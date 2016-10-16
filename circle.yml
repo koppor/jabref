@@ -4,38 +4,9 @@ machine:
   java:
     version: oraclejdk8
 
-dependencies:
-  pre:
-    - scripts/prepare-install4j.sh
-    - install4j6/bin/install4jc --verbose --license=$INSTALL4J_KEY
-  override:
-    # We do this to decrease build time by using CircleCI's cache. See https://discuss.circleci.com/t/effective-caching-for-gradle/540 for a longer motivation.
-    - ./gradlew getdeps
-  cache_directories:
-    - "~/.install4j6"
-    - "~/downloads"
-
 test:
   override:
-    - ./gradlew -Pdev=true -Pinstall4jDir="install4j6" release --stacktrace
-
-deployment:
-  release:
-    # we only do a simple check for SemVer and do not use a sophisticated check as presented at https://github.com/sindresorhus/semver-regex/blob/master/index.js
-   tag: /v[0-9]+(\.[0-9]+)*(-.+)?/
-   commands:
-      # we have to do a clean build as changing gradle's "project.version" does not lead to a rebuild of resources (mirroring project.version)
-      - ./gradlew -Pinstall4jDir="install4j6" clean release --stacktrace
-      # upload at all circumstances
-      - scripts/upload-to-builds.jabref.org.sh
-  development:
-     # match all branches; this is executed, if "release" is not matched - see https://circleci.com/docs/configuration/
-    branch: /.*/
-    commands:
-      # if upload fails, it is accepted; CircleCI provides deep links to the binaries as fallback
-      - timeout 580 scripts/upload-to-builds.jabref.org.sh || exit 0
-
-
+    - ./gradlew test
 
 general:
   artifacts:
