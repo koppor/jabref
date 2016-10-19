@@ -678,7 +678,7 @@ public class JabRefPreferences {
         defaults.put(WARN_BEFORE_OVERWRITING_KEY, Boolean.TRUE);
         defaults.put(CONFIRM_DELETE, Boolean.TRUE);
         defaults.put(GRAY_OUT_NON_HITS, Boolean.TRUE);
-        defaults.put(DEFAULT_BIBTEX_KEY_PATTERN, "[auth][year]");
+        defaults.put(DEFAULT_BIBTEX_KEY_PATTERN, "[auth][year]_[title:capitalize]");
         defaults.put(DO_NOT_RESOLVE_STRINGS_FOR, FieldName.URL);
         defaults.put(RESOLVE_STRINGS_ALL_FIELDS, Boolean.FALSE);
         defaults.put(NON_WRAPPABLE_FIELDS, "pdf;ps;url;doi;file;isbn;issn");
