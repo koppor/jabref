@@ -615,9 +615,9 @@ public class JabRefPreferences {
         defaults.put(ACTIVE_FIELD_EDITOR_BACKGROUND_COLOR, "220:220:255");
         defaults.put(FIELD_EDITOR_TEXT_COLOR, "0:0:0");
 
-        // default icon colors
-        defaults.put(ICON_ENABLED_COLOR, "79:95:143");
-        defaults.put(ICON_DISABLED_COLOR, "200:200:200");
+        // default icon colors (IAAS)
+        defaults.put(ICON_ENABLED_COLOR, "202:00:123");
+        defaults.put(ICON_DISABLED_COLOR, "104:04:40");
 
         defaults.put(INCOMPLETE_ENTRY_BACKGROUND, "250:175:175");
 
