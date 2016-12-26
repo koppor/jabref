@@ -2,6 +2,7 @@ package net.sf.jabref.gui.date;
 
 import java.awt.BorderLayout;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.JComponent;
@@ -53,7 +54,7 @@ public class DatePickerButton implements DateChangeListener {
             if (isoFormat) {
                 editor.setText(date.format(DateTimeFormatter.ISO_DATE));
             } else {
-                EasyDateFormat.fromTimeStampFormat(Globals.prefs.get(JabRefPreferences.TIME_STAMP_FORMAT)).getDateAt(date.atStartOfDay());
+                EasyDateFormat.fromTimeStampFormat(Globals.prefs.get(JabRefPreferences.TIME_STAMP_FORMAT)).getDateAt(ZonedDateTime.from(date));
             }
         } else {
             // in this case the user selected "none" in the date picker, so we just clear the field
