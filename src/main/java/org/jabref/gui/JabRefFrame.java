@@ -59,6 +59,7 @@ import javafx.application.Platform;
 
 import org.jabref.Globals;
 import org.jabref.JabRefExecutorService;
+import org.jabref.bibsonomy.BibSonomySidePaneComponent;
 import org.jabref.gui.actions.Actions;
 import org.jabref.gui.actions.AutoLinkFilesAction;
 import org.jabref.gui.actions.ConnectToSharedDatabaseAction;
@@ -410,6 +411,7 @@ public class JabRefFrame extends JFrame implements OutputPrinter {
             Globals.getKeyPrefs().getKey(KeyBinding.FIND_UNLINKED_FILES)
     );
     private final AutoLinkFilesAction autoLinkFile = new AutoLinkFilesAction();
+
     // The action for adding a new entry of unspecified type.
     private final NewEntryAction newEntryAction = new NewEntryAction(this, Globals.getKeyPrefs().getKey(KeyBinding.NEW_ENTRY));
     private final List<NewEntryAction> newSpecificEntryAction = getNewEntryActions();
@@ -447,6 +449,7 @@ public class JabRefFrame extends JFrame implements OutputPrinter {
     private OpenOfficePanel openOfficePanel;
     private GroupSelector groupSelector;
     private int previousTabCount = -1;
+    private BibSonomySidePaneComponent bibsonomySidePaneComponent;
     private JMenu newSpec;
 
     public JabRefFrame() {
@@ -683,6 +686,9 @@ public class JabRefFrame extends JFrame implements OutputPrinter {
         generalFetcher = new GeneralFetcher(this, sidePaneManager);
 
         sidePaneManager.register(groupSelector);
+
+        bibsonomySidePaneComponent = new BibSonomySidePaneComponent(sidePaneManager, this);
+        sidePaneManager.register( bibsonomySidePaneComponent);
     }
 
     /**
@@ -1188,6 +1194,8 @@ public class JabRefFrame extends JFrame implements OutputPrinter {
         tools.add(abbreviateMedline);
         tools.add(unabbreviate);
         mb.add(tools);
+
+        mb.add(bibsonomySidePaneComponent.getMenuItem());
 
         options.add(showPrefs);
 

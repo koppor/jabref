@@ -83,6 +83,7 @@ import org.apache.commons.logging.LogFactory;
 public class JabRefPreferences {
 
     // Push to application preferences
+    public static final String BIBSONOMY_PROPERTIES = "bibsonomyProperties";
     public static final String EMACS_PATH = "emacsPath";
     public static final String EMACS_ADDITIONAL_PARAMETERS = "emacsParameters";
     public static final String LATEX_EDITOR_PATH = "latexEditorPath";

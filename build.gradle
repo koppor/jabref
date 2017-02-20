@@ -57,10 +57,16 @@ install4j {
 
 repositories {
     jcenter()
+
     maven {
         url 'https://oss.sonatype.org/content/groups/public'
     }
+
+    maven {
+        url "http://dev.bibsonomy.org/maven2/"
+    }
 }
+
 
 configurations {
     antlr3
@@ -88,6 +94,8 @@ def getV8Dependency() {
 }
 
 dependencies {
+    compile 'org.bibsonomy:bibsonomy-rest-client:3.7.2'
+
     compile 'com.jgoodies:jgoodies-common:1.8.1'
     compile 'com.jgoodies:jgoodies-forms:1.9.0'
     compile 'com.jgoodies:jgoodies-looks:2.7.0'
