@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -293,10 +294,7 @@ public class MainTableSelectionListener implements ListEventListener<BibEntry>, 
                                 ExternalFileMenuItem item = new ExternalFileMenuItem(panel.frame(), entry, "",
                                         flEntry.getLink(), flEntry.getType().map(ExternalFileType::getIcon).orElse(null),
                                         panel.getBibDatabaseContext(), flEntry.getType());
-                                boolean success = item.openLink();
-                                if (!success) {
-                                    panel.output(Localization.lang("Unable to open link."));
-                                }
+                                item.doClick();
                             }
                         } else {
                             try {
@@ -518,7 +516,7 @@ public class MainTableSelectionListener implements ListEventListener<BibEntry>, 
                 if (o == null) {
                     continue;
                 }
-                String s = o.toString().toLowerCase();
+                String s = o.toString().toLowerCase(Locale.ROOT);
                 if (s.length() >= lastPressedCount) {
                     for (int j = 0; j < lastPressedCount; j++) {
                         if (s.charAt(j) != lastPressed[j]) {

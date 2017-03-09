@@ -126,7 +126,6 @@ import org.apache.commons.logging.LogFactory;
  * update themselves if the change is made from somewhere else.
  */
 public class EntryEditor extends JPanel implements EntryContainer {
-
     private static final Log LOGGER = LogFactory.getLog(EntryEditor.class);
 
     /**
@@ -1148,7 +1147,7 @@ public class EntryEditor extends JPanel implements EntryContainer {
                 }
 
                 // When the tab "Related articles" gets selected, the request to get the recommendations is started.
-                if (activeTab instanceof EntryEditorTabRelatedArticles) {
+                if (activeTab == relatedArticlePanel) {
                     relatedArticlesTab.focus();
                 }
             });
