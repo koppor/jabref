@@ -12,6 +12,7 @@ We refer to [GitHub issues](https://github.com/JabRef/jabref/issues) by using `#
 ## [Unreleased]
 
 ### Changed
+- JabRef has a new logo! The logo was designed by "AikTheOne" - who was the winner of a design contest at 99designs.com
 - Add tab which shows the MathSciNet review website if the `MRNumber` field is present.
 - Partly switched to a new UI technology (JavaFX).
     - Redesigned group panel.
@@ -40,6 +41,7 @@ We refer to [GitHub issues](https://github.com/JabRef/jabref/issues) by using `#
 - The `Move linked files to default file directory`-Cleanup operation respects the `File directory pattern` setting 
 - We separated the `Move file` and `Rename Pdfs` logic and context menu entries in the `General`-Tab for the Field `file` to improve the semantics
 - A scrollbar was added to the cleanup panel, as a result of issue [#2501](https://github.com/JabRef/jabref/issues/2501)
+- F4 opens selected file in current JTable context not just from selected entry inside the main table [#2355](https://github.com/JabRef/jabref/issues/2355)
 
 ### Fixed
  - We fixed an issue where authors with multiple surnames were not presented correctly in the main table. [#2534](https://github.com/JabRef/jabref/issues/2534)
@@ -62,7 +64,7 @@ We refer to [GitHub issues](https://github.com/JabRef/jabref/issues) by using `#
  - We fixed an issue with importing groups and subgroups [#2600](https://github.com/JabRef/jabref/issues/2600)
  - Fixed an issue where title-related key patterns did not correspond to the documentation [#2604](https://github.com/JabRef/jabref/issues/2604) [#2589](https://github.com/JabRef/jabref/issues/2589)
  - We fixed an issue which prohibited the citation export to external programms on MacOS  [#2613](https://github.com/JabRef/jabref/issues/2613)
- 
+ - We fixed an issue where the file folder could not be changed when running `Get fulltext` in the `general`-tab [#2572](https://github.com/JabRef/jabref/issues/2572)
 ### Removed
 
 

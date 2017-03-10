@@ -23,7 +23,7 @@ import org.jabref.logic.importer.IdBasedFetcher;
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.logic.importer.SearchBasedFetcher;
 import org.jabref.logic.importer.util.OAI2Handler;
-import org.jabref.logic.util.DOI;
+import org.jabref.logic.identifier.DOI;
 import org.jabref.logic.util.io.XMLUtil;
 import org.jabref.logic.util.strings.StringSimilarity;
 import org.jabref.model.entry.ArXivIdentifier;
@@ -55,6 +55,7 @@ public class ArXiv implements FulltextFetcher, SearchBasedFetcher, IdBasedFetche
     private static final Log LOGGER = LogFactory.getLog(ArXiv.class);
 
     private static final String API_URL = "http://export.arxiv.org/api/query";
+
     private final ImportFormatPreferences importFormatPreferences;
 
     public ArXiv(ImportFormatPreferences importFormatPreferences) {

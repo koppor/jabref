@@ -1,4 +1,4 @@
-package org.jabref.logic.util;
+package org.jabref.logic.identifier;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,7 +22,7 @@ public class DOI {
     private static final Log LOGGER = LogFactory.getLog(DOI.class);
 
     // DOI resolver
-    public static final URI RESOLVER = URI.create("http://doi.org");
+    private static final URI RESOLVER = URI.create("http://doi.org");
 
     // DOI
     private final String doi;
@@ -112,7 +112,7 @@ public class DOI {
      * @param doi the DOI string
      * @return true if DOI is valid, false otherwise
      */
-    public static boolean isValid(String doi ){
+    public static boolean isValid(String doi){
         return build(doi).isPresent();
     }
 
