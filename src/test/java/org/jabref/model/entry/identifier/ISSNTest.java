@@ -1,6 +1,4 @@
-package org.jabref.logic.identifier;
-
-import org.jabref.logic.identifier.ISSN;
+package org.jabref.model.entry.identifier;
 
 import org.junit.Test;
 
@@ -8,9 +6,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 public class ISSNTest {
-
 
     @Test
     public void testIsCanBeCleaned() {
