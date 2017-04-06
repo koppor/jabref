@@ -714,11 +714,16 @@ public class StringUtil {
      * @return the encoded string or null
      */
     public static String toUTF8(String s) {
-        if(s != null) {
+        if (s != null) {
             try {
                 return new String(s.getBytes("UTF8"));
-            } catch (UnsupportedEncodingException e) {}
+            } catch (UnsupportedEncodingException e) {
+            }
         }
         return null;
+    }
+
+    public static boolean containsIgnoreCase(String text, String searchString) {
+        return StringUtils.containsIgnoreCase(text, searchString);
     }
 }

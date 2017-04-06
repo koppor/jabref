@@ -740,7 +740,7 @@ public class JabRefFrame extends JFrame implements OutputPrinter {
      * @param filenames the filenames of all currently opened files - used for storing them if prefs openLastEdited is set to true
      */
     private void tearDownJabRef(List<String> filenames) {
-        JabRefExecutorService.INSTANCE.shutdownEverything();
+        Globals.shutdownThreadPools();
 
         dispose();
 
@@ -1184,7 +1184,7 @@ public class JabRefFrame extends JFrame implements OutputPrinter {
         quality.add(findUnlinkedFiles);
         quality.add(autoLinkFile);
 
-        for (IdFetcher fetcher : WebFetchers.getIdFetchers()) {
+        for (IdFetcher fetcher : WebFetchers.getIdFetchers(Globals.prefs.getImportFormatPreferences())) {
             lookupIdentifiers.add(new LookupIdentifierAction(this, fetcher));
         }
         quality.add(lookupIdentifiers);
