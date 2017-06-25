@@ -56,6 +56,7 @@ import org.jabref.gui.DuplicateResolverDialog.DuplicateResolverResult;
 import org.jabref.gui.EntryMarker;
 import org.jabref.gui.GUIGlobals;
 import org.jabref.gui.IconTheme;
+import org.jabref.gui.JabRefDialog;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.PreviewPanel;
 import org.jabref.gui.desktop.JabRefDesktop;
@@ -93,6 +94,7 @@ import org.jabref.model.entry.FieldName;
 import org.jabref.model.entry.FieldProperty;
 import org.jabref.model.entry.IdGenerator;
 import org.jabref.model.entry.InternalBibtexFields;
+import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.groups.AllEntriesGroup;
 import org.jabref.model.groups.GroupEntryChanger;
 import org.jabref.model.groups.GroupTreeNode;
@@ -138,7 +140,7 @@ import org.apache.commons.logging.LogFactory;
  * receiving this call).
  */
 
-public class ImportInspectionDialog extends JDialog implements ImportInspector, OutputPrinter {
+public class ImportInspectionDialog extends JabRefDialog implements ImportInspector, OutputPrinter {
 
     private static final Log LOGGER = LogFactory.getLog(ImportInspectionDialog.class);
     private static final List<String> INSPECTION_FIELDS = Arrays.asList(FieldName.AUTHOR, FieldName.TITLE, FieldName.YEAR, BibEntry.KEY_FIELD);
@@ -189,7 +191,7 @@ public class ImportInspectionDialog extends JDialog implements ImportInspector, 
      * @param panel
      */
     public ImportInspectionDialog(JabRefFrame frame, BasePanel panel, String undoName, boolean newDatabase) {
-        super(frame);
+        super(frame, ImportInspectionDialog.class);
         this.frame = frame;
         this.panel = panel;
         this.bibDatabaseContext = (panel == null) ? null : panel.getBibDatabaseContext();
@@ -235,7 +237,7 @@ public class ImportInspectionDialog extends JDialog implements ImportInspector, 
 
         popup.add(deleteListener);
         popup.addSeparator();
-        if (!newDatabase && (bibDatabaseContext != null)) {
+        if (!newDatabase && (bibDatabaseContext != null) && bibDatabaseContext.getMetaData().getGroups().isPresent()) {
             GroupTreeNode node = bibDatabaseContext.getMetaData().getGroups().get();
             JMenu groupsAdd = new JMenu(Localization.lang("Add to group"));
             groupsAdd.setEnabled(false); // Will get enabled if there are groups that can be added to.
@@ -1251,14 +1253,11 @@ public class ImportInspectionDialog extends JDialog implements ImportInspector, 
         }
 
         @Override
-        public void downloadComplete(FileListEntry file) {
+        public void downloadComplete(LinkedFile file) {
             ImportInspectionDialog.this.toFront(); // Hack
-            FileListTableModel localModel = new FileListTableModel();
-            entry.getField(FieldName.FILE).ifPresent(localModel::setContent);
-            localModel.addEntry(localModel.getRowCount(), file);
             entries.getReadWriteLock().writeLock().lock();
             try {
-                entry.setField(FieldName.FILE, localModel.getStringRepresentation());
+                entry.addFile(file);
             } finally {
                 entries.getReadWriteLock().writeLock().unlock();
             }
@@ -1327,16 +1326,13 @@ public class ImportInspectionDialog extends JDialog implements ImportInspector, 
                 return;
             }
             entry = selectionModel.getSelected().get(0);
-            FileListEntry flEntry = new FileListEntry("", "");
-            FileListEntryEditor editor = new FileListEntryEditor(frame, flEntry, false, true, bibDatabaseContext, true);
+            LinkedFile flEntry = new LinkedFile("", "", "");
+            FileListEntryEditor editor = new FileListEntryEditor(flEntry, false, true, bibDatabaseContext, true);
             editor.setVisible(true, true);
             if (editor.okPressed()) {
-                FileListTableModel localModel = new FileListTableModel();
-                entry.getField(FieldName.FILE).ifPresent(localModel::setContent);
-                localModel.addEntry(localModel.getRowCount(), flEntry);
                 entries.getReadWriteLock().writeLock().lock();
                 try {
-                    entry.setField(FieldName.FILE, localModel.getStringRepresentation());
+                    entry.addFile(flEntry);
                 } finally {
                     entries.getReadWriteLock().writeLock().unlock();
                 }
@@ -1345,14 +1341,11 @@ public class ImportInspectionDialog extends JDialog implements ImportInspector, 
         }
 
         @Override
-        public void downloadComplete(FileListEntry file) {
+        public void downloadComplete(LinkedFile file) {
             ImportInspectionDialog.this.toFront(); // Hack
-            FileListTableModel localModel = new FileListTableModel();
-            entry.getField(FieldName.FILE).ifPresent(localModel::setContent);
-            localModel.addEntry(localModel.getRowCount(), file);
             entries.getReadWriteLock().writeLock().lock();
             try {
-                entry.setField(FieldName.FILE, localModel.getStringRepresentation());
+                entry.addFile(file);
             } finally {
                 entries.getReadWriteLock().writeLock().unlock();
             }

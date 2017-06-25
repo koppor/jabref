@@ -1,10 +1,8 @@
 package org.jabref.gui.fieldeditors;
 
 import java.awt.Color;
-import java.awt.Container;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 
 import org.jabref.gui.autocompleter.AutoCompleteListener;
 
@@ -24,9 +22,14 @@ public interface FieldEditor {
     /*
      * Returns the text component itself.
      */
-    JComponent getTextComponent();
+    Object getTextComponent();
 
-    JLabel getLabel();
+    default boolean hasFocus() {
+        if (getTextComponent() instanceof JComponent) {
+            return ((JComponent) getTextComponent()).hasFocus();
+        }
+        return false;
+    }
 
     void setActiveBackgroundColor();
 
@@ -34,11 +37,7 @@ public interface FieldEditor {
 
     void setInvalidBackgroundColor();
 
-    void setLabelColor(Color color);
-
     void setBackground(Color color);
-
-    void updateFontColor();
 
     String getText();
 
@@ -52,13 +51,9 @@ public interface FieldEditor {
 
     void append(String text);
 
-    Container getParent();
-
     void requestFocus();
 
     void setEnabled(boolean enabled);
-
-    void updateFont();
 
     /**
      * paste text into component, it should also take some selected text into

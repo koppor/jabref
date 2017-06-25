@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,43 +33,47 @@ import org.fxmisc.easybind.monadic.MonadicBinding;
 public class StateManager {
 
     private final ObjectProperty<Optional<BibDatabaseContext>> activeDatabase = new SimpleObjectProperty<>(Optional.empty());
-    private final ReadOnlyObjectWrapper<Optional<GroupTreeNode>> activeGroup = new ReadOnlyObjectWrapper<>(Optional.empty());
+    private final ReadOnlyListWrapper<GroupTreeNode> activeGroups = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
     private final ObservableList<BibEntry> selectedEntries = FXCollections.observableArrayList();
-    private final ObservableMap<BibDatabaseContext, GroupTreeNode> selectedGroups = FXCollections.observableHashMap();
+    private final ObservableMap<BibDatabaseContext, ObservableList<GroupTreeNode>> selectedGroups = FXCollections.observableHashMap();
 
     public StateManager() {
         MonadicBinding<BibDatabaseContext> currentDatabase = EasyBind.map(activeDatabase, database -> database.orElse(null));
-        activeGroup.bind(EasyBind.map(Bindings.valueAt(selectedGroups, currentDatabase), Optional::ofNullable));
+        activeGroups.bind(Bindings.valueAt(selectedGroups, currentDatabase));
     }
 
     public ObjectProperty<Optional<BibDatabaseContext>> activeDatabaseProperty() {
         return activeDatabase;
     }
 
-    public ReadOnlyObjectProperty<Optional<GroupTreeNode>> activeGroupProperty() {
-        return activeGroup.getReadOnlyProperty();
+    public ReadOnlyListProperty<GroupTreeNode> activeGroupProperty() {
+        return activeGroups.getReadOnlyProperty();
     }
 
     public ObservableList<BibEntry> getSelectedEntries() {
-        return FXCollections.unmodifiableObservableList(selectedEntries);
+        return selectedEntries;
     }
 
     public void setSelectedEntries(List<BibEntry> newSelectedEntries) {
-        selectedEntries.clear();
-        selectedEntries.addAll(newSelectedEntries);
+        selectedEntries.setAll(newSelectedEntries);
     }
 
-    public void setSelectedGroup(BibDatabaseContext database, GroupTreeNode newSelectedGroup) {
-        Objects.requireNonNull(newSelectedGroup);
-        selectedGroups.put(database, newSelectedGroup);
+    public void setSelectedGroups(BibDatabaseContext database, List<GroupTreeNode> newSelectedGroups) {
+        Objects.requireNonNull(newSelectedGroups);
+        selectedGroups.put(database, FXCollections.observableArrayList(newSelectedGroups));
     }
 
-    public Optional<GroupTreeNode> getSelectedGroup(BibDatabaseContext database) {
-        return Optional.ofNullable(selectedGroups.get(database));
+    public ObservableList<GroupTreeNode> getSelectedGroup(BibDatabaseContext database) {
+        ObservableList<GroupTreeNode> selectedGroupsForDatabase = selectedGroups.get(database);
+        return selectedGroupsForDatabase != null ? selectedGroupsForDatabase : FXCollections.observableArrayList();
     }
 
-    public void clearSelectedGroup(BibDatabaseContext database) {
+    public void clearSelectedGroups(BibDatabaseContext database) {
         selectedGroups.remove(database);
+    }
+
+    public Optional<BibDatabaseContext> getActiveDatabase() {
+        return activeDatabase.get();
     }
 
     public List<BibEntry> getEntriesInCurrentDatabase() {

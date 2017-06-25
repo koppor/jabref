@@ -130,7 +130,8 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
             return false;
         }
         GroupTreeNode that = (GroupTreeNode) o;
-        return Objects.equals(group, that.group);
+        return Objects.equals(group, that.group) &&
+                Objects.equals(getChildren(), that.getChildren());
     }
 
     @Override
@@ -142,18 +143,18 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
         List<GroupTreeNode> groups = new ArrayList<>();
 
         // Add myself if I contain the entries
-        if(requireAll) {
-            if(this.group.containsAll(entries)) {
+        if (requireAll) {
+            if (this.group.containsAll(entries)) {
                 groups.add(this);
             }
         } else {
-            if(this.group.containsAny(entries)) {
+            if (this.group.containsAny(entries)) {
                 groups.add(this);
             }
         }
 
         // Traverse children
-        for(GroupTreeNode child : getChildren()) {
+        for (GroupTreeNode child : getChildren()) {
             groups.addAll(child.getContainingGroups(entries, requireAll));
         }
 
@@ -173,7 +174,7 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
         }
 
         // Traverse children
-        for(GroupTreeNode child : getChildren()) {
+        for (GroupTreeNode child : getChildren()) {
             groups.addAll(child.getMatchingGroups(entries));
         }
 
@@ -293,5 +294,12 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    /**
+     * Returns true if the underlying groups of both {@link GroupTreeNode}s is the same.
+     */
+    public boolean isSameGroupAs(GroupTreeNode other) {
+        return Objects.equals(group, other.group);
     }
 }

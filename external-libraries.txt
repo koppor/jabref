@@ -136,9 +136,29 @@ URL:     http://fxexperience.com/controlsfx/
 License: BSD-3-Clause
 
 Id:      org.fx.misc.easybin:easybind
-Projekt: EasyBind
+Project: EasyBind
 URL:     https://github.com/TomasMikula/EasyBind
 License: BSD-2-Clause
+
+Id:      net.corda:jfx
+Project: Corda
+URL:     https://github.com/corda/corda/tree/master/client/jfx
+License: Apache-2.0
+
+Id:      org.fxmisc.flowless:flowless
+Project: Flowless
+URL:     https://github.com/TomasMikula/Flowless
+License: BSD-2-Clause
+
+Id:      org.fxmisc.richtext:richtextfx
+Project: RichTextFX
+URL:     https://github.com/TomasMikula/RichTextFX
+License: BSD-2-Clause
+
+Id:      de.jensd:fontawesomefx-materialdesignfont
+Project: FontAwesomeFX
+URL:     https://bitbucket.org/Jerady/fontawesomefx
+License: Apache-2.0
 
 Id:      org.jsoup:jsoup
 Project: jsoup
@@ -165,15 +185,20 @@ Project: OpenOffice.org
 URL:     http://www.openoffice.org/api/SDK
 License: Apache-2.0
 
+Id:      org.xmlunit:xmlunit-core
+Project: XMLUnit
+URL:     http://www.xmlunit.org/
+License: Apache 2.0
+
+Id:      org.xmlunit:xmlunit-matchers
+Project: XMLUnit
+URL:     http://www.xmlunit.org/
+License: Apache 2.0
+
 Id:      org.swinglabs.swingx:swingx-core
 Project: SwingX
 URL:     https://swingx.java.net/
 License: LGPL-3.0
-
-Id:      com.github.lgooddatepicker:LGoodDatePicker
-Project: LGoodDatePicker
-URL:     https://github.com/LGoodDatePicker/LGoodDatePicker
-License: MIT
 
 Id:      spin
 Path:    lib/spin.jar
