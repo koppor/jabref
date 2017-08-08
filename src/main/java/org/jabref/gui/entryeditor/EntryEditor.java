@@ -8,16 +8,15 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -48,7 +47,6 @@ import org.jabref.gui.IconTheme;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.OSXCompatibleToolbar;
 import org.jabref.gui.actions.Actions;
-import org.jabref.gui.contentselector.FieldContentSelector;
 import org.jabref.gui.externalfiles.WriteXMPEntryEditorAction;
 import org.jabref.gui.fieldeditors.FieldEditor;
 import org.jabref.gui.fieldeditors.TextField;
@@ -64,7 +62,6 @@ import org.jabref.gui.util.DefaultTaskExecutor;
 import org.jabref.gui.util.component.CheckBoxMessage;
 import org.jabref.gui.util.component.VerticalLabelUI;
 import org.jabref.logic.TypedBibEntry;
-import org.jabref.logic.autocompleter.AutoCompleter;
 import org.jabref.logic.bibtex.InvalidFieldValueException;
 import org.jabref.logic.bibtex.LatexFieldFormatter;
 import org.jabref.logic.bibtexkeypattern.BibtexKeyPatternUtil;
@@ -96,6 +93,7 @@ import org.fxmisc.easybind.EasyBind;
  * update themselves if the change is made from somewhere else.
  */
 public class EntryEditor extends JPanel implements EntryContainer {
+
     private static final Log LOGGER = LogFactory.getLog(EntryEditor.class);
 
     /**
@@ -134,7 +132,6 @@ public class EntryEditor extends JPanel implements EntryContainer {
     private final TabPane tabbed = new TabPane();
     private final JabRefFrame frame;
     private final BasePanel panel;
-    private final Set<FieldContentSelector> contentSelectors = new HashSet<>();
     private final HelpAction helpAction = new HelpAction(HelpFile.ENTRY_EDITOR, IconTheme.JabRefIcon.HELP.getIcon());
     private final UndoAction undoAction = new UndoAction();
     private final RedoAction redoAction = new RedoAction();
@@ -145,7 +142,7 @@ public class EntryEditor extends JPanel implements EntryContainer {
      */
     private boolean movingToDifferentEntry;
 
-    public EntryEditor(JabRefFrame frame, BasePanel panel, BibEntry entry) {
+    public EntryEditor(JabRefFrame frame, BasePanel panel, BibEntry entry, String lastTabName) {
         this.frame = frame;
         this.panel = panel;
         this.entry = Objects.requireNonNull(entry);
@@ -159,8 +156,36 @@ public class EntryEditor extends JPanel implements EntryContainer {
         setupToolBar();
 
         JFXPanel container = new JFXPanel();
+
+        container.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+
+                //We need to consume this event here to prevent the propgation of keybinding events back to the JFrame
+                Optional<KeyBinding> keyBinding = Globals.getKeyPrefs().mapToKeyBinding(e);
+                if (keyBinding.isPresent()) {
+                    switch (keyBinding.get()) {
+                        case CUT:
+                        case COPY:
+                        case PASTE:
+                        case CLOSE_ENTRY_EDITOR:
+                        case DELETE_ENTRY:
+                        case SELECT_ALL:
+                        case ENTRY_EDITOR_NEXT_PANEL:
+                        case ENTRY_EDITOR_NEXT_PANEL_2:
+                        case ENTRY_EDITOR_PREVIOUS_PANEL:
+                        case ENTRY_EDITOR_PREVIOUS_PANEL_2:
+                            e.consume();
+                            break;
+                        default:
+                            //do nothing
+                    }
+                }
+            }
+        });
         DefaultTaskExecutor.runInJavaFXThread(() -> {
-            addTabs();
+            addTabs(lastTabName);
             container.setScene(new Scene(tabbed));
         });
         add(container, BorderLayout.CENTER);
@@ -175,11 +200,15 @@ public class EntryEditor extends JPanel implements EntryContainer {
         setupKeyBindings();
     }
 
+    private void selectLastUsedTab(String lastTabName) {
+        tabbed.getTabs().stream().filter(tab -> lastTabName.equals(tab.getText())).findFirst().ifPresent(tab -> tabbed.getSelectionModel().select(tab));
+    }
+
     /**
      * Set-up key bindings specific for the entry editor.
      */
     private void setupKeyBindings() {
-        tabbed.addEventFilter(KeyEvent.ANY, event -> {
+        tabbed.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             Optional<KeyBinding> keyBinding = Globals.getKeyPrefs().mapToKeyBinding(event);
             if (keyBinding.isPresent()) {
                 switch (keyBinding.get()) {
@@ -197,6 +226,10 @@ public class EntryEditor extends JPanel implements EntryContainer {
                         helpAction.actionPerformed(null);
                         event.consume();
                         break;
+                    case CLOSE_ENTRY_EDITOR:
+                        closeAction.actionPerformed(null);
+                        event.consume();
+                        break;
                     default:
                         // Pass other keys to children
                 }
@@ -204,7 +237,7 @@ public class EntryEditor extends JPanel implements EntryContainer {
         });
     }
 
-    private void addTabs() {
+    private void addTabs(String lastTabName) {
         EntryType type = EntryTypes.getTypeOrDefault(entry.getType(),
                 this.frame.getCurrentBasePanel().getBibDatabaseContext().getMode());
 
@@ -236,7 +269,7 @@ public class EntryEditor extends JPanel implements EntryContainer {
         tabs.add(new RelatedArticlesTab(entry));
 
         // Source tab
-        SourceTab sourceTab = new SourceTab(panel.getBibDatabaseContext().getMode(), entry);
+        SourceTab sourceTab = new SourceTab(panel.getBibDatabaseContext(), entry);
         tabs.add(sourceTab);
 
         tabbed.getTabs().clear();
@@ -249,6 +282,8 @@ public class EntryEditor extends JPanel implements EntryContainer {
 
         if (Globals.prefs.getBoolean(JabRefPreferences.DEFAULT_SHOW_SOURCE)) {
             tabbed.getSelectionModel().select(sourceTab);
+        } else {
+            selectLastUsedTab(lastTabName);
         }
     }
 
@@ -362,28 +397,6 @@ public class EntryEditor extends JPanel implements EntryContainer {
         add(leftPan, BorderLayout.WEST);
     }
 
-    /**
-     * getExtra checks the field name against InternalBibtexFields.getFieldExtras(name).
-     * If the name has an entry, the proper component to be shown is created and
-     * returned. Otherwise, null is returned. In addition, e.g. listeners can be
-     * added to the field editor, even if no component is returned.
-     *
-     * @return Component to show, or null if none.
-     */
-    /*
-    public Optional<JComponent> getExtra(final FieldEditor editor) {
-        final String fieldName = editor.getFieldName();
-
-        final Set<FieldProperty> fieldExtras = InternalBibtexFields.getFieldProperties(fieldName);
-
-        if (!panel.getBibDatabaseContext().getMetaData().getContentSelectorValuesForField(fieldName).isEmpty()) {
-            return FieldExtraComponents.getSelectorExtraComponent(frame, panel, editor, contentSelectors,
-                    storeFieldAction);
-        }
-        return Optional.empty();
-    }
-    */
-
     void addSearchListener(SearchQueryHighlightListener listener) {
         // TODO: Highlight search text in entry editors
         searchListeners.add(listener);
@@ -442,14 +455,6 @@ public class EntryEditor extends JPanel implements EntryContainer {
         }
     }
 
-    public void updateAllContentSelectors() {
-        if (!contentSelectors.isEmpty()) {
-            for (FieldContentSelector contentSelector : contentSelectors) {
-                contentSelector.rebuildComboBox();
-            }
-        }
-    }
-
     public void setMovingToDifferentEntry() {
         movingToDifferentEntry = true;
         unregisterListeners();
@@ -490,6 +495,7 @@ public class EntryEditor extends JPanel implements EntryContainer {
     }
 
     private class TypeButton extends JButton {
+
         private TypeButton() {
             super(IconTheme.JabRefIcon.EDIT.getIcon());
             setToolTipText(Localization.lang("Change entry type"));
@@ -498,6 +504,7 @@ public class EntryEditor extends JPanel implements EntryContainer {
     }
 
     private class TypeLabel extends JLabel {
+
         private TypeLabel(String type) {
             super(type);
             setUI(new VerticalLabelUI(false));
@@ -537,6 +544,7 @@ public class EntryEditor extends JPanel implements EntryContainer {
     }
 
     private class DeleteAction extends AbstractAction {
+
         private DeleteAction() {
             super(Localization.lang("Delete"), IconTheme.JabRefIcon.DELETE_ENTRY.getIcon());
             putValue(Action.SHORT_DESCRIPTION, Localization.lang("Delete entry"));
@@ -687,11 +695,13 @@ public class EntryEditor extends JPanel implements EntryContainer {
 
                         fieldEditor.setValidBackgroundColor();
 
-                        // See if we need to update an AutoCompleter instance:
-                        AutoCompleter<String> aComp = panel.getAutoCompleters().get(fieldEditor.getFieldName());
+                        //TODO: See if we need to update an AutoCompleter instance:
+                        /*
+                        AutoCompleter<String> aComp = panel.getSuggestionProviders().get(fieldEditor.getFieldName());
                         if (aComp != null) {
                             aComp.addBibtexEntry(entry);
                         }
+                        */
 
                         // Add an UndoableFieldChange to the baseframe's undoManager.
                         UndoableFieldChange undoableFieldChange = new UndoableFieldChange(entry,
@@ -804,7 +814,7 @@ public class EntryEditor extends JPanel implements EntryContainer {
             }
 
             BibtexKeyPatternUtil.makeAndSetLabel(panel.getBibDatabaseContext().getMetaData()
-                            .getCiteKeyPattern(Globals.prefs.getBibtexKeyPatternPreferences().getKeyPattern()),
+                    .getCiteKeyPattern(Globals.prefs.getBibtexKeyPatternPreferences().getKeyPattern()),
                     panel.getDatabase(), entry,
                     Globals.prefs.getBibtexKeyPatternPreferences());
 
@@ -821,6 +831,7 @@ public class EntryEditor extends JPanel implements EntryContainer {
     }
 
     private class UndoAction extends AbstractAction {
+
         private UndoAction() {
             super("Undo", IconTheme.JabRefIcon.UNDO.getIcon());
             putValue(Action.SHORT_DESCRIPTION, "Undo");

@@ -407,7 +407,7 @@ public class JabRefFrame extends JFrame implements OutputPrinter {
             IconTheme.JabRefIcon.MERGE_ENTRIES.getIcon());
     private final AbstractAction downloadFullText = new GeneralAction(Actions.DOWNLOAD_FULL_TEXT,
             Localization.menuTitle("Look up full text documents"),
-            Localization.lang("Look up full text documents"));
+            Globals.getKeyPrefs().getKey(KeyBinding.DOWNLOAD_FULL_TEXT));
     private final AbstractAction increaseFontSize = new IncreaseTableFontSizeAction();
     private final AbstractAction defaultFontSize = new DefaultTableFontSizeAction();
     private final AbstractAction decreseFontSize = new DecreaseTableFontSizeAction();
@@ -628,7 +628,7 @@ public class JabRefFrame extends JFrame implements OutputPrinter {
                 if (currentSearchQuery.isPresent()) {
                     content = currentSearchQuery.get().getQuery();
                 }
-                globalSearchBar.setSearchTerm(content, true);
+                globalSearchBar.setSearchTerm(content);
             }
 
             currentBasePanel.getPreviewPanel().updateLayout();
@@ -1593,7 +1593,7 @@ public class JabRefFrame extends JFrame implements OutputPrinter {
         Map<String, Double> measurements = new HashMap<>();
         measurements.put("NumberOfEntries", (double)basePanel.getDatabaseContext().getDatabase().getEntryCount());
 
-        Globals.getTelemetryClient().trackEvent("OpenNewDatabase", properties, measurements);
+        Globals.getTelemetryClient().ifPresent(client -> client.trackEvent("OpenNewDatabase", properties, measurements));
     }
 
     public BasePanel addTab(BibDatabaseContext databaseContext, boolean raisePanel) {
