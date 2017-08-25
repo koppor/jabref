@@ -20,7 +20,7 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibtexEntryTypes;
 import org.jabref.model.entry.EntryType;
 import org.jabref.model.entry.FieldName;
-import org.jabref.model.entry.MonthUtil;
+import org.jabref.model.entry.Month;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.preferences.JabRefPreferences;
 
@@ -204,11 +204,11 @@ public class JabRefModelConverter {
 	public static void copyMonth(final BibEntry entry, final BibTex bibtex) {
 		final String month = bibtex.getMonth();
 		if (present(month)) {
-			final String longMonth = MonthUtil.getMonth(month).fullName;
-			if (present(longMonth)) {
-				entry.setField("month", longMonth);
+            Optional<Month> parsedMonth = Month.parse(month);
+			if (parsedMonth.isPresent()) {
+			    entry.setMonth(parsedMonth.get());
 			} else {
-				entry.setField("month", month);
+				entry.setField(FieldName.MONTH, month);
 			}
 		}
 	}
