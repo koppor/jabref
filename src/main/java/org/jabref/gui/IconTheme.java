@@ -166,7 +166,7 @@ public class IconTheme {
 
         return jabrefLogos;
     }
-	
+
     public enum JabRefIcon {
 
         ADD(MaterialDesignIcon.PLUS_BOX),
@@ -223,7 +223,7 @@ public class IconTheme {
         GROUP_REFINING(MaterialDesignIcon.FILTER) /*css: filter*/,
         AUTO_GROUP(MaterialDesignIcon.AUTO_FIX), /*css: auto-fix*/
         EMAIL(MaterialDesignIcon.EMAIL) /*css: email*/,
-        EXPORT("\uF207") /* css: export */,
+        EXPORT(MaterialDesignIcon.EXPORT) /* css: export */,
         EXPORT_TO_CLIPBOARD(MaterialDesignIcon.CLIPBOARD_ARROW_LEFT) /*css: clipboard-arrow-left */,
         ATTACH_FILE(MaterialDesignIcon.PAPERCLIP) /*css: paperclip*/,
         AUTO_FILE_LINK(MaterialDesignIcon.FILE_FIND) /*css: file-find */,
@@ -270,10 +270,11 @@ public class IconTheme {
         BLOG(MaterialDesignIcon.RSS), /* css: rss */
         GLOBAL_SEARCH(MaterialDesignIcon.EARTH), /* css: earth */
         DATE_PICKER(MaterialDesignIcon.CALENDAR), /* css: calendar */
-        CANCEL("\uF739") /* css: cancel */,
-        CLOUD_DOWNLOAD("\uF162") /* css: cloud-download */,
-        CLOUD_SYNC("\uF63F") /* css: cloud-sync */,
-        TAG_TEXT_OUTLINE("\uF4FD") /* css: tag-text-outline */,
+        // CANCEL(MaterialDesignIcon.CANCEL) /* css: cancel */, <-- does not exist yet
+        CANCEL(MaterialDesignIcon.ALERT_CIRCLE), // workaround
+        CLOUD_DOWNLOAD(MaterialDesignIcon.CLOUD_DOWNLOAD) /* css: cloud-download */,
+        CLOUD_SYNC(MaterialDesignIcon.CLOUD_SYNC) /* css: cloud-sync */,
+        TAG_TEXT_OUTLINE(MaterialDesignIcon.TAG_TEXT_OUTLINE) /* css: tag-text-outline */,
         DEFAULT_GROUP_ICON(MaterialDesignIcon.LABEL_OUTLINE), /* css: label-outline */
         ALL_ENTRIES_GROUP_ICON(DefaultGroupsFactory.ALL_ENTRIES_GROUP_DEFAULT_ICON),
         // STILL MISSING:
