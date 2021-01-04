@@ -34,9 +34,6 @@ eclipse {
                 def javafxfxml = entries.find { isJavafxFXML(it) };
                 javafxfxml.entryAttributes['add-opens'] = 'javafx.fxml/javafx.fxml=org.jabref';
 
-                def graaltruffle = entries.find{ isTruffleGraal(it) } ;
-                graaltruffle.entryAttributes['add-exports'] = 'com.oracle.truffle.regex/com.oracle.truffle.regex=org.graalvm.truffle';
-
                 entries.findAll { isLibrary(it) && isTestScope(it) }.each { //mark test source files
                     it.entryAttributes['test'] = 'true'
                 }

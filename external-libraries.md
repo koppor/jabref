@@ -492,9 +492,9 @@ License: BSD-3-Clause
 
 ## Sorted list of runtime dependencies output by gradle
 
-1. `gradlew dependencies > build\reports\project\dependencies.txt`
-2. Manually edit depedencies.txt to contain the tree of "compileClasspath" and "implementation" only
-3. `sed 's/^.* //' < build/reports/project/dependencies.txt | sort | uniq > build/dependencies-for-external-libraries.txt`
+1. `gradlew dependencies > build\dependencies.txt`
+2. Manually edit depedencies.txt to contain the tree of "runtimeClasspath" only (`runtimeClasspath - Runtime classpath of source set 'main'.`)
+3. `sed 's/^.* //' < build/dependencies.txt | sort | uniq > build/dependencies-for-external-libraries.txt`
 
 ```text
 com.github.tomtung:latex2unicode_2.12:0.2.6

@@ -237,7 +237,6 @@ Make sure your Eclipse installation us up to date.
         --add-exports javafx.graphics/com.sun.javafx.css=org.controlsfx.controls
         --add-exports javafx.controls/com.sun.javafx.scene.control.behavior=com.jfoenix
         --add-exports javafx.graphics/com.sun.javafx.stage=com.jfoenix
-        --add-exports com.oracle.truffle.regex/com.oracle.truffle.regex=org.graalvm.truffle
         --patch-module org.jabref=build/resources/main
      ```
 
