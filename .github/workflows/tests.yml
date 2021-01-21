@@ -24,15 +24,15 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v2
       - uses: sdkman/sdkman-action@master
-        id: sdkman
+        id: sdkman14
         with:
           candidate: java
-          version: 15.0.1.j9-adpt
+          version: 14.0.2.j9-adpt
       - uses: actions/setup-java@v1
         id: setup-java
         with:
-          java-version: 15.0.1
-          jdkFile: ${{ steps.sdkman.outputs.file }}
+          java-version: 14.0.2
+          jdkFile: ${{ steps.sdkman14.outputs.file }}
       - uses: actions/cache@v1
         name: Restore gradle cache
         with:
@@ -66,15 +66,15 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v2
       - uses: sdkman/sdkman-action@master
-        id: sdkman
+        id: sdkman14
         with:
           candidate: java
-          version: 15.0.1.j9-adpt
+          version: 14.0.2.j9-adpt
       - uses: actions/setup-java@v1
         id: setup-java
         with:
-          java-version: 15.0.1
-          jdkFile: ${{ steps.sdkman.outputs.file }}
+          java-version: 14.0.2
+          jdkFile: ${{ steps.sdkman14.outputs.file }}
       - uses: actions/cache@v1
         name: Restore gradle cache
         with:
@@ -116,15 +116,15 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v2
       - uses: sdkman/sdkman-action@master
-        id: sdkman
+        id: sdkman14
         with:
           candidate: java
-          version: 15.0.1.j9-adpt
+          version: 14.0.2.j9-adpt
       - uses: actions/setup-java@v1
         id: setup-java
         with:
-          java-version: 15.0.1
-          jdkFile: ${{ steps.sdkman.outputs.file }}
+          java-version: 14.0.2
+          jdkFile: ${{ steps.sdkman14.outputs.file }}
       - uses: actions/cache@v1
         name: Restore gradle cache
         with:
@@ -168,15 +168,15 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v2
       - uses: sdkman/sdkman-action@master
-        id: sdkman
+        id: sdkman14
         with:
           candidate: java
-          version: 15.0.1.j9-adpt
+          version: 14.0.2.j9-adpt
       - uses: actions/setup-java@v1
         id: setup-java
         with:
-          java-version: 15.0.1
-          jdkFile: ${{ steps.sdkman.outputs.file }}
+          java-version: 14.0.2
+          jdkFile: ${{ steps.sdkman14.outputs.file }}
       - uses: actions/cache@v1
         name: Restore gradle cache
         with:
@@ -224,15 +224,15 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v2
       - uses: sdkman/sdkman-action@master
-        id: sdkman
+        id: sdkman14
         with:
           candidate: java
-          version: 15.0.1.j9-adpt
+          version: 14.0.2.j9-adpt
       - uses: actions/setup-java@v1
         id: setup-java
         with:
-          java-version: 15.0.1
-          jdkFile: ${{ steps.sdkman.outputs.file }}
+          java-version: 14.0.2
+          jdkFile: ${{ steps.sdkman14.outputs.file }}
       - uses: actions/cache@v1
         name: Restore gradle cache
         with:
