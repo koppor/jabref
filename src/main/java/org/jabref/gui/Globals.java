@@ -17,6 +17,7 @@ import org.jabref.logic.importer.ImportFormatReader;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.logic.protectedterms.ProtectedTermsLoader;
 import org.jabref.logic.remote.server.RemoteListenerServerLifecycle;
+import org.jabref.logic.sharelatex.ShareLatexManager;
 import org.jabref.logic.util.BuildInfo;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.strings.StringUtil;
@@ -70,6 +71,8 @@ public class Globals {
      * Only GUI code is allowed to access it, logic code should use dependency injection.
      */
     public static ProtectedTermsLoader protectedTermsLoader;
+
+    public static ShareLatexManager shareLatexManager = new ShareLatexManager();
 
     public static ExporterFactory exportFactory;
     public static CountingUndoManager undoManager = new CountingUndoManager();

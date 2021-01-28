@@ -19,6 +19,9 @@ import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.metadata.MetaData;
 import org.jabref.model.strings.StringUtil;
 
+/**
+ * Writes a bib database to a .bib file
+ */
 public class BibtexDatabaseWriter extends BibDatabaseWriter {
 
     public static final String DATABASE_ID_PREFIX = "DBID:";

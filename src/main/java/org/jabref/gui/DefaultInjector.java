@@ -8,6 +8,7 @@ import org.jabref.gui.keyboard.KeyBindingRepository;
 import org.jabref.gui.util.TaskExecutor;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.logic.protectedterms.ProtectedTermsLoader;
+import org.jabref.logic.sharelatex.ShareLatexManager;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
@@ -39,6 +40,8 @@ public class DefaultInjector implements PresenterFactory {
             return Globals.journalAbbreviationRepository;
         } else if (clazz == StateManager.class) {
             return Globals.stateManager;
+        } else if (clazz == ShareLatexManager.class) {
+            return Globals.shareLatexManager;
         } else if (clazz == FileUpdateMonitor.class) {
             return Globals.getFileUpdateMonitor();
         } else if (clazz == ProtectedTermsLoader.class) {

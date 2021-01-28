@@ -43,6 +43,9 @@ import org.jabref.model.metadata.MetaData;
 import org.jabref.model.metadata.SaveOrderConfig;
 import org.jabref.model.strings.StringUtil;
 
+/**
+ * Generic class to write BibDatabases to any format
+ */
 public abstract class BibDatabaseWriter {
 
     private static final Pattern REFERENCE_PATTERN = Pattern.compile("(#[A-Za-z]+#)"); // Used to detect string references in strings

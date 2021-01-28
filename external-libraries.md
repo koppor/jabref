@@ -400,6 +400,20 @@ License: BSD-2-Clause
 ```
 
 ```yaml
+Id:      org.glassfish.tyrus.bundles:tyrus-standalone-client
+Projekt: Tyrus
+URL:     https://tyrus.java.net/
+Licence: CDDL 1.1 and GPL 2 with CPE
+```
+
+```yaml
+Id:      com.google.code.gson:gson
+Project: google-gson
+URL:     https://github.com/google/gson
+License: Apache-2.0
+```
+
+```yaml
 Id:      org.fxmisc.richtext:richtextfx
 Project: RichTextFX
 URL:     https://github.com/TomasMikula/RichTextFX
@@ -549,6 +563,7 @@ io.github.java-diff-utils:java-diff-utils:4.9
 jakarta.activation:jakarta.activation-api:1.2.1
 jakarta.annotation:jakarta.annotation-api:1.3.5
 jakarta.xml.bind:jakarta.xml.bind-api:2.3.2
+javax.websocket:javax.websocket-api:1.1
 net.jcip:jcip-annotations:1.0
 net.jodah:typetools:0.6.1
 org.antlr:antlr-runtime:3.5.2
@@ -584,6 +599,10 @@ org.fxmisc.wellbehaved:wellbehavedfx:0.3.3
 org.glassfish.hk2.external:jakarta.inject:2.6.1
 org.glassfish.jaxb:jaxb-runtime:2.3.2
 org.glassfish.jaxb:txw2:2.3.2
+org.glassfish.tyrus.ext:tyrus-extension-deflate:1.16
+org.glassfish.tyrus:tyrus-client:1.16
+org.glassfish.tyrus:tyrus-core:1.16
+org.glassfish.tyrus:tyrus-spi:1.16
 org.graalvm.js:js:19.2.1
 org.graalvm.regex:regex:19.2.1
 org.graalvm.sdk:graal-sdk:19.2.1

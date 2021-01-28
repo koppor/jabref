@@ -87,5 +87,11 @@ open module org.jabref {
     requires com.h2database.mvstore;
     requires lucene.queryparser;
     requires lucene.core;
+
+    requires tyrus.client;
+    requires tyrus.extension.deflate;
+    requires javax.websocket.api;
+
     requires org.eclipse.jgit;
+
 }
