@@ -1,12 +1,12 @@
 package org.jabref.logic.sharelatex;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.jabref.gui.Globals;
-import org.jabref.gui.JabRefExecutorService;
+import org.jabref.gui.sharelatex.ShareLatexLoginDialogView;
 import org.jabref.logic.exporter.SavePreferences;
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.model.database.BibDatabaseContext;
@@ -23,12 +23,21 @@ public class ShareLatexManager {
     private final SharelatexConnector connector = new SharelatexConnector();
     private final ShareLatexParser parser = new ShareLatexParser();
     private SharelatexConnectionProperties properties;
+    private Optional<List<ShareLatexProject>> projectList;
 
     public ShareLatexManager() {
     }
 
-    public String login(String server, String username, String password) throws IOException {
-        return connector.connectToServer(server, username, password);
+    public void loginWebEngineToServer(String server, String username, String password, ShareLatexLoginDialogView dialogView) {
+        connector.connectWebEngineToServer(server, username, password, dialogView, this::setProjects);
+    }
+
+    public List<ShareLatexProject> getWebEngineProjects() {
+        return projectList.orElse(Collections.emptyList());
+    }
+
+    public void setProjects(List<ShareLatexProject> projects) {
+        projectList = Optional.ofNullable(projects);
     }
 
     public List<ShareLatexProject> getProjects() throws IOException {
@@ -39,16 +48,18 @@ public class ShareLatexManager {
     }
 
     public void startWebSocketHandler(String projectID, BibDatabaseContext database, ImportFormatPreferences preferences, FileUpdateMonitor fileMonitor) {
-        JabRefExecutorService.INSTANCE.executeAndWait(() -> {
+        //JabRefExecutorService.INSTANCE.executeAndWait(() -> {
 
-            try {
-                connector.startWebsocketListener(projectID, database, preferences, fileMonitor);
-            } catch (URISyntaxException e) {
-                LOGGER.error(e);
-            }
+            //try {
+                connector.openWebEngineProject(projectID, database, preferences, fileMonitor);
+                // connector.startSocketIOListener(projectID, database, preferences, fileMonitor);
+                // connector.startWebsocketListener(projectID, database, preferences, fileMonitor);
+            //} catch (URISyntaxException e) {
+            //    LOGGER.error(e);
+            //}
             registerListener(ShareLatexManager.this);
 
-        });
+        //});
     }
 
     /**

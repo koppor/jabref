@@ -36,7 +36,7 @@ public class ShareLatexProjectDialogView extends BaseDialog<Void> {
 
     @FXML private ButtonType syncButton;
 
-    @Inject private ShareLatexManager manager;
+    @Inject private ShareLatexManager shareLatexManager;
     @Inject private StateManager stateManager;
     @Inject private PreferencesService preferences;
 
@@ -57,12 +57,13 @@ public class ShareLatexProjectDialogView extends BaseDialog<Void> {
 
     @FXML
     private void initialize() {
-        viewModel = new ShareLatexProjectDialogViewModel(stateManager, manager, preferences.getImportFormatPreferences(), fileMonitor);
-        try {
-            viewModel.addProjects(manager.getProjects());
-        } catch (IOException e) {
-            LOGGER.error("Could not add projects", e);
-        }
+        viewModel = new ShareLatexProjectDialogViewModel(stateManager, shareLatexManager, preferences.getImportFormatPreferences(), fileMonitor);
+        //try {
+            viewModel.addProjects(shareLatexManager.getWebEngineProjects());
+            //viewModel.addProjects(shareLatexManager.getProjects());
+        //} catch (IOException e) {
+        //    LOGGER.error("Could not add projects", e);
+        //}
 
         tblProjects.setEditable(true);
         colActive.setEditable(true);
@@ -84,13 +85,15 @@ public class ShareLatexProjectDialogView extends BaseDialog<Void> {
 
     @FXML
     private void synchronizeLibrary() {
-        Optional<ShareLatexProjectViewModel> projects = viewModel.projectsProperty().filtered(x -> x.isActive())
-                                                                 .stream().findFirst();
+        Optional<ShareLatexProjectViewModel> projects = viewModel.projectsProperty()
+                                                                 .filtered(ShareLatexProjectViewModel::isActive)
+                                                                 .stream()
+                                                                 .findFirst();
 
         if (projects.isPresent() && stateManager.getActiveDatabase().isPresent()) {
             String projectID = projects.get().getProjectId();
             BibDatabaseContext database = stateManager.getActiveDatabase().get();
-            manager.startWebSocketHandler(projectID, database, preferences.getImportFormatPreferences(), fileMonitor);
+            shareLatexManager.startWebSocketHandler(projectID, database, preferences.getImportFormatPreferences(), fileMonitor);
         }
 
     }

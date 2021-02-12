@@ -92,8 +92,6 @@ public class ShareLatexProjectDialogViewModel {
                 } else {
                     try (BufferedWriter writer = Files.newBufferedWriter(actualDbPath, StandardCharsets.UTF_8)) {
                         writer.write(event.getNewDatabaseContent());
-                        writer.close();
-
                     } catch (IOException e) {
                         LOGGER.error("Problem writing new database content", e);
                     }

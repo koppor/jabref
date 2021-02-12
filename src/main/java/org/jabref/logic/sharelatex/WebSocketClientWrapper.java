@@ -14,7 +14,7 @@ import javax.websocket.ClientEndpointConfig;
 import javax.websocket.CloseReason;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
-import javax.websocket.MessageHandler.Whole;
+import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 
 import org.jabref.gui.JabRefExecutorService;
@@ -114,7 +114,7 @@ public class WebSocketClientWrapper {
                 @Override
                 public void onOpen(Session session, EndpointConfig config) {
 
-                    session.addMessageHandler(String.class, (Whole<String>) message -> {
+                    session.addMessageHandler(String.class, (MessageHandler.Whole<String>) message -> {
                         message = parser.fixUTF8Strings(message);
                         LOGGER.debug("Received new message " + message);
                         parseContents(message);

@@ -91,6 +91,7 @@ open module org.jabref {
     requires tyrus.client;
     requires tyrus.extension.deflate;
     requires javax.websocket.api;
+    requires jdk.jsobject;
 
     requires org.eclipse.jgit;
 

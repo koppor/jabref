@@ -3,14 +3,12 @@ package org.jabref.gui.sharelatex;
 import javax.inject.Inject;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import org.jabref.gui.DialogService;
-import org.jabref.gui.FXDialog;
 import org.jabref.gui.Globals;
 import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.ControlHelper;
@@ -55,32 +53,37 @@ public class ShareLatexLoginDialogView extends BaseDialog<Void> {
     private void signIn() {
         btnLogin.setText(Localization.lang("Logging in..."));
         try {
+            manager.loginWebEngineToServer(tbAddress.getText(), tbUsername.getText(), tbPassword.getText(), this);
+            /*
             String result = manager.login(tbAddress.getText(), tbUsername.getText(), tbPassword.getText());
-            if (result.contains("incorrect")) {
+             if (result.contains("incorrect")) {
                 FXDialog dlg = new FXDialog(AlertType.ERROR);
                 dlg.setContentText("Your email or password is incorrect. Please try again");
                 dlg.showAndWait();
             } else {
-                // TODO: Replace with PreferencesService later
-
-                props = new SharelatexConnectionProperties(Globals.prefs.getShareLatexPreferences());
-
-                props.setUrl(tbAddress.getText());
-                props.setUser(tbUsername.getText());
-                props.setPassword(tbPassword.getText());
-
-                manager.setConnectionProperties(props);
-
-                ShareLatexProjectDialogView dlgprojects = new ShareLatexProjectDialogView();
-                dlgprojects.show();
-                this.close();
-
+                // Do nothing or showShareLatexProjectDialogView
             }
+             */
         } catch (Exception e) {
             LOGGER.error("Problems connectiong", e);
             dialogService.showErrorDialogAndWait(e);
         }
 
+    }
+
+    public void showShareLatexProjectDialogView() {
+        // TODO: Replace with PreferencesService later
+        props = new SharelatexConnectionProperties(Globals.prefs.getShareLatexPreferences());
+
+        props.setUrl(tbAddress.getText());
+        props.setUser(tbUsername.getText());
+        props.setPassword(tbPassword.getText());
+
+        manager.setConnectionProperties(props);
+
+        ShareLatexProjectDialogView dlgprojects = new ShareLatexProjectDialogView();
+        dlgprojects.show();
+        this.close();
     }
 
 }
