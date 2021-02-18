@@ -1268,23 +1268,24 @@ class OOBibBase {
             UndefinedCharacterFormatException, UnknownPropertyException, PropertyVetoException, CreationException,
             BibEntryNotFoundException {
         XNameAccess nameAccess = getReferenceMarks();
+        // TODO: doesn't work for citations in footnotes/tables
         List<String> names = getSortedReferenceMarks(nameAccess);
 
         final XTextRangeCompare compare = UnoRuntime.queryInterface(XTextRangeCompare.class, text);
 
-        int pivot = 0;
+        int piv = 0;
         boolean madeModifications = false;
-        while (pivot < (names.size())) {
-            XTextRange range1 = UnoRuntime.queryInterface(XTextContent.class, nameAccess.getByName(names.get(pivot)))
+        while (piv < (names.size())) {
+            XTextRange range1 = UnoRuntime.queryInterface(XTextContent.class, nameAccess.getByName(names.get(piv)))
                 .getAnchor();
 
-            XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
-
+            XTextCursor mxDocCursor = range1.getText().createTextCursorByRange(range1);
+            //
             // If we are supposed to set character format for citations, test this before
             // making any changes. This way we can throw an exception before any reference
             // marks are removed, preventing damage to the user's document:
             if (style.isFormatCitations()) {
-                XPropertySet xCursorProps = UnoRuntime.queryInterface(XPropertySet.class, textCursor);
+                XPropertySet xCursorProps = UnoRuntime.queryInterface(XPropertySet.class, mxDocCursor);
                 String charStyle = style.getCitationCharacterFormat();
                 try {
                     xCursorProps.setPropertyValue(CHAR_STYLE_NAME, charStyle);
@@ -1296,26 +1297,26 @@ class OOBibBase {
                 }
             }
 
-            List<String> keys = parseRefMarkName(names.get(pivot));
+            List<String> keys = parseRefMarkName(names.get(piv));
             if (keys.size() > 1) {
-                removeReferenceMark(names.get(pivot));
-
+                removeReferenceMark(names.get(piv));
+                //
                 // Insert bookmark for each key
                 int last = keys.size() - 1;
                 int i = 0;
                 for (String key : keys) {
-                    String newName = getUniqueReferenceMarkName(key, OOBibBase.AUTHORYEAR_PAR);
-                    insertReferenceMark(newName, "tmp", textCursor, true, style);
-                    textCursor.collapseToEnd();
+                    String bName = getUniqueReferenceMarkName(key, OOBibBase.AUTHORYEAR_PAR);
+                    insertReferenceMark(bName, "tmp", mxDocCursor, true, style);
+                    mxDocCursor.collapseToEnd();
                     if (i != last) {
-                        textCursor.setString(" ");
-                        textCursor.collapseToEnd();
+                        mxDocCursor.setString(" ");
+                        mxDocCursor.collapseToEnd();
                     }
                     i++;
                 }
                 madeModifications = true;
             }
-            pivot++;
+            piv++;
         }
         if (madeModifications) {
             updateSortedReferenceMarks();
