@@ -766,6 +766,8 @@ class OOBibBase {
      * @return The list of citation keys encoded in the name.
      *         In case of duplicated citation keys, only the first occurrence.
      *         Otherwise their order is preserved.
+     *
+     *         If name does not match CITE_PATTERN, an empty List<String> is returned.
      */
     private List<String> parseRefMarkNameToUniqueCitationKeys(String name) {
         List<String> keys = new ArrayList<>();
@@ -781,6 +783,14 @@ class OOBibBase {
         return keys;
     }
 
+    /**
+     *  Extract citation keys from names of referenceMarks in the document.
+     *
+     *  Each citation key is listed only once, in the order of first appearance.
+     *
+     *   doc.referenceMarks.names.map(parse).flatten.unique
+     *
+     */
     private List<String> findCitedKeys()
 	throws NoSuchElementException,
 	       WrappedTargetException
@@ -804,8 +814,23 @@ class OOBibBase {
         return keys;
     }
 
-    private Map<BibEntry, BibDatabase> findCitedEntries(List<BibDatabase> databases, List<String> keys,
-                                                        Map<String, BibDatabase> linkSourceBase) {
+    /**
+     * @return LinkedHashMap, from BibEntry to BibDatabase
+     *
+     *  If a key is not found, BibEntry is new UndefinedBibtexEntry(key), BibDatabase is null.
+     *  If key is found, then
+     *          BibEntry is what we found, BibDatabase is the database we found it in.
+     *          linkSourceBase.put(key, database); is called.
+     *
+     *  So:
+     *  - result has an entry for each key, in the same order
+     *  - key in the entry is the same as the original key
+     *  - on return linkSourceBase has an entry for the keys we did find
+     */
+    private Map<BibEntry, BibDatabase> findCitedEntries(List<BibDatabase> databases,
+							List<String> keys,
+                                                        Map<String, BibDatabase> linkSourceBase)
+    {
         Map<BibEntry, BibDatabase> entries = new LinkedHashMap<>();
         for (String key : keys) {
             boolean found = false;
