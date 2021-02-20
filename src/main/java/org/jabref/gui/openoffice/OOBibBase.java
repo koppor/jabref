@@ -185,8 +185,7 @@ class OOBibBase {
 
     public XTextDocument selectComponent(List<XTextDocument> list) {
         List<DocumentTitleViewModel> viewModel =
-	    list
-	    .stream()
+	    list.stream()
 	    .map(DocumentTitleViewModel::new)
 	    .collect(Collectors.toList());
 
@@ -424,21 +423,34 @@ class OOBibBase {
             XTextViewCursor xViewCursor = this.xViewCursorSupplier.getViewCursor();
 
 	    sortBibEntryList( entries, style );
-	    /*
-            if (entries.size() > 1) {
-                if (style.getBooleanCitProperty(OOBibStyle.MULTI_CITE_CHRONOLOGICAL)) {
-                    entries.sort(yearAuthorTitleComparator);
-                } else {
-                    entries.sort(entryComparator);
-                }
-            }
-	    */
+	    //	      if (entries.size() > 1) {
+	    //                if (style.getBooleanCitProperty(OOBibStyle.MULTI_CITE_CHRONOLOGICAL)) {
+	    //                    entries.sort(yearAuthorTitleComparator);
+	    //                } else {
+	    //                    entries.sort(entryComparator);
+	    //                }
+	    //            }
+
 
             String keyString = String.join(",",
-                    entries.stream().map(entry -> entry.getCitationKey().orElse("")).collect(Collectors.toList()));
+					   entries
+					   .stream()
+					   .map(entry ->
+						entry
+						.getCitationKey()
+						.orElse("")
+						)
+					   .collect(Collectors.toList())
+					   );
             // Insert bookmark:
-            String bName = getUniqueReferenceMarkName(keyString,
-                    withText ? inParenthesis ? OOBibBase.AUTHORYEAR_PAR : OOBibBase.AUTHORYEAR_INTEXT : OOBibBase.INVISIBLE_CIT);
+            String bName = getUniqueReferenceMarkName(
+						      keyString,
+						      withText
+						      ? ( inParenthesis
+							  ? OOBibBase.AUTHORYEAR_PAR
+							  : OOBibBase.AUTHORYEAR_INTEXT )
+						      : OOBibBase.INVISIBLE_CIT
+						      );
 
             // If we should store metadata for page info, do that now:
             if (pageInfo != null) {
@@ -800,7 +812,11 @@ class OOBibBase {
             Object referenceMark = xReferenceMarks.getByName(names.get(i));
             XTextContent bookmark = unoQI(XTextContent.class, referenceMark);
 
-            XTextCursor cursor = bookmark.getAnchor().getText().createTextCursorByRange(bookmark.getAnchor());
+            XTextCursor cursor =
+		bookmark
+		.getAnchor()
+		.getText()
+		.createTextCursorByRange(bookmark.getAnchor());
 
             if (mustTestCharFormat) {
                 // If we are supposed to set character format for citations, must run a test before we
@@ -852,7 +868,8 @@ class OOBibBase {
         List<String> names = Arrays.asList(nameAccess.getElementNames());
         List<Point> positions = new ArrayList<>(names.size());
         for (String name : names) {
-            XTextContent textContent = unoQI(XTextContent.class, nameAccess.getByName(name));
+            XTextContent textContent =
+		unoQI(XTextContent.class, nameAccess.getByName(name));
             XTextRange range = textContent.getAnchor();
             // Check if we are inside a footnote:
             if (unoQI(XFootnote.class, range.getText()) != null) {
@@ -879,10 +896,18 @@ class OOBibBase {
     }
 
     public XNameAccess getReferenceMarks() {
-        XReferenceMarksSupplier supplier = unoQI(XReferenceMarksSupplier.class, xCurrentComponent);
+        XReferenceMarksSupplier supplier =
+	    unoQI(XReferenceMarksSupplier.class, xCurrentComponent);
         return supplier.getReferenceMarks();
     }
 
+    /*
+     * The first occurrence of bibtexKey gets no serial number, the
+     * second gets 0, the third 1 ...
+     *
+     * Or the first unused in this series, after removals.
+     *
+     */
     private String getUniqueReferenceMarkName(String bibtexKey, int type) {
         XNameAccess xNamedRefMarks = getReferenceMarks();
         int i = 0;
@@ -894,12 +919,22 @@ class OOBibBase {
         return name;
     }
 
-    public void rebuildBibTextSection(List<BibDatabase> databases, OOBibStyle style)
-            throws NoSuchElementException, WrappedTargetException, IllegalArgumentException,
-            CreationException, PropertyVetoException, UnknownPropertyException, UndefinedParagraphFormatException {
-        List<String> cited = findCitedKeys();
-        Map<String, BibDatabase> linkSourceBase = new HashMap<>();
-        Map<BibEntry, BibDatabase> entries = findCitedEntries(databases, cited, linkSourceBase); // Although entries are redefined without use, this also updates linkSourceBase
+    public void rebuildBibTextSection(List<BibDatabase> databases,
+				      OOBibStyle style)
+	throws NoSuchElementException,
+	       WrappedTargetException,
+	       IllegalArgumentException,
+	       CreationException,
+	       PropertyVetoException,
+	       UnknownPropertyException,
+	       UndefinedParagraphFormatException
+    {
+        List<String>               cited          = findCitedKeys();
+        Map<String, BibDatabase>   linkSourceBase = new HashMap<>();
+        Map<BibEntry, BibDatabase> entries =
+	    // Although entries are redefined without use, this also
+	    // updates linkSourceBase
+	    findCitedEntries(databases, cited, linkSourceBase);
 
         List<String> names = sortedReferenceMarks;
 
