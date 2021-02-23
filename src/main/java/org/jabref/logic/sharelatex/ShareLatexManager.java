@@ -1,12 +1,11 @@
 package org.jabref.logic.sharelatex;
 
-import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
 
 import org.jabref.gui.Globals;
-import org.jabref.gui.sharelatex.ShareLatexLoginDialogView;
 import org.jabref.logic.exporter.SavePreferences;
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.model.database.BibDatabaseContext;
@@ -23,43 +22,24 @@ public class ShareLatexManager {
     private final SharelatexConnector connector = new SharelatexConnector();
     private final ShareLatexParser parser = new ShareLatexParser();
     private SharelatexConnectionProperties properties;
-    private Optional<List<ShareLatexProject>> projectList;
+    private final ListProperty<ShareLatexProject> projectList = new SimpleListProperty<>();
 
     public ShareLatexManager() {
+        // Todo, probably shouldn't be bi-directional
+        projectList.bind(connector.projectListProperty());
     }
 
-    public void loginWebEngineToServer(String server, String username, String password, ShareLatexLoginDialogView dialogView) {
-        connector.connectWebEngineToServer(server, username, password, dialogView, this::setProjects);
+    public void loginWebEngineToServer(String server, String username, String password) {
+        connector.connectWebEngineToServer(server, username, password);
     }
 
     public List<ShareLatexProject> getWebEngineProjects() {
-        return projectList.orElse(Collections.emptyList());
-    }
-
-    public void setProjects(List<ShareLatexProject> projects) {
-        projectList = Optional.ofNullable(projects);
-    }
-
-    public List<ShareLatexProject> getProjects() throws IOException {
-        if (connector.getProjects().isPresent()) {
-            return parser.getProjectFromJson(connector.getProjects().get());
-        }
-        return Collections.emptyList();
+        return projectList.get();
     }
 
     public void startWebSocketHandler(String projectID, BibDatabaseContext database, ImportFormatPreferences preferences, FileUpdateMonitor fileMonitor) {
-        //JabRefExecutorService.INSTANCE.executeAndWait(() -> {
-
-            //try {
-                connector.openWebEngineProject(projectID, database, preferences, fileMonitor);
-                // connector.startSocketIOListener(projectID, database, preferences, fileMonitor);
-                // connector.startWebsocketListener(projectID, database, preferences, fileMonitor);
-            //} catch (URISyntaxException e) {
-            //    LOGGER.error(e);
-            //}
-            registerListener(ShareLatexManager.this);
-
-        //});
+        connector.openWebEngineProject(projectID, database, preferences, fileMonitor);
+        registerListener(ShareLatexManager.this); // Todo, figure out what should happen here
     }
 
     /**
@@ -106,5 +86,9 @@ public class ShareLatexManager {
 
     public SharelatexConnectionProperties getConnectionProperties() {
         return this.properties;
+    }
+
+    public ListProperty<ShareLatexProject> projectListProperty() {
+        return projectList;
     }
 }

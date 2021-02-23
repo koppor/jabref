@@ -49,8 +49,9 @@ public class ShareLatexProjectDialogViewModel {
     }
 
     public void addProjects(List<ShareLatexProject> projectsToAdd) {
-        this.projects.clear();
-        this.projects.addAll(projectsToAdd.stream().map(ShareLatexProjectViewModel::new).collect(Collectors.toList()));
+        this.projects.setAll(projectsToAdd.stream()
+                                          .map(ShareLatexProjectViewModel::new)
+                                          .collect(Collectors.toList()));
     }
 
     public SimpleListProperty<ShareLatexProjectViewModel> projectsProperty() {

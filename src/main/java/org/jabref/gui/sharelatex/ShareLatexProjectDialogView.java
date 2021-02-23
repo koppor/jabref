@@ -1,6 +1,5 @@
 package org.jabref.gui.sharelatex;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -59,7 +58,7 @@ public class ShareLatexProjectDialogView extends BaseDialog<Void> {
     private void initialize() {
         viewModel = new ShareLatexProjectDialogViewModel(stateManager, shareLatexManager, preferences.getImportFormatPreferences(), fileMonitor);
         //try {
-            viewModel.addProjects(shareLatexManager.getWebEngineProjects());
+        viewModel.addProjects(shareLatexManager.getWebEngineProjects());
             //viewModel.addProjects(shareLatexManager.getProjects());
         //} catch (IOException e) {
         //    LOGGER.error("Could not add projects", e);

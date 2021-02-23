@@ -2,6 +2,7 @@ package org.jabref.gui.sharelatex;
 
 import javax.inject.Inject;
 
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -15,6 +16,7 @@ import org.jabref.gui.util.ControlHelper;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.sharelatex.ShareLatexManager;
 import org.jabref.logic.sharelatex.SharelatexConnectionProperties;
+import org.jabref.model.sharelatex.ShareLatexProject;
 
 import com.airhacks.afterburner.views.ViewLoader;
 import org.slf4j.Logger;
@@ -42,7 +44,7 @@ public class ShareLatexLoginDialogView extends BaseDialog<Void> {
 
         ControlHelper.setAction(connectButton, this.getDialogPane(), event -> signIn());
         btnLogin = (Button) this.getDialogPane().lookupButton(connectButton);
-
+        manager.projectListProperty().addListener((ListChangeListener<ShareLatexProject>) c -> showShareLatexProjectDialogView());
     }
 
     @FXML
@@ -53,7 +55,7 @@ public class ShareLatexLoginDialogView extends BaseDialog<Void> {
     private void signIn() {
         btnLogin.setText(Localization.lang("Logging in..."));
         try {
-            manager.loginWebEngineToServer(tbAddress.getText(), tbUsername.getText(), tbPassword.getText(), this);
+            manager.loginWebEngineToServer(tbAddress.getText(), tbUsername.getText(), tbPassword.getText());
             /*
             String result = manager.login(tbAddress.getText(), tbUsername.getText(), tbPassword.getText());
              if (result.contains("incorrect")) {
