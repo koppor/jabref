@@ -427,8 +427,6 @@ class OOBibBase {
         XEnumerationAccess  enumAccess = desktop.getComponents();
         XEnumeration        compEnum   = enumAccess.createEnumeration();
 
-        // TODO: http://api.openoffice.org/docs/DevelopersGuide/OfficeDev/OfficeDev.xhtml#1_1_3_2_1_2_Frame_Hierarchies
-
         while (compEnum.hasMoreElements()) {
             Object       next = compEnum.nextElement();
             XComponent   comp = unoQI(XComponent.class   , next);
@@ -581,7 +579,8 @@ class OOBibBase {
         // TODO: maybe we should install an event handler for document
         // close: addCloseListener
         //
-        // https://www.openoffice.org/api/docs/common/ref/com/sun/star/util/XCloseBroadcaster.html#addCloseListener
+        // https://www.openoffice.org/api/docs/common/ref/com/sun/star/
+        //         util/XCloseBroadcaster.html#addCloseListener
     }
 
     /*
@@ -1695,7 +1694,8 @@ class OOBibBase {
                         // firstLimAuthors will be (-1) except at the first
                         // refMark it appears at, where a positive maxAuthorsFirst
                         // may override. This is why:
-                        // https://discourse.jabref.org/t/number-of-authors-in-citations-style-libreoffice/747/3
+                        // https://discourse.jabref.org/t/
+                        //    number-of-authors-in-citations-style-libreoffice/747/3
                         // "Some citation styles require to list the full
                         // names of the first 4 authors for the first
                         // time. Later it is sufficient to have only maybe
@@ -2395,31 +2395,45 @@ class OOBibBase {
     }
 
     /**
+     * GUI action.
      * Do the opposite of combineCiteMarkers.
      * Combined markers are split, with a space inserted between.
      */
     public void unCombineCiteMarkers(List<BibDatabase> databases, OOBibStyle style)
-            throws IOException, WrappedTargetException, NoSuchElementException, IllegalArgumentException,
-            UndefinedCharacterFormatException, UnknownPropertyException, PropertyVetoException, CreationException,
-            BibEntryNotFoundException {
-        XNameAccess nameAccess = getReferenceMarks();
-        List<String> names = getSortedReferenceMarks(nameAccess);
+        throws IOException,
+               WrappedTargetException,
+               NoSuchElementException,
+               IllegalArgumentException,
+               UndefinedCharacterFormatException,
+               UnknownPropertyException,
+               PropertyVetoException,
+               CreationException,
+               BibEntryNotFoundException,
+               NoDocumentException
+    {
+        DocumentConnection documentConnection = getDocumentConnectionOrThrow();
 
-        final XTextRangeCompare compare = UnoRuntime.queryInterface(XTextRangeCompare.class, text);
+        // TODO: doesn't work for citations in footnotes/tables
+        List<String> names =
+            getJabRefReferenceMarkNamesSortedByPosition(documentConnection);
 
-        int pivot = 0;
+        final XTextRangeCompare compare = unoQI(XTextRangeCompare.class,
+                                                documentConnection.xText);
+
+        int piv = 0;
         boolean madeModifications = false;
-        while (pivot < (names.size())) {
-            XTextRange range1 = UnoRuntime.queryInterface(XTextContent.class, nameAccess.getByName(names.get(pivot)))
+        XNameAccess nameAccess = documentConnection.getReferenceMarks();
+        while (piv < (names.size())) {
+            XTextRange range1 = unoQI(XTextContent.class, nameAccess.getByName(names.get(piv)))
                 .getAnchor();
 
-            XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
-
+            XTextCursor mxDocCursor = range1.getText().createTextCursorByRange(range1);
+            //
             // If we are supposed to set character format for citations, test this before
             // making any changes. This way we can throw an exception before any reference
             // marks are removed, preventing damage to the user's document:
             if (style.isFormatCitations()) {
-                XPropertySet xCursorProps = UnoRuntime.queryInterface(XPropertySet.class, textCursor);
+                XPropertySet xCursorProps = unoQI(XPropertySet.class, mxDocCursor);
                 String charStyle = style.getCitationCharacterFormat();
                 try {
                     xCursorProps.setPropertyValue(CHAR_STYLE_NAME, charStyle);
@@ -2431,26 +2445,29 @@ class OOBibBase {
                 }
             }
 
-            List<String> keys = parseRefMarkName(names.get(pivot));
+            List<String> keys = parseRefMarkNameToUniqueCitationKeys(names.get(piv));
             if (keys.size() > 1) {
-                removeReferenceMark(names.get(pivot));
-
+                removeReferenceMark(documentConnection, names.get(piv));
+                //
                 // Insert bookmark for each key
                 int last = keys.size() - 1;
                 int i = 0;
                 for (String key : keys) {
-                    String newName = getUniqueReferenceMarkName(key, OOBibBase.AUTHORYEAR_PAR);
-                    insertReferenceMark(newName, "tmp", textCursor, true, style);
-                    textCursor.collapseToEnd();
+                    String bName = getUniqueReferenceMarkName(documentConnection,
+                                                              key,
+                                                              OOBibBase.AUTHORYEAR_PAR
+                                                              );
+                    insertReferenceMark(documentConnection, bName, "tmp", mxDocCursor, true, style);
+                    mxDocCursor.collapseToEnd();
                     if (i != last) {
-                        textCursor.setString(" ");
-                        textCursor.collapseToEnd();
+                        mxDocCursor.setString(" ");
+                        mxDocCursor.collapseToEnd();
                     }
                     i++;
                 }
                 madeModifications = true;
             }
-            pivot++;
+            piv++;
         }
         if (madeModifications) {
             updateSortedReferenceMarks();
