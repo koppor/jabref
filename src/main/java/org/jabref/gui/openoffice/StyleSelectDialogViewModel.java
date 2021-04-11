@@ -23,6 +23,7 @@ import org.jabref.gui.externalfiletype.ExternalFileTypes;
 import org.jabref.gui.util.FileDialogConfiguration;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.openoffice.OOBibStyle;
+import org.jabref.logic.openoffice.OOBibStyleParser;
 import org.jabref.logic.openoffice.OpenOfficePreferences;
 import org.jabref.logic.openoffice.StyleLoader;
 import org.jabref.logic.util.StandardFileType;
@@ -66,14 +67,27 @@ public class StyleSelectDialogViewModel {
                 .build();
         Optional<Path> path = dialogService.showFileOpenDialog(fileDialogConfiguration);
         path.map(Path::toAbsolutePath).map(Path::toString).ifPresent(stylePath -> {
-            if (loader.addStyleIfValid(stylePath)) {
-                preferences.setCurrentStyle(stylePath);
-                styles.setAll(loadStyles());
-                selectedItem.setValue(getStyleOrDefault(stylePath));
-            } else {
-                dialogService.showErrorDialogAndWait(Localization.lang("Invalid style selected"), Localization.lang("You must select a valid style file. Your style is probably missing a line for the type \"default\"."));
-            }
-        });
+                OOBibStyleParser.ParseLog parseLog = loader.addStyleIfValid(stylePath);
+                if ( !parseLog.hasError() ) {
+                    preferences.setCurrentStyle(stylePath);
+                    styles.setAll(loadStyles());
+                    selectedItem.setValue(getStyleOrDefault(stylePath));
+                    if (!parseLog.isEmpty()) {
+                        // showInformationDialogAndWait shows a non-resizable window,
+                        // not wide enough.
+                        dialogService.showInformationDialogAndWait("Parse log", parseLog.format());
+                    }
+                } else {
+                    dialogService.showErrorDialogAndWait(
+                        Localization.lang("Invalid style selected"),
+                        Localization.lang(
+                            "You must select a valid style file."
+                            +" Your style is probably missing a line for the type \"default\".")
+                        + "\n"
+                        + parseLog.format()
+                        );
+                }
+            });
     }
 
     public List<StyleSelectItemViewModel> loadStyles() {
