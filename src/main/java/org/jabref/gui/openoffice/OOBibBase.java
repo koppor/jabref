@@ -1110,49 +1110,6 @@ class OOBibBase {
         } else {
             cursor.setString("");
         }
-
-        // Last minute editing: find "et al." (OOBibStyle.ET_AL_STRING) and
-        //                      format it as italic.
-
-        // Check if we should italicize the "et al." string in citations:
-        boolean italicize = style.getItalicEtAl();
-        if (italicize) {
-            String etAlString = style.getEtAlString();
-            Objects.requireNonNull(etAlString);
-            Objects.requireNonNull(citationText);
-            for (int index = citationText.indexOf(etAlString);
-                 index >= 0;
-                 index = citationText.indexOf(etAlString, index + 1)) {
-                italicizeRangeFromPosition(cursor, index, index + etAlString.length());
-            }
-        }
-    }
-
-    /**
-     * Taking position.getStart() as a reference point, italicize the range (ref+start,ref+end)
-     *
-     * @param position  : position.getStart() is out reference point.
-     * @param start     : start of range to italicize w.r.t position.getStart().
-     * @param end       : end of range  to italicize w.r.t position.getStart().
-     *
-     *  Why this API?  This is used after finding "et al." string in a
-     *  citation marker.
-     */
-    private static void italicizeRangeFromPosition(XTextCursor position,
-                                                   int start,
-                                                   int end)
-        throws
-        UnknownPropertyException,
-        PropertyVetoException,
-        IllegalArgumentException,
-        WrappedTargetException {
-
-        XTextRange range = position.getStart();
-        XTextCursor cursor = position.getText().createTextCursorByRange(range);
-        cursor.goRight((short) start, false);
-        cursor.goRight((short) (end - start), true);
-
-        DocumentConnection.setCharFormatItalic(cursor);
     }
 
     /**

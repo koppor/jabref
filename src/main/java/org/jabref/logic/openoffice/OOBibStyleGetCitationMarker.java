@@ -97,6 +97,13 @@ class OOBibStyleGetCitationMarker {
         // e.g. " et al."
         String etAlString = style.getEtAlString();
 
+        // getItalicEtAl is not necessary now, since etAlString could
+        // itself contain the markup.
+        // This is for backward compatibility.
+        if (style.getItalicEtAl()) {
+            etAlString = "<i>" + etAlString + "</i>";
+        }
+
         // The String to add between author names except the last two,
         // e.g. ", ".
         String authorSep = style.getAuthorSeparator();
