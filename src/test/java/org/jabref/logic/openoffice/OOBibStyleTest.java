@@ -46,7 +46,7 @@ class OOBibStyleTest {
         assertTrue(style.isInternalStyle());
         assertFalse(style.isCitationKeyCiteMarkers());
         assertFalse(style.isBoldCitations());
-        assertFalse(style.isFormatCitations());
+        assertFalse(style.getFormatCitations());
         assertFalse(style.isItalicCitations());
         assertFalse(style.isNumberEntries());
         assertFalse(style.isSortByPosition());
@@ -61,7 +61,7 @@ class OOBibStyleTest {
         assertFalse(style.isInternalStyle());
         assertFalse(style.isCitationKeyCiteMarkers());
         assertFalse(style.isBoldCitations());
-        assertFalse(style.isFormatCitations());
+        assertFalse(style.getFormatCitations());
         assertFalse(style.isItalicCitations());
         assertFalse(style.isNumberEntries());
         assertFalse(style.isSortByPosition());
@@ -74,7 +74,7 @@ class OOBibStyleTest {
         assertTrue(style.isValid());
         assertFalse(style.isCitationKeyCiteMarkers());
         assertFalse(style.isBoldCitations());
-        assertFalse(style.isFormatCitations());
+        assertFalse(style.getFormatCitations());
         assertFalse(style.isItalicCitations());
         assertTrue(style.isNumberEntries());
         assertTrue(style.isSortByPosition());
