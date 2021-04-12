@@ -264,21 +264,29 @@ public class OOUtil {
                             com.sun.star.awt.FontPitch.VARIABLE);
         } */
 
+        /*
+         * short CharEscapement.
+         * specifies the percentage by which to raise/lower superscript/subscript characters.
+         * Negative values denote subscripts and positive values superscripts.
+         *
+         * byte CharEscapementHeight
+         * This is the relative height used for subscript or superscript characters in units of percent.
+         * The value 100 denotes the original height of the characters.
+         *
+         * From LibreOffice:
+         *     SuperScript: 33 and 58
+         *     SubScript:   10 and 58
+         *
+         */
         if (formatting.contains(Formatting.SUBSCRIPT)) {
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT,
-                    (byte) -101);
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT,
-                    (byte) 58);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT, (short) -10);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT, (byte) 58);
         } else if (formatting.contains(Formatting.SUPERSCRIPT)) {
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT,
-                    (byte) 101);
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT,
-                    (byte) 58);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT,  (short) 33);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT, (byte) 58);
         } else {
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT,
-                    (byte) 0);
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT,
-                    (byte) 100);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT, (short) 0);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT, (byte) 100);
         }
 
         if (formatting.contains(Formatting.UNDERLINE)) {
