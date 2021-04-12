@@ -1101,12 +1101,7 @@ class OOBibBase {
         Objects.requireNonNull(style);
 
         if (withText) {
-            // setString: All styles are removed when applying this method.
-            // cursor.setString(citationText);
-            OOUtil.insertOOFormattedTextAtCurrentLocation(
-                cursor,
-                citationText);
-
+            OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, citationText);
             DocumentConnection.setCharLocaleNone(cursor);
             if (style.getFormatCitations()) {
                 String charStyle = style.getCitationCharacterFormat();
@@ -1858,6 +1853,20 @@ class OOBibBase {
 
             // this is where we create the paragraph.
             OOUtil.insertParagraphBreak(documentConnection.xText, cursor);
+                // format the paragraph
+                try {
+                    if (parStyle != null) {
+                        DocumentConnection.setParagraphStyle(cursor,
+                                                             parStyle);
+                    }
+                }  catch ( UndefinedParagraphFormatException ex ) {
+                    // TODO: precheck or remember if we already emitted this message.
+                    String message =
+                        String.format("Could not apply paragraph format '%s' to bibliography entry",
+                                      parStyle);
+                    // LOGGER.warn(message, ex);
+                    LOGGER.warn(message); // no stack trace
+                }
 
             // insert marker "[1]"
             if (style.getIsNumberEntries()) {
@@ -1869,11 +1878,8 @@ class OOBibBase {
 
                 int number = ck.number.get();
                 String marker = style.getNumCitationMarkerForBibliography(number);
-
-                OOUtil.insertTextAtCurrentLocation(documentConnection.xText,
-                                                   cursor,
-                                                   marker,
-                                                   Collections.emptyList());
+                OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, marker);
+                cursor.collapseToEnd();
             } else {
                 // !style.getIsNumberEntries() : emit no prefix
                 // TODO: We might want [citationKey] prefix for style.getBibTeXKeyCitations();
@@ -1881,10 +1887,9 @@ class OOBibBase {
 
             if ( ck.db.isEmpty() ) {
                 // Unresolved entry
-                OOUtil.insertTextAtCurrentLocation(documentConnection.xText,
-                                                   cursor,
-                                                   String.format("Unresolved(%s)", ck.citationKey),
-                                                   Collections.emptyList());
+                String referenceDetails = String.format("Unresolved(%s)", ck.citationKey);
+                OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, referenceDetails);
+                cursor.collapseToEnd();
                 // Try to list citations:
                 if (true) {
                     OOUtil.insertTextAtCurrentLocation(
@@ -1932,24 +1937,8 @@ class OOBibBase {
                                                                   ck.db.get().database,
                                                                   ck.uniqueLetter.orElse(null));
 
-                // format the paragraph
-                try {
-                    if (parStyle != null) {
-                        DocumentConnection.setParagraphStyle(cursor,
-                                                             parStyle);
-                    }
-                }  catch ( UndefinedParagraphFormatException ex ) {
-                    // TODO: precheck or remember if we already emitted this message.
-                    String message =
-                        String.format("Could not apply paragraph format '%s' to bibliography entry",
-                                      parStyle);
-                    // LOGGER.warn(message, ex);
-                    LOGGER.warn(message); // no stack trace
-                }
                 // Insert the formatted text:
-                OOUtil.insertOOFormattedTextAtCurrentLocation(//documentConnection.xText,
-                                                              cursor,
-                                                              formattedText);
+                OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, formattedText);
                 cursor.collapseToEnd();
             }
         }
@@ -2044,9 +2033,12 @@ class OOBibBase {
                               .createTextCursorByRange(section.getAnchor()));
 
         // emit header
+        /*
         documentConnection.xText.insertString(cursor,
-                                              style.getReferenceHeaderText(),
+        style.getReferenceHeaderText(),
                                               true);
+        */
+        OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, style.getReferenceHeaderText());
         String parStyle = style.getReferenceHeaderParagraphFormat();
         try {
             if (parStyle != null) {
