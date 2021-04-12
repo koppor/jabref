@@ -888,9 +888,12 @@ class OOBibBase {
 
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             List<Citation> cits = cgs.getSortedCitations(cgid);
-            String citMarker = (cits.stream()
-                                .map(cit -> cit.citationKey)
-                                .collect(Collectors.joining(",")));
+            String citMarker =
+                style.getCitationGroupMarkupBefore()
+                + (cits.stream()
+                   .map(cit -> cit.citationKey)
+                   .collect(Collectors.joining(",")))
+                + style.getCitationGroupMarkupAfter();
             citMarkers.put(cgid, citMarker);
         }
         return citMarkers;

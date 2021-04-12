@@ -196,22 +196,6 @@ FormatCitations = false
 ## They are not controlled by FormatCitations.
 ##
 
-## ItalicCitations  : boolean, default: false.
-## Not implemented.
-# ItalicCitations = false
-
-## BoldCitations  : boolean, default: false.
-## Not implemented.
-# BoldCitations = false
-
-## SuperscriptCitations : boolean, default: false.
-## Not implemented.
-# SuperscriptCitations = false
-
-## SubscriptCitations : boolean, default: false.
-## Not implemented.
-# SubscriptCitations = false
-
 ##
 ## For text fragments below, examples show the location
 ## by bracketing the relevant part with "{}"

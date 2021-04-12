@@ -46,6 +46,12 @@ class OOBibStyleGetCitationMarker {
         return sb.toString();
     }
 
+    private static String markupAuthorName(OOBibStyle style, String name) {
+        return (style.getAuthorNameMarkupBefore()
+                + name
+                + style.getAuthorNameMarkupAfter());
+    }
+
     /**
      * @param authorList Parsed list of authors.
      *
@@ -133,9 +139,12 @@ class OOBibStyleGetCitationMarker {
                               // number of authors emitted.
                               : Math.min(maxAuthorsBeforeEtAl, nAuthors));
 
-        if (nAuthorsToEmit > 0) {
+        if (nAuthorsToEmit >= 1) {
+            sb.append(style.getAuthorsPartMarkupBefore());
+            sb.append(style.getAuthorNamesListMarkupBefore());
             // The first author
-            sb.append(getAuthorLastName(authorList, 0));
+            String name = getAuthorLastName(authorList, 0);
+            sb.append(markupAuthorName(style, name));
         }
 
         if (nAuthors >= 2) {
@@ -145,7 +154,8 @@ class OOBibStyleGetCitationMarker {
                 int j = 1;
                 while (j < (nAuthors - 1)) {
                     sb.append(authorSep);
-                    sb.append(getAuthorLastName(authorList, j));
+                    String name = getAuthorLastName(authorList, j);
+                    sb.append(markupAuthorName(style, name));
                     j++;
                 }
                 // oxfordComma if at least 3 authors
@@ -154,7 +164,8 @@ class OOBibStyleGetCitationMarker {
                 }
                 // Emit " and "+"LastAuthor"
                 sb.append(andString);
-                sb.append(getAuthorLastName(authorList, nAuthors - 1));
+                String name = getAuthorLastName(authorList, nAuthors - 1);
+                sb.append(markupAuthorName(style, name));
 
             } else {
                 // Emit last names up to nAuthorsToEmit.
@@ -166,14 +177,23 @@ class OOBibStyleGetCitationMarker {
                     int j = 1;
                     while (j < nAuthorsToEmit) {
                         sb.append(authorSep);
-                        sb.append(getAuthorLastName(authorList, j));
+                        String name = getAuthorLastName(authorList, j);
+                        sb.append(markupAuthorName(style, name));
                         j++;
                     }
                 }
-                sb.append(etAlString);
             }
         }
 
+        if (nAuthorsToEmit >= 1) {
+            sb.append(style.getAuthorNamesListMarkupAfter());
+        }
+
+        if (nAuthors >= 2 && !emitAllAuthors ) {
+            sb.append(etAlString);
+        }
+
+        sb.append(style.getAuthorsPartMarkupAfter());
         return sb.toString();
     }
 
@@ -182,7 +202,7 @@ class OOBibStyleGetCitationMarker {
      * but we also need to know which field matched, because
      * for some fields (actually: for author names) we need to
      * reproduce the surrounding braces to inform AuthorList.parse
-     * not to split up teh content.
+     * not to split up the content.
      */
     private static class FieldAndContent {
         Field field;
@@ -392,6 +412,7 @@ class OOBibStyleGetCitationMarker {
         String uniquefierSeparator = style.getUniquefierSeparator();
 
         StringBuilder sb = new StringBuilder();
+        sb.append(style.getCitationGroupMarkupBefore());
         if (inParenthesis) {
             sb.append(startBrace);
         }
@@ -478,6 +499,7 @@ class OOBibStyleGetCitationMarker {
         if (inParenthesis) {
             sb.append(endBrace);
         }
+        sb.append(style.getCitationGroupMarkupAfter());
         return sb.toString();
     }
 
@@ -496,6 +518,8 @@ class OOBibStyleGetCitationMarker {
      *         citations need uniqueLetters.
      *
      * For details of what "normalized" means: {@see getAuthorYearParenthesisMarker}
+     *
+     * Note: now includes some markup.
      */
     public static String getNormalizedCitationMarker(OOBibStyle style,
                                                      CitationMarkerEntry ce,

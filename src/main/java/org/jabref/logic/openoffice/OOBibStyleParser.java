@@ -192,10 +192,11 @@ public class OOBibStyleParser {
 
         Map<String, String> res = new HashMap<String, String>();
         /* ItalicCitations was only recognized, but not used in JabRef5.2. */
-        res.put("ItalicCitations", "ItalicCitations is not implemented");
-        res.put("BoldCitations", "BoldCitations is not implemented");
-        res.put("SuperscriptCitations", "SuperscriptCitations is not implemented");
-        res.put("SubscriptCitations", "SubscriptCitations is not implemented");
+        res.put("ItalicCitations", "ItalicCitations is not implemented, use CitationGroupMarkupBefore/After");
+        res.put("BoldCitations", "BoldCitations is not implemented, use CitationGroupMarkupBefore/After");
+        res.put("SuperscriptCitations", "SuperscriptCitations is not implemented, use CitationGroupMarkupBefore/After");
+        res.put("SubscriptCitations", "SubscriptCitations is not implemented, use CitationGroupMarkupBefore/After");
+
         res.put("BibtexKeyCitations", "Found 'BibtexKeyCitations' instead of 'BibTeXKeyCitations'");
         return Collections.unmodifiableMap(res);
     }
@@ -203,6 +204,20 @@ public class OOBibStyleParser {
     private static Map<String, PropertyType> makeKnownCitationProperties() {
 
         Map<String, PropertyType> res = new HashMap<String, PropertyType>();
+        res.put("MultiCiteChronological", PropertyType.BOOL);
+        res.put("BibTeXKeyCitations", PropertyType.BOOL); // BIBTEX_KEY_CITATIONS
+
+        res.put("BracketBefore", PropertyType.STRING);
+        res.put("BracketAfter", PropertyType.STRING);
+        res.put("BracketBeforeInList", PropertyType.STRING);
+        res.put("BracketAfterInList", PropertyType.STRING);
+
+        res.put("CitationSeparator", PropertyType.STRING);
+        res.put("PageInfoSeparator", PropertyType.STRING);
+
+        res.put("GroupedNumbersSeparator", PropertyType.STRING);
+        res.put("MinimumGroupingCount", PropertyType.INT);
+
         res.put("AuthorField", PropertyType.STRING);
         res.put("YearField", PropertyType.STRING);
         res.put("MaxAuthors", PropertyType.INT);
@@ -213,25 +228,30 @@ public class OOBibStyleParser {
         res.put("EtAlString", PropertyType.STRING);
         res.put("YearSeparator", PropertyType.STRING);
         res.put("InTextYearSeparator", PropertyType.STRING);
-        res.put("BracketBefore", PropertyType.STRING);
-        res.put("BracketAfter", PropertyType.STRING);
-        res.put("BracketBeforeInList", PropertyType.STRING);
-        res.put("BracketAfterInList", PropertyType.STRING);
-        res.put("CitationSeparator", PropertyType.STRING);
-        res.put("PageInfoSeparator", PropertyType.STRING);
-        res.put("GroupedNumbersSeparator", PropertyType.STRING);
-        res.put("MinimumGroupingCount", PropertyType.INT);
         res.put("FormatCitations", PropertyType.BOOL);
         res.put("CitationCharacterFormat", PropertyType.STRING);
-        res.put("ItalicCitations", PropertyType.BOOL);
-        res.put("BoldCitations", PropertyType.BOOL);
-        res.put("SuperscriptCitations", PropertyType.BOOL);
-        res.put("SubscriptCitations", PropertyType.BOOL);
-        res.put("MultiCiteChronological", PropertyType.BOOL);
-        res.put("BibTeXKeyCitations", PropertyType.BOOL); // BIBTEX_KEY_CITATIONS
-        res.put("ItalicEtAl", PropertyType.BOOL);
         res.put("OxfordComma", PropertyType.STRING);
         res.put("UniquefierSeparator", PropertyType.STRING);
+
+        res.put("CitationGroupMarkupBefore", PropertyType.STRING);
+        res.put("CitationGroupMarkupAfter", PropertyType.STRING);
+
+        res.put("AuthorsPartMarkupBefore", PropertyType.STRING);
+        res.put("AuthorsPartMarkupAfter", PropertyType.STRING);
+
+        res.put("AuthorNamesListMarkupBefore", PropertyType.STRING);
+        res.put("AuthorNamesListMarkupAfter", PropertyType.STRING);
+
+        res.put("AuthorNameMarkupBefore", PropertyType.STRING);
+        res.put("AuthorNameMarkupAfter", PropertyType.STRING);
+
+        //
+        res.put("ItalicCitations", PropertyType.IGNORE);
+        res.put("BoldCitations", PropertyType.IGNORE);
+        res.put("SuperscriptCitations", PropertyType.IGNORE);
+        res.put("SubscriptCitations", PropertyType.IGNORE);
+
+        res.put("ItalicEtAl", PropertyType.BOOL);
         return Collections.unmodifiableMap(res);
     }
 

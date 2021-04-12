@@ -72,6 +72,18 @@
 #      show the corresponding internal name, which otherwise I
 #      do not know how to get.
 #
+# New: the text emitted into the document, may contain some HTML-like
+#      tags. This was true before for the bibliography entries
+#      (controlled by the LAYOUT section), not it includes the title
+#      of the bibliography (Title below), the citations in the text and
+#      entry labels (for numeric styles).
+#
+#      A sample of the available tags is inserted into the Title below.
+#
+#      This makes ItalicEtAl obsolete, since EtAlString may contain " <i>et al.</i>"
+#
+#      Also raises the question how to describe which tags surround what.
+#
 #
 NAME
 # The NAME section provides a name for the style.
@@ -96,7 +108,7 @@ PROPERTIES
 
 ## Title: string, the title of the bibliography.
 ## default: "Bibliography"
-Title = "References"
+Title = "References  <b>b: bold</b> <i>i: italic</i> <tt>(tt: does not work)</tt> <smallcaps>SmallCaps</smallcaps> <sup>sup</sup> <sub>sub</sub> <u>u</u> <s>s</s>"
 
 ## ReferenceHeaderParagraphFormat : string.
 ## The paragraph style for the title of the bibliography.
@@ -196,21 +208,34 @@ FormatCitations = false
 ## They are not controlled by FormatCitations.
 ##
 
-## ItalicCitations  : boolean, default: false.
-## Not implemented.
-# ItalicCitations = false
+## CitationGroupMarkupBefore: string, default: ""
+## CitationGroupMarkupAfter:  string, default: ""
+##
+## Purpose: what is to be injected before and after a citation group.
+## Providing both ends allows for example labeling.
+CitationGroupMarkupBefore = ""
+CitationGroupMarkupAfter  = ""
 
-## BoldCitations  : boolean, default: false.
-## Not implemented.
-# BoldCitations = false
+## AuthorsPartMarkup : "Au et al."
+AuthorsPartMarkupBefore = ""
+AuthorsPartMarkupAfter  = ""
 
-## SuperscriptCitations : boolean, default: false.
-## Not implemented.
-# SuperscriptCitations = false
+# AuthorNamesListMarkup : excludes " et al.", includes names and separators
+AuthorNamesListMarkupBefore = ""
+AuthorNamesListMarkupAfter  = ""
 
-## SubscriptCitations : boolean, default: false.
-## Not implemented.
-# SubscriptCitations = false
+# AuthorNameMarkup : "Au" excludes AuthorSeparator
+AuthorNameMarkupBefore = "<smallcaps>"
+AuthorNameMarkupAfter  = "</smallcaps>"
+
+## These probably could be done, if there is a need:
+# CitationMarkup = "<i>"
+# YearMarkup = "<u>"
+# UniquefierListMarkup = "" # "a,b"
+# UniquefierMarkup = ""     # excludes UniquefierSeparator
+# NunberRangeMarkup = ""    # "1" or "2-3"
+# NumberMarkup = ""         # excludes GroupedNumbersSeparator
+# PageInfoMarkup=""         # Does not include PageInfoSeparator
 
 ##
 ## For text fragments below, examples show the location
@@ -308,7 +333,7 @@ AuthorSeparator=", "
 
 ## AuthorLastSeparator : string default: " & "
 ## Location: "[Smith, Jones,{ and }Brown 2000]" */
-AuthorLastSeparator=" & "
+AuthorLastSeparator=" and "
 
 ## AuthorLastSeparatorInText : string, default: not set.
 ## If not set, AuthorLastSeparator is used instead.

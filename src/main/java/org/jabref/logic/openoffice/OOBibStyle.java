@@ -90,22 +90,28 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     private static final String FORMAT_CITATIONS = "FormatCitations";
     private static final String CITATION_CHARACTER_FORMAT = "CitationCharacterFormat";
 
-    // TODO:  ITALIC_CITATIONS ItalicCitations is not implemented
-    // status:
-    // - jstyles.jabref.org-master : 4 styles mention it, value is false in all of them.
-    // - getter: getItalicCitations() exists, but only called from tests, to assert it is false.
-    // - default: citProperties.put(ITALIC_CITATIONS, Boolean.FALSE);
+
+    // These two can do wat ItalicCitations, BoldCitations,
+    // SuperscriptCitations and SubscriptCitations were supposed to do,
+    // as well as underline smallcaps and strikeout.
+    private static final String CITATION_GROUP_MARKUP_BEFORE = "CitationGroupMarkupBefore";
+    private static final String CITATION_GROUP_MARKUP_AFTER = "CitationGroupMarkupAfter";
+
+    // These are replaced by CitationGroupMarkupBefore and CitationGroupMarkupAfter
     //
-    private static final String ITALIC_CITATIONS = "ItalicCitations";
+    // private static final String ITALIC_CITATIONS = "ItalicCitations";
+    // private static final String BOLD_CITATIONS = "BoldCitations";
+    // private static final String SUPERSCRIPT_CITATIONS = "SuperscriptCitations";
+    // private static final String SUBSCRIPT_CITATIONS = "SubscriptCitations";
 
-    // TODO: BOLD_CITATIONS is not implemented
-    private static final String BOLD_CITATIONS = "BoldCitations";
+    private static final String AUTHORS_PART_MARKUP_BEFORE = "AuthorsPartMarkupBefore";
+    private static final String AUTHORS_PART_MARKUP_AFTER = "AuthorsPartMarkupAfter";
 
-    // TODO: SUPERSCRIPT_CITATIONS is not implemented
-    private static final String SUPERSCRIPT_CITATIONS = "SuperscriptCitations";
+    private static final String AUTHOR_NAMES_LIST_MARKUP_BEFORE = "AuthorNamesListMarkupBefore";
+    private static final String AUTHOR_NAMES_LIST_MARKUP_AFTER  = "AuthorNamesListMarkupAfter";
 
-    // TODO: SUBSCRIPT_CITATIONS is not implemented
-    private static final String SUBSCRIPT_CITATIONS = "SubscriptCitations";
+    private static final String AUTHOR_NAME_MARKUP_BEFORE = "AuthorNameMarkupBefore";
+    private static final String AUTHOR_NAME_MARKUP_AFTER  = "AuthorNameMarkupAfter";
 
     /*
      * common (numeric and author-year)
@@ -280,10 +286,19 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         obsCitProperties.put(FORMAT_CITATIONS, Boolean.FALSE);
         // was "Default", but that is not knowm to LO
         obsCitProperties.put(CITATION_CHARACTER_FORMAT, "Standard");
-        obsCitProperties.put(ITALIC_CITATIONS, Boolean.FALSE);
-        obsCitProperties.put(BOLD_CITATIONS, Boolean.FALSE);
-        obsCitProperties.put(SUPERSCRIPT_CITATIONS, Boolean.FALSE);
-        obsCitProperties.put(SUBSCRIPT_CITATIONS, Boolean.FALSE);
+
+
+        obsCitProperties.put(CITATION_GROUP_MARKUP_BEFORE, "");
+        obsCitProperties.put(CITATION_GROUP_MARKUP_AFTER, "");
+
+        obsCitProperties.put(AUTHORS_PART_MARKUP_BEFORE, "");
+        obsCitProperties.put(AUTHORS_PART_MARKUP_AFTER, "");
+
+        obsCitProperties.put(AUTHOR_NAMES_LIST_MARKUP_BEFORE, "");
+        obsCitProperties.put(AUTHOR_NAMES_LIST_MARKUP_AFTER, "");
+
+        obsCitProperties.put(AUTHOR_NAME_MARKUP_BEFORE, "");
+        obsCitProperties.put(AUTHOR_NAME_MARKUP_AFTER, "");
 
         obsCitProperties.put(AUTHOR_FIELD,
                              FieldFactory.serializeOrFields(StandardField.AUTHOR,
@@ -308,8 +323,10 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
 
         obsCitProperties.put(MULTI_CITE_CHRONOLOGICAL, Boolean.TRUE);
         obsCitProperties.put(BIBTEX_KEY_CITATIONS, Boolean.FALSE); //"BibTeXKeyCitations"
-        obsCitProperties.put(ITALIC_ET_AL, Boolean.FALSE);
         obsCitProperties.put(OXFORD_COMMA, "");
+
+        // Obsolete, keep for backward compat.
+        obsCitProperties.put(ITALIC_ET_AL, Boolean.FALSE);
     }
 
     //    public Layout getDefaultBibLayout() {
@@ -720,49 +737,41 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     /**
      * Should citation markers be italicized?
      *
-     * @return true to indicate that citations should be in italics.
-     *
-     * TODO: unused getItalicCitations, getBoldCitations,
-     *       getSuperscriptCitations, getSubscriptCitations
-     *
-     * May be worth implementing, because only getItalicCitations has
-     *   a corresponding predefined character style in LibreOffice
-     *   (Emphasis), and asking the user to create a style complicates
-     *   usage.
-     *
-     * (a)  Alternatively, we could have a character style, for example
-     *      JR_citation that we always apply, and modify according to the
-     *      current style. But that might interact with other uses of
-     *      styles: I think a character can only have a single character
-     *      style applied: if we are doing that, then a style applied by the
-     *      user, for example a change in the font-size is going to be
-     *      overwritten. Is it possible to create partial styles, that
-     *      only override some, but not all character properties? Probably not.
-     *
-     * (b) Considering ItalicEtAl, we may want to switch to citation
-     *     marks generated as OOFormattedText instead of plain
-     *     text. If we do so, getItalicCitations et al could be
-     *     replaced by BracketBefore="<i>[" BracketAfter="]</i>".
-     *
-     *     Probably this is the way to go.
      */
-    public boolean getItalicCitations() {
-        return getBooleanCitProperty(ITALIC_CITATIONS);
+    public String getCitationGroupMarkupBefore() {
+        return getStringCitProperty(CITATION_GROUP_MARKUP_BEFORE);
     }
-    public boolean getBoldCitations() {
-        return (Boolean) obsCitProperties.get(BOLD_CITATIONS);
+    public String getCitationGroupMarkupAfter() {
+        return getStringCitProperty(CITATION_GROUP_MARKUP_AFTER);
     }
-    public boolean getSuperscriptCitations() {
-        return (Boolean) obsCitProperties.get(SUPERSCRIPT_CITATIONS);
+
+    /** Author list, including " et al." */
+    public String getAuthorsPartMarkupBefore() {
+        return getStringCitProperty(AUTHORS_PART_MARKUP_BEFORE);
     }
-    public boolean getSubscriptCitations() {
-        return (Boolean) obsCitProperties.get(SUBSCRIPT_CITATIONS);
+    public String getAuthorsPartMarkupAfter() {
+        return getStringCitProperty(AUTHORS_PART_MARKUP_AFTER);
+    }
+
+    /** Author list, excluding " et al." */
+    public String getAuthorNamesListMarkupBefore() {
+        return getStringCitProperty(AUTHOR_NAMES_LIST_MARKUP_BEFORE);
+    }
+    public String getAuthorNamesListMarkupAfter() {
+        return getStringCitProperty(AUTHOR_NAMES_LIST_MARKUP_AFTER);
+    }
+
+    /** Author names. Excludes Author separators */
+    public String getAuthorNameMarkupBefore() {
+        return getStringCitProperty(AUTHOR_NAME_MARKUP_BEFORE);
+    }
+    public String getAuthorNameMarkupAfter() {
+        return getStringCitProperty(AUTHOR_NAME_MARKUP_AFTER);
     }
 
     /*
      *
      */
-
     public boolean getBibTeXKeyCitations() {
         // "BibTeXKeyCitations"
         return (Boolean) obsCitProperties.get(BIBTEX_KEY_CITATIONS);
@@ -773,6 +782,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         return this.getBooleanCitProperty(OOBibStyle.MULTI_CITE_CHRONOLOGICAL);
     }
 
+    // Probably obsolete, now we can use " <i>et al.</i>" instead in EtAlString
     public boolean getItalicEtAl() {
         // "ItalicEtAl"
         return this.getBooleanCitProperty(OOBibStyle.ITALIC_ET_AL);
@@ -780,7 +790,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
 
     /**
      *  @return Names of fields containing authors: the first
-     *  non-empty field is will be used.
+     *  non-empty field will be used.
      */
     protected OrFields getAuthorFieldNames() {
         String authorFieldNamesString = this.getStringCitProperty(OOBibStyle.AUTHOR_FIELD);

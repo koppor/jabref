@@ -155,7 +155,9 @@ class OOBibStyleGetNumCitationMarker {
                         + String.format(" nCitations = %d", nCitations));
                 }
                 //
-                StringBuilder sb = new StringBuilder(bracketBefore);
+                StringBuilder sb = new StringBuilder();
+                sb.append(style.getCitationGroupMarkupBefore());
+                sb.append(bracketBefore);
                 final int current = numbers.get(0);
                 if (current < 0) {
                     throw new RuntimeException("getNumCitationMarker: found negative value");
@@ -164,6 +166,7 @@ class OOBibStyleGetNumCitationMarker {
                           ? String.valueOf(current)
                           : OOBibStyle.UNDEFINED_CITATION_MARKER);
                 sb.append(bracketAfter);
+                sb.append(style.getCitationGroupMarkupAfter());
                 return sb.toString();
             }
         }
