@@ -115,19 +115,23 @@ public class OOUtil {
      * Process {@code ltext} in chunks between HTML-tags, while
      * updating current formatting state at HTML-tags.
      *
-     * Finally: {@code cursor.collapseToEnd()}
+     * // removed: Finally: {@code cursor.collapseToEnd()}
+     * Works with a copy of the cursor passed in.
      *
      * Note: Leaves setting the paragraph style to the caller.
      *
-     * @param text     The text to insert in.
+     * param text     The text to insert into. (taken from the cursor)
+     *
      * @param cursor   The cursor giving the insert location.
      * @param lText    The marked-up text to insert.
+     * //param keepTheCursor If true, use a copy of the cursor, do not modify.
+     * //                     If false the cursor is collapsed at the end.
      * @throws WrappedTargetException
      * @throws PropertyVetoException
      * @throws UnknownPropertyException
      * @throws IllegalArgumentException
      */
-    public static void insertOOFormattedTextAtCurrentLocation(XText text,
+    public static void insertOOFormattedTextAtCurrentLocation(//XText text,
                                                               XTextCursor cursor,
                                                               String lText)
         throws
@@ -136,6 +140,12 @@ public class OOUtil {
         WrappedTargetException,
         IllegalArgumentException {
 
+        // boolean keepTheCursor = true;
+        XText text =  cursor.getText();
+        // copy the cursor
+        XTextCursor cursor3 = cursor.getText().createTextCursorByRange(cursor);
+        // XTextCursor cursor3 = keepTheCursor ? cursor2 : cursor ;
+
         List<Formatting> formatting = new ArrayList<>();
         // We need to extract formatting. Use a simple regexp search iteration:
         int piv = 0;
@@ -143,7 +153,7 @@ public class OOUtil {
         while (m.find()) {
             String currentSubstring = lText.substring(piv, m.start());
             if (!currentSubstring.isEmpty()) {
-                OOUtil.insertTextAtCurrentLocation(text, cursor, currentSubstring, formatting);
+                OOUtil.insertTextAtCurrentLocation(text, cursor3, currentSubstring, formatting);
             }
             String tag = m.group();
             // Handle tags:
@@ -185,9 +195,9 @@ public class OOUtil {
         }
 
         if (piv < lText.length()) {
-            OOUtil.insertTextAtCurrentLocation(text, cursor, lText.substring(piv), formatting);
+            OOUtil.insertTextAtCurrentLocation(text, cursor3, lText.substring(piv), formatting);
         }
-        cursor.collapseToEnd();
+        // cursor3.collapseToEnd();
     }
 
     public static void insertParagraphBreak(XText text, XTextCursor cursor)

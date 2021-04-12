@@ -1102,7 +1102,11 @@ class OOBibBase {
 
         if (withText) {
             // setString: All styles are removed when applying this method.
-            cursor.setString(citationText);
+            // cursor.setString(citationText);
+            OOUtil.insertOOFormattedTextAtCurrentLocation(
+                cursor,
+                citationText);
+
             DocumentConnection.setCharLocaleNone(cursor);
             if (style.getFormatCitations()) {
                 String charStyle = style.getCitationCharacterFormat();
@@ -1943,9 +1947,10 @@ class OOBibBase {
                     LOGGER.warn(message); // no stack trace
                 }
                 // Insert the formatted text:
-                OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection.xText,
+                OOUtil.insertOOFormattedTextAtCurrentLocation(//documentConnection.xText,
                                                               cursor,
                                                               formattedText);
+                cursor.collapseToEnd();
             }
         }
     }
