@@ -2324,44 +2324,31 @@ class OOBibBase {
     }
 
     /**
-     * GUI action.
      * Do the opposite of combineCiteMarkers.
      * Combined markers are split, with a space inserted between.
      */
     public void unCombineCiteMarkers(List<BibDatabase> databases, OOBibStyle style)
-        throws IOException,
-               WrappedTargetException,
-               NoSuchElementException,
-               IllegalArgumentException,
-               UndefinedCharacterFormatException,
-               UnknownPropertyException,
-               PropertyVetoException,
-               CreationException,
-               BibEntryNotFoundException,
-               NoDocumentException
-    {
-        DocumentConnection documentConnection = this.xDocumentConnection;
+            throws IOException, WrappedTargetException, NoSuchElementException, IllegalArgumentException,
+            UndefinedCharacterFormatException, UnknownPropertyException, PropertyVetoException, CreationException,
+            BibEntryNotFoundException {
+        XNameAccess nameAccess = getReferenceMarks();
+        List<String> names = getSortedReferenceMarks(nameAccess);
 
-        // TODO: doesn't work for citations in footnotes/tables
-        List<String> names = getJabRefReferenceMarkNamesSortedByPosition(documentConnection);
+        final XTextRangeCompare compare = UnoRuntime.queryInterface(XTextRangeCompare.class, text);
 
-        final XTextRangeCompare compare = unoQI(XTextRangeCompare.class,
-                                                documentConnection.xText);
-
-        int piv = 0;
+        int pivot = 0;
         boolean madeModifications = false;
-        XNameAccess nameAccess = documentConnection.getReferenceMarks();
-        while (piv < (names.size())) {
-            XTextRange range1 = unoQI(XTextContent.class, nameAccess.getByName(names.get(piv)))
+        while (pivot < (names.size())) {
+            XTextRange range1 = UnoRuntime.queryInterface(XTextContent.class, nameAccess.getByName(names.get(pivot)))
                 .getAnchor();
 
-            XTextCursor mxDocCursor = range1.getText().createTextCursorByRange(range1);
-            //
+            XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
+
             // If we are supposed to set character format for citations, test this before
             // making any changes. This way we can throw an exception before any reference
             // marks are removed, preventing damage to the user's document:
             if (style.isFormatCitations()) {
-                XPropertySet xCursorProps = unoQI(XPropertySet.class, mxDocCursor);
+                XPropertySet xCursorProps = UnoRuntime.queryInterface(XPropertySet.class, textCursor);
                 String charStyle = style.getCitationCharacterFormat();
                 try {
                     xCursorProps.setPropertyValue(CHAR_STYLE_NAME, charStyle);
@@ -2373,29 +2360,26 @@ class OOBibBase {
                 }
             }
 
-            List<String> keys = parseRefMarkNameToUniqueCitationKeys(names.get(piv));
+            List<String> keys = parseRefMarkName(names.get(pivot));
             if (keys.size() > 1) {
-                removeReferenceMark(documentConnection, names.get(piv));
-                //
+                removeReferenceMark(names.get(pivot));
+
                 // Insert bookmark for each key
                 int last = keys.size() - 1;
                 int i = 0;
                 for (String key : keys) {
-                    String bName = getUniqueReferenceMarkName(documentConnection,
-                                                              key,
-                                                              OOBibBase.AUTHORYEAR_PAR
-                                                              );
-                    insertReferenceMark(documentConnection, bName, "tmp", mxDocCursor, true, style);
-                    mxDocCursor.collapseToEnd();
+                    String newName = getUniqueReferenceMarkName(key, OOBibBase.AUTHORYEAR_PAR);
+                    insertReferenceMark(newName, "tmp", textCursor, true, style);
+                    textCursor.collapseToEnd();
                     if (i != last) {
-                        mxDocCursor.setString(" ");
-                        mxDocCursor.collapseToEnd();
+                        textCursor.setString(" ");
+                        textCursor.collapseToEnd();
                     }
                     i++;
                 }
                 madeModifications = true;
             }
-            piv++;
+            pivot++;
         }
         if (madeModifications) {
             updateSortedReferenceMarks();
