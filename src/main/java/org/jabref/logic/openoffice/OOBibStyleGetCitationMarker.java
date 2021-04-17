@@ -189,7 +189,7 @@ class OOBibStyleGetCitationMarker {
             sb.append(style.getAuthorNamesListMarkupAfter());
         }
 
-        if (nAuthors >= 2 && !emitAllAuthors ) {
+        if (nAuthors >= 2 && !emitAllAuthors) {
             sb.append(etAlString);
         }
 
@@ -323,8 +323,8 @@ class OOBibStyleGetCitationMarker {
                           ? style.getMaxAuthorsFirst()
                           : style.getMaxAuthors());
 
-        BibEntry bibEntry = ce.getBibEntryOrNull();
-        BibDatabase database = ce.getDatabaseOrNull();
+        BibEntry bibEntry = ce.getBibEntry().orElse(null);
+        BibDatabase database = ce.getDatabase().orElse(null);
         boolean isUnresolved = (bibEntry == null) || (database == null);
         if (isUnresolved) {
             return 0;
@@ -358,8 +358,8 @@ class OOBibStyleGetCitationMarker {
      *              omitting them from the list.
      *
      *              Unresolved citations recognized by
-     *              ce.getBibEntryOrNull() and/or
-     *              ce.getDatabaseOrNull() returning null, and
+     *              ce.getBibEntry() and/or
+     *              ce.getDatabase() returning empty, and
      *              emitted as "Unresolved${citationKey}".
      *
      *              Neither uniqueLetter nor pageInfo are emitted
@@ -424,7 +424,7 @@ class OOBibStyleGetCitationMarker {
 
             if (!startingNewGroup) {
                 // Just add our uniqueLetter
-                String uniqueLetter = ce.getUniqueLetterOrNull();
+                String uniqueLetter = ce.getUniqueLetter().orElse(null);
                 if (uniqueLetter != null) {
                     sb.append(uniquefierSeparator);
                     sb.append(uniqueLetter);
@@ -441,8 +441,8 @@ class OOBibStyleGetCitationMarker {
                 sb.append(citationSeparator);
             }
 
-            BibDatabase currentDatabase = ce.getDatabaseOrNull();
-            BibEntry currentEntry = ce.getBibEntryOrNull();
+            BibDatabase currentDatabase = ce.getDatabase().orElse(null);
+            BibEntry currentEntry = ce.getBibEntry().orElse(null);
 
             boolean isUnresolved = (currentEntry == null) || (currentDatabase == null);
 
@@ -478,12 +478,12 @@ class OOBibStyleGetCitationMarker {
                 }
 
                 if (purpose != AuthorYearMarkerPurpose.NORMALIZED) {
-                    String uniqueLetter = ce.getUniqueLetterOrNull();
+                    String uniqueLetter = ce.getUniqueLetter().orElse(null);
                     if (uniqueLetter != null) {
                         sb.append(uniqueLetter);
                     }
 
-                    String pageInfo = OOBibStyle.regularizePageInfo(ce.getPageInfoOrNull());
+                    String pageInfo = OOBibStyle.regularizePageInfo(ce.getPageInfo().orElse(null));
                     if (pageInfo != null) {
                         sb.append(pageInfoSeparator);
                         sb.append(pageInfo);
@@ -619,11 +619,11 @@ class OOBibStyleGetCitationMarker {
             String nm1 = normalizedMarkers.get(i - 1);
             String nm2 = normalizedMarkers.get(i);
 
-            BibEntry bibEntry1 = ce1.getBibEntryOrNull();
-            BibEntry bibEntry2 = ce2.getBibEntryOrNull();
+            BibEntry bibEntry1 = ce1.getBibEntry().orElse(null);
+            BibEntry bibEntry2 = ce2.getBibEntry().orElse(null);
 
-            BibDatabase database1 = ce1.getDatabaseOrNull();
-            BibDatabase database2 = ce2.getDatabaseOrNull();
+            BibDatabase database1 = ce1.getDatabase().orElse(null);
+            BibDatabase database2 = ce2.getDatabase().orElse(null);
 
             boolean isUnresolved1 = (bibEntry1 == null) || (database1 == null);
             boolean isUnresolved2 = (bibEntry2 == null) || (database2 == null);
@@ -674,11 +674,13 @@ class OOBibStyleGetCitationMarker {
                     }
                 }
 
-                String pi2 = nullToEmptyString(OOBibStyle.regularizePageInfo(ce2.getPageInfoOrNull()));
-                String pi1 = nullToEmptyString(OOBibStyle.regularizePageInfo(ce1.getPageInfoOrNull()));
+                String pi2 =
+                    nullToEmptyString(OOBibStyle.regularizePageInfo(ce2.getPageInfo().orElse(null)));
+                String pi1 =
+                    nullToEmptyString(OOBibStyle.regularizePageInfo(ce1.getPageInfo().orElse(null)));
 
-                String ul2 = ce2.getUniqueLetterOrNull();
-                String ul1 = ce1.getUniqueLetterOrNull();
+                String ul2 = ce2.getUniqueLetter().orElse(null);
+                String ul1 = ce1.getUniqueLetter().orElse(null);
 
                 boolean uniqueLetterPresenceChanged = (ul2 == null) != (ul1 == null);
 
@@ -706,12 +708,11 @@ class OOBibStyleGetCitationMarker {
                 }
 
                 boolean normalizedMarkerChanged = !nm2.equals(nm1);
-                startingNewGroup = (
-                    normalizedMarkerChanged
-                    || firstAppearanceInhibitsJoin
-                    || pageInfoInhibitsJoin
-                    || uniqueLetterPresenceChanged
-                    || uniqueLetterDoesNotMakeUnique);
+                startingNewGroup = (normalizedMarkerChanged
+                                    || firstAppearanceInhibitsJoin
+                                    || pageInfoInhibitsJoin
+                                    || uniqueLetterPresenceChanged
+                                    || uniqueLetterDoesNotMakeUnique);
 
                 if (!startingNewGroup) {
                     // inherit from first of group. Used at next i.

@@ -2,43 +2,18 @@ package org.jabref.gui.openoffice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Collections;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import com.sun.star.awt.Point;
-import com.sun.star.awt.Selection;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XNameAccess;
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.lang.XServiceInfo;
-import com.sun.star.text.XText;
-import com.sun.star.text.XTextCursor;
-import com.sun.star.text.XTextContent;
-import com.sun.star.text.XTextRange;
-import com.sun.star.text.XTextRangeCompare;
-import com.sun.star.text.XTextViewCursor;
-import com.sun.star.text.XTextViewCursorSupplier;
-import com.sun.star.util.InvalidStateException;
 
 import org.jabref.logic.JabRefException;
-import org.jabref.gui.openoffice.RangeSort;
-// import org.jabref.model.database.BibDatabase;
-// import org.jabref.model.entry.BibEntry;
+
+import com.sun.star.awt.Point;
+import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.lang.XServiceInfo;
+import com.sun.star.text.XTextRange;
+import com.sun.star.text.XTextViewCursor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,8 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 class RangeSortVisual {
 
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(RangeSortVisual.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RangeSortVisual.class);
 
     /* first appearance order, based on visual order */
 
@@ -81,8 +55,7 @@ class RangeSortVisual {
      * @param cursor To get the position, we need az XTextViewCursor.
      *               It will be moved to the range.
      */
-    private static Point
-    findPositionOfTextRange(XTextRange range, XTextViewCursor cursor) {
+    private static Point findPositionOfTextRange(XTextRange range, XTextViewCursor cursor) {
         cursor.gotoRange(range, false);
         return cursor.getPosition();
     }
@@ -133,8 +106,7 @@ class RangeSortVisual {
                 return ((this.position.X == other.position.X)
                         && (this.position.Y == other.position.Y)
                         && (this.indexInPosition == other.indexInPosition)
-                        && Objects.equals(this.content, other.content)
-                    );
+                        && Objects.equals(this.content, other.content));
             }
             return false;
         }
@@ -148,7 +120,6 @@ class RangeSortVisual {
             return Objects.hash(position, indexInPosition, content);
         }
     }
-
 
     /**
      * Sort its input {@code vses} visually.
@@ -176,21 +147,10 @@ class RangeSortVisual {
 
         final int inputSize = vses.size();
 
-        // if ( messageOnFailureToObtainAFunctionalXTextViewCursor == null ) {
-        //     messageOnFailureToObtainAFunctionalXTextViewCursor =
-        //         Localization.lang("Please move the cursor into the document text.")
-        //         + "\n"
-        //         + Localization.lang("To get the visual positions of your citations"
-        //                             + " I need to move the cursor around,"
-        //                             + " but could not get it.");
-        // }
-
         if (documentConnection.hasControllersLocked()) {
-            LOGGER.warn(
-                "visualSort:"
-                + " with ControllersLocked, viewCursor.gotoRange"
-                + " is probably useless"
-                );
+            LOGGER.warn("visualSort:"
+                        + " with ControllersLocked, viewCursor.gotoRange"
+                        + " is probably useless");
         }
 
         /*
@@ -222,7 +182,7 @@ class RangeSortVisual {
          */
         final boolean debugThisFun = false;
 
-        XServiceInfo initialSelection =  documentConnection.getSelectionAsServiceInfo();
+        XServiceInfo initialSelection = documentConnection.getSelectionAsServiceInfo().orElse(null);
 
         if (initialSelection != null) {
             if (Arrays.stream(initialSelection.getSupportedServiceNames())
@@ -237,33 +197,20 @@ class RangeSortVisual {
                                 + " We need to change the viewCursor.");
                 }
                 XTextRange newSelection = documentConnection.xText.getStart();
-                documentConnection.select( newSelection );
+                documentConnection.select(newSelection);
             }
         } else {
             if (debugThisFun) {
                 LOGGER.info("visualSort: initialSelection is null: no idea what to do.");
             }
-            /*
-             * XTextRange newSelection = documentConnection.xText.getStart();
-             * boolean res = documentConnection.select( newSelection );
-             * XServiceInfo sel2 =  documentConnection.getSelectionAsServiceInfo();
-             * LOGGER.info(
-             * String.format("visualSort: initialSelection is null: result of select: %s, isNull: %s%n",
-             *                   res,
-             *                   sel2 == null));
-             * // ^^^ prints true, true
-             */
         }
-
 
         XTextViewCursor viewCursor = documentConnection.getViewCursor();
         Objects.requireNonNull(viewCursor);
         try {
             viewCursor.getStart();
         } catch (com.sun.star.uno.RuntimeException ex) {
-            throw new JabRefException(
-                messageOnFailureToObtainAFunctionalXTextViewCursor,
-                ex);
+            throw new JabRefException(messageOnFailureToObtainAFunctionalXTextViewCursor, ex);
         }
 
         // find coordinates
@@ -281,23 +228,19 @@ class RangeSortVisual {
             documentConnection.select(initialSelection);
         }
 
-        if ( positions.size() != inputSize ) {
+        if (positions.size() != inputSize) {
             throw new RuntimeException("visualSort: positions.size() != inputSize");
         }
 
         // order by position
         Set<ComparableMark<RangeSort.RangeSortable<T>>> set = new TreeSet<>();
         for (int i = 0; i < vses.size(); i++) {
-            set.add(
-                new ComparableMark<>(
-                    positions.get(i),
-                    vses.get(i).getIndexInPosition(),
-                    vses.get(i)
-                    )
-                );
+            set.add(new ComparableMark<>(positions.get(i),
+                                         vses.get(i).getIndexInPosition(),
+                                         vses.get(i)));
         }
 
-        if ( set.size() != inputSize ) {
+        if (set.size() != inputSize) {
             throw new RuntimeException("visualSort: set.size() != inputSize");
         }
 
@@ -307,7 +250,7 @@ class RangeSortVisual {
             result.add(mark.getContent());
         }
 
-        if ( result.size() != inputSize ) {
+        if (result.size() != inputSize) {
             throw new RuntimeException("visualSort: result.size() != inputSize");
         }
 

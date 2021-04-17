@@ -1,17 +1,13 @@
 package org.jabref.logic.openoffice;
 
+import java.util.Optional;
+
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 
 /**
  * This is what we need for getCitationMarker to produce author-year
  * citation markers.
- *
- * Details of BibEntry are accessed via getBibEntryOrNull()
- *
- * org/jabref/gui/openoffice.Citation and org/jabref/gui/openoffice.CitedKey
- *
- * are used as actual sources.
  *
  * Citation misses two things
  *   - isFirstAppearanceOfSource : could be extended to provide this.
@@ -25,8 +21,8 @@ public interface CitationMarkerEntry {
 
     /** Citation key. This is what we usually get from the document.
      *
-     *  Used if getBibEntryOrNull() and/or getDatabaseOrNull() returns
-     *  null, which indicates failure to lookup in the databases.
+     *  Used if getBibEntry() and/or getDatabase() returns
+     *  empty, which indicates failure to lookup in the databases.
      *  The marker created is "Unresolved({citationKey})".
      *
      */
@@ -34,27 +30,27 @@ public interface CitationMarkerEntry {
 
     /** Bibliography entry looked up from databases.
      *
-     * May be null if not found. In this case getDatabaseOrNull()
-     * should also return null.
+     * May be empty if not found. In this case getDatabase()
+     * should also return empty.
      */
-    BibEntry getBibEntryOrNull();
+    Optional<BibEntry> getBibEntry();
 
     /**
      * The database where BibEntry was found.
-     * May be null, if not found (otherwise not).
+     * May be empty, if not found (otherwise not).
      */
-    BibDatabase getDatabaseOrNull();
+    Optional<BibDatabase> getDatabase();
 
     /**
      * uniqueLetter or null if not needed.
      */
-    String getUniqueLetterOrNull();
+    Optional<String> getUniqueLetter();
 
     /**
      * pageInfo for this citation, provided by the user.
-     * May be null, for none.
+     * May be empty, for none.
      */
-    String getPageInfoOrNull();
+    Optional<String> getPageInfo();
 
     /**
      *  @return true if this citation is the first appearance of the

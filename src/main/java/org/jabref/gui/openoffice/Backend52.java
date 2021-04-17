@@ -1,45 +1,19 @@
 package org.jabref.gui.openoffice;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.jabref.logic.JabRefException;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.BibEntry;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
 import com.sun.star.beans.PropertyExistException;
-import com.sun.star.beans.UnknownPropertyException;
-
 import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XNameAccess;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XFootnote;
-import com.sun.star.text.XText;
-import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextRange;
-import com.sun.star.uno.UnoRuntime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class Backend52 {
     public final Compat.DataModel dataModel;
@@ -92,23 +66,22 @@ class Backend52 {
     }
 
     /**
-     *  @return null if all is OK, message text otherwise.
+     *  @return Optional.empty if all is OK, message text otherwise.
      */
-    public String healthReport(DocumentConnection documentConnection)
+    public Optional<String> healthReport(DocumentConnection documentConnection)
         throws
         NoDocumentException {
         List<String> pageInfoThrash =
             this.findUnusedJabrefPropertyNames(documentConnection,
                                                this.getJabRefReferenceMarkNames(documentConnection));
-        if ( pageInfoThrash.isEmpty() ){
-            return null; //"Backend52: found no unused pageInfo data";
+        if (pageInfoThrash.isEmpty()) {
+            return Optional.empty(); // "Backend52: found no unused pageInfo data";
         }
-        String msg = (
+        String msg =
             "Backend52: found unused pageInfo data, with names listed below.\n"
-            + "In LibreOffice you may remove these in [File]/[Properties]/[Custom Properties]\n"
-            );
-        msg += "" + String.join( "\n",  pageInfoThrash ) + "";
-        return msg;
+            + "In LibreOffice you may remove these in [File]/[Properties]/[Custom Properties]\n";
+        msg += "" + String.join("\n", pageInfoThrash) + "";
+        return Optional.of(msg);
     }
 
     /**
@@ -123,33 +96,27 @@ class Backend52 {
 
         Optional<Codec52.ParsedMarkName> op = Codec52.parseMarkName(refMarkName);
         if (op.isEmpty()) {
-            // We have a problem. We want types[i] and bibtexKeys[i]
-            // to correspond to referenceMarkNames.get(i).
-            // And do not want null in bibtexKeys (or error code in types)
-            // on return.
             throw new IllegalArgumentException("readCitationGroupFromDocumentOrThrow:"
                                                + " found unparsable referenceMarkName");
         }
         Codec52.ParsedMarkName ov = op.get();
         CitationGroupID id = new CitationGroupID(refMarkName);
-        List<Citation> citations = ((ov.citationKeys == null)
-                                    ? new ArrayList<>()
-                                    : (ov.citationKeys.stream()
-                                       .map(Citation::new)
-                                       .collect(Collectors.toList())));
+        List<Citation> citations = (ov.citationKeys.stream()
+                                    .map(Citation::new)
+                                    .collect(Collectors.toList()));
 
         Optional<String> pageInfo = documentConnection.getCustomProperty(refMarkName);
 
-        StorageBase.NamedRange sr = citationStorageManager.getFromDocumentOrNull(documentConnection,
-                                                                                 refMarkName);
+        Optional<StorageBase.NamedRange> sr = (citationStorageManager
+                                               .getFromDocument(documentConnection, refMarkName));
 
-        if (sr == null) {
-            throw new IllegalArgumentException(
-                "readCitationGroupFromDocumentOrThrow: referenceMarkName is not in the document");
+        if (sr.isEmpty()) {
+            throw new IllegalArgumentException("readCitationGroupFromDocumentOrThrow:"
+                                               + " referenceMarkName is not in the document");
         }
 
         CitationGroup cg = new CitationGroup(id,
-                                             sr,
+                                             sr.get(),
                                              ov.itcType,
                                              citations,
                                              pageInfo,
@@ -206,7 +173,6 @@ class Backend52 {
      */
     public CitationGroup createCitationGroup(DocumentConnection documentConnection,
                                              List<String> citationKeys,
-                                             // Optional<String> pageInfo,
                                              List<String> pageInfosForCitations,
                                              int itcType,
                                              XTextCursor position,
@@ -220,16 +186,15 @@ class Backend52 {
         PropertyExistException,
         IllegalTypeException {
 
-        String xkey =
-            citationKeys.stream()
-            .collect(Collectors.joining(","));
+        String xkey = (citationKeys.stream()
+                       .collect(Collectors.joining(",")));
 
-        Set<String> usedNames = new HashSet<>( this.citationStorageManager
-                                               .getUsedNames(documentConnection) );
-        String refMarkName =
-            Codec52.getUniqueMarkName(usedNames,
-                                      xkey,
-                                      itcType);
+        Set<String> usedNames = new HashSet<>(this.citationStorageManager
+                                              .getUsedNames(documentConnection));
+
+        String refMarkName = Codec52.getUniqueMarkName(usedNames,
+                                                       xkey,
+                                                       itcType);
 
         CitationGroupID cgid = new CitationGroupID(refMarkName);
 
@@ -249,12 +214,13 @@ class Backend52 {
                                                                        insertSpaceAfter,
                                                                        withoutBrackets);
 
-        switch (dataModel){
+        switch (dataModel) {
         case JabRef52:
-            Optional<String> pageInfo = getJabRef52PageInfoFromList( pageInfosForCitations );
-            if ( pageInfo.isPresent() && !pageInfo.get().equals("") ) {
+            Optional<String> pageInfo = getJabRef52PageInfoFromList(pageInfosForCitations);
+            if (pageInfo.isPresent() && !pageInfo.get().equals("")) {
                 documentConnection.setCustomProperty(refMarkName, pageInfo.get());
             } else {
+                // do not inherit from trash
                 documentConnection.removeCustomProperty(refMarkName);
             }
             CitationGroup cg = new CitationGroup(cgid,
@@ -269,6 +235,9 @@ class Backend52 {
         }
     }
 
+    /**
+     * Return the last pageInfo from the list, if there is one.
+     */
     Optional<String> getJabRef52PageInfoFromList(List<String> pageInfosForCitations) {
         if (pageInfosForCitations == null) {
             return Optional.empty();
@@ -277,25 +246,21 @@ class Backend52 {
         if (n == 0) {
             return Optional.empty();
         }
-        return Optional.ofNullable(pageInfosForCitations.get(n-1));
+        return Optional.ofNullable(pageInfosForCitations.get(n - 1));
     }
 
     /**
      * @param pageInfo Nullable.
+     * @return JabRef53 style pageInfo list
      */
     static List<String> fakePageInfosForCitations(String pageInfo,
-                                                  int nCitations,
-                                                  boolean mayReturnNull) {
-        // JabRef53 style pageInfo list, or null
-        List<String> pageInfosForCitations = null;
-        if (!mayReturnNull || (pageInfo != null && !pageInfo.equals(""))) {
-            pageInfosForCitations = new ArrayList<>(nCitations);
-            for (int i = 0; i < nCitations; i++) {
-                if (i == nCitations - 1) {
-                    pageInfosForCitations.add(pageInfo);
-                } else {
-                    pageInfosForCitations.add(null);
-                }
+                                                  int nCitations) {
+        List<String> pageInfosForCitations = new ArrayList<>(nCitations);
+        for (int i = 0; i < nCitations; i++) {
+            if (i == nCitations - 1) {
+                pageInfosForCitations.add(pageInfo);
+            } else {
+                pageInfosForCitations.add(null);
             }
         }
         return pageInfosForCitations;
@@ -315,20 +280,18 @@ class Backend52 {
      *          TODO: we may want class DataModel52, DataModel53 and split this.
      */
     static List<String> getPageInfosForCitations(Compat.DataModel dataModel, CitationGroup cg) {
-        switch (dataModel){
+        switch (dataModel) {
         case JabRef52:
             // check conformance to dataModel
-            for ( int i = 0; i < cg.citations.size(); i++ ) {
-                if ( cg.citations.get(i).pageInfo.isPresent() ) {
+            for (int i = 0; i < cg.citations.size(); i++) {
+                if (cg.citations.get(i).pageInfo.isPresent()) {
                     throw new RuntimeException("getPageInfosForCitations:"
                                                + " found Citation.pageInfo under JabRef52 dataModel");
                 }
             }
             // A list of null values, except the last that comes from this.pageInfo
             return Backend52.fakePageInfosForCitations(cg.pageInfo.orElse(null),
-                                                       cg.citations.size(),
-                                                       false /*mayReturnNull*/);
-
+                                                       cg.citations.size());
         case JabRef53:
             // check conformance to dataModel
             if (cg.pageInfo.isPresent()) {
@@ -373,14 +336,12 @@ class Backend52 {
                               .map(cg -> cg.citations.size())
                               .mapToInt(Integer::intValue).sum());
 
-            return Backend52.fakePageInfosForCitations(cgPageInfo,
-                                                       nCitations,
-                                                       false /*mayReturnNull*/);
+            return Backend52.fakePageInfosForCitations(cgPageInfo, nCitations);
 
         case JabRef53:
             return (joinableGroup.stream()
-                    .flatMap( cg -> (cg.citations.stream()
-                                     .map(cit -> cit.pageInfo.orElse(null))))
+                    .flatMap(cg -> (cg.citations.stream()
+                                    .map(cit -> cit.pageInfo.orElse(null))))
                     .collect(Collectors.toList()));
         default:
             throw new RuntimeException("unhandled dataModel here");
@@ -390,7 +351,7 @@ class Backend52 {
     /**
      *
      */
-    public List<String> combinePageInfos(List<CitationGroup> joinableGroup ) {
+    public List<String> combinePageInfos(List<CitationGroup> joinableGroup) {
         return combinePageInfos(this.dataModel, joinableGroup);
     }
 
@@ -420,24 +381,24 @@ class Backend52 {
 
     /**
      *
-     * @return Null if the reference mark is missing.
+     * @return Optional.empty if the reference mark is missing.
      *
      */
-    public XTextRange getMarkRangeOrNull(CitationGroup cg,
-                                         DocumentConnection documentConnection)
+    public Optional<XTextRange> getMarkRange(CitationGroup cg,
+                                             DocumentConnection documentConnection)
         throws
         NoDocumentException,
         WrappedTargetException {
 
-        return cg.cgRangeStorage.getMarkRangeOrNull(documentConnection);
+        return cg.cgRangeStorage.getMarkRange(documentConnection);
     }
 
     /**
      * Cursor for the reference marks as is, not prepared for filling,
      * but does not need cleanFillCursorForCitationGroup either.
      */
-    public XTextCursor getRawCursorForCitationGroup(CitationGroup cg,
-                                                    DocumentConnection documentConnection)
+    public Optional<XTextCursor> getRawCursorForCitationGroup(CitationGroup cg,
+                                                              DocumentConnection documentConnection)
         throws
         NoDocumentException,
         WrappedTargetException,

@@ -64,7 +64,7 @@ public class StyleLoader {
                                                  encoding);
 
             OOBibStyleParser.ParseLog parseLog = newStyle.getParseLog();
-            if ( parseLog == null ) {
+            if (parseLog == null) {
                 parseLog = new OOBibStyleParser.ParseLog();
                 parseLog.error(filename, 0,
                                "OOBibStyle constructor returned with no parseLog");
@@ -75,7 +75,7 @@ public class StyleLoader {
                 parseLog.error(filename, 0,
                                "An external style file with the same content,"
                                + " including its path"
-                               + " is already known (not adding)" );
+                               + " is already known (not adding)");
                 return parseLog;
             } else if (newStyle.isValid() && !parseLog.hasError()) {
                 externalStyles.add(newStyle);
@@ -91,14 +91,14 @@ public class StyleLoader {
             // The file couldn't be found... should we tell anyone?
             String msg = "Cannot find external style file " + filename;
             LOGGER.info(msg, e);
-            OOBibStyleParser.ParseLog parseLog = new  OOBibStyleParser.ParseLog();
-            parseLog.error( filename, 0, msg );
+            OOBibStyleParser.ParseLog parseLog = new OOBibStyleParser.ParseLog();
+            parseLog.error(filename, 0, msg);
             return parseLog;
         } catch (IOException e) {
             LOGGER.info("Problem reading external style file " + filename, e);
-            OOBibStyleParser.ParseLog parseLog = new  OOBibStyleParser.ParseLog();
+            OOBibStyleParser.ParseLog parseLog = new OOBibStyleParser.ParseLog();
             String msg = "Problem (IOException) reading external style file " + filename;
-            parseLog.error( filename, 0, msg );
+            parseLog.error(filename, 0, msg);
             return parseLog;
         }
     }

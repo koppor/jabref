@@ -1,43 +1,10 @@
 package org.jabref.gui.openoffice;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.jabref.logic.JabRefException;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XNameAccess;
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XFootnote;
-import com.sun.star.text.XText;
-import com.sun.star.text.XTextContent;
-import com.sun.star.text.XTextCursor;
-import com.sun.star.text.XTextRange;
-import com.sun.star.uno.UnoRuntime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-class Citation  implements CitationSort.ComparableCitation {
+class Citation implements CitationSort.ComparableCitation {
 
     /** key in database */
     String citationKey;
@@ -69,17 +36,17 @@ class Citation  implements CitationSort.ComparableCitation {
     }
 
     @Override
-    public String getCitationKey(){
+    public String getCitationKey() {
         return citationKey;
     }
 
     @Override
-    public String getPageInfoOrNull(){
-        return pageInfo.orElse(null);
+    public Optional<String> getPageInfo() {
+        return pageInfo;
     }
 
     @Override
-    public Optional<BibEntry> getBibEntry(){
+    public Optional<BibEntry> getBibEntry() {
         return (db.isPresent()
                 ? Optional.of(db.get().entry)
                 : Optional.empty());

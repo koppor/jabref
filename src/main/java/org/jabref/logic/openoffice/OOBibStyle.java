@@ -108,10 +108,10 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     private static final String AUTHORS_PART_MARKUP_AFTER = "AuthorsPartMarkupAfter";
 
     private static final String AUTHOR_NAMES_LIST_MARKUP_BEFORE = "AuthorNamesListMarkupBefore";
-    private static final String AUTHOR_NAMES_LIST_MARKUP_AFTER  = "AuthorNamesListMarkupAfter";
+    private static final String AUTHOR_NAMES_LIST_MARKUP_AFTER = "AuthorNamesListMarkupAfter";
 
     private static final String AUTHOR_NAME_MARKUP_BEFORE = "AuthorNameMarkupBefore";
-    private static final String AUTHOR_NAME_MARKUP_AFTER  = "AuthorNameMarkupAfter";
+    private static final String AUTHOR_NAME_MARKUP_AFTER = "AuthorNameMarkupAfter";
 
     /*
      * common (numeric and author-year)
@@ -277,7 +277,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         obsProperties.put(IS_NUMBER_ENTRIES, Boolean.FALSE);
         obsProperties.put(IS_SORT_BY_POSITION, Boolean.FALSE);
 
-
         // Set default obsCitProperties for the citation marker:
 
         /*
@@ -286,7 +285,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         obsCitProperties.put(FORMAT_CITATIONS, Boolean.FALSE);
         // was "Default", but that is not knowm to LO
         obsCitProperties.put(CITATION_CHARACTER_FORMAT, "Standard");
-
 
         obsCitProperties.put(CITATION_GROUP_MARKUP_BEFORE, "");
         obsCitProperties.put(CITATION_GROUP_MARKUP_AFTER, "");
@@ -322,7 +320,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         obsCitProperties.put(MINIMUM_GROUPING_COUNT, 3);
 
         obsCitProperties.put(MULTI_CITE_CHRONOLOGICAL, Boolean.TRUE);
-        obsCitProperties.put(BIBTEX_KEY_CITATIONS, Boolean.FALSE); //"BibTeXKeyCitations"
+        obsCitProperties.put(BIBTEX_KEY_CITATIONS, Boolean.FALSE); // "BibTeXKeyCitations"
         obsCitProperties.put(OXFORD_COMMA, "");
 
         // Obsolete, keep for backward compat.
@@ -356,7 +354,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      */
     private void initialize(InputStream stream, String filename) throws IOException {
         Objects.requireNonNull(stream);
-
 
         // remove data from a previous parse
         localCopy = null;
@@ -556,8 +553,8 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      * Format the marker for an the in-text citation according to
      * this style.
      *
-     * Uniquefier letters are added as provided by the
-     * CitationMarkerEntry.getUniqueLetterOrNull().
+     * Uniquefier letters are added as provided by
+     * CitationMarkerEntry.getUniqueLetter().
      *
      * If successive entries within the citation are uniquefied from
      * each other, this method will perform a grouping of these
@@ -608,8 +605,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     }
 
     private String nullToEmpty(String s) {
-        return ( s == null ? "" : s );
+        return (s == null ? "" : s);
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -741,6 +739,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     public String getCitationGroupMarkupBefore() {
         return getStringCitProperty(CITATION_GROUP_MARKUP_BEFORE);
     }
+
     public String getCitationGroupMarkupAfter() {
         return getStringCitProperty(CITATION_GROUP_MARKUP_AFTER);
     }
@@ -749,6 +748,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     public String getAuthorsPartMarkupBefore() {
         return getStringCitProperty(AUTHORS_PART_MARKUP_BEFORE);
     }
+
     public String getAuthorsPartMarkupAfter() {
         return getStringCitProperty(AUTHORS_PART_MARKUP_AFTER);
     }
@@ -757,6 +757,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     public String getAuthorNamesListMarkupBefore() {
         return getStringCitProperty(AUTHOR_NAMES_LIST_MARKUP_BEFORE);
     }
+
     public String getAuthorNamesListMarkupAfter() {
         return getStringCitProperty(AUTHOR_NAMES_LIST_MARKUP_AFTER);
     }
@@ -765,6 +766,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     public String getAuthorNameMarkupBefore() {
         return getStringCitProperty(AUTHOR_NAME_MARKUP_BEFORE);
     }
+
     public String getAuthorNameMarkupAfter() {
         return getStringCitProperty(AUTHOR_NAME_MARKUP_AFTER);
     }
@@ -812,10 +814,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
 
     /* As getAuthorLastSeparator, for in-text citation. */
     protected String getAuthorLastSeparatorInTextWithFallBack() {
-        return Objects.requireNonNullElse(
-            getStringCitProperty(OOBibStyle.AUTHOR_LAST_SEPARATOR_IN_TEXT),
-            // Use the default one if no explicit separator for text is defined
-            getStringCitProperty(OOBibStyle.AUTHOR_LAST_SEPARATOR));
+        String a = getStringCitProperty(OOBibStyle.AUTHOR_LAST_SEPARATOR_IN_TEXT);
+        String b = getStringCitProperty(OOBibStyle.AUTHOR_LAST_SEPARATOR);
+        return Objects.requireNonNullElse(a, b);
     }
 
     protected String getPageInfoSeparator() {

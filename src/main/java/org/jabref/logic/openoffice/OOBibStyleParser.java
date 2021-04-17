@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,18 +51,19 @@ public class OOBibStyleParser {
     /*
      * Keys in the PROPERTIES section that we warn about.
      */
-    private static final Map<String,String> PROPERTY_WARNINGS = Map.of(
-        // Appeared in setDefaultProperties, otherwise unknown.
-        "SortAlgorithm", "SortAlgorithm is not used"
-        );
+    private static final Map<String, String> PROPERTY_WARNINGS =
+        Map.of(// Appeared in setDefaultProperties, otherwise unknown.
+            "SortAlgorithm", "SortAlgorithm is not used");
 
     /*
      * Keys in the CITATION section we warn about.
      */
     private static final Map<String, String> CITATION_PROPERTY_WARNINGS = makeCitationPropertyWarnings();
-    private static final Map<String,PropertyType> KNOWN_PROPERTIES = makeKnownProperties();
-    private static final Map<String,PropertyType> KNOWN_CITATION_PROPERTIES =
+    private static final Map<String, PropertyType> KNOWN_PROPERTIES = makeKnownProperties();
+    private static final Map<String, PropertyType> KNOWN_CITATION_PROPERTIES =
         makeKnownCitationProperties();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OOBibStyleParser.class);
 
     enum PropertyType {
         BOOL,
@@ -77,8 +77,8 @@ public class OOBibStyleParser {
     }
 
     private static String dropQuotes(String s) {
-        if (hasQuotes(s)){
-            return s.substring(1, s.length()-1);
+        if (hasQuotes(s)) {
+            return s.substring(1, s.length() - 1);
         }
         return s;
     }
@@ -100,7 +100,7 @@ public class OOBibStyleParser {
                                              int lineNumber,
                                              ParseLog logger,
                                              String whatIsIt) {
-        final String quotedTrue  = "\"true\"";
+        final String quotedTrue = "\"true\"";
         final String quotedFalse = "\"false\"";
 
         switch (type) {
@@ -109,10 +109,10 @@ public class OOBibStyleParser {
         case BOOL:
             switch (value) {
             case "true":
-                destProperties.put(propertyName, Boolean.TRUE );
+                destProperties.put(propertyName, Boolean.TRUE);
                 return ParseLogLevel.OK;
             case "false":
-                destProperties.put(propertyName, Boolean.FALSE );
+                destProperties.put(propertyName, Boolean.FALSE);
                 return ParseLogLevel.OK;
             default:
                 String msg = String.format("Boolean %s '%s'"
@@ -120,13 +120,13 @@ public class OOBibStyleParser {
                                            whatIsIt,
                                            propertyName, value);
                 if (patient) {
-                    if (value.equals(quotedTrue)){
-                        destProperties.put(propertyName, Boolean.TRUE );
+                    if (value.equals(quotedTrue)) {
+                        destProperties.put(propertyName, Boolean.TRUE);
                         logger.warn(fileName, lineNumber, msg);
                         return ParseLogLevel.WARN;
                     }
-                    if (value.equals(quotedFalse)){
-                        destProperties.put(propertyName, Boolean.FALSE );
+                    if (value.equals(quotedFalse)) {
+                        destProperties.put(propertyName, Boolean.FALSE);
                         logger.warn(fileName, lineNumber, msg);
                         return ParseLogLevel.WARN;
                     }
@@ -192,10 +192,14 @@ public class OOBibStyleParser {
 
         Map<String, String> res = new HashMap<String, String>();
         /* ItalicCitations was only recognized, but not used in JabRef5.2. */
-        res.put("ItalicCitations", "ItalicCitations is not implemented, use CitationGroupMarkupBefore/After");
-        res.put("BoldCitations", "BoldCitations is not implemented, use CitationGroupMarkupBefore/After");
-        res.put("SuperscriptCitations", "SuperscriptCitations is not implemented, use CitationGroupMarkupBefore/After");
-        res.put("SubscriptCitations", "SubscriptCitations is not implemented, use CitationGroupMarkupBefore/After");
+        res.put("ItalicCitations",
+                "ItalicCitations is not implemented, use CitationGroupMarkupBefore/After");
+        res.put("BoldCitations",
+                "BoldCitations is not implemented, use CitationGroupMarkupBefore/After");
+        res.put("SuperscriptCitations",
+                "SuperscriptCitations is not implemented, use CitationGroupMarkupBefore/After");
+        res.put("SubscriptCitations",
+                "SubscriptCitations is not implemented, use CitationGroupMarkupBefore/After");
 
         res.put("BibtexKeyCitations", "Found 'BibtexKeyCitations' instead of 'BibTeXKeyCitations'");
         return Collections.unmodifiableMap(res);
@@ -255,9 +259,7 @@ public class OOBibStyleParser {
         return Collections.unmodifiableMap(res);
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OOBibStyleParser.class);
-
-    private static boolean endsWithCharacter(String s, char c){
+    private static boolean endsWithCharacter(String s, char c) {
         return !s.isEmpty() && (s.charAt(s.length() - 1) == c);
     }
 
@@ -276,7 +278,6 @@ public class OOBibStyleParser {
         IN_LAYOUT_SECTION_MULTILINE
     }
 
-
     /** Also used as return code */
     static enum ParseLogLevel {
         ERROR,
@@ -290,12 +291,14 @@ public class OOBibStyleParser {
         public final String fileName;
         public final int lineNumber;
         public final String message;
+
         ParseLogEntry(ParseLogLevel level, String fileName, int lineNumber, String message) {
             this.level = level;
             this.fileName = fileName;
             this.lineNumber = lineNumber;
             this.message = message;
         }
+
         public String format() {
             StringBuilder sb = new StringBuilder();
             ParseLogEntry e = this;
@@ -351,18 +354,23 @@ public class OOBibStyleParser {
 
     public static class ParseLog {
         List<ParseLogEntry> entries;
+
         ParseLog() {
             this.entries = new ArrayList<>();
         }
-        void log( ParseLogLevel level, String fileName, int lineNumber, String message) {
+
+        void log(ParseLogLevel level, String fileName, int lineNumber, String message) {
             this.entries.add(new ParseLogEntry(level, fileName, lineNumber, message));
         }
+
         void error(String fileName, int lineNumber, String message) {
             this.entries.add(new ParseLogEntry(ParseLogLevel.ERROR, fileName, lineNumber, message));
         }
+
         void warn(String fileName, int lineNumber, String message) {
             this.entries.add(new ParseLogEntry(ParseLogLevel.WARN, fileName, lineNumber, message));
         }
+
         void info(String fileName, int lineNumber, String message) {
             this.entries.add(new ParseLogEntry(ParseLogLevel.INFO, fileName, lineNumber, message));
         }
@@ -375,7 +383,7 @@ public class OOBibStyleParser {
             return entries.isEmpty();
         }
 
-        public String format(){
+        public String format() {
             StringBuilder sb = new StringBuilder();
             for (ParseLogEntry e : entries) {
                 sb.append(e.format());
@@ -384,7 +392,7 @@ public class OOBibStyleParser {
         }
 
         // omits file path
-        public String formatShort(){
+        public String formatShort() {
             StringBuilder sb = new StringBuilder();
             for (ParseLogEntry e : entries) {
                 sb.append(e.formatShort());
@@ -469,7 +477,7 @@ public class OOBibStyleParser {
             final String trimmedLine = line.trim();
 
             // Skip empty lines, unless we are in IN_LAYOUT_SECTION_MULTILINE
-            if (trimmedLine.isEmpty() && (mode != BibStyleMode.IN_LAYOUT_SECTION_MULTILINE) ) {
+            if (trimmedLine.isEmpty() && (mode != BibStyleMode.IN_LAYOUT_SECTION_MULTILINE)) {
                 continue;
             }
 
@@ -494,9 +502,9 @@ public class OOBibStyleParser {
 
             case IN_NAME_SECTION:
                 if (SECTION_NAMES.contains(trimmedLine)) {
-                    logger.error( fileName, lineNumber,
-                                  "Expected name of style, found section name"
-                                  + String.format("'%s'", trimmedLine ));
+                    logger.error(fileName, lineNumber,
+                                 "Expected name of style, found section name"
+                                 + String.format("'%s'", trimmedLine));
                     return logger;
                 } else {
                     // ok
@@ -537,7 +545,7 @@ public class OOBibStyleParser {
                         return logger;
                     }
                 } else {
-                    style.journals.add( trimmedLine );
+                    style.journals.add(trimmedLine);
                     continue;
                 }
 
@@ -627,7 +635,7 @@ public class OOBibStyleParser {
                                                               style,
                                                               fileName,
                                                               layoutLineCollectorStartLine,
-                                                              logger );
+                                                              logger);
 
                     layoutLineCollectorName = "***";
                     layoutLineCollectorValue = new ArrayList<>();
@@ -674,7 +682,7 @@ public class OOBibStyleParser {
     /**
      * Parse a line providing a property name and value.
      *
-     * @param line The line containing the formatter names.
+     * @param trimmedLine A line containing a propery setting.
      *
      * Format: "{propertyName}={value}"
      */
@@ -700,7 +708,7 @@ public class OOBibStyleParser {
         String propertyName = trimmedLine.substring(0, index).trim();
         String value = trimmedLine.substring(index + 1).trim();
 
-        if ("".equals(propertyName)){
+        if ("".equals(propertyName)) {
             logger.log(softError, fileName, lineNumber,
                        String.format("Empty %s name", whatIsIt));
             return softError;
@@ -795,7 +803,7 @@ public class OOBibStyleParser {
                                      style,
                                      fileName,
                                      lineNumber,
-                                     logger );
+                                     logger);
     }
 
     private static ParseLogLevel handleLayoutLineParts(String name,

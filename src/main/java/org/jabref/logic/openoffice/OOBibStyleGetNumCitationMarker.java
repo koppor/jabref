@@ -149,10 +149,9 @@ class OOBibStyleGetNumCitationMarker {
                 // If (purpose==BIBLIOGRAPHY), then
                 // we expect exactly one number here, and can handle quickly
                 if (nCitations != 1) {
-                    throw new RuntimeException(
-                        "getNumCitationMarker:"
-                        + "nCitations != 1 for purpose==BIBLIOGRAPHY."
-                        + String.format(" nCitations = %d", nCitations));
+                    throw new RuntimeException("getNumCitationMarker:"
+                                               + "nCitations != 1 for purpose==BIBLIOGRAPHY."
+                                               + String.format(" nCitations = %d", nCitations));
                 }
                 //
                 StringBuilder sb = new StringBuilder();
@@ -181,11 +180,10 @@ class OOBibStyleGetNumCitationMarker {
          *    pageInfos with null values.
          */
         List<String> pageInfos =
-            OOBibStyle.regularizePageInfosForCitations(
-                (purpose == CitationMarkerPurpose.BIBLIOGRAPHY
-                 ? null
-                 : pageInfosForCitations),
-                numbers.size());
+            OOBibStyle.regularizePageInfosForCitations((purpose == CitationMarkerPurpose.BIBLIOGRAPHY
+                                                        ? null
+                                                        : pageInfosForCitations),
+                                                       numbers.size());
 
         // Sort the numbers, together with the corresponding pageInfo values
         List<NumberWithPageInfo> nps = new ArrayList<>();

@@ -1,11 +1,9 @@
 package org.jabref.gui.openoffice;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
-import com.sun.star.text.XText;
+
 import com.sun.star.text.XTextRange;
 
 class RangeKeyedMapList<V> {
@@ -25,10 +23,10 @@ class RangeKeyedMapList<V> {
 
     public void add(XTextRange r, V value) {
         List<V> vs = xxs.get(r);
-        if (vs == null){
+        if (vs == null) {
             vs = new ArrayList<>();
             vs.add(value);
-            xxs.put(r,vs);
+            xxs.put(r, vs);
         } else {
             vs.add(value);
         }
@@ -37,7 +35,7 @@ class RangeKeyedMapList<V> {
     /**
      * @return A list of the partitions.
      */
-    public List<TreeMap<XTextRange,List<V>>> partitionValues() {
+    public List<TreeMap<XTextRange, List<V>>> partitionValues() {
         return this.xxs.partitionValues();
     }
 
@@ -48,8 +46,8 @@ class RangeKeyedMapList<V> {
      */
     public List<V> flatListOfValues() {
         List<V> result = new ArrayList<>();
-        for (TreeMap<XTextRange,List<V>> partition : partitionValues() ) {
-            for (List<V> valuesUnderARange : partition.values() ) {
+        for (TreeMap<XTextRange, List<V>> partition : partitionValues()) {
+            for (List<V> valuesUnderARange : partition.values()) {
                 result.addAll(valuesUnderARange);
             }
         }
@@ -72,11 +70,11 @@ class RangeKeyedMapList<V> {
         OverlapKind kind;
         List<V> vs;
 
-        public RangeOverlap( OverlapKind kind, List<V> vs ) {
+        public RangeOverlap(OverlapKind kind, List<V> vs) {
             this.kind = kind;
             this.vs = vs;
         }
-    };
+    }
 
     /**
      * Report identical, overlapping or touching ranges.
@@ -89,19 +87,14 @@ class RangeKeyedMapList<V> {
      */
     List<RangeOverlap> findOverlappingRanges(int atMost, boolean includeTouching) {
         List<RangeOverlap> res = new ArrayList<>();
-        for (TreeMap<XTextRange,List<V>> xs : xxs.partitionValues()) {
+        for (TreeMap<XTextRange, List<V>> xs : xxs.partitionValues()) {
             List<XTextRange> oxs = new ArrayList<>(xs.keySet());
             for (int i = 0; i < oxs.size(); i++) {
                 XTextRange a = oxs.get(i);
                 List<V> avs = xs.get(a);
                 if (avs.size() > 1) {
-                    res.add(
-                        new RangeOverlap(
-                            OverlapKind.EQUAL_RANGE,
-                            avs
-                            )
-                        );
-                    if ( atMost > 0 && res.size() >= atMost ) {
+                    res.add(new RangeOverlap(OverlapKind.EQUAL_RANGE, avs));
+                    if (atMost > 0 && res.size() >= atMost) {
                         return res;
                     }
                 }
@@ -112,16 +105,12 @@ class RangeKeyedMapList<V> {
                         // found overlap or touch
                         List<V> bvs = xs.get(b);
                         List<V> vs = new ArrayList<>();
-                        vs.add( avs.get(0) );
-                        vs.add( bvs.get(0) );
-                        res.add(
-                            new RangeOverlap(
-                                (cmp == 0) ? OverlapKind.TOUCH : OverlapKind.OVERLAP,
-                                vs
-                                )
-                            );
+                        vs.add(avs.get(0));
+                        vs.add(bvs.get(0));
+                        res.add(new RangeOverlap((cmp == 0) ? OverlapKind.TOUCH : OverlapKind.OVERLAP,
+                                                 vs));
                     }
-                    if ( atMost > 0 && res.size() >= atMost ) {
+                    if (atMost > 0 && res.size() >= atMost) {
                         return res;
                     }
                 }

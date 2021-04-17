@@ -3,15 +3,17 @@ package org.jabref.gui.openoffice;
 import java.util.Comparator;
 import java.util.Optional;
 
-import org.jabref.model.entry.BibEntry;
 import org.jabref.logic.openoffice.OOBibStyle;
+import org.jabref.model.entry.BibEntry;
 
 class CitationSort {
 
     interface ComparableCitation {
         public String getCitationKey();
+
         public Optional<BibEntry> getBibEntry();
-        public String getPageInfoOrNull();
+
+        public Optional<String> getPageInfo();
     }
 
     static class CitationComparator implements Comparator<ComparableCitation> {
@@ -49,7 +51,8 @@ class CitationSort {
                                               bbe.get());
             // Also consider pageInfo
             if (res == 0) {
-                OOBibStyle.comparePageInfo( a.getPageInfoOrNull(), b.getPageInfoOrNull() );
+                OOBibStyle.comparePageInfo(a.getPageInfo().orElse(null),
+                                           b.getPageInfo().orElse(null));
             }
             return res;
         }

@@ -1,40 +1,13 @@
 package org.jabref.gui.openoffice;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.jabref.logic.JabRefException;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.BibEntry;
-
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XNameAccess;
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XFootnote;
-import com.sun.star.text.XText;
-import com.sun.star.text.XTextContent;
-import com.sun.star.text.XTextCursor;
-import com.sun.star.text.XTextRange;
-import com.sun.star.uno.UnoRuntime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *  How and what is encoded in a mark names.
@@ -55,13 +28,15 @@ class Codec52 {
      */
     public static class ParsedMarkName {
         /**  "", "0", "1" ... */
-        public String i;
+        public final String i;
         /** in-text-citation type */
-        public int itcType;
+        public final int itcType;
         /** Citation keys embedded in the reference mark. */
-        public List<String> citationKeys;
+        public final List<String> citationKeys;
 
         ParsedMarkName(String i, int itcType, List<String> citationKeys) {
+            Objects.requireNonNull(i);
+            Objects.requireNonNull(citationKeys);
             this.i = i;
             this.itcType = itcType;
             this.citationKeys = citationKeys;

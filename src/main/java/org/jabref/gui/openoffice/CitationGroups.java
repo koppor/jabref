@@ -1,23 +1,16 @@
 package org.jabref.gui.openoffice;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
@@ -27,13 +20,8 @@ import org.jabref.model.entry.BibEntry;
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
 import com.sun.star.beans.PropertyExistException;
-import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XNameAccess;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XFootnote;
-import com.sun.star.text.XText;
-import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextRange;
 import com.sun.star.uno.UnoRuntime;
@@ -51,11 +39,8 @@ import org.slf4j.LoggerFactory;
 
 class CitationGroups {
 
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(CitationGroups.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CitationGroups.class);
 
-    // public final Compat.DataModel dataModel;
-    // private StorageBase.NamedRangeManager citationStorageManager;
     public final Backend52 backend;
 
     /**
@@ -63,13 +48,18 @@ class CitationGroups {
      */
     private Map<CitationGroupID, CitationGroup> citationGroups;
 
-    /**
+    /*
      *  Extra Data
      */
 
+    /**
+     * Provides order of appearance for the citation groups.
+     *
+     * Background: just getting the reference marks does not provide
+     *    this. Citation groups in footnotes, frames etc make getting
+     *    this order right tricky. {@see class RangeSortVisual}
+     */
     private Optional<List<CitationGroupID>> globalOrder;
-
-    private Optional<CitedKeys> citedKeysAfterDatabaseLookup;
 
     /**
      *  This is going to be the bibliography
@@ -92,7 +82,6 @@ class CitationGroups {
         // Get the citationGroupNames
         List<String> citationGroupNames = this.backend.getJabRefReferenceMarkNames(documentConnection);
 
-
         this.citationGroups = readCitationGroupsFromDocument(this.backend,
                                                              documentConnection,
                                                              citationGroupNames);
@@ -102,7 +91,6 @@ class CitationGroups {
         // But (I guess) those change too easily, so we only ask when actually needed.
 
         this.globalOrder = Optional.empty();
-        this.citedKeysAfterDatabaseLookup = Optional.empty();
         this.bibliography = Optional.empty();
     }
 
@@ -110,12 +98,10 @@ class CitationGroups {
         return backend.dataModel;
     }
 
-    public String healthReport(DocumentConnection documentConnection)
+    public Optional<String> healthReport(DocumentConnection documentConnection)
         throws
         NoDocumentException {
-        String r1 = backend.healthReport(documentConnection);
-        // add more?
-        return r1;
+        return backend.healthReport(documentConnection);
     }
 
     private static Map<CitationGroupID, CitationGroup>
@@ -156,9 +142,6 @@ class CitationGroups {
 
         cks.lookupInDatabases(databases);
         cks.distributeDatabaseLookupResults(cgs);
-        // record we did a database lookup
-        // and allow extracting unresolved keys.
-        this.citedKeysAfterDatabaseLookup = Optional.of(cks);
         return cks;
     }
 
@@ -244,39 +227,42 @@ class CitationGroups {
     public void createNumberedBibliographySortedInOrderOfAppearance() {
         CitationGroups cgs = this;
         if (!cgs.bibliography.isEmpty()) {
-            throw new RuntimeException(
-                "createNumberedBibliographySortedInOrderOfAppearance: already have a bibliography");
+            throw new RuntimeException("createNumberedBibliographySortedInOrderOfAppearance:"
+                                       + " already have a bibliography");
         }
-        CitedKeys sortedCitedKeys =
-            cgs.getCitedKeysSortedInOrderOfAppearance();
+        CitedKeys sortedCitedKeys = cgs.getCitedKeysSortedInOrderOfAppearance();
         sortedCitedKeys.numberCitedKeysInCurrentOrder();
         sortedCitedKeys.distributeNumbers(cgs);
         cgs.bibliography = Optional.of(sortedCitedKeys);
     }
 
-    public void createNumberedBibliographySortedByComparator(Comparator<BibEntry> entryComparator) {
-        CitationGroups cgs = this;
-        if (!cgs.bibliography.isEmpty()) {
-            throw new RuntimeException(
-                "createNumberedBibliographySortedByComparator: already have a bibliography");
-        }
-        CitedKeys citedKeys = cgs.getCitedKeys();
-        citedKeys.sortByComparator(entryComparator); // TODO: must be after database lookup
-        citedKeys.numberCitedKeysInCurrentOrder();
-        citedKeys.distributeNumbers(cgs);
-        this.bibliography = Optional.of(citedKeys);
-    }
-
+    /**
+     * precondition: database lookup already performed (otherwise we just sort citation keys)
+     */
     public void createPlainBibliographySortedByComparator(Comparator<BibEntry> entryComparator) {
         CitationGroups cgs = this;
         if (!this.bibliography.isEmpty()) {
-            throw new RuntimeException(
-                "createPlainBibliographySortedByComparator: already have a bibliography");
+            throw new RuntimeException("createPlainBibliographySortedByComparator:"
+                                       + " already have a bibliography");
         }
         CitedKeys citedKeys = cgs.getCitedKeys();
-        citedKeys.sortByComparator(entryComparator); // TODO: must be after database lookup
-        // citedKeys.numberCitedKeysInCurrentOrder();
-        // citedKeys.distributeNumbers();
+        citedKeys.sortByComparator(entryComparator);
+        this.bibliography = Optional.of(citedKeys);
+    }
+
+    /**
+     * precondition: database lookup already performed (otherwise we just sort citation keys)
+     */
+    public void createNumberedBibliographySortedByComparator(Comparator<BibEntry> entryComparator) {
+        CitationGroups cgs = this;
+        if (!cgs.bibliography.isEmpty()) {
+            throw new RuntimeException("createNumberedBibliographySortedByComparator:"
+                                       + " already have a bibliography");
+        }
+        CitedKeys citedKeys = cgs.getCitedKeys();
+        citedKeys.sortByComparator(entryComparator);
+        citedKeys.numberCitedKeysInCurrentOrder();
+        citedKeys.distributeNumbers(cgs);
         this.bibliography = Optional.of(citedKeys);
     }
 
@@ -316,15 +302,13 @@ class CitationGroups {
         NoDocumentException,
         WrappedTargetException {
 
-        List<CitationGroupID> cgids =
-            new ArrayList<>(cgs.getCitationGroupIDs());
+        List<CitationGroupID> cgids = new ArrayList<>(cgs.getCitationGroupIDs());
 
         List<RangeSort.RangeSortEntry> vses = new ArrayList<>();
         for (CitationGroupID cgid : cgids) {
-            XTextRange range = cgs.getMarkRangeOrNull(documentConnection, cgid);
-            if (range == null) {
-                throw new RuntimeException("getMarkRangeOrNull returned null");
-            }
+            XTextRange range = (cgs
+                                .getMarkRange(documentConnection, cgid)
+                                .orElseThrow(RuntimeException::new));
             vses.add(new RangeSort.RangeSortEntry(range, 0, cgid));
         }
 
@@ -372,12 +356,10 @@ class CitationGroups {
                     RangeSort.RangeSortEntry<CitationGroupID> v = avs.get(j);
                     v.indexInPosition = indexInPartition++;
                     if (mapFootnotesToFootnoteMarks) {
+                        Optional<XTextRange> fmr = DocumentConnection.getFootnoteMarkRange(v.getRange());
                         // Adjust range if we are inside a footnote:
-                        if (unoQI(XFootnote.class, v.range.getText()) != null) {
-                            // Find the linking footnote marker:
-                            XFootnote footer = unoQI(XFootnote.class, v.range.getText());
-                            // The footnote's anchor gives the correct position in the text:
-                            v.range = footer.getAnchor();
+                        if (fmr.isPresent()) {
+                            v.range = fmr.get();
                         }
                     }
                     res.add(v);
@@ -456,11 +438,10 @@ class CitationGroups {
         // This is like getVisuallySortedCitationGroupIDs,
         // but we skip the visualSort part.
         CitationGroups cgs = this;
-        // boolean mapFootnotesToFootnoteMarks = false;
         List<RangeSort.RangeSortable<CitationGroupID>> vses =
             CitationGroups.createVisualSortInput(cgs,
-                                                                    documentConnection,
-                                                                    mapFootnotesToFootnoteMarks);
+                                                 documentConnection,
+                                                 mapFootnotesToFootnoteMarks);
 
         if (vses.size() != cgs.citationGroups.size()) {
             throw new RuntimeException("getCitationGroupIDsSortedWithinPartitions:"
@@ -484,8 +465,8 @@ class CitationGroups {
     public void setGlobalOrder(List<CitationGroupID> globalOrder) {
         Objects.requireNonNull(globalOrder);
         if (globalOrder.size() != citationGroups.size()) {
-            throw new RuntimeException(
-                "setGlobalOrder: globalOrder.size() != citationGroups.size()");
+            throw new RuntimeException("setGlobalOrder:"
+                                       + " globalOrder.size() != citationGroups.size()");
         }
         this.globalOrder = Optional.of(globalOrder);
     }
@@ -538,7 +519,7 @@ class CitationGroups {
     }
 
     /**
-     *  Create a reference mark with the given name, at the
+     *  Create a citation group for the given citation keys, at the
      *  end of position.
      *
      *  To reduce the difference from the original representation, we
@@ -574,19 +555,21 @@ class CitationGroups {
      *  On return {@code position} is collapsed, and is after the
      *  inserted space, or at the end of the reference mark.
      *
-     *  @param documentConnection Connection to document.
-     *  @param position Collapsed to its end.
-     *  @param insertSpaceAfter We insert a space after the mark, that
-     *                          carries on format of characters from
-     *                          the original position.
+     * @param documentConnection Connection to document.
+     * @param citationKeys
+     * @param pageInfosForCitations
+     * @param itcType
+     * @param position Collapsed to its end.
+     * @param insertSpaceAfter If true, we insert a space after the mark, that
+     *                         carries on format of characters from
+     *                         the original position.
      *
-     *  @param withoutBrackets  Force empty reference mark (no brackets).
-     *                          For use with INVISIBLE_CIT.
+     * @param withoutBrackets  Force empty reference mark (no brackets).
+     *                         For use with INVISIBLE_CIT.
      *
      */
     public CitationGroupID createCitationGroup(DocumentConnection documentConnection,
                                                List<String> citationKeys,
-                                               //Optional<String> pageInfo,
                                                List<String> pageInfosForCitations,
                                                int itcType,
                                                XTextCursor position,
@@ -627,7 +610,7 @@ class CitationGroups {
         IllegalTypeException {
 
         for (CitationGroup cg : cgs) {
-            removeCitationGroup( cg, documentConnection );
+            removeCitationGroup(cg, documentConnection);
         }
     }
 
@@ -662,9 +645,7 @@ class CitationGroups {
 
         // Update what we can.
         this.globalOrder.map(l -> l.remove(cg.cgid));
-
-        // Invalidate what we cannot update: CitedKeys
-        this.citedKeysAfterDatabaseLookup = Optional.empty();
+        // Invalidate what we cannot
         this.bibliography = Optional.empty();
         // Could also: reset citation.number, citation.uniqueLetter.
     }
@@ -676,29 +657,32 @@ class CitationGroups {
      * @return Null if the reference mark is missing.
      *
      */
-    public XTextRange getMarkRangeOrNull(DocumentConnection documentConnection,
-                                         CitationGroupID cgid)
+    public Optional<XTextRange> getMarkRange(DocumentConnection documentConnection,
+                                             CitationGroupID cgid)
         throws
         NoDocumentException,
         WrappedTargetException {
 
         CitationGroup cg = this.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
-        return backend.getMarkRangeOrNull(cg, documentConnection);
+        return backend.getMarkRange(cg, documentConnection);
     }
 
     /**
      * Cursor for the reference marks as is, not prepared for filling,
      * but does not need cleanFillCursorForCitationGroup either.
      */
-    public XTextCursor getRawCursorForCitationGroup(CitationGroupID cgid,
-                                                    DocumentConnection documentConnection)
+    public Optional<XTextCursor> getRawCursorForCitationGroup(CitationGroupID cgid,
+                                                              DocumentConnection documentConnection)
         throws
         NoDocumentException,
         WrappedTargetException,
         CreationException {
 
-        CitationGroup cg = this.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
-        return backend.getRawCursorForCitationGroup(cg, documentConnection);
+        Optional<CitationGroup> cg = this.getCitationGroup(cgid);
+        if (cg.isEmpty()) {
+            return Optional.empty();
+        }
+        return backend.getRawCursorForCitationGroup(cg.get(), documentConnection);
     }
 
     public XTextCursor getFillCursorForCitationGroup(DocumentConnection documentConnection,
@@ -715,9 +699,6 @@ class CitationGroups {
     /**
      * Remove brackets, but if the result would become empty, leave
      * them; if the result would be a single characer, leave the left bracket.
-     *
-     * @param removeBracketsFromEmpty is intended to force removal if
-     *        we are working on an "Empty citation" (INVISIBLE_CIT).
      */
     public void cleanFillCursorForCitationGroup(DocumentConnection documentConnection,
                                                 CitationGroupID cgid)
@@ -727,7 +708,7 @@ class CitationGroups {
         CreationException {
 
         CitationGroup cg = this.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
-        backend.cleanFillCursorForCitationGroup(cg,documentConnection);
+        backend.cleanFillCursorForCitationGroup(cg, documentConnection);
     }
 
     /**
@@ -745,7 +726,7 @@ class CitationGroups {
         List<CitationGroupID> cgids = new ArrayList<>(this.getCitationGroupIDs());
 
         for (CitationGroupID cgid : cgids) {
-            XTextRange r = this.getMarkRangeOrNull(documentConnection, cgid);
+            XTextRange r = this.getMarkRange(documentConnection, cgid).orElseThrow(RuntimeException::new);
             CitationGroup cg = this.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
             String name = cg.cgRangeStorage.getName();
             xs.add(new RangeForOverlapCheck(r,
@@ -786,22 +767,20 @@ class CitationGroups {
         for (RangeForOverlapCheck base : citRanges) {
             XTextRange r = base.range;
 
-            XTextRange footnoteMarkRange =
-                DocumentConnection.getFootnoteMarkRangeOrNull(r);
+            Optional<XTextRange> footnoteMarkRange = DocumentConnection.getFootnoteMarkRange(r);
 
-            if (footnoteMarkRange == null) {
+            if (footnoteMarkRange.isEmpty()) {
                 // not in footnote
                 continue;
             }
 
-            boolean seenContains = seen.containsKey(footnoteMarkRange);
+            boolean seenContains = seen.containsKey(footnoteMarkRange.get());
             if (!seenContains) {
-                seen.put(footnoteMarkRange, true);
-                xs.add(new RangeForOverlapCheck(
-                           footnoteMarkRange,
-                           base.i, // cgid :: identifies of citation group
-                           RangeForOverlapCheck.FOOTNOTE_MARK_KIND,
-                           "FootnoteMark for " + base.description));
+                seen.put(footnoteMarkRange.get(), true);
+                xs.add(new RangeForOverlapCheck(footnoteMarkRange.get(),
+                                                base.i, // cgid :: identifies of citation group
+                                                RangeForOverlapCheck.FOOTNOTE_MARK_KIND,
+                                                "FootnoteMark for " + base.description));
             }
         }
         return xs;

@@ -222,8 +222,7 @@ public class OpenOfficePanel {
             } catch (JabRefException ex) {
                 dialogService.showErrorDialogAndWait(
                     Localization.lang("JabRefException"),
-                    ex.getLocalizedMessage()
-                    );
+                    ex.getLocalizedMessage());
             } catch (UndefinedCharacterFormatException ex) {
                 reportUndefinedCharacterFormat(ex);
             } catch (UndefinedParagraphFormatException ex) {
@@ -269,8 +268,7 @@ public class OpenOfficePanel {
             } catch (JabRefException ex) {
                 dialogService.showErrorDialogAndWait(
                     Localization.lang("JabRefException"),
-                    ex.getLocalizedMessage()
-                    );
+                    ex.getLocalizedMessage());
             } catch (UndefinedCharacterFormatException ex) {
                 reportUndefinedCharacterFormat(ex);
             } catch (NoDocumentException ex) {
@@ -299,8 +297,7 @@ public class OpenOfficePanel {
             } catch (JabRefException ex) {
                 dialogService.showErrorDialogAndWait(
                     Localization.lang("JabRefException"),
-                    ex.getLocalizedMessage()
-                    );
+                    ex.getLocalizedMessage());
             } catch (NoDocumentException ex) {
                 showNoDocumentErrorMessage();
             } catch (UndefinedCharacterFormatException ex) {
@@ -327,7 +324,7 @@ public class OpenOfficePanel {
         settingsB.setOnAction(e -> settingsMenu.show(settingsB, Side.BOTTOM, 0, 0));
         manageCitations.setMaxWidth(Double.MAX_VALUE);
         manageCitations.setOnAction(e -> {
-                if ( ooBase.documentConnectionMissing() ){
+                if (ooBase.documentConnectionMissing()) {
                     showNoDocumentErrorMessage();
                 } else {
                     dialogService.showCustomDialogAndWait(new ManageCitationsDialogView(ooBase));
@@ -373,21 +370,19 @@ public class OpenOfficePanel {
                 style.ensureUpToDate();
             }
 
-
             List<BibDatabase> databases = getBaseList();
-            if ( databases.isEmpty() ){
+            if (databases.isEmpty()) {
                 dialogService.showErrorDialogAndWait(
                     Localization.lang("No database is open"),
-                    Localization.lang("We need a database to export from. Open one.")
-                    );
+                    Localization.lang("We need a database to export from. Open one."));
                 return;
             }
 
-            OOBibBase.ExportCitedHelperResult r = ooBase.exportCitedHelper( databases, style );
-            if ( r.unresolvedKeys == null ){
+            OOBibBase.ExportCitedHelperResult r = ooBase.exportCitedHelper(databases, style);
+            if (r.unresolvedKeys == null) {
                 throw new RuntimeException("OpenOfficePanel.exportEntries: r.unresolvedKeys is null");
             }
-            if ( r.newDatabase == null ){
+            if (r.newDatabase == null) {
                 throw new RuntimeException("OpenOfficePanel.exportEntries: r.newDatabase is null");
             }
             if (!r.unresolvedKeys.isEmpty()) {
@@ -587,20 +582,18 @@ public class OpenOfficePanel {
                 Localization.lang(
                     "No bibliography database is open for citation.")
                 + "\n"
-                + Localization.lang("Open one before citing.")
-                );
+                + Localization.lang("Open one before citing."));
             return;
         }
 
         List<BibEntry> entries = libraryTab.getSelectedEntries();
-        if (entries.isEmpty()){
+        if (entries.isEmpty()) {
             dialogService.showErrorDialogAndWait(
                 Localization.lang("No entries selected for citation"),
                 Localization.lang(
                     "No bibliography entries are selected for citation.")
                 + "\n"
-                + Localization.lang("Select some before citing.")
-                );
+                + Localization.lang("Select some before citing."));
             return;
         }
 
@@ -612,9 +605,7 @@ public class OpenOfficePanel {
                     Localization.lang(
                         "No bibliography style is selected for citation.")
                     + "\n"
-                    + Localization.lang(
-                        "Select one before citing.")
-                    );
+                    + Localization.lang("Select one before citing."));
                 return;
             }
         }
@@ -636,16 +627,14 @@ public class OpenOfficePanel {
         if (!entries.isEmpty() && checkThatEntriesHaveKeys(entries)) {
 
                 try {
-                    ooBase.insertCitation(
-                        entries,
-                        database,
-                        getBaseList(),
-                        style,
-                        inParenthesis,
-                        withText,
-                        pageInfo,
-                        ooPrefs.getSyncWhenCiting()
-                        );
+                    ooBase.insertCitation(entries,
+                                          database,
+                                          getBaseList(),
+                                          style,
+                                          inParenthesis,
+                                          withText,
+                                          pageInfo,
+                                          ooPrefs.getSyncWhenCiting());
                 } catch (FileNotFoundException ex) {
 
                     dialogService.showErrorDialogAndWait(
@@ -664,8 +653,7 @@ public class OpenOfficePanel {
                 } catch (JabRefException ex) {
                     dialogService.showErrorDialogAndWait(
                         Localization.lang("JabRefException"),
-                        ex.getLocalizedMessage()
-                        );
+                        ex.getLocalizedMessage());
                 } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
                          CreationException | NoSuchElementException | WrappedTargetException | IOException |
                          BibEntryNotFoundException | IllegalTypeException | PropertyExistException |
@@ -750,9 +738,7 @@ public class OpenOfficePanel {
         dialogService.showErrorDialogAndWait(Localization.lang("Undefined character format"),
                                              Localization.lang("Your style file specifies the character format '%0', "
                                                                + "which is undefined in your current OpenOffice/LibreOffice document.",
-                                                               ex.getFormatName()) + "\n" + Localization.lang("The character format is controlled by the citation property 'CitationCharacterFormat' in the style file.")
-
-        );
+                                                               ex.getFormatName()) + "\n" + Localization.lang("The character format is controlled by the citation property 'CitationCharacterFormat' in the style file."));
     }
 
     private ContextMenu createSettingsPopup() {

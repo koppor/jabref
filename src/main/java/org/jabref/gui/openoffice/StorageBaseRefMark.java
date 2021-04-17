@@ -1,42 +1,16 @@
 package org.jabref.gui.openoffice;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-//import org.jabref.gui.openoffice.CitationSort;
-import org.jabref.logic.JabRefException;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.BibEntry;
-
-import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XNameAccess;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XFootnote;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextRange;
-import com.sun.star.uno.UnoRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 class StorageBaseRefMark implements StorageBase.NamedRange {
 
@@ -52,16 +26,17 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
     public static final String
     REFERENCE_MARK_RIGHT_BRACKET = REFERENCE_MARK_USE_INVISIBLE_BRACKETS ? ZERO_WIDTH_SPACE : ">";
 
-    private static final Logger LOGGER =
-        LoggerFactory.getLogger(StorageBaseRefMark.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StorageBaseRefMark.class);
 
     private String id; /* reference mark name */
 
-    private StorageBaseRefMark( String id ) {
+    private StorageBaseRefMark(String id) {
         this.id = id;
     }
 
-    String getId(){ return id; }
+    String getId() {
+        return id;
+    }
 
     /**
      *  Insert {@code n} spaces in a way that reference
@@ -126,10 +101,9 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                                    ? ""
                                    : left + right);
 
-        cursor.getText().insertString(
-            cursor,
-            bracketedContent,
-            true);
+        cursor.getText().insertString(cursor,
+                                      bracketedContent,
+                                      true);
 
         documentConnection.insertReferenceMark(refMarkName,
                                                cursor,
@@ -155,20 +129,19 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                              position,
                              insertSpaceAfter,
                              withoutBrackets);
-        return new StorageBaseRefMark( refMarkName );
+        return new StorageBaseRefMark(refMarkName);
     }
 
-    private static StorageBaseRefMark getFromDocumentOrNull(DocumentConnection documentConnection,
-                                                            String refMarkName)
+    /**
+     * @return Optional.empty if there is no corresponding range.
+     */
+    private static Optional<StorageBaseRefMark> getFromDocument(DocumentConnection documentConnection,
+                                                                String refMarkName)
         throws
         NoDocumentException,
         WrappedTargetException {
-        XTextRange r = documentConnection.getReferenceMarkRangeOrNull(refMarkName);
-        if (r == null) {
-            return null;
-        } else {
-            return new StorageBaseRefMark( refMarkName );
-        }
+        return (documentConnection.getReferenceMarkRange(refMarkName)
+                .map(e -> new StorageBaseRefMark(refMarkName)));
     }
 
     /*
@@ -185,24 +158,25 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         documentConnection.removeReferenceMark(this.getName());
     }
 
-
     @Override
-    public String getName(){ return id; }
+    public String getName() {
+        return id;
+    }
 
     /*
      * ranges controlled by citation groups should not overlap with each other.
      *
-     * @return Null if the reference mark is missing.
+     * @return Optional.empty if the reference mark is missing.
      *
-     * See: getReferenceMarkRangeOrNull
+     * See: getReferenceMarkRange
      */
     @Override
-    public XTextRange getMarkRangeOrNull(DocumentConnection documentConnection)
+    public Optional<XTextRange> getMarkRange(DocumentConnection documentConnection)
         throws
         NoDocumentException,
         WrappedTargetException {
         String name = this.getName();
-        return documentConnection.getReferenceMarkRangeOrNull(name);
+        return documentConnection.getReferenceMarkRange(name);
     }
 
     /**
@@ -210,12 +184,12 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
      * but does not need cleanFillCursorForCitationGroup either.
      *
      * @return null if reference mark is missing from the document,
-     *         otherwise an XTextCursor for getMarkRangeOrNull
+     *         otherwise an XTextCursor for getMarkRange
      *
      * See: getRawCursorForCitationGroup
      */
     @Override
-    public XTextCursor getRawCursor(DocumentConnection documentConnection)
+    public Optional<XTextCursor> getRawCursor(DocumentConnection documentConnection)
         throws
         NoDocumentException,
         WrappedTargetException,
@@ -224,21 +198,21 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         String name = this.getName();
         XTextCursor full = null;
 
-        XTextContent markAsTextContent =
-            documentConnection.getReferenceMarkAsTextContentOrNull(name);
+        Optional<XTextContent> markAsTextContent = (documentConnection
+                                                    .getReferenceMarkAsTextContent(name));
 
-        if (markAsTextContent == null) {
-            throw new RuntimeException(
-                String.format(
-                    "getRawCursor: markAsTextContent(%s) == null",
-                    name));
+        if (markAsTextContent.isEmpty()) {
+            String msg = String.format("getRawCursor: markAsTextContent(%s).isEmpty()", name);
+            LOGGER.warn(msg);
         }
 
-        full = DocumentConnection.getTextCursorOfTextContent(markAsTextContent);
+        full = DocumentConnection.getTextCursorOfTextContent(markAsTextContent.get());
         if (full == null) {
-            throw new RuntimeException("getRawCursor: full == null");
+            String msg = "getRawCursor: full == null";
+            LOGGER.warn(msg);
+            return Optional.empty();
         }
-        return full;
+        return Optional.ofNullable(full);
     }
 
     /**
@@ -263,20 +237,20 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         String fullText = null;
         for (int i = 1; i <= 2; i++) {
             XTextContent markAsTextContent =
-                documentConnection.getReferenceMarkAsTextContentOrNull(name);
+                documentConnection.getReferenceMarkAsTextContent(name).orElse(null);
 
             if (markAsTextContent == null) {
-                throw new RuntimeException(
-                    String.format("getFillCursor:"
-                                  + " markAsTextContent(%s) == null (attempt %d)",
-                                  name,
-                                  i));
+                String msg = String.format("getFillCursor:"
+                                           + " markAsTextContent(%s) == null (attempt %d)",
+                                           name,
+                                           i);
+                throw new RuntimeException(msg);
             }
 
             full = DocumentConnection.getTextCursorOfTextContent(markAsTextContent);
             if (full == null) {
-                throw new RuntimeException(
-                    String.format("getFillCursor: full == null (attempt %d)", i));
+                String msg = String.format("getFillCursor: full == null (attempt %d)", i);
+                throw new RuntimeException(msg);
             }
 
             fullText = full.getString();
@@ -290,10 +264,10 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
             } else {
                 // (fullText.length() < 2)
                 if (i == 2) {
-                    throw new RuntimeException(
-                        String.format("getFillCursor:"
-                                      + " (fullText.length() < 2) (attempt %d)",
-                                      i));
+                    String msg = String.format("getFillCursor:"
+                                               + " (fullText.length() < 2) (attempt %d)",
+                                               i);
+                    throw new RuntimeException(msg);
                 }
                 // too short, recreate
                 if (debugThisFun) {
@@ -303,17 +277,16 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                 try {
                     documentConnection.removeReferenceMark(name);
                 } catch (NoSuchElementException ex) {
-                    LOGGER.warn(
-                        String.format("getFillCursor got NoSuchElementException"
-                                      + " for '%s'",
-                                      name));
+                    String msg = String.format("getFillCursor got NoSuchElementException"
+                                               + " for '%s'",
+                                               name);
+                    LOGGER.warn(msg);
                 }
-                createReprInDocument(
-                    documentConnection,
-                    name,
-                    full,
-                    false, /* insertSpaceAfter */
-                    false  /* withoutBrackets */);
+                createReprInDocument(documentConnection,
+                                     name,
+                                     full,
+                                     false, /* insertSpaceAfter */
+                                     false  /* withoutBrackets */);
             }
         }
 
@@ -372,11 +345,9 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         final short leftLength = (short) left.length();
         final short rightLength = (short) right.length();
 
-        // CitationGroupsV001 cgs = this;
-        // String name = cgs.getReferenceMarkName(cgid).orElseThrow(RuntimeException::new);
         String name = this.getName();
 
-        XTextCursor full = this.getRawCursor(documentConnection);
+        XTextCursor full = this.getRawCursor(documentConnection).orElseThrow(RuntimeException::new);
         final String fullText = full.getString();
         final int fullTextLength = fullText.length();
 
@@ -391,24 +362,23 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         omega.collapseToEnd();
 
         if (!fullText.startsWith(left)) {
-            throw new RuntimeException(
-                String.format("cleanFillCursor:"
-                              + " (%s) does not start with REFERENCE_MARK_LEFT_BRACKET",
-                              name));
+            String msg = String.format("cleanFillCursor:"
+                                       + " (%s) does not start with REFERENCE_MARK_LEFT_BRACKET",
+                                       name);
+            throw new RuntimeException(msg);
         }
 
         if (!fullText.endsWith(right)) {
-            throw new RuntimeException(
-                String.format("cleanFillCursor:"
-                              + " (%s) does not end with REFERENCE_MARK_RIGHT_BRACKET",
-                              name));
+            String msg = String.format("cleanFillCursor:"
+                                       + " (%s) does not end with REFERENCE_MARK_RIGHT_BRACKET",
+                                       name);
+            throw new RuntimeException(msg);
         }
 
         final int contentLength = (fullTextLength - (leftLength + rightLength));
         if (contentLength < 0) {
-            throw new RuntimeException(
-                String.format("cleanFillCursor: length(%s) < 0",
-                              name));
+            String msg = String.format("cleanFillCursor: length(%s) < 0", name);
+            throw new RuntimeException(msg);
         }
 
         boolean removeRight = ((contentLength >= 1)
@@ -438,11 +408,11 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
 
     public static class Manager implements StorageBase.NamedRangeManager {
         @Override
-        public StorageBase.NamedRange create( DocumentConnection documentConnection,
-                                              String refMarkName,
-                                              XTextCursor position,
-                                              boolean insertSpaceAfter,
-                                              boolean withoutBrackets )
+        public StorageBase.NamedRange create(DocumentConnection documentConnection,
+                                             String refMarkName,
+                                             XTextCursor position,
+                                             boolean insertSpaceAfter,
+                                             boolean withoutBrackets)
             throws
             CreationException {
             return StorageBaseRefMark.create(documentConnection,
@@ -460,12 +430,14 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         }
 
         @Override
-        public StorageBase.NamedRange getFromDocumentOrNull(DocumentConnection documentConnection,
-                                                            String refMarkName)
+        public Optional<StorageBase.NamedRange> getFromDocument(DocumentConnection documentConnection,
+                                                                String refMarkName)
             throws
             NoDocumentException,
             WrappedTargetException {
-            return StorageBaseRefMark.getFromDocumentOrNull(documentConnection, refMarkName);
+            return (StorageBaseRefMark
+                    .getFromDocument(documentConnection, refMarkName)
+                    .map(x -> x));
         }
     }
 }

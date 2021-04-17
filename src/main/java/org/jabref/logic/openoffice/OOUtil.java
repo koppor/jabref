@@ -18,7 +18,6 @@ import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.ControlCharacter;
-import com.sun.star.text.XParagraphCursor;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.uno.UnoRuntime;
@@ -110,29 +109,19 @@ public class OOUtil {
     /**
      * Insert a text in OOFormattedText
      * (where character formatting is indicated by HTML-like tags), into
-     * an {@code XText} at the position given by an {@code XTextCursor}.
+     * at the position given by an {@code XTextCursor}.
      *
      * Process {@code ltext} in chunks between HTML-tags, while
      * updating current formatting state at HTML-tags.
      *
-     * // removed: Finally: {@code cursor.collapseToEnd()}
-     * Works with a copy of the cursor passed in.
-     *
-     * Note: Leaves setting the paragraph style to the caller.
-     *
-     * param text     The text to insert into. (taken from the cursor)
-     *
-     * @param cursor   The cursor giving the insert location.
+     * @param cursor   The cursor giving the insert location. Not modified.
      * @param lText    The marked-up text to insert.
-     * //param keepTheCursor If true, use a copy of the cursor, do not modify.
-     * //                     If false the cursor is collapsed at the end.
      * @throws WrappedTargetException
      * @throws PropertyVetoException
      * @throws UnknownPropertyException
      * @throws IllegalArgumentException
      */
-    public static void insertOOFormattedTextAtCurrentLocation(//XText text,
-                                                              XTextCursor cursor,
+    public static void insertOOFormattedTextAtCurrentLocation(XTextCursor cursor,
                                                               String lText)
         throws
         UnknownPropertyException,
@@ -140,11 +129,9 @@ public class OOUtil {
         WrappedTargetException,
         IllegalArgumentException {
 
-        // boolean keepTheCursor = true;
-        XText text =  cursor.getText();
+        XText text = cursor.getText();
         // copy the cursor
-        XTextCursor cursor3 = cursor.getText().createTextCursorByRange(cursor);
-        // XTextCursor cursor3 = keepTheCursor ? cursor2 : cursor ;
+        XTextCursor myCursor = cursor.getText().createTextCursorByRange(cursor);
 
         List<Formatting> formatting = new ArrayList<>();
         // We need to extract formatting. Use a simple regexp search iteration:
@@ -153,7 +140,7 @@ public class OOUtil {
         while (m.find()) {
             String currentSubstring = lText.substring(piv, m.start());
             if (!currentSubstring.isEmpty()) {
-                OOUtil.insertTextAtCurrentLocation(text, cursor3, currentSubstring, formatting);
+                OOUtil.insertTextAtCurrentLocation(text, myCursor, currentSubstring, formatting);
             }
             String tag = m.group();
             // Handle tags:
@@ -195,9 +182,8 @@ public class OOUtil {
         }
 
         if (piv < lText.length()) {
-            OOUtil.insertTextAtCurrentLocation(text, cursor3, lText.substring(piv), formatting);
+            OOUtil.insertTextAtCurrentLocation(text, myCursor, lText.substring(piv), formatting);
         }
-        // cursor3.collapseToEnd();
     }
 
     public static void insertParagraphBreak(XText text, XTextCursor cursor)
@@ -282,7 +268,7 @@ public class OOUtil {
             xCursorProps.setPropertyValue(CHAR_ESCAPEMENT, (short) -10);
             xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT, (byte) 58);
         } else if (formatting.contains(Formatting.SUPERSCRIPT)) {
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT,  (short) 33);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT, (short) 33);
             xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT, (byte) 58);
         } else {
             xCursorProps.setPropertyValue(CHAR_ESCAPEMENT, (short) 0);
@@ -305,8 +291,7 @@ public class OOUtil {
 
     public static Object getProperty(Object o, String property)
             throws UnknownPropertyException, WrappedTargetException {
-        XPropertySet props = UnoRuntime.queryInterface(
-                XPropertySet.class, o);
+        XPropertySet props = UnoRuntime.queryInterface(XPropertySet.class, o);
         return props.getPropertyValue(property);
     }
 }
