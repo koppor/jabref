@@ -77,7 +77,8 @@ class OOBibStyleTest {
     @Test
     void testGetNumCitationMarkerForInText() throws IOException {
         OOBibStyle style = new OOBibStyle(StyleLoader.DEFAULT_NUMERICAL_STYLE_PATH,
-                                          layoutFormatterPreferences);
+                layoutFormatterPreferences);
+
         List<String> empty = null;
 
         // Unfortunately these two are both "; " in
@@ -208,7 +209,8 @@ class OOBibStyleTest {
     @Test
     void testGetNumCitationMarkerUndefined() throws IOException {
         OOBibStyle style = new OOBibStyle(StyleLoader.DEFAULT_NUMERICAL_STYLE_PATH,
-                                          layoutFormatterPreferences);
+                layoutFormatterPreferences);
+
         List<String> empty = null;
 
         // unresolved citations look like [??]
