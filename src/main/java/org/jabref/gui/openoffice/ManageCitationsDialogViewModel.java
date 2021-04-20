@@ -29,12 +29,7 @@ public class ManageCitationsDialogViewModel {
     private final OOBibBase ooBase;
     private final DialogService dialogService;
 
-    public ManageCitationsDialogViewModel(OOBibBase ooBase,
-                                          DialogService dialogService)
-        throws NoSuchElementException,
-               WrappedTargetException,
-               UnknownPropertyException,
-               NoDocumentException {
+    public ManageCitationsDialogViewModel(OOBibBase ooBase, DialogService dialogService) throws NoSuchElementException, WrappedTargetException, UnknownPropertyException {
         this.ooBase = ooBase;
         this.dialogService = dialogService;
 
@@ -54,24 +49,14 @@ public class ManageCitationsDialogViewModel {
     }
 
     public void storeSettings() {
-
-        List<CitationEntry> citationEntries =
-            citations.stream()
-            .map(CitationEntryViewModel::toCitationEntry)
-            .collect(Collectors.toList());
-
+        List<CitationEntry> ciationEntries = citations.stream().map(CitationEntryViewModel::toCitationEntry).collect(Collectors.toList());
         try {
             ooBase.applyCitationEntries(citationEntries);
-        } catch (UnknownPropertyException
-                 | NotRemoveableException
-                 | PropertyExistException
-                 | IllegalTypeException
-                 | IllegalArgumentException
-                 | NoDocumentException ex
-                 ) {
-                LOGGER.warn("Problem modifying citation", ex);
-                dialogService.showErrorDialogAndWait(Localization.lang("Problem modifying citation"), ex);
-            }
+        } catch (UnknownPropertyException | NotRemoveableException | PropertyExistException | IllegalTypeException | NoDocumentException |
+                IllegalArgumentException ex) {
+            LOGGER.warn("Problem modifying citation", ex);
+            dialogService.showErrorDialogAndWait(Localization.lang("Problem modifying citation"), ex);
+        }
     }
 
     public ListProperty<CitationEntryViewModel> citationsProperty() {

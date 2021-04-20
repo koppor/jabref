@@ -56,25 +56,14 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
     }
 
     @FXML
-    private void initialize()
-            throws NoSuchElementException,
-            WrappedTargetException,
-            UnknownPropertyException,
-            NoDocumentException {
+    private void initialize() throws NoSuchElementException, WrappedTargetException, UnknownPropertyException {
 
         viewModel = new ManageCitationsDialogViewModel(ooBase, dialogService);
 
-        citation.setCellValueFactory(cellData ->
-                                     cellData.getValue()
-                                     .citationProperty());
+        citation.setCellValueFactory(cellData -> cellData.getValue().citationProperty());
+        new ValueTableCellFactory<CitationEntryViewModel, String>().withGraphic(this::getText).install(citation);
 
-        new ValueTableCellFactory<CitationEntryViewModel, String>()
-                .withGraphic(this::getText)
-                .install(citation);
-
-        extraInfo.setCellValueFactory(cellData ->
-                                      cellData.getValue()
-                                      .extraInformationProperty());
+        extraInfo.setCellValueFactory(cellData -> cellData.getValue().extraInformationProperty());
         extraInfo.setEditable(true);
 
         citationsTableView.setEditable(true);
