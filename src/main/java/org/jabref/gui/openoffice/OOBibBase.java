@@ -1146,7 +1146,7 @@ class OOBibBase {
     }
 
     /**
-     * In insertCitation we receive BibEntry values from the GUI.
+     * In insertEntry we receive BibEntry values from the GUI.
      *
      * In the document we store citations by their citation key.
      *
@@ -1154,10 +1154,10 @@ class OOBibBase {
      * the user. Or the programmer, that we cannot accept such input.
      *
      */
-    private static String insertCitationGetCitationKey(BibEntry entry) {
+    private static String insertEntryGetCitationKey(BibEntry entry) {
         Optional<String> key = entry.getCitationKey();
         if (key.isEmpty()) {
-            throw new RuntimeException("insertCitationGetCitationKey:"
+            throw new RuntimeException("insertEntryGetCitationKey:"
                                        + " cannot cite entries without citation key");
         }
         return key.get();
@@ -1219,14 +1219,14 @@ class OOBibBase {
      *
      *
      */
-    public void insertCitation(List<BibEntry> entries,
-                               BibDatabase database,
-                               List<BibDatabase> allBases,
-                               OOBibStyle style,
-                               boolean inParenthesis,
-                               boolean withText,
-                               String pageInfo,
-                               boolean sync)
+    public void insertEntry(List<BibEntry> entries,
+                            BibDatabase database,
+                            List<BibDatabase> allBases,
+                            OOBibStyle style,
+                            boolean inParenthesis,
+                            boolean withText,
+                            String pageInfo,
+                            boolean sync)
         throws
         JabRefException,
         IllegalArgumentException,
@@ -1291,7 +1291,7 @@ class OOBibBase {
 
             List<String> citationKeys =
                 entries.stream()
-                .map(OOBibBase::insertCitationGetCitationKey)
+                .map(OOBibBase::insertEntryGetCitationKey)
                 .collect(Collectors.toList());
 
             int itcType = citationTypeFromOptions(withText, inParenthesis);
