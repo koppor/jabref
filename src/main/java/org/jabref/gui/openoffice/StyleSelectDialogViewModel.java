@@ -77,11 +77,9 @@ public class StyleSelectDialogViewModel {
                                                                    parseLog.formatShort());
                     }
                 } else {
-                    String title = Localization.lang("Invalid style selected");
-                    String msg = (Localization.lang("You must select a valid style file.")
+                dialogService.showErrorDialogAndWait(Localization.lang("Invalid style selected"), Localization.lang("You must select a valid style file.")
                                   + "\n"
                                   + parseLog.formatShort());
-                    dialogService.showErrorDialogAndWait(title, msg);
                 }
             });
     }
