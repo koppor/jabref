@@ -25,7 +25,7 @@ public class ManageCitationsDialogViewModel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManageCitationsDialogViewModel.class);
 
-    private final ListProperty<ManageCitationsEntryViewModel> citations = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<CitationEntryViewModel> citations = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final OOBibBase ooBase;
     private final DialogService dialogService;
 
@@ -41,7 +41,7 @@ public class ManageCitationsDialogViewModel {
         try {
             List<CitationEntry> cts = ooBase.getCitationEntries();
             for (CitationEntry entry : cts) {
-                ManageCitationsEntryViewModel itemViewModelEntry = new ManageCitationsEntryViewModel(entry);
+                CitationEntryViewModel itemViewModelEntry = new CitationEntryViewModel(entry);
                 citations.add(itemViewModelEntry);
             }
         } catch (UnknownPropertyException
@@ -57,7 +57,7 @@ public class ManageCitationsDialogViewModel {
 
         List<CitationEntry> citationEntries =
             citations.stream()
-            .map(ManageCitationsEntryViewModel::toCitationEntry)
+            .map(CitationEntryViewModel::toCitationEntry)
             .collect(Collectors.toList());
 
         try {
@@ -74,7 +74,7 @@ public class ManageCitationsDialogViewModel {
             }
     }
 
-    public ListProperty<ManageCitationsEntryViewModel> citationsProperty() {
+    public ListProperty<CitationEntryViewModel> citationsProperty() {
         return citations;
     }
 }

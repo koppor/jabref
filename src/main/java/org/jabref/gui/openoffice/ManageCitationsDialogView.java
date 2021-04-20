@@ -30,9 +30,9 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
 
     private final OOBibBase ooBase;
 
-    @FXML private TableView<ManageCitationsEntryViewModel> citationsTableView;
-    @FXML private TableColumn<ManageCitationsEntryViewModel, String> citation;
-    @FXML private TableColumn<ManageCitationsEntryViewModel, String> extraInfo;
+    @FXML private TableView<CitationEntryViewModel> citationsTableView;
+    @FXML private TableColumn<CitationEntryViewModel, String> citation;
+    @FXML private TableColumn<CitationEntryViewModel, String> extraInfo;
 
     @Inject private DialogService dialogService;
 
@@ -68,7 +68,7 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
                                      cellData.getValue()
                                      .citationProperty());
 
-        new ValueTableCellFactory<ManageCitationsEntryViewModel, String>()
+        new ValueTableCellFactory<CitationEntryViewModel, String>()
                 .withGraphic(this::getText)
                 .install(citation);
 
@@ -81,7 +81,7 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
 
         citationsTableView.itemsProperty().bindBidirectional(viewModel.citationsProperty());
 
-        extraInfo.setOnEditCommit((CellEditEvent<ManageCitationsEntryViewModel, String> cell) -> {
+        extraInfo.setOnEditCommit((CellEditEvent<CitationEntryViewModel, String> cell) -> {
             cell.getRowValue().setExtraInfo(cell.getNewValue());
         });
         extraInfo.setCellFactory(TextFieldTableCell.forTableColumn());

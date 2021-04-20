@@ -5,19 +5,19 @@ import javafx.beans.property.StringProperty;
 
 import org.jabref.logic.openoffice.CitationEntry;
 
-public class ManageCitationsEntryViewModel {
+public class CitationEntryViewModel {
 
     private final StringProperty citation = new SimpleStringProperty("");
     private final StringProperty extraInformation = new SimpleStringProperty("");
     private final String refMarkName;
 
-    public ManageCitationsEntryViewModel(String refMarkName, String citation, String extraInfo) {
+    public CitationEntryViewModel(String refMarkName, String citation, String extraInfo) {
         this.refMarkName = refMarkName;
         this.citation.setValue(citation);
         this.extraInformation.setValue(extraInfo);
     }
 
-    public ManageCitationsEntryViewModel(CitationEntry citationEntry) {
+    public CitationEntryViewModel(CitationEntry citationEntry) {
         this(citationEntry.getRefMarkName(), citationEntry.getContext(), citationEntry.getPageInfo().orElse(""));
     }
 
