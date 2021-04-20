@@ -250,6 +250,7 @@ public class OpenOfficePanel {
             } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
                      CreationException | NoSuchElementException | WrappedTargetException | IOException |
                      NotRemoveableException | IllegalTypeException | InvalidStateException |
+                     PropertyExistException |
                      BibEntryNotFoundException ex) {
                 LOGGER.warn("Problem combining cite markers", ex);
             }

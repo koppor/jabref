@@ -49,7 +49,7 @@ public class ManageCitationsDialogViewModel {
     }
 
     public void storeSettings() {
-        List<CitationEntry> ciationEntries = citations.stream().map(CitationEntryViewModel::toCitationEntry).collect(Collectors.toList());
+        List<CitationEntry> citationEntries = citations.stream().map(CitationEntryViewModel::toCitationEntry).collect(Collectors.toList());
         try {
             ooBase.applyCitationEntries(citationEntries);
         } catch (UnknownPropertyException | NotRemoveableException | PropertyExistException | IllegalTypeException | NoDocumentException |
