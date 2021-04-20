@@ -427,13 +427,18 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      * @return true if the file could be parsed as a style file, false otherwise.
      */
     public boolean isValid() {
-        return valid;
+        return valid && !getParseLog().hasError();
     }
 
     /**
      * May return null.
      */
     public OOBibStyleParser.ParseLog getParseLog() {
+        if (parseLog == null) {
+            parseLog = new OOBibStyleParser.ParseLog();
+            parseLog.error(filename, 0,
+                           "OOBibStyle: no parseLog");
+        }
         return parseLog;
     }
 
