@@ -58,10 +58,11 @@ public class StyleLoader {
      */
     public OOBibStyleParser.ParseLog addStyleIfValid(String filename) {
         Objects.requireNonNull(filename);
+        OOBibStyleParser.ParseLog parseLog;
         try {
             OOBibStyle newStyle = new OOBibStyle(new File(filename), layoutFormatterPreferences, encoding);
 
-            OOBibStyleParser.ParseLog parseLog = newStyle.getParseLog();
+            parseLog = newStyle.getParseLog();
 
             if (externalStyles.contains(newStyle)) {
                 LOGGER.info("External style file " + filename + " already existing.");
@@ -81,11 +82,11 @@ public class StyleLoader {
             // The file couldn't be found... should we tell anyone?
             String msg = "Cannot find external style file " + filename;
             LOGGER.info(msg, e);
-            OOBibStyleParser.ParseLog parseLog = new OOBibStyleParser.ParseLog();
+            parseLog = new OOBibStyleParser.ParseLog();
             parseLog.error(filename, 0, msg);
         } catch (IOException e) {
             LOGGER.info("Problem reading external style file " + filename, e);
-            OOBibStyleParser.ParseLog parseLog = new OOBibStyleParser.ParseLog();
+            parseLog = new OOBibStyleParser.ParseLog();
             String msg = "Problem (IOException) reading external style file " + filename;
             parseLog.error(filename, 0, msg);
         }
