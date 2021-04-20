@@ -78,12 +78,9 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
 
     private Node getText(String citationContext) {
 
-        String inBetween = StringUtil.substringBetween(citationContext,
-                                                       HTML_BOLD_START_TAG,
-                                                       HTML_BOLD_END_TAG);
+        String inBetween = StringUtil.substringBetween(citationContext, HTML_BOLD_START_TAG, HTML_BOLD_END_TAG);
         String start = citationContext.substring(0, citationContext.indexOf(HTML_BOLD_START_TAG));
-        String end = citationContext.substring(citationContext.lastIndexOf(HTML_BOLD_END_TAG)
-                                               + HTML_BOLD_END_TAG.length());
+        String end = citationContext.substring(citationContext.lastIndexOf(HTML_BOLD_END_TAG) + HTML_BOLD_END_TAG.length());
 
         Text startText = new Text(start);
         Text inBetweenText = new Text(inBetween);
