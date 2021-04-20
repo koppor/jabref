@@ -49,10 +49,11 @@ public class ManageCitationsDialogViewModel {
     }
 
     public void storeSettings() {
-        List<CitationEntry> citationEntries = citations.stream().map(CitationEntryViewModel::toCitationEntry).collect(Collectors.toList());
+        List<CitationEntry> ciationEntries = citations.stream().map(CitationEntryViewModel::toCitationEntry).collect(Collectors.toList());
         try {
-            ooBase.applyCitationEntries(citationEntries);
-        } catch (UnknownPropertyException | NotRemoveableException | PropertyExistException | IllegalTypeException | NoDocumentException |
+            ooBase.applyCitationEntries(ciationEntries);
+        } catch (UnknownPropertyException | NotRemoveableException | PropertyExistException | IllegalTypeException |
+                 NoDocumentException |
                 IllegalArgumentException ex) {
             LOGGER.warn("Problem modifying citation", ex);
             dialogService.showErrorDialogAndWait(Localization.lang("Problem modifying citation"), ex);
