@@ -59,13 +59,6 @@ public class OOUtil {
     /**
      * Format the reference part of a bibliography entry using a Layout.
      *
-     * The label (if any) and paragraph style are not added here.
-     *
-     * param parStyle   The name of the paragraph style to use.
-     *
-     *                  Not used here, for now we leave application of
-     *                  the paragraph style to the caller.
-     *
      * @param layout     The Layout to format the reference with.
      * @param entry      The entry to insert.
      * @param database   The database the entry belongs to.
@@ -76,13 +69,7 @@ public class OOUtil {
     public static String formatFullReference(Layout layout,
                                              BibEntry entry,
                                              BibDatabase database,
-                                             String uniquefier)
-        throws
-    // TODO: are any of these thrown?
-        UnknownPropertyException,
-        PropertyVetoException,
-        WrappedTargetException,
-        IllegalArgumentException {
+                                             String uniquefier) {
 
         // Backup the value of the uniq field, just in case the entry already has it:
         Optional<String> oldUniqVal = entry.getField(UNIQUEFIER_FIELD);
@@ -103,25 +90,21 @@ public class OOUtil {
         } else {
             entry.clearField(UNIQUEFIER_FIELD);
         }
+
         return formattedText;
     }
 
     /**
-     * Insert a text in OOFormattedText
-     * (where character formatting is indicated by HTML-like tags), into
-     * at the position given by an {@code XTextCursor}.
+     * Insert a text with formatting indicated by HTML-like tags, into a text at the position given by a cursor.
      *
-     * Process {@code ltext} in chunks between HTML-tags, while
-     * updating current formatting state at HTML-tags.
-     *
-     * @param cursor   The cursor giving the insert location. Not modified.
+     * @param position   The cursor giving the insert location. Not modified.
      * @param lText    The marked-up text to insert.
      * @throws WrappedTargetException
      * @throws PropertyVetoException
      * @throws UnknownPropertyException
      * @throws IllegalArgumentException
      */
-    public static void insertOOFormattedTextAtCurrentLocation(XTextCursor cursor,
+    public static void insertOOFormattedTextAtCurrentLocation(XTextCursor position,
                                                               String lText)
         throws
         UnknownPropertyException,
@@ -129,9 +112,8 @@ public class OOUtil {
         WrappedTargetException,
         IllegalArgumentException {
 
-        XText text = cursor.getText();
-        // copy the cursor
-        XTextCursor myCursor = cursor.getText().createTextCursorByRange(cursor);
+        XText text = position.getText();
+        XTextCursor cursor = text.createTextCursorByRange(position);
 
         List<Formatting> formatting = new ArrayList<>();
         // We need to extract formatting. Use a simple regexp search iteration:
@@ -140,7 +122,7 @@ public class OOUtil {
         while (m.find()) {
             String currentSubstring = lText.substring(piv, m.start());
             if (!currentSubstring.isEmpty()) {
-                OOUtil.insertTextAtCurrentLocation(text, myCursor, currentSubstring, formatting);
+                OOUtil.insertTextAtCurrentLocation(text, cursor, currentSubstring, formatting);
             }
             String tag = m.group();
             // Handle tags:
@@ -182,39 +164,25 @@ public class OOUtil {
         }
 
         if (piv < lText.length()) {
-            OOUtil.insertTextAtCurrentLocation(text, myCursor, lText.substring(piv), formatting);
+            OOUtil.insertTextAtCurrentLocation(text, cursor, lText.substring(piv), formatting);
         }
+
     }
 
-    public static void insertParagraphBreak(XText text, XTextCursor cursor)
-        throws
-        IllegalArgumentException {
+    public static void insertParagraphBreak(XText text, XTextCursor cursor) throws IllegalArgumentException {
         text.insertControlCharacter(cursor, ControlCharacter.PARAGRAPH_BREAK, true);
         cursor.collapseToEnd();
     }
 
-    /**
-     * Set cursor range content to {@code string}, apply {@code
-     * formatting} to it, {@code cursor.collapseToEnd()}.
-     *
-     * Insert {@code string} into {@code text} at {@code cursor}, while removing the content
-     * of the cursor's range. The cursor's content is {@code string} now.
-     *
-     * Apply character direct formatting from {@code formatting}.
-     * Features not in {@code formatting} are removed by setting to NONE.
-     *
-     * Finally: {@code cursor.collapseToEnd();}
-     */
     public static void insertTextAtCurrentLocation(XText text, XTextCursor cursor, String string,
                                                    List<Formatting> formatting)
             throws UnknownPropertyException, PropertyVetoException, WrappedTargetException,
             IllegalArgumentException {
-
         text.insertString(cursor, string, true);
         // Access the property set of the cursor, and set the currently selected text
         // (which is the string we just inserted) to be bold
-        XPropertySet xCursorProps = UnoRuntime.queryInterface(XPropertySet.class, cursor);
-
+        XPropertySet xCursorProps = UnoRuntime.queryInterface(
+                XPropertySet.class, cursor);
         if (formatting.contains(Formatting.BOLD)) {
             xCursorProps.setPropertyValue(CHAR_WEIGHT,
                     com.sun.star.awt.FontWeight.BOLD);
@@ -249,30 +217,21 @@ public class OOUtil {
             xCursorProps.setPropertyValue("CharFontPitch",
                             com.sun.star.awt.FontPitch.VARIABLE);
         } */
-
-        /*
-         * short CharEscapement.
-         * specifies the percentage by which to raise/lower superscript/subscript characters.
-         * Negative values denote subscripts and positive values superscripts.
-         *
-         * byte CharEscapementHeight
-         * This is the relative height used for subscript or superscript characters in units of percent.
-         * The value 100 denotes the original height of the characters.
-         *
-         * From LibreOffice:
-         *     SuperScript: 33 and 58
-         *     SubScript:   10 and 58
-         *
-         */
         if (formatting.contains(Formatting.SUBSCRIPT)) {
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT, (short) -10);
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT, (byte) 58);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT,
+                                          (short) -10);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT,
+                    (byte) 58);
         } else if (formatting.contains(Formatting.SUPERSCRIPT)) {
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT, (short) 33);
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT, (byte) 58);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT,
+                                          (short) 33);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT,
+                    (byte) 58);
         } else {
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT, (short) 0);
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT, (byte) 100);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT,
+                    (byte) 0);
+            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT,
+                    (byte) 100);
         }
 
         if (formatting.contains(Formatting.UNDERLINE)) {
@@ -291,7 +250,8 @@ public class OOUtil {
 
     public static Object getProperty(Object o, String property)
             throws UnknownPropertyException, WrappedTargetException {
-        XPropertySet props = UnoRuntime.queryInterface(XPropertySet.class, o);
+        XPropertySet props = UnoRuntime.queryInterface(
+                XPropertySet.class, o);
         return props.getPropertyValue(property);
     }
 }
