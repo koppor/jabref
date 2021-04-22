@@ -209,7 +209,7 @@ public class OOBibStyleParser {
 
         Map<String, PropertyType> res = new HashMap<String, PropertyType>();
         res.put("MultiCiteChronological", PropertyType.BOOL);
-        res.put("BibTeXKeyCitations", PropertyType.BOOL); // BIBTEX_KEY_CITATIONS
+        res.put("BibTeXKeyCitations", PropertyType.BOOL);
 
         res.put("BracketBefore", PropertyType.STRING);
         res.put("BracketAfter", PropertyType.STRING);
@@ -448,7 +448,7 @@ public class OOBibStyleParser {
         }
 
         // Store a local copy for viewing
-        style.localCopy = sb.toString();
+        style.setLocalCopy(sb.toString());
 
         // Add EOL and a fake an empty line at the end. In case
         // IN_LAYOUT_SECTION_MULTILINE is terminated by EOF,
@@ -508,7 +508,7 @@ public class OOBibStyleParser {
                     return logger;
                 } else {
                     // ok
-                    style.obsName = trimmedLine;
+                    style.setName(trimmedLine);
                     mode = BibStyleMode.BEFORE_JOURNALS_SECTION;
                     continue;
                 }
@@ -522,7 +522,7 @@ public class OOBibStyleParser {
                     String msg = String.format("Expected \"%s\", got \"%s\"", JOURNALS_MARK, line);
                     if (patient) {
                         logger.warn(fileName, lineNumber, msg);
-                        style.obsName = trimmedLine; // mimic old behaviour
+                        style.setName(trimmedLine); // mimic old behaviour
                         continue;
                     } else {
                         logger.error(fileName, lineNumber,
@@ -545,7 +545,7 @@ public class OOBibStyleParser {
                         return logger;
                     }
                 } else {
-                    style.journals.add(trimmedLine);
+                    style.addJournal(trimmedLine);
                     continue;
                 }
 
@@ -566,7 +566,7 @@ public class OOBibStyleParser {
                     ParseLogLevel res = handlePropertiesLine(trimmedLine,
                                                              fileName,
                                                              lineNumber,
-                                                             style.obsProperties,
+                                                             style.getProperties(),
                                                              PROPERTY_WARNINGS,
                                                              KNOWN_PROPERTIES,
                                                              logger,
@@ -595,7 +595,7 @@ public class OOBibStyleParser {
                     ParseLogLevel res = handlePropertiesLine(trimmedLine,
                                                              fileName,
                                                              lineNumber,
-                                                             style.obsCitProperties,
+                                                             style.getCitProperties(),
                                                              CITATION_PROPERTY_WARNINGS,
                                                              KNOWN_CITATION_PROPERTIES,
                                                              logger,
@@ -671,11 +671,11 @@ public class OOBibStyleParser {
             logger.error(fileName, lineNumber, "Did not reach LAYOUT section at EOF");
             return logger;
         }
-        if (!style.isDefaultLayoutPresent) {
+        if (!style.getIsDefaultLayoutPresent()) {
             logger.error(fileName, lineNumber, "File did not provide a \"default\" layout.");
             return logger;
         }
-        style.valid = true;
+        style.setValid(!logger.hasError());
         return logger;
     }
 
@@ -821,7 +821,7 @@ public class OOBibStyleParser {
         StringReader reader = new StringReader(formatString);
         Layout layout;
         try {
-            layout = new LayoutHelper(reader, style.prefs).getLayoutFromText();
+            layout = new LayoutHelper(reader, style.getPrefs()).getLayoutFromText();
         } catch (IOException ex) {
             // LOGGER.warn("Cannot parse bibliography structure", ex);
             String msg = String.format("Cannot parse bibliography structure. %s", ex.getMessage());
@@ -835,11 +835,11 @@ public class OOBibStyleParser {
          * Note: Adding the second DEFAULT_MARK to bibLayout may be unintended.
          *
          */
-        if (!style.isDefaultLayoutPresent && name.equals(DEFAULT_MARK)) {
-            style.isDefaultLayoutPresent = true;
-            style.defaultBibLayout = layout;
+        if (!style.getIsDefaultLayoutPresent() && name.equals(DEFAULT_MARK)) {
+            style.setIsDefaultLayoutPresent(true);
+            style.setDefaultBibLayout(layout);
         } else {
-            style.bibLayout.put(type, layout);
+            style.getBibLayout().put(type, layout);
         }
         return ParseLogLevel.OK;
     }

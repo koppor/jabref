@@ -276,7 +276,7 @@ class OOBibStyleGetCitationMarker {
         }
 
         FieldAndContent fc = optionalFieldAndContent.get();
-        String result = style.fieldFormatter.format(fc.content);
+        String result = style.getFieldFormatter().format(fc.content);
 
         // If the field we found is mentioned in authorFieldNames and
         // content has a pair of braces around it, we add a pair of

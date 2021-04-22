@@ -43,10 +43,10 @@ class OOBibStyleGetNumCitationMarker {
     /**
      * See {@see getNumCitationMarkerCommon} for details.
      */
-    public static String getNumCitationMarkerForInText(OOBibStyle style,
-                                                       List<Integer> numbers,
-                                                       int minGroupingCount,
-                                                       List<String> pageInfosForCitations) {
+    public static String getNumCitationMarker(OOBibStyle style,
+                                              List<Integer> numbers,
+                                              int minGroupingCount,
+                                              List<String> pageInfosForCitations) {
         return getNumCitationMarkerCommon(style,
                                           numbers,
                                           minGroupingCount,
@@ -80,7 +80,7 @@ class OOBibStyleGetNumCitationMarker {
      * Format a number-based citation marker for the given number or numbers.
      *
      * This is the common implementation behind
-     * getNumCitationMarkerForInText and
+     * getNumCitationMarker and
      * getNumCitationMarkerForBibliography. The latter could be easily
      * separated unless there is (or going to be) a need for handling
      * multiple numbers or page info by getNumCitationMarkerForBibliography.
