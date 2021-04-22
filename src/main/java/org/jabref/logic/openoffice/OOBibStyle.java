@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -18,14 +19,20 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import org.jabref.logic.layout.Layout;
 import org.jabref.logic.layout.LayoutFormatter;
 import org.jabref.logic.layout.LayoutFormatterPreferences;
+import org.jabref.logic.layout.LayoutHelper;
 import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
+import org.jabref.model.entry.types.EntryTypeFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class embodies a bibliography formatting for OpenOffice, which is composed
@@ -54,6 +61,13 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
 
     public static final String TITLE = "Title";
     public static final String UNDEFINED_CITATION_MARKER = "??";
+    private static final Pattern NUM_PATTERN = Pattern.compile("-?\\d+");
+    private static final String LAYOUT_MRK = "LAYOUT";
+    private static final String PROPERTIES_MARK = "PROPERTIES";
+    private static final String CITATION_MARK = "CITATION";
+    private static final String NAME_MARK = "NAME";
+    private static final String JOURNALS_MARK = "JOURNALS";
+    private static final String DEFAULT_MARK = "default";
     private static final String BRACKET_AFTER_IN_LIST = "BracketAfterInList";
     private static final String BRACKET_BEFORE_IN_LIST = "BracketBeforeInList";
     private static final String UNIQUEFIER_SEPARATOR = "UniquefierSeparator";
@@ -99,14 +113,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
 
     private static final String AUTHOR_SEPARATOR = "AuthorSeparator";
 
+    private static final Pattern QUOTED = Pattern.compile("\".*\"");
 
-    /** Messages from the parser.
-     *
-     *  Since we are parsing by calling the constructor, there is no way to
-     *  return it to the caller there.
-     */
-    OOBibStyleParser.ParseLog parseLog;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OOBibStyle.class);
     private final SortedSet<String> journals = new TreeSet<>();
     // Formatter to be run on fields before they are used as part of citation marker:
     private final LayoutFormatter fieldFormatter = new OOPreFormatter();
@@ -142,7 +151,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         Objects.requireNonNull(resourcePath);
         this.encoding = StandardCharsets.UTF_8;
         setDefaultProperties();
-        initialize(OOBibStyle.class.getResourceAsStream(resourcePath), resourcePath);
+        initialize(OOBibStyle.class.getResourceAsStream(resourcePath));
         fromResource = true;
         path = resourcePath;
     }
@@ -220,24 +229,11 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         return Collections.unmodifiableSet(journals);
     }
 
-    private void initialize(InputStream stream, String filename) throws IOException {
+    private void initialize(InputStream stream) throws IOException {
         Objects.requireNonNull(stream);
 
-        // remove data from a previous parse
-        localCopy = null;
-        name = "";
-        journals.clear();
-        properties.clear();
-        citProperties.clear();
-        bibLayout.clear();
-        setDefaultBibLayout(null);
-        setIsDefaultLayoutPresent(false);
-        setValid(false);
-        setDefaultProperties();
-        this.parseLog = null;
-
         try (Reader reader = new InputStreamReader(stream, encoding)) {
-            this.parseLog = OOBibStyleParser.readFormatFile(reader, this, filename);
+            readFormatFile(reader);
         }
     }
 
@@ -263,7 +259,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         if (styleFile != null) {
             this.styleFileModificationTime = styleFile.lastModified();
             try (InputStream stream = new FileInputStream(styleFile)) {
-                initialize(stream, styleFile.getAbsolutePath());
+                initialize(stream);
             }
         }
     }
@@ -282,6 +278,81 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         }
     }
 
+    private void readFormatFile(Reader in) throws IOException {
+
+        // First read all the contents of the file:
+        StringBuilder sb = new StringBuilder();
+        int c;
+        while ((c = in.read()) != -1) {
+            sb.append((char) c);
+        }
+
+        // Store a local copy for viewing
+        localCopy = sb.toString();
+
+        // Break into separate lines:
+        String[] lines = sb.toString().split("\n");
+        BibStyleMode mode = BibStyleMode.NONE;
+
+        for (String line1 : lines) {
+            String line = line1;
+            if (!line.isEmpty() && (line.charAt(line.length() - 1) == '\r')) {
+                line = line.substring(0, line.length() - 1);
+            }
+            // Check for empty line or comment:
+            if (line.trim().isEmpty() || (line.charAt(0) == '#')) {
+                continue;
+            }
+            // Check if we should change mode:
+            switch (line) {
+                case NAME_MARK:
+                    mode = BibStyleMode.NAME;
+                    continue;
+                case LAYOUT_MRK:
+                    mode = BibStyleMode.LAYOUT;
+                    continue;
+                case PROPERTIES_MARK:
+                    mode = BibStyleMode.PROPERTIES;
+                    continue;
+                case CITATION_MARK:
+                    mode = BibStyleMode.CITATION;
+                    continue;
+                case JOURNALS_MARK:
+                    mode = BibStyleMode.JOURNALS;
+                    continue;
+                default:
+                    break;
+            }
+
+            switch (mode) {
+                case NAME:
+                    if (!line.trim().isEmpty()) {
+                        name = line.trim();
+                    }
+                    break;
+                case LAYOUT:
+                    handleStructureLine(line);
+                    break;
+                case PROPERTIES:
+                    handlePropertiesLine(line, properties);
+                    break;
+                case CITATION:
+                    handlePropertiesLine(line, citProperties);
+                    break;
+                case JOURNALS:
+                    handleJournalsLine(line);
+                    break;
+                default:
+                    break;
+            }
+        }
+        // Set validity boolean based on whether we found anything interesting
+        // in the file:
+        if ((mode != BibStyleMode.NONE) && isDefaultLayoutPresent) {
+            valid = true;
+        }
+    }
+
     /**
      * After initializing this style from a file, this method can be used to check
      * whether the file appeared to be a proper style file.
@@ -290,6 +361,66 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      */
     public boolean isValid() {
         return valid;
+    }
+
+    /**
+     * Parse a line providing bibliography structure information for an entry type.
+     *
+     * @param line The string containing the structure description.
+     */
+    private void handleStructureLine(String line) {
+        int index = line.indexOf('=');
+        if ((index > 0) && (index < (line.length() - 1))) {
+
+            try {
+                String formatString = line.substring(index + 1);
+                Layout layout = new LayoutHelper(new StringReader(formatString), this.prefs).getLayoutFromText();
+                EntryType type = EntryTypeFactory.parse(line.substring(0, index));
+
+                if (!isDefaultLayoutPresent && line.substring(0, index).equals(OOBibStyle.DEFAULT_MARK)) {
+                    isDefaultLayoutPresent = true;
+                    defaultBibLayout = layout;
+                } else {
+                    bibLayout.put(type, layout);
+                }
+            } catch (IOException ex) {
+                LOGGER.warn("Cannot parse bibliography structure", ex);
+            }
+        }
+    }
+
+    /**
+     * Parse a line providing a property name and value.
+     *
+     * @param line The line containing the formatter names.
+     */
+    private void handlePropertiesLine(String line, Map<String, Object> map) {
+        int index = line.indexOf('=');
+        if ((index > 0) && (index <= (line.length() - 1))) {
+            String propertyName = line.substring(0, index).trim();
+            String value = line.substring(index + 1);
+            if ((value.trim().length() > 1) && QUOTED.matcher(value.trim()).matches()) {
+                value = value.trim().substring(1, value.trim().length() - 1);
+            }
+            Object toSet = value;
+            if (NUM_PATTERN.matcher(value).matches()) {
+                toSet = Integer.parseInt(value);
+            } else if ("true".equalsIgnoreCase(value.trim())) {
+                toSet = Boolean.TRUE;
+            } else if ("false".equalsIgnoreCase(value.trim())) {
+                toSet = Boolean.FALSE;
+            }
+            map.put(propertyName, toSet);
+        }
+    }
+
+    /**
+     * Parse a line providing a journal name for which this style is valid.
+     */
+    private void handleJournalsLine(String line) {
+        if (!line.trim().isEmpty()) {
+            journals.add(line.trim());
+        }
     }
 
     public Layout getReferenceFormat(EntryType type) {
@@ -655,18 +786,14 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
             return Objects.equals(path, otherStyle.path)
                     && Objects.equals(name, otherStyle.name)
                     && Objects.equals(citProperties, otherStyle.citProperties)
-                    && Objects.equals(properties, otherStyle.properties)
-                    // Do not ignore a reload if the user
-                    // changed the LAYOUT section.
-                    && Objects.equals(Objects.hashCode(localCopy),
-                                      Objects.hashCode(otherStyle.localCopy));
+                    && Objects.equals(properties, otherStyle.properties);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(path, name, citProperties, properties, localCopy);
+        return Objects.hash(path, name, citProperties, properties);
     }
 
     /* moved to OOBibStyleGetCitationMarker as formatAuthorList
@@ -701,7 +828,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     }
     */
 
-    /* moved to OOBibStyleParser.java
     enum BibStyleMode {
         NONE,
         LAYOUT,
@@ -710,7 +836,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         NAME,
         JOURNALS
     }
-     */
 
     /** The String to represent authors that are not mentioned,
      * e.g. " et al."
@@ -883,15 +1008,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         FORGIVEN,
         /** Throw a RuntimeException */
         THROWS
-    }
-
-    public OOBibStyleParser.ParseLog getParseLog() {
-        if (parseLog == null) {
-            parseLog = new OOBibStyleParser.ParseLog();
-            parseLog.error(path, 0, "OOBibStyle: no parseLog");
-            setValid(false);
-        }
-        return parseLog;
     }
 
     /**

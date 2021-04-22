@@ -53,44 +53,28 @@ public class StyleLoader {
      * Adds the given style to the list of styles
      *
      * @param filename The filename of the style
-     * @return parse log. result.hasError() is false if the style is added, true otherwise.
-     *         // was: True if the added style is valid, false otherwise
+     * @return True if the added style is valid, false otherwise
      */
-    public OOBibStyleParser.ParseLog addStyleIfValid(String filename) {
+    public boolean addStyleIfValid(String filename) {
         Objects.requireNonNull(filename);
-        OOBibStyleParser.ParseLog parseLog;
         try {
             OOBibStyle newStyle = new OOBibStyle(new File(filename), layoutFormatterPreferences, encoding);
-
-            parseLog = newStyle.getParseLog();
-
             if (externalStyles.contains(newStyle)) {
                 LOGGER.info("External style file " + filename + " already existing.");
-                parseLog.error(filename, 0,
-                               "An external style file with the same content,"
-                               + " including its path"
-                               + " is already known (not adding)");
             } else if (newStyle.isValid()) {
                 externalStyles.add(newStyle);
                 storeExternalStyles();
+                return true;
             } else {
-                String msg = String.format("Style with filename %s is invalid", filename);
-                LOGGER.error(msg);
-                parseLog.error(filename, 0, msg);
+                LOGGER.error(String.format("Style with filename %s is invalid", filename));
             }
         } catch (FileNotFoundException e) {
             // The file couldn't be found... should we tell anyone?
-            String msg = "Cannot find external style file " + filename;
-            LOGGER.info(msg, e);
-            parseLog = new OOBibStyleParser.ParseLog();
-            parseLog.error(filename, 0, msg);
+            LOGGER.info("Cannot find external style file " + filename, e);
         } catch (IOException e) {
             LOGGER.info("Problem reading external style file " + filename, e);
-            parseLog = new OOBibStyleParser.ParseLog();
-            String msg = "Problem (IOException) reading external style file " + filename;
-            parseLog.error(filename, 0, msg);
         }
-        return parseLog;
+        return false;
     }
 
     private void loadExternalStyles() {

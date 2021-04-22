@@ -45,7 +45,9 @@ class OOBibStyleTest {
         assertTrue(style.isValid());
         assertTrue(style.isInternalStyle());
         assertFalse(style.isCitationKeyCiteMarkers());
+        assertFalse(style.isBoldCitations());
         assertFalse(style.isFormatCitations());
+        assertFalse(style.isItalicCitations());
         assertFalse(style.isNumberEntries());
         assertFalse(style.isSortByPosition());
     }
@@ -58,7 +60,9 @@ class OOBibStyleTest {
         assertTrue(style.isValid());
         assertFalse(style.isInternalStyle());
         assertFalse(style.isCitationKeyCiteMarkers());
+        assertFalse(style.isBoldCitations());
         assertFalse(style.isFormatCitations());
+        assertFalse(style.isItalicCitations());
         assertFalse(style.isNumberEntries());
         assertFalse(style.isSortByPosition());
     }
@@ -69,7 +73,9 @@ class OOBibStyleTest {
                 layoutFormatterPreferences);
         assertTrue(style.isValid());
         assertFalse(style.isCitationKeyCiteMarkers());
+        assertFalse(style.isBoldCitations());
         assertFalse(style.isFormatCitations());
+        assertFalse(style.isItalicCitations());
         assertTrue(style.isNumberEntries());
         assertTrue(style.isSortByPosition());
     }
@@ -699,11 +705,6 @@ class OOBibStyleTest {
         OOBibStyle style = new OOBibStyle(StyleLoader.DEFAULT_NUMERICAL_STYLE_PATH,
                 layoutFormatterPreferences);
 
-        OOBibStyleParser.ParseLog pl = style.getParseLog();
-        assertTrue( pl != null );
-        assertTrue( !pl.hasError() );
-        assertTrue( "[".equals(style.getBracketBefore()) );
-
         BibDatabase database = new BibDatabase();
 
         BibEntry entry = new BibEntry();
@@ -747,7 +748,7 @@ class OOBibStyleTest {
         database.insertEntry(entry2);
 
 
-        // Without uniquefiers this is a problem, getCitationMarker cannot
+        // Without uniquefiers this is a problem getCitationMarker cannot
         // solve, since it does not see the whole picture (citations outside its scope).
         // It can throw a RuntimeException or forgive and provide a flawed presentation.
         //
@@ -929,40 +930,5 @@ class OOBibStyleTest {
         assertTrue(style.isValid());
     }
 
-    @Test
-    void testParseError() throws Exception {
-        OOBibStyle style = new OOBibStyle("parseError.jstyle",
-                                          layoutFormatterPreferences);
-        assertFalse(style.isValid());
-        OOBibStyleParser.ParseLog pl = style.getParseLog();
-        assertTrue(pl.hasError());
-    }
-
-    @Test
-    void testParserWarning() throws Exception {
-        OOBibStyle style = new OOBibStyle("parserWarning.jstyle",
-                                          layoutFormatterPreferences);
-        assertTrue(style.isValid());
-        OOBibStyleParser.ParseLog pl = style.getParseLog();
-        assertFalse(pl.hasError());
-    }
-
-    @Test
-    void testParseMultilineRules() throws Exception {
-        OOBibStyle style = new OOBibStyle("multilineLayoutRule.jstyle",
-                                          layoutFormatterPreferences);
-        assertTrue(style.isValid());
-        OOBibStyleParser.ParseLog pl = style.getParseLog();
-        assertFalse(pl.hasError());
-    }
-
-    @Test
-    void testParseExample() throws Exception {
-        OOBibStyle style = new OOBibStyle("example_style_file.jstyle",
-                                          layoutFormatterPreferences);
-        assertTrue(style.isValid());
-        OOBibStyleParser.ParseLog pl = style.getParseLog();
-        assertFalse(pl.hasError());
-    }
 }
 
