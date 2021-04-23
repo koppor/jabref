@@ -803,9 +803,7 @@ class OOBibBase {
      */
     private static Map<CitationGroupID, String>
     produceCitationMarkersForIsCitationKeyCiteMarkers(CitationGroups cgs,
-                                                      OOBibStyle style)
-        throws
-        BibEntryNotFoundException {
+                                                      OOBibStyle style) {
 
         assert style.isCitationKeyCiteMarkers();
 
@@ -840,9 +838,7 @@ class OOBibBase {
      */
     private static Map<CitationGroupID, String>
     produceCitationMarkersForIsNumberEntriesIsSortByPosition(CitationGroups cgs,
-                                                             OOBibStyle style)
-        throws
-        BibEntryNotFoundException {
+                                                             OOBibStyle style) {
 
         assert style.isNumberEntries();
         assert style.isSortByPosition();
@@ -902,9 +898,7 @@ class OOBibBase {
      * @param style              Bibliography style.
      */
     private Map<CitationGroupID, String> produceCitationMarkersForNormalStyle(CitationGroups cgs,
-                                                                              OOBibStyle style)
-        throws
-        BibEntryNotFoundException {
+                                                                              OOBibStyle style) {
 
         assert !style.isCitationKeyCiteMarkers();
         assert !style.isNumberEntries();
@@ -1240,7 +1234,6 @@ class OOBibBase {
         PropertyVetoException,
         IOException,
         CreationException,
-        BibEntryNotFoundException,
         UndefinedParagraphFormatException,
         NoDocumentException,
         InvalidStateException {
@@ -1523,7 +1516,6 @@ class OOBibBase {
         WrappedTargetException,
         IllegalArgumentException,
         NoSuchElementException,
-        BibEntryNotFoundException,
         NoDocumentException,
         UnknownPropertyException,
         JabRefException {
@@ -1891,7 +1883,6 @@ class OOBibBase {
         PropertyExistException,
         IllegalTypeException,
         CreationException,
-        BibEntryNotFoundException,
         NoDocumentException,
         JabRefException,
         InvalidStateException {
@@ -2247,7 +2238,6 @@ class OOBibBase {
         PropertyExistException,
         IllegalTypeException,
         CreationException,
-        BibEntryNotFoundException,
         NoDocumentException,
         JabRefException,
         InvalidStateException {
@@ -2392,7 +2382,6 @@ class OOBibBase {
         PropertyVetoException,
         IOException,
         CreationException,
-        BibEntryNotFoundException,
         InvalidStateException {
 
         DocumentConnection documentConnection = getDocumentConnectionOrThrow();
@@ -2605,7 +2594,6 @@ class OOBibBase {
         UndefinedParagraphFormatException,
         NoDocumentException,
         UndefinedCharacterFormatException,
-        BibEntryNotFoundException,
         IOException,
         JabRefException,
         InvalidStateException {

@@ -222,11 +222,6 @@ public class OpenOfficePanel {
                 LOGGER.warn("Problem with style file", ex);
                 dialogService.showErrorDialogAndWait(Localization.lang("No valid style file defined"),
                                                      Localization.lang("You must select either a valid style file, or use one of the default styles."));
-            } catch (BibEntryNotFoundException ex) {
-                LOGGER.debug("BibEntry not found", ex);
-                dialogService.showErrorDialogAndWait(Localization.lang("Unable to synchronize bibliography"), Localization.lang(
-                                                                                                                                "Your OpenOffice/LibreOffice document references the citation key '%0', which could not be found in your current library.",
-                                                                                                                                ex.getCitationKey()));
             } catch (com.sun.star.lang.IllegalArgumentException | PropertyVetoException | UnknownPropertyException | WrappedTargetException | NoSuchElementException |
                      InvalidStateException |
                      CreationException ex) {
@@ -250,8 +245,7 @@ public class OpenOfficePanel {
             } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
                      CreationException | NoSuchElementException | WrappedTargetException | IOException |
                      NotRemoveableException | IllegalTypeException | InvalidStateException |
-                     PropertyExistException |
-                     BibEntryNotFoundException ex) {
+                     PropertyExistException ex) {
                 LOGGER.warn("Problem combining cite markers", ex);
             }
         });
@@ -272,8 +266,7 @@ public class OpenOfficePanel {
             } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
                      CreationException | NoSuchElementException | WrappedTargetException | IOException |
                      PropertyExistException | IllegalTypeException | NotRemoveableException |
-                     InvalidStateException |
-                     BibEntryNotFoundException ex) {
+                     InvalidStateException ex) {
                 LOGGER.warn("Problem uncombining cite markers", ex);
             }
         });
@@ -352,11 +345,6 @@ public class OpenOfficePanel {
             this.frame.addTab(databaseContext, true);
         } catch (NoDocumentException ex) {
             showNoDocumentErrorMessage();
-        } catch (BibEntryNotFoundException ex) {
-            LOGGER.debug("BibEntry not found", ex);
-            dialogService.showErrorDialogAndWait(Localization.lang("Unable to synchronize bibliography"),
-                                                 Localization.lang("Your OpenOffice/LibreOffice document references the citation key '%0', which could not be found in your current library.",
-                                                                   ex.getCitationKey()));
         } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
                  UndefinedCharacterFormatException | NoSuchElementException | WrappedTargetException | IOException |
                  InvalidStateException |
@@ -590,7 +578,7 @@ public class OpenOfficePanel {
                         ex.getLocalizedMessage());
                 } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
                          CreationException | NoSuchElementException | WrappedTargetException | IOException |
-                         BibEntryNotFoundException | IllegalTypeException | PropertyExistException |
+                         IllegalTypeException | PropertyExistException |
                          InvalidStateException |
                          NotRemoveableException ex) {
                     LOGGER.warn("Could not insert entry", ex);
