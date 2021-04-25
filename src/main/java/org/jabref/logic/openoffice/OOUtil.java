@@ -21,12 +21,16 @@ import com.sun.star.text.ControlCharacter;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.uno.UnoRuntime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility methods for processing OO Writer documents.
  */
 @AllowedToUseAwt("Requires AWT for changing document properties")
 public class OOUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OOUtil.class);
 
     private static final String CHAR_STRIKEOUT = "CharStrikeout";
     private static final String CHAR_UNDERLINE = "CharUnderline";
@@ -65,6 +69,8 @@ public class OOUtil {
      * @param uniquefier Uniqiefier letter, if any, to append to the entry's year.
      *
      * @return OOFormattedText suitable for insertOOFormattedTextAtCurrentLocation()
+     *
+     * TODO: this is not OO-specific, should be in oostyle
      */
     public static String formatFullReference(Layout layout,
                                              BibEntry entry,
@@ -248,10 +254,81 @@ public class OOUtil {
         cursor.collapseToEnd();
     }
 
-    public static Object getProperty(Object o, String property)
-            throws UnknownPropertyException, WrappedTargetException {
-        XPropertySet props = UnoRuntime.queryInterface(
-                XPropertySet.class, o);
-        return props.getPropertyValue(property);
+    /**
+     *  Get the text belonging to cursor with up to
+     *  charBefore and charAfter characters of context.
+     *
+     *  The actual context may be smaller than requested.
+     *
+     *  @param documentConnection
+     *  @param cursor
+     *  @param charBefore Number of characters requested.
+     *  @param charAfter  Number of characters requested.
+     *  @param htmlMarkup If true, the text belonging to the
+     *                    reference mark is surrounded by bold html tag.
+     *
+     * TODO: This method could go to OOUtil, except that it refers to
+     * DocumentConnection, which is in "gui". DocumentConnection
+     * should go to "logic" as well.  As well as many others, ...
+     *
+     * TODO: there is also a potential distinction between OO-specific
+     *  parts and those that could participate in for example a Word
+     *  panel. Is the GUI itself dependent on using OO/LO? Hard to
+     *  tell.
+     */
+    public static String getCursorStringWithContext(DocumentConnection documentConnection,
+                                                    XTextCursor cursor,
+                                                    int charBefore,
+                                                    int charAfter,
+                                                    boolean htmlMarkup)
+        throws
+        WrappedTargetException,
+        NoDocumentException,
+        CreationException {
+
+        String citPart = cursor.getString();
+
+        // extend cursor range left
+        int flex = 8;
+        for (int i = 0; i < charBefore; i++) {
+            try {
+                cursor.goLeft((short) 1, true);
+                // If we are close to charBefore and see a space,
+                // then cut here. Might avoid cutting a word in half.
+                if ((i >= (charBefore - flex))
+                    && Character.isWhitespace(cursor.getString().charAt(0))) {
+                    break;
+                }
+            } catch (IndexOutOfBoundsException ex) {
+                LOGGER.warn("Problem going left", ex);
+            }
+        }
+
+        int lengthWithBefore = cursor.getString().length();
+        int addedBefore = lengthWithBefore - citPart.length();
+
+        cursor.collapseToStart();
+        for (int i = 0; i < (charAfter + lengthWithBefore); i++) {
+            try {
+                cursor.goRight((short) 1, true);
+                if (i >= ((charAfter + lengthWithBefore) - flex)) {
+                    String strNow = cursor.getString();
+                    if (Character.isWhitespace(strNow.charAt(strNow.length() - 1))) {
+                        break;
+                    }
+                }
+            } catch (IndexOutOfBoundsException ex) {
+                LOGGER.warn("Problem going right", ex);
+            }
+        }
+
+        String result = cursor.getString();
+        if (htmlMarkup) {
+            result = (result.substring(0, addedBefore)
+                      + "<b>" + citPart + "</b>"
+                      + result.substring(lengthWithBefore));
+        }
+        return result.trim();
     }
+
 }

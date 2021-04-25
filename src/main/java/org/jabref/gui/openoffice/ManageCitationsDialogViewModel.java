@@ -9,7 +9,9 @@ import javafx.collections.FXCollections;
 
 import org.jabref.gui.DialogService;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.openoffice.CitationEntry;
+import org.jabref.logic.oostyle.CitationEntry;
+import org.jabref.logic.openoffice.CreationException;
+import org.jabref.logic.openoffice.NoDocumentException;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;

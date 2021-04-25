@@ -23,12 +23,26 @@ import org.jabref.logic.bibtex.comparator.FieldComparator;
 import org.jabref.logic.bibtex.comparator.FieldComparatorStack;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.layout.Layout;
-import org.jabref.logic.openoffice.CitationEntry;
-import org.jabref.logic.openoffice.CitationMarkerEntry;
-import org.jabref.logic.openoffice.CitationMarkerEntryImpl;
-import org.jabref.logic.openoffice.OOBibStyle;
-import org.jabref.logic.openoffice.OOPreFormatter;
+import org.jabref.logic.oostyle.Citation;
+import org.jabref.logic.oostyle.CitationEntry;
+import org.jabref.logic.oostyle.CitationGroup;
+import org.jabref.logic.oostyle.CitationGroupID;
+import org.jabref.logic.oostyle.CitationGroups;
+import org.jabref.logic.oostyle.CitationMarkerEntry;
+import org.jabref.logic.oostyle.CitationMarkerEntryImpl;
+import org.jabref.logic.oostyle.CitationPath;
+import org.jabref.logic.oostyle.CitedKey;
+import org.jabref.logic.oostyle.CitedKeys;
+import org.jabref.logic.oostyle.OOBibStyle;
+import org.jabref.logic.oostyle.OOPreFormatter;
+import org.jabref.logic.openoffice.Backend52;
+import org.jabref.logic.openoffice.CreationException;
+import org.jabref.logic.openoffice.DocumentConnection;
+import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.OOUtil;
+import org.jabref.logic.openoffice.RangeForOverlapCheck;
+import org.jabref.logic.openoffice.RangeKeyedMapList;
+import org.jabref.logic.openoffice.UndefinedCharacterFormatException;
 import org.jabref.logic.openoffice.UndefinedParagraphFormatException;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
@@ -400,6 +414,8 @@ class OOBibBase {
     /**
      * @param requireSeparation Report range pairs that only share a boundary.
      * @param reportAtMost Limit number of overlaps reported (0 for no limit)
+     *
+     * TODO: move to org.jabref.logic.openoffice
      */
     public void checkRangeOverlaps(CitationGroups cgs,
                                    DocumentConnection documentConnection,
@@ -490,92 +506,7 @@ class OOBibBase {
 
         DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
         CitationGroups cgs = new CitationGroups(documentConnection);
-
-        int n = cgs.numberOfCitationGroups();
-        List<CitationEntry> citations = new ArrayList<>(n);
-        for (CitationGroupID cgid : cgs.getCitationGroupIDs()) {
-            String name = cgid.asString();
-            String context = this.getCitationContext(cgs, cgid, documentConnection, 30, 30, true);
-            CitationEntry entry = new CitationEntry(name,
-                                                    context,
-                                                    cgs.getPageInfo(cgid));
-            citations.add(entry);
-        }
-        return citations;
-    }
-
-    /**
-     *  Get the text belonging to refMarkName with up to
-     *  charBefore and charAfter characters of context.
-     *
-     *  The actual context may be smaller than requested.
-     *
-     *  @param cgs
-     *  @param cgid
-     *  @param documentConnection
-     *  @param charBefore Number of characters requested.
-     *  @param charAfter  Number of characters requested.
-     *  @param htmlMarkup If true, the text belonging to the
-     *                    reference mark is surrounded by bold html tag.
-     */
-    private String getCitationContext(CitationGroups cgs,
-                                      CitationGroupID cgid,
-                                      DocumentConnection documentConnection,
-                                      int charBefore,
-                                      int charAfter,
-                                      boolean htmlMarkup)
-        throws
-        WrappedTargetException,
-        NoDocumentException,
-        CreationException {
-
-        XTextCursor cursor = (cgs
-                              .getRawCursorForCitationGroup(cgid, documentConnection)
-                              .orElseThrow(RuntimeException::new));
-
-        String citPart = cursor.getString();
-
-        // extend cursor range left
-        int flex = 8;
-        for (int i = 0; i < charBefore; i++) {
-            try {
-                cursor.goLeft((short) 1, true);
-                // If we are close to charBefore and see a space,
-                // then cut here. Might avoid cutting a word in half.
-                if ((i >= (charBefore - flex))
-                    && Character.isWhitespace(cursor.getString().charAt(0))) {
-                    break;
-                }
-            } catch (IndexOutOfBoundsException ex) {
-                LOGGER.warn("Problem going left", ex);
-            }
-        }
-
-        int lengthWithBefore = cursor.getString().length();
-        int addedBefore = lengthWithBefore - citPart.length();
-
-        cursor.collapseToStart();
-        for (int i = 0; i < (charAfter + lengthWithBefore); i++) {
-            try {
-                cursor.goRight((short) 1, true);
-                if (i >= ((charAfter + lengthWithBefore) - flex)) {
-                    String strNow = cursor.getString();
-                    if (Character.isWhitespace(strNow.charAt(strNow.length() - 1))) {
-                        break;
-                    }
-                }
-            } catch (IndexOutOfBoundsException ex) {
-                LOGGER.warn("Problem going right", ex);
-            }
-        }
-
-        String result = cursor.getString();
-        if (htmlMarkup) {
-            result = (result.substring(0, addedBefore)
-                      + "<b>" + citPart + "</b>"
-                      + result.substring(lengthWithBefore));
-        }
-        return result.trim();
+        return cgs.backend.getCitationEntries(documentConnection, cgs);
     }
 
     /**
@@ -696,9 +627,8 @@ class OOBibBase {
     /**
      *  Fills {@code sortedCitedKeys//normCitMarker}
      */
-    private void
-    createNormalizedCitationMarkersForNormalStyle(CitedKeys sortedCitedKeys,
-                                                  OOBibStyle style) {
+    private void createNormalizedCitationMarkersForNormalStyle(CitedKeys sortedCitedKeys,
+                                                               OOBibStyle style) {
 
         for (CitedKey ck : sortedCitedKeys.data.values()) {
             ck.normCitMarker = Optional.of(normalizedCitationMarkerForNormalStyle(ck, style));
@@ -1698,7 +1628,7 @@ class OOBibBase {
                     for (CitationPath p : ck.where) {
                         CitationGroupID cgid = p.group;
                         CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
-                        String refMarkName = cg.referenceMarkName;
+                        String refMarkName = cg.getMarkName();
 
                         if (i > 0) {
                             OOUtil.insertTextAtCurrentLocation(documentConnection.xText,
