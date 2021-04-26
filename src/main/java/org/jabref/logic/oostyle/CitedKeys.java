@@ -43,7 +43,7 @@ public class CitedKeys {
     void numberCitedKeysInCurrentOrder() {
         int i = 1;
         for (CitedKey ck : data.values()) {
-            ck.number = Optional.of(i); // was: -1 for UndefinedBibtexEntry
+            ck.number = Optional.of(i); // was: -1 for unresolved
             i++;
         }
     }
