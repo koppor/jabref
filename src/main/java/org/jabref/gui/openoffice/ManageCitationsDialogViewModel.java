@@ -55,7 +55,7 @@ public class ManageCitationsDialogViewModel {
         try {
             ooBase.applyCitationEntries(ciationEntries);
         } catch (UnknownPropertyException | NotRemoveableException | PropertyExistException | IllegalTypeException |
-                 NoDocumentException |
+                 NoDocumentException | WrappedTargetException |
                 IllegalArgumentException ex) {
             LOGGER.warn("Problem modifying citation", ex);
             dialogService.showErrorDialogAndWait(Localization.lang("Problem modifying citation"), ex);

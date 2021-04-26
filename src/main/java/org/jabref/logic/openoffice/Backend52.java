@@ -12,6 +12,7 @@ import org.jabref.logic.oostyle.CitationEntry;
 import org.jabref.logic.oostyle.CitationGroup;
 import org.jabref.logic.oostyle.CitationGroupID;
 import org.jabref.logic.oostyle.CitationGroups;
+import org.jabref.logic.oostyle.Compat;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
@@ -286,7 +287,7 @@ public class Backend52 {
      *
      *          TODO: we may want class DataModel52, DataModel53 and split this.
      */
-    static List<String> getPageInfosForCitations(Compat.DataModel dataModel, CitationGroup cg) {
+    public static List<String> getPageInfosForCitations(Compat.DataModel dataModel, CitationGroup cg) {
         switch (dataModel) {
         case JabRef52:
             // check conformance to dataModel
@@ -369,7 +370,7 @@ public class Backend52 {
      *
      */
     public List<String> getPageInfosForCitations(CitationGroup cg) {
-        return getPageInfosForCitations(this.dataModel, cg);
+        return Backend52.getPageInfosForCitations(this.dataModel, cg);
     }
 
     public void removeCitationGroup(CitationGroup cg, DocumentConnection documentConnection)
@@ -436,8 +437,8 @@ public class Backend52 {
         cg.cgRangeStorage.cleanFillCursor(documentConnection);
     }
 
-    public static List<CitationEntry> getCitationEntries(DocumentConnection documentConnection,
-                                                         CitationGroups cgs)
+    public List<CitationEntry> getCitationEntries(DocumentConnection documentConnection,
+                                                  CitationGroups cgs)
         throws
         UnknownPropertyException,
         WrappedTargetException,
@@ -449,9 +450,10 @@ public class Backend52 {
         int n = cgs.numberOfCitationGroups();
         List<CitationEntry> citations = new ArrayList<>(n);
         for (CitationGroupID cgid : cgs.getCitationGroupIDs()) {
+            CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
             String name = cgid.asString();
-            XTextCursor cursor = (cgs
-                                  .getRawCursorForCitationGroup(cgid, documentConnection)
+            XTextCursor cursor = (this
+                                  .getRawCursorForCitationGroup(cg, documentConnection)
                                   .orElseThrow(RuntimeException::new));
             String context = OOUtil.getCursorStringWithContext(documentConnection,
                                                                cursor, 30, 30, true);
@@ -461,6 +463,31 @@ public class Backend52 {
             citations.add(entry);
         }
         return citations;
+    }
+
+    public void applyCitationEntries(DocumentConnection documentConnection,
+                                     List<CitationEntry> citationEntries)
+        throws
+        UnknownPropertyException,
+        NotRemoveableException,
+        PropertyExistException,
+        IllegalTypeException,
+        IllegalArgumentException,
+        NoDocumentException {
+        switch (dataModel) {
+        case JabRef52:
+            for (CitationEntry entry : citationEntries) {
+                Optional<String> pageInfo = entry.getPageInfo();
+                if (pageInfo.isPresent()) {
+                    documentConnection.setCustomProperty(entry.getRefMarkName(),
+                                                         pageInfo.get());
+                }
+            }
+            break;
+        case JabRef53:
+            //xx
+            throw new RuntimeException("applyCitationEntries for JabRef53 is not implemented yet");
+        }
     }
 
 } // end Backend52
