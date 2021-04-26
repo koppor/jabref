@@ -49,4 +49,32 @@ public class OOFormat {
 
         return formattedText;
     }
-}
+
+    public static OOFormattedText setLocale(OOFormattedText s, String locale) {
+        return OOFormattedText.fromString(String.format("<locale value=\"%s\">", locale)
+                                          + s.asString()
+                                          + "</locale>");
+    }
+
+    public static OOFormattedText setLocaleNone(OOFormattedText s) {
+        return OOFormat.setLocale(s, "zxx");
+    }
+
+    public static OOFormattedText setCharStyle(OOFormattedText s, String charStyle) {
+        return OOFormattedText.fromString(String.format("<font class=\"%s\">", charStyle)
+                                          + s.asString()
+                                          + "</font>");
+    }
+
+    public static OOFormattedText paragraph(OOFormattedText s, String paraStyle) {
+        return OOFormattedText.fromString(String.format("<p class=\"%s\">", paraStyle)
+                                          + s.asString()
+                                          + "</p>");
+    }
+
+    public static OOFormattedText paragraph(OOFormattedText s) {
+        return OOFormattedText.fromString("<p>"
+                                          + s.asString()
+                                          + "</p>");
+    }
+ }

@@ -420,7 +420,8 @@ class OOBibBase {
         fr.applyCitationEntries(documentConnection, citationEntries);
     }
 
-    private static void fillCitationMarkInCursor(XTextCursor cursor,
+    private static void fillCitationMarkInCursor(DocumentConnection documentConnection,
+                                                 XTextCursor cursor,
                                                  OOFormattedText citationText,
                                                  boolean withText,
                                                  OOBibStyle style)
@@ -429,19 +430,27 @@ class OOBibBase {
         WrappedTargetException,
         PropertyVetoException,
         IllegalArgumentException,
-        UndefinedCharacterFormatException {
+        UndefinedCharacterFormatException,
+        NoSuchElementException {
 
         Objects.requireNonNull(cursor);
         Objects.requireNonNull(citationText);
         Objects.requireNonNull(style);
 
         if (withText) {
-            OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, citationText);
+            OOFormattedText citationText2 = OOFormat.setLocaleNone(citationText);
+            if (style.isFormatCitations()) {
+                String charStyle = style.getCitationCharacterFormat();
+                citationText2 = OOFormat.setCharStyle(citationText2, charStyle);
+            }
+            OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection, cursor, citationText2);
+            /*
             DocumentConnection.setCharLocaleNone(cursor);
             if (style.isFormatCitations()) {
                 String charStyle = style.getCitationCharacterFormat();
                 DocumentConnection.setCharStyle(cursor, charStyle);
             }
+            */
         } else {
             cursor.setString("");
         }
@@ -489,7 +498,8 @@ class OOBibBase {
         UndefinedCharacterFormatException,
         CreationException,
         NoDocumentException,
-        IllegalTypeException {
+        IllegalTypeException,
+        NoSuchElementException {
 
         CitationGroupID cgid = fr.createCitationGroup(documentConnection,
                                                       citationKeys,
@@ -503,7 +513,8 @@ class OOBibBase {
             XTextCursor c2 = fr.getFillCursorForCitationGroup(documentConnection,
                                                               cgid);
 
-            fillCitationMarkInCursor(c2,
+            fillCitationMarkInCursor(documentConnection,
+                                     c2,
                                      citationText,
                                      withText,
                                      style);
@@ -838,7 +849,8 @@ class OOBibBase {
         UnknownPropertyException,
         CreationException,
         WrappedTargetException,
-        PropertyVetoException {
+        PropertyVetoException,
+        NoSuchElementException {
 
         CitationGroups cgs = fr.cgs;
         final boolean hadBibSection = (documentConnection
@@ -875,7 +887,8 @@ class OOBibBase {
                     mustTestCharFormat = false;
                 }
 
-                fillCitationMarkInCursor(cursor,
+                fillCitationMarkInCursor(documentConnection,
+                                         cursor,
                                          citationText,
                                          withText,
                                          style);
@@ -949,7 +962,8 @@ class OOBibBase {
         UnknownPropertyException,
         PropertyVetoException,
         WrappedTargetException,
-        CreationException {
+        CreationException,
+        NoSuchElementException {
 
         final boolean debugThisFun = false;
 
@@ -972,19 +986,20 @@ class OOBibBase {
 
             // this is where we create the paragraph.
             OOUtil.insertParagraphBreak(documentConnection.xText, cursor);
-                // format the paragraph
-                try {
-                    if (parStyle != null) {
-                        DocumentConnection.setParagraphStyle(cursor,
-                                                             parStyle);
-                    }
-                } catch (UndefinedParagraphFormatException ex) {
-                    // TODO: precheck or remember if we already emitted this message.
-                    String message =
-                        String.format("Could not apply paragraph format '%s' to bibliography entry",
-                                      parStyle);
-                    LOGGER.warn(message); // no stack trace
+            cursor.collapseToEnd();
+            // format the paragraph
+            try {
+                if (parStyle != null) {
+                    DocumentConnection.setParagraphStyle(cursor,
+                                                         parStyle);
                 }
+            } catch (UndefinedParagraphFormatException ex) {
+                // TODO: precheck or remember if we already emitted this message.
+                String message =
+                    String.format("Could not apply paragraph format '%s' to bibliography entry",
+                                  parStyle);
+                LOGGER.warn(message); // no stack trace
+            }
 
             // insert marker "[1]"
             if (style.isNumberEntries()) {
@@ -996,7 +1011,7 @@ class OOBibBase {
 
                 int number = ck.number.get();
                 OOFormattedText marker = style.getNumCitationMarkerForBibliography(number);
-                OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, marker);
+                OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection, cursor, marker);
                 cursor.collapseToEnd();
             } else {
                 // !style.isNumberEntries() : emit no prefix
@@ -1007,16 +1022,20 @@ class OOBibBase {
                 // Unresolved entry
                 OOFormattedText referenceDetails =
                     OOFormattedText.fromString(String.format("Unresolved(%s)", ck.citationKey));
-                OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, referenceDetails);
+                OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection,
+                                                              cursor,
+                                                              referenceDetails);
                 cursor.collapseToEnd();
                 // Try to list citations:
                 if (true) {
                     String prefix = String.format(" (%s: ", Localization.lang("Cited on pages"));
                     String suffix = ")";
-                    OOUtil.insertTextAtCurrentLocation(documentConnection.xText,
+                    OOUtil.insertTextAtCurrentLocation(documentConnection,
                                                        cursor,
                                                        prefix,
-                                                       Collections.emptyList());
+                                                       Collections.emptyList(),
+                                                       Optional.empty(),
+                                                       Optional.empty());
 
                     int last = ck.where.size();
                     int i = 0;
@@ -1025,10 +1044,12 @@ class OOBibBase {
                         CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
 
                         if (i > 0) {
-                            OOUtil.insertTextAtCurrentLocation(documentConnection.xText,
+                            OOUtil.insertTextAtCurrentLocation(documentConnection,
                                                                cursor,
                                                                String.format(", "),
-                                                               Collections.emptyList());
+                                                               Collections.emptyList(),
+                                                               Optional.empty(),
+                                                               Optional.empty());
                         }
                         documentConnection
                             .insertGetreferenceToPageNumberOfReferenceMark(cg.getMarkName(), cursor);
@@ -1036,10 +1057,12 @@ class OOBibBase {
                     }
                     documentConnection.refresh();
 
-                    OOUtil.insertTextAtCurrentLocation(documentConnection.xText,
+                    OOUtil.insertTextAtCurrentLocation(documentConnection,
                                                        cursor,
                                                        suffix,
-                                                       Collections.emptyList());
+                                                       Collections.emptyList(),
+                                                       Optional.empty(),
+                                                       Optional.empty());
                 }
 
             } else {
@@ -1056,7 +1079,7 @@ class OOBibBase {
                                                                              ck.uniqueLetter.orElse(null));
 
                 // Insert the formatted text:
-                OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, formattedText);
+                OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection, cursor, formattedText);
                 cursor.collapseToEnd();
             }
         }
@@ -1078,6 +1101,7 @@ class OOBibBase {
         textCursor.gotoEnd(false);
 
         OOUtil.insertParagraphBreak(documentConnection.xText, textCursor);
+        textCursor.collapseToEnd();
 
         documentConnection.insertTextSection(OOBibBase.BIB_SECTION_NAME,
                                              textCursor,
@@ -1152,7 +1176,9 @@ class OOBibBase {
                               .createTextCursorByRange(section.getAnchor()));
 
         // emit the title of the bibliography
-        OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, style.getReferenceHeaderText());
+        OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection,
+                                                      cursor,
+                                                      style.getReferenceHeaderText());
         String parStyle = style.getReferenceHeaderParagraphFormat();
         try {
             if (parStyle != null) {

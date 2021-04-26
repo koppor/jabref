@@ -2,6 +2,8 @@ package org.jabref.logic.openoffice;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +13,8 @@ import org.jabref.logic.oostyle.OOFormattedText;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
+import com.sun.star.container.NoSuchElementException;
+import com.sun.star.lang.Locale;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.ControlCharacter;
 import com.sun.star.text.XText;
@@ -35,6 +39,7 @@ public class OOUtil {
     private static final String CHAR_WEIGHT = "CharWeight";
     private static final String CHAR_ESCAPEMENT_HEIGHT = "CharEscapementHeight";
     private static final String CHAR_ESCAPEMENT = "CharEscapement";
+    private static final String CHAR_STYLE_NAME = "CharStyleName";
 
     public enum Formatting {
         BOLD,
@@ -47,7 +52,8 @@ public class OOUtil {
         MONOSPACE
     }
 
-    private static final Pattern HTML_TAG = Pattern.compile("</?[a-z]+>");
+    private static final Pattern HTML_TAG =
+        Pattern.compile("</?[a-z]+>|<(p|font|locale)\\s+(class|value)=\"([^\"]+)\">");
 
     private OOUtil() {
         // Just to hide the public constructor
@@ -63,13 +69,15 @@ public class OOUtil {
      * @throws UnknownPropertyException
      * @throws IllegalArgumentException
      */
-    public static void insertOOFormattedTextAtCurrentLocation(XTextCursor position,
+    public static void insertOOFormattedTextAtCurrentLocation(DocumentConnection documentConnection,
+                                                              XTextCursor position,
                                                               OOFormattedText ootext)
         throws
         UnknownPropertyException,
         PropertyVetoException,
         WrappedTargetException,
-        IllegalArgumentException {
+        IllegalArgumentException,
+        NoSuchElementException {
 
         String lText = OOFormattedText.toString(ootext);
 
@@ -77,15 +85,28 @@ public class OOUtil {
         XTextCursor cursor = text.createTextCursorByRange(position);
 
         List<Formatting> formatting = new ArrayList<>();
+        Stack<String> charstyleStack = new Stack<>();
+        Stack<Locale> localeStack = new Stack<>();
+        charstyleStack.push(DocumentConnection.getCharStyle(cursor));
+        localeStack.push(DocumentConnection.getCharLocale(cursor));
+
         // We need to extract formatting. Use a simple regexp search iteration:
         int piv = 0;
         Matcher m = OOUtil.HTML_TAG.matcher(lText);
         while (m.find()) {
             String currentSubstring = lText.substring(piv, m.start());
             if (!currentSubstring.isEmpty()) {
-                OOUtil.insertTextAtCurrentLocation(text, cursor, currentSubstring, formatting);
+                OOUtil.insertTextAtCurrentLocation(documentConnection,
+                                                   cursor,
+                                                   currentSubstring,
+                                                   formatting,
+                                                   Optional.of(charstyleStack.peek()),
+                                                   Optional.of(localeStack.peek()));
             }
             String tag = m.group();
+            String xtag = m.group(1);
+            String xvar = m.group(2);
+            String xval = m.group(3);
             // Handle tags:
             if ("<b>".equals(tag)) {
                 formatting.add(Formatting.BOLD);
@@ -119,31 +140,102 @@ public class OOUtil {
                 formatting.add(Formatting.STRIKEOUT);
             } else if ("</s>".equals(tag)) {
                 formatting.remove(Formatting.STRIKEOUT);
+            } else if ("</p>".equals(tag)) {
+                // nop
+            } else if ("p".equals(xtag) || "<p>".equals(tag)) {
+                // <p class="standard">
+                OOUtil.insertParagraphBreak(text, cursor);
+                cursor.collapseToEnd();
+                if ("class".equals(xvar) && xval != null && !xval.equals("")) {
+                    try {
+                        DocumentConnection.setParagraphStyle(cursor, xval);
+                    } catch (UndefinedParagraphFormatException ex) {
+                        // ignore silently
+                    }
+                }
+            } else if ("font".equals(xtag) || "<font>".equals(tag)) {
+                // <font class="standard">
+                if ("class".equals(xvar) && xval != null && !xval.equals("")) {
+                    charstyleStack.push(xval);
+                } else {
+                    charstyleStack.push("");
+                }
+            } else if ("</font>".equals(tag)) {
+                charstyleStack.pop();
+            } else if ("locale".equals(xtag)) {
+                // <locale value="zxx">
+                // <locale value="en-US">
+                if ("value".equals(xvar) && xval != null && !xval.equals("")) {
+                    String[] parts = xval.split("-");
+                    String language = (parts.length > 0) ? parts[0] : "";
+                    String country = (parts.length > 1) ? parts[1] : "";
+                    String variant = (parts.length > 2) ? parts[2] : "";
+                    Locale l = new Locale(language, country, variant);
+                    localeStack.push(l);
+                } else {
+                    localeStack.push(localeStack.peek());
+                }
+            } else if ("</locale>".equals(tag)) {
+                localeStack.pop();
             }
 
             piv = m.end();
         }
 
         if (piv < lText.length()) {
-            OOUtil.insertTextAtCurrentLocation(text, cursor, lText.substring(piv), formatting);
+            OOUtil.insertTextAtCurrentLocation(documentConnection,
+                                               cursor,
+                                               lText.substring(piv),
+                                               formatting,
+                                               Optional.of(charstyleStack.peek()),
+                                               Optional.of(localeStack.peek()));
         }
-
     }
 
     public static void insertParagraphBreak(XText text, XTextCursor cursor) throws IllegalArgumentException {
         text.insertControlCharacter(cursor, ControlCharacter.PARAGRAPH_BREAK, true);
+    }
+
+    public static void insertTextAtCurrentLocation(DocumentConnection documentConnection,
+                                                   XTextCursor cursor,
+                                                   String string,
+                                                   List<Formatting> formatting,
+                                                   Optional<String> charStyle,
+                                                   Optional<Locale> locale)
+        throws
+        UnknownPropertyException,
+        PropertyVetoException,
+        WrappedTargetException,
+        IllegalArgumentException,
+        NoSuchElementException {
+        XText text = cursor.getText();
+        text.insertString(cursor, string, true);
+        formatTextInCursor(documentConnection,
+                           cursor,
+                           formatting,
+                           charStyle,
+                           locale);
+
         cursor.collapseToEnd();
     }
 
-    public static void insertTextAtCurrentLocation(XText text, XTextCursor cursor, String string,
-                                                   List<Formatting> formatting)
-            throws UnknownPropertyException, PropertyVetoException, WrappedTargetException,
-            IllegalArgumentException {
-        text.insertString(cursor, string, true);
+    public static void formatTextInCursor(DocumentConnection documentConnection,
+                                          XTextCursor cursor,
+                                          List<Formatting> formatting,
+                                          Optional<String> charStyle,
+                                          Optional<Locale> locale)
+        throws
+        UnknownPropertyException,
+        PropertyVetoException,
+        WrappedTargetException,
+        IllegalArgumentException,
+        NoSuchElementException {
+
         // Access the property set of the cursor, and set the currently selected text
         // (which is the string we just inserted) to be bold
         XPropertySet xCursorProps = UnoRuntime.queryInterface(
                 XPropertySet.class, cursor);
+
         if (formatting.contains(Formatting.BOLD)) {
             xCursorProps.setPropertyValue(CHAR_WEIGHT,
                     com.sun.star.awt.FontWeight.BOLD);
@@ -178,6 +270,7 @@ public class OOUtil {
             xCursorProps.setPropertyValue("CharFontPitch",
                             com.sun.star.awt.FontPitch.VARIABLE);
         } */
+
         if (formatting.contains(Formatting.SUBSCRIPT)) {
             xCursorProps.setPropertyValue(CHAR_ESCAPEMENT,
                                           (short) -10);
@@ -206,7 +299,33 @@ public class OOUtil {
         } else {
             xCursorProps.setPropertyValue(CHAR_STRIKEOUT, com.sun.star.awt.FontStrikeout.NONE);
         }
-        cursor.collapseToEnd();
+
+        if (locale.isPresent()) {
+            try {
+                xCursorProps.setPropertyValue("CharLocale", locale.get());
+            } catch (UnknownPropertyException
+                     | PropertyVetoException
+                     | IllegalArgumentException
+                     | WrappedTargetException ex) {
+                // silently
+            }
+        }
+
+        if (charStyle.isPresent() && !charStyle.get().equals("")) {
+            if (documentConnection
+                .getInternalNameOfCharacterStyle(charStyle.get()).isPresent()) {
+                try {
+                    xCursorProps.setPropertyValue(CHAR_STYLE_NAME, charStyle.get());
+                } catch (UnknownPropertyException
+                         | PropertyVetoException
+                         | IllegalArgumentException
+                         | WrappedTargetException ex) {
+                    // silently
+                }
+            }
+            // otherwise: ignore silently. Assume character style was already tested elsewhere.
+        }
+
     }
 
     /**

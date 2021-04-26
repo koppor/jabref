@@ -926,6 +926,15 @@ public class DocumentConnection {
         }
     }
 
+    public static String getCharStyle(XTextCursor position)
+        throws
+        UnknownPropertyException,
+        WrappedTargetException {
+
+        XPropertySet xCursorProps = unoQI(XPropertySet.class, position);
+        return (String) xCursorProps.getPropertyValue(CHAR_STYLE_NAME);
+    }
+
     public static void setParagraphStyle(XTextCursor cursor,
                                          String parStyle)
         throws
@@ -984,6 +993,14 @@ public class DocumentConnection {
         WrappedTargetException {
         XPropertySet xcp = unoQI(XPropertySet.class, textRange);
         xcp.setPropertyValue("CharLocale", new Locale("zxx", "", ""));
+    }
+
+    public static Locale getCharLocale(XTextRange textRange)
+        throws
+        UnknownPropertyException,
+        WrappedTargetException {
+        XPropertySet xcp = unoQI(XPropertySet.class, textRange);
+        return (Locale) xcp.getPropertyValue("CharLocale");
     }
 
     /**
