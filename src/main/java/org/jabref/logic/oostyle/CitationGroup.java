@@ -20,25 +20,16 @@ public class CitationGroup {
     /** For Compat.DataModel.JabRef52 pageInfo belongs to the group */
     public Optional<String> pageInfo;
 
-    /**
-     * Locator in document, replaced with cgRangeStorage
-     * TODO: replace referenceMarkName with
-     *       getMarkName(){ return backed.cgRangeStorage.getName(); }
-     */
-    String referenceMarkName;
-
     public CitationGroup(CitationGroupID cgid,
                          StorageBase.NamedRange cgRangeStorage,
                          int itcType,
                          List<Citation> citations,
-                         Optional<String> pageInfo,
-                         String referenceMarkName) {
+                         Optional<String> pageInfo) {
         this.cgid = cgid;
         this.cgRangeStorage = cgRangeStorage;
         this.itcType = itcType;
         this.citations = citations;
         this.pageInfo = pageInfo;
-        this.referenceMarkName = referenceMarkName;
         this.localOrder = makeIndices(citations.size());
     }
 

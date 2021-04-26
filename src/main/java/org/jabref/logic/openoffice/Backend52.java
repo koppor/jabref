@@ -127,8 +127,7 @@ public class Backend52 {
                                              sr.get(),
                                              ov.itcType,
                                              citations,
-                                             pageInfo,
-                                             refMarkName);
+                                             pageInfo);
         return cg;
     }
 
@@ -235,8 +234,7 @@ public class Backend52 {
                                                  sr,
                                                  itcType,
                                                  citations,
-                                                 pageInfo,
-                                                 refMarkName);
+                                                 pageInfo);
             return cg;
         default:
             throw new RuntimeException("Backend52 requires JabRef52 dataModel");

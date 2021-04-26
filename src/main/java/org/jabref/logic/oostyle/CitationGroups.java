@@ -253,10 +253,6 @@ public class CitationGroups {
         return e;
     }
 
-    private Optional<String> getReferenceMarkName(CitationGroupID cgid) {
-        return getCitationGroup(cgid).map(cg -> cg.getMarkName());
-    }
-
     private Optional<Integer> getItcType(CitationGroupID cgid) {
         return getCitationGroup(cgid).map(cg -> cg.itcType);
     }

@@ -1501,7 +1501,6 @@ class OOBibBase {
                     for (CitationPath p : ck.where) {
                         CitationGroupID cgid = p.group;
                         CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
-                        String refMarkName = cg.getMarkName();
 
                         if (i > 0) {
                             OOUtil.insertTextAtCurrentLocation(documentConnection.xText,
@@ -1510,7 +1509,7 @@ class OOBibBase {
                                                                Collections.emptyList());
                         }
                         documentConnection
-                            .insertGetreferenceToPageNumberOfReferenceMark(refMarkName, cursor);
+                            .insertGetreferenceToPageNumberOfReferenceMark(cg.getMarkName(), cursor);
                         i++;
                     }
                     documentConnection.refresh();
