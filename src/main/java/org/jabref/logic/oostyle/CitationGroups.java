@@ -8,7 +8,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import org.jabref.logic.openoffice.Backend52;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 
@@ -273,7 +272,7 @@ public class CitationGroups {
     }
 
     public List<String> getPageInfosForCitations(CitationGroup cg) {
-        return Backend52.getPageInfosForCitations(this.dataModel, cg);
+        return Compat.getPageInfosForCitations(this.dataModel, cg);
     }
 
     public List<String> getPageInfosForCitations(CitationGroupID cgid) {

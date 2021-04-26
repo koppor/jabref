@@ -33,9 +33,9 @@ import org.jabref.logic.oostyle.CitationMarkerEntryImpl;
 import org.jabref.logic.oostyle.CitationPath;
 import org.jabref.logic.oostyle.CitedKey;
 import org.jabref.logic.oostyle.CitedKeys;
+import org.jabref.logic.oostyle.Compat;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.OOPreFormatter;
-import org.jabref.logic.openoffice.Backend52;
 import org.jabref.logic.openoffice.CreationException;
 import org.jabref.logic.openoffice.DocumentConnection;
 import org.jabref.logic.openoffice.NoDocumentException;
@@ -1122,7 +1122,7 @@ class OOBibBase {
             assertCitationCharacterFormatIsOK(cursor, style);
 
             // JabRef53 style pageInfo list
-            List<String> pageInfosForCitations = Backend52.fakePageInfosForCitations(pageInfo, nEntries);
+            List<String> pageInfosForCitations = Compat.fakePageInfosForCitations(pageInfo, nEntries);
 
             List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(entries.size());
             for (int i = 0; i < nEntries; i++) {
