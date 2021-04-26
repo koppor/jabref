@@ -50,7 +50,7 @@ public interface CitationMarkerEntry {
      * pageInfo for this citation, provided by the user.
      * May be empty, for none.
      */
-    Optional<String> getPageInfo();
+    Optional<OOFormattedText> getPageInfo();
 
     /**
      *  @return true if this citation is the first appearance of the

@@ -13,6 +13,7 @@ import org.jabref.logic.oostyle.CitationGroup;
 import org.jabref.logic.oostyle.CitationGroupID;
 import org.jabref.logic.oostyle.CitationGroups;
 import org.jabref.logic.oostyle.Compat;
+import org.jabref.logic.oostyle.OOFormattedText;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
@@ -113,7 +114,8 @@ public class Backend52 {
                                     .map(Citation::new)
                                     .collect(Collectors.toList()));
 
-        Optional<String> pageInfo = documentConnection.getCustomProperty(refMarkName);
+        Optional<OOFormattedText> pageInfo = (documentConnection.getCustomProperty(refMarkName)
+                                              .map(OOFormattedText::fromString));
 
         Optional<StorageBase.NamedRange> sr = (citationStorageManager
                                                .getFromDocument(documentConnection, refMarkName));
@@ -180,7 +182,7 @@ public class Backend52 {
      */
     public CitationGroup createCitationGroup(DocumentConnection documentConnection,
                                              List<String> citationKeys,
-                                             List<String> pageInfosForCitations,
+                                             List<OOFormattedText> pageInfosForCitations,
                                              int itcType,
                                              XTextCursor position,
                                              boolean insertSpaceAfter,
@@ -223,9 +225,10 @@ public class Backend52 {
 
         switch (dataModel) {
         case JabRef52:
-            Optional<String> pageInfo = Compat.getJabRef52PageInfoFromList(pageInfosForCitations);
-            if (pageInfo.isPresent() && !pageInfo.get().equals("")) {
-                documentConnection.setCustomProperty(refMarkName, pageInfo.get());
+            Optional<OOFormattedText> pageInfo = Compat.getJabRef52PageInfoFromList(pageInfosForCitations);
+            if (pageInfo.isPresent() && !"".equals(OOFormattedText.toString(pageInfo.get()))) {
+                documentConnection.setCustomProperty(refMarkName,
+                                                     OOFormattedText.toString(pageInfo.get()));
             } else {
                 // do not inherit from trash
                 documentConnection.removeCustomProperty(refMarkName);
@@ -244,7 +247,7 @@ public class Backend52 {
     /**
      *
      */
-    public List<String> combinePageInfos(List<CitationGroup> joinableGroup) {
+    public List<OOFormattedText> combinePageInfos(List<CitationGroup> joinableGroup) {
         return Compat.combinePageInfos(this.dataModel, joinableGroup);
     }
 
@@ -336,7 +339,8 @@ public class Backend52 {
                                                                    cursor, 30, 30, true);
                 CitationEntry entry = new CitationEntry(name,
                                                         context,
-                                                        cgs.getPageInfo(cgid));
+                                                        (cgs.getPageInfo(cgid)
+                                                         .map(e -> OOFormattedText.toString(e))));
                 citations.add(entry);
             }
             return citations;

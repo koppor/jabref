@@ -13,8 +13,8 @@ class OOBibStyleGetNumCitationMarker {
      */
     private static class NumberWithPageInfo {
         int num;
-        String pageInfo;
-        NumberWithPageInfo(int num, String pageInfo) {
+        OOFormattedText pageInfo;
+        NumberWithPageInfo(int num, OOFormattedText pageInfo) {
             this.num = num;
             this.pageInfo = pageInfo;
         }
@@ -43,10 +43,10 @@ class OOBibStyleGetNumCitationMarker {
     /**
      * See {@see getNumCitationMarkerCommon} for details.
      */
-    public static String getNumCitationMarker(OOBibStyle style,
-                                              List<Integer> numbers,
-                                              int minGroupingCount,
-                                              List<String> pageInfosForCitations) {
+    public static OOFormattedText getNumCitationMarker(OOBibStyle style,
+                                                       List<Integer> numbers,
+                                                       int minGroupingCount,
+                                                       List<OOFormattedText> pageInfosForCitations) {
         return getNumCitationMarkerCommon(style,
                                           numbers,
                                           minGroupingCount,
@@ -67,8 +67,8 @@ class OOBibStyleGetNumCitationMarker {
      *       "]" stands for BRACKET_AFTER_IN_LIST (with fallback BRACKET_AFTER)
      *       "${number}" stands for the formatted number.
      */
-    public static String getNumCitationMarkerForBibliography(OOBibStyle style,
-                                                             int number) {
+    public static OOFormattedText getNumCitationMarkerForBibliography(OOBibStyle style,
+                                                                      int number) {
         return getNumCitationMarkerCommon(style,
                                           Collections.singletonList(number),
                                           0,
@@ -116,11 +116,12 @@ class OOBibStyleGetNumCitationMarker {
      * @return The text for the citation.
      *
      */
-    private static String getNumCitationMarkerCommon(OOBibStyle style,
-                                                     List<Integer> numbers,
-                                                     int minGroupingCount,
-                                                     CitationMarkerPurpose purpose,
-                                                     List<String> pageInfosForCitations) {
+    private static OOFormattedText
+    getNumCitationMarkerCommon(OOBibStyle style,
+                               List<Integer> numbers,
+                               int minGroupingCount,
+                               CitationMarkerPurpose purpose,
+                               List<OOFormattedText> pageInfosForCitations) {
 
         final boolean joinIsDisabled = (minGroupingCount <= 0);
         final int notFoundInDatabases = 0;
@@ -166,7 +167,7 @@ class OOBibStyleGetNumCitationMarker {
                           : OOBibStyle.UNDEFINED_CITATION_MARKER);
                 sb.append(bracketAfter);
                 sb.append(style.getCitationGroupMarkupAfter());
-                return sb.toString();
+                return OOFormattedText.fromString(sb.toString());
             }
         }
 
@@ -179,7 +180,7 @@ class OOBibStyleGetNumCitationMarker {
          *    get here, and {@code purpose==BIBLIOGRAPHY}, then we just fill
          *    pageInfos with null values.
          */
-        List<String> pageInfos =
+        List<OOFormattedText> pageInfos =
             OOBibStyle.regularizePageInfosForCitations((purpose == CitationMarkerPurpose.BIBLIOGRAPHY
                                                         ? null
                                                         : pageInfosForCitations),
@@ -244,9 +245,9 @@ class OOBibStyleGetNumCitationMarker {
                           ? OOBibStyle.UNDEFINED_CITATION_MARKER
                           : String.valueOf(num));
                 // Emit pageInfo
-                String pageInfo = block.get(0).pageInfo;
+                OOFormattedText pageInfo = block.get(0).pageInfo;
                 if (pageInfo != null) {
-                    sb.append(style.getPageInfoSeparator() + pageInfo);
+                    sb.append(style.getPageInfoSeparator() + OOFormattedText.toString(pageInfo));
                 }
             } else {
                 // block has at least 2 elements
@@ -379,7 +380,7 @@ class OOBibStyleGetNumCitationMarker {
 
         // Emit: "]"
         sb.append(bracketAfter);
-        return sb.toString();
+        return OOFormattedText.fromString(sb.toString());
     }
 
 }

@@ -81,10 +81,10 @@ public class OOProcess {
      *
      * **************************************/
 
-    private static String normalizedCitationMarkerForNormalStyle(CitedKey ck,
-                                                                 OOBibStyle style) {
+    private static OOFormattedText normalizedCitationMarkerForNormalStyle(CitedKey ck,
+                                                                          OOBibStyle style) {
         if (ck.db.isEmpty()) {
-            return String.format("(Unresolved(%s))", ck.citationKey);
+            return OOFormattedText.fromString(String.format("(Unresolved(%s))", ck.citationKey));
         }
         // We need "normalized" (in parenthesis) markers
         // for uniqueness checking purposes:
@@ -137,7 +137,7 @@ public class OOProcess {
         //
         Map<String, List<String>> ncm2clks = new HashMap<>();
         for (CitedKey ck : sortedCitedKeys.values()) {
-            String ncm = ck.normCitMarker.get();
+            String ncm = OOFormattedText.toString(ck.normCitMarker.get());
             String citationKey = ck.citationKey;
 
             if (!ncm2clks.containsKey(ncm)) {
@@ -205,7 +205,7 @@ public class OOProcess {
      *  Produce citation markers for the case when the citation
      *  markers are the citation keys themselves, separated by commas.
      */
-    private static Map<CitationGroupID, String>
+    private static Map<CitationGroupID, OOFormattedText>
     produceCitationMarkersForIsCitationKeyCiteMarkers(CitationGroups cgs,
                                                       OOBibStyle style) {
 
@@ -213,7 +213,7 @@ public class OOProcess {
 
         cgs.createPlainBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
 
-        Map<CitationGroupID, String> citMarkers = new HashMap<>();
+        Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             List<Citation> cits = cgs.getSortedCitations(cgid);
@@ -223,7 +223,7 @@ public class OOProcess {
                    .map(cit -> cit.citationKey)
                    .collect(Collectors.joining(",")))
                 + style.getCitationGroupMarkupAfter();
-            citMarkers.put(cgid, citMarker);
+            citMarkers.put(cgid, OOFormattedText.fromString(citMarker));
         }
         return citMarkers;
     }
@@ -240,7 +240,7 @@ public class OOProcess {
      *         Assumes global order and local order ae already applied.
      *
      */
-    private static Map<CitationGroupID, String>
+    private static Map<CitationGroupID, OOFormattedText>
     produceCitationMarkersForIsNumberEntriesIsSortByPosition(CitationGroups cgs,
                                                              OOBibStyle style) {
 
@@ -251,12 +251,12 @@ public class OOProcess {
 
         final int minGroupingCount = style.getMinimumGroupingCount();
 
-        Map<CitationGroupID, String> citMarkers = new HashMap<>();
+        Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
             List<Integer> numbers = cg.getSortedNumbers();
-            List<String> pageInfos = cgs.getPageInfosForCitations(cg);
+            List<OOFormattedText> pageInfos = cgs.getPageInfosForCitations(cg);
             citMarkers.put(cgid,
                            style.getNumCitationMarker(numbers,
                                                       minGroupingCount,
@@ -270,7 +270,7 @@ public class OOProcess {
      * Produce citation markers for the case of numbered citations
      * when the bibliography is not sorted by position.
      */
-    private static Map<CitationGroupID, String>
+    private static Map<CitationGroupID, OOFormattedText>
     produceCitationMarkersForIsNumberEntriesNotSortByPosition(CitationGroups cgs,
                                                               OOBibStyle style) {
         assert style.isNumberEntries();
@@ -280,12 +280,12 @@ public class OOProcess {
 
         final int minGroupingCount = style.getMinimumGroupingCount();
 
-        Map<CitationGroupID, String> citMarkers = new HashMap<>();
+        Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
             List<Integer> numbers = cg.getSortedNumbers();
-            List<String> pageInfos = cgs.getPageInfosForCitations(cg);
+            List<OOFormattedText> pageInfos = cgs.getPageInfosForCitations(cg);
             citMarkers.put(cgid,
                            style.getNumCitationMarker(numbers,
                                                       minGroupingCount,
@@ -301,7 +301,7 @@ public class OOProcess {
      * @param cgs
      * @param style              Bibliography style.
      */
-    private static Map<CitationGroupID, String>
+    private static Map<CitationGroupID, OOFormattedText>
     produceCitationMarkersForNormalStyle(CitationGroups cgs,
                                          OOBibStyle style) {
 
@@ -321,13 +321,13 @@ public class OOProcess {
 
         Set<String> seenBefore = new HashSet<>();
 
-        Map<CitationGroupID, String> citMarkers = new HashMap<>();
+        Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
             List<Citation> cits = cg.getSortedCitations();
             final int nCitedEntries = cits.size();
-            List<String> pageInfosForCitations = cgs.getPageInfosForCitations(cg);
+            List<OOFormattedText> pageInfosForCitations = cgs.getPageInfosForCitations(cg);
 
             List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nCitedEntries);
 
@@ -379,14 +379,15 @@ public class OOProcess {
                         s = s + String.format("(Unresolved(%s))", cm.getCitationKey());
                     }
                 }
-                citMarkers.put(cgid, s);
+                citMarkers.put(cgid, OOFormattedText.fromString(s));
             } else {
                 /*
                  * All entries are resolved.
                  */
-                String citMarker = style.getCitationMarker(citationMarkerEntries,
-                                                           cg.itcType == OOProcess.AUTHORYEAR_PAR,
-                                                           OOBibStyle.NonUniqueCitationMarker.THROWS);
+                OOFormattedText citMarker =
+                    style.getCitationMarker(citationMarkerEntries,
+                                            cg.itcType == OOProcess.AUTHORYEAR_PAR,
+                                            OOBibStyle.NonUniqueCitationMarker.THROWS);
                 citMarkers.put(cgid, citMarker);
             }
         }
@@ -402,10 +403,10 @@ public class OOProcess {
         public CitationGroups cgs;
 
         /** citation markers */
-        public Map<CitationGroupID, String> citMarkers;
+        public Map<CitationGroupID, OOFormattedText> citMarkers;
 
         ProduceCitationMarkersResult(CitationGroups cgs,
-                                     Map<CitationGroupID, String> citMarkers) {
+                                     Map<CitationGroupID, OOFormattedText> citMarkers) {
             this.cgs = cgs;
             this.citMarkers = citMarkers;
             if (cgs.getBibliography().isEmpty()) {
@@ -447,7 +448,7 @@ public class OOProcess {
         // requires cgs.lookupEntryInDatabases: needs BibEntry data
         cgs.imposeLocalOrderByComparator(comparatorForMulticite(style));
 
-        Map<CitationGroupID, String> citMarkers;
+        Map<CitationGroupID, OOFormattedText> citMarkers;
 
         // fill citMarkers
         Map<String, String> uniqueLetters = new HashMap<>();

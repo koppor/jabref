@@ -377,11 +377,11 @@ class OOBibStyleGetCitationMarker {
      * @return The formatted citation.
      *
      */
-    private static String getAuthorYearParenthesisMarker(OOBibStyle style,
-                                                         AuthorYearMarkerPurpose purpose,
-                                                         List<CitationMarkerEntry> ces,
-                                                         boolean[] startsNewGroup,
-                                                         Optional<Integer> maxAuthorsOverride) {
+    private static OOFormattedText getAuthorYearParenthesisMarker(OOBibStyle style,
+                                                                  AuthorYearMarkerPurpose purpose,
+                                                                  List<CitationMarkerEntry> ces,
+                                                                  boolean[] startsNewGroup,
+                                                                  Optional<Integer> maxAuthorsOverride) {
 
         boolean inParenthesis = (purpose == AuthorYearMarkerPurpose.IN_PARENTHESIS
                                  || purpose == AuthorYearMarkerPurpose.NORMALIZED);
@@ -483,10 +483,11 @@ class OOBibStyleGetCitationMarker {
                         sb.append(uniqueLetter);
                     }
 
-                    String pageInfo = OOBibStyle.regularizePageInfo(ce.getPageInfo().orElse(null));
+                    OOFormattedText pageInfo =
+                        OOBibStyle.regularizePageInfo(ce.getPageInfo().orElse(null));
                     if (pageInfo != null) {
                         sb.append(pageInfoSeparator);
-                        sb.append(pageInfo);
+                        sb.append(OOFormattedText.toString(pageInfo));
                     }
                 }
 
@@ -500,7 +501,7 @@ class OOBibStyleGetCitationMarker {
             sb.append(endBrace);
         }
         sb.append(style.getCitationGroupMarkupAfter());
-        return sb.toString();
+        return OOFormattedText.fromString(sb.toString());
     }
 
     // "" is more convenient to compare for equality than null-or-String
@@ -521,9 +522,9 @@ class OOBibStyleGetCitationMarker {
      *
      * Note: now includes some markup.
      */
-    public static String getNormalizedCitationMarker(OOBibStyle style,
-                                                     CitationMarkerEntry ce,
-                                                     Optional<Integer> maxAuthorsOverride) {
+    public static OOFormattedText getNormalizedCitationMarker(OOBibStyle style,
+                                                              CitationMarkerEntry ce,
+                                                              Optional<Integer> maxAuthorsOverride) {
         boolean[] startsNewGroup = {true};
         return getAuthorYearParenthesisMarker(style,
                                               AuthorYearMarkerPurpose.NORMALIZED,
@@ -561,7 +562,7 @@ class OOBibStyleGetCitationMarker {
      *             Note: only consecutive citations are checked.
      *
      */
-    public static String
+    public static OOFormattedText
     getCitationMarker(OOBibStyle style,
                       List<CitationMarkerEntry> citationMarkerEntries,
                       boolean inParenthesis,
@@ -584,11 +585,11 @@ class OOBibStyleGetCitationMarker {
         // We also assume, that identical entries have the same uniqueLetters.
         //
 
-        List<String> normalizedMarkers = new ArrayList<>(nEntries);
+        List<OOFormattedText> normalizedMarkers = new ArrayList<>(nEntries);
         for (CitationMarkerEntry citationMarkerEntry : citationMarkerEntries) {
-            String nm = getNormalizedCitationMarker(style,
-                                                    citationMarkerEntry,
-                                                    Optional.empty());
+            OOFormattedText nm = getNormalizedCitationMarker(style,
+                                                             citationMarkerEntry,
+                                                             Optional.empty());
             normalizedMarkers.add(nm);
         }
 
@@ -616,8 +617,8 @@ class OOBibStyleGetCitationMarker {
         for (int i = 1; i < nEntries; i++) {
             CitationMarkerEntry ce1 = citationMarkerEntries.get(i - 1);
             CitationMarkerEntry ce2 = citationMarkerEntries.get(i);
-            String nm1 = normalizedMarkers.get(i - 1);
-            String nm2 = normalizedMarkers.get(i);
+            String nm1 = OOFormattedText.toString(normalizedMarkers.get(i - 1));
+            String nm2 = OOFormattedText.toString(normalizedMarkers.get(i));
 
             BibEntry bibEntry1 = ce1.getBibEntry().orElse(null);
             BibEntry bibEntry2 = ce2.getBibEntry().orElse(null);
@@ -667,17 +668,21 @@ class OOBibStyleGetCitationMarker {
                         } else {
                             // prevShown >= need
                             // Check with extended normalizedMarkers.
-                            String nmx1 = getNormalizedCitationMarker(style, ce1, Optional.of(prevShown));
-                            String nmx2 = getNormalizedCitationMarker(style, ce2, Optional.of(prevShown));
+                            OOFormattedText fnmx1 =
+                                getNormalizedCitationMarker(style, ce1, Optional.of(prevShown));
+                            String nmx1 = OOFormattedText.toString(fnmx1);
+                            OOFormattedText fnmx2 =
+                                getNormalizedCitationMarker(style, ce2, Optional.of(prevShown));
+                            String nmx2 = OOFormattedText.toString(fnmx2);
                             firstAppearanceInhibitsJoin = !nmx2.equals(nmx1);
                         }
                     }
                 }
 
-                String pi2 =
-                    nullToEmptyString(OOBibStyle.regularizePageInfo(ce2.getPageInfo().orElse(null)));
-                String pi1 =
-                    nullToEmptyString(OOBibStyle.regularizePageInfo(ce1.getPageInfo().orElse(null)));
+                OOFormattedText fpi2 = OOBibStyle.regularizePageInfo(ce2.getPageInfo().orElse(null));
+                OOFormattedText fpi1 = OOBibStyle.regularizePageInfo(ce1.getPageInfo().orElse(null));
+                String pi2 = nullToEmptyString(OOFormattedText.toString(fpi2));
+                String pi1 = nullToEmptyString(OOFormattedText.toString(fpi1));
 
                 String ul2 = ce2.getUniqueLetter().orElse(null);
                 String ul1 = ce1.getUniqueLetter().orElse(null);

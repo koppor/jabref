@@ -40,7 +40,8 @@ public class Compat {
     /**
      * Return the last pageInfo from the list, if there is one.
      */
-    public static Optional<String> getJabRef52PageInfoFromList(List<String> pageInfosForCitations) {
+    public static Optional<OOFormattedText>
+    getJabRef52PageInfoFromList(List<OOFormattedText> pageInfosForCitations) {
         if (pageInfosForCitations == null) {
             return Optional.empty();
         }
@@ -55,12 +56,12 @@ public class Compat {
      * @param pageInfo Nullable.
      * @return JabRef53 style pageInfo list
      */
-    public static List<String> fakePageInfosForCitations(String pageInfo,
-                                                         int nCitations) {
-        List<String> pageInfosForCitations = new ArrayList<>(nCitations);
+    public static List<OOFormattedText> fakePageInfosForCitations(String pageInfo,
+                                                                  int nCitations) {
+        List<OOFormattedText> pageInfosForCitations = new ArrayList<>(nCitations);
         for (int i = 0; i < nCitations; i++) {
             if (i == nCitations - 1) {
-                pageInfosForCitations.add(pageInfo);
+                pageInfosForCitations.add(OOFormattedText.fromString(pageInfo));
             } else {
                 pageInfosForCitations.add(null);
             }
@@ -81,7 +82,8 @@ public class Compat {
      *
      *          TODO: we may want class DataModel52, DataModel53 and split this.
      */
-    public static List<String> getPageInfosForCitations(Compat.DataModel dataModel, CitationGroup cg) {
+    public static List<OOFormattedText> getPageInfosForCitations(Compat.DataModel dataModel,
+                                                                 CitationGroup cg) {
         switch (dataModel) {
         case JabRef52:
             // check conformance to dataModel
@@ -92,7 +94,8 @@ public class Compat {
                 }
             }
             // A list of null values, except the last that comes from this.pageInfo
-            return Compat.fakePageInfosForCitations(cg.pageInfo.orElse(null),
+            OOFormattedText pi = cg.pageInfo.orElse(null);
+            return Compat.fakePageInfosForCitations(OOFormattedText.toString(pi),
                                                     cg.citations.size());
         case JabRef53:
             // check conformance to dataModel
@@ -118,19 +121,19 @@ public class Compat {
      *  TODO: JabRef52 combinePageInfos is not reversible. Should warn
      *        user to check the result. Or ask what to do.
      */
-    public static List<String> combinePageInfos(Compat.DataModel dataModel,
-                                                List<CitationGroup> joinableGroup) {
+    public static List<OOFormattedText> combinePageInfos(Compat.DataModel dataModel,
+                                                         List<CitationGroup> joinableGroup) {
         switch (dataModel) {
         case JabRef52:
             // collect to cgPageInfos
-            List<Optional<String>> cgPageInfos = (joinableGroup.stream()
-                                                  .map(cg -> cg.pageInfo)
-                                                  .collect(Collectors.toList()));
+            List<Optional<OOFormattedText>> cgPageInfos = (joinableGroup.stream()
+                                                           .map(cg -> cg.pageInfo)
+                                                           .collect(Collectors.toList()));
 
             // Try to do something of the cgPageInfos.
             String cgPageInfo = (cgPageInfos.stream()
                                  .filter(pi -> pi.isPresent())
-                                 .map(pi -> pi.get())
+                                 .map(pi -> OOFormattedText.toString(pi.get()))
                                  .distinct()
                                  .collect(Collectors.joining("; ")));
 

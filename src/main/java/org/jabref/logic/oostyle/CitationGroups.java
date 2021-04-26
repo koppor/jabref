@@ -261,17 +261,17 @@ public class CitationGroups {
         return citationGroups.size();
     }
 
-    public Optional<String> getPageInfo(CitationGroupID cgid) {
+    public Optional<OOFormattedText> getPageInfo(CitationGroupID cgid) {
         return (getCitationGroup(cgid)
                 .map(cg -> cg.pageInfo)
                 .flatMap(x -> x));
     }
 
-    public List<String> getPageInfosForCitations(CitationGroup cg) {
+    public List<OOFormattedText> getPageInfosForCitations(CitationGroup cg) {
         return Compat.getPageInfosForCitations(this.dataModel, cg);
     }
 
-    public List<String> getPageInfosForCitations(CitationGroupID cgid) {
+    public List<OOFormattedText> getPageInfosForCitations(CitationGroupID cgid) {
         CitationGroup cg = getCitationGroupOrThrow(cgid);
         return getPageInfosForCitations(cg);
     }

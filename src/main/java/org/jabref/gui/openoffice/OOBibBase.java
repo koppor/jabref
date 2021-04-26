@@ -29,6 +29,8 @@ import org.jabref.logic.oostyle.CitedKey;
 import org.jabref.logic.oostyle.CitedKeys;
 import org.jabref.logic.oostyle.Compat;
 import org.jabref.logic.oostyle.OOBibStyle;
+import org.jabref.logic.oostyle.OOFormat;
+import org.jabref.logic.oostyle.OOFormattedText;
 import org.jabref.logic.oostyle.OOPreFormatter;
 import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.logic.openoffice.CreationException;
@@ -419,7 +421,7 @@ class OOBibBase {
     }
 
     private static void fillCitationMarkInCursor(XTextCursor cursor,
-                                                 String citationText,
+                                                 OOFormattedText citationText,
                                                  boolean withText,
                                                  OOBibStyle style)
         throws
@@ -469,9 +471,9 @@ class OOBibBase {
                                             // CitationGroups cgs,
                                             DocumentConnection documentConnection,
                                             List<String> citationKeys,
-                                            List<String> pageInfosForCitations,
+                                            List<OOFormattedText> pageInfosForCitations,
                                             int itcType,
-                                            String citationText,
+                                            OOFormattedText citationText,
                                             XTextCursor position,
                                             boolean withText,
                                             OOBibStyle style,
@@ -714,7 +716,8 @@ class OOBibBase {
             assertCitationCharacterFormatIsOK(cursor, style);
 
             // JabRef53 style pageInfo list
-            List<String> pageInfosForCitations = Compat.fakePageInfosForCitations(pageInfo, nEntries);
+            List<OOFormattedText> pageInfosForCitations =
+                Compat.fakePageInfosForCitations(pageInfo, nEntries);
 
             List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(entries.size());
             for (int i = 0; i < nEntries; i++) {
@@ -731,14 +734,15 @@ class OOBibBase {
             }
 
             // The text we insert
-            String citeText = (style.isNumberEntries()
-                               ? "[-]" // A dash only. Only refresh later.
-                               : style.getCitationMarker(citationMarkerEntries,
-                                                         inParenthesis,
-                                                         OOBibStyle.NonUniqueCitationMarker.FORGIVEN));
+            OOFormattedText citeText =
+                (style.isNumberEntries()
+                 ? OOFormattedText.fromString("[-]") // A dash only. Only refresh later.
+                 : style.getCitationMarker(citationMarkerEntries,
+                                           inParenthesis,
+                                           OOBibStyle.NonUniqueCitationMarker.FORGIVEN));
 
-            if (citeText.equals("")) {
-                citeText = "[?]";
+            if ("".equals(OOFormattedText.toString(citeText))) {
+                citeText = OOFormattedText.fromString("[?]");
             }
 
             createAndFillCitationGroup(fr,
@@ -826,7 +830,7 @@ class OOBibBase {
      */
     private void applyNewCitationMarkers(DocumentConnection documentConnection,
                                          OOFrontend fr,
-                                         Map<CitationGroupID, String> citMarkers,
+                                         Map<CitationGroupID, OOFormattedText> citMarkers,
                                          OOBibStyle style)
         throws
         NoDocumentException,
@@ -849,12 +853,12 @@ class OOBibBase {
         // catastrophic consequences for the user.
         boolean mustTestCharFormat = style.isFormatCitations();
 
-        for (Map.Entry<CitationGroupID, String> kv : citMarkers.entrySet()) {
+        for (Map.Entry<CitationGroupID, OOFormattedText> kv : citMarkers.entrySet()) {
 
             CitationGroupID cgid = kv.getKey();
             Objects.requireNonNull(cgid);
 
-            String citationText = kv.getValue();
+            OOFormattedText citationText = kv.getValue();
             Objects.requireNonNull(citationText);
 
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
@@ -991,7 +995,7 @@ class OOBibBase {
                 }
 
                 int number = ck.number.get();
-                String marker = style.getNumCitationMarkerForBibliography(number);
+                OOFormattedText marker = style.getNumCitationMarkerForBibliography(number);
                 OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, marker);
                 cursor.collapseToEnd();
             } else {
@@ -1001,7 +1005,8 @@ class OOBibBase {
 
             if (ck.db.isEmpty()) {
                 // Unresolved entry
-                String referenceDetails = String.format("Unresolved(%s)", ck.citationKey);
+                OOFormattedText referenceDetails =
+                    OOFormattedText.fromString(String.format("Unresolved(%s)", ck.citationKey));
                 OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, referenceDetails);
                 cursor.collapseToEnd();
                 // Try to list citations:
@@ -1045,10 +1050,10 @@ class OOBibBase {
                 Layout layout = style.getReferenceFormat(bibentry.getType());
                 layout.setPostFormatter(POSTFORMATTER);
 
-                String formattedText = OOUtil.formatFullReference(layout,
-                                                                  bibentry,
-                                                                  ck.db.get().database,
-                                                                  ck.uniqueLetter.orElse(null));
+                OOFormattedText formattedText = OOFormat.formatFullReference(layout,
+                                                                             bibentry,
+                                                                             ck.db.get().database,
+                                                                             ck.uniqueLetter.orElse(null));
 
                 // Insert the formatted text:
                 OOUtil.insertOOFormattedTextAtCurrentLocation(cursor, formattedText);
@@ -1472,7 +1477,7 @@ class OOBibBase {
                     // cgPageInfos belong to the CitationGroup (DataModel JabRef52),
                     // but it is not clear how should we handle them here.
                     // We delegate the problem to the backend.
-                    List<String> pageInfosForCitations =
+                    List<OOFormattedText> pageInfosForCitations =
                         fr.backend.combinePageInfos(joinableGroup);
 
                     // Remove the old citation groups from the document.
@@ -1499,7 +1504,7 @@ class OOBibBase {
                                                citationKeys,
                                                pageInfosForCitations,
                                                itcType, // OOBibBase.AUTHORYEAR_PAR
-                                               "tmp",
+                                               OOFormattedText.fromString("tmp"),
                                                textCursor,
                                                true, // withText
                                                style,
@@ -1606,7 +1611,7 @@ class OOBibBase {
                     }
 
                     // Note: JabRef52 returns cg.pageInfo for the last citation.
-                    List<String> pageInfosForCitations = fr.cgs.getPageInfosForCitations(cg);
+                    List<OOFormattedText> pageInfosForCitations = fr.cgs.getPageInfosForCitations(cg);
 
                     List<Citation> cits = cg.citations;
                     if (cits.size() <= 1) {
@@ -1635,7 +1640,7 @@ class OOBibBase {
                                                    keys.subList(i, i + 1), // citationKeys,
                                                    pageInfosForCitations.subList(i, i + 1), // pageInfos,
                                                    OOProcess.AUTHORYEAR_PAR, // itcType,
-                                                   "tmp",
+                                                   OOFormattedText.fromString("tmp"),
                                                    textCursor,
                                                    true, /* withText.
                                                           * Should be itcType != OOBibBase.INVISIBLE_CIT */

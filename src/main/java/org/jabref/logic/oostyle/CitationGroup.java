@@ -18,13 +18,13 @@ public class CitationGroup {
     public List<Integer> localOrder;
 
     /** For Compat.DataModel.JabRef52 pageInfo belongs to the group */
-    public Optional<String> pageInfo;
+    public Optional<OOFormattedText> pageInfo;
 
     public CitationGroup(CitationGroupID cgid,
                          StorageBase.NamedRange cgRangeStorage,
                          int itcType,
                          List<Citation> citations,
-                         Optional<String> pageInfo) {
+                         Optional<OOFormattedText> pageInfo) {
         this.cgid = cgid;
         this.cgRangeStorage = cgRangeStorage;
         this.itcType = itcType;
@@ -77,7 +77,7 @@ public class CitationGroup {
         }
 
         @Override
-        public Optional<String> getPageInfo() {
+        public Optional<OOFormattedText> getPageInfo() {
             return c.pageInfo;
         }
     }

@@ -438,9 +438,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      * @param number The citation numbers.
      * @return The text for the citation.
      */
-    public String getNumCitationMarker(List<Integer> number,
-                                       int minGroupingCount,
-                                       List<String> pageInfosForCitations) {
+    public OOFormattedText getNumCitationMarker(List<Integer> number,
+                                                int minGroupingCount,
+                                                List<OOFormattedText> pageInfosForCitations) {
         return OOBibStyleGetNumCitationMarker.getNumCitationMarker(this,
                                                                    number,
                                                                    minGroupingCount,
@@ -861,8 +861,8 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     /**
      * Title for the bibliography.
      */
-    public String getReferenceHeaderText() {
-        return getStringProperty(OOBibStyle.TITLE);
+    public OOFormattedText getReferenceHeaderText() {
+        return OOFormattedText.fromString(getStringProperty(OOBibStyle.TITLE));
     }
 
     /**
@@ -932,20 +932,20 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     /**
      * Format a number-based bibliography label for the given number.
      */
-    public String getNumCitationMarkerForBibliography(int number) {
+    public OOFormattedText getNumCitationMarkerForBibliography(int number) {
         return OOBibStyleGetNumCitationMarker.getNumCitationMarkerForBibliography(this,
                                                                                   number);
     }
 
-    public static String regularizePageInfo(String p) {
+    public static OOFormattedText regularizePageInfo(OOFormattedText p) {
         if (p == null) {
             return null;
         }
-        String pt = p.trim();
+        String pt = OOFormattedText.toString(p).trim();
         if (pt.equals("")) {
             return null;
         } else {
-            return pt;
+            return OOFormattedText.fromString(pt);
         }
     }
 
@@ -953,10 +953,11 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      *  Make sure that (1) we have exactly one entry for each
      *  citation, (2) each entry is either null or is not empty when trimmed.
      */
-    public static List<String> regularizePageInfosForCitations(List<String> pageInfosForCitations,
-                                                               int nCitations) {
+    public static List<OOFormattedText>
+    regularizePageInfosForCitations(List<OOFormattedText> pageInfosForCitations,
+                                    int nCitations) {
         if (pageInfosForCitations == null) {
-            List<String> res = new ArrayList<>(nCitations);
+            List<OOFormattedText> res = new ArrayList<>(nCitations);
             for (int i = 0; i < nCitations; i++) {
                 res.add(null);
             }
@@ -966,9 +967,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
                 throw new RuntimeException("regularizePageInfosForCitations:"
                                            + " pageInfosForCitations.size() != nCitations");
             }
-            List<String> res = new ArrayList<>(nCitations);
+            List<OOFormattedText> res = new ArrayList<>(nCitations);
             for (int i = 0; i < nCitations; i++) {
-                String p = pageInfosForCitations.get(i);
+                OOFormattedText p = pageInfosForCitations.get(i);
                 res.add(regularizePageInfo(p));
             }
             return res;
@@ -980,9 +981,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      *
      * null comes before non-null
      */
-    public static int comparePageInfo(String a, String b) {
-        String aa = regularizePageInfo(a);
-        String bb = regularizePageInfo(b);
+    public static int comparePageInfo(OOFormattedText a, OOFormattedText b) {
+        String aa = OOFormattedText.toString(regularizePageInfo(a));
+        String bb = OOFormattedText.toString(regularizePageInfo(b));
         if (aa == null && bb == null) {
             return 0;
         }
@@ -995,7 +996,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         return aa.compareTo(bb);
     }
 
-    public String getNormalizedCitationMarker(CitationMarkerEntry ce) {
+    public OOFormattedText getNormalizedCitationMarker(CitationMarkerEntry ce) {
         return OOBibStyleGetCitationMarker.getNormalizedCitationMarker(this, ce, Optional.empty());
     }
 
@@ -1038,9 +1039,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      *
      * @return The formatted citation.
      */
-    public String getCitationMarker(List<CitationMarkerEntry> citationMarkerEntries,
-                                    boolean inParenthesis,
-                                    NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
+    public OOFormattedText getCitationMarker(List<CitationMarkerEntry> citationMarkerEntries,
+                                             boolean inParenthesis,
+                                             NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
         return OOBibStyleGetCitationMarker.getCitationMarker(this,
                                                              citationMarkerEntries,
                                                              inParenthesis,

@@ -17,14 +17,14 @@ public class CitationMarkerEntryImpl implements CitationMarkerEntry {
     final Optional<BibEntry> bibEntry;
     final Optional<BibDatabase> database;
     final Optional<String> uniqueLetter;
-    final Optional<String> pageInfo;
+    final Optional<OOFormattedText> pageInfo;
     final boolean isFirstAppearanceOfSource;
 
     public CitationMarkerEntryImpl(String citationKey,
                                    Optional<BibEntry> bibEntry,
                                    Optional<BibDatabase> database,
                                    Optional<String> uniqueLetter,
-                                   Optional<String> pageInfo,
+                                   Optional<OOFormattedText> pageInfo,
                                    boolean isFirstAppearanceOfSource) {
         Objects.requireNonNull(citationKey);
         this.citationKey = citationKey;
@@ -57,7 +57,8 @@ public class CitationMarkerEntryImpl implements CitationMarkerEntry {
         Optional<BibEntry> bibEntry = Optional.ofNullable(bibEntryQ);
         Optional<BibDatabase> database = Optional.ofNullable(databaseQ);
         Optional<String> uniqueLetter = Optional.ofNullable(uniqueLetterQ);
-        Optional<String> pageInfo = Optional.ofNullable(pageInfoQ);
+        Optional<OOFormattedText> pageInfo =
+            Optional.ofNullable(OOFormattedText.fromString(pageInfoQ));
 
         if (bibEntry.isEmpty() && database.isPresent()) {
             throw new RuntimeException("CitationMarkerEntryImpl:"
@@ -96,7 +97,7 @@ public class CitationMarkerEntryImpl implements CitationMarkerEntry {
     }
 
     @Override
-    public Optional<String> getPageInfo() {
+    public Optional<OOFormattedText> getPageInfo() {
         return pageInfo;
     }
 

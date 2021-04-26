@@ -16,7 +16,7 @@ public class Citation implements CitationSort.ComparableCitation {
     public Optional<String> uniqueLetter;
 
     /** pageInfo: For Compat.DataModel.JabRef53 */
-    public Optional<String> pageInfo;
+    public Optional<OOFormattedText> pageInfo;
 
     /* missing: something that differentiates this from other
      * citations of the same citationKey. In particular, a
@@ -41,7 +41,7 @@ public class Citation implements CitationSort.ComparableCitation {
     }
 
     @Override
-    public Optional<String> getPageInfo() {
+    public Optional<OOFormattedText> getPageInfo() {
         return pageInfo;
     }
 

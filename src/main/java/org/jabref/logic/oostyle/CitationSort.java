@@ -12,7 +12,7 @@ class CitationSort {
 
         public Optional<BibEntry> getBibEntry();
 
-        public Optional<String> getPageInfo();
+        public Optional<OOFormattedText> getPageInfo();
     }
 
     static class CitationComparator implements Comparator<ComparableCitation> {
