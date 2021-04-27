@@ -286,7 +286,7 @@ class OOBibBase {
      * Either return a valid DocumentConnection or throw
      * NoDocumentException.
      */
-    private DocumentConnection getDocumentConnectionOrThrow()
+    public DocumentConnection getDocumentConnectionOrThrow()
         throws
         NoDocumentException {
         if (documentConnectionMissing()) {
@@ -372,9 +372,15 @@ class OOBibBase {
         UnknownPropertyException,
         WrappedTargetException,
         NoDocumentException,
-        CreationException {
+        CreationException,
+        PropertyVetoException,
+        JabRefException {
 
         DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
+
+        // checkStylesExistInTheDocument(style, documentConnection);
+        checkRecordChanges(documentConnection);
+
         OOFrontend fr = new OOFrontend(documentConnection);
         return fr.getCitationEntries(documentConnection);
     }
@@ -683,6 +689,10 @@ class OOBibBase {
         final int nEntries = entries.size();
 
         DocumentConnection documentConnection = getDocumentConnectionOrThrow();
+
+        checkStylesExistInTheDocument(style, documentConnection);
+        checkRecordChanges(documentConnection);
+
         OOFrontend fr = new OOFrontend(documentConnection);
         // CitationGroups cgs = new CitationGroups(documentConnection);
         // TODO: imposeLocalOrder
@@ -1228,6 +1238,9 @@ class OOBibBase {
 
         final boolean useLockControllers = true;
         DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
+        checkStylesExistInTheDocument(style, documentConnection);
+        checkRecordChanges(documentConnection);
+
         OOFrontend fr = new OOFrontend(documentConnection);
 
         try {
@@ -1585,6 +1598,10 @@ class OOBibBase {
 
         final boolean useLockControllers = true;
         DocumentConnection documentConnection = getDocumentConnectionOrThrow();
+
+        checkStylesExistInTheDocument(style, documentConnection);
+        checkRecordChanges(documentConnection);
+
         OOFrontend fr = new OOFrontend(documentConnection);
 
         try {
@@ -1797,6 +1814,41 @@ class OOBibBase {
         return new ExportCitedHelperResult(unresolvedKeys, resultDatabase);
     }
 
+    /*
+     * Throw JabRefException if recording changes or the document contains
+     * recorded changes.
+     */
+    public void checkRecordChanges(DocumentConnection documentConnection)
+        throws
+        UnknownPropertyException,
+        WrappedTargetException,
+        PropertyVetoException,
+        JabRefException {
+        /* We could do this: documentConnection.setRecordChanges(false);
+         * but it is more transparent to ask.
+         */
+        boolean recordingChanges = documentConnection.getRecordChanges();
+        int nRedlines = documentConnection.countRedlines();
+        if (recordingChanges || nRedlines > 0) {
+            String msg = "";
+            if (recordingChanges) {
+                msg += Localization.lang("Cannot work with [Edit]/[Track Changes]/[Record] turned on.");
+            }
+            if (nRedlines > 0) {
+                if (recordingChanges) {
+                    msg += "\n";
+                }
+                msg += Localization.lang("Changes by JabRef"
+                                         + " could result in unexpected interactions with"
+                                         + " recorded changes.");
+                msg += "\n";
+                msg += Localization.lang("Use [Edit]/[Track Changes]/[Manage] to resolve them first.");
+            }
+            String title = Localization.lang("Recording and/or Recorded changes");
+            throw new JabRefException(title, msg);
+        }
+    }
+
     void styleIsRequired(OOBibStyle style)
         throws
         JabRefException {
@@ -1941,6 +1993,7 @@ class OOBibBase {
 
         DocumentConnection documentConnection = getDocumentConnectionOrThrow();
         checkStylesExistInTheDocument(style, documentConnection);
+        checkRecordChanges(documentConnection);
 
         try {
             documentConnection.enterUndoContext("Refresh bibliography");

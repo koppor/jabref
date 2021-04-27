@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.ValueTableCellFactory;
+import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.strings.StringUtil;
 
@@ -56,7 +57,7 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
     }
 
     @FXML
-    private void initialize() throws NoSuchElementException, WrappedTargetException, UnknownPropertyException {
+    private void initialize() throws NoSuchElementException, WrappedTargetException, UnknownPropertyException, JabRefException {
 
         viewModel = new ManageCitationsDialogViewModel(ooBase, dialogService);
 

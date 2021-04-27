@@ -8,6 +8,7 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 
 import org.jabref.gui.DialogService;
+import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.oostyle.CitationEntry;
 import org.jabref.logic.openoffice.CreationException;
@@ -16,6 +17,7 @@ import org.jabref.logic.openoffice.NoDocumentException;
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
 import com.sun.star.beans.PropertyExistException;
+import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.IllegalArgumentException;
@@ -31,7 +33,12 @@ public class ManageCitationsDialogViewModel {
     private final OOBibBase ooBase;
     private final DialogService dialogService;
 
-    public ManageCitationsDialogViewModel(OOBibBase ooBase, DialogService dialogService) throws NoSuchElementException, WrappedTargetException, UnknownPropertyException {
+    public ManageCitationsDialogViewModel(OOBibBase ooBase, DialogService dialogService)
+        throws
+        NoSuchElementException,
+        WrappedTargetException,
+        UnknownPropertyException,
+        JabRefException {
         this.ooBase = ooBase;
         this.dialogService = dialogService;
 
@@ -44,6 +51,7 @@ public class ManageCitationsDialogViewModel {
         } catch (UnknownPropertyException
                  | WrappedTargetException
                  | NoDocumentException
+                 | PropertyVetoException
                  | CreationException ex) {
             LOGGER.warn("Problem collecting citations", ex);
             dialogService.showErrorDialogAndWait(Localization.lang("Problem collecting citations"), ex);

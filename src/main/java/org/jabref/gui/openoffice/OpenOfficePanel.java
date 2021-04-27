@@ -48,6 +48,7 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.StyleLoader;
 import org.jabref.logic.openoffice.CreationException;
+import org.jabref.logic.openoffice.DocumentConnection;
 import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.OpenOfficeFileSearch;
 import org.jabref.logic.openoffice.OpenOfficePreferences;
@@ -280,9 +281,21 @@ public class OpenOfficePanel {
         settingsB.setOnAction(e -> settingsMenu.show(settingsB, Side.BOTTOM, 0, 0));
         manageCitations.setMaxWidth(Double.MAX_VALUE);
         manageCitations.setOnAction(e -> {
-           if (ooBase.documentConnectionMissing()) {
+           try {
+               DocumentConnection documentConnection = ooBase.getDocumentConnectionOrThrow();
+               ooBase.checkRecordChanges(documentConnection);
+           } catch (JabRefException ex) {
+                dialogService.showErrorDialogAndWait(
+                    Localization.lang("JabRefException"),
+                    ex.getLocalizedMessage());
+                return;
+           } catch (NoDocumentException ex) {
                showNoDocumentErrorMessage();
                return;
+           } catch (UnknownPropertyException
+                    | PropertyVetoException
+                    | WrappedTargetException ex) {
+               LOGGER.warn("Problem during checkRecordChanges", ex);
            }
            dialogService.showCustomDialogAndWait(new ManageCitationsDialogView(ooBase));
         });
@@ -504,6 +517,23 @@ public class OpenOfficePanel {
         if (!ooBase.isConnectedToDocument()) {
             dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"), Localization.lang("Not connected to any Writer document. Please" + " make sure a document is open, and use the 'Select Writer document' button to connect to it."));
             return;
+        }
+
+        try {
+            DocumentConnection documentConnection = ooBase.getDocumentConnectionOrThrow();
+            ooBase.checkRecordChanges(documentConnection);
+        } catch (JabRefException ex) {
+            dialogService.showErrorDialogAndWait(
+                Localization.lang("JabRefException"),
+                ex.getLocalizedMessage());
+            return;
+        } catch (NoDocumentException ex) {
+            showNoDocumentErrorMessage();
+            return;
+        } catch (UnknownPropertyException
+                 | PropertyVetoException
+                 | WrappedTargetException ex) {
+            LOGGER.warn("Problem during checkRecordChanges", ex);
         }
 
         Boolean inParenthesis = inParenthesisIn;

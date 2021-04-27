@@ -15,10 +15,14 @@ import com.sun.star.beans.XPropertyContainer;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertySetInfo;
 import com.sun.star.container.NoSuchElementException;
+import com.sun.star.container.XEnumeration;
+import com.sun.star.container.XEnumerationAccess;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.container.XNameContainer;
 import com.sun.star.container.XNamed;
+import com.sun.star.document.XDocumentProperties;
 import com.sun.star.document.XDocumentPropertiesSupplier;
+import com.sun.star.document.XRedlinesSupplier;
 import com.sun.star.document.XUndoManager;
 import com.sun.star.document.XUndoManagerSupplier;
 import com.sun.star.frame.XController;
@@ -52,6 +56,8 @@ import com.sun.star.text.XTextViewCursorSupplier;
 import com.sun.star.uno.Any;
 import com.sun.star.uno.Type;
 import com.sun.star.uno.UnoRuntime;
+import com.sun.star.uno.XInterface;
+import com.sun.star.util.DateTime;
 import com.sun.star.util.InvalidStateException;
 import com.sun.star.util.XRefreshable;
 import com.sun.star.view.XSelectionSupplier;
@@ -90,6 +96,16 @@ public class DocumentConnection {
     public XPropertySet propertySet;
 
     public DocumentConnection(XTextDocument mxDoc) {
+        //        printServiceInfo(mxDoc);
+        //        *** xserviceinfo
+        //    object       is OK
+        //    xserviceinfo is OK
+        //        .getImplementationName: "SwXTextDocument"
+        //        .getSupportedServiceNames:
+        //              "com.sun.star.document.OfficeDocument"
+        //              "com.sun.star.text.GenericTextDocument"
+        //              "com.sun.star.text.TextDocument"
+
         this.mxDoc = mxDoc;
         this.xCurrentComponent = unoQI(XComponent.class, mxDoc);
         this.mxDocFactory = unoQI(XMultiServiceFactory.class, mxDoc);
@@ -116,6 +132,219 @@ public class DocumentConnection {
     private static <T> T unoQI(Class<T> zInterface,
                                Object object) {
         return UnoRuntime.queryInterface(zInterface, object);
+    }
+
+    private XDocumentProperties getXDocumentProperties() {
+        XDocumentPropertiesSupplier supp = unoQI(XDocumentPropertiesSupplier.class, mxDoc);
+        return supp.getDocumentProperties();
+    }
+
+    private short getRedlineDisplayType()
+        throws
+        UnknownPropertyException,
+        WrappedTargetException {
+        // https://www.openoffice.org/api/docs/common/ref/com/sun/star/document/RedlineDisplayType.html
+        // Constants (short)
+        // 0 NONE                  no changes are displayed.
+        // 1 INSERTED              only inserted parts are displayed and attributed.
+        // 2 INSERTED_AND_REMOVED  only inserted parts are displayed and attributed.
+        // 3 REMOVED               only removed parts are displayed and attributed.
+        XPropertySet ps = unoQI(XPropertySet.class, mxDoc);
+        return (short) ps.getPropertyValue("RedlineDisplayType");
+    }
+
+    public boolean getRecordChanges()
+        throws
+        UnknownPropertyException,
+        WrappedTargetException {
+        XPropertySet ps = unoQI(XPropertySet.class, mxDoc);
+        // https://wiki.openoffice.org/wiki/Documentation/DevGuide/Text/Settings
+        // "Properties of com.sun.star.text.TextDocument"
+        if (ps == null) {
+            throw new RuntimeException("getRecordChanges: ps is null");
+        }
+        return (boolean) ps.getPropertyValue("RecordChanges");
+    }
+
+    public void setRecordChanges(boolean value)
+        throws
+        UnknownPropertyException,
+        WrappedTargetException,
+        PropertyVetoException {
+        XPropertySet ps = unoQI(XPropertySet.class, mxDoc);
+        ps.setPropertyValue("RecordChanges", value);
+    }
+
+    private XRedlinesSupplier getRedlinesSupplier() {
+        return unoQI(XRedlinesSupplier.class, mxDoc);
+    }
+
+    public int countRedlines() {
+        XRedlinesSupplier rs = getRedlinesSupplier();
+        XEnumerationAccess ea = rs.getRedlines();
+        XEnumeration e = ea.createEnumeration(); // null for empty
+        if (e == null) {
+            // System.out.println("countRedLines: no redlines found");
+            return 0;
+        } else {
+            int count = 0;
+            for (; e.hasMoreElements(); ) {
+                try {
+                    Object o = e.nextElement();
+                    count++;
+                } catch (NoSuchElementException | WrappedTargetException ex) {
+                    break;
+                }
+            }
+            // System.out.println(String.format("countRedLines: found %d redlines", count));
+            return count;
+        }
+    }
+
+    private void printRedlines() {
+        // https://docs.libreoffice.org/sw/html/unoredline_8cxx_source.html#l00290
+        // http://www.openoffice.org/api/docs/common/ref/com/sun/star/text/RedlinePortion.html
+        XRedlinesSupplier rs = getRedlinesSupplier();
+        XEnumerationAccess ea = rs.getRedlines();
+        XEnumeration e = ea.createEnumeration(); // null for empty
+        if (e == null) {
+            System.out.println("printRedLines: no redlines found");
+            return;
+        } else {
+            int count = 0;
+            for (; e.hasMoreElements(); ) {
+                try {
+                    count++;
+                    Object o = e.nextElement();
+                    XPropertySet ps = unoQI(XPropertySet.class, o);
+                    if (ps == null) {
+                        String msg = String.format("printRedLines: %d XPropertySet is null", count);
+                        System.out.println(msg);
+                        continue;
+                    }
+                    XPropertySetInfo psi = ps.getPropertySetInfo();
+                    if (psi == null) {
+                        String msg = String.format("printRedLines: %d XPropertySetInfo is null", count);
+                        System.out.println(msg);
+                    } else {
+                        String msg = String.format("printRedLines: %d XPropertySetInfo is OK", count);
+                        System.out.println(msg);
+                        int propertyCount = 0;
+                        for (Property p : psi.getProperties()) {
+                            propertyCount++;
+                            String m = String.format("printRedLines: %d/%d '%s' %d %s",
+                                                     count,
+                                                     propertyCount,
+                                                     p.Name,
+                                                     p.Handle,
+                                                     p.Type);
+                            switch (p.Name) {
+                            case "RedlineEnd":
+                                // printRedLines: 1/1 'RedlineEnd' 0 Type[com.sun.star.uno.XInterface]
+                                // UNO_NAME_REDLINE_END   "RedlineEnd"
+                            case "RedlineStart":
+                                // printRedLines: 1/12 'RedlineStart' 0 Type[com.sun.star.uno.XInterface]
+                                // UNO_NAME_REDLINE_START   "RedlineStart"
+                                XInterface xi = (XInterface) ps.getPropertyValue(p.Name);
+                                // printServiceInfo(xi);
+                                //*** xserviceinfo
+                                //    object       is OK
+                                //    xserviceinfo is OK
+                                //        .getImplementationName: "SwXTextRange"
+                                //        .getSupportedServiceNames:
+                                //              "com.sun.star.text.TextRange"
+                                //              "com.sun.star.style.CharacterProperties"
+                                //              "com.sun.star.style.CharacterPropertiesAsian"
+                                //              "com.sun.star.style.CharacterPropertiesComplex"
+                                //              "com.sun.star.style.ParagraphProperties"
+                                //              "com.sun.star.style.ParagraphPropertiesAsian"
+                                //              "com.sun.star.style.ParagraphPropertiesComplex"
+                                break;
+                            case "RedlineAuthor":
+                                // printRedLines: 1/2 'RedlineAuthor' 0 Type[string]
+                                // UNO_NAME_REDLINE_AUTHOR   "RedlineAuthor"
+                            case "RedlineIdentifier":
+                                // printRedLines: 1/3 'RedlineIdentifier' 0 Type[string]
+                                // UNO_NAME_REDLINE_IDENTIFIER   "RedlineIdentifier"
+                            case "RedlineDescription":
+                                // printRedLines: 1/5 'RedlineDescription' 0 Type[string]
+                                // UNO_NAME_REDLINE_DESCRIPTION   "RedlineDescription"
+                            case "RedlineType":
+                                // printRedLines: 1/7 'RedlineType' 0 Type[string]
+                                // UNO_NAME_REDLINE_TYPE   "RedlineType"
+                            case "RedlineComment":
+                                // printRedLines: 1/8 'RedlineComment' 0 Type[string]
+                                // UNO_NAME_REDLINE_COMMENT   "RedlineComment"
+                                m += String.format(" '%s'", (String) ps.getPropertyValue(p.Name));
+                                break;
+                            case "RedlineDateTime":
+                                // printRedLines: 1/4 'RedlineDateTime' 0 Type[com.sun.star.util.DateTime]
+                                // UNO_NAME_REDLINE_DATE_TIME   "RedlineDateTime"
+                                // OO http://www.openoffice.org/api/docs/common/ref/com/sun/star/util/DateTime.html
+                                // LO https://api.libreoffice.org/docs/idl/ref/structcom_1_1sun_1_1star_1_1util_1_1DateTime.html
+                                DateTime dt = (DateTime) ps.getPropertyValue(p.Name);
+                                String s1 = String.format("%04d-%02d-%02d %02d:%02d:%02d",
+                                                         dt.Year, dt.Month, dt.Day,
+                                                         dt.Hours, dt.Minutes, dt.Seconds
+                                                         /* OO: dt.HundredthSeconds */
+                                                         /* LO: dt.NanoSeconds (but zero anyway) */);
+                                m += String.format(" '%s'", s1);
+                                break;
+
+                            case "IsInHeaderFooter":
+                                // printRedLines: 1/9 'IsInHeaderFooter' 0 Type[boolean]
+                                // UNO_NAME_IS_IN_HEADER_FOOTER   "IsInHeaderFooter"
+                            case "MergeLastPara":
+                                // printRedLines: 1/11 'MergeLastPara' 0 Type[boolean]
+                                // UNO_NAME_MERGE_LAST_PARA   "MergeLastPara"
+                                boolean b = (boolean) ps.getPropertyValue(p.Name);
+                                m += String.format(" '%s'", b);
+                                break;
+
+                            case "RedlineText":
+                                // printRedLines: 1/10 'RedlineText' 0 Type[com.sun.star.text.XText]
+                                // UNO_NAME_REDLINE_TEXT   "RedlineText"
+
+                                // RedlineText: provides access to the text of the
+                                // redline. This interface is only
+                                // provided if the change is not
+                                // visible. The visibility depends on
+                                // the redline display options that
+                                // are set at the documents property
+                                // set (RedlineDisplayType).
+
+                                XText t = null;
+                                try {
+                                    t = (XText) ps.getPropertyValue(p.Name);
+                                    String s2 = t.getString();
+                                    m += String.format(" '%s'", s2);
+                                } catch (java.lang.ClassCastException ex) {
+                                    m += " NotAvailable";
+                                }
+                                break;
+                                // printRedLines: 1/6 'RedlineSuccessorData' 0 Type[[]com.sun.star.beans.PropertyValue]
+                                // UNO_NAME_REDLINE_SUCCESSOR_DATA   "RedlineSuccessorData"
+
+                                // printRedLines: 1/13 'StartRedline' 22275 Type[[]com.sun.star.beans.PropertyValue]
+                                // UNO_NAME_START_REDLINE   "StartRedline"
+                                // "contains the properties of a redline at the start of the document."
+
+                                // printRedLines: 1/14 'EndRedline' 22276 Type[[]com.sun.star.beans.PropertyValue]
+                                // UNO_NAME_END_REDLINE   "EndRedline"
+                            }
+                            System.out.println(m);
+                        }
+                    }
+
+                } catch (NoSuchElementException
+                         | WrappedTargetException
+                         | UnknownPropertyException ex) {
+                    break;
+                }
+            }
+            System.out.println(String.format("printRedLines: found %d redlines", count));
+            return;
+        }
     }
 
     private Optional<XStyle> getStyleFromFamily(String familyName, String styleName)
