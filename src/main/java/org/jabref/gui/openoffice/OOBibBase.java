@@ -448,14 +448,7 @@ class OOBibBase {
                 String charStyle = style.getCitationCharacterFormat();
                 citationText2 = OOFormat.setCharStyle(citationText2, charStyle);
             }
-            OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection, cursor, citationText2);
-            /*
-            DocumentConnection.setCharLocaleNone(cursor);
-            if (style.isFormatCitations()) {
-                String charStyle = style.getCitationCharacterFormat();
-                DocumentConnection.setCharStyle(cursor, charStyle);
-            }
-            */
+            OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection, cursor, citationText2, null);
         } else {
             cursor.setString("");
         }
@@ -1020,7 +1013,7 @@ class OOBibBase {
 
                 int number = ck.number.get();
                 OOFormattedText marker = style.getNumCitationMarkerForBibliography(number);
-                OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection, cursor, marker);
+                OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection, cursor, marker, null);
                 cursor.collapseToEnd();
             } else {
                 // !style.isNumberEntries() : emit no prefix
@@ -1033,7 +1026,8 @@ class OOBibBase {
                     OOFormattedText.fromString(String.format("Unresolved(%s)", ck.citationKey));
                 OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection,
                                                               cursor,
-                                                              referenceDetails);
+                                                              referenceDetails,
+                                                              null);
                 cursor.collapseToEnd();
                 // Try to list citations:
                 if (true) {
@@ -1073,7 +1067,10 @@ class OOBibBase {
                                                                              ck.uniqueLetter.orElse(null));
 
                 // Insert the formatted text:
-                OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection, cursor, formattedText);
+                OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection,
+                                                              cursor,
+                                                              formattedText,
+                                                              null);
                 cursor.collapseToEnd();
             }
         }

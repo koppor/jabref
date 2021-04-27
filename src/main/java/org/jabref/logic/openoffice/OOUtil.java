@@ -1,5 +1,6 @@
 package org.jabref.logic.openoffice;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -27,6 +28,17 @@ import org.slf4j.LoggerFactory;
 @AllowedToUseAwt("Requires AWT for changing document properties")
 public class OOUtil {
 
+    /*
+     * When passed to formatTextInCursor2, RESET supplies default
+     * values for features not controlled by the OOFormattedText input.
+     */
+    public static final List<Formatter> RESET = List.of(FontWeightDefault(),
+                                                        FontSlantDefault(),
+                                                        CaseMapDefault(),
+                                                        CharEscapementDefault(),
+                                                        FontUnderlineDefault(),
+                                                        FontStrikeoutDefault());
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OOUtil.class);
 
     private static final String CHAR_STRIKEOUT = "CharStrikeout";
@@ -39,17 +51,6 @@ public class OOUtil {
     private static final String CHAR_ESCAPEMENT = "CharEscapement";
     private static final String CHAR_STYLE_NAME = "CharStyleName";
 
-    public enum Formatting {
-        BOLD,
-        ITALIC,
-        SMALLCAPS,
-        SUPERSCRIPT,
-        SUBSCRIPT,
-        UNDERLINE,
-        STRIKEOUT,
-        MONOSPACE
-    }
-
     private static final Pattern HTML_TAG =
         Pattern.compile("</?[a-z]+>|<(p|font|locale)\\s+(class|value)=\"([^\"]+)\">");
 
@@ -58,10 +59,14 @@ public class OOUtil {
     }
 
     /**
-     * Insert a text with formatting indicated by HTML-like tags, into a text at the position given by a cursor.
+     * Insert a text with formatting indicated by HTML-like tags, into
+     * a text at the position given by a cursor.
      *
+     * @param documentConnection
      * @param position   The cursor giving the insert location. Not modified.
-     * @param ootext    The marked-up text to insert.
+     * @param ootext     The marked-up text to insert.
+     * @param reset      Formatters to apply before those given by markup in ootext.
+     *                   May be null.
      * @throws WrappedTargetException
      * @throws PropertyVetoException
      * @throws UnknownPropertyException
@@ -69,7 +74,8 @@ public class OOUtil {
      */
     public static void insertOOFormattedTextAtCurrentLocation(DocumentConnection documentConnection,
                                                               XTextCursor position,
-                                                              OOFormattedText ootext)
+                                                              OOFormattedText ootext,
+                                                              List<Formatter> reset)
         throws
         UnknownPropertyException,
         PropertyVetoException,
@@ -84,7 +90,6 @@ public class OOUtil {
         cursor.collapseToEnd();
 
         Stack<Formatter> formatters = new Stack<>();
-        boolean reset = false;
 
         // We need to extract formatting. Use a simple regexp search iteration:
         int piv = 0;
@@ -237,6 +242,10 @@ public class OOUtil {
         return new FontWeight(com.sun.star.awt.FontWeight.BOLD);
     }
 
+    static Formatter FontWeightDefault() {
+        return new FontWeight(com.sun.star.awt.FontWeight.NORMAL);
+    }
+
     static class FontSlant implements Formatter {
         com.sun.star.awt.FontSlant oldSlant;
         com.sun.star.awt.FontSlant mySlant;
@@ -271,6 +280,10 @@ public class OOUtil {
 
     static Formatter Italic() {
         return new FontSlant(com.sun.star.awt.FontSlant.ITALIC);
+    }
+
+    static Formatter FontSlantDefault() {
+        return new FontSlant(com.sun.star.awt.FontSlant.NONE);
     }
 
     /*
@@ -310,6 +323,10 @@ public class OOUtil {
 
     static Formatter SmallCaps() {
         return new CaseMap(com.sun.star.style.CaseMap.SMALLCAPS);
+    }
+
+    static Formatter CaseMapDefault() {
+        return new CaseMap(com.sun.star.style.CaseMap.NONE);
     }
 
     static class CharEscapement implements Formatter {
@@ -360,6 +377,10 @@ public class OOUtil {
         return new CharEscapement((short) 33, (byte) 58);
     }
 
+    static Formatter CharEscapementDefault() {
+        return new CharEscapement((short) 0, (byte) 100);
+    }
+
     /*
      * com.sun.star.awt.FontUnderline
      */
@@ -399,6 +420,10 @@ public class OOUtil {
         return new FontUnderline(com.sun.star.awt.FontUnderline.SINGLE);
     }
 
+    static FontUnderline FontUnderlineDefault() {
+        return new FontUnderline(com.sun.star.awt.FontUnderline.NONE);
+    }
+
     /*
      * com.sun.star.awt.FontStrikeout
      */
@@ -436,6 +461,10 @@ public class OOUtil {
 
     static Formatter Strikeout() {
         return new FontStrikeout(com.sun.star.awt.FontStrikeout.SINGLE);
+    }
+
+    static Formatter FontStrikeoutDefault() {
+        return new FontStrikeout(com.sun.star.awt.FontStrikeout.NONE);
     }
 
     /*
@@ -580,12 +609,17 @@ public class OOUtil {
     }
 
     /**
-     * Here: apply only those on the stack, and in that order
+     * Apply Formatters in reset, then those on the stack.
+     *
+     * @param documentConnection passed to each Formatter
+     * @param cursor Marks the text to format
+     * @param formatters Formatters to apply (normally extracted from OOFormattedText)
+     * @param reset Formatters to apply before those in formatters. May be null.
      */
     public static void formatTextInCursor2(DocumentConnection documentConnection,
                                            XTextCursor cursor,
                                            Stack<Formatter> formatters,
-                                           boolean reset)
+                                           List<Formatter> reset)
         throws
         UnknownPropertyException,
         PropertyVetoException,
@@ -593,26 +627,23 @@ public class OOUtil {
         IllegalArgumentException,
         NoSuchElementException {
 
-        // Access the property set of the cursor, and set the currently selected text
-        // (which is the string we just inserted) to be bold
         XPropertySet xCursorProps = UnoRuntime.queryInterface(XPropertySet.class, cursor);
 
-        if (reset) {
-            // Reset everything.
-            xCursorProps.setPropertyValue(CHAR_WEIGHT, com.sun.star.awt.FontWeight.NORMAL);
-            xCursorProps.setPropertyValue(CHAR_POSTURE, com.sun.star.awt.FontSlant.NONE);
-            xCursorProps.setPropertyValue(CHAR_CASE_MAP, com.sun.star.style.CaseMap.NONE);
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT, (byte) 0);
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT, (byte) 100);
-            xCursorProps.setPropertyValue(CHAR_UNDERLINE, com.sun.star.awt.FontUnderline.NONE);
-            xCursorProps.setPropertyValue(CHAR_STRIKEOUT, com.sun.star.awt.FontStrikeout.NONE);
+        // Set properties we do not want to inherit from the context
+        // and are not controlled by formatters.
+        if (reset != null) {
+            for (Formatter f : reset) {
+                f.apply(documentConnection, xCursorProps);
+            }
         }
+
         for (Formatter f : formatters) {
             f.apply(documentConnection, xCursorProps);
         }
     }
 
-    public static void insertParagraphBreak(XText text, XTextCursor cursor) throws IllegalArgumentException {
+    public static void insertParagraphBreak(XText text, XTextCursor cursor)
+        throws IllegalArgumentException {
         text.insertControlCharacter(cursor, ControlCharacter.PARAGRAPH_BREAK, true);
     }
 

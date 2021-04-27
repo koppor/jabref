@@ -1227,4 +1227,16 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         return (s == null ? "" : s);
     }
 
+    public OOFormattedText getFormattedBibliographyTitle() {
+        OOBibStyle style = this;
+        OOFormattedText title = style.getReferenceHeaderText();
+        String parStyle = style.getReferenceHeaderParagraphFormat();
+        if (parStyle != null) {
+            title = OOFormat.paragraph(title, parStyle);
+        } else {
+            title = OOFormat.paragraph(title);
+        }
+        return title;
+    }
+
 }
