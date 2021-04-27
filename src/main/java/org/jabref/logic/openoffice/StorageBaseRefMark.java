@@ -182,7 +182,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
      * Cursor for the reference marks as is, not prepared for filling,
      * but does not need cleanFillCursorForCitationGroup either.
      *
-     * @return null if reference mark is missing from the document,
+     * @return Optional.empty() if reference mark is missing from the document,
      *         otherwise an XTextCursor for getMarkRange
      *
      * See: getRawCursorForCitationGroup
@@ -259,6 +259,10 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
             }
 
             if (fullText.length() >= 2) {
+                if (debugThisFun) {
+                    System.out.printf("getFillCursor: (attempt: %d) fulltext.length() >= 2,"
+                                      + " break loop%n", i);
+                }
                 break;
             } else {
                 // (fullText.length() < 2)
@@ -296,6 +300,10 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
             throw new RuntimeException("getFillCursor: fullText == null (after loop)");
         }
 
+        fullText = full.getString();
+        if (fullText.length() < 2) {
+            throw new RuntimeException("getFillCursor: fullText.length() < 2 (after loop)'%n");
+        }
         // we have at least two characters inside
         XTextCursor alpha = full.getText().createTextCursorByRange(full);
         alpha.collapseToStart();
@@ -306,16 +314,98 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         beta.collapseToStart();
         beta.goRight((short) 1, false);
         beta.goRight((short) (fullText.length() - 2), true);
-        beta.setString(left + right);
+        if (debugThisFun) {
+            System.out.printf("getFillCursor: beta(1) covers '%s'%n", beta.getString());
+        }
+        // beta now covers everything except first and last character
+        // Replace its content with brackets
+        String paddingx = "x";
+        String paddingy = "y";
+        String paddingz = "z";
+        beta.setString(paddingx + left + paddingy + right + paddingz);
+        if (debugThisFun) {
+            System.out.printf("getFillCursor: beta(2) covers '%s'%n", beta.getString());
+        }
+        // move beta to before the right bracket
         beta.collapseToEnd();
-        beta.goLeft(rightLength, false);
-        // drop the initial character
-        alpha.goRight((short) 1, true);
+        beta.goLeft((short) (rightLength + 1), false);
+        // remove middle padding
+        beta.goLeft((short) 1, true);
+        if (debugThisFun) {
+            System.out.printf("getFillCursor: beta(3) covers '%s'%n", beta.getString());
+        }
+        // only drop paddingy later: beta.setString("");
+
+        // drop the initial character and paddingx
+        alpha.collapseToStart();
+        alpha.goRight((short) (1 + 1), true);
+        if (debugThisFun) {
+            System.out.printf("getFillCursor: alpha(4) covers '%s'%n", alpha.getString());
+        }
         alpha.setString("");
-        // drop the last character
-        omega.goLeft((short) 1, true);
+        // drop the last character and paddingz
+        omega.collapseToEnd();
+        omega.goLeft((short) (1 + 1), true);
+        if (debugThisFun) {
+            System.out.printf("getFillCursor: omega(5) covers '%s'%n", omega.getString());
+        }
         omega.setString("");
+
+        // drop paddingy now
+        if (debugThisFun) {
+            System.out.printf("getFillCursor: beta(6) covers '%s'%n", beta.getString());
+        }
+        beta.setString("");
+        // should be OK now.
+        if (debugThisFun) {
+            alpha.goRight(leftLength, true);
+            System.out.printf("getFillCursor: alpha(7) covers '%s', should be '%s'%n",
+                              alpha.getString(), left);
+            omega.goLeft(rightLength, true);
+            System.out.printf("getFillCursor: omega(8) covers '%s', should be '%s'%n",
+                              omega.getString(), right);
+        }
+
+        StorageBaseRefMark.checkFillCursor(beta);
         return beta;
+    }
+
+    /*
+     * Throw RuntimeException if the brackets are not there.
+     */
+    public static void checkFillCursor(XTextCursor cursor) {
+        final String left = REFERENCE_MARK_LEFT_BRACKET;
+        final String right = REFERENCE_MARK_RIGHT_BRACKET;
+        final short leftLength = (short) left.length();
+        final short rightLength = (short) right.length();
+
+        XTextCursor alpha = cursor.getText().createTextCursorByRange(cursor);
+        alpha.collapseToStart();
+
+        XTextCursor omega = cursor.getText().createTextCursorByRange(cursor);
+        omega.collapseToEnd();
+
+        if (leftLength > 0) {
+            alpha.goLeft(leftLength, true);
+            if (!left.equals(alpha.getString())) {
+                String msg = String.format("checkFillCursor:"
+                                           + " ('%s') is not prefixed with"
+                                           + " REFERENCE_MARK_LEFT_BRACKET, has '%s'",
+                                           cursor.getString(), alpha.getString());
+                throw new RuntimeException(msg);
+            }
+        }
+
+        if (rightLength > 0) {
+            omega.goRight(rightLength, true);
+            if (!right.equals(omega.getString())) {
+                String msg = String.format("checkFillCursor:"
+                                           + " ('%s') is not followed by"
+                                           + " REFERENCE_MARK_RIGHT_BRACKET, has '%s'",
+                                           cursor.getString(), omega.getString());
+                throw new RuntimeException(msg);
+            }
+        }
     }
 
     /**
