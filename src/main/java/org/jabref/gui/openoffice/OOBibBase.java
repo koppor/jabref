@@ -3,7 +3,6 @@ package org.jabref.gui.openoffice;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -1030,12 +1029,7 @@ class OOBibBase {
                 if (true) {
                     String prefix = String.format(" (%s: ", Localization.lang("Cited on pages"));
                     String suffix = ")";
-                    OOUtil.insertTextAtCurrentLocation(documentConnection,
-                                                       cursor,
-                                                       prefix,
-                                                       Collections.emptyList(),
-                                                       Optional.empty(),
-                                                       Optional.empty());
+                    OOUtil.insertTextAtCurrentLocation(cursor, prefix);
 
                     int last = ck.where.size();
                     int i = 0;
@@ -1044,12 +1038,7 @@ class OOBibBase {
                         CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
 
                         if (i > 0) {
-                            OOUtil.insertTextAtCurrentLocation(documentConnection,
-                                                               cursor,
-                                                               String.format(", "),
-                                                               Collections.emptyList(),
-                                                               Optional.empty(),
-                                                               Optional.empty());
+                            OOUtil.insertTextAtCurrentLocation(cursor, ", ");
                         }
                         documentConnection
                             .insertGetreferenceToPageNumberOfReferenceMark(cg.getMarkName(), cursor);
@@ -1057,12 +1046,7 @@ class OOBibBase {
                     }
                     documentConnection.refresh();
 
-                    OOUtil.insertTextAtCurrentLocation(documentConnection,
-                                                       cursor,
-                                                       suffix,
-                                                       Collections.emptyList(),
-                                                       Optional.empty(),
-                                                       Optional.empty());
+                    OOUtil.insertTextAtCurrentLocation(cursor, suffix);
                 }
 
             } else {
