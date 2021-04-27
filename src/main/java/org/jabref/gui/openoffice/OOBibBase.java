@@ -1091,7 +1091,7 @@ class OOBibBase {
         XTextCursor textCursor = documentConnection.xText.createTextCursor();
         textCursor.gotoEnd(false);
 
-        OOUtil.insertParagraphBreak(documentConnection.xText, textCursor);
+        // OOUtil.insertParagraphBreak(documentConnection.xText, textCursor);
         textCursor.collapseToEnd();
 
         documentConnection.insertTextSection(OOBibBase.BIB_SECTION_NAME,
@@ -1169,19 +1169,16 @@ class OOBibBase {
         // emit the title of the bibliography
         OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection,
                                                       cursor,
-                                                      style.getReferenceHeaderText());
-        String parStyle = style.getReferenceHeaderParagraphFormat();
-        try {
-            if (parStyle != null) {
-                DocumentConnection.setParagraphStyle(cursor, parStyle);
-            }
-        } catch (UndefinedParagraphFormatException ex) {
-            String message =
-                String.format("Could not apply paragraph format '%s' to bibliography header",
-                              parStyle);
-            LOGGER.warn(message); // No stack trace.
-        }
+                                                      style.getFormattedBibliographyTitle(),
+                                                      null);
         cursor.collapseToEnd();
+
+        // remove the inital empty paragraph from the section.
+        XTextCursor initialParagraph = (documentConnection.xText
+                                        .createTextCursorByRange(section.getAnchor()));
+        initialParagraph.collapseToStart();
+        initialParagraph.goRight((short) 1, true);
+        initialParagraph.setString("");
 
         // emit body
         insertFullReferenceAtCursor(documentConnection,
