@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public class OOUtil {
 
     /*
-     * When passed to formatTextInCursor2, RESET supplies default
+     * When passed to formatTextInCursor, RESET supplies default
      * values for features not controlled by the OOFormattedText input.
      */
     public static final List<Formatter> RESET = List.of(FontWeightDefault(),
@@ -98,10 +98,10 @@ public class OOUtil {
             String currentSubstring = lText.substring(piv, m.start());
             if (!currentSubstring.isEmpty()) {
                 text.insertString(cursor, currentSubstring, true);
-                OOUtil.formatTextInCursor2(documentConnection,
-                                           cursor,
-                                           formatters,
-                                           reset);
+                OOUtil.formatTextInCursor(documentConnection,
+                                          cursor,
+                                          formatters,
+                                          reset);
             }
             cursor.collapseToEnd();
             XPropertySet xCursorProps = UnoRuntime.queryInterface(XPropertySet.class, cursor);
@@ -181,10 +181,10 @@ public class OOUtil {
 
         if (piv < lText.length()) {
             text.insertString(cursor, lText.substring(piv), true);
-            OOUtil.formatTextInCursor2(documentConnection,
-                                       cursor,
-                                       formatters,
-                                       reset);
+            OOUtil.formatTextInCursor(documentConnection,
+                                      cursor,
+                                      formatters,
+                                      reset);
             cursor.collapseToEnd();
         }
     }
@@ -616,10 +616,10 @@ public class OOUtil {
      * @param formatters Formatters to apply (normally extracted from OOFormattedText)
      * @param reset Formatters to apply before those in formatters. May be null.
      */
-    public static void formatTextInCursor2(DocumentConnection documentConnection,
-                                           XTextCursor cursor,
-                                           Stack<Formatter> formatters,
-                                           List<Formatter> reset)
+    public static void formatTextInCursor(DocumentConnection documentConnection,
+                                          XTextCursor cursor,
+                                          Stack<Formatter> formatters,
+                                          List<Formatter> reset)
         throws
         UnknownPropertyException,
         PropertyVetoException,
@@ -673,14 +673,6 @@ public class OOUtil {
      *  @param htmlMarkup If true, the text belonging to the
      *                    reference mark is surrounded by bold html tag.
      *
-     * TODO: This method could go to OOUtil, except that it refers to
-     * DocumentConnection, which is in "gui". DocumentConnection
-     * should go to "logic" as well.  As well as many others, ...
-     *
-     * TODO: there is also a potential distinction between OO-specific
-     *  parts and those that could participate in for example a Word
-     *  panel. Is the GUI itself dependent on using OO/LO? Hard to
-     *  tell.
      */
     public static String getCursorStringWithContext(DocumentConnection documentConnection,
                                                     XTextCursor cursor,
