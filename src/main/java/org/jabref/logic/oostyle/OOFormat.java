@@ -19,8 +19,6 @@ public class OOFormat {
      * @param uniquefier Uniqiefier letter, if any, to append to the entry's year.
      *
      * @return OOFormattedText suitable for insertOOFormattedTextAtCurrentLocation()
-     *
-     * TODO: this is not OO-specific, should be in oostyle
      */
     public static OOFormattedText formatFullReference(Layout layout,
                                                       BibEntry entry,
