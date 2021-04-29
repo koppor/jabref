@@ -1,6 +1,5 @@
 package org.jabref.logic.openoffice;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -28,16 +27,6 @@ import org.slf4j.LoggerFactory;
 @AllowedToUseAwt("Requires AWT for changing document properties")
 public class OOUtil {
 
-    /*
-     * When passed to formatTextInCursor, RESET supplies default
-     * values for features not controlled by the OOFormattedText input.
-     */
-    public static final List<Formatter> RESET = List.of(FontWeightDefault(),
-                                                        FontSlantDefault(),
-                                                        CaseMapDefault(),
-                                                        CharEscapementDefault(),
-                                                        FontUnderlineDefault(),
-                                                        FontStrikeoutDefault());
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OOUtil.class);
 
@@ -65,8 +54,6 @@ public class OOUtil {
      * @param documentConnection
      * @param position   The cursor giving the insert location. Not modified.
      * @param ootext     The marked-up text to insert.
-     * @param reset      Formatters to apply before those given by markup in ootext.
-     *                   May be null.
      * @throws WrappedTargetException
      * @throws PropertyVetoException
      * @throws UnknownPropertyException
@@ -74,8 +61,7 @@ public class OOUtil {
      */
     public static void insertOOFormattedTextAtCurrentLocation(DocumentConnection documentConnection,
                                                               XTextCursor position,
-                                                              OOFormattedText ootext,
-                                                              List<Formatter> reset)
+                                                              OOFormattedText ootext)
         throws
         UnknownPropertyException,
         PropertyVetoException,
@@ -98,11 +84,10 @@ public class OOUtil {
             String currentSubstring = lText.substring(piv, m.start());
             if (!currentSubstring.isEmpty()) {
                 text.insertString(cursor, currentSubstring, true);
-                OOUtil.formatTextInCursor(documentConnection,
-                                          cursor,
-                                          formatters,
-                                          reset);
             }
+            OOUtil.formatTextInCursor(documentConnection,
+                                      cursor,
+                                      formatters);
             cursor.collapseToEnd();
             XPropertySet xCursorProps = UnoRuntime.queryInterface(XPropertySet.class, cursor);
             String tag = m.group();
@@ -181,12 +166,11 @@ public class OOUtil {
 
         if (piv < lText.length()) {
             text.insertString(cursor, lText.substring(piv), true);
-            OOUtil.formatTextInCursor(documentConnection,
-                                      cursor,
-                                      formatters,
-                                      reset);
-            cursor.collapseToEnd();
         }
+        OOUtil.formatTextInCursor(documentConnection,
+                                  cursor,
+                                  formatters);
+        cursor.collapseToEnd();
     }
 
     interface Formatter {
@@ -609,17 +593,15 @@ public class OOUtil {
     }
 
     /**
-     * Apply Formatters in reset, then those on the stack.
+     * Apply Formatters on the stack.
      *
      * @param documentConnection passed to each Formatter
      * @param cursor Marks the text to format
      * @param formatters Formatters to apply (normally extracted from OOFormattedText)
-     * @param reset Formatters to apply before those in formatters. May be null.
      */
     public static void formatTextInCursor(DocumentConnection documentConnection,
                                           XTextCursor cursor,
-                                          Stack<Formatter> formatters,
-                                          List<Formatter> reset)
+                                          Stack<Formatter> formatters)
         throws
         UnknownPropertyException,
         PropertyVetoException,
