@@ -18,7 +18,7 @@ public class OOFormat {
      * @param database   The database the entry belongs to.
      * @param uniquefier Uniqiefier letter, if any, to append to the entry's year.
      *
-     * @return OOFormattedText suitable for insertOOFormattedTextAtCurrentLocation()
+     * @return OOFormattedText suitable for insertOOFormattedTextAtCurrentLocation2()
      */
     public static OOFormattedText formatFullReference(Layout layout,
                                                       BibEntry entry,

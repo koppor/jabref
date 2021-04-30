@@ -59,9 +59,9 @@ public class OOUtil {
      * @throws UnknownPropertyException
      * @throws IllegalArgumentException
      */
-    public static void insertOOFormattedTextAtCurrentLocation(DocumentConnection documentConnection,
-                                                              XTextCursor position,
-                                                              OOFormattedText ootext)
+    public static void insertOOFormattedTextAtCurrentLocation2(DocumentConnection documentConnection,
+                                                               XTextCursor position,
+                                                               OOFormattedText ootext)
         throws
         UnknownPropertyException,
         PropertyVetoException,

@@ -448,7 +448,7 @@ class OOBibBase {
                 String charStyle = style.getCitationCharacterFormat();
                 citationText2 = OOFormat.setCharStyle(citationText2, charStyle);
             }
-            OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection, cursor, citationText2);
+            OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection, cursor, citationText2);
         } else {
             cursor.setString("");
         }
@@ -1013,7 +1013,7 @@ class OOBibBase {
 
                 int number = ck.number.get();
                 OOFormattedText marker = style.getNumCitationMarkerForBibliography(number);
-                OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection, cursor, marker);
+                OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection, cursor, marker);
                 cursor.collapseToEnd();
             } else {
                 // !style.isNumberEntries() : emit no prefix
@@ -1024,9 +1024,9 @@ class OOBibBase {
                 // Unresolved entry
                 OOFormattedText referenceDetails =
                     OOFormattedText.fromString(String.format("Unresolved(%s)", ck.citationKey));
-                OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection,
-                                                              cursor,
-                                                              referenceDetails);
+                OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection,
+                                                               cursor,
+                                                               referenceDetails);
                 cursor.collapseToEnd();
                 // Try to list citations:
                 if (true) {
@@ -1066,9 +1066,9 @@ class OOBibBase {
                                                                              ck.uniqueLetter.orElse(null));
 
                 // Insert the formatted text:
-                OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection,
-                                                              cursor,
-                                                              formattedText);
+                OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection,
+                                                               cursor,
+                                                               formattedText);
                 cursor.collapseToEnd();
             }
         }
@@ -1165,9 +1165,10 @@ class OOBibBase {
                               .createTextCursorByRange(section.getAnchor()));
 
         // emit the title of the bibliography
-        OOUtil.insertOOFormattedTextAtCurrentLocation(documentConnection,
-                                                      cursor,
-                                                      style.getFormattedBibliographyTitle());
+        OOUtil.removeDirectFormatting(documentConnection, cursor);
+        OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection,
+                                                       cursor,
+                                                       style.getFormattedBibliographyTitle());
         cursor.collapseToEnd();
 
         // remove the inital empty paragraph from the section.
