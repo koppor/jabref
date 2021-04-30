@@ -989,23 +989,7 @@ class OOBibBase {
                                    : String.format("%02d", ck.number.get())));
             }
 
-            // this is where we create the paragraph.
-            OOUtil.insertParagraphBreak(documentConnection.xText, cursor);
-            cursor.collapseToEnd();
-            // format the paragraph
-            try {
-                if (parStyle != null) {
-                    DocumentConnection.setParagraphStyle(cursor,
-                                                         parStyle);
-                }
-            } catch (UndefinedParagraphFormatException ex) {
-                // TODO: precheck or remember if we already emitted this message.
-                String message =
-                    String.format("Could not apply paragraph format '%s' to bibliography entry",
-                                  parStyle);
-                LOGGER.warn(message); // no stack trace
-            }
-
+            StringBuilder sb = new StringBuilder();
             // insert marker "[1]"
             if (style.isNumberEntries()) {
 
@@ -1016,8 +1000,7 @@ class OOBibBase {
 
                 int number = ck.number.get();
                 OOFormattedText marker = style.getNumCitationMarkerForBibliography(number);
-                OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection, cursor, marker);
-                cursor.collapseToEnd();
+                sb.append(marker.asString());
             } else {
                 // !style.isNumberEntries() : emit no prefix
                 // TODO: We might want [citationKey] prefix for style.isCitationKeyCiteMarkers();
@@ -1027,12 +1010,12 @@ class OOBibBase {
                 // Unresolved entry
                 OOFormattedText referenceDetails =
                     OOFormattedText.fromString(String.format("Unresolved(%s)", ck.citationKey));
-                OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection,
-                                                               cursor,
-                                                               referenceDetails);
-                cursor.collapseToEnd();
+                sb.append(referenceDetails.asString());
                 // Try to list citations:
-                if (true) {
+                if (false) {
+                    //
+                    // TODO: not implemented in insertOOFormattedTextAtCurrentLocation2
+                    //
                     String prefix = String.format(" (%s: ", Localization.lang("Cited on pages"));
                     String suffix = ")";
                     OOUtil.insertTextAtCurrentLocation(cursor, prefix);
@@ -1069,12 +1052,15 @@ class OOBibBase {
                                                                              ck.uniqueLetter.orElse(null));
 
                 // Insert the formatted text:
-                OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection,
-                                                               cursor,
-                                                               formattedText);
-                cursor.collapseToEnd();
+                sb.append(formattedText.asString());
             }
-        }
+
+            OOFormattedText entryText = OOFormattedText.fromString(sb.toString());
+            OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection,
+                                                           cursor,
+                                                           OOFormat.paragraph(entryText, parStyle));
+            cursor.collapseToEnd();
+        } // for CitedKey
     }
 
     /**
