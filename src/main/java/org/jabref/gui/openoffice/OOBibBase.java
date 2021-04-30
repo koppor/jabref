@@ -448,6 +448,9 @@ class OOBibBase {
                 String charStyle = style.getCitationCharacterFormat();
                 citationText2 = OOFormat.setCharStyle(citationText2, charStyle);
             }
+            // inject a ZERO_WIDTH_SPACE to hold the initial character format
+            final String ZERO_WIDTH_SPACE = "\u200b";
+            citationText2 = OOFormattedText.fromString(ZERO_WIDTH_SPACE + citationText2.asString());
             OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection, cursor, citationText2);
         } else {
             cursor.setString("");
