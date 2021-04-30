@@ -1,5 +1,8 @@
 package org.jabref.logic.openoffice;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -8,9 +11,12 @@ import java.util.regex.Pattern;
 import org.jabref.architecture.AllowedToUseAwt;
 import org.jabref.logic.oostyle.OOFormattedText;
 
+import com.sun.star.beans.PropertyState;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
+import com.sun.star.beans.XMultiPropertyStates;
 import com.sun.star.beans.XPropertySet;
+import com.sun.star.beans.XPropertyState;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.Locale;
 import com.sun.star.lang.WrappedTargetException;
@@ -39,12 +45,36 @@ public class OOUtil {
     private static final String CHAR_ESCAPEMENT_HEIGHT = "CharEscapementHeight";
     private static final String CHAR_ESCAPEMENT = "CharEscapement";
     private static final String CHAR_STYLE_NAME = "CharStyleName";
+    private static final String CHAR_LOCALE = "CharLocale";
 
+    private static final String TAG_NAME_REGEXP = "(?:b|i|em|tt|smallcaps|sup|sub|u|s|p|font|locale)";
+    private static final String ATTRIBUTE_NAME_REGEXP = "(?:class|value)";
+    private static final String ATTRIBUTE_VALUE_REGEXP = "\"([^\"]*)\"";
     private static final Pattern HTML_TAG =
-        Pattern.compile("</?[a-z]+>|<(p|font|locale)\\s+(class|value)=\"([^\"]+)\">");
+        Pattern.compile("<(/" + TAG_NAME_REGEXP + ")>"
+                        + "|"
+                        + "<(" + TAG_NAME_REGEXP + ")"
+                        + "((?:\\s+(" + ATTRIBUTE_NAME_REGEXP + ")=" + ATTRIBUTE_VALUE_REGEXP + ")*)"
+                        + ">");
+    private static final Pattern ATTRIBUTE_PATTERN =
+        Pattern.compile("\\s+(" + ATTRIBUTE_NAME_REGEXP + ")=" + ATTRIBUTE_VALUE_REGEXP);
 
     private OOUtil() {
         // Just to hide the public constructor
+    }
+
+    private static Map<String, String> parseAttributes(String s) {
+        Map<String, String> res = new HashMap<>();
+        if (s == null) {
+            return res;
+        }
+        Matcher m = OOUtil.ATTRIBUTE_PATTERN.matcher(s);
+        while (m.find()) {
+            String key = m.group(1);
+            String value = m.group(2);
+            res.put(key, value);
+        }
+        return res;
     }
 
     /**
@@ -76,6 +106,7 @@ public class OOUtil {
         cursor.collapseToEnd();
 
         Stack<Formatter> formatters = new Stack<>();
+        Stack<String> expectEnd = new Stack<>();
 
         // We need to extract formatting. Use a simple regexp search iteration:
         int piv = 0;
@@ -89,76 +120,98 @@ public class OOUtil {
                                       cursor,
                                       formatters);
             cursor.collapseToEnd();
-            XPropertySet xCursorProps = UnoRuntime.queryInterface(XPropertySet.class, cursor);
-            String tag = m.group();
-            String xtag = m.group(1);
-            String xvar = m.group(2);
-            String xval = m.group(3);
+
+            // XPropertySet xCursorProps = unoQI(XPropertySet.class, cursor);
+
+            String fullTag = m.group();
+            String endTagName = m.group(1);
+            String startTagName = m.group(2);
+            String attributeListPart = m.group(3);
+            boolean isStartTag = (endTagName == null) || "".equals(endTagName);
+            String tagName = isStartTag ? startTagName : endTagName;
+            Objects.requireNonNull(tagName);
+
+            Map<String, String> attributes = parseAttributes(attributeListPart);
+
             // Handle tags:
-            if ("<b>".equals(tag)) {
+            switch (tagName) {
+            case "b":
                 formatters.push(Bold());
-            } else if ("</b>".equals(tag)) {
-                formatters.pop().applyEnd(documentConnection, xCursorProps);
-            } else if ("<i>".equals(tag) || "<em>".equals(tag)) {
+                expectEnd.push("/" + tagName);
+                break;
+            case "i":
+            case "em":
                 formatters.push(Italic());
-            } else if ("</i>".equals(tag) || "</em>".equals(tag)) {
-                formatters.pop().applyEnd(documentConnection, xCursorProps);
-            } else if ("<tt>".equals(tag)) {
-                // nop
-            } else if ("</tt>".equals(tag)) {
-                // nop
-            } else if ("<smallcaps>".equals(tag)) {
+                expectEnd.push("/" + tagName);
+                break;
+            case "smallcaps":
                 formatters.push(SmallCaps());
-            } else if ("</smallcaps>".equals(tag)) {
-                formatters.pop().applyEnd(documentConnection, xCursorProps);
-            } else if ("<sup>".equals(tag)) {
+                expectEnd.push("/" + tagName);
+                break;
+            case "sup":
                 formatters.push(SuperScript());
-            } else if ("</sup>".equals(tag)) {
-                formatters.pop().applyEnd(documentConnection, xCursorProps);
-            } else if ("<sub>".equals(tag)) {
+                expectEnd.push("/" + tagName);
+                break;
+            case "sub":
                 formatters.push(SubScript());
-            } else if ("</sub>".equals(tag)) {
-                formatters.pop().applyEnd(documentConnection, xCursorProps);
-            } else if ("<u>".equals(tag)) {
+                expectEnd.push("/" + tagName);
+                break;
+            case "u":
                 formatters.push(Underline());
-            } else if ("</u>".equals(tag)) {
-                formatters.pop().applyEnd(documentConnection, xCursorProps);
-            } else if ("<s>".equals(tag)) {
+                expectEnd.push("/" + tagName);
+                break;
+            case "s":
                 formatters.push(Strikeout());
-            } else if ("</s>".equals(tag)) {
-                formatters.pop().applyEnd(documentConnection, xCursorProps);
-            } else if ("</p>".equals(tag)) {
+                expectEnd.push("/" + tagName);
+                break;
+            case "/p":
                 // nop
-            } else if ("p".equals(xtag) || "<p>".equals(tag)) {
+                break;
+            case "p":
+                String cls = attributes.get("class");
                 // <p class="standard">
                 OOUtil.insertParagraphBreak(text, cursor);
                 cursor.collapseToEnd();
-                if ("class".equals(xvar) && xval != null && !xval.equals("")) {
+                if (cls != null && !cls.equals("")) {
                     try {
-                        DocumentConnection.setParagraphStyle(cursor, xval);
+                        DocumentConnection.setParagraphStyle(cursor, cls);
                     } catch (UndefinedParagraphFormatException ex) {
                         // ignore silently
                     }
                 }
-            } else if ("font".equals(xtag) || "<font>".equals(tag)) {
-                // <font class="standard">
-                if ("class".equals(xvar)) {
-                    formatters.push(SetCharStyle(xval));
-                } else {
-                    formatters.push(SetCharStyle(null));
-                }
-            } else if ("</font>".equals(tag)) {
-                formatters.pop().applyEnd(documentConnection, xCursorProps);
-            } else if ("locale".equals(xtag)) {
+                break;
+            case "font":
+                formatters.push(SetCharStyle(attributes.get("class")));
+                expectEnd.push("/" + tagName);
+                break;
+            case "tt":
+                // Note: "Example" names a character style in LibreOffice.
+                formatters.push(SetCharStyle("Example"));
+                expectEnd.push("/" + tagName);
+                break;
+            case "locale":
                 // <locale value="zxx">
                 // <locale value="en-US">
-                if ("value".equals(xvar)) {
-                    formatters.push(SetLocale(xval));
-                } else {
-                    formatters.push(SetLocale(null));
+                formatters.push(SetLocale(attributes.get("value")));
+                expectEnd.push("/" + tagName);
+                break;
+            case "/b":
+            case "/i":
+            case "/em":
+            case "/tt":
+            case "/smallcaps":
+            case "/sup":
+            case "/sub":
+            case "/u":
+            case "/s":
+            case "/font":
+            case "/locale":
+                formatters.pop().applyEnd(documentConnection, cursor);
+                String expected = expectEnd.pop();
+                if (!tagName.equals(expected)) {
+                    LOGGER.warn(String.format("expected '<%s>', found '<%s>'", expected, tagName));
                 }
-            } else if ("</locale>".equals(tag)) {
-                formatters.pop().applyEnd(documentConnection, xCursorProps);
+                break;
             }
 
             piv = m.end();
@@ -173,8 +226,25 @@ public class OOUtil {
         cursor.collapseToEnd();
     }
 
+    /**
+     * Problem: in some cases we do not want to inherit direct
+     *          formatting from the context.
+     *
+     *          In particular, when filling the bibliography title.
+     */
+    public static void removeDirectFormatting(DocumentConnection documentConnection, XTextCursor cursor) {
+        // Probably this is the official solution.
+        // (Throws no exceptions)
+        XMultiPropertyStates mpss = unoQI(XMultiPropertyStates.class, cursor);
+        mpss.setAllPropertiesToDefault();
+    }
+
     interface Formatter {
-        public void apply(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        /*
+         * Note: apply may be called multiple times, but should pick up old value
+         * at its first call.
+         */
+        public void apply(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
@@ -182,7 +252,7 @@ public class OOUtil {
             IllegalArgumentException,
             NoSuchElementException;
 
-        public void applyEnd(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void applyEnd(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
@@ -191,264 +261,389 @@ public class OOUtil {
             NoSuchElementException;
     }
 
+    /**
+     * unoQI : short for UnoRuntime.queryInterface
+     *
+     * @return A reference to the requested UNO interface type if available,
+     *         otherwise null
+     */
+    private static <T> T unoQI(Class<T> zInterface,
+                               Object object) {
+        return UnoRuntime.queryInterface(zInterface, object);
+    }
+
+    /**
+     * Remove direct formatting of propertyName from propertySet.
+     *
+     * Observation: while
+     * XPropertyState.setPropertyToDefault(propertyName) does reset
+     * the property, it also has a side effect (probably bug in LO
+     * 6.4.6.2) that it also resets other properties.
+     *
+     * Wrokaround:
+     *  (https://forum.openoffice.org/en/forum/viewtopic.php?f=20&t=105117)
+     *
+     *     Use setPropertyValue with either result from
+     *     getPropertyValue to restore the earlier state or with
+     *     result from getPropertyDefault. In this case the property
+     *     "CharStyleName" has to be handled specially, by mapping the
+     *     received value "" to "Standard".  Hopefully other
+     *     properties will not need special handling.
+     *
+     */
+    private static void setPropertyToDefault(XTextCursor cursor, String propertyName)
+        throws
+        UnknownPropertyException,
+        PropertyVetoException,
+        WrappedTargetException {
+        // setPropertyToDefault("CharWeight") also removes "CharColor"
+
+        XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
+        XPropertyState propertyState = unoQI(XPropertyState.class, cursor);
+        if ("CharStyleName".equals(propertyName)) {
+            String value = "Standard";
+            propertySet.setPropertyValue(propertyName, value);
+        } else {
+            Object value = propertyState.getPropertyDefault(propertyName);
+            propertySet.setPropertyValue(propertyName, value);
+        }
+    }
+
+    /**
+     * We rely on property values being ether DIRECT_VALUE or
+     * DEFAULT_VALUE (not AMBIGUOUS_VALUE). If the cursor covers a homogeneous region,
+     * or is collapsed, then this is true.
+     */
+    private static boolean isPropertyDefault(XTextCursor cursor, String propertyName)
+        throws
+        UnknownPropertyException {
+        XPropertyState propState = unoQI(XPropertyState.class, cursor);
+        PropertyState pst = propState.getPropertyState(propertyName);
+        if (pst == PropertyState.AMBIGUOUS_VALUE) {
+            throw new RuntimeException("PropertyState.AMBIGUOUS_VALUE"
+                                       + " (expected properties for a homogeneous cursor)");
+        }
+        return pst == PropertyState.DEFAULT_VALUE;
+    }
+
+    private static Optional<Object> getPropertyValue(XTextCursor cursor, String propertyName)
+        throws
+        UnknownPropertyException,
+        WrappedTargetException {
+        XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
+        if (isPropertyDefault(cursor, propertyName)) {
+            return Optional.empty();
+        } else {
+            return Optional.of(propertySet.getPropertyValue(propertyName));
+        }
+    }
+
+    private static <T> void setPropertyValue(XTextCursor cursor, String propertyName, Optional<T> value)
+        throws
+        UnknownPropertyException,
+        PropertyVetoException,
+        WrappedTargetException {
+        XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
+        if (value.isPresent()) {
+            propertySet.setPropertyValue(propertyName, value.get());
+        } else {
+            setPropertyToDefault(cursor, propertyName);
+        }
+    }
+
     static class FontWeight implements Formatter {
-        float oldWeight;
-        float myWeight;
-        FontWeight(float weight) {
+        Optional<Float> myWeight;
+        Optional<Float> oldWeight;
+        boolean started;
+        FontWeight(Optional<Float> weight) {
             this.myWeight = weight;
+            this.started = false;
         }
 
         @Override
-        public void apply(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void apply(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            oldWeight = (float) xCursorProps.getPropertyValue(CHAR_WEIGHT);
-            xCursorProps.setPropertyValue(CHAR_WEIGHT, myWeight);
+            if (!started) {
+                oldWeight = getPropertyValue(cursor, CHAR_WEIGHT).map(e -> (float) e);
+                started = true;
+            }
+
+            setPropertyValue(cursor, CHAR_WEIGHT, myWeight);
         }
 
         @Override
-        public void applyEnd(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void applyEnd(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            xCursorProps.setPropertyValue(CHAR_WEIGHT, oldWeight);
+            setPropertyValue(cursor, CHAR_WEIGHT, oldWeight);
         }
     }
 
     static Formatter Bold() {
-        return new FontWeight(com.sun.star.awt.FontWeight.BOLD);
+        return new FontWeight(Optional.of(com.sun.star.awt.FontWeight.BOLD));
     }
 
     static Formatter FontWeightDefault() {
-        return new FontWeight(com.sun.star.awt.FontWeight.NORMAL);
+        return new FontWeight(Optional.of(com.sun.star.awt.FontWeight.NORMAL));
     }
 
     static class FontSlant implements Formatter {
-        com.sun.star.awt.FontSlant oldSlant;
-        com.sun.star.awt.FontSlant mySlant;
+        Optional<com.sun.star.awt.FontSlant> mySlant;
+        Optional<com.sun.star.awt.FontSlant> oldSlant;
+        boolean started;
 
-        FontSlant(com.sun.star.awt.FontSlant slant) {
+        FontSlant(Optional<com.sun.star.awt.FontSlant> slant) {
             this.mySlant = slant;
+            this.oldSlant = Optional.empty();
+            this.started = false;
         }
 
         @Override
-        public void apply(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void apply(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            oldSlant = (com.sun.star.awt.FontSlant) xCursorProps.getPropertyValue(CHAR_POSTURE);
-            xCursorProps.setPropertyValue(CHAR_POSTURE, mySlant);
+            if (!started) {
+                oldSlant = getPropertyValue(cursor, CHAR_POSTURE).map(e -> (com.sun.star.awt.FontSlant) e);
+                started = true;
+            }
+            setPropertyValue(cursor, CHAR_POSTURE, mySlant);
         }
 
         @Override
-        public void applyEnd(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void applyEnd(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            xCursorProps.setPropertyValue(CHAR_POSTURE, oldSlant);
+            setPropertyValue(cursor, CHAR_POSTURE, oldSlant);
         }
     }
 
     static Formatter Italic() {
-        return new FontSlant(com.sun.star.awt.FontSlant.ITALIC);
+        return new FontSlant(Optional.of(com.sun.star.awt.FontSlant.ITALIC));
     }
 
     static Formatter FontSlantDefault() {
-        return new FontSlant(com.sun.star.awt.FontSlant.NONE);
+        return new FontSlant(Optional.of(com.sun.star.awt.FontSlant.NONE));
     }
 
     /*
      * com.sun.star.style.CaseMap
      */
     static class CaseMap implements Formatter {
-        short old;
-        short my;
+        Optional<Short> my;
+        Optional<Short> old;
+        boolean started;
 
-        CaseMap(short value) {
+        CaseMap(Optional<Short> value) {
             this.my = value;
+            this.started = false;
         }
 
         @Override
-        public void apply(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void apply(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            old = (short) xCursorProps.getPropertyValue(CHAR_CASE_MAP);
-            xCursorProps.setPropertyValue(CHAR_CASE_MAP, my);
+            if (!started) {
+                old = getPropertyValue(cursor, CHAR_CASE_MAP).map(e -> (short) e);
+                started = true;
+            }
+            setPropertyValue(cursor, CHAR_CASE_MAP, my);
         }
 
         @Override
-        public void applyEnd(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void applyEnd(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            xCursorProps.setPropertyValue(CHAR_CASE_MAP, old);
+            setPropertyValue(cursor, CHAR_CASE_MAP, old);
         }
     }
 
     static Formatter SmallCaps() {
-        return new CaseMap(com.sun.star.style.CaseMap.SMALLCAPS);
+        return new CaseMap(Optional.of(com.sun.star.style.CaseMap.SMALLCAPS));
     }
 
     static Formatter CaseMapDefault() {
-        return new CaseMap(com.sun.star.style.CaseMap.NONE);
+        return new CaseMap(Optional.of(com.sun.star.style.CaseMap.NONE));
     }
 
     static class CharEscapement implements Formatter {
-        short oldValue;
-        byte oldHeight;
+        Optional<Short> myValue;
+        Optional<Byte> myHeight;
 
-        short myValue;
-        byte myHeight;
+        Optional<Short> oldValue;
+        Optional<Byte> oldHeight;
+        boolean started;
 
-        CharEscapement(short value, byte height) {
+        CharEscapement(Optional<Short> value, Optional<Byte> height) {
             myValue = value;
             myHeight = height;
+            oldValue = Optional.empty();
+            oldHeight = Optional.empty();
+            started = false;
         }
 
         @Override
-        public void apply(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void apply(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            oldValue = (short) xCursorProps.getPropertyValue(CHAR_ESCAPEMENT);
-            oldHeight = (byte) xCursorProps.getPropertyValue(CHAR_ESCAPEMENT_HEIGHT);
-
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT, myValue);
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT, myHeight);
+            if (!started) {
+                oldValue = getPropertyValue(cursor, CHAR_ESCAPEMENT).map(e -> (short) e);
+                oldHeight = getPropertyValue(cursor, CHAR_ESCAPEMENT_HEIGHT).map(e -> (byte) e);
+                started = true;
+            }
+            setPropertyValue(cursor, CHAR_ESCAPEMENT, myValue);
+            setPropertyValue(cursor, CHAR_ESCAPEMENT_HEIGHT, myHeight);
         }
 
         @Override
-        public void applyEnd(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void applyEnd(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT, oldValue);
-            xCursorProps.setPropertyValue(CHAR_ESCAPEMENT_HEIGHT, oldHeight);
+            setPropertyValue(cursor, CHAR_ESCAPEMENT, oldValue);
+            setPropertyValue(cursor, CHAR_ESCAPEMENT_HEIGHT, oldHeight);
         }
     }
 
     static Formatter SubScript() {
-        return new CharEscapement((short) -10, (byte) 58);
+        return new CharEscapement(Optional.of((short) -10), Optional.of((byte) 58));
     }
 
     static Formatter SuperScript() {
-        return new CharEscapement((short) 33, (byte) 58);
+        return new CharEscapement(Optional.of((short) 33), Optional.of((byte) 58));
     }
 
     static Formatter CharEscapementDefault() {
-        return new CharEscapement((short) 0, (byte) 100);
+        return new CharEscapement(Optional.of((short) 0), Optional.of((byte) 100));
     }
 
     /*
      * com.sun.star.awt.FontUnderline
      */
     static class FontUnderline implements Formatter {
-        short oldValue;
-        short myValue;
+        Optional<Short> myValue;
+        Optional<Short> oldValue;
+        boolean started;
 
-        FontUnderline(short value) {
+        FontUnderline(Optional<Short> value) {
             this.myValue = value;
+            this.oldValue = Optional.empty();
+            this.started = false;
         }
 
         @Override
-        public void apply(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void apply(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            oldValue = (short) xCursorProps.getPropertyValue(CHAR_UNDERLINE);
-            xCursorProps.setPropertyValue(CHAR_UNDERLINE, myValue);
+            if (!started) {
+                oldValue = getPropertyValue(cursor, CHAR_UNDERLINE).map(e -> (short) e);
+                started = true;
+            }
+            setPropertyValue(cursor, CHAR_UNDERLINE, myValue);
         }
 
         @Override
-        public void applyEnd(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void applyEnd(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            xCursorProps.setPropertyValue(CHAR_UNDERLINE, oldValue);
+            setPropertyValue(cursor, CHAR_UNDERLINE, oldValue);
         }
     }
 
     static Formatter Underline() {
-        return new FontUnderline(com.sun.star.awt.FontUnderline.SINGLE);
+        return new FontUnderline(Optional.of(com.sun.star.awt.FontUnderline.SINGLE));
     }
 
     static FontUnderline FontUnderlineDefault() {
-        return new FontUnderline(com.sun.star.awt.FontUnderline.NONE);
+        return new FontUnderline(Optional.of(com.sun.star.awt.FontUnderline.NONE));
     }
 
     /*
      * com.sun.star.awt.FontStrikeout
      */
     static class FontStrikeout implements Formatter {
-        short oldValue;
-        short myValue;
+        Optional<Short> myValue;
+        Optional<Short> oldValue;
+        boolean started;
 
-        FontStrikeout(short value) {
+        FontStrikeout(Optional<Short> value) {
             this.myValue = value;
+            this.oldValue = Optional.empty();
+            this.started = false;
         }
 
         @Override
-        public void apply(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void apply(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            oldValue = (short) xCursorProps.getPropertyValue(CHAR_STRIKEOUT);
-            xCursorProps.setPropertyValue(CHAR_STRIKEOUT, myValue);
+            if (!started) {
+                oldValue = getPropertyValue(cursor, CHAR_STRIKEOUT).map(e -> (short) e);
+                started = true;
+            }
+            setPropertyValue(cursor, CHAR_STRIKEOUT, myValue);
         }
 
         @Override
-        public void applyEnd(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void applyEnd(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            xCursorProps.setPropertyValue(CHAR_STRIKEOUT, oldValue);
+            setPropertyValue(cursor, CHAR_STRIKEOUT, oldValue);
         }
     }
 
     static Formatter Strikeout() {
-        return new FontStrikeout(com.sun.star.awt.FontStrikeout.SINGLE);
+        return new FontStrikeout(Optional.of(com.sun.star.awt.FontStrikeout.SINGLE));
     }
 
     static Formatter FontStrikeoutDefault() {
-        return new FontStrikeout(com.sun.star.awt.FontStrikeout.NONE);
+        return new FontStrikeout(Optional.of(com.sun.star.awt.FontStrikeout.NONE));
     }
 
     /*
@@ -457,57 +652,59 @@ public class OOUtil {
     static class CharLocale implements Formatter {
         private Optional<Locale> myLocale;
         private Optional<Locale> oldLocale;
+        private boolean started;
 
         CharLocale(Optional<Locale> locale) {
             this.myLocale = locale;
             this.oldLocale = Optional.empty();
+            this.started = false;
         }
 
         @Override
-        public void apply(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void apply(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            if (myLocale.isPresent()) {
-                try {
-                    Locale old = (Locale) xCursorProps.getPropertyValue("CharLocale");
-                    oldLocale = Optional.of(old);
-                    xCursorProps.setPropertyValue("CharLocale", myLocale.get());
-                } catch (UnknownPropertyException
-                         | PropertyVetoException
-                         | IllegalArgumentException
-                         | WrappedTargetException ex) {
-                    // silently
+            try {
+                if (!started) {
+                    oldLocale = getPropertyValue(cursor, CHAR_LOCALE).map(e -> (Locale) e);
+                    started = true;
                 }
+                setPropertyValue(cursor, CHAR_LOCALE, myLocale);
+            } catch (UnknownPropertyException
+                     | PropertyVetoException
+                     | IllegalArgumentException
+                     | WrappedTargetException ex) {
+                LOGGER.warn("CharLocale.apply caught", ex);
             }
         }
 
         @Override
-        public void applyEnd(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void applyEnd(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            if (oldLocale.isPresent()) {
-                try {
-                    xCursorProps.setPropertyValue("CharLocale", oldLocale.get());
-                } catch (UnknownPropertyException
-                         | PropertyVetoException
-                         | IllegalArgumentException
-                         | WrappedTargetException ex) {
-                    // silently
-                }
+            try {
+                setPropertyValue(cursor, CHAR_LOCALE, oldLocale);
+            } catch (UnknownPropertyException
+                     | PropertyVetoException
+                     | IllegalArgumentException
+                     | WrappedTargetException ex) {
+                LOGGER.warn("CharLocale.applyEnd caught", ex);
             }
         }
     }
 
-    /*
+    /**
      * Locale from string encoding: language, language-country or language-country-variant
+     *
+     * @param value Empty or null encodes "remove direct formatting"
      */
     static Formatter SetLocale(String value) {
         if (value == null || "".equals(value)) {
@@ -522,69 +719,71 @@ public class OOUtil {
         return new CharLocale(Optional.of(l));
     }
 
-    /*
+    /**
      * Set a character style known to OO/LO
+     *
+     *  Optional.empty() encodes (remove direct formatting) both in
+     *  myCharStyle and in oldCharStyle.
+     *
      */
     static class CharStyleName implements Formatter {
         private Optional<String> myCharStyle;
         private Optional<String> oldCharStyle;
+        private boolean started;
 
         public CharStyleName(Optional<String> charStyle) {
             this.myCharStyle = charStyle;
             this.oldCharStyle = Optional.empty();
+            this.started = false;
         }
 
         @Override
-        public void apply(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void apply(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            if (myCharStyle.isPresent() && !myCharStyle.get().equals("")) {
-                if (documentConnection
-                    .getInternalNameOfCharacterStyle(myCharStyle.get()).isPresent()) {
-                    try {
-                        String old = (String) xCursorProps.getPropertyValue(CHAR_STYLE_NAME);
-                        oldCharStyle = Optional.of(old);
-                        xCursorProps.setPropertyValue(CHAR_STYLE_NAME, myCharStyle.get());
-                    } catch (UnknownPropertyException
-                             | PropertyVetoException
-                             | IllegalArgumentException
-                             | WrappedTargetException ex) {
-                        // silently
-                    }
+            try {
+                if (!started) {
+                    oldCharStyle = getPropertyValue(cursor, CHAR_STYLE_NAME).map(e -> (String) e);
+                    started = true;
                 }
-                // otherwise: ignore silently. Assume character style was already tested elsewhere.
+                setPropertyValue(cursor, CHAR_STYLE_NAME, myCharStyle);
+            } catch (UnknownPropertyException
+                     | PropertyVetoException
+                     | IllegalArgumentException
+                     | WrappedTargetException ex) {
+                LOGGER.warn("CharStyleName.apply caught", ex);
             }
         }
 
         @Override
-        public void applyEnd(DocumentConnection documentConnection, XPropertySet xCursorProps)
+        public void applyEnd(DocumentConnection documentConnection, XTextCursor cursor)
             throws
             UnknownPropertyException,
             PropertyVetoException,
             WrappedTargetException,
             IllegalArgumentException,
             NoSuchElementException {
-            if (oldCharStyle.isPresent() && !oldCharStyle.get().equals("")) {
-                if (documentConnection
-                    .getInternalNameOfCharacterStyle(oldCharStyle.get()).isPresent()) {
-                    try {
-                        xCursorProps.setPropertyValue(CHAR_STYLE_NAME, oldCharStyle.get());
-                    } catch (UnknownPropertyException
-                             | PropertyVetoException
-                             | IllegalArgumentException
-                             | WrappedTargetException ex) {
-                        // silently
-                    }
-                }
-                // otherwise: ignore silently. Assume character style was already tested elsewhere.
+
+            try {
+                setPropertyValue(cursor, CHAR_STYLE_NAME, oldCharStyle);
+            } catch (UnknownPropertyException
+                     | PropertyVetoException
+                     | IllegalArgumentException
+                     | WrappedTargetException ex) {
+                LOGGER.warn("CharStyleName.applyEnd caught", ex);
             }
         }
+
     }
 
+    /**
+     * @param charStyle null or "" encodes "remove direct formatting",
+     * not "do nothing".
+     */
     static Formatter SetCharStyle(String charStyle) {
         if (charStyle == null || "".equals(charStyle)) {
             return new CharStyleName(Optional.empty());
@@ -609,18 +808,8 @@ public class OOUtil {
         IllegalArgumentException,
         NoSuchElementException {
 
-        XPropertySet xCursorProps = UnoRuntime.queryInterface(XPropertySet.class, cursor);
-
-        // Set properties we do not want to inherit from the context
-        // and are not controlled by formatters.
-        if (reset != null) {
-            for (Formatter f : reset) {
-                f.apply(documentConnection, xCursorProps);
-            }
-        }
-
         for (Formatter f : formatters) {
-            f.apply(documentConnection, xCursorProps);
+            f.apply(documentConnection, cursor);
         }
     }
 
