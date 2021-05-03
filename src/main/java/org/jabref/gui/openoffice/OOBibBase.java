@@ -1055,6 +1055,7 @@ class OOBibBase {
                 sb.append(formattedText.asString());
             }
 
+            // Emit a bibliography entry
             OOFormattedText entryText = OOFormattedText.fromString(sb.toString());
             OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection,
                                                            cursor,
@@ -1154,7 +1155,7 @@ class OOBibBase {
                               .createTextCursorByRange(section.getAnchor()));
 
         // emit the title of the bibliography
-        OOUtil.removeDirectFormatting(documentConnection, cursor);
+        OOUtil.removeDirectFormatting(cursor);
         OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection,
                                                        cursor,
                                                        style.getFormattedBibliographyTitle());
