@@ -35,6 +35,7 @@ import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.logic.openoffice.CreationException;
 import org.jabref.logic.openoffice.DocumentConnection;
 import org.jabref.logic.openoffice.NoDocumentException;
+import org.jabref.logic.openoffice.OOFormattedTextIntoOO;
 import org.jabref.logic.openoffice.OOFrontend;
 import org.jabref.logic.openoffice.OOUtil;
 import org.jabref.logic.openoffice.UndefinedCharacterFormatException;
@@ -451,7 +452,7 @@ class OOBibBase {
             // inject a ZERO_WIDTH_SPACE to hold the initial character format
             final String ZERO_WIDTH_SPACE = "\u200b";
             citationText2 = OOFormattedText.fromString(ZERO_WIDTH_SPACE + citationText2.asString());
-            OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection, cursor, citationText2);
+            OOFormattedTextIntoOO.write(cursor, citationText2);
         } else {
             cursor.setString("");
         }
@@ -1014,7 +1015,7 @@ class OOBibBase {
                 // Try to list citations:
                 if (false) {
                     //
-                    // TODO: not implemented in insertOOFormattedTextAtCurrentLocation2
+                    // TODO: not implemented in OOFormattedTextIntoOO.write
                     //
                     String prefix = String.format(" (%s: ", Localization.lang("Cited on pages"));
                     String suffix = ")";
@@ -1057,9 +1058,8 @@ class OOBibBase {
 
             // Emit a bibliography entry
             OOFormattedText entryText = OOFormattedText.fromString(sb.toString());
-            OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection,
-                                                           cursor,
-                                                           OOFormat.paragraph(entryText, parStyle));
+            entryText = OOFormat.paragraph(entryText, parStyle);
+            OOFormattedTextIntoOO.write(cursor, entryText);
             cursor.collapseToEnd();
         } // for CitedKey
     }
@@ -1155,10 +1155,9 @@ class OOBibBase {
                               .createTextCursorByRange(section.getAnchor()));
 
         // emit the title of the bibliography
-        OOUtil.removeDirectFormatting(cursor);
-        OOUtil.insertOOFormattedTextAtCurrentLocation2(documentConnection,
-                                                       cursor,
-                                                       style.getFormattedBibliographyTitle());
+        OOFormattedTextIntoOO.removeDirectFormatting(cursor);
+        OOFormattedText title = style.getFormattedBibliographyTitle();
+        OOFormattedTextIntoOO.write(cursor, title);
         cursor.collapseToEnd();
 
         // remove the inital empty paragraph from the section.
