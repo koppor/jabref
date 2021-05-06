@@ -1,4 +1,4 @@
-package org.jabref.logic.oostyle;
+package org.jabref.model.oostyle;
 
 /**   What is the data stored?   */
 public enum OOStyleDataModelVersion {

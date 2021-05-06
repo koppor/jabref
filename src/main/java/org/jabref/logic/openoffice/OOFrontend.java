@@ -15,7 +15,7 @@ import org.jabref.logic.oostyle.CitationGroupID;
 import org.jabref.logic.oostyle.CitationGroups;
 import org.jabref.logic.oostyle.InTextCitationType;
 import org.jabref.logic.oostyle.OOFormattedText;
-import org.jabref.logic.oostyle.OOStyleDataModelVersion;
+import org.jabref.model.oostyle.OOStyleDataModelVersion;
 import org.jabref.model.openoffice.CitationEntry;
 
 import com.sun.star.beans.IllegalTypeException;
