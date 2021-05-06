@@ -125,6 +125,19 @@ public class OOFormatBibliography {
         return full;
     }
 
+    public static OOFormattedText formatBibliography(CitationGroups cgs,
+                                                     CitedKeys bibliography,
+                                                     OOBibStyle style,
+                                                     boolean alwaysAddCitedOnPages) {
+
+        OOFormattedText title = style.getFormattedBibliographyTitle();
+        OOFormattedText body = OOFormatBibliography.formatBibliography(cgs,
+                                                                       bibliography,
+                                                                       style,
+                                                                       alwaysAddCitedOnPages);
+        return OOFormattedText.fromString(title.asString() + body.asString());
+    }
+
     /**
      * Format the reference part of a bibliography entry using a Layout.
      *

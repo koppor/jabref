@@ -730,29 +730,6 @@ class OOBibBase {
                                alwaysAddCitedOnPages);
     }
 
-    /*
-     *
-     * Only called from populateBibTextSection (and that from rebuildBibTextSection)
-     */
-    private void insertFullReferenceAtCursor(DocumentConnection documentConnection,
-                                             XTextCursor cursor,
-                                             CitationGroups cgs,
-                                             CitedKeys bibliography,
-                                             OOBibStyle style,
-                                             boolean alwaysAddCitedOnPages)
-        throws
-        IllegalArgumentException,
-        UnknownPropertyException,
-        PropertyVetoException,
-        WrappedTargetException,
-        CreationException,
-        NoSuchElementException {
-        OOFormattedText text =
-            OOFormatBibliography.formatBibliographyBody(cgs, bibliography, style, alwaysAddCitedOnPages);
-        OOFormattedTextIntoOO.write(documentConnection, cursor, text);
-        cursor.collapseToEnd();
-    }
-
     /**
      * Insert a paragraph break and create a text section for the bibliography.
      *
@@ -846,8 +823,11 @@ class OOBibBase {
 
         // emit the title of the bibliography
         OOFormattedTextIntoOO.removeDirectFormatting(cursor);
-        OOFormattedText title = style.getFormattedBibliographyTitle();
-        OOFormattedTextIntoOO.write(documentConnection, cursor, title);
+        OOFormattedText bibliographyText = OOFormatBibliography.formatBibliography(fr.cgs,
+                                                                                   bibliography,
+                                                                                   style,
+                                                                                   alwaysAddCitedOnPages);
+        OOFormattedTextIntoOO.write(documentConnection, cursor, bibliographyText);
         cursor.collapseToEnd();
 
         // remove the inital empty paragraph from the section.
@@ -856,14 +836,6 @@ class OOBibBase {
         initialParagraph.collapseToStart();
         initialParagraph.goRight((short) 1, true);
         initialParagraph.setString("");
-
-        // emit body
-        insertFullReferenceAtCursor(documentConnection,
-                                    cursor,
-                                    fr.cgs,
-                                    bibliography,
-                                    style,
-                                    alwaysAddCitedOnPages);
 
         documentConnection.insertBookmark(OOBibBase.BIB_SECTION_END_NAME,
                                           cursor,
