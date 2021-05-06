@@ -290,7 +290,8 @@ public class CitationGroups {
         switch (dataModel) {
         case JabRef52:
             // check conformance to dataModel
-            for (int i = 0; i < cg.citations.size() - 1; i++) {
+            final int nCitations = cg.citations.size();
+            for (int i = 0; i < nCitations - 1; i++) {
                 if (cg.citations.get(i).pageInfo.isPresent()) {
                     throw new RuntimeException("getPageInfosForCitations:"
                                                + " found Citation.pageInfo"
@@ -299,7 +300,7 @@ public class CitationGroups {
             }
             // A list of null values, except the last that comes from this.pageInfo
             List<OOFormattedText> result = new ArrayList<>(cg.citations.size());
-            for (int i = 0; i < cg.citations.size() - 1; i++) {
+            for (int i = 0; i < nCitations; i++) {
                 int j = cg.localOrder.get(i);
                 OOFormattedText value = cg.citations.get(j).pageInfo.orElse(null);
                 result.add(value);
