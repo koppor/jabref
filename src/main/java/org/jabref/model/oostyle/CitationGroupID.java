@@ -1,4 +1,4 @@
-package org.jabref.logic.oostyle;
+package org.jabref.model.oostyle;
 
 /**
  * Identifies a citation group in a document.

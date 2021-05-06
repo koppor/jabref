@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import org.jabref.logic.openoffice.StorageBase;
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.oostyle.CitationGroupID;
 
 public class CitationGroup {
     public CitationGroupID cgid;
