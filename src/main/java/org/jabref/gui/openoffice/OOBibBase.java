@@ -24,6 +24,7 @@ import org.jabref.logic.oostyle.CitedKey;
 import org.jabref.logic.oostyle.CitedKeys;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.OOFormat;
+import org.jabref.logic.oostyle.OOFormatBibliography;
 import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.logic.openoffice.CreationException;
 import org.jabref.logic.openoffice.DocumentConnection;
@@ -760,7 +761,7 @@ class OOBibBase {
         CreationException,
         NoSuchElementException {
         OOFormattedText text =
-            OOFormat.formatBibliographyBody(cgs, bibliography, style, alwaysAddCitedOnPages);
+            OOFormatBibliography.formatBibliographyBody(cgs, bibliography, style, alwaysAddCitedOnPages);
         OOFormattedTextIntoOO.write(documentConnection, cursor, text);
         cursor.collapseToEnd();
     }
