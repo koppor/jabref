@@ -283,7 +283,7 @@ public class OpenOfficePanel {
         manageCitations.setOnAction(e -> {
            try {
                DocumentConnection documentConnection = ooBase.getDocumentConnectionOrThrow();
-               ooBase.checkRecordChanges(documentConnection);
+               ooBase.checkIfOpenOfficeIsRecordingChanges(documentConnection);
            } catch (JabRefException ex) {
                 dialogService.showErrorDialogAndWait(
                     Localization.lang("JabRefException"),
@@ -295,7 +295,7 @@ public class OpenOfficePanel {
            } catch (UnknownPropertyException
                     | PropertyVetoException
                     | WrappedTargetException ex) {
-               LOGGER.warn("Problem during checkRecordChanges", ex);
+               LOGGER.warn("Problem during checkIfOpenOfficeIsRecordingChanges", ex);
            }
            dialogService.showCustomDialogAndWait(new ManageCitationsDialogView(ooBase));
         });
@@ -521,7 +521,7 @@ public class OpenOfficePanel {
 
         try {
             DocumentConnection documentConnection = ooBase.getDocumentConnectionOrThrow();
-            ooBase.checkRecordChanges(documentConnection);
+            ooBase.checkIfOpenOfficeIsRecordingChanges(documentConnection);
         } catch (JabRefException ex) {
             dialogService.showErrorDialogAndWait(
                 Localization.lang("JabRefException"),
@@ -533,7 +533,7 @@ public class OpenOfficePanel {
         } catch (UnknownPropertyException
                  | PropertyVetoException
                  | WrappedTargetException ex) {
-            LOGGER.warn("Problem during checkRecordChanges", ex);
+            LOGGER.warn("Problem during checkIfOpenOfficeIsRecordingChanges", ex);
         }
 
         Boolean inParenthesis = inParenthesisIn;

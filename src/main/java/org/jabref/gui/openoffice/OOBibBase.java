@@ -56,7 +56,6 @@ import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextSection;
 import com.sun.star.uno.Any;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.util.InvalidStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,17 +149,6 @@ class OOBibBase {
      *
      * ****************************/
 
-    /**
-     * unoQI : short for UnoRuntime.queryInterface
-     *
-     * @return A reference to the requested UNO interface type if
-     *         available, otherwise null.
-     */
-    private static <T> T unoQI(Class<T> zInterface,
-                               Object object) {
-        return UnoRuntime.queryInterface(zInterface, object);
-    }
-
     public List<CitationEntry> getCitationEntries()
         throws
         UnknownPropertyException,
@@ -172,8 +160,7 @@ class OOBibBase {
 
         DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
 
-        // checkStylesExistInTheDocument(style, documentConnection);
-        checkRecordChanges(documentConnection);
+        checkIfOpenOfficeIsRecordingChanges(documentConnection);
 
         OOFrontend fr = new OOFrontend(documentConnection);
         return fr.getCitationEntries(documentConnection);
@@ -481,7 +468,7 @@ class OOBibBase {
         DocumentConnection documentConnection = getDocumentConnectionOrThrow();
 
         checkStylesExistInTheDocument(style, documentConnection);
-        checkRecordChanges(documentConnection);
+        checkIfOpenOfficeIsRecordingChanges(documentConnection);
 
         OOFrontend fr = new OOFrontend(documentConnection);
         // CitationGroups cgs = new CitationGroups(documentConnection);
@@ -924,7 +911,7 @@ class OOBibBase {
         final boolean useLockControllers = true;
         DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
         checkStylesExistInTheDocument(style, documentConnection);
-        checkRecordChanges(documentConnection);
+        checkIfOpenOfficeIsRecordingChanges(documentConnection);
 
         OOFrontend fr = new OOFrontend(documentConnection);
 
@@ -1285,7 +1272,7 @@ class OOBibBase {
         DocumentConnection documentConnection = getDocumentConnectionOrThrow();
 
         checkStylesExistInTheDocument(style, documentConnection);
-        checkRecordChanges(documentConnection);
+        checkIfOpenOfficeIsRecordingChanges(documentConnection);
 
         OOFrontend fr = new OOFrontend(documentConnection);
 
@@ -1503,7 +1490,7 @@ class OOBibBase {
      * Throw JabRefException if recording changes or the document contains
      * recorded changes.
      */
-    public void checkRecordChanges(DocumentConnection documentConnection)
+    public void checkIfOpenOfficeIsRecordingChanges(DocumentConnection documentConnection)
         throws
         UnknownPropertyException,
         WrappedTargetException,
@@ -1678,7 +1665,7 @@ class OOBibBase {
 
         DocumentConnection documentConnection = getDocumentConnectionOrThrow();
         checkStylesExistInTheDocument(style, documentConnection);
-        checkRecordChanges(documentConnection);
+        checkIfOpenOfficeIsRecordingChanges(documentConnection);
 
         try {
             documentConnection.enterUndoContext("Refresh bibliography");
