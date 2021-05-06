@@ -15,18 +15,15 @@ import org.jabref.architecture.AllowedToUseAwt;
 import org.jabref.gui.DialogService;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.layout.Layout;
 import org.jabref.logic.oostyle.Citation;
 import org.jabref.logic.oostyle.CitationGroup;
 import org.jabref.logic.oostyle.CitationGroups;
 import org.jabref.logic.oostyle.CitationMarkerEntry;
 import org.jabref.logic.oostyle.CitationMarkerEntryImpl;
-import org.jabref.logic.oostyle.CitationPath;
 import org.jabref.logic.oostyle.CitedKey;
 import org.jabref.logic.oostyle.CitedKeys;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.OOFormat;
-import org.jabref.logic.oostyle.OOPreFormatter;
 import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.logic.openoffice.CreationException;
 import org.jabref.logic.openoffice.DocumentConnection;
@@ -69,7 +66,6 @@ import org.slf4j.LoggerFactory;
  */
 @AllowedToUseAwt("Requires AWT for italics and bold")
 class OOBibBase {
-    private static final OOPreFormatter POSTFORMATTER = new OOPreFormatter();
 
     private static final String BIB_SECTION_NAME = "JR_bib";
     private static final String BIB_SECTION_END_NAME = "JR_bib_end";
@@ -79,6 +75,7 @@ class OOBibBase {
 
     /* variables  */
     private final DialogService dialogService;
+    private final boolean alwaysAddCitedOnPages;
 
     /**
      * Created when connected to a document.
@@ -100,6 +97,7 @@ class OOBibBase {
 
         this.dialogService = dialogService;
         this.connection = new OOBibBaseConnect(loPath, dialogService);
+        this.alwaysAddCitedOnPages = true;
     }
 
     public void selectDocument()
@@ -588,7 +586,8 @@ class OOBibBase {
                     rebuildBibTextSection(documentConnection,
                                           style,
                                           fr2,
-                                          x.getBibliography());
+                                          x.getBibliography(),
+                                          this.alwaysAddCitedOnPages);
                 } finally {
                     documentConnection.unlockControllers();
                 }
@@ -723,7 +722,8 @@ class OOBibBase {
     private void rebuildBibTextSection(DocumentConnection documentConnection,
                                        OOBibStyle style,
                                        OOFrontend fr,
-                                       CitedKeys bibliography)
+                                       CitedKeys bibliography,
+                                       boolean alwaysAddCitedOnPages)
         throws
         NoSuchElementException,
         WrappedTargetException,
@@ -738,17 +738,11 @@ class OOBibBase {
         populateBibTextSection(documentConnection,
                                fr,
                                bibliography,
-                               style);
+                               style,
+                               alwaysAddCitedOnPages);
     }
 
-    /**
-     * Insert body of bibliography at `cursor`.
-     *
-     * @param documentConnection Connection.
-     * @param cursor  Where to
-     * @param cgs
-     * @param bibliography
-     * @param style Style.
+    /*
      *
      * Only called from populateBibTextSection (and that from rebuildBibTextSection)
      */
@@ -756,7 +750,8 @@ class OOBibBase {
                                              XTextCursor cursor,
                                              CitationGroups cgs,
                                              CitedKeys bibliography,
-                                             OOBibStyle style)
+                                             OOBibStyle style,
+                                             boolean alwaysAddCitedOnPages)
         throws
         IllegalArgumentException,
         UnknownPropertyException,
@@ -764,104 +759,10 @@ class OOBibBase {
         WrappedTargetException,
         CreationException,
         NoSuchElementException {
-
-        final boolean debugThisFun = false;
-
-        if (debugThisFun) {
-            System.out.printf("Ref IsSortByPosition %s\n", style.isSortByPosition());
-            System.out.printf("Ref IsNumberEntries  %s\n", style.isNumberEntries());
-        }
-
-        String parStyle = style.getReferenceParagraphFormat();
-
-        for (CitedKey ck : bibliography.values()) {
-
-            if (debugThisFun) {
-                System.out.printf("Ref cit %-20s ck.number %7s%n",
-                                  String.format("'%s'", ck.citationKey),
-                                  (ck.number.isEmpty()
-                                   ? "(empty)"
-                                   : String.format("%02d", ck.number.get())));
-            }
-
-            StringBuilder sb = new StringBuilder();
-            // insert marker "[1]"
-            if (style.isNumberEntries()) {
-
-                if (ck.number.isEmpty()) {
-                    throw new RuntimeException("insertFullReferenceAtCursor:"
-                                               + " numbered style, but found unnumbered entry");
-                }
-
-                int number = ck.number.get();
-                OOFormattedText marker = style.getNumCitationMarkerForBibliography(number);
-                sb.append(marker.asString());
-            } else {
-                // !style.isNumberEntries() : emit no prefix
-                // TODO: We might want [citationKey] prefix for style.isCitationKeyCiteMarkers();
-            }
-
-            if (ck.db.isEmpty()) {
-                // Unresolved entry
-                OOFormattedText referenceDetails =
-                    OOFormattedText.fromString(String.format("Unresolved(%s)", ck.citationKey));
-                sb.append(referenceDetails.asString());
-                if (true) {
-                    // Try to list citations:
-                    //
-                    // TODO: not implemented in OOFormattedTextIntoOO.write
-                    //
-                    // Problems:
-                    //
-                    // - With Reference
-                    //   - we do not control the text shown
-                    //   - using page numbers: useful in print
-                    //   - we would want it sorted by page number: why is it not?
-                    //
-                    String prefix = String.format(" (%s: ", Localization.lang("Cited on pages"));
-                    String suffix = ")";
-                    sb.append(prefix);
-
-                    int last = ck.where.size();
-                    int i = 0;
-                    for (CitationPath p : ck.where) {
-                        CitationGroupID cgid = p.group;
-                        CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
-
-                        if (i > 0) {
-                            sb.append(", ");
-                        }
-                        OOFormattedText xref =
-                            OOFormat.formatReferenceToPageNumberOfReferenceMark(cg.getMarkName());
-                        sb.append(xref.asString());
-                        i++;
-                    }
-                    sb.append(suffix);
-                }
-
-            } else {
-                // Resolved entry
-                BibEntry bibentry = ck.db.get().entry;
-
-                // insert the actual details.
-                Layout layout = style.getReferenceFormat(bibentry.getType());
-                layout.setPostFormatter(POSTFORMATTER);
-
-                OOFormattedText formattedText = OOFormat.formatFullReference(layout,
-                                                                             bibentry,
-                                                                             ck.db.get().database,
-                                                                             ck.uniqueLetter.orElse(null));
-
-                // Insert the formatted text:
-                sb.append(formattedText.asString());
-            }
-
-            // Emit a bibliography entry
-            OOFormattedText entryText = OOFormattedText.fromString(sb.toString());
-            entryText = OOFormat.paragraph(entryText, parStyle);
-            OOFormattedTextIntoOO.write(documentConnection, cursor, entryText);
-            cursor.collapseToEnd();
-        } // for CitedKey
+        OOFormattedText text =
+            OOFormat.formatBibliographyBody(cgs, bibliography, style, alwaysAddCitedOnPages);
+        OOFormattedTextIntoOO.write(documentConnection, cursor, text);
+        cursor.collapseToEnd();
     }
 
     /**
@@ -937,7 +838,8 @@ class OOBibBase {
     private void populateBibTextSection(DocumentConnection documentConnection,
                                         OOFrontend fr,
                                         CitedKeys bibliography,
-                                        OOBibStyle style)
+                                        OOBibStyle style,
+                                        boolean alwaysAddCitedOnPages)
         throws
         NoSuchElementException,
         WrappedTargetException,
@@ -972,7 +874,8 @@ class OOBibBase {
                                     cursor,
                                     fr.cgs,
                                     bibliography,
-                                    style);
+                                    style,
+                                    alwaysAddCitedOnPages);
 
         documentConnection.insertBookmark(OOBibBase.BIB_SECTION_END_NAME,
                                           cursor,
@@ -1806,7 +1709,8 @@ class OOBibBase {
                 rebuildBibTextSection(documentConnection,
                                       style,
                                       fr,
-                                      x.getBibliography());
+                                      x.getBibliography(),
+                                      this.alwaysAddCitedOnPages);
                 return x.getUnresolvedKeys();
             } finally {
                 if (useLockControllers && documentConnection.hasControllersLocked()) {

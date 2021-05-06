@@ -18,21 +18,44 @@ public class CitationGroup {
     public StorageBase.NamedRange cgRangeStorage; // knows referenceMarkName
     public InTextCitationType itcType;
     public List<Citation> citations;
+
     public List<Integer> localOrder;
+
+    /*
+     * A name of a reference mark to link to by formatCitedOnPages.
+     * May be empty, if Backend does not use reference marks.
+     */
+    private Optional<String> referenceMarkNameForLinking;
+    private Optional<Integer> indexInGlobalOrder;
 
     public CitationGroup(CitationGroupID cgid,
                          StorageBase.NamedRange cgRangeStorage,
                          InTextCitationType itcType,
-                         List<Citation> citations) {
+                         List<Citation> citations,
+                         Optional<String> referenceMarkNameForLinking) {
         this.cgid = cgid;
         this.cgRangeStorage = cgRangeStorage;
         this.itcType = itcType;
         this.citations = citations;
         this.localOrder = makeIndices(citations.size());
+        this.referenceMarkNameForLinking = referenceMarkNameForLinking;
+        this.indexInGlobalOrder = Optional.empty();
     }
 
-    public String getMarkName() {
-        return cgRangeStorage.getName();
+    public void setIndexInGlobalOrder(Optional<Integer> i) {
+        this.indexInGlobalOrder = i;
+    }
+
+    public Optional<Integer> getIndexInGlobalOrder() {
+        return this.indexInGlobalOrder;
+    }
+
+    public Optional<String> getReferenceMarkNameForLinking() {
+        return referenceMarkNameForLinking;
+    }
+
+    public void setReferenceMarkNameForLinking(Optional<String> referenceMarkNameForLinking) {
+        this.referenceMarkNameForLinking = referenceMarkNameForLinking;
     }
 
     /** Integers 0..(n-1) */

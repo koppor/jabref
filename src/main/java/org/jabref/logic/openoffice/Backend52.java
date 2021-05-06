@@ -150,7 +150,8 @@ public class Backend52 {
         CitationGroup cg = new CitationGroup(id,
                                              sr.get(),
                                              ov.itcType,
-                                             citations);
+                                             citations,
+                                             Optional.of(refMarkName));
         return cg;
     }
 
@@ -296,7 +297,8 @@ public class Backend52 {
             CitationGroup cg = new CitationGroup(cgid,
                                                  sr,
                                                  itcType,
-                                                 citations);
+                                                 citations,
+                                                 Optional.of(refMarkName));
             return cg;
         default:
             throw new RuntimeException("Backend52 requires JabRef52 dataModel");

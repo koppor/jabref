@@ -241,6 +241,11 @@ public class CitationGroups {
                                        + " globalOrder.size() != citationGroups.size()");
         }
         this.globalOrder = Optional.of(globalOrder);
+        int i = 0;
+        for (CitationGroupID cgid : globalOrder) {
+            citationGroups.get(cgid).setIndexInGlobalOrder(Optional.of(i));
+            i++;
+        }
     }
 
     public Optional<CitationGroup> getCitationGroup(CitationGroupID cgid) {
@@ -337,6 +342,18 @@ public class CitationGroups {
             throw new RuntimeException("getCitationsInLocalOrder: invalid cgid");
         }
         return cg.get().getCitationsInLocalOrder();
+    }
+
+    /*
+     * @return true if all citation groups have referenceMarkNameForLinking
+     */
+    public boolean citationGroupsProvideReferenceMarkNameForLinking() {
+        for (CitationGroup cg : citationGroups.values()) {
+            if (cg.getReferenceMarkNameForLinking().isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void afterCreateCitationGroup(CitationGroup cg) {
