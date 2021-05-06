@@ -109,4 +109,10 @@ public class OOFormat {
                                           + s.asString()
                                           + "</p>");
     }
+
+    public static OOFormattedText formatReferenceToPageNumberOfReferenceMark(String referencMarkName) {
+        String s = String.format("<oo:referenceToPageNumberOfReferenceMark target=\"%s\">",
+                                 referencMarkName);
+        return OOFormattedText.fromString(s);
+    }
  }

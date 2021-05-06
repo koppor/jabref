@@ -1017,8 +1017,8 @@ public class DocumentConnection {
      * May need a documentConnection.refresh() after, to update
      * the text shown.
      */
-    public void insertGetreferenceToPageNumberOfReferenceMark(String referenceMarkName,
-                                                              XTextRange cursor)
+    public void insertReferenceToPageNumberOfReferenceMark(String referenceMarkName,
+                                                           XTextRange cursor)
         throws
         CreationException,
         UnknownPropertyException,
@@ -1053,9 +1053,6 @@ public class DocumentConnection {
 
         // Get the XTextContent interface of the GetReference text field
         XTextContent xRefContent = (XTextContent) unoQI(XTextContent.class, xFieldProps);
-
-        // Make some text to precede the reference
-        // this.xText.insertString(cursor.getEnd(), "Page ", false);
 
         // Insert the text field
         this.xText.insertTextContent(cursor.getEnd(), xRefContent, false);

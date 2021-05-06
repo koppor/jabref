@@ -71,8 +71,10 @@ public class OOFormattedTextIntoOO {
     private static final byte SUPERSCRIPT_HEIGHT = (byte) 58;
     private static final byte SUBSCRIPT_HEIGHT = (byte) 58;
 
-    private static final String TAG_NAME_REGEXP = "(?:b|i|em|tt|smallcaps|sup|sub|u|s|p|span)";
-    private static final String ATTRIBUTE_NAME_REGEXP = "(?:oo:ParaStyleName|oo:CharStyleName|lang|style)";
+    private static final String TAG_NAME_REGEXP =
+        "(?:b|i|em|tt|smallcaps|sup|sub|u|s|p|span|oo:referenceToPageNumberOfReferenceMark)";
+    private static final String ATTRIBUTE_NAME_REGEXP =
+        "(?:oo:ParaStyleName|oo:CharStyleName|lang|style|target)";
     private static final String ATTRIBUTE_VALUE_REGEXP = "\"([^\"]*)\"";
     private static final Pattern HTML_TAG =
         Pattern.compile("<(/" + TAG_NAME_REGEXP + ")>"
@@ -128,14 +130,16 @@ public class OOFormattedTextIntoOO {
      * @param position   The cursor giving the insert location. Not modified.
      * @param ootext     The marked-up text to insert.
      */
-    public static void write(XTextCursor position,
+    public static void write(DocumentConnection documentConnection,
+                             XTextCursor position,
                              OOFormattedText ootext)
         throws
         UnknownPropertyException,
         PropertyVetoException,
         WrappedTargetException,
         IllegalArgumentException,
-        NoSuchElementException {
+        NoSuchElementException,
+        CreationException {
 
         String lText = OOFormattedText.toString(ootext);
 
@@ -220,6 +224,21 @@ public class OOFormattedTextIntoOO {
                                 // ignore silently
                             }
                         }
+                        break;
+                    default:
+                        LOGGER.warn(String.format("Unexpected attribute '%s' for <%s>", key, tagName));
+                        break;
+                    }
+                }
+                break;
+            case "oo:referenceToPageNumberOfReferenceMark":
+                for (Pair<String, String> kv : attributes) {
+                    String key = kv.getKey();
+                    String value = kv.getValue();
+                    switch (key) {
+                    case "target":
+                        documentConnection
+                            .insertReferenceToPageNumberOfReferenceMark(value, cursor);
                         break;
                     default:
                         LOGGER.warn(String.format("Unexpected attribute '%s' for <%s>", key, tagName));

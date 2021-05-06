@@ -33,7 +33,6 @@ import org.jabref.logic.openoffice.DocumentConnection;
 import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.OOFormattedTextIntoOO;
 import org.jabref.logic.openoffice.OOFrontend;
-import org.jabref.logic.openoffice.OOUtil;
 import org.jabref.logic.openoffice.UndefinedCharacterFormatException;
 import org.jabref.logic.openoffice.UndefinedParagraphFormatException;
 import org.jabref.model.database.BibDatabase;
@@ -232,7 +231,8 @@ class OOBibBase {
         PropertyVetoException,
         IllegalArgumentException,
         UndefinedCharacterFormatException,
-        NoSuchElementException {
+        NoSuchElementException,
+        CreationException {
 
         Objects.requireNonNull(cursor);
         Objects.requireNonNull(citationText);
@@ -247,7 +247,7 @@ class OOBibBase {
             // inject a ZERO_WIDTH_SPACE to hold the initial character format
             final String ZERO_WIDTH_SPACE = "\u200b";
             citationText2 = OOFormattedText.fromString(ZERO_WIDTH_SPACE + citationText2.asString());
-            OOFormattedTextIntoOO.write(cursor, citationText2);
+            OOFormattedTextIntoOO.write(documentConnection, cursor, citationText2);
         } else {
             cursor.setString("");
         }
@@ -806,14 +806,21 @@ class OOBibBase {
                 OOFormattedText referenceDetails =
                     OOFormattedText.fromString(String.format("Unresolved(%s)", ck.citationKey));
                 sb.append(referenceDetails.asString());
-                // Try to list citations:
-                if (false) {
+                if (true) {
+                    // Try to list citations:
                     //
                     // TODO: not implemented in OOFormattedTextIntoOO.write
                     //
+                    // Problems:
+                    //
+                    // - With Reference
+                    //   - we do not control the text shown
+                    //   - using page numbers: useful in print
+                    //   - we would want it sorted by page number: why is it not?
+                    //
                     String prefix = String.format(" (%s: ", Localization.lang("Cited on pages"));
                     String suffix = ")";
-                    OOUtil.insertTextAtCurrentLocation(cursor, prefix);
+                    sb.append(prefix);
 
                     int last = ck.where.size();
                     int i = 0;
@@ -822,15 +829,14 @@ class OOBibBase {
                         CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
 
                         if (i > 0) {
-                            OOUtil.insertTextAtCurrentLocation(cursor, ", ");
+                            sb.append(", ");
                         }
-                        documentConnection
-                            .insertGetreferenceToPageNumberOfReferenceMark(cg.getMarkName(), cursor);
+                        OOFormattedText xref =
+                            OOFormat.formatReferenceToPageNumberOfReferenceMark(cg.getMarkName());
+                        sb.append(xref.asString());
                         i++;
                     }
-                    documentConnection.refresh();
-
-                    OOUtil.insertTextAtCurrentLocation(cursor, suffix);
+                    sb.append(suffix);
                 }
 
             } else {
@@ -853,7 +859,7 @@ class OOBibBase {
             // Emit a bibliography entry
             OOFormattedText entryText = OOFormattedText.fromString(sb.toString());
             entryText = OOFormat.paragraph(entryText, parStyle);
-            OOFormattedTextIntoOO.write(cursor, entryText);
+            OOFormattedTextIntoOO.write(documentConnection, cursor, entryText);
             cursor.collapseToEnd();
         } // for CitedKey
     }
@@ -951,7 +957,7 @@ class OOBibBase {
         // emit the title of the bibliography
         OOFormattedTextIntoOO.removeDirectFormatting(cursor);
         OOFormattedText title = style.getFormattedBibliographyTitle();
-        OOFormattedTextIntoOO.write(cursor, title);
+        OOFormattedTextIntoOO.write(documentConnection, cursor, title);
         cursor.collapseToEnd();
 
         // remove the inital empty paragraph from the section.
