@@ -8,6 +8,7 @@ import org.jabref.model.entry.BibEntry;
 class CitationSort {
 
     interface ComparableCitation {
+
         public String getCitationKey();
 
         public Optional<BibEntry> getBibEntry();
@@ -29,25 +30,23 @@ class CitationSort {
         public int compare(ComparableCitation a, ComparableCitation b) {
             Optional<BibEntry> abe = a.getBibEntry();
             Optional<BibEntry> bbe = b.getBibEntry();
+            final int mul = unresolvedComesFirst ? (+1) : (-1);
 
+            int res = 0;
             if (abe.isEmpty() && bbe.isEmpty()) {
                 // Both are unresolved: compare them by citation key.
                 String ack = a.getCitationKey();
                 String bck = b.getCitationKey();
-                return ack.compareTo(bck);
-            }
-            // Comparing unresolved and real entry
-
-            final int mul = unresolvedComesFirst ? (+1) : (-1);
-            if (abe.isEmpty()) {
+                res = ack.compareTo(bck);
+            } else if (abe.isEmpty()) {
                 return -mul;
-            }
-            if (bbe.isEmpty()) {
+            } else if (bbe.isEmpty()) {
                 return mul;
-            }
-            // Proper comparison of entries
-            int res = entryComparator.compare(abe.get(),
+            } else {
+                // Proper comparison of entries
+                res = entryComparator.compare(abe.get(),
                                               bbe.get());
+            }
             // Also consider pageInfo
             if (res == 0) {
                 OOBibStyle.comparePageInfo(a.getPageInfo().orElse(null),
