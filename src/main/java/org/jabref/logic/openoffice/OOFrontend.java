@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.oostyle.CitationEntry;
 import org.jabref.logic.oostyle.CitationGroup;
 import org.jabref.logic.oostyle.CitationGroupID;
 import org.jabref.logic.oostyle.CitationGroups;
 import org.jabref.logic.oostyle.Compat;
 import org.jabref.logic.oostyle.InTextCitationType;
 import org.jabref.logic.oostyle.OOFormattedText;
+import org.jabref.model.openoffice.CitationEntry;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
