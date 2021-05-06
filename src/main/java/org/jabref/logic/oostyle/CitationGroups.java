@@ -23,7 +23,7 @@ public class CitationGroups {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CitationGroups.class);
 
-    private final Compat.DataModel dataModel;
+    private final OOStyleDataModelVersion dataModel;
 
     /**
      *  Original CitationGroups Data
@@ -51,7 +51,7 @@ public class CitationGroups {
     /**
      * Constructor
      */
-    public CitationGroups(Compat.DataModel dataModel,
+    public CitationGroups(OOStyleDataModelVersion dataModel,
                           Map<CitationGroupID, CitationGroup> citationGroups) {
 
         this.dataModel = dataModel;

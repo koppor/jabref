@@ -25,8 +25,6 @@ public class Citation implements CitationSort.ComparableCitation {
      * citations.
      */
 
-    // TODO: Citation constructor needs dataModel, to check
-    //       if usage of pageInfo confirms to expectations.
     public Citation(String citationKey) {
         this.citationKey = citationKey;
         this.db = Optional.empty();

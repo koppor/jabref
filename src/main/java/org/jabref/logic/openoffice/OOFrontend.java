@@ -13,9 +13,9 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.oostyle.CitationGroup;
 import org.jabref.logic.oostyle.CitationGroupID;
 import org.jabref.logic.oostyle.CitationGroups;
-import org.jabref.logic.oostyle.Compat;
 import org.jabref.logic.oostyle.InTextCitationType;
 import org.jabref.logic.oostyle.OOFormattedText;
+import org.jabref.logic.oostyle.OOStyleDataModelVersion;
 import org.jabref.model.openoffice.CitationEntry;
 
 import com.sun.star.beans.IllegalTypeException;
@@ -54,7 +54,7 @@ public class OOFrontend {
         this.cgs = new CitationGroups(backend.dataModel, citationGroups);
     }
 
-    public Compat.DataModel getDataModel() {
+    public OOStyleDataModelVersion getDataModel() {
         return backend.dataModel;
     }
 

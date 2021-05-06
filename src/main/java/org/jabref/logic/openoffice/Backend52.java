@@ -14,6 +14,7 @@ import org.jabref.logic.oostyle.CitationGroups;
 import org.jabref.logic.oostyle.Compat;
 import org.jabref.logic.oostyle.InTextCitationType;
 import org.jabref.logic.oostyle.OOFormattedText;
+import org.jabref.logic.oostyle.OOStyleDataModelVersion;
 import org.jabref.model.openoffice.CitationEntry;
 
 import com.sun.star.beans.IllegalTypeException;
@@ -26,11 +27,11 @@ import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextRange;
 
 public class Backend52 {
-    public final Compat.DataModel dataModel;
+    public final OOStyleDataModelVersion dataModel;
     public final StorageBase.NamedRangeManager citationStorageManager;
     // uses: Codec52
     public Backend52() {
-        this.dataModel = Compat.DataModel.JabRef52;
+        this.dataModel = OOStyleDataModelVersion.JabRef52;
         this.citationStorageManager = new StorageBaseRefMark.Manager();
     }
 
