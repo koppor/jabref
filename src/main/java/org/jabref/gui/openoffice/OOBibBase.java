@@ -51,22 +51,14 @@ import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XEnumeration;
-import com.sun.star.container.XEnumerationAccess;
 import com.sun.star.container.XNameAccess;
-import com.sun.star.frame.XComponentLoader;
-import com.sun.star.frame.XDesktop;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.text.XTextCursor;
-import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextSection;
 import com.sun.star.uno.Any;
 import com.sun.star.uno.UnoRuntime;
-import com.sun.star.uno.XComponentContext;
 import com.sun.star.util.InvalidStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,14 +79,15 @@ class OOBibBase {
 
     /* variables  */
     private final DialogService dialogService;
-    private final XDesktop xDesktop;
 
     /**
      * Created when connected to a document.
      *
      * Cleared (to null) when we discover we lost the connection.
      */
-    private DocumentConnection xDocumentConnection;
+    // private DocumentConnection xDocumentConnection;
+
+    private OOBibBaseConnect connection;
 
     /*
      * Constructor
@@ -106,156 +99,15 @@ class OOBibBase {
         CreationException {
 
         this.dialogService = dialogService;
-        this.xDesktop = simpleBootstrap(loPath);
+        this.connection = new OOBibBaseConnect(loPath, dialogService);
     }
 
-    /* *****************************
-     *
-     *  Establish connection
-     *
-     * *****************************/
-
-    private XDesktop simpleBootstrap(Path loPath)
-        throws
-        CreationException,
-        BootstrapException {
-
-        // Get the office component context:
-        XComponentContext context = org.jabref.gui.openoffice.Bootstrap.bootstrap(loPath);
-        XMultiComponentFactory sem = context.getServiceManager();
-
-        // Create the desktop, which is the root frame of the
-        // hierarchy of frames that contain viewable components:
-        Object desktop;
-        try {
-            desktop = sem.createInstanceWithContext("com.sun.star.frame.Desktop", context);
-        } catch (Exception e) {
-            throw new CreationException(e.getMessage());
-        }
-        XDesktop result = unoQI(XDesktop.class, desktop);
-
-        unoQI(XComponentLoader.class, desktop);
-
-        return result;
-    }
-
-    private static List<XTextDocument> getTextDocuments(XDesktop desktop)
-        throws
-        NoSuchElementException,
-        WrappedTargetException {
-
-        List<XTextDocument> result = new ArrayList<>();
-
-        XEnumerationAccess enumAccess = desktop.getComponents();
-        XEnumeration compEnum = enumAccess.createEnumeration();
-
-        while (compEnum.hasMoreElements()) {
-            Object next = compEnum.nextElement();
-            XComponent comp = unoQI(XComponent.class, next);
-            XTextDocument doc = unoQI(XTextDocument.class, comp);
-            if (doc != null) {
-                result.add(doc);
-            }
-        }
-        return result;
-    }
-
-    /**
-     *  Run a dialog allowing the user to choose among the documents in `list`.
-     *
-     * @return Null if no document was selected. Otherwise the
-     *         document selected.
-     *
-     */
-    private static XTextDocument selectDocumentDialog(List<XTextDocument> list,
-                                                      DialogService dialogService) {
-
-        class DocumentTitleViewModel {
-
-            private final XTextDocument xTextDocument;
-            private final String description;
-
-            public DocumentTitleViewModel(XTextDocument xTextDocument) {
-                this.xTextDocument = xTextDocument;
-                this.description = DocumentConnection.getDocumentTitle(xTextDocument).orElse("");
-            }
-
-            public XTextDocument getXtextDocument() {
-                return xTextDocument;
-            }
-
-            @Override
-            public String toString() {
-                return description;
-            }
-        }
-
-        List<DocumentTitleViewModel> viewModel = (list.stream()
-                                                  .map(DocumentTitleViewModel::new)
-                                                  .collect(Collectors.toList()));
-
-        // This whole method is part of a background task when
-        // auto-detecting instances, so we need to show dialog in FX
-        // thread
-        Optional<DocumentTitleViewModel> selectedDocument =
-            (dialogService
-             .showChoiceDialogAndWait(Localization.lang("Select document"),
-                                      Localization.lang("Found documents:"),
-                                      Localization.lang("Use selected document"),
-                                      viewModel));
-
-        return (selectedDocument
-                .map(DocumentTitleViewModel::getXtextDocument)
-                .orElse(null));
-    }
-
-    /**
-     * Choose a document to work with.
-     *
-     * Assumes we have already connected to LibreOffice or OpenOffice.
-     *
-     * If there is a single document to choose from, selects that.
-     * If there are more than one, shows selection dialog.
-     * If there are none, throws NoDocumentException
-     *
-     * After successful selection connects to the selected document
-     * and extracts some frequently used parts (starting points for
-     * managing its content).
-     *
-     * Finally initializes this.xDocumentConnection with the selected
-     * document and parts extracted.
-     *
-     */
     public void selectDocument()
         throws
         NoDocumentException,
         NoSuchElementException,
         WrappedTargetException {
-
-        XTextDocument selected;
-        List<XTextDocument> textDocumentList = getTextDocuments(this.xDesktop);
-        if (textDocumentList.isEmpty()) {
-            throw new NoDocumentException("No Writer documents found");
-        } else if (textDocumentList.size() == 1) {
-            selected = textDocumentList.get(0); // Get the only one
-        } else { // Bring up a dialog
-            selected = OOBibBase.selectDocumentDialog(textDocumentList,
-                                                      this.dialogService);
-        }
-
-        if (selected == null) {
-            return;
-        }
-
-        this.xDocumentConnection = new DocumentConnection(selected);
-    }
-
-    /**
-     * Mark the current document as missing.
-     *
-     */
-    private void forgetDocument() {
-        this.xDocumentConnection = null;
+        this.connection.selectDocument();
     }
 
     /**
@@ -266,21 +118,14 @@ class OOBibBase {
      *
      */
     public boolean isConnectedToDocument() {
-        return this.xDocumentConnection != null;
+        return this.connection.isConnectedToDocument();
     }
 
     /**
      * @return true if we are connected to a document
      */
     public boolean documentConnectionMissing() {
-        if (this.xDocumentConnection == null) {
-            return true;
-        }
-        boolean res = this.xDocumentConnection.documentConnectionMissing();
-        if (res) {
-            forgetDocument();
-        }
-        return res;
+        return this.connection.documentConnectionMissing();
     }
 
     /**
@@ -290,21 +135,14 @@ class OOBibBase {
     public DocumentConnection getDocumentConnectionOrThrow()
         throws
         NoDocumentException {
-        if (documentConnectionMissing()) {
-            throw new NoDocumentException("Not connected to document");
-        }
-        return this.xDocumentConnection;
+        return this.connection.getDocumentConnectionOrThrow();
     }
 
     /**
      *  The title of the current document, or Optional.empty()
      */
     public Optional<String> getCurrentDocumentTitle() {
-        if (documentConnectionMissing()) {
-            return Optional.empty();
-        } else {
-            return this.xDocumentConnection.getDocumentTitle();
-        }
+        return this.connection.getCurrentDocumentTitle();
     }
 
     /* ****************************
@@ -479,7 +317,6 @@ class OOBibBase {
      *             reference mark.
      */
     private void createAndFillCitationGroup(OOFrontend fr,
-                                            // CitationGroups cgs,
                                             DocumentConnection documentConnection,
                                             List<String> citationKeys,
                                             List<OOFormattedText> pageInfosForCitations,
@@ -1985,7 +1822,7 @@ class OOBibBase {
 
             // Check Range overlaps
             int maxReportedOverlaps = 10;
-            fr.checkRangeOverlaps(this.xDocumentConnection,
+            fr.checkRangeOverlaps(documentConnection,
                                   requireSeparation,
                                   maxReportedOverlaps);
 
