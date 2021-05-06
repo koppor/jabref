@@ -51,6 +51,9 @@ public class OOFormat {
      * Mark {@code s} as part of a paragraph with style {@code paraStyle}
      */
     public static OOFormattedText paragraph(OOFormattedText s, String paraStyle) {
+        if (paraStyle == null || "".equals(paraStyle)) {
+            return paragraph(s);
+        }
         return OOFormattedText.fromString(String.format("<p oo:ParaStyleName=\"%s\">", paraStyle)
                                           + s.asString()
                                           + "</p>");
