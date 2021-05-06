@@ -1,8 +1,9 @@
 package org.jabref.logic.openoffice;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,7 +42,10 @@ import org.slf4j.LoggerFactory;
  * Interpret OOFormattedText into an OpenOffice or LibreOffice writer
  * document.
  *
- * 
+ * On the question of what should it understand: apart from what
+ * it can do now, probably whatever a CSL style with HTML output
+ * emits. 
+ *
  */
 @AllowedToUseAwt("Requires AWT for changing document properties")
 public class OOFormattedTextIntoOO {
@@ -67,8 +71,8 @@ public class OOFormattedTextIntoOO {
     private static final byte SUPERSCRIPT_HEIGHT = (byte) 58;
     private static final byte SUBSCRIPT_HEIGHT = (byte) 58;
 
-    private static final String TAG_NAME_REGEXP = "(?:b|i|em|tt|smallcaps|sup|sub|u|s|p|font|locale)";
-    private static final String ATTRIBUTE_NAME_REGEXP = "(?:class|value)";
+    private static final String TAG_NAME_REGEXP = "(?:b|i|em|tt|smallcaps|sup|sub|u|s|p|span)";
+    private static final String ATTRIBUTE_NAME_REGEXP = "(?:oo:ParaStyleName|oo:CharStyleName|lang|style)";
     private static final String ATTRIBUTE_VALUE_REGEXP = "\"([^\"]*)\"";
     private static final Pattern HTML_TAG =
         Pattern.compile("<(/" + TAG_NAME_REGEXP + ")>"
@@ -135,6 +139,8 @@ public class OOFormattedTextIntoOO {
 
         String lText = OOFormattedText.toString(ootext);
 
+        System.out.println(lText);
+
         XText text = position.getText();
         XTextCursor cursor = text.createTextCursorByRange(position);
         cursor.collapseToEnd();
@@ -162,7 +168,7 @@ public class OOFormattedTextIntoOO {
             String tagName = isStartTag ? startTagName : endTagName;
             Objects.requireNonNull(tagName);
 
-            LinkedHashMap<String, String> attributes = parseAttributes(attributeListPart);
+            List<Pair<String, String>> attributes = parseAttributes(attributeListPart);
 
             // Handle tags:
             switch (tagName) {
@@ -199,15 +205,25 @@ public class OOFormattedTextIntoOO {
                 // nop
                 break;
             case "p":
-                String cls = attributes.get("class");
-                // <p class="standard">
                 OOUtil.insertParagraphBreak(text, cursor);
                 cursor.collapseToEnd();
-                if (cls != null && !cls.equals("")) {
-                    try {
-                        DocumentConnection.setParagraphStyle(cursor, cls);
-                    } catch (UndefinedParagraphFormatException ex) {
-                        // ignore silently
+                for (Pair<String, String> kv : attributes) {
+                    String key = kv.getKey();
+                    String value = kv.getValue();
+                    switch (key) {
+                    case "oo:ParaStyleName":
+                        // <p oo:ParaStyleName="Standard">
+                        if (value != null && !value.equals("")) {
+                            try {
+                                DocumentConnection.setParagraphStyle(cursor, value);
+                            } catch (UndefinedParagraphFormatException ex) {
+                                // ignore silently
+                            }
+                        }
+                        break;
+                    default:
+                        LOGGER.warn(String.format("Unexpected attribute '%s' for <%s>", key, tagName));
+                        break;
                     }
                 }
                 break;
@@ -216,14 +232,36 @@ public class OOFormattedTextIntoOO {
                 formatters.push(setCharStyleName("Example"));
                 expectEnd.push("/" + tagName);
                 break;
-            case "font":
-                formatters.push(setCharStyleName(attributes.get("class")));
-                expectEnd.push("/" + tagName);
-                break;
-            case "locale":
-                // <locale value="zxx">
-                // <locale value="en-US">
-                formatters.push(setCharLocale(attributes.get("value")));
+            case "span":
+                Formatters fs = new Formatters();
+                for (Pair<String, String> kv : attributes) {
+                    String key = kv.getKey();
+                    String value = kv.getValue();
+                    switch (key) {
+                    case "oo:CharStylename":
+                        // <span oo:CharStylename="Standard">
+                        fs.add(setCharStyleName(value));
+                        break;
+                    case "lang":
+                        // <span lang="zxx">
+                        // <span lang="en-US">
+                        fs.add(setCharLocale(value));
+                        break;
+                    case "style":
+                        // In general we may need to parse value
+                        if (value.equals("font-variant: small-caps")) {
+                            fs.add(setCharCaseMap(CaseMap.SMALLCAPS));
+                            break;
+                        }
+                        LOGGER.warn(String.format("Unexpected value %s for attribute '%s' for <%s>",
+                                                  value, key, tagName));
+                        break;
+                    default:
+                        LOGGER.warn(String.format("Unexpected attribute '%s' for <%s>", key, tagName));
+                        break;
+                    }
+                }
+                formatters.push(fs);
                 expectEnd.push("/" + tagName);
                 break;
             case "/b":
@@ -235,8 +273,7 @@ public class OOFormattedTextIntoOO {
             case "/sub":
             case "/u":
             case "/s":
-            case "/font":
-            case "/locale":
+            case "/span":
                 formatters.pop().applyEnd(cursor);
                 String expected = expectEnd.pop();
                 if (!tagName.equals(expected)) {
@@ -274,7 +311,6 @@ public class OOFormattedTextIntoOO {
     public static void removeDirectFormatting(XTextCursor cursor) {
 
         XMultiPropertyStates mpss = unoQI(XMultiPropertyStates.class, cursor);
-        mpss.setAllPropertiesToDefault();
 
         /*
          * Now that we have setAllPropertiesToDefault, check which properties
@@ -289,12 +325,16 @@ public class OOFormattedTextIntoOO {
         try {
             // Special handling
             propertySet.setPropertyValue(CHAR_STYLE_NAME, "Standard");
+            // propertySet.setPropertyValue("CharCaseMap", CaseMap.NONE);
+            propertyState.setPropertyToDefault("CharCaseMap");
         } catch (UnknownPropertyException |
                  PropertyVetoException |
                  IllegalArgumentException |
                  WrappedTargetException ex) {
             LOGGER.warn("exception caught", ex);
         }
+
+        mpss.setAllPropertiesToDefault();
 
         // Only report those we do not yet know about
         final Set<String> knownToFail = Set.of("ListAutoFormat",
@@ -331,8 +371,25 @@ public class OOFormattedTextIntoOO {
         }
     }
 
-    private static LinkedHashMap<String, String> parseAttributes(String s) {
-        LinkedHashMap<String, String> res = new LinkedHashMap<>();
+    private static class Pair<K, V> {
+        K key;
+        V value;
+        public Pair(K k, V v) {
+            key = k;
+            value = v;
+        }
+
+        K getKey() {
+            return key;
+        }
+
+        V getValue() {
+            return value;
+        }
+    }
+
+    private static List<Pair<String, String>> parseAttributes(String s) {
+        List<Pair<String, String>> res = new ArrayList<>();
         if (s == null) {
             return res;
         }
@@ -340,7 +397,7 @@ public class OOFormattedTextIntoOO {
         while (m.find()) {
             String key = m.group(1);
             String value = m.group(2);
-            res.put(key, value);
+            res.add(new Pair<String, String>(key, value));
         }
         return res;
     }
@@ -619,6 +676,44 @@ public class OOFormattedTextIntoOO {
 
         for (Formatter f : formatters) {
             f.apply(cursor);
+        }
+    }
+
+    private static class Formatters implements Formatter {
+        List<Formatter> parts;
+        public Formatters() {
+            parts = new ArrayList<>();
+        }
+
+        public void add(Formatter f) {
+            parts.add(f);
+        }
+
+        @Override
+        public void apply(XTextCursor cursor)
+            throws
+            UnknownPropertyException,
+            PropertyVetoException,
+            WrappedTargetException,
+            IllegalArgumentException,
+            NoSuchElementException {
+            for (Formatter f : parts) {
+                f.apply(cursor);
+            }
+        }
+
+        @Override
+        public void applyEnd(XTextCursor cursor)
+            throws
+            UnknownPropertyException,
+            PropertyVetoException,
+            WrappedTargetException,
+            IllegalArgumentException,
+            NoSuchElementException {
+            for (int i = parts.size() - 1; i >= 0; i--) {
+                Formatter f = parts.get(i);
+                f.applyEnd(cursor);
+            }
         }
     }
 
