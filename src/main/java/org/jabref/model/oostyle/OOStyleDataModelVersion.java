@@ -1,5 +1,8 @@
 package org.jabref.model.oostyle;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**   What is the data stored?   */
 public enum OOStyleDataModelVersion {
     /**
@@ -27,5 +30,22 @@ public enum OOStyleDataModelVersion {
      *    pageInfo belongs to Citation.
      *    Need: formatting citation needs to know about these, inject after each year part
      */
-    JabRef53
+    JabRef53;
+
+    /**
+     * @param pageInfo Nullable.
+     * @return JabRef53 style pageInfo list
+     */
+    public static List<OOFormattedText> fakePageInfosForCitations(String pageInfo,
+                                                                  int nCitations) {
+        List<OOFormattedText> pageInfosForCitations = new ArrayList<>(nCitations);
+        for (int i = 0; i < nCitations; i++) {
+            if (i == nCitations - 1) {
+                pageInfosForCitations.add(OOFormattedText.fromString(pageInfo));
+            } else {
+                pageInfosForCitations.add(null);
+            }
+        }
+        return pageInfosForCitations;
+    }
 }

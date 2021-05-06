@@ -10,10 +10,9 @@ import java.util.stream.Collectors;
 import org.jabref.logic.oostyle.Citation;
 import org.jabref.logic.oostyle.CitationGroup;
 import org.jabref.logic.oostyle.CitationGroups;
-import org.jabref.logic.oostyle.Compat;
-import org.jabref.logic.oostyle.OOFormattedText;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.oostyle.OOStyleDataModelVersion;
 import org.jabref.model.openoffice.CitationEntry;
 
@@ -25,10 +24,14 @@ import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextRange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Backend52 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Backend52.class);
     public final OOStyleDataModelVersion dataModel;
     public final StorageBase.NamedRangeManager citationStorageManager;
+
     // uses: Codec52
     public Backend52() {
         this.dataModel = OOStyleDataModelVersion.JabRef52;
@@ -95,6 +98,21 @@ public class Backend52 {
         return Optional.of(msg);
     }
 
+    private static void setPageInfoInData(List<Citation> citations, Optional<OOFormattedText> pageInfo) {
+        // attribute to last citation (in storage order)
+        if (citations.size() > 0) {
+            citations.get(citations.size() - 1).pageInfo = pageInfo;
+        }
+    }
+
+    private static Optional<OOFormattedText> getPageInfoFromData(List<Citation> citations) {
+        if (citations.size() > 0) {
+            return citations.get(citations.size() - 1).pageInfo;
+        } else {
+            return Optional.empty();
+        }
+    }
+
     /**
      *  We have circular dependency here: backend uses
      *  class from ...
@@ -119,6 +137,8 @@ public class Backend52 {
         Optional<OOFormattedText> pageInfo = (documentConnection.getCustomProperty(refMarkName)
                                               .map(OOFormattedText::fromString));
 
+        setPageInfoInData(citations, pageInfo);
+
         Optional<StorageBase.NamedRange> sr = (citationStorageManager
                                                .getFromDocument(documentConnection, refMarkName));
 
@@ -130,9 +150,33 @@ public class Backend52 {
         CitationGroup cg = new CitationGroup(id,
                                              sr.get(),
                                              ov.itcType,
-                                             citations,
-                                             pageInfo);
+                                             citations);
         return cg;
+    }
+
+    static Optional<OOFormattedText> normalizePageInfoToOptional(OOFormattedText o) {
+        String s;
+        if (o == null || "".equals(OOFormattedText.toString(o))) {
+            s = null;
+        } else {
+            s = OOFormattedText.toString(o);
+        }
+        return Optional.ofNullable(OOFormattedText.fromString(s));
+    }
+
+    /**
+     * Return the last pageInfo from the list, if there is one.
+     */
+    private static Optional<OOFormattedText>
+    getJabRef52PageInfoFromList(List<OOFormattedText> pageInfosForCitations) {
+        if (pageInfosForCitations == null) {
+            return Optional.empty();
+        }
+        int n = pageInfosForCitations.size();
+        if (n == 0) {
+            return Optional.empty();
+        }
+        return normalizePageInfoToOptional(pageInfosForCitations.get(n - 1));
     }
 
     /**
@@ -213,7 +257,21 @@ public class Backend52 {
         for (int i = 0; i < citationKeys.size(); i++) {
             Citation cit = new Citation(citationKeys.get(i));
             citations.add(cit);
-            // cit.setPageInfo(getJabRef53PageInfo(pageInfosForCitations, i));
+
+            Optional<OOFormattedText> pageInfo = normalizePageInfoToOptional(pageInfosForCitations.get(i));
+            switch (dataModel) {
+            case JabRef52:
+                if (i == citationKeys.size() - 1) {
+                    cit.pageInfo = pageInfo;
+                } else {
+                    if (pageInfo.isPresent()) {
+                        LOGGER.warn("dataModel JabRef52"
+                                    + " only supports pageInfo for the last citation of a group");
+                    }
+                }
+            case JabRef53:
+                cit.pageInfo = pageInfo;
+            }
         }
 
         /*
@@ -227,7 +285,7 @@ public class Backend52 {
 
         switch (dataModel) {
         case JabRef52:
-            Optional<OOFormattedText> pageInfo = Compat.getJabRef52PageInfoFromList(pageInfosForCitations);
+            Optional<OOFormattedText> pageInfo = getJabRef52PageInfoFromList(pageInfosForCitations);
             if (pageInfo.isPresent() && !"".equals(OOFormattedText.toString(pageInfo.get()))) {
                 documentConnection.setCustomProperty(refMarkName,
                                                      OOFormattedText.toString(pageInfo.get()));
@@ -238,8 +296,7 @@ public class Backend52 {
             CitationGroup cg = new CitationGroup(cgid,
                                                  sr,
                                                  itcType,
-                                                 citations,
-                                                 pageInfo);
+                                                 citations);
             return cg;
         default:
             throw new RuntimeException("Backend52 requires JabRef52 dataModel");
@@ -247,10 +304,49 @@ public class Backend52 {
     }
 
     /**
+     * @return A list with one nullable pageInfo entry for each citation in
+     *         joinableGroups.
+     *
+     *  TODO: JabRef52 combinePageInfos is not reversible. Should warn
+     *        user to check the result. Or ask what to do.
+     */
+    public static List<OOFormattedText> combinePageInfosCommon(OOStyleDataModelVersion dataModel,
+                                                               List<CitationGroup> joinableGroup) {
+        switch (dataModel) {
+        case JabRef52:
+            // collect to cgPageInfos
+            List<Optional<OOFormattedText>> cgPageInfos = (joinableGroup.stream()
+                                                           .map(cg -> getPageInfoFromData(cg.citations))
+                                                           .collect(Collectors.toList()));
+
+            // Try to do something of the cgPageInfos.
+            String cgPageInfo = (cgPageInfos.stream()
+                                 .filter(pi -> pi.isPresent())
+                                 .map(pi -> OOFormattedText.toString(pi.get()))
+                                 .distinct()
+                                 .collect(Collectors.joining("; ")));
+
+            int nCitations = (joinableGroup.stream()
+                              .map(cg -> cg.citations.size())
+                              .mapToInt(Integer::intValue).sum());
+
+            return OOStyleDataModelVersion.fakePageInfosForCitations(cgPageInfo, nCitations);
+
+        case JabRef53:
+            return (joinableGroup.stream()
+                    .flatMap(cg -> (cg.citations.stream()
+                                    .map(cit -> cit.pageInfo.orElse(null))))
+                    .collect(Collectors.toList()));
+        default:
+            throw new RuntimeException("unhandled dataModel here");
+        }
+    }
+
+    /**
      *
      */
     public List<OOFormattedText> combinePageInfos(List<CitationGroup> joinableGroup) {
-        return Compat.combinePageInfos(this.dataModel, joinableGroup);
+        return combinePageInfosCommon(this.dataModel, joinableGroup);
     }
 
     public void removeCitationGroup(CitationGroup cg, DocumentConnection documentConnection)
@@ -339,10 +435,15 @@ public class Backend52 {
                                       .orElseThrow(RuntimeException::new));
                 String context = OOUtil.getCursorStringWithContext(documentConnection,
                                                                    cursor, 30, 30, true);
+                Optional<String> pageInfo = (cg.citations.size() > 0
+                                             ? (cg.citations
+                                                .get(cg.citations.size() - 1)
+                                                .getPageInfo()
+                                                .map(e -> OOFormattedText.toString(e)))
+                                             : Optional.empty());
                 CitationEntry entry = new CitationEntry(name,
                                                         context,
-                                                        (cgs.getPageInfo(cgid)
-                                                         .map(e -> OOFormattedText.toString(e))));
+                                                        pageInfo);
                 citations.add(entry);
             }
             return citations;

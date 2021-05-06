@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jabref.architecture.AllowedToUseAwt;
-import org.jabref.logic.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOFormattedText;
 
 import com.sun.star.awt.FontSlant;
 import com.sun.star.awt.FontStrikeout;

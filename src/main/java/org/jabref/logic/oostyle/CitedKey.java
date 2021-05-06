@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.oostyle.OOFormattedText;
 
 public class CitedKey implements CitationSort.ComparableCitation {
     public String citationKey;

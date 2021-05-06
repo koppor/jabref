@@ -12,6 +12,7 @@ import org.jabref.model.entry.AuthorList;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.OrFields;
+import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.strings.StringUtil;
 
 class OOBibStyleGetCitationMarker {

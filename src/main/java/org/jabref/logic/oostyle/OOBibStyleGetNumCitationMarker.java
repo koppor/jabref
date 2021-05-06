@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
+import org.jabref.model.oostyle.OOFormattedText;
+
 class OOBibStyleGetNumCitationMarker {
 
     /*

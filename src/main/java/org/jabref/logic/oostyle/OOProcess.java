@@ -17,6 +17,7 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.OOFormattedText;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,7 +213,7 @@ public class OOProcess {
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
-            List<Citation> cits = cgs.getSortedCitations(cgid);
+            List<Citation> cits = cgs.getCitationsInLocalOrder(cgid);
             String citMarker =
                 style.getCitationGroupMarkupBefore()
                 + (cits.stream()
@@ -321,7 +322,7 @@ public class OOProcess {
 
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
-            List<Citation> cits = cg.getSortedCitations();
+            List<Citation> cits = cg.getCitationsInLocalOrder();
             final int nCitedEntries = cits.size();
             List<OOFormattedText> pageInfosForCitations = cgs.getPageInfosForCitations(cg);
 

@@ -7,6 +7,7 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.oostyle.OOFormattedText;
 
 public class OOFormat {
     private static final Field UNIQUEFIER_FIELD = new UnknownField("uniq");

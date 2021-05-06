@@ -24,10 +24,8 @@ import org.jabref.logic.oostyle.CitationMarkerEntryImpl;
 import org.jabref.logic.oostyle.CitationPath;
 import org.jabref.logic.oostyle.CitedKey;
 import org.jabref.logic.oostyle.CitedKeys;
-import org.jabref.logic.oostyle.Compat;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.OOFormat;
-import org.jabref.logic.oostyle.OOFormattedText;
 import org.jabref.logic.oostyle.OOPreFormatter;
 import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.logic.openoffice.CreationException;
@@ -43,6 +41,8 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOStyleDataModelVersion;
 import org.jabref.model.openoffice.CitationEntry;
 
 import com.sun.star.beans.IllegalTypeException;
@@ -528,7 +528,7 @@ class OOBibBase {
 
             // JabRef53 style pageInfo list
             List<OOFormattedText> pageInfosForCitations =
-                Compat.fakePageInfosForCitations(pageInfo, nEntries);
+                OOStyleDataModelVersion.fakePageInfosForCitations(pageInfo, nEntries);
 
             List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(entries.size());
             for (int i = 0; i < nEntries; i++) {

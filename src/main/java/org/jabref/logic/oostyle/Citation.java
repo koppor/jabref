@@ -3,6 +3,7 @@ package org.jabref.logic.oostyle;
 import java.util.Optional;
 
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.oostyle.OOFormattedText;
 
 public class Citation implements CitationSort.ComparableCitation {
 

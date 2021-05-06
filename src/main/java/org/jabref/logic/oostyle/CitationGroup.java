@@ -11,6 +11,7 @@ import org.jabref.logic.openoffice.StorageBase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.OOFormattedText;
 
 public class CitationGroup {
     public CitationGroupID cgid;
@@ -19,19 +20,14 @@ public class CitationGroup {
     public List<Citation> citations;
     public List<Integer> localOrder;
 
-    /** For Compat.DataModel.JabRef52 pageInfo belongs to the group */
-    public Optional<OOFormattedText> pageInfo;
-
     public CitationGroup(CitationGroupID cgid,
                          StorageBase.NamedRange cgRangeStorage,
                          InTextCitationType itcType,
-                         List<Citation> citations,
-                         Optional<OOFormattedText> pageInfo) {
+                         List<Citation> citations) {
         this.cgid = cgid;
         this.cgRangeStorage = cgRangeStorage;
         this.itcType = itcType;
         this.citations = citations;
-        this.pageInfo = pageInfo;
         this.localOrder = makeIndices(citations.size());
     }
 
@@ -44,7 +40,7 @@ public class CitationGroup {
         return Stream.iterate(0, i -> i + 1).limit(n).collect(Collectors.toList());
     }
 
-    public List<Citation> getSortedCitations() {
+    public List<Citation> getCitationsInLocalOrder() {
         List<Citation> res = new ArrayList<>(citations.size());
         for (int i : localOrder) {
             res.add(citations.get(i));
@@ -53,7 +49,7 @@ public class CitationGroup {
     }
 
     public List<Integer> getSortedNumbers() {
-        List<Citation> cits = getSortedCitations();
+        List<Citation> cits = getCitationsInLocalOrder();
         return (cits.stream()
                 .map(cit -> cit.number.orElseThrow(RuntimeException::new))
                 .collect(Collectors.toList()));
