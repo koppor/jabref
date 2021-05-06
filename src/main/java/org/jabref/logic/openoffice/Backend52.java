@@ -11,9 +11,9 @@ import org.jabref.logic.oostyle.Citation;
 import org.jabref.logic.oostyle.CitationGroup;
 import org.jabref.logic.oostyle.CitationGroups;
 import org.jabref.logic.oostyle.Compat;
-import org.jabref.logic.oostyle.InTextCitationType;
 import org.jabref.logic.oostyle.OOFormattedText;
 import org.jabref.model.oostyle.CitationGroupID;
+import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OOStyleDataModelVersion;
 import org.jabref.model.openoffice.CitationEntry;
 

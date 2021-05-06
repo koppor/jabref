@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.jabref.logic.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.InTextCitationType;
 
 /**
  *  How and what is encoded in a mark names.

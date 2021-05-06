@@ -1,4 +1,4 @@
-package org.jabref.logic.oostyle;
+package org.jabref.model.oostyle;
 
 /*
  * Types of in-text citation. (itcType)

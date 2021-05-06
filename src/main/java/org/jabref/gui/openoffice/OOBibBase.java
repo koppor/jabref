@@ -25,7 +25,6 @@ import org.jabref.logic.oostyle.CitationPath;
 import org.jabref.logic.oostyle.CitedKey;
 import org.jabref.logic.oostyle.CitedKeys;
 import org.jabref.logic.oostyle.Compat;
-import org.jabref.logic.oostyle.InTextCitationType;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.OOFormat;
 import org.jabref.logic.oostyle.OOFormattedText;
@@ -43,6 +42,7 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.oostyle.CitationGroupID;
+import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.openoffice.CitationEntry;
 
 import com.sun.star.beans.IllegalTypeException;

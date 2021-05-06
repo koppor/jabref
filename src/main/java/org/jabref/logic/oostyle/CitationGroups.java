@@ -11,6 +11,7 @@ import java.util.Set;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.CitationGroupID;
+import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OOStyleDataModelVersion;
 
 import org.slf4j.Logger;
