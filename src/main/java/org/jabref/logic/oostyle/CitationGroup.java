@@ -13,7 +13,7 @@ import org.jabref.model.entry.BibEntry;
 public class CitationGroup {
     public CitationGroupID cgid;
     public StorageBase.NamedRange cgRangeStorage; // knows referenceMarkName
-    public int itcType;
+    public InTextCitationType itcType;
     public List<Citation> citations;
     public List<Integer> localOrder;
 
@@ -22,7 +22,7 @@ public class CitationGroup {
 
     public CitationGroup(CitationGroupID cgid,
                          StorageBase.NamedRange cgRangeStorage,
-                         int itcType,
+                         InTextCitationType itcType,
                          List<Citation> citations,
                          Optional<OOFormattedText> pageInfo) {
         this.cgid = cgid;

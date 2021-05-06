@@ -15,6 +15,7 @@ import org.jabref.logic.oostyle.CitationGroup;
 import org.jabref.logic.oostyle.CitationGroupID;
 import org.jabref.logic.oostyle.CitationGroups;
 import org.jabref.logic.oostyle.Compat;
+import org.jabref.logic.oostyle.InTextCitationType;
 import org.jabref.logic.oostyle.OOFormattedText;
 
 import com.sun.star.beans.IllegalTypeException;
@@ -309,7 +310,7 @@ public class OOFrontend {
     public CitationGroupID createCitationGroup(DocumentConnection documentConnection,
                                                List<String> citationKeys,
                                                List<OOFormattedText> pageInfosForCitations,
-                                               int itcType,
+                                               InTextCitationType itcType,
                                                XTextCursor position,
                                                boolean insertSpaceAfter,
                                                boolean withoutBrackets)

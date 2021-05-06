@@ -27,6 +27,7 @@ import org.jabref.logic.oostyle.CitationPath;
 import org.jabref.logic.oostyle.CitedKey;
 import org.jabref.logic.oostyle.CitedKeys;
 import org.jabref.logic.oostyle.Compat;
+import org.jabref.logic.oostyle.InTextCitationType;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.OOFormat;
 import org.jabref.logic.oostyle.OOFormattedText;
@@ -162,50 +163,6 @@ class OOBibBase {
         return UnoRuntime.queryInterface(zInterface, object);
     }
 
-    /* ***************************************
-     *
-     *     Storage/retrieve of citations
-     *
-     *
-     *  We store some information in the document about
-     *
-     *    Citation groups:
-     *
-     *       - citations belonging to the group.
-     *       - Range of text owned (where the citation marks go).
-     *       - pageInfo
-     *
-     *    Citations : citation key
-     *        Each belongs to exactly one group.
-     *
-     *    From these, the databases and the style we create and update
-     *    the presentation (citation marks)
-     *
-     *    How:
-     *      database lookup
-     *
-     *      Local order
-     *          presentation order within groups from (style,BibEntry)
-     *
-     *      Global order:
-     *          visualPosition (for first appearance order)
-     *          bibliography-order
-     *
-     *      Make them unique
-     *         numbering
-     *         uniqueLetters from (Set<BibEntry>, firstAppearanceOrder, style)
-     *
-     *
-     *  Bibliography uses parts of the information above:
-     *      citation keys,
-     *      location of citation groups (if ordered and/or numbered by first appearance)
-     *
-     *      and
-     *      the range of text controlled (storage)
-     *
-     *      And fills the bibliography (presentation)
-     *
-     * **************************************/
     public List<CitationEntry> getCitationEntries()
         throws
         UnknownPropertyException,
@@ -320,7 +277,7 @@ class OOBibBase {
                                             DocumentConnection documentConnection,
                                             List<String> citationKeys,
                                             List<OOFormattedText> pageInfosForCitations,
-                                            int itcType,
+                                            InTextCitationType itcType,
                                             OOFormattedText citationText,
                                             XTextCursor position,
                                             boolean withText,
@@ -565,7 +522,7 @@ class OOBibBase {
                 .map(OOBibBase::insertEntryGetCitationKey)
                 .collect(Collectors.toList());
 
-            int itcType = OOProcess.citationTypeFromOptions(withText, inParenthesis);
+            InTextCitationType itcType = OOProcess.citationTypeFromOptions(withText, inParenthesis);
 
             assertCitationCharacterFormatIsOK(cursor, style);
 
@@ -718,7 +675,7 @@ class OOBibBase {
 
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
 
-            boolean withText = (cg.itcType != OOProcess.INVISIBLE_CIT);
+            boolean withText = (cg.itcType != InTextCitationType.INVISIBLE_CIT);
 
             if (withText) {
 
@@ -1091,7 +1048,7 @@ class OOBibBase {
                 // can get itcType from the first element of each
                 // joinableGroup.
                 //
-                // List<Integer> itcTypes = new ArrayList<>();
+                // List<InTextCitationType> itcTypes = new ArrayList<>();
 
                 if (referenceMarkNames.size() > 0) {
                     // current group of CitationGroup values
@@ -1114,9 +1071,9 @@ class OOBibBase {
                          */
 
                         // Only combine (Author 2000) type citations
-                        if (cg.itcType != OOProcess.AUTHORYEAR_PAR
+                        if (cg.itcType != InTextCitationType.AUTHORYEAR_PAR
                             // allow "Author (2000)"
-                            // && itcTypes[i] != OOBibBase.AUTHORYEAR_INTEXT
+                            // && itcTypes[i] != InTextCitationType.AUTHORYEAR_INTEXT
                             ) {
                             addToGroup = false;
                         }
@@ -1208,7 +1165,7 @@ class OOBibBase {
                          *
                          * Can it start a new group?
                          */
-                        boolean canStartGroup = (cg.itcType == OOProcess.AUTHORYEAR_PAR);
+                        boolean canStartGroup = (cg.itcType == InTextCitationType.AUTHORYEAR_PAR);
 
                         if (!addToGroup) {
                             // close currentGroup
@@ -1313,7 +1270,7 @@ class OOBibBase {
                         newGroupCitations.addAll(rk.citations);
                     }
 
-                    int itcType = joinableGroup.get(0).itcType;
+                    InTextCitationType itcType = joinableGroup.get(0).itcType;
 
                     // cgPageInfos belong to the CitationGroup (DataModel JabRef52),
                     // but it is not clear how should we handle them here.
@@ -1344,7 +1301,7 @@ class OOBibBase {
                                                documentConnection,
                                                citationKeys,
                                                pageInfosForCitations,
-                                               itcType, // OOBibBase.AUTHORYEAR_PAR
+                                               itcType, // InTextCitationType.AUTHORYEAR_PAR
                                                OOFormattedText.fromString("tmp"),
                                                textCursor,
                                                true, // withText
@@ -1480,15 +1437,15 @@ class OOBibBase {
                         //       We just reread below.
 
                         boolean insertSpaceAfter = (i != last);
+                        boolean withText = cg.itcType != InTextCitationType.INVISIBLE_CIT; // true
                         createAndFillCitationGroup(fr,
                                                    documentConnection,
                                                    keys.subList(i, i + 1), // citationKeys,
                                                    pageInfosForCitations.subList(i, i + 1), // pageInfos,
-                                                   OOProcess.AUTHORYEAR_PAR, // itcType,
+                                                   InTextCitationType.AUTHORYEAR_PAR, // itcType,
                                                    OOFormattedText.fromString("tmp"),
                                                    textCursor,
-                                                   true, /* withText.
-                                                          * Should be itcType != OOBibBase.INVISIBLE_CIT */
+                                                   withText,
                                                    style,
                                                    insertSpaceAfter);
                         textCursor.collapseToEnd();

@@ -253,7 +253,7 @@ public class CitationGroups {
         return e;
     }
 
-    private Optional<Integer> getItcType(CitationGroupID cgid) {
+    private Optional<InTextCitationType> getItcType(CitationGroupID cgid) {
         return getCitationGroup(cgid).map(cg -> cg.itcType);
     }
 

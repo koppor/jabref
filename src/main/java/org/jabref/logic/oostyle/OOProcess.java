@@ -20,12 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OOProcess {
-    /* Types of in-text citation. (itcType)
-     * Their numeric values are used in reference mark names.
-     */
-    public static final int AUTHORYEAR_PAR = 1;
-    public static final int AUTHORYEAR_INTEXT = 2;
-    public static final int INVISIBLE_CIT = 3;
 
     private static final Comparator<BibEntry> AUTHOR_YEAR_TITLE_COMPARATOR =
         makeAuthorYearTitleComparator();
@@ -192,13 +186,13 @@ public class OOProcess {
      * @param inParenthesis True means "(Au and Thor 2000)".
      *                      False means "Au and Thor (2000)".
      */
-    public static int citationTypeFromOptions(boolean withText, boolean inParenthesis) {
+    public static InTextCitationType citationTypeFromOptions(boolean withText, boolean inParenthesis) {
         if (!withText) {
-            return OOProcess.INVISIBLE_CIT;
+            return InTextCitationType.INVISIBLE_CIT;
         }
         return (inParenthesis
-                ? OOProcess.AUTHORYEAR_PAR
-                : OOProcess.AUTHORYEAR_INTEXT);
+                ? InTextCitationType.AUTHORYEAR_PAR
+                : InTextCitationType.AUTHORYEAR_INTEXT);
     }
 
     /**
@@ -373,7 +367,7 @@ public class OOProcess {
                     if (cm.getBibEntry().isPresent()) {
                         s = (s
                              + style.getCitationMarker(citationMarkerEntries.subList(j, j + 1),
-                                                       cg.itcType == OOProcess.AUTHORYEAR_PAR,
+                                                       cg.itcType == InTextCitationType.AUTHORYEAR_PAR,
                                                        OOBibStyle.NonUniqueCitationMarker.THROWS));
                     } else {
                         s = s + String.format("(Unresolved(%s))", cm.getCitationKey());
@@ -386,7 +380,7 @@ public class OOProcess {
                  */
                 OOFormattedText citMarker =
                     style.getCitationMarker(citationMarkerEntries,
-                                            cg.itcType == OOProcess.AUTHORYEAR_PAR,
+                                            cg.itcType == InTextCitationType.AUTHORYEAR_PAR,
                                             OOBibStyle.NonUniqueCitationMarker.THROWS);
                 citMarkers.put(cgid, citMarker);
             }
