@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.oostyle.CitationDatabaseLookup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OOFormattedText;

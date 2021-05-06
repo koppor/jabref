@@ -1,4 +1,6 @@
-package org.jabref.logic.oostyle;
+package org.jabref.model.oostyle;
+
+// import org.jabref.model.oostyle.CitationDatabaseLookup;
 
 import java.util.List;
 import java.util.Optional;
