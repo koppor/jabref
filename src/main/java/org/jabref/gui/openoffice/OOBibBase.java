@@ -1190,7 +1190,7 @@ class OOBibBase {
                 OOFrontend fr2 = new OOFrontend(documentConnection);
                 fr2.imposeGlobalOrder(documentConnection);
                 OOProcess.ProduceCitationMarkersResult x =
-                    OOProcess.produceCitationMarkers(fr.cgs,
+                    OOProcess.produceCitationMarkers(fr2.cgs,
                                                      databases,
                                                      style);
                 try {
@@ -1198,7 +1198,7 @@ class OOBibBase {
                         documentConnection.lockControllers();
                     }
                     applyNewCitationMarkers(documentConnection,
-                                            fr,
+                                            fr2,
                                             x.citMarkers,
                                             style);
                 } finally {
@@ -1333,7 +1333,7 @@ class OOBibBase {
                 OOFrontend fr2 = new OOFrontend(documentConnection);
                 fr2.imposeGlobalOrder(documentConnection);
                 OOProcess.ProduceCitationMarkersResult x =
-                    OOProcess.produceCitationMarkers(fr.cgs, databases, style);
+                    OOProcess.produceCitationMarkers(fr2.cgs, databases, style);
                 try {
                     if (useLockControllers) {
                         documentConnection.lockControllers();
