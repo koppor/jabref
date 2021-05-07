@@ -131,10 +131,10 @@ public class OOFormatBibliography {
                                                      boolean alwaysAddCitedOnPages) {
 
         OOFormattedText title = style.getFormattedBibliographyTitle();
-        OOFormattedText body = OOFormatBibliography.formatBibliography(cgs,
-                                                                       bibliography,
-                                                                       style,
-                                                                       alwaysAddCitedOnPages);
+        OOFormattedText body = OOFormatBibliography.formatBibliographyBody(cgs,
+                                                                           bibliography,
+                                                                           style,
+                                                                           alwaysAddCitedOnPages);
         return OOFormattedText.fromString(title.asString() + body.asString());
     }
 
