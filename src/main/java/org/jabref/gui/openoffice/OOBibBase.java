@@ -1187,6 +1187,7 @@ class OOBibBase {
             }
 
             if (madeModifications) {
+                documentConnection.refresh();
                 OOFrontend fr2 = new OOFrontend(documentConnection);
                 fr2.imposeGlobalOrder(documentConnection);
                 OOProcess.ProduceCitationMarkersResult x =
@@ -1331,6 +1332,7 @@ class OOBibBase {
             }
 
             if (madeModifications) {
+                documentConnection.refresh();
                 OOFrontend fr2 = new OOFrontend(documentConnection);
                 fr2.imposeGlobalOrder(documentConnection);
                 OOProcess.ProduceCitationMarkersResult x =
