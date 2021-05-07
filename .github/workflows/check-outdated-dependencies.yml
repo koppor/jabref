@@ -11,16 +11,11 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
-      - uses: sdkman/sdkman-action@master
-        id: sdkman
+      - name: Set up JDK
+        uses: actions/setup-java@v2
         with:
-          candidate: java
-          version: 15.0.1.j9-adpt
-      - uses: actions/setup-java@v1
-        id: setup-java
-        with:
-          java-version: 15.0.1
-          jdkFile: ${{ steps.sdkman.outputs.file }}
+          java-version: 14
+          distribution: 'adopt'
       - name: Look for outdated dependencies
         run: ./gradlew -q checkOutdatedDependencies
       - name: Report issues

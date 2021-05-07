@@ -61,7 +61,7 @@ Many times there is a need to provide an object on many locations simultaneously
 
 ### Register to the `EventBus`
 
-Any listening method has to be annotated with `@Subscribe` keyword and must have only one accepting parameter. Furthermore the object which contains such listening method\(s\) has to be registered using the `register(Object)` method provided by `EventBus`. The listening methods can be overloaded by using different parameter types.
+Any listening method has to be annotated with `@Subscribe` keyword and must have only one accepting parameter. Furthermore, the object which contains such listening method\(s\) has to be registered using the `register(Object)` method provided by `EventBus`. The listening methods can be overloaded by using different parameter types.
 
 ### Posting an object
 
@@ -190,7 +190,7 @@ If the language is a variant of a language `zh_CN` or `pt_BR` it is necessary to
 
 ## Cleanup and Formatters
 
-We try to build a cleanup mechanism based on formatters. The idea is that we can register these actions in arbitrary places, e.g., onSave, onImport, onExport, cleanup, etc. and apply them to different fields. The formatters themself are independent of any logic and therefore easy to test.
+We try to build a cleanup mechanism based on formatters. The idea is that we can register these actions in arbitrary places, e.g., onSave, onImport, onExport, cleanup, etc. and apply them to different fields. The formatters themselves are independent of any logic and therefore easy to test.
 
 Example: [NormalizePagesFormatter](https://github.com/JabRef/jabref/blob/master/src/main/java/org/jabref/logic/formatter/bibtexfields/NormalizePagesFormatter.java)
 
@@ -228,6 +228,8 @@ See [https://github.com/JabRef/jabref/blob/master/src/main/java/org/jabref/logic
 Defaults should go into the model package. See [Comments in this Commit](https://github.com/JabRef/jabref/commit/2f553e6557bddf7753b618b0f4edcaa6e873f719#commitcomment-15779484)
 
 ## Test Cases
+
+### General hints on tests
 
 Imagine you want to test the method `format(String value)` in the class `BracesFormatter` which removes double braces in a given string.
 
@@ -315,6 +317,22 @@ public void getTypeReturnsBibLatexArticleInBibLatexMode() {
 ```
 
 To test that a preferences migration works successfully, use the mockito method `verify`. See `PreferencesMigrationsTest` for an example.
+
+### Background on Java testing
+
+In JabRef, we mainly rely to basic JUnit tests to increase code coverage.
+There are other ways to test:
+
+| Type | Techniques | Tool (Java) | Kind of tests | Used In JabRef |
+| -- | -- | -- | -- | -- |
+| Functional | Dynamics, black box, positive and negative | [JUnit-QuickCheck](https://github.com/pholser/junit-quickcheck) | Random data generation | No, not intended, because other test kinds seem more helpful. |
+| Functional | Dynamics, black box, positive and negative | [GraphWalker](https://graphwalker.github.io/) | Model-based | No, because the BibDatabase doesn't need to be tests |
+| Functional | Dynamics, black box, positive and negative | [TestFX](https://github.com/TestFX/TestFX) | GUI Tests | Yes |
+| Functional | Dynamics, white box, negative | [PIT](https://pitest.org/) | Mutation | No |
+| Functional | Dynamics, white box, positive and negative | [Mockito](https://site.mockito.org/) | Mocking | Yes |
+| Non-functional | Dynamics, black box, positive and negative | [JETM](http://jetm.void.fm/), [Apache JMeter](https://jmeter.apache.org/) | Performance (performance testing vs load testing respectively) | No |
+| Structural | Static, white box | [CheckStyle](https://checkstyle.sourceforge.io/) | Constient formatting of the source code | Yes |
+| Structural | Dynamics, white box | [SpotBugs](https://spotbugs.github.io/) | Reocurreing bugs (based on experience of other projects) | No |
 
 ## UI
 
