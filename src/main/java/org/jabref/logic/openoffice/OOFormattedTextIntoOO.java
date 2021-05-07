@@ -257,8 +257,8 @@ public class OOFormattedTextIntoOO {
                     String key = kv.getKey();
                     String value = kv.getValue();
                     switch (key) {
-                    case "oo:CharStylename":
-                        // <span oo:CharStylename="Standard">
+                    case "oo:CharStyleName":
+                        // <span oo:CharStyleName="Standard">
                         fs.add(setCharStyleName(value));
                         break;
                     case "lang":
