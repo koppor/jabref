@@ -1056,8 +1056,6 @@ public class DocumentConnection {
 
         // Insert the text field
         this.xText.insertTextContent(cursor.getEnd(), xRefContent, false);
-
-        this.refresh();
     }
 
     /**

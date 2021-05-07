@@ -1210,6 +1210,7 @@ class OOBibBase {
         } finally {
             documentConnection.leaveUndoContext();
         }
+        documentConnection.refresh();
     } // combineCiteMarkers
 
     /**
@@ -1348,6 +1349,7 @@ class OOBibBase {
         } finally {
             documentConnection.leaveUndoContext();
         }
+        documentConnection.refresh();
     }
 
     static class ExportCitedHelperResult {
