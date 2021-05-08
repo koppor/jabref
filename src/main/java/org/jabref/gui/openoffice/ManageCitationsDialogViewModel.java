@@ -19,7 +19,6 @@ import com.sun.star.beans.NotRemoveableException;
 import com.sun.star.beans.PropertyExistException;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import org.slf4j.Logger;
@@ -33,12 +32,7 @@ public class ManageCitationsDialogViewModel {
     private final OOBibBase ooBase;
     private final DialogService dialogService;
 
-    public ManageCitationsDialogViewModel(OOBibBase ooBase, DialogService dialogService)
-        throws
-        NoSuchElementException,
-        WrappedTargetException,
-        UnknownPropertyException,
-        JabRefException {
+    public ManageCitationsDialogViewModel(OOBibBase ooBase, DialogService dialogService) {
         this.ooBase = ooBase;
         this.dialogService = dialogService;
 
@@ -52,6 +46,7 @@ public class ManageCitationsDialogViewModel {
                  | WrappedTargetException
                  | NoDocumentException
                  | PropertyVetoException
+                 | JabRefException
                  | CreationException ex) {
             LOGGER.warn("Problem collecting citations", ex);
             dialogService.showErrorDialogAndWait(Localization.lang("Problem collecting citations"), ex);
