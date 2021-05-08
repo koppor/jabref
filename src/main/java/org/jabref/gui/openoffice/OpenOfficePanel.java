@@ -682,12 +682,12 @@ public class OpenOfficePanel {
 
     private void showConnectionLostErrorMessage() {
         dialogService.showErrorDialogAndWait(Localization.lang("Connection lost"),
-                                             Localization.lang("Connection to OpenOffice/LibreOffice has been lost. " + "Please make sure OpenOffice/LibreOffice is running, and try to reconnect."));
+                                             Localization.lang("Connection to OpenOffice/LibreOffice has been lost. Please make sure OpenOffice/LibreOffice is running, and try to reconnect."));
     }
 
     private void showNoDocumentErrorMessage() {
         dialogService.showErrorDialogAndWait(Localization.lang("Connection to document lost"),
-                                             Localization.lang("Connection to OpenOffice/LibreOffice document has been lost. " + "Please make sure OpenOffice/LibreOffice is running, and try to reconnect."));
+                                             Localization.lang("Connection to OpenOffice/LibreOffice document has been lost. Please make sure OpenOffice/LibreOffice is running, and try to reconnect."));
     }
 
     private void reportUndefinedParagraphFormat(UndefinedParagraphFormatException ex) {
