@@ -188,9 +188,9 @@ public class DocumentConnection {
             return 0;
         } else {
             int count = 0;
-            for (; e.hasMoreElements(); ) {
+            while (e.hasMoreElements()) {
                 try {
-                    Object o = e.nextElement();
+                    e.nextElement();
                     count++;
                 } catch (NoSuchElementException | WrappedTargetException ex) {
                     break;
@@ -212,7 +212,7 @@ public class DocumentConnection {
             return;
         } else {
             int count = 0;
-            for (; e.hasMoreElements(); ) {
+            while (e.hasMoreElements()) {
                 try {
                     count++;
                     Object o = e.nextElement();
