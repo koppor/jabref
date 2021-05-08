@@ -28,8 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class for manipulating the Bibliography of the currently started
- * document in OpenOffice.
+ * Establish connection to a document opened in OpenOffice or LibreOffice.
  */
 class OOBibBaseConnect {
 
@@ -58,12 +57,6 @@ class OOBibBaseConnect {
         this.dialogService = dialogService;
         this.xDesktop = simpleBootstrap(loPath);
     }
-
-    /* *****************************
-     *
-     *  Establish connection
-     *
-     * *****************************/
 
     private XDesktop simpleBootstrap(Path loPath)
         throws
