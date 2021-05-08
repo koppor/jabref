@@ -1,8 +1,8 @@
 package org.jabref.logic.openoffice;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -24,6 +24,7 @@ import com.sun.star.beans.PropertyAttribute;
 import com.sun.star.beans.PropertyState;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
+import com.sun.star.beans.XMultiPropertySet;
 import com.sun.star.beans.XMultiPropertyStates;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertySetInfo;
@@ -44,7 +45,16 @@ import org.slf4j.LoggerFactory;
  *
  * On the question of what should it understand: apart from what
  * it can do now, probably whatever a CSL style with HTML output
- * emits. 
+ * emits.
+ *
+ * Seems slow with approx 40 citations.
+ *
+ * Idea:
+ *
+ *   - Use setString, not insertString. This removes character formats,
+ *     probably no need for workaround about setPropertyToDefault.
+ *   - Calculate current set of character properties in java.
+ *   - Use interface allowing to set multiple properties in a single call.
  *
  */
 @AllowedToUseAwt("Requires AWT for changing document properties")
@@ -89,6 +99,359 @@ public class OOFormattedTextIntoOO {
         // Just to hide the public constructor
     }
 
+    static class MyPropertyStack {
+
+        // Only try to control these. In particular, leave paragraph
+        // properties alone.
+        static final Set<String> CONTROLLED_PROPERTIES = Set.of(
+
+            /* Used for SuperScript, SubScript.
+             *
+             * These three are interdependent: changing one may change others.
+             */
+            "CharEscapement", "CharEscapementHeight", "CharAutoEscapement",
+
+            /* used for Bold */
+            "CharWeight",
+
+            /* Used for Italic */
+            "CharPosture",
+
+            /* CharWordMode : If this property is TRUE, the underline
+             * and strike-through properties are not applied to white
+             * spaces.
+             */
+            // "CharWordMode",
+
+            /* Used for strikeout. These two are interdependent. */
+            "CharStrikeout", "CharCrossedOut",
+
+            /* Used for underline */
+            "CharUnderline", // "CharUnderlineColor", "CharUnderlineHasColor",
+
+            // "CharOverline", "CharOverlineColor", "CharOverlineHasColor",
+
+            /* Used for lang="zxx" to shut spellchecker. */
+            "CharLocale",
+
+            /* Used for CitationCharacterFormat */
+            "CharStyleName", //  "CharStyleNames", "CharAutoStyleName",
+
+            /* Used for <smallcaps> and <span style="font-variant: small-caps"> */
+            "CharCaseMap"
+
+            /* HyperLink */
+            // "HyperLinkName", /* ??? */
+            // "HyperLinkURL",  /* empty for thisDocument */
+            // "HyperLinkTarget",
+            /* HyperLinkTarget : What comes after '#' (location in doc).
+             * Can be a bookmark name.
+             */
+            /* character style names for unvisited  and visited links */
+            // "UnvisitedCharStyleName", "VisitedCharStyleName",
+            // "HyperLinkEvents",
+
+            // "CharColor",
+            // "CharHighlight",
+            // "CharBackColor",  "CharBackTransparent",
+
+            // "CharScaleWidth", /* Allows to reduce font width */
+
+            // "CharKerning", "CharAutoKerning",
+
+            // "CharFontCharSet",
+            // "CharFontFamily",
+            // "CharFontName",
+            // "CharFontPitch",
+            // "CharFontStyleName",
+            // "CharHeight",
+
+            // "CharHidden",
+
+            /*
+             * CharInteropGrabBag : **Since LibreOffice 4.3**
+             *
+             * Grab bag of character properties, used as a string-any
+             * map for interim interop purposes.
+             *
+             * This property is intentionally not handled by the ODF
+             * filter. Any member that should be handled there should
+             * be first moved out from this grab bag to a separate
+             * property.
+             */
+            // "CharInteropGrabBag",
+
+            // "CharNoHyphenation",
+
+            // "CharContoured", "CharFlash", "CharRelief",
+
+            // "CharRotation", "CharRotationIsFitToLine",
+
+            // "CharShadingValue", "CharShadowFormat", "CharShadowed",
+
+            /* CharBorder */
+            // "CharBorderDistance",
+            // "CharBottomBorder",          "CharBottomBorderDistance",
+            // "CharTopBorder",             "CharTopBorderDistance",
+            // "CharRightBorder",           "CharRightBorderDistance",
+            // "CharLeftBorder",            "CharLeftBorderDistance",
+
+            // "IsSkipHiddenText",
+            // "IsSkipProtectedText",
+
+            /* TextUserDefinedAttributes: Saved into doc, but lost on Load.
+             *
+             * They might be usable within a session to invisibly attach info
+             * available elsewhere, but costly to get to.
+             *
+             */
+            // "TextUserDefinedAttributes",
+
+            // "WritingMode"
+
+            // "CharCombineIsOn", "CharCombinePrefix", "CharCombineSuffix",
+
+            /* Ruby */
+            // "RubyAdjust", "RubyCharStyleName", "RubyIsAbove", "RubyPosition", "RubyText",
+
+            // "CharEmphasis", /* emphasis mark in asian texts */
+
+            /* Asian */
+            // "CharWeightAsian",
+            // "CharPostureAsian",
+            // "CharLocaleAsian",
+            // "CharFontCharSetAsian",
+            // "CharFontFamilyAsian",
+            // "CharFontNameAsian",
+            // "CharFontPitchAsian",
+            // "CharFontStyleNameAsian",
+            // "CharHeightAsian",
+
+            /* Complex */
+            // "CharWeightComplex",
+            // "CharPostureComplex",
+            // "CharLocaleComplex",
+            // "CharFontCharSetComplex",
+            // "CharFontFamilyComplex",
+            // "CharFontNameComplex",
+            // "CharFontPitchComplex",
+            // "CharFontStyleNameComplex",
+            // "CharHeightComplex",
+
+            /*
+             * Non-character properties
+             */
+            // "SnapToGrid",
+            // "BreakType"
+            //
+            // "BorderDistance"
+            // "BottomBorder" "BottomBorderDistance"
+            // "LeftBorder"   "LeftBorderDistance"
+            // "RightBorder"  "RightBorderDistance"
+            // "TopBorder"    "TopBorderDistance"
+            //
+            // "ParaBottomMargin"
+            // "ParaLeftMargin"
+            // "ParaTopMargin"
+            // "ParaRightMargin"
+            // "ParaContextMargin"
+            //
+            // "DropCapCharStyleName"
+            // "DropCapFormat"
+            // "DropCapWholeWord"
+            //
+            // "ListAutoFormat" "ListId"
+            //
+            // "NumberingIsNumber"
+            // "NumberingLevel"
+            // "NumberingRules"
+            // "NumberingStartValue"
+            // "NumberingStyleName"
+            // "OutlineLevel"
+            // "ParaChapterNumberingLevel"
+            //
+            // "PageDescName" "PageNumberOffset"
+            //
+            // "Rsid" "ParRsid"
+            //
+            // "ParaAdjust" "ParaAutoStyleName"
+            //
+            // "ParaBackColor"
+            // "ParaBackGraphic"
+            // "ParaBackGraphicFilter"
+            // "ParaBackGraphicLocation"
+            // "ParaBackGraphicURL"
+            // "ParaBackTransparent"
+            //
+            // "ParaExpandSingleWord"
+            // "ParaFirstLineIndent"
+            //
+            // "ParaIsHyphenation"
+            // "ParaHyphenationMaxHyphens"
+            // "ParaHyphenationMaxLeadingChars"
+            // "ParaHyphenationMaxTrailingChars"
+            // "ParaHyphenationNoCaps"
+            //
+            // "ParaInteropGrabBag"
+            // "ParaIsAutoFirstLineIndent"
+            // "ParaIsCharacterDistance"
+            // "ParaIsConnectBorder"
+            // "ParaIsForbiddenRules"
+            // "ParaIsHangingPunctuation"
+            // "ParaIsNumberingRestart"
+            // "ParaKeepTogether"
+            // "ParaLastLineAdjust"
+            // "ParaLineNumberCount" "ParaLineNumberStartValue"
+            // "ParaLineSpacing" "ParaOrphans" "ParaRegisterModeActive"
+            // "ParaShadowFormat" "ParaSplit"
+            // "ParaStyleName" "ParaTabStops"
+            // "ParaUserDefinedAttributes" "ParaVertAlignment"
+            // "ParaWidows"
+
+            /**/);
+        final int goodSize;
+        final Map<String, Integer> goodNameToIndex;
+        final String[] goodNames;
+        final Stack<ArrayList<Optional<Object>>> layers;
+
+        MyPropertyStack(XTextCursor cursor)
+            throws UnknownPropertyException {
+
+            XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
+            XPropertySetInfo psi = propertySet.getPropertySetInfo();
+
+            this.goodNameToIndex = new HashMap<>();
+            int nextIndex = 0;
+            for (Property p : psi.getProperties()) {
+                if ((p.Attributes & PropertyAttribute.READONLY) != 0) {
+                    continue;
+                }
+                if (!CONTROLLED_PROPERTIES.contains(p.Name)) {
+                    continue;
+                }
+                this.goodNameToIndex.put(p.Name, nextIndex);
+                nextIndex++;
+            }
+
+            this.goodSize = nextIndex;
+
+            this.goodNames = new String[goodSize];
+            for (Map.Entry<String, Integer> kv : goodNameToIndex.entrySet()) {
+                goodNames[ kv.getValue() ] = kv.getKey();
+            }
+
+            // XMultiPropertySet.setPropertyValues()
+            // requires alphabetically sorted property names.
+            Arrays.sort(goodNames);
+            for (int i = 0; i < goodSize; i++) {
+                this.goodNameToIndex.put(goodNames[i], i);
+            }
+
+            /*
+            for (int i = 0; i < goodSize; i++) {
+                System.out.printf(" '%s'", goodNames[i]);
+            }
+            System.out.printf("%n");
+            */
+
+            // This throws:
+            // XPropertyAccess xPropertyAccess = unoQI(XPropertyAccess.class, cursor);
+            // if (xPropertyAccess == null) {
+            //     throw new RuntimeException("MyPropertyStack: xPropertyAccess is null");
+            // }
+
+            // we could use:
+            // import com.sun.star.beans.XMultiPropertyStates;
+            XMultiPropertyStates mpss = unoQI(XMultiPropertyStates.class, cursor);
+            PropertyState[] propertyStates = mpss.getPropertyStates(goodNames);
+
+            XMultiPropertySet mps = unoQI(XMultiPropertySet.class, cursor);
+            Object[] initialValues = mps.getPropertyValues(goodNames);
+
+            ArrayList<Optional<Object>> initialValuesOpt = new ArrayList<>(goodSize);
+
+            for (int i = 0; i < goodSize; i++) {
+                if (propertyStates[i] == PropertyState.DIRECT_VALUE) {
+                    initialValuesOpt.add(Optional.of(initialValues[i]));
+                } else {
+                    initialValuesOpt.add(Optional.empty());
+                }
+            }
+
+            this.layers = new Stack<>();
+            this.layers.push(initialValuesOpt);
+        }
+
+        void pushLayer(List<Pair<String, Object>> settings) {
+            ArrayList<Optional<Object>> oldLayer = layers.peek();
+            ArrayList<Optional<Object>> newLayer = new ArrayList<>(oldLayer);
+            for (Pair<String, Object> kv : settings) {
+                String name = kv.getKey();
+                Integer i = goodNameToIndex.get(name);
+                if (i == null) {
+                    LOGGER.warn(String.format("pushLayer: '%s' is not in goodNameToIndex", name));
+                    continue;
+                }
+                Object newValue = kv.getValue();
+                newLayer.set(i, Optional.ofNullable(newValue));
+            }
+            layers.push(newLayer);
+        }
+
+        void popLayer() {
+            if (layers.size() <= 1) {
+                LOGGER.warn("popLayer: underflow");
+                return;
+            }
+            layers.pop();
+        }
+
+        void apply(XTextCursor cursor) {
+            // removeDirectFormatting(cursor);
+            XMultiPropertySet mps = unoQI(XMultiPropertySet.class, cursor);
+            XMultiPropertyStates mpss = unoQI(XMultiPropertyStates.class, cursor);
+            ArrayList<Optional<Object>> topLayer = layers.peek();
+            try {
+                // select values to be set
+                ArrayList<String> names = new ArrayList<>(goodSize);
+                ArrayList<Object> values = new ArrayList<>(goodSize);
+                ArrayList<String> delNames = new ArrayList<>(goodSize);
+                for (int i = 0; i < goodSize; i++) {
+                    if (topLayer.get(i).isPresent()) {
+                        names.add(goodNames[i]);
+                        values.add(topLayer.get(i).get());
+                    } else {
+                        delNames.add(goodNames[i]);
+                    }
+                }
+                // namesArray must be alphabetically sorted.
+                String[] namesArray = names.toArray(new String[names.size()]);
+                String[] delNamesArray = delNames.toArray(new String[names.size()]);
+                mpss.setPropertiesToDefault(delNamesArray);
+                mps.setPropertyValues(namesArray, values.toArray());
+            } catch (UnknownPropertyException ex) {
+                LOGGER.warn("UnknownPropertyException in MyPropertyStack.apply");
+            } catch (PropertyVetoException ex) {
+                LOGGER.warn("PropertyVetoException in MyPropertyStack.apply");
+            } catch (IllegalArgumentException ex) {
+                LOGGER.warn("IllegalArgumentException in MyPropertyStack.apply");
+            } catch (WrappedTargetException ex) {
+                LOGGER.warn("WrappedTargetException in MyPropertyStack.apply");
+            }
+        }
+
+        // Relative CharEscapement needs to know current values.
+        Optional<Object> getPropertyValue(String name) {
+            if (goodNameToIndex.containsKey(name)) {
+                int i = goodNameToIndex.get(name);
+                ArrayList<Optional<Object>> topLayer = layers.peek();
+                Optional<Object> value = topLayer.get(i);
+                return value;
+            }
+            return Optional.empty();
+        }
+    }
+
     /**
      * Insert a text with formatting indicated by HTML-like tags, into
      * a text at the position given by a cursor.
@@ -102,17 +465,23 @@ public class OOFormattedTextIntoOO {
      * Notable changes w.r.t insertOOFormattedTextAtCurrentLocation:
      *
      * - new tags:
-     *   - &lt;locale value="zxx"&gt;
+     *
+     *   - &lt;span lang="zxx"&gt;
      *     - earlier was applied from code
-     *   - &lt;font class="CharStylename"&gt;
+     *
+     *   - &lt;span oo:CharStyleName="CharStylename"&gt;
      *     - earlier was applied from code, for "CitationCharacterFormat"
+     *
      *   - &lt;p&gt; start new paragraph
      *     - earlier was applied from code
-     *   - &lt;p class="ParStyleName"&gt; : start new paragraph and apply ParStyleName
+     *
+     *   - &lt;p oo:ParaStyleName="ParStyleName"&gt; : start new paragraph and apply ParStyleName
      *     - earlier was applied from code
+     *
      *   - &lt;tt&gt;
      *     - earlier: known, but ignored
-     *     - now: equivalent to &lt;font class="Example"&gt;
+     *     - now: equivalent to &lt;span oo:CharStyleName="Example"&gt;
+     *   - &lt;oo:referenceToPageNumberOfReferenceMark&gt; (self-closing)
      *
      * - closing tags try to properly restore state instead of dictating
      *   an "off" state.
@@ -141,15 +510,20 @@ public class OOFormattedTextIntoOO {
         NoSuchElementException,
         CreationException {
 
+        final boolean useSetString = true;
+
         String lText = OOFormattedText.toString(ootext);
 
-        System.out.println(lText);
+        // System.out.println(lText);
 
         XText text = position.getText();
         XTextCursor cursor = text.createTextCursorByRange(position);
         cursor.collapseToEnd();
 
-        Stack<Formatter> formatters = new Stack<>();
+        MyPropertyStack formatStack = new MyPropertyStack(cursor);
+
+        // Stack<Formatter> formatters = new Stack<>();
+
         Stack<String> expectEnd = new Stack<>();
 
         // We need to extract formatting. Use a simple regexp search iteration:
@@ -159,9 +533,13 @@ public class OOFormattedTextIntoOO {
 
             String currentSubstring = lText.substring(piv, m.start());
             if (!currentSubstring.isEmpty()) {
-                text.insertString(cursor, currentSubstring, true);
+                if (useSetString) {
+                    cursor.setString(currentSubstring);
+                } else {
+                    text.insertString(cursor, currentSubstring, true);
+                }
             }
-            formatTextInCursor(cursor, formatters);
+            formatStack.apply(cursor);
             cursor.collapseToEnd();
 
             String fullTag = m.group();
@@ -177,32 +555,32 @@ public class OOFormattedTextIntoOO {
             // Handle tags:
             switch (tagName) {
             case "b":
-                formatters.push(setCharWeight(FontWeight.BOLD));
+                formatStack.pushLayer(setCharWeight(FontWeight.BOLD));
                 expectEnd.push("/" + tagName);
                 break;
             case "i":
             case "em":
-                formatters.push(setCharPosture(FontSlant.ITALIC));
+                formatStack.pushLayer(setCharPosture(FontSlant.ITALIC));
                 expectEnd.push("/" + tagName);
                 break;
             case "smallcaps":
-                formatters.push(setCharCaseMap(CaseMap.SMALLCAPS));
+                formatStack.pushLayer(setCharCaseMap(CaseMap.SMALLCAPS));
                 expectEnd.push("/" + tagName);
                 break;
             case "sup":
-                formatters.push(SuperScript());
+                formatStack.pushLayer(SuperScript(formatStack));
                 expectEnd.push("/" + tagName);
                 break;
             case "sub":
-                formatters.push(SubScript());
+                formatStack.pushLayer(SubScript(formatStack));
                 expectEnd.push("/" + tagName);
                 break;
             case "u":
-                formatters.push(setCharUnderline(FontUnderline.SINGLE));
+                formatStack.pushLayer(setCharUnderline(FontUnderline.SINGLE));
                 expectEnd.push("/" + tagName);
                 break;
             case "s":
-                formatters.push(setCharStrikeout(FontStrikeout.SINGLE));
+                formatStack.pushLayer(setCharStrikeout(FontStrikeout.SINGLE));
                 expectEnd.push("/" + tagName);
                 break;
             case "/p":
@@ -218,11 +596,15 @@ public class OOFormattedTextIntoOO {
                     case "oo:ParaStyleName":
                         // <p oo:ParaStyleName="Standard">
                         if (value != null && !value.equals("")) {
+                            // LOGGER.warn(String.format("oo:ParaStyleName=\"%s\" found", value));
                             try {
                                 DocumentConnection.setParagraphStyle(cursor, value);
                             } catch (UndefinedParagraphFormatException ex) {
-                                // ignore silently
+                                LOGGER.warn(String.format("oo:ParaStyleName=\"%s\" failed with"
+                                                          + " UndefinedParagraphFormatException", value));
                             }
+                        } else {
+                            LOGGER.warn(String.format("oo:ParaStyleName inherited"));
                         }
                         break;
                     default:
@@ -248,28 +630,28 @@ public class OOFormattedTextIntoOO {
                 break;
             case "tt":
                 // Note: "Example" names a character style in LibreOffice.
-                formatters.push(setCharStyleName("Example"));
+                formatStack.pushLayer(setCharStyleName("Example"));
                 expectEnd.push("/" + tagName);
                 break;
             case "span":
-                Formatters fs = new Formatters();
+                List<Pair<String, Object>> settings = new ArrayList<>();
                 for (Pair<String, String> kv : attributes) {
                     String key = kv.getKey();
                     String value = kv.getValue();
                     switch (key) {
                     case "oo:CharStyleName":
                         // <span oo:CharStyleName="Standard">
-                        fs.add(setCharStyleName(value));
+                        settings.addAll(setCharStyleName(value));
                         break;
                     case "lang":
                         // <span lang="zxx">
                         // <span lang="en-US">
-                        fs.add(setCharLocale(value));
+                        settings.addAll(setCharLocale(value));
                         break;
                     case "style":
                         // In general we may need to parse value
                         if (value.equals("font-variant: small-caps")) {
-                            fs.add(setCharCaseMap(CaseMap.SMALLCAPS));
+                            settings.addAll(setCharCaseMap(CaseMap.SMALLCAPS));
                             break;
                         }
                         LOGGER.warn(String.format("Unexpected value %s for attribute '%s' for <%s>",
@@ -280,7 +662,7 @@ public class OOFormattedTextIntoOO {
                         break;
                     }
                 }
-                formatters.push(fs);
+                formatStack.pushLayer(settings);
                 expectEnd.push("/" + tagName);
                 break;
             case "/b":
@@ -293,10 +675,13 @@ public class OOFormattedTextIntoOO {
             case "/u":
             case "/s":
             case "/span":
-                formatters.pop().applyEnd(cursor);
+                formatStack.popLayer();
                 String expected = expectEnd.pop();
                 if (!tagName.equals(expected)) {
-                    LOGGER.warn(String.format("expected '<%s>', found '<%s>'", expected, tagName));
+                    LOGGER.warn(String.format("expected '<%s>', found '<%s>' after '%s'",
+                                              expected,
+                                              tagName,
+                                              currentSubstring));
                 }
                 break;
             }
@@ -305,9 +690,13 @@ public class OOFormattedTextIntoOO {
         }
 
         if (piv < lText.length()) {
-            text.insertString(cursor, lText.substring(piv), true);
+            if (useSetString) {
+                cursor.setString(lText.substring(piv));
+            } else {
+                text.insertString(cursor, lText.substring(piv), true);
+            }
         }
-        formatTextInCursor(cursor, formatters);
+        formatStack.apply(cursor);
         cursor.collapseToEnd();
 
         if (!expectEnd.empty()) {
@@ -432,173 +821,7 @@ public class OOFormattedTextIntoOO {
         return UnoRuntime.queryInterface(zInterface, object);
     }
 
-    /**
-     * Remove direct formatting of propertyName from propertySet.
-     *
-     * Observation: while
-     * XPropertyState.setPropertyToDefault(propertyName) does reset
-     * the property, it also has a side effect (probably bug in LO
-     * 6.4.6.2) that it also resets other properties.
-     *
-     * For example setPropertyToDefault("CharWeight") also removes "CharColor"
-     *
-     * Workaround:
-     *  (https://forum.openoffice.org/en/forum/viewtopic.php?f=20&t=105117)
-     *
-     *     Use setPropertyValue with either result from
-     *     getPropertyValue to restore the earlier state or with
-     *     result from getPropertyDefault.
-     *
-     *     In either case the property "CharStyleName" has to be handled
-     *     specially, by mapping the received value "" to "Standard".
-     *     Hopefully other properties will not need special handling.
-     *
-     * Well, they do. Some properties interact: setting one to
-     * non-default also sets the other to non-default. Fortunately
-     * these interactions appear meaningful. For example setting
-     * "CharCrossedOut" to non-default also modifies "CharStrikeout".
-     * For the strategy applied here (remove all, then restore all
-     * except the one we wanted to default) it means we have to avoid
-     * restoring those that would, as a side-effect set to non-default
-     * what we promised to set to default. I did not investigate
-     * potential asymmetries of these interactions, the code below implements
-     * symmetric behaviour. This means that for example for
-     * propertyName == "CharCrossedOut" we do not restore
-     * "CharStrikeout", although the problematic behaviour observed was
-     * that restoring "CharCrossedOut" changes "CharStrikeout" from its default.
-     *
-     */
-    private static void setPropertyToDefault(XTextCursor cursor, String propertyName)
-        throws
-        UnknownPropertyException,
-        PropertyVetoException,
-        WrappedTargetException {
-
-        if (false) {
-            // This is what should "simply work".
-            // However it loses e.g. font color when propertyName is "CharWeight".
-            XPropertyState propertyState = unoQI(XPropertyState.class, cursor);
-            propertyState.setPropertyToDefault(propertyName);
-        } else if (false) {
-
-            // Despite the name getPropertyDefault, storing
-            // its result by setPropertyValue is NOT (always) equivalent
-            // to setPropertyToDefault().
-            //
-            // setPropertyToDefault() should remove direct ("hard")
-            // formatting.
-            //
-            // setPropertyValue(getPropertyDefault()) can only do that
-            // if getPropertyDefault provides a value with the meaning
-            // "use whatever comes from the level above".
-            //
-            // If the value from getPropertyDefault dictates any
-            // concrete value for the property and "whatever comes
-            // from the level above" happens to be a different value,
-            // then the two behaviours yield different results.
-
-            XPropertyState propertyState = unoQI(XPropertyState.class, cursor);
-            Object value = propertyState.getPropertyDefault(propertyName);
-            XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
-            propertySet.setPropertyValue(propertyName, value);
-        } else {
-
-            // Try to remove all, then add all directly formatted again,
-            // except the one we are removing. And those that would override
-            // what we try to achieve.
-
-            /* https://wiki.openoffice.org/wiki/Documentation/DevGuide/Text/Formatting
-             * at the bottom lists interdependent sets:
-             *
-             * Those marked [-] we probably will not touch, [X] handled, [?] maybe will touch.
-             *
-             * - [-] ParaRightMargin, ParaLeftMargin, ParaFirstLineIndent, ParaIsAutoFirstLineIndent
-             * - [-] ParaTopMargin, ParaBottomMargin
-             * - [-] ParaGraphicURL/Filter/Location, ParaBackColor, ParaBackTransparent
-             * - [-] ParaIsHyphenation, ParaHyphenationMaxLeadingChars/MaxTrailingChars/MaxHyphens
-             * - [-] Left/Right/Top/BottomBorder, Left/Right/Top/BottomBorderDistance, BorderDistance
-             * - [-] DropCapFormat, DropCapWholeWord, DropCapCharStyleName
-             * - [-] PageDescName, PageNumberOffset, PageStyleName
-             *
-             * - [-] CharCombineIsOn, CharCombinePrefix, CharCombineSuffix
-             * - [-] RubyText, RubyAdjust, RubyCharStyleName, RubyIsAbove
-             *
-             * - [X] CharStrikeOut, CharCrossedOut
-             * - [X] CharEscapement, CharAutoEscapement, CharEscapementHeight
-             * - [X] CharUnderline, CharUnderlineColor, CharUnderlineHasColor
-             *
-             * - [?] CharFontName, CharFontStyleName, CharFontFamily, CharFontPitch
-             * - [?] HyperLinkURL/Name/Target, UnvisitedCharStyleName, VisitedCharStyleName
-             *
-             */
-
-            // CharStrikeout and CharCrossedOut interact: if we default one,
-            // we default the other as well.
-            Set<String> charStrikeOutSet = Set.of(CHAR_STRIKEOUT,
-                                                  "CharCrossedOut");
-            Set<String> charEscapementSet = Set.of("CharAutoEscapement",
-                                                   CHAR_ESCAPEMENT,
-                                                   CHAR_ESCAPEMENT_HEIGHT);
-            Set<String> charUnderlineSet = Set.of(CHAR_UNDERLINE,
-                                                  "CharUnderlineColor",
-                                                  "CharUnderlineHasColor");
-
-            Set<String> namesToDefault = new HashSet<>();
-            if (charStrikeOutSet.contains(propertyName)) {
-                namesToDefault = charStrikeOutSet;
-            } else if (charEscapementSet.contains(propertyName)) {
-                namesToDefault = charEscapementSet;
-            } else if (charUnderlineSet.contains(propertyName)) {
-                namesToDefault = charUnderlineSet;
-            } else {
-                namesToDefault.add(propertyName);
-            }
-            XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
-            XPropertySetInfo psi = propertySet.getPropertySetInfo();
-
-            // Remember those we shall we restore later
-            Map<String, Object> ds = new HashMap<>();
-            for (Property p : psi.getProperties()) {
-                boolean noRestore = (namesToDefault.contains(p.Name)
-                                     || ((p.Attributes & PropertyAttribute.READONLY) != 0)
-                                     || (isPropertyDefault(cursor, p.Name)));
-                if (noRestore) {
-                    continue;
-                }
-                ds.put(p.Name, propertySet.getPropertyValue(p.Name));
-            }
-
-            // Remove all
-            removeDirectFormatting(cursor);
-
-            boolean failed = false;
-            if (!isPropertyDefault(cursor, propertyName)) {
-                LOGGER.warn(String.format("OOFormattedTextIntoOO.setPropertyToDefault:"
-                                          + " removeDirectFormatting failed to reset '%s'",
-                                          propertyName));
-                failed = true;
-            }
-
-            // Restore those saved
-            for (Map.Entry<String, Object> e : ds.entrySet()) {
-                propertySet.setPropertyValue(e.getKey(), e.getValue());
-                if (!failed && !isPropertyDefault(cursor, propertyName)) {
-                    LOGGER.warn(String.format("OOFormattedTextIntoOO.setPropertyToDefault('%s')"
-                                              + " setPropertyValue('%s') caused loss of default state",
-                                              propertyName, e.getKey()));
-                    failed = true;
-                }
-            }
-
-            if (!failed && !isPropertyDefault(cursor, propertyName)) {
-                LOGGER.warn(String.format("OOFormattedTextIntoOO.setPropertyToDefault('%s') failed",
-                                          propertyName));
-            }
-
-        }
-    }
-
-    /**
+    /*
      * We rely on property values being either DIRECT_VALUE or
      * DEFAULT_VALUE (not AMBIGUOUS_VALUE). If the cursor covers a homogeneous region,
      * or is collapsed, then this is true.
@@ -615,206 +838,60 @@ public class OOFormattedTextIntoOO {
         return pst == PropertyState.DEFAULT_VALUE;
     }
 
-    /**
-     * @return Optional.empty() if the property is not directly formatted.
-     */
-    private static Optional<Object> getPropertyValue(XTextCursor cursor, String propertyName)
-        throws
-        UnknownPropertyException,
-        WrappedTargetException {
-        if (isPropertyDefault(cursor, propertyName)) {
-            return Optional.empty();
-        } else {
-            XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
-            return Optional.of(propertySet.getPropertyValue(propertyName));
-        }
+    private static List<Pair<String, Object>> setCharWeight(float value) {
+        List<Pair<String, Object>> settings = new ArrayList<>();
+        settings.add(new Pair("CharWeight", (Float) value));
+        return settings;
     }
 
-    /**
-     * @param value Optional.empty() means instruction to remove direct formatting.
-     */
-    private static <T> void setPropertyValue(XTextCursor cursor, String propertyName, Optional<T> value)
-        throws
-        UnknownPropertyException,
-        PropertyVetoException,
-        WrappedTargetException {
-        XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
-        if (value.isPresent()) {
-            propertySet.setPropertyValue(propertyName, value.get());
-        } else {
-            setPropertyToDefault(cursor, propertyName);
-        }
+    private static List<Pair<String, Object>> setCharPosture(FontSlant value) {
+        List<Pair<String, Object>> settings = new ArrayList<>();
+        settings.add(new Pair("CharPosture", (Object) value));
+        return settings;
     }
 
-    /**
-     *  At each tag we adjust the current stack of formatters-to-apply
-     *  stack, then run it.
-     */
-    private interface Formatter {
-        /**
-         * Note: apply may be called multiple times, but should pick up old value only
-         * at its first call.
-         */
-        public void apply(XTextCursor cursor)
-            throws
-            UnknownPropertyException,
-            PropertyVetoException,
-            WrappedTargetException,
-            IllegalArgumentException,
-            NoSuchElementException;
-
-        /**
-         *  Closing tags call applyEnd directly, so applyEnd is only called once.
-         *
-         *  It should restore the state to that seen by the first call to apply.
-         *
-         */
-        public void applyEnd(XTextCursor cursor)
-            throws
-            UnknownPropertyException,
-            PropertyVetoException,
-            WrappedTargetException,
-            IllegalArgumentException,
-            NoSuchElementException;
-    }
-
-    /**
-     * Apply Formatters on the stack.
-     *
-     * @param cursor Marks the text to format
-     * @param formatters Formatters to apply (normally extracted from OOFormattedText)
-     */
-    private static void formatTextInCursor(XTextCursor cursor,
-                                           Stack<Formatter> formatters)
-        throws
-        UnknownPropertyException,
-        PropertyVetoException,
-        WrappedTargetException,
-        IllegalArgumentException,
-        NoSuchElementException {
-
-        for (Formatter f : formatters) {
-            f.apply(cursor);
-        }
-    }
-
-    private static class Formatters implements Formatter {
-        List<Formatter> parts;
-        public Formatters() {
-            parts = new ArrayList<>();
-        }
-
-        public void add(Formatter f) {
-            parts.add(f);
-        }
-
-        @Override
-        public void apply(XTextCursor cursor)
-            throws
-            UnknownPropertyException,
-            PropertyVetoException,
-            WrappedTargetException,
-            IllegalArgumentException,
-            NoSuchElementException {
-            for (Formatter f : parts) {
-                f.apply(cursor);
-            }
-        }
-
-        @Override
-        public void applyEnd(XTextCursor cursor)
-            throws
-            UnknownPropertyException,
-            PropertyVetoException,
-            WrappedTargetException,
-            IllegalArgumentException,
-            NoSuchElementException {
-            for (int i = parts.size() - 1; i >= 0; i--) {
-                Formatter f = parts.get(i);
-                f.applyEnd(cursor);
-            }
-        }
-    }
-
-    private static class SimpleFormatter<T> implements Formatter {
-        final String propertyName;
-        Optional<T> myValue;
-        Optional<T> oldValue;
-        boolean started;
-
-        SimpleFormatter(String propertyName, Optional<T> value) {
-            this.propertyName = propertyName;
-            this.myValue = value;
-            this.oldValue = Optional.empty();
-            this.started = false;
-        }
-
-        @Override
-        public void apply(XTextCursor cursor)
-            throws
-            UnknownPropertyException,
-            PropertyVetoException,
-            WrappedTargetException,
-            IllegalArgumentException,
-            NoSuchElementException {
-
-            if (!started) {
-                oldValue = getPropertyValue(cursor, propertyName).map(e -> (T) e);
-                XPropertyState propertyState = unoQI(XPropertyState.class, cursor);
-                started = true;
-            }
-
-            setPropertyValue(cursor, propertyName, myValue);
-        }
-
-        @Override
-        public void applyEnd(XTextCursor cursor)
-            throws
-            UnknownPropertyException,
-            PropertyVetoException,
-            WrappedTargetException,
-            IllegalArgumentException,
-            NoSuchElementException {
-            setPropertyValue(cursor, propertyName, oldValue);
-        }
-    }
-
-    private static Formatter setCharWeight(float value) {
-        return new SimpleFormatter<Float>("CharWeight", Optional.of(value));
-    }
-
-    private static Formatter setCharPosture(FontSlant value) {
-        return new SimpleFormatter<FontSlant>("CharPosture", Optional.of(value));
-    }
-
-    private static Formatter setCharCaseMap(short value) {
-        return new SimpleFormatter<Short>("CharCaseMap", Optional.of(value));
+    private static List<Pair<String, Object>> setCharCaseMap(short value) {
+        List<Pair<String, Object>> settings = new ArrayList<>();
+        settings.add(new Pair("CharCaseMap", (Short) value));
+        return settings;
     }
 
     // com.sun.star.awt.FontUnderline
-    private static Formatter setCharUnderline(short value) {
-        return new SimpleFormatter<Short>(CHAR_UNDERLINE, Optional.of(value));
+    private static List<Pair<String, Object>> setCharUnderline(short value) {
+        List<Pair<String, Object>> settings = new ArrayList<>();
+        settings.add(new Pair(CHAR_UNDERLINE, (Short) value));
+        return settings;
     }
 
     // com.sun.star.awt.FontStrikeout
-    private static Formatter setCharStrikeout(short value) {
-        return new SimpleFormatter<Short>(CHAR_STRIKEOUT, Optional.of(value));
+    private static List<Pair<String, Object>> setCharStrikeout(short value) {
+        List<Pair<String, Object>> settings = new ArrayList<>();
+        settings.add(new Pair(CHAR_STRIKEOUT, (Short) value));
+        return settings;
     }
 
     // CharStyleName
-    private static Formatter setCharStyleName(String value) {
-        return new SimpleFormatter<String>(CHAR_STYLE_NAME, Optional.ofNullable(value));
+    private static List<Pair<String, Object>> setCharStyleName(String value) {
+        List<Pair<String, Object>> settings = new ArrayList<>();
+        if (value != null && value != "") {
+            settings.add(new Pair(CHAR_STYLE_NAME, value));
+        } else {
+            LOGGER.warn("setCharStyleName: received null or empty value");
+        }
+        return settings;
     }
 
     // Locale
-    private static Formatter setCharLocale(Locale value) {
-        return new SimpleFormatter<Locale>("CharLocale", Optional.of(value));
+    private static List<Pair<String, Object>> setCharLocale(Locale value) {
+        List<Pair<String, Object>> settings = new ArrayList<>();
+        settings.add(new Pair("CharLocale", (Object) value));
+        return settings;
     }
 
     /**
      * Locale from string encoding: language, language-country or language-country-variant
      */
-    private static Formatter setCharLocale(String value) {
+    private static List<Pair<String, Object>> setCharLocale(String value) {
         if (value == null || "".equals(value)) {
             throw new RuntimeException("setCharLocale \"\" or null");
         }
@@ -829,74 +906,55 @@ public class OOFormattedTextIntoOO {
     /*
      * SuperScript and SubScript
      */
-    private static class CharEscapement implements Formatter {
-        Optional<Short> myValue;
-        Optional<Byte> myHeight;
-        boolean relative;
+    private static List<Pair<String, Object>> CharEscapement(Optional<Short> value,
+                                                             Optional<Byte> height,
+                                                             boolean relative,
+                                                             MyPropertyStack formatStack) {
+        List<Pair<String, Object>> settings = new ArrayList<>();
+        Optional<Short> oldValue = (formatStack
+                                    .getPropertyValue(CHAR_ESCAPEMENT)
+                                    .map(e -> (short) e));
 
-        Optional<Short> oldValue;
-        Optional<Byte> oldHeight;
-        boolean started;
+        Optional<Byte> oldHeight = (formatStack
+                                    .getPropertyValue(CHAR_ESCAPEMENT_HEIGHT)
+                                    .map(e -> (byte) e));
 
-        /**
-         * @param relative Make value and height relative to oldHeight and oldValue.
-         *        Needed for e^{x_i} e^{x^2} (i.e. sup or sub within sup or sup)
-         *
-         */
-        CharEscapement(Optional<Short> value, Optional<Byte> height, boolean relative) {
-            this.myValue = value;
-            this.myHeight = height;
-            this.relative = relative;
-            this.oldValue = Optional.empty();
-            this.oldHeight = Optional.empty();
-            this.started = false;
-        }
-
-        @Override
-        public void apply(XTextCursor cursor)
-            throws
-            UnknownPropertyException,
-            PropertyVetoException,
-            WrappedTargetException,
-            IllegalArgumentException,
-            NoSuchElementException {
-            if (!started) {
-                oldValue = getPropertyValue(cursor, CHAR_ESCAPEMENT).map(e -> (short) e);
-                oldHeight = getPropertyValue(cursor, CHAR_ESCAPEMENT_HEIGHT).map(e -> (byte) e);
-                started = true;
+        if (relative && (value.isPresent() || height.isPresent())) {
+            double oh = oldHeight.orElse(CHAR_ESCAPEMENT_HEIGHT_DEFAULT) * 0.01;
+            double xHeight = height.orElse(CHAR_ESCAPEMENT_HEIGHT_DEFAULT) * oh;
+            double ov = oldValue.orElse(CHAR_ESCAPEMENT_VALUE_DEFAULT);
+            double xValue = value.orElse(CHAR_ESCAPEMENT_VALUE_DEFAULT) * oh + ov;
+            short newValue = (short) Math.round(xValue);
+            byte newHeight = (byte) Math.round(xHeight);
+            if (value.isPresent()) {
+                settings.add(new Pair(CHAR_ESCAPEMENT, (Short) newValue));
             }
-            if (relative && (myValue.isPresent() || myHeight.isPresent())) {
-                double oh = oldHeight.orElse(CHAR_ESCAPEMENT_HEIGHT_DEFAULT) * 0.01;
-                double xHeight = myHeight.orElse(CHAR_ESCAPEMENT_HEIGHT_DEFAULT) * oh;
-                double ov = oldValue.orElse(CHAR_ESCAPEMENT_VALUE_DEFAULT);
-                double xValue = myValue.orElse(CHAR_ESCAPEMENT_VALUE_DEFAULT) * oh + ov;
-                setPropertyValue(cursor, CHAR_ESCAPEMENT, Optional.of((short) Math.round(xValue)));
-                setPropertyValue(cursor, CHAR_ESCAPEMENT_HEIGHT, Optional.of((byte) Math.round(xHeight)));
-            } else {
-                setPropertyValue(cursor, CHAR_ESCAPEMENT, myValue);
-                setPropertyValue(cursor, CHAR_ESCAPEMENT_HEIGHT, myHeight);
+            if (height.isPresent()) {
+                settings.add(new Pair(CHAR_ESCAPEMENT_HEIGHT, (Byte) newHeight));
+            }
+        } else {
+            if (value.isPresent()) {
+                settings.add(new Pair(CHAR_ESCAPEMENT, (Short) value.get()));
+            }
+            if (height.isPresent()) {
+                settings.add(new Pair(CHAR_ESCAPEMENT_HEIGHT, (Byte) height.get()));
             }
         }
-
-        @Override
-        public void applyEnd(XTextCursor cursor)
-            throws
-            UnknownPropertyException,
-            PropertyVetoException,
-            WrappedTargetException,
-            IllegalArgumentException,
-            NoSuchElementException {
-            setPropertyValue(cursor, CHAR_ESCAPEMENT, oldValue);
-            setPropertyValue(cursor, CHAR_ESCAPEMENT_HEIGHT, oldHeight);
-        }
+        return settings;
     }
 
-    private static Formatter SubScript() {
-        return new CharEscapement(Optional.of(SUBSCRIPT_VALUE), Optional.of(SUBSCRIPT_HEIGHT), true);
+    private static List<Pair<String, Object>> SubScript(MyPropertyStack formatStack) {
+        return CharEscapement(Optional.of(SUBSCRIPT_VALUE),
+                              Optional.of(SUBSCRIPT_HEIGHT),
+                              true,
+                              formatStack);
     }
 
-    private static Formatter SuperScript() {
-        return new CharEscapement(Optional.of(SUPERSCRIPT_VALUE), Optional.of(SUPERSCRIPT_HEIGHT), true);
+    private static List<Pair<String, Object>> SuperScript(MyPropertyStack formatStack) {
+        return CharEscapement(Optional.of(SUPERSCRIPT_VALUE),
+                              Optional.of(SUPERSCRIPT_HEIGHT),
+                              true,
+                              formatStack);
     }
 
 }

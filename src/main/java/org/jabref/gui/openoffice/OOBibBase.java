@@ -1202,6 +1202,7 @@ class OOBibBase {
                                             fr2,
                                             x.citMarkers,
                                             style);
+                    // bibliography is not refreshed
                 } finally {
                     if (useLockControllers) {
                         documentConnection.unlockControllers();
@@ -1211,7 +1212,7 @@ class OOBibBase {
         } finally {
             documentConnection.leaveUndoContext();
         }
-        documentConnection.refresh();
+        // documentConnection.refresh();
     } // combineCiteMarkers
 
     /**
@@ -1342,6 +1343,7 @@ class OOBibBase {
                         documentConnection.lockControllers();
                     }
                     applyNewCitationMarkers(documentConnection, fr2, x.citMarkers, style);
+                    // bibliography is not refreshed
                 } finally {
                     if (useLockControllers) {
                         documentConnection.unlockControllers();
@@ -1351,7 +1353,7 @@ class OOBibBase {
         } finally {
             documentConnection.leaveUndoContext();
         }
-        documentConnection.refresh();
+        // documentConnection.refresh();
     }
 
     static class ExportCitedHelperResult {
