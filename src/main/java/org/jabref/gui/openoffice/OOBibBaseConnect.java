@@ -16,7 +16,6 @@ import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XEnumeration;
 import com.sun.star.container.XEnumerationAccess;
-import com.sun.star.frame.XComponentLoader;
 import com.sun.star.frame.XDesktop;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
@@ -75,11 +74,7 @@ class OOBibBaseConnect {
         } catch (Exception e) {
             throw new CreationException(e.getMessage());
         }
-        XDesktop result = unoQI(XDesktop.class, desktop);
-
-        unoQI(XComponentLoader.class, desktop);
-
-        return result;
+        return unoQI(XDesktop.class, desktop);
     }
 
     private static List<XTextDocument> getTextDocuments(XDesktop desktop)
