@@ -740,9 +740,9 @@ class OOBibBase {
         IllegalArgumentException,
         CreationException {
 
-        // Always creating at the end of documentConnection.xText
+        // Always creating at the end of documentConnection.getText()
         // Alternatively, we could receive a cursor.
-        XTextCursor textCursor = documentConnection.xText.createTextCursor();
+        XTextCursor textCursor = documentConnection.getText().createTextCursor();
         textCursor.gotoEnd(false);
 
         // OOUtil.insertParagraphBreak(documentConnection.xText, textCursor);
@@ -777,7 +777,8 @@ class OOBibBase {
             XTextSection section = (XTextSection) a.getObject();
             // Clear it:
 
-            XTextCursor cursor = documentConnection.xText.createTextCursorByRange(section.getAnchor());
+            XTextCursor cursor = (documentConnection.getText()
+                                  .createTextCursorByRange(section.getAnchor()));
 
             cursor.gotoRange(section.getAnchor(), false);
             cursor.setString("");
@@ -818,7 +819,7 @@ class OOBibBase {
                                 .getTextSectionByName(OOBibBase.BIB_SECTION_NAME)
                                 .orElseThrow(RuntimeException::new));
 
-        XTextCursor cursor = (documentConnection.xText
+        XTextCursor cursor = (documentConnection.getText()
                               .createTextCursorByRange(section.getAnchor()));
 
         // emit the title of the bibliography
@@ -831,7 +832,7 @@ class OOBibBase {
         cursor.collapseToEnd();
 
         // remove the inital empty paragraph from the section.
-        XTextCursor initialParagraph = (documentConnection.xText
+        XTextCursor initialParagraph = (documentConnection.getText()
                                         .createTextCursorByRange(section.getAnchor()));
         initialParagraph.collapseToStart();
         initialParagraph.goRight((short) 1, true);

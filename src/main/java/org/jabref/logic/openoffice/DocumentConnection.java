@@ -77,23 +77,7 @@ public class DocumentConnection {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentConnection.class);
 
 
-    public XTextDocument mxDoc;
-
-    // unoQI(XComponent.class, mxDoc);
-    public XComponent xCurrentComponent;
-
-    // unoQI(XMultiServiceFactory.class, mxDoc);
-    public XMultiServiceFactory mxDocFactory;
-
-    // XModel mo = unoQI(XModel.class, this.xCurrentComponent);
-    // XController co = mo.getCurrentController();
-
-    public XText xText;
-
-    // xViewCursorSupplier = unoQI(XTextViewCursorSupplier.class, co);
-    public XTextViewCursorSupplier xViewCursorSupplier;
-    public XPropertyContainer userProperties;
-    public XPropertySet propertySet;
+    private XTextDocument mxDoc;
 
     public DocumentConnection(XTextDocument mxDoc) {
         //        printServiceInfo(mxDoc);
@@ -107,20 +91,33 @@ public class DocumentConnection {
         //              "com.sun.star.text.TextDocument"
 
         this.mxDoc = mxDoc;
-        this.xCurrentComponent = unoQI(XComponent.class, mxDoc);
-        this.mxDocFactory = unoQI(XMultiServiceFactory.class, mxDoc);
-        // unoQI(XDocumentIndexesSupplier.class, component);
+    }
 
-        // get a reference to the body text of the document
-        this.xText = mxDoc.getText();
+    /**
+     * Get a reference to the body text of the document
+     */
+    public XText getText() {
+        return mxDoc.getText();
+    }
 
-        XModel mo = unoQI(XModel.class, this.xCurrentComponent);
-        XController co = mo.getCurrentController();
-        this.xViewCursorSupplier = unoQI(XTextViewCursorSupplier.class, co);
+    private XComponent asXComponent() {
+        return unoQI(XComponent.class, mxDoc);
+    }
 
-        XDocumentPropertiesSupplier supp = unoQI(XDocumentPropertiesSupplier.class, mxDoc);
-        this.userProperties = supp.getDocumentProperties().getUserDefinedProperties();
-        this.propertySet = unoQI(XPropertySet.class, userProperties);
+    public XModel asXModel() {
+        return unoQI(XModel.class, mxDoc /* this.asXComponent() */);
+    }
+
+    private XMultiServiceFactory asXMultiServiceFactory() {
+        return unoQI(XMultiServiceFactory.class, mxDoc);
+    }
+
+    public XController getCurrentController() {
+        return this.asXModel().getCurrentController();
+    }
+
+    public XSelectionSupplier getSelectionSupplier() {
+        return unoQI(XSelectionSupplier.class, this.getCurrentController());
     }
 
     /**
@@ -134,9 +131,16 @@ public class DocumentConnection {
         return UnoRuntime.queryInterface(zInterface, object);
     }
 
-    private XDocumentProperties getXDocumentProperties() {
+    private XDocumentProperties getDocumentProperties() {
         XDocumentPropertiesSupplier supp = unoQI(XDocumentPropertiesSupplier.class, mxDoc);
         return supp.getDocumentProperties();
+    }
+
+    private XPropertyContainer getUserDefinedProperties() {
+        return this.getDocumentProperties().getUserDefinedProperties();
+    }
+    private XPropertySet getUserDefinedPropertiesAsXPropertySet() {
+        return unoQI(XPropertySet.class, this.getUserDefinedProperties());
     }
 
     private short getRedlineDisplayType()
@@ -413,18 +417,6 @@ public class DocumentConnection {
         }
     }
 
-    public XModel getModel() {
-        return unoQI(XModel.class, this.xCurrentComponent);
-    }
-
-    public XController getCurrentController() {
-        return this.getModel().getCurrentController();
-    }
-
-    public XSelectionSupplier getSelectionSupplier() {
-        return unoQI(XSelectionSupplier.class, this.getCurrentController());
-    }
-
     /**
      * @return may be null, or some type supporting XServiceInfo
      *
@@ -539,17 +531,17 @@ public class DocumentConnection {
      * notifications for display updates are not broadcasted.
      */
     public void lockControllers() {
-        XModel mo = unoQI(XModel.class, this.xCurrentComponent);
+        XModel mo = this.asXModel();
         mo.lockControllers();
     }
 
     public void unlockControllers() {
-        XModel mo = unoQI(XModel.class, this.xCurrentComponent);
+        XModel mo = this.asXModel();
         mo.unlockControllers();
     }
 
     public boolean hasControllersLocked() {
-        XModel mo = unoQI(XModel.class, this.xCurrentComponent);
+        XModel mo = this.asXModel();
         return mo.hasControllersLocked();
     }
 
@@ -560,13 +552,7 @@ public class DocumentConnection {
 
         boolean missing = false;
         // These are set by DocumentConnection constructor.
-        if (null == this.mxDoc
-            || null == this.xCurrentComponent
-            || null == this.mxDocFactory
-            || null == this.xText
-            || null == this.xViewCursorSupplier
-            || null == this.userProperties
-            || null == this.propertySet) {
+        if (null == this.mxDoc) {
             missing = true;
         }
 
@@ -582,12 +568,6 @@ public class DocumentConnection {
         if (missing) {
             // release it
             this.mxDoc = null;
-            this.xCurrentComponent = null;
-            this.mxDocFactory = null;
-            this.xText = null;
-            this.xViewCursorSupplier = null;
-            this.userProperties = null;
-            this.propertySet = null;
         }
         return missing;
     }
@@ -628,9 +608,9 @@ public class DocumentConnection {
     }
 
     public List<String> getCustomPropertyNames() {
-        assert (this.propertySet != null);
 
-        XPropertySetInfo psi = this.propertySet.getPropertySetInfo();
+        XPropertySet ps = getUserDefinedPropertiesAsXPropertySet();
+        XPropertySetInfo psi = ps.getPropertySetInfo();
 
         List<String> names = new ArrayList<>();
         for (Property p : psi.getProperties()) {
@@ -653,16 +633,12 @@ public class DocumentConnection {
         throws
         WrappedTargetException {
 
-        assert (this.propertySet != null);
-
-        XPropertySetInfo psi = this.propertySet.getPropertySetInfo();
+        XPropertySet ps = getUserDefinedPropertiesAsXPropertySet();
+        XPropertySetInfo psi = ps.getPropertySetInfo();
 
         if (psi.hasPropertyByName(property)) {
             try {
-                String v =
-                    this.propertySet
-                    .getPropertyValue(property)
-                    .toString();
+                String v = ps.getPropertyValue(property).toString();
                 return Optional.ofNullable(v);
             } catch (UnknownPropertyException ex) {
                 throw new RuntimeException("getCustomProperty: caught UnknownPropertyException");
@@ -684,14 +660,15 @@ public class DocumentConnection {
         IllegalTypeException,
         IllegalArgumentException {
 
-        XPropertySetInfo psi = this.propertySet.getPropertySetInfo();
+        XPropertySet ps = getUserDefinedPropertiesAsXPropertySet();
+        XPropertySetInfo psi = ps.getPropertySetInfo();
 
         if (psi.hasPropertyByName(property)) {
             this.removeCustomProperty(property);
         }
 
         if (value != null) {
-            this.userProperties
+            this.getUserDefinedProperties()
                 .addProperty(property,
                              com.sun.star.beans.PropertyAttribute.REMOVEABLE,
                              new Any(Type.STRING, value));
@@ -709,11 +686,12 @@ public class DocumentConnection {
         IllegalTypeException,
         IllegalArgumentException {
 
-        XPropertySetInfo psi = this.propertySet.getPropertySetInfo();
+        XPropertySet ps = getUserDefinedPropertiesAsXPropertySet();
+        XPropertySetInfo psi = ps.getPropertySetInfo();
 
         if (psi.hasPropertyByName(property)) {
             try {
-                this.userProperties.removeProperty(property);
+                this.getUserDefinedProperties().removeProperty(property);
             } catch (UnknownPropertyException ex) {
                 throw new RuntimeException("removeCustomProperty caught UnknownPropertyException"
                                            + " (should be impossible)");
@@ -733,7 +711,7 @@ public class DocumentConnection {
         NoDocumentException {
 
         XReferenceMarksSupplier supplier = unoQI(XReferenceMarksSupplier.class,
-                                                 this.xCurrentComponent);
+                                                 this.mxDoc);
         try {
             return supplier.getReferenceMarks();
         } catch (DisposedException ex) {
@@ -747,7 +725,7 @@ public class DocumentConnection {
     public XNameAccess getBookmarks() {
 
         XBookmarksSupplier supplier = unoQI(XBookmarksSupplier.class,
-                                            this.xCurrentComponent);
+                                            this.mxDoc);
         return supplier.getBookmarks();
     }
 
@@ -847,7 +825,7 @@ public class DocumentConnection {
             if (mark.isEmpty()) {
                 return;
             }
-            this.xText.removeTextContent(mark.get());
+            this.getText().removeTextContent(mark.get());
         }
     }
 
@@ -856,7 +834,9 @@ public class DocumentConnection {
      *
      */
     public XTextViewCursor getViewCursor() {
-        return this.xViewCursorSupplier.getViewCursor();
+        XController co = this.getCurrentController();
+        XTextViewCursorSupplier xViewCursorSupplier = unoQI(XTextViewCursorSupplier.class, co);
+        return xViewCursorSupplier.getViewCursor();
     }
 
     /**
@@ -907,7 +887,7 @@ public class DocumentConnection {
      *                 "com.sun.star.text.Bookmark" or
      *                 "com.sun.star.text.TextSection".
      *
-     *                 Passed to this.mxDocFactory.createInstance(service)
+     *                 Passed to this.asXMultiServiceFactory().createInstance(service)
      *                 The result is expected to support the
      *                 XNamed and XTextContent interfaces.
      *
@@ -936,7 +916,7 @@ public class DocumentConnection {
 
         Object xObject;
         try {
-            xObject = this.mxDocFactory.createInstance(service);
+            xObject = this.asXMultiServiceFactory().createInstance(service);
         } catch (Exception e) {
             throw new CreationException(e.getMessage());
         }
@@ -1034,7 +1014,7 @@ public class DocumentConnection {
         try {
             String name = "com.sun.star.text.textfield.GetReference";
             xFieldProps = (XPropertySet) unoQI(XPropertySet.class,
-                                               this.mxDocFactory.createInstance(name));
+                                               this.asXMultiServiceFactory().createInstance(name));
         } catch (Exception e) {
             throw new CreationException(e.getMessage());
         }
@@ -1055,7 +1035,7 @@ public class DocumentConnection {
         XTextContent xRefContent = (XTextContent) unoQI(XTextContent.class, xFieldProps);
 
         // Insert the text field
-        this.xText.insertTextContent(cursor.getEnd(), xRefContent, false);
+        this.getText().insertTextContent(cursor.getEnd(), xRefContent, false);
     }
 
     /**

@@ -196,7 +196,7 @@ public class RangeSortVisual {
                     LOGGER.info("visualSort: initialSelection does not support TextRanges."
                                 + " We need to change the viewCursor.");
                 }
-                XTextRange newSelection = documentConnection.xText.getStart();
+                XTextRange newSelection = documentConnection.getText().getStart();
                 documentConnection.select(newSelection);
             }
         } else {
