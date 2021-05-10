@@ -41,7 +41,6 @@ import com.sun.star.text.ReferenceFieldPart;
 import com.sun.star.text.ReferenceFieldSource;
 import com.sun.star.text.XBookmarksSupplier;
 import com.sun.star.text.XFootnote;
-import com.sun.star.text.XParagraphCursor;
 import com.sun.star.text.XReferenceMarksSupplier;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextContent;
@@ -66,12 +65,6 @@ import org.slf4j.LoggerFactory;
  * Document-connection related variables.
  */
 public class DocumentConnection {
-    /** https://wiki.openoffice.org/wiki/Documentation/BASIC_Guide/
-     *  Structure_of_Text_Documents#Character_Properties
-     *  "CharStyleName" is an OpenOffice Property name.
-     */
-    private static final String CHAR_STYLE_NAME = "CharStyleName";
-    private static final String PARA_STYLE_NAME = "ParaStyleName";
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentConnection.class);
 
 
@@ -926,22 +919,6 @@ public class DocumentConnection {
             return Optional.ofNullable(footer.getAnchor());
         }
         return Optional.empty();
-    }
-
-    public static void setParagraphStyle(XTextCursor cursor,
-                                         String parStyle)
-        throws
-        UndefinedParagraphFormatException {
-        XParagraphCursor parCursor = unoQI(XParagraphCursor.class, cursor);
-        XPropertySet props = unoQI(XPropertySet.class, parCursor);
-        try {
-            props.setPropertyValue(PARA_STYLE_NAME, parStyle);
-        } catch (UnknownPropertyException
-                 | PropertyVetoException
-                 | IllegalArgumentException
-                 | WrappedTargetException ex) {
-            throw new UndefinedParagraphFormatException(parStyle);
-        }
     }
 
     /**

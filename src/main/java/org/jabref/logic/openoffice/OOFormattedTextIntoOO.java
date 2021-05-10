@@ -33,6 +33,7 @@ import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.Locale;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.style.CaseMap;
+import com.sun.star.text.XParagraphCursor;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
@@ -62,6 +63,11 @@ import org.slf4j.LoggerFactory;
 public class OOFormattedTextIntoOO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OOFormattedTextIntoOO.class);
+
+    /**
+     *  "ParaStyleName" is an OpenOffice Property name.
+     */
+    private static final String PARA_STYLE_NAME = "ParaStyleName";
 
     /*
      * Character property names used in multiple locations below.
@@ -601,7 +607,7 @@ public class OOFormattedTextIntoOO {
                         if (value != null && !value.equals("")) {
                             // LOGGER.warn(String.format("oo:ParaStyleName=\"%s\" found", value));
                             try {
-                                DocumentConnection.setParagraphStyle(cursor, value);
+                                setParagraphStyle(cursor, value);
                             } catch (UndefinedParagraphFormatException ex) {
                                 LOGGER.warn(String.format("oo:ParaStyleName=\"%s\" failed with"
                                                           + " UndefinedParagraphFormatException", value));
@@ -958,6 +964,22 @@ public class OOFormattedTextIntoOO {
                               Optional.of(SUPERSCRIPT_HEIGHT),
                               true,
                               formatStack);
+    }
+
+    public static void setParagraphStyle(XTextCursor cursor,
+                                         String parStyle)
+        throws
+        UndefinedParagraphFormatException {
+        XParagraphCursor parCursor = unoQI(XParagraphCursor.class, cursor);
+        XPropertySet props = unoQI(XPropertySet.class, parCursor);
+        try {
+            props.setPropertyValue(PARA_STYLE_NAME, parStyle);
+        } catch (UnknownPropertyException
+                 | PropertyVetoException
+                 | IllegalArgumentException
+                 | WrappedTargetException ex) {
+            throw new UndefinedParagraphFormatException(parStyle);
+        }
     }
 
 }

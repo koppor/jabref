@@ -32,6 +32,7 @@ import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.Locale;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.style.CaseMap;
+import com.sun.star.text.XParagraphCursor;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
@@ -61,6 +62,11 @@ import org.slf4j.LoggerFactory;
 public class OOFormattedTextIntoOOV1 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OOFormattedTextIntoOO.class);
+
+    /**
+     *  "ParaStyleName" is an OpenOffice Property name.
+     */
+    private static final String PARA_STYLE_NAME = "ParaStyleName";
 
     /*
      * Character property names used in multiple locations below.
@@ -237,7 +243,7 @@ public class OOFormattedTextIntoOOV1 {
                         // <p oo:ParaStyleName="Standard">
                         if (value != null && !value.equals("")) {
                             try {
-                                DocumentConnection.setParagraphStyle(cursor, value);
+                                setParagraphStyle(cursor, value);
                             } catch (UndefinedParagraphFormatException ex) {
                                 // ignore silently
                             }
@@ -915,6 +921,22 @@ public class OOFormattedTextIntoOOV1 {
 
     private static Formatter SuperScript() {
         return new CharEscapement(Optional.of(SUPERSCRIPT_VALUE), Optional.of(SUPERSCRIPT_HEIGHT), true);
+    }
+
+    public static void setParagraphStyle(XTextCursor cursor,
+                                         String parStyle)
+        throws
+        UndefinedParagraphFormatException {
+        XParagraphCursor parCursor = unoQI(XParagraphCursor.class, cursor);
+        XPropertySet props = unoQI(XPropertySet.class, parCursor);
+        try {
+            props.setPropertyValue(PARA_STYLE_NAME, parStyle);
+        } catch (UnknownPropertyException
+                 | PropertyVetoException
+                 | IllegalArgumentException
+                 | WrappedTargetException ex) {
+            throw new UndefinedParagraphFormatException(parStyle);
+        }
     }
 
 }
