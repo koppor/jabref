@@ -8,6 +8,7 @@ import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +80,9 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                                              boolean withoutBrackets)
         throws
         CreationException {
+
+        XTextDocument doc = documentConnection.asXTextDocument();
+
         // The cursor we received: we push it before us.
         position.collapseToEnd();
 
@@ -104,7 +108,8 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                                       bracketedContent,
                                       true);
 
-        documentConnection.insertReferenceMark(refMarkName,
+        DocumentConnection.insertReferenceMark(doc,
+                                               refMarkName,
                                                cursor,
                                                true /* absorb */);
 
@@ -134,12 +139,12 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
     /**
      * @return Optional.empty if there is no corresponding range.
      */
-    private static Optional<StorageBaseRefMark> getFromDocument(DocumentConnection documentConnection,
+    private static Optional<StorageBaseRefMark> getFromDocument(XTextDocument doc,
                                                                 String refMarkName)
         throws
         NoDocumentException,
         WrappedTargetException {
-        return (documentConnection.getReferenceMarkRange(refMarkName)
+        return (DocumentConnection.getReferenceMarkRange(doc, refMarkName)
                 .map(e -> new StorageBaseRefMark(refMarkName)));
     }
 
@@ -149,12 +154,12 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
      * See: removeCitationGroups
      */
     @Override
-    public void removeFromDocument(DocumentConnection documentConnection)
+    public void removeFromDocument(XTextDocument doc)
         throws
         WrappedTargetException,
         NoDocumentException,
         NoSuchElementException {
-        documentConnection.removeReferenceMark(this.getName());
+        DocumentConnection.removeReferenceMark(doc, this.getName());
     }
 
     @Override
@@ -174,8 +179,9 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         throws
         NoDocumentException,
         WrappedTargetException {
+        XTextDocument doc = documentConnection.asXTextDocument();
         String name = this.getName();
-        return documentConnection.getReferenceMarkRange(name);
+        return DocumentConnection.getReferenceMarkRange(doc, name);
     }
 
     /**
@@ -194,11 +200,12 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         WrappedTargetException,
         CreationException {
 
+        XTextDocument doc = documentConnection.asXTextDocument();
         String name = this.getName();
-        XTextCursor full = null;
+        Optional<XTextCursor> full = Optional.empty();
 
-        Optional<XTextContent> markAsTextContent = (documentConnection
-                                                    .getReferenceMarkAsTextContent(name));
+        Optional<XTextContent> markAsTextContent = (DocumentConnection
+                                                    .getReferenceMarkAsTextContent(doc, name));
 
         if (markAsTextContent.isEmpty()) {
             String msg = String.format("getRawCursor: markAsTextContent(%s).isEmpty()", name);
@@ -206,12 +213,12 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         }
 
         full = DocumentConnection.getTextCursorOfTextContent(markAsTextContent.get());
-        if (full == null) {
-            String msg = "getRawCursor: full == null";
+        if (full.isEmpty()) {
+            String msg = "getRawCursor: full.isEmpty()";
             LOGGER.warn(msg);
             return Optional.empty();
         }
-        return Optional.ofNullable(full);
+        return full;
     }
 
     /**
@@ -224,6 +231,8 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         WrappedTargetException,
         CreationException {
 
+        XTextDocument doc = documentConnection.asXTextDocument();
+
         String name = this.getName();
 
         final boolean debugThisFun = false;
@@ -235,18 +244,18 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         XTextCursor full = null;
         String fullText = null;
         for (int i = 1; i <= 2; i++) {
-            XTextContent markAsTextContent =
-                documentConnection.getReferenceMarkAsTextContent(name).orElse(null);
+            Optional<XTextContent> markAsTextContent =
+                DocumentConnection.getReferenceMarkAsTextContent(doc, name);
 
-            if (markAsTextContent == null) {
+            if (markAsTextContent.isEmpty()) {
                 String msg = String.format("getFillCursor:"
-                                           + " markAsTextContent(%s) == null (attempt %d)",
+                                           + " markAsTextContent(%s).isEmpty (attempt %d)",
                                            name,
                                            i);
                 throw new RuntimeException(msg);
             }
 
-            full = DocumentConnection.getTextCursorOfTextContent(markAsTextContent);
+            full = DocumentConnection.getTextCursorOfTextContent(markAsTextContent.get()).orElse(null);
             if (full == null) {
                 String msg = String.format("getFillCursor: full == null (attempt %d)", i);
                 throw new RuntimeException(msg);
@@ -278,7 +287,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                 }
                 full.setString("");
                 try {
-                    documentConnection.removeReferenceMark(name);
+                    DocumentConnection.removeReferenceMark(doc, name);
                 } catch (NoSuchElementException ex) {
                     String msg = String.format("getFillCursor got NoSuchElementException"
                                                + " for '%s'",
@@ -489,10 +498,10 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         }
     }
 
-    private static List<String> getUsedNames(DocumentConnection documentConnection)
+    private static List<String> getUsedNames(XTextDocument doc)
         throws
         NoDocumentException {
-        return documentConnection.getReferenceMarkNames();
+        return DocumentConnection.getReferenceMarkNames(doc);
     }
 
     public static class Manager implements StorageBase.NamedRangeManager {
@@ -512,20 +521,20 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         }
 
         @Override
-        public List<String> getUsedNames(DocumentConnection documentConnection)
+        public List<String> getUsedNames(XTextDocument doc)
             throws
             NoDocumentException {
-            return StorageBaseRefMark.getUsedNames(documentConnection);
+            return StorageBaseRefMark.getUsedNames(doc);
         }
 
         @Override
-        public Optional<StorageBase.NamedRange> getFromDocument(DocumentConnection documentConnection,
+        public Optional<StorageBase.NamedRange> getFromDocument(XTextDocument doc,
                                                                 String refMarkName)
             throws
             NoDocumentException,
             WrappedTargetException {
             return (StorageBaseRefMark
-                    .getFromDocument(documentConnection, refMarkName)
+                    .getFromDocument(doc, refMarkName)
                     .map(x -> x));
         }
     }

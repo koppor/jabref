@@ -53,6 +53,7 @@ import com.sun.star.container.XNameAccess;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextSection;
 import com.sun.star.uno.Any;
@@ -136,6 +137,12 @@ class OOBibBase {
         return this.connection.getDocumentConnectionOrThrow();
     }
 
+    public XTextDocument getXTextDocumentOrThrow()
+        throws
+        NoDocumentException {
+        return this.connection.getXTextDocumentOrThrow();
+    }
+
     /**
      *  The title of the current document, or Optional.empty()
      */
@@ -196,6 +203,7 @@ class OOBibBase {
         UnknownPropertyException,
         NotRemoveableException,
         PropertyExistException,
+        PropertyVetoException,
         IllegalTypeException,
         IllegalArgumentException,
         NoDocumentException,
@@ -304,55 +312,6 @@ class OOBibBase {
             fr.cleanFillCursorForCitationGroup(documentConnection, cgid);
         }
         position.collapseToEnd();
-    }
-
-    /**
-     * Test if we have a problem applying character style prescribe by
-     * the style.
-     *
-     * If the style prescribes an character style, we insert a
-     * character, format it and delete it.
-     *
-     * An UndefinedCharacterFormatException may be raised, indicating
-     * that the style requested is not available in the document.
-     *
-     * @param cursor Provides location where we insert, format and
-     * remove a character.
-     */
-    void assertCitationCharacterFormatIsOK(XTextCursor cursor,
-                                           OOBibStyle style)
-        throws UndefinedCharacterFormatException {
-        if (!style.isFormatCitations()) {
-            return;
-        }
-
-        /* We do not want to change the cursor passed in, so using a copy. */
-        XTextCursor c2 = cursor.getText().createTextCursorByRange(cursor.getEnd());
-
-        /*
-         * Inserting, formatting and removing a single character
-         * still leaves a style change in place.
-         * Let us try with two characters, formatting only the first.
-         */
-        c2
-         .getText()
-         .insertString(c2, "@*", false);
-
-        String charStyle = style.getCitationCharacterFormat();
-        try {
-            c2.goLeft((short) 1, false); // step over '*'
-            c2.goLeft((short) 1, true);  // select '@'
-            // The next line may throw
-            // UndefinedCharacterFormatException(charStyle).
-            // We let that propagate.
-            DocumentConnection.setCharStyle(c2, charStyle);
-        } finally {
-            // Before leaving this scope, always delete the character we
-            // inserted:
-            c2.collapseToStart();
-            c2.goRight((short) 2, true);  // select '@*'
-            c2.setString("");
-        }
     }
 
     /**
@@ -465,7 +424,8 @@ class OOBibBase {
         }
         final int nEntries = entries.size();
 
-        DocumentConnection documentConnection = getDocumentConnectionOrThrow();
+        DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
+        XTextDocument doc = this.getXTextDocumentOrThrow();
 
         checkStylesExistInTheDocument(style, documentConnection);
         checkIfOpenOfficeIsRecordingChanges(documentConnection);
@@ -478,12 +438,12 @@ class OOBibBase {
 
         try {
             if (useUndoContext) {
-                documentConnection.enterUndoContext("Insert citation");
+                DocumentConnection.enterUndoContext(doc, "Insert citation");
             }
             XTextCursor cursor;
             // Get the cursor positioned by the user.
             try {
-                cursor = documentConnection.getViewCursor();
+                cursor = DocumentConnection.getViewCursor(doc).orElse(null);
             } catch (RuntimeException ex) {
                 // com.sun.star.uno.RuntimeException
                 throw new JabRefException("Could not get the cursor",
@@ -509,8 +469,6 @@ class OOBibBase {
                 .collect(Collectors.toList());
 
             InTextCitationType itcType = OOProcess.citationTypeFromOptions(withText, inParenthesis);
-
-            assertCitationCharacterFormatIsOK(cursor, style);
 
             // JabRef53 style pageInfo list
             List<OOFormattedText> pageInfosForCitations =
@@ -565,7 +523,7 @@ class OOBibBase {
                 OOProcess.ProduceCitationMarkersResult x =
                     OOProcess.produceCitationMarkers(fr2.cgs, allBases, style);
                 try {
-                    documentConnection.lockControllers();
+                    DocumentConnection.lockControllers(doc);
                     applyNewCitationMarkers(documentConnection,
                                             fr2,
                                             x.citMarkers,
@@ -577,7 +535,7 @@ class OOBibBase {
                                           x.getBibliography(),
                                           this.alwaysAddCitedOnPages);
                 } finally {
-                    documentConnection.unlockControllers();
+                    DocumentConnection.unlockControllers(doc);
                 }
 
                 /*
@@ -599,7 +557,7 @@ class OOBibBase {
             throw new ConnectionLostException(ex.getMessage());
         } finally {
             if (useUndoContext) {
-                documentConnection.leaveUndoContext();
+                DocumentConnection.leaveUndoContext(doc);
             }
         }
     }
@@ -637,20 +595,17 @@ class OOBibBase {
         CreationException,
         WrappedTargetException,
         PropertyVetoException,
-        NoSuchElementException {
+        NoSuchElementException,
+        JabRefException {
+
+        XTextDocument doc = documentConnection.asXTextDocument();
+
+        checkStylesExistInTheDocument(style, documentConnection);
 
         CitationGroups cgs = fr.cgs;
-        final boolean hadBibSection = (documentConnection
-                                       .getBookmarkRange(OOBibBase.BIB_SECTION_NAME)
+        final boolean hadBibSection = (DocumentConnection
+                                       .getBookmarkRange(doc, OOBibBase.BIB_SECTION_NAME)
                                        .isPresent());
-
-        // If we are supposed to set character format for citations,
-        // must run a test before we delete old citation
-        // markers. Otherwise, if the specified character format
-        // doesn't exist, we end up deleting the markers before the
-        // process crashes due to a the missing format, with
-        // catastrophic consequences for the user.
-        boolean mustTestCharFormat = style.isFormatCitations();
 
         for (Map.Entry<CitationGroupID, OOFormattedText> kv : citMarkers.entrySet()) {
 
@@ -669,11 +624,6 @@ class OOBibBase {
                 XTextCursor cursor = fr.getFillCursorForCitationGroup(documentConnection,
                                                                       cgid);
 
-                if (mustTestCharFormat) {
-                    assertCitationCharacterFormatIsOK(cursor, style);
-                    mustTestCharFormat = false;
-                }
-
                 fillCitationMarkInCursor(documentConnection,
                                          cursor,
                                          citationText,
@@ -684,8 +634,8 @@ class OOBibBase {
             }
 
             if (hadBibSection
-                && (documentConnection
-                    .getBookmarkRange(OOBibBase.BIB_SECTION_NAME)
+                && (DocumentConnection
+                    .getBookmarkRange(doc, OOBibBase.BIB_SECTION_NAME)
                     .isEmpty())) {
                 // Overwriting text already there is too harsh.
                 // I am making it an error, to see if we ever get here.
@@ -719,7 +669,8 @@ class OOBibBase {
         CreationException,
         PropertyVetoException,
         UnknownPropertyException,
-        UndefinedParagraphFormatException {
+        UndefinedParagraphFormatException,
+        NoDocumentException {
 
         clearBibTextSectionContent2(documentConnection);
 
@@ -740,15 +691,18 @@ class OOBibBase {
         IllegalArgumentException,
         CreationException {
 
+        XTextDocument doc = documentConnection.asXTextDocument();
+
         // Always creating at the end of documentConnection.getText()
         // Alternatively, we could receive a cursor.
-        XTextCursor textCursor = documentConnection.getText().createTextCursor();
+        XTextCursor textCursor = doc.getText().createTextCursor();
         textCursor.gotoEnd(false);
 
         // OOUtil.insertParagraphBreak(documentConnection.xText, textCursor);
         textCursor.collapseToEnd();
 
-        documentConnection.insertTextSection(OOBibBase.BIB_SECTION_NAME,
+        DocumentConnection.insertTextSection(doc,
+                                             OOBibBase.BIB_SECTION_NAME,
                                              textCursor,
                                              false);
     }
@@ -764,9 +718,11 @@ class OOBibBase {
         throws
         WrappedTargetException,
         IllegalArgumentException,
-        CreationException {
+        CreationException,
+        NoDocumentException {
 
-        XNameAccess nameAccess = documentConnection.getTextSections();
+        XTextDocument doc = documentConnection.asXTextDocument();
+        XNameAccess nameAccess = DocumentConnection.getTextSections(doc);
         if (!nameAccess.hasByName(OOBibBase.BIB_SECTION_NAME)) {
             createBibTextSection2(documentConnection);
             return;
@@ -777,8 +733,8 @@ class OOBibBase {
             XTextSection section = (XTextSection) a.getObject();
             // Clear it:
 
-            XTextCursor cursor = (documentConnection.getText()
-                                  .createTextCursorByRange(section.getAnchor()));
+            XTextCursor cursor =
+                (documentConnection.getXText().createTextCursorByRange(section.getAnchor()));
 
             cursor.gotoRange(section.getAnchor(), false);
             cursor.setString("");
@@ -814,13 +770,14 @@ class OOBibBase {
         UndefinedParagraphFormatException,
         IllegalArgumentException,
         CreationException {
+        XTextDocument doc = documentConnection.asXTextDocument();
 
-        XTextSection section = (documentConnection
-                                .getTextSectionByName(OOBibBase.BIB_SECTION_NAME)
+        XTextSection section = (DocumentConnection
+                                .getTextSectionByName(doc, OOBibBase.BIB_SECTION_NAME)
                                 .orElseThrow(RuntimeException::new));
 
-        XTextCursor cursor = (documentConnection.getText()
-                              .createTextCursorByRange(section.getAnchor()));
+        XTextCursor cursor =
+            (documentConnection.getXText().createTextCursorByRange(section.getAnchor()));
 
         // emit the title of the bibliography
         OOFormattedTextIntoOO.removeDirectFormatting(cursor);
@@ -832,13 +789,14 @@ class OOBibBase {
         cursor.collapseToEnd();
 
         // remove the inital empty paragraph from the section.
-        XTextCursor initialParagraph = (documentConnection.getText()
-                                        .createTextCursorByRange(section.getAnchor()));
+        XTextCursor initialParagraph =
+            (documentConnection.getXText().createTextCursorByRange(section.getAnchor()));
         initialParagraph.collapseToStart();
         initialParagraph.goRight((short) 1, true);
         initialParagraph.setString("");
 
-        documentConnection.insertBookmark(OOBibBase.BIB_SECTION_END_NAME,
+        DocumentConnection.insertBookmark(doc,
+                                          OOBibBase.BIB_SECTION_END_NAME,
                                           cursor,
                                           true);
         cursor.collapseToEnd();
@@ -883,13 +841,15 @@ class OOBibBase {
 
         final boolean useLockControllers = true;
         DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
+        XTextDocument doc = this.getXTextDocumentOrThrow();
+
         checkStylesExistInTheDocument(style, documentConnection);
         checkIfOpenOfficeIsRecordingChanges(documentConnection);
 
         OOFrontend fr = new OOFrontend(documentConnection);
 
         try {
-            documentConnection.enterUndoContext("Merge citations");
+            DocumentConnection.enterUndoContext(doc, "Merge citations");
 
             boolean madeModifications = false;
 
@@ -902,7 +862,7 @@ class OOBibBase {
             try {
 
                 if (useLockControllers) {
-                    documentConnection.lockControllers();
+                    DocumentConnection.lockControllers(doc);
                 }
 
                 /*
@@ -1115,11 +1075,6 @@ class OOBibBase {
                     }
                 } // if (referenceMarkNames.size() > 0)
 
-                if (joinableGroups.size() > 0) {
-                    XTextCursor textCursor = joinableGroupsCursors.get(0);
-                    assertCitationCharacterFormatIsOK(textCursor, style);
-                }
-
                 /*
                  * Now we can process the joinable groups
                  */
@@ -1183,12 +1138,12 @@ class OOBibBase {
 
             } finally {
                 if (useLockControllers) {
-                    documentConnection.unlockControllers();
+                    DocumentConnection.unlockControllers(doc);
                 }
             }
 
             if (madeModifications) {
-                documentConnection.refresh();
+                DocumentConnection.refresh(doc);
                 OOFrontend fr2 = new OOFrontend(documentConnection);
                 fr2.imposeGlobalOrder(documentConnection);
                 OOProcess.ProduceCitationMarkersResult x =
@@ -1197,7 +1152,7 @@ class OOBibBase {
                                                      style);
                 try {
                     if (useLockControllers) {
-                        documentConnection.lockControllers();
+                        DocumentConnection.lockControllers(doc);
                     }
                     applyNewCitationMarkers(documentConnection,
                                             fr2,
@@ -1206,12 +1161,12 @@ class OOBibBase {
                     // bibliography is not refreshed
                 } finally {
                     if (useLockControllers) {
-                        documentConnection.unlockControllers();
+                        DocumentConnection.unlockControllers(doc);
                     }
                 }
             }
         } finally {
-            documentConnection.leaveUndoContext();
+            DocumentConnection.leaveUndoContext(doc);
         }
         // documentConnection.refresh();
     } // combineCiteMarkers
@@ -1245,7 +1200,8 @@ class OOBibBase {
         Objects.requireNonNull(style);
 
         final boolean useLockControllers = true;
-        DocumentConnection documentConnection = getDocumentConnectionOrThrow();
+        DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
+        XTextDocument doc = this.getXTextDocumentOrThrow();
 
         checkStylesExistInTheDocument(style, documentConnection);
         checkIfOpenOfficeIsRecordingChanges(documentConnection);
@@ -1253,7 +1209,7 @@ class OOBibBase {
         OOFrontend fr = new OOFrontend(documentConnection);
 
         try {
-            documentConnection.enterUndoContext("Separate citations");
+            DocumentConnection.enterUndoContext(doc, "Separate citations");
             boolean madeModifications = false;
 
             // {@code names} does not need to be sorted.
@@ -1261,11 +1217,10 @@ class OOBibBase {
 
             try {
                 if (useLockControllers) {
-                    documentConnection.lockControllers();
+                    DocumentConnection.lockControllers(doc);
                 }
 
                 int pivot = 0;
-                boolean setCharStyleTested = false;
 
                 while (pivot < (names.size())) {
                     CitationGroupID cgid = names.get(pivot);
@@ -1274,16 +1229,6 @@ class OOBibBase {
                                          .getMarkRange(documentConnection, cgid)
                                          .orElseThrow(RuntimeException::new));
                     XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
-
-                    // If we are supposed to set character format for
-                    // citations, test this before making any changes. This
-                    // way we can throw an exception before any reference
-                    // marks are removed, preventing damage to the user's
-                    // document:
-                    if (!setCharStyleTested) {
-                        assertCitationCharacterFormatIsOK(textCursor, style);
-                        setCharStyleTested = true;
-                    }
 
                     // Note: JabRef52 returns cg.pageInfo for the last citation.
                     List<OOFormattedText> pageInfosForCitations = fr.cgs.getPageInfosForCitations(cg);
@@ -1329,30 +1274,30 @@ class OOBibBase {
                 }
             } finally {
                 if (useLockControllers) {
-                    documentConnection.unlockControllers();
+                    DocumentConnection.unlockControllers(doc);
                 }
             }
 
             if (madeModifications) {
-                documentConnection.refresh();
+                DocumentConnection.refresh(doc);
                 OOFrontend fr2 = new OOFrontend(documentConnection);
                 fr2.imposeGlobalOrder(documentConnection);
                 OOProcess.ProduceCitationMarkersResult x =
                     OOProcess.produceCitationMarkers(fr2.cgs, databases, style);
                 try {
                     if (useLockControllers) {
-                        documentConnection.lockControllers();
+                        DocumentConnection.lockControllers(doc);
                     }
                     applyNewCitationMarkers(documentConnection, fr2, x.citMarkers, style);
                     // bibliography is not refreshed
                 } finally {
                     if (useLockControllers) {
-                        documentConnection.unlockControllers();
+                        DocumentConnection.unlockControllers(doc);
                     }
                 }
             }
         } finally {
-            documentConnection.leaveUndoContext();
+            DocumentConnection.leaveUndoContext(doc);
         }
         // documentConnection.refresh();
     }
@@ -1391,12 +1336,14 @@ class OOBibBase {
         CreationException,
         InvalidStateException {
 
-        DocumentConnection documentConnection = getDocumentConnectionOrThrow();
+        DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
+        XTextDocument doc = this.getXTextDocumentOrThrow();
+
         try {
-            documentConnection.enterUndoContext("Changes during \"Export cited\"");
+            DocumentConnection.enterUndoContext(doc, "Changes during \"Export cited\"");
             return this.generateDatabase(databases, documentConnection);
         } finally {
-            documentConnection.leaveUndoContext();
+            DocumentConnection.leaveUndoContext(doc);
         }
     }
 
@@ -1475,11 +1422,9 @@ class OOBibBase {
         WrappedTargetException,
         PropertyVetoException,
         JabRefException {
-        /* We could do this: documentConnection.setRecordChanges(false);
-         * but it is more transparent to ask.
-         */
-        boolean recordingChanges = documentConnection.getRecordChanges();
-        int nRedlines = documentConnection.countRedlines();
+        XTextDocument doc = documentConnection.asXTextDocument();
+        boolean recordingChanges = DocumentConnection.getRecordChanges(doc);
+        int nRedlines = DocumentConnection.countRedlines(doc);
         if (recordingChanges || nRedlines > 0) {
             String msg = "";
             if (recordingChanges) {
@@ -1519,8 +1464,8 @@ class OOBibBase {
         JabRefException,
         NoSuchElementException,
         WrappedTargetException {
-
-        Optional<String> internalName = documentConnection.getInternalNameOfParagraphStyle(styleName);
+        XTextDocument doc = documentConnection.asXTextDocument();
+        Optional<String> internalName = DocumentConnection.getInternalNameOfParagraphStyle(doc, styleName);
 
         if (internalName.isEmpty()) {
             String msg =
@@ -1559,9 +1504,9 @@ class OOBibBase {
         JabRefException,
         NoSuchElementException,
         WrappedTargetException {
-
-        Optional<String> internalName = (documentConnection
-                                         .getInternalNameOfCharacterStyle(styleName));
+        XTextDocument doc = documentConnection.asXTextDocument();
+        Optional<String> internalName = (DocumentConnection
+                                         .getInternalNameOfCharacterStyle(doc, styleName));
 
         if (internalName.isEmpty()) {
             String msg =
@@ -1642,12 +1587,14 @@ class OOBibBase {
 
         styleIsRequired(style);
 
-        DocumentConnection documentConnection = getDocumentConnectionOrThrow();
+        DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
+        XTextDocument doc = this.getXTextDocumentOrThrow();
+
         checkStylesExistInTheDocument(style, documentConnection);
         checkIfOpenOfficeIsRecordingChanges(documentConnection);
 
         try {
-            documentConnection.enterUndoContext("Refresh bibliography");
+            DocumentConnection.enterUndoContext(doc, "Refresh bibliography");
 
             boolean requireSeparation = false;
             // CitationGroups cgs = new CitationGroups(documentConnection);
@@ -1667,7 +1614,7 @@ class OOBibBase {
                                                  style);
             try {
                 if (useLockControllers) {
-                    documentConnection.lockControllers();
+                    DocumentConnection.lockControllers(doc);
                 }
                 applyNewCitationMarkers(documentConnection,
                                         fr,
@@ -1680,12 +1627,12 @@ class OOBibBase {
                                       this.alwaysAddCitedOnPages);
                 return x.getUnresolvedKeys();
             } finally {
-                if (useLockControllers && documentConnection.hasControllersLocked()) {
-                    documentConnection.unlockControllers();
+                if (useLockControllers && DocumentConnection.hasControllersLocked(doc)) {
+                    DocumentConnection.unlockControllers(doc);
                 }
             }
         } finally {
-            documentConnection.leaveUndoContext();
+            DocumentConnection.leaveUndoContext(doc);
         }
     }
 

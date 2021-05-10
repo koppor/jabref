@@ -94,7 +94,6 @@ class Codec52 {
                                            InTextCitationType itcType)
         throws NoDocumentException {
 
-        // XNameAccess xNamedRefMarks = documentConnection.getReferenceMarks();
         int i = 0;
         int j = InTextCitationTypeToInt(itcType);
         String name = BIB_CITATION + '_' + j + '_' + bibtexKey;

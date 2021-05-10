@@ -34,6 +34,7 @@ import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.style.CaseMap;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
 import com.sun.star.uno.UnoRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +157,8 @@ public class OOFormattedTextIntoOOV1 {
         NoSuchElementException,
         CreationException {
 
+        XTextDocument doc = documentConnection.asXTextDocument();
+
         String lText = OOFormattedText.toString(ootext);
 
         System.out.println(lText);
@@ -252,8 +255,8 @@ public class OOFormattedTextIntoOOV1 {
                     String value = kv.getValue();
                     switch (key) {
                     case "target":
-                        documentConnection
-                            .insertReferenceToPageNumberOfReferenceMark(value, cursor);
+                        DocumentConnection
+                            .insertReferenceToPageNumberOfReferenceMark(doc, value, cursor);
                         break;
                     default:
                         LOGGER.warn(String.format("Unexpected attribute '%s' for <%s>", key, tagName));

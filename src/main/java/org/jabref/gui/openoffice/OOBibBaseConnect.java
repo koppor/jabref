@@ -214,7 +214,12 @@ class OOBibBaseConnect {
         if (this.xDocumentConnection == null) {
             return true;
         }
-        boolean res = this.xDocumentConnection.documentConnectionMissing();
+        XTextDocument doc = this.xDocumentConnection.asXTextDocument();
+        if (doc == null) {
+            forgetDocument();
+            return true;
+        }
+        boolean res = DocumentConnection.documentConnectionMissing(doc);
         if (res) {
             forgetDocument();
         }
@@ -234,6 +239,12 @@ class OOBibBaseConnect {
         return this.xDocumentConnection;
     }
 
+    public XTextDocument getXTextDocumentOrThrow()
+        throws
+        NoDocumentException {
+        return getDocumentConnectionOrThrow().asXTextDocument();
+    }
+
     /**
      *  The title of the current document, or Optional.empty()
      */
@@ -241,7 +252,7 @@ class OOBibBaseConnect {
         if (documentConnectionMissing()) {
             return Optional.empty();
         } else {
-            return this.xDocumentConnection.getDocumentTitle();
+            return DocumentConnection.getDocumentTitle(this.xDocumentConnection.asXTextDocument());
         }
     }
 

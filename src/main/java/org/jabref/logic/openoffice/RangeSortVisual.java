@@ -12,6 +12,7 @@ import org.jabref.logic.JabRefException;
 import com.sun.star.awt.Point;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XServiceInfo;
+import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextViewCursor;
 import org.slf4j.Logger;
@@ -145,9 +146,11 @@ public class RangeSortVisual {
         NoDocumentException,
         JabRefException {
 
+        XTextDocument doc = documentConnection.asXTextDocument();
+
         final int inputSize = vses.size();
 
-        if (documentConnection.hasControllersLocked()) {
+        if (DocumentConnection.hasControllersLocked(doc)) {
             LOGGER.warn("visualSort:"
                         + " with ControllersLocked, viewCursor.gotoRange"
                         + " is probably useless");
@@ -182,7 +185,7 @@ public class RangeSortVisual {
          */
         final boolean debugThisFun = false;
 
-        XServiceInfo initialSelection = documentConnection.getSelectionAsServiceInfo().orElse(null);
+        XServiceInfo initialSelection = DocumentConnection.getSelectionAsXServiceInfo(doc).orElse(null);
 
         if (initialSelection != null) {
             if (Arrays.stream(initialSelection.getSupportedServiceNames())
@@ -196,8 +199,8 @@ public class RangeSortVisual {
                     LOGGER.info("visualSort: initialSelection does not support TextRanges."
                                 + " We need to change the viewCursor.");
                 }
-                XTextRange newSelection = documentConnection.getText().getStart();
-                documentConnection.select(newSelection);
+                XTextRange newSelection = documentConnection.getXText().getStart();
+                DocumentConnection.select(doc, newSelection);
             }
         } else {
             if (debugThisFun) {
@@ -205,7 +208,7 @@ public class RangeSortVisual {
             }
         }
 
-        XTextViewCursor viewCursor = documentConnection.getViewCursor();
+        XTextViewCursor viewCursor = DocumentConnection.getViewCursor(doc).orElse(null);
         Objects.requireNonNull(viewCursor);
         try {
             viewCursor.getStart();
@@ -225,7 +228,7 @@ public class RangeSortVisual {
          * Restore initial state of selection (and thus viewCursor)
          */
         if (initialSelection != null) {
-            documentConnection.select(initialSelection);
+            DocumentConnection.select(doc, initialSelection);
         }
 
         if (positions.size() != inputSize) {

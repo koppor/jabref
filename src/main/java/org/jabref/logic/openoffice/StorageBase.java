@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 
 public class StorageBase {
@@ -59,7 +60,7 @@ public class StorageBase {
         /**
          *  Note: create is in NamedRangeManager
          */
-        public void removeFromDocument(DocumentConnection documentConnection)
+        public void removeFromDocument(XTextDocument doc)
             throws
             WrappedTargetException,
             NoDocumentException,
@@ -79,11 +80,11 @@ public class StorageBase {
             throws
             CreationException;
 
-        public List<String> getUsedNames(DocumentConnection documentConnection)
+        public List<String> getUsedNames(XTextDocument doc)
             throws
             NoDocumentException;
 
-        public Optional<NamedRange> getFromDocument(DocumentConnection documentConnection,
+        public Optional<NamedRange> getFromDocument(XTextDocument doc,
                                                     String refMarkName)
             throws
             NoDocumentException,

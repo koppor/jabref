@@ -19,10 +19,12 @@ import org.jabref.model.openoffice.CitationEntry;
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
 import com.sun.star.beans.PropertyExistException;
+import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +50,8 @@ public class Backend52 {
     public List<String> getJabRefReferenceMarkNames(DocumentConnection documentConnection)
         throws
         NoDocumentException {
-        List<String> allNames = this.citationStorageManager.getUsedNames(documentConnection);
+        XTextDocument doc = documentConnection.asXTextDocument();
+        List<String> allNames = this.citationStorageManager.getUsedNames(doc);
         return Codec52.filterIsJabRefReferenceMarkName(allNames);
     }
 
@@ -61,13 +64,15 @@ public class Backend52 {
      */
     private List<String> findUnusedJabrefPropertyNames(DocumentConnection documentConnection,
                                                        List<String> citationGroupNames) {
+        XTextDocument doc = documentConnection.asXTextDocument();
+
         // Collect unused jabrefPropertyNames
         Set<String> citationGroupNamesSet =
             citationGroupNames.stream().collect(Collectors.toSet());
 
         List<String> pageInfoThrash = new ArrayList<>();
         List<String> jabrefPropertyNames =
-            documentConnection.getCustomPropertyNames()
+            DocumentConnection.getUserDefinedPropertiesNames(doc)
             .stream()
             .filter(Codec52::isJabRefReferenceMarkName)
             .collect(Collectors.toList());
@@ -123,6 +128,8 @@ public class Backend52 {
         WrappedTargetException,
         NoDocumentException {
 
+        XTextDocument doc = documentConnection.asXTextDocument();
+
         Optional<Codec52.ParsedMarkName> op = Codec52.parseMarkName(refMarkName);
         if (op.isEmpty()) {
             throw new IllegalArgumentException("readCitationGroupFromDocumentOrThrow:"
@@ -134,13 +141,14 @@ public class Backend52 {
                                     .map(Citation::new)
                                     .collect(Collectors.toList()));
 
-        Optional<OOFormattedText> pageInfo = (documentConnection.getCustomProperty(refMarkName)
-                                              .map(OOFormattedText::fromString));
+        Optional<OOFormattedText> pageInfo =
+            (DocumentConnection.getUserDefinedStringPropertyValue(doc, refMarkName)
+             .map(OOFormattedText::fromString));
 
         setPageInfoInData(citations, pageInfo);
 
         Optional<StorageBase.NamedRange> sr = (citationStorageManager
-                                               .getFromDocument(documentConnection, refMarkName));
+                                               .getFromDocument(doc, refMarkName));
 
         if (sr.isEmpty()) {
             throw new IllegalArgumentException("readCitationGroupFromDocumentOrThrow:"
@@ -240,13 +248,16 @@ public class Backend52 {
         WrappedTargetException,
         NotRemoveableException,
         PropertyExistException,
+        PropertyVetoException,
         IllegalTypeException {
+
+        XTextDocument doc = documentConnection.asXTextDocument();
 
         String xkey = (citationKeys.stream()
                        .collect(Collectors.joining(",")));
 
         Set<String> usedNames = new HashSet<>(this.citationStorageManager
-                                              .getUsedNames(documentConnection));
+                                              .getUsedNames(doc));
 
         String refMarkName = Codec52.getUniqueMarkName(usedNames,
                                                        xkey,
@@ -288,11 +299,13 @@ public class Backend52 {
         case JabRef52:
             Optional<OOFormattedText> pageInfo = getJabRef52PageInfoFromList(pageInfosForCitations);
             if (pageInfo.isPresent() && !"".equals(OOFormattedText.toString(pageInfo.get()))) {
-                documentConnection.setCustomProperty(refMarkName,
-                                                     OOFormattedText.toString(pageInfo.get()));
+                DocumentConnection.setOrCreateUserDefinedStringPropertyValue(doc,
+                                                                             refMarkName,
+                                                                             OOFormattedText
+                                                                             .toString(pageInfo.get()));
             } else {
                 // do not inherit from trash
-                documentConnection.removeCustomProperty(refMarkName);
+                DocumentConnection.removeUserDefinedProperty(doc, refMarkName);
             }
             CitationGroup cg = new CitationGroup(cgid,
                                                  sr,
@@ -360,9 +373,11 @@ public class Backend52 {
         IllegalTypeException,
         PropertyExistException {
 
+        XTextDocument doc = documentConnection.asXTextDocument();
+
         String refMarkName = cg.cgRangeStorage.getName();
-        cg.cgRangeStorage.removeFromDocument(documentConnection);
-        documentConnection.removeCustomProperty(refMarkName);
+        cg.cgRangeStorage.removeFromDocument(doc);
+        DocumentConnection.removeUserDefinedProperty(doc, refMarkName);
     }
 
     /**
@@ -463,16 +478,21 @@ public class Backend52 {
         UnknownPropertyException,
         NotRemoveableException,
         PropertyExistException,
+        PropertyVetoException,
         IllegalTypeException,
         IllegalArgumentException,
-        NoDocumentException {
+        NoDocumentException,
+        WrappedTargetException {
+
+        XTextDocument doc = documentConnection.asXTextDocument();
         switch (dataModel) {
         case JabRef52:
             for (CitationEntry entry : citationEntries) {
                 Optional<String> pageInfo = entry.getPageInfo();
                 if (pageInfo.isPresent()) {
-                    documentConnection.setCustomProperty(entry.getRefMarkName(),
-                                                         pageInfo.get());
+                    DocumentConnection.setOrCreateUserDefinedStringPropertyValue(doc,
+                                                                                 entry.getRefMarkName(),
+                                                                                 pageInfo.get());
                 }
             }
             break;

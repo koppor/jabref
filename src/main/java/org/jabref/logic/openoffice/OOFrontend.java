@@ -21,6 +21,7 @@ import org.jabref.model.openoffice.CitationEntry;
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
 import com.sun.star.beans.PropertyExistException;
+import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
@@ -320,6 +321,7 @@ public class OOFrontend {
         WrappedTargetException,
         NotRemoveableException,
         PropertyExistException,
+        PropertyVetoException,
         IllegalTypeException {
 
         CitationGroup cg = backend.createCitationGroup(documentConnection,
@@ -613,9 +615,11 @@ public class OOFrontend {
         UnknownPropertyException,
         NotRemoveableException,
         PropertyExistException,
+        PropertyVetoException,
         IllegalTypeException,
         IllegalArgumentException,
-        NoDocumentException {
+        NoDocumentException,
+        WrappedTargetException {
         this.backend.applyCitationEntries(documentConnection, citationEntries);
     }
 

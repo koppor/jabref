@@ -57,7 +57,7 @@ public class ManageCitationsDialogViewModel {
         List<CitationEntry> ciationEntries = citations.stream().map(CitationEntryViewModel::toCitationEntry).collect(Collectors.toList());
         try {
             ooBase.applyCitationEntries(ciationEntries);
-        } catch (UnknownPropertyException | NotRemoveableException | PropertyExistException | IllegalTypeException |
+        } catch (UnknownPropertyException | NotRemoveableException | PropertyExistException | PropertyVetoException | IllegalTypeException |
                  NoDocumentException | WrappedTargetException |
                 IllegalArgumentException ex) {
             LOGGER.warn("Problem modifying citation", ex);
