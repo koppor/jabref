@@ -152,7 +152,7 @@ public class OOFormattedTextIntoOOV1 {
      * @param position   The cursor giving the insert location. Not modified.
      * @param ootext     The marked-up text to insert.
      */
-    public static void write(DocumentConnection documentConnection,
+    public static void write(XTextDocument doc,
                              XTextCursor position,
                              OOFormattedText ootext)
         throws
@@ -162,8 +162,6 @@ public class OOFormattedTextIntoOOV1 {
         IllegalArgumentException,
         NoSuchElementException,
         CreationException {
-
-        XTextDocument doc = documentConnection.asXTextDocument();
 
         String lText = OOFormattedText.toString(ootext);
 

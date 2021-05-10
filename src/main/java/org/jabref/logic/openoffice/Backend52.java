@@ -386,12 +386,12 @@ public class Backend52 {
      *
      */
     public Optional<XTextRange> getMarkRange(CitationGroup cg,
-                                             DocumentConnection documentConnection)
+                                             XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {
 
-        return cg.cgRangeStorage.getMarkRange(documentConnection);
+        return cg.cgRangeStorage.getMarkRange(doc);
     }
 
     /**

@@ -26,6 +26,7 @@ import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,12 +112,13 @@ public class OOFrontend {
         NoDocumentException,
         WrappedTargetException {
 
+        XTextDocument doc = documentConnection.asXTextDocument();
         List<CitationGroupID> cgids = new ArrayList<>(cgs.getCitationGroupIDs());
 
         List<RangeSort.RangeSortEntry> vses = new ArrayList<>();
         for (CitationGroupID cgid : cgids) {
             XTextRange range = (this
-                                .getMarkRange(documentConnection, cgid)
+                                .getMarkRange(doc, cgid)
                                 .orElseThrow(RuntimeException::new));
             vses.add(new RangeSort.RangeSortEntry(range, 0, cgid));
         }
@@ -387,14 +389,13 @@ public class OOFrontend {
      * @return Null if the reference mark is missing.
      *
      */
-    public Optional<XTextRange> getMarkRange(DocumentConnection documentConnection,
+    public Optional<XTextRange> getMarkRange(XTextDocument doc,
                                              CitationGroupID cgid)
         throws
         NoDocumentException,
         WrappedTargetException {
-
         CitationGroup cg = this.cgs.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
-        return backend.getMarkRange(cg, documentConnection);
+        return backend.getMarkRange(cg, doc);
     }
 
     /**
@@ -451,12 +452,13 @@ public class OOFrontend {
         NoDocumentException,
         WrappedTargetException {
 
+        XTextDocument doc = documentConnection.asXTextDocument();
         List<RangeForOverlapCheck> xs = new ArrayList<>(cgs.numberOfCitationGroups());
 
         List<CitationGroupID> cgids = new ArrayList<>(cgs.getCitationGroupIDs());
 
         for (CitationGroupID cgid : cgids) {
-            XTextRange r = this.getMarkRange(documentConnection, cgid).orElseThrow(RuntimeException::new);
+            XTextRange r = this.getMarkRange(doc, cgid).orElseThrow(RuntimeException::new);
             CitationGroup cg = cgs.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
             String name = cg.cgRangeStorage.getName();
             xs.add(new RangeForOverlapCheck(r,

@@ -20,7 +20,7 @@ public class StorageBase {
         /**
          * @return Optional.empty if the mark is missing from the document.
          */
-        public Optional<XTextRange> getMarkRange(DocumentConnection documentConnection)
+        public Optional<XTextRange> getMarkRange(XTextDocument doc)
             throws
             NoDocumentException,
             WrappedTargetException;

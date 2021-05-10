@@ -63,6 +63,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Document-connection related variables.
+ *
+ *  documentConnection.asXTextDocument()
  */
 public class DocumentConnection {
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentConnection.class);

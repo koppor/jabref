@@ -231,6 +231,7 @@ class OOBibBase {
         Objects.requireNonNull(cursor);
         Objects.requireNonNull(citationText);
         Objects.requireNonNull(style);
+        XTextDocument doc = documentConnection.asXTextDocument();
 
         if (withText) {
             OOFormattedText citationText2 = OOFormat.setLocaleNone(citationText);
@@ -241,7 +242,7 @@ class OOBibBase {
             // inject a ZERO_WIDTH_SPACE to hold the initial character format
             final String ZERO_WIDTH_SPACE = "\u200b";
             citationText2 = OOFormattedText.fromString(ZERO_WIDTH_SPACE + citationText2.asString());
-            OOFormattedTextIntoOO.write(documentConnection, cursor, citationText2);
+            OOFormattedTextIntoOO.write(doc, cursor, citationText2);
         } else {
             cursor.setString("");
         }
@@ -785,7 +786,7 @@ class OOBibBase {
                                                                                    bibliography,
                                                                                    style,
                                                                                    alwaysAddCitedOnPages);
-        OOFormattedTextIntoOO.write(documentConnection, cursor, bibliographyText);
+        OOFormattedTextIntoOO.write(doc, cursor, bibliographyText);
         cursor.collapseToEnd();
 
         // remove the inital empty paragraph from the section.
@@ -892,7 +893,7 @@ class OOBibBase {
                         CitationGroup cg = fr.cgs.getCitationGroupOrThrow(cgid);
 
                         XTextRange currentRange = (fr
-                                                   .getMarkRange(documentConnection, cgid)
+                                                   .getMarkRange(doc, cgid)
                                                    .orElseThrow(RuntimeException::new));
 
                         boolean addToGroup = true;
@@ -1226,7 +1227,7 @@ class OOBibBase {
                     CitationGroupID cgid = names.get(pivot);
                     CitationGroup cg = fr.cgs.getCitationGroupOrThrow(cgid);
                     XTextRange range1 = (fr
-                                         .getMarkRange(documentConnection, cgid)
+                                         .getMarkRange(doc, cgid)
                                          .orElseThrow(RuntimeException::new));
                     XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
 

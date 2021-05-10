@@ -73,15 +73,13 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         return cursor;
     }
 
-    private static void createReprInDocument(DocumentConnection documentConnection,
+    private static void createReprInDocument(XTextDocument doc,
                                              String refMarkName,
                                              XTextCursor position,
                                              boolean insertSpaceAfter,
                                              boolean withoutBrackets)
         throws
         CreationException {
-
-        XTextDocument doc = documentConnection.asXTextDocument();
 
         // The cursor we received: we push it before us.
         position.collapseToEnd();
@@ -128,7 +126,9 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                                             boolean withoutBrackets)
         throws
         CreationException {
-        createReprInDocument(documentConnection,
+        XTextDocument doc = documentConnection.asXTextDocument();
+
+        createReprInDocument(doc,
                              refMarkName,
                              position,
                              insertSpaceAfter,
@@ -175,11 +175,10 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
      * See: getReferenceMarkRange
      */
     @Override
-    public Optional<XTextRange> getMarkRange(DocumentConnection documentConnection)
+    public Optional<XTextRange> getMarkRange(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {
-        XTextDocument doc = documentConnection.asXTextDocument();
         String name = this.getName();
         return DocumentConnection.getReferenceMarkRange(doc, name);
     }
@@ -294,7 +293,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                                                name);
                     LOGGER.warn(msg);
                 }
-                createReprInDocument(documentConnection,
+                createReprInDocument(doc,
                                      name,
                                      full,
                                      false, /* insertSpaceAfter */
