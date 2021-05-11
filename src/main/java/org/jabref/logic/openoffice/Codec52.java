@@ -21,7 +21,7 @@ class Codec52 {
     private static final String BIB_CITATION = "JR_cite";
     private static final Pattern CITE_PATTERN =
         // Pattern.compile(BIB_CITATION + "(\\d*)_(\\d*)_(.*)");
-        // itcType is always "1" "2" or "3"
+        // citationType is always "1" "2" or "3"
         Pattern.compile(BIB_CITATION + "(\\d*)_([123])_(.*)");
 
     /**
@@ -32,15 +32,15 @@ class Codec52 {
         /**  "", "0", "1" ... */
         public final String i;
         /** in-text-citation type */
-        public final InTextCitationType itcType;
+        public final InTextCitationType citationType;
         /** Citation keys embedded in the reference mark. */
         public final List<String> citationKeys;
 
-        ParsedMarkName(String i, InTextCitationType itcType, List<String> citationKeys) {
+        ParsedMarkName(String i, InTextCitationType citationType, List<String> citationKeys) {
             Objects.requireNonNull(i);
             Objects.requireNonNull(citationKeys);
             this.i = i;
-            this.itcType = itcType;
+            this.citationType = citationType;
             this.citationKeys = citationKeys;
         }
     }
@@ -77,12 +77,12 @@ class Codec52 {
 
     /**
      * Produce a reference mark name for JabRef for the given citation
-     * key and itcType that does not yet appear among the reference
+     * key and citationType that does not yet appear among the reference
      * marks of the document.
      *
      * @param bibtexKey The citation key.
-     * @param itcType   Encodes the effect of withText and
-     *                  inParenthesis options.
+     * @param citationType Encodes the effect of withText and
+     *                     inParenthesis options.
      *
      * The first occurrence of bibtexKey gets no serial number, the
      * second gets 0, the third 1 ...
@@ -91,11 +91,11 @@ class Codec52 {
      */
     public static String getUniqueMarkName(Set<String> usedNames,
                                            String bibtexKey,
-                                           InTextCitationType itcType)
+                                           InTextCitationType citationType)
         throws NoDocumentException {
 
         int i = 0;
-        int j = InTextCitationTypeToInt(itcType);
+        int j = InTextCitationTypeToInt(citationType);
         String name = BIB_CITATION + '_' + j + '_' + bibtexKey;
         while (usedNames.contains(name)) {
             name = BIB_CITATION + i + '_' + j + '_' + bibtexKey;
@@ -120,8 +120,8 @@ class Codec52 {
         List<String> keys = Arrays.asList(citeMatcher.group(3).split(","));
         String i = citeMatcher.group(1);
         int j = Integer.parseInt(citeMatcher.group(2));
-        InTextCitationType itcType = InTextCitationTypeFromInt(j);
-        return (Optional.of(new Codec52.ParsedMarkName(i, itcType, keys)));
+        InTextCitationType citationType = InTextCitationTypeFromInt(j);
+        return (Optional.of(new Codec52.ParsedMarkName(i, citationType, keys)));
     }
 
     /**

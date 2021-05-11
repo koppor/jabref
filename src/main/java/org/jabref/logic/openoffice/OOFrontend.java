@@ -282,7 +282,7 @@ public class OOFrontend {
      *  cleanFillCursorForCitationGroup overrides this, and for empty
      *  citations it will remove the brackets, leaving an empty
      *  reference mark. The idea behind this is that we do not need to
-     *  refill empty marks (itcTypes INVISIBLE_CIT), and the caller
+     *  refill empty marks (citationType INVISIBLE_CIT), and the caller
      *  can tell us that we are dealing with one of these.
      *
      *  Thus the only user-visible difference in citation marks is
@@ -297,7 +297,7 @@ public class OOFrontend {
      *
      * @param citationKeys
      * @param pageInfosForCitations
-     * @param itcType
+     * @param citationType
      * @param position Collapsed to its end.
      * @param insertSpaceAfter If true, we insert a space after the mark, that
      *                         carries on format of characters from
@@ -310,7 +310,7 @@ public class OOFrontend {
     public CitationGroupID createCitationGroup(XTextDocument doc,
                                                List<String> citationKeys,
                                                List<OOFormattedText> pageInfosForCitations,
-                                               InTextCitationType itcType,
+                                               InTextCitationType citationType,
                                                XTextCursor position,
                                                boolean insertSpaceAfter,
                                                boolean withoutBrackets)
@@ -326,7 +326,7 @@ public class OOFrontend {
         CitationGroup cg = backend.createCitationGroup(doc,
                                                        citationKeys,
                                                        pageInfosForCitations,
-                                                       itcType,
+                                                       citationType,
                                                        position,
                                                        insertSpaceAfter,
                                                        withoutBrackets);

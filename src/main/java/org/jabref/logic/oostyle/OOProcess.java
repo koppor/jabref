@@ -183,7 +183,7 @@ public class OOProcess {
 
     /**
      * Given the withText and inParenthesis options,
-     * return the corresponding itcType.
+     * return the corresponding citationType.
      *
      * @param withText False means invisible citation (no text).
      * @param inParenthesis True means "(Au and Thor 2000)".
@@ -252,8 +252,8 @@ public class OOProcess {
 
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
-            List<Integer> numbers = cg.getSortedNumbers();
-            List<OOFormattedText> pageInfos = cgs.getPageInfosForCitations(cg);
+            List<Integer> numbers = cg.getCitationNumbersInLocalOrder();
+            List<OOFormattedText> pageInfos = cgs.getPageInfosForCitationsInLocalOrder(cg);
             citMarkers.put(cgid,
                            style.getNumCitationMarker(numbers,
                                                       minGroupingCount,
@@ -281,8 +281,8 @@ public class OOProcess {
 
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
-            List<Integer> numbers = cg.getSortedNumbers();
-            List<OOFormattedText> pageInfos = cgs.getPageInfosForCitations(cg);
+            List<Integer> numbers = cg.getCitationNumbersInLocalOrder();
+            List<OOFormattedText> pageInfos = cgs.getPageInfosForCitationsInLocalOrder(cg);
             citMarkers.put(cgid,
                            style.getNumCitationMarker(numbers,
                                                       minGroupingCount,
@@ -322,9 +322,10 @@ public class OOProcess {
 
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
+
             List<Citation> cits = cg.getCitationsInLocalOrder();
             final int nCitedEntries = cits.size();
-            List<OOFormattedText> pageInfosForCitations = cgs.getPageInfosForCitations(cg);
+            List<OOFormattedText> pageInfosForCitations = cgs.getPageInfosForCitationsInLocalOrder(cg);
 
             List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nCitedEntries);
 
@@ -359,6 +360,9 @@ public class OOProcess {
             //       maybe the fall back to ungrouped citations here is
             //       not needed anymore.
 
+            final boolean inParenthesis = (cg.citationType == InTextCitationType.AUTHORYEAR_PAR);
+            final OOBibStyle.NonUniqueCitationMarker strictlyUnique =
+                OOBibStyle.NonUniqueCitationMarker.THROWS;
             if (hasUnresolved) {
                 /*
                  * Some entries are unresolved.
@@ -370,8 +374,8 @@ public class OOProcess {
                     if (cm.getBibEntry().isPresent()) {
                         s = (s
                              + style.getCitationMarker(citationMarkerEntries.subList(j, j + 1),
-                                                       cg.itcType == InTextCitationType.AUTHORYEAR_PAR,
-                                                       OOBibStyle.NonUniqueCitationMarker.THROWS));
+                                                       inParenthesis,
+                                                       strictlyUnique));
                     } else {
                         s = s + String.format("(Unresolved(%s))", cm.getCitationKey());
                     }
@@ -383,8 +387,8 @@ public class OOProcess {
                  */
                 OOFormattedText citMarker =
                     style.getCitationMarker(citationMarkerEntries,
-                                            cg.itcType == InTextCitationType.AUTHORYEAR_PAR,
-                                            OOBibStyle.NonUniqueCitationMarker.THROWS);
+                                            inParenthesis,
+                                            strictlyUnique);
                 citMarkers.put(cgid, citMarker);
             }
         }

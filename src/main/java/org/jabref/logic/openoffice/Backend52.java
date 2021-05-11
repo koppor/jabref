@@ -141,17 +141,17 @@ public class Backend52 {
 
         setPageInfoInData(citations, pageInfo);
 
-        Optional<StorageBase.NamedRange> sr = (citationStorageManager
-                                               .getFromDocument(doc, refMarkName));
+        Optional<StorageBase.NamedRange> storedRange = (citationStorageManager
+                                                        .getFromDocument(doc, refMarkName));
 
-        if (sr.isEmpty()) {
+        if (storedRange.isEmpty()) {
             throw new IllegalArgumentException("readCitationGroupFromDocumentOrThrow:"
                                                + " referenceMarkName is not in the document");
         }
 
         CitationGroup cg = new CitationGroup(id,
-                                             sr.get(),
-                                             ov.itcType,
+                                             storedRange.get(),
+                                             ov.citationType,
                                              citations,
                                              Optional.of(refMarkName));
         return cg;
@@ -206,7 +206,7 @@ public class Backend52 {
      *  cleanFillCursorForCitationGroup overrides this, and for empty
      *  citations it will remove the brackets, leaving an empty
      *  reference mark. The idea behind this is that we do not need to
-     *  refill empty marks (itcTypes INVISIBLE_CIT), and the caller
+     *  refill empty marks (citationType: INVISIBLE_CIT), and the caller
      *  can tell us that we are dealing with one of these.
      *
      *  Thus the only user-visible difference in citation marks is
@@ -231,7 +231,7 @@ public class Backend52 {
     public CitationGroup createCitationGroup(XTextDocument doc,
                                              List<String> citationKeys,
                                              List<OOFormattedText> pageInfosForCitations,
-                                             InTextCitationType itcType,
+                                             InTextCitationType citationType,
                                              XTextCursor position,
                                              boolean insertSpaceAfter,
                                              boolean withoutBrackets)
@@ -244,15 +244,9 @@ public class Backend52 {
         PropertyVetoException,
         IllegalTypeException {
 
-        String xkey = (citationKeys.stream()
-                       .collect(Collectors.joining(",")));
-
-        Set<String> usedNames = new HashSet<>(this.citationStorageManager
-                                              .getUsedNames(doc));
-
-        String refMarkName = Codec52.getUniqueMarkName(usedNames,
-                                                       xkey,
-                                                       itcType);
+        Set<String> usedNames = new HashSet<>(this.citationStorageManager.getUsedNames(doc));
+        String xkey = (citationKeys.stream().collect(Collectors.joining(",")));
+        String refMarkName = Codec52.getUniqueMarkName(usedNames, xkey, citationType);
 
         CitationGroupID cgid = new CitationGroupID(refMarkName);
 
@@ -280,11 +274,9 @@ public class Backend52 {
         /*
          * Apply to document
          */
-        StorageBase.NamedRange sr = this.citationStorageManager.create(doc,
-                                                                       refMarkName,
-                                                                       position,
-                                                                       insertSpaceAfter,
-                                                                       withoutBrackets);
+        StorageBase.NamedRange storedRange =
+            this.citationStorageManager.create(doc, refMarkName, position, insertSpaceAfter,
+                                               withoutBrackets);
 
         switch (dataModel) {
         case JabRef52:
@@ -296,11 +288,8 @@ public class Backend52 {
                 // do not inherit from trash
                 UnoUserDefinedProperty.removeIfExists(doc, refMarkName);
             }
-            CitationGroup cg = new CitationGroup(cgid,
-                                                 sr,
-                                                 itcType,
-                                                 citations,
-                                                 Optional.of(refMarkName));
+            CitationGroup cg =
+                new CitationGroup(cgid, storedRange, citationType, citations, Optional.of(refMarkName));
             return cg;
         default:
             throw new RuntimeException("Backend52 requires JabRef52 dataModel");
@@ -319,9 +308,10 @@ public class Backend52 {
         switch (dataModel) {
         case JabRef52:
             // collect to cgPageInfos
-            List<Optional<OOFormattedText>> cgPageInfos = (joinableGroup.stream()
-                                                           .map(cg -> getPageInfoFromData(cg.citations))
-                                                           .collect(Collectors.toList()));
+            List<Optional<OOFormattedText>> cgPageInfos =
+                (joinableGroup.stream()
+                 .map(cg -> getPageInfoFromData(cg.citationsInStorageOrder))
+                 .collect(Collectors.toList()));
 
             // Try to do something of the cgPageInfos.
             String cgPageInfo = (cgPageInfos.stream()
@@ -331,14 +321,14 @@ public class Backend52 {
                                  .collect(Collectors.joining("; ")));
 
             int nCitations = (joinableGroup.stream()
-                              .map(cg -> cg.citations.size())
+                              .map(cg -> cg.numberOfCitations())
                               .mapToInt(Integer::intValue).sum());
 
             return OOStyleDataModelVersion.fakePageInfosForCitations(cgPageInfo, nCitations);
 
         case JabRef53:
             return (joinableGroup.stream()
-                    .flatMap(cg -> (cg.citations.stream()
+                    .flatMap(cg -> (cg.citationsInStorageOrder.stream()
                                     .map(cit -> cit.pageInfo.orElse(null))))
                     .collect(Collectors.toList()));
         default:
@@ -433,9 +423,9 @@ public class Backend52 {
                                       .getRawCursorForCitationGroup(cg, doc)
                                       .orElseThrow(RuntimeException::new));
                 String context = OOUtil.getCursorStringWithContext(cursor, 30, 30, true);
-                Optional<String> pageInfo = (cg.citations.size() > 0
-                                             ? (cg.citations
-                                                .get(cg.citations.size() - 1)
+                Optional<String> pageInfo = (cg.numberOfCitations() > 0
+                                             ? (cg.citationsInStorageOrder
+                                                .get(cg.numberOfCitations() - 1)
                                                 .getPageInfo()
                                                 .map(e -> OOFormattedText.toString(e)))
                                              : Optional.empty());
