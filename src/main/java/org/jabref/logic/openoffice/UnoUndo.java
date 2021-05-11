@@ -8,7 +8,7 @@ import com.sun.star.text.XTextDocument;
 import com.sun.star.util.InvalidStateException;
 
 /**
- * Undo
+ * Undo : group document changes into larger Undo actions.
  */
 public class UnoUndo {
 

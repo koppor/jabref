@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Document level user-defined properties.
+ *
+ *  LibreOffice GUI: [File]/[Properties]/[Custom Properties]
  */
 public class UnoUserDefinedProperty {
 
@@ -115,7 +117,9 @@ public class UnoUserDefinedProperty {
 
     /**
      * @param property Name of a custom document property in the
-     *        current document.
+     *                 current document.
+     *
+     *  Logs warning if does not exist.
      */
     public static void remove(XTextDocument doc, String property)
         throws
@@ -144,6 +148,8 @@ public class UnoUserDefinedProperty {
     /**
      * @param property Name of a custom document property in the
      *        current document.
+     *
+     * Keep silent if property dids not exist.
      */
     public static void removeIfExists(XTextDocument doc, String property)
         throws
