@@ -1007,7 +1007,8 @@ class OOBibBase {
                                                        + "cursorBetween: '%s'\n"
                                                        + "currentRange: '%s'\n"
                                                        + "currentGroupCursor: '%s'\n",
-                                                       UnoTextRange.compareEnds(cursorBetween, currentGroupCursor),
+                                                       UnoTextRange.compareEnds(cursorBetween,
+                                                                                currentGroupCursor),
                                                        cursorBetween.getString(),
                                                        currentRange.getString(),
                                                        currentGroupCursor.getString())
