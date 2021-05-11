@@ -49,6 +49,22 @@ public class UnoTextSection {
     }
 
     /**
+     * Get the XTextRange covering to the named section.
+     *
+     * @param name The name of the section to find.
+     * @return The XTextRange for the section, or Optional.empty().
+     */
+    public static Optional<XTextRange> getTextRange(XTextDocument doc, String name)
+        throws
+        WrappedTargetException,
+        NoDocumentException {
+
+        XNameAccess nameAccess = getNameAccess(doc);
+        return (UnoNameAccess.getTextContentByName(nameAccess, name)
+                .map(e -> e.getAnchor()));
+    }
+
+    /**
      *  Create a text section with the provided name and insert it at
      *  the provided cursor.
      *

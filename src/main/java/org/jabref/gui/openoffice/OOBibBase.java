@@ -686,13 +686,13 @@ class OOBibBase {
         CreationException,
         NoDocumentException {
 
-        Optional<XTextSection> section = UnoTextSection.getByName(doc, OOBibBase.BIB_SECTION_NAME);
-        if (section.isEmpty()) {
+        Optional<XTextRange> sectionRange = UnoTextSection.getTextRange(doc, OOBibBase.BIB_SECTION_NAME);
+        if (sectionRange.isEmpty()) {
             createBibTextSection2(doc);
             return;
         } else {
             // Clear it
-            XTextCursor cursor = doc.getText().createTextCursorByRange(section.get().getAnchor());
+            XTextCursor cursor = doc.getText().createTextCursorByRange(sectionRange.get());
             cursor.setString("");
         }
     }
