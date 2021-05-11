@@ -31,6 +31,20 @@ public class UnoTextSection {
         }
     }
 
+    /**
+     *  Get an XTextSection by name.
+     */
+    public static Optional<XTextSection> getByName(XTextDocument doc, String name)
+        throws
+        WrappedTargetException,
+        NoDocumentException {
+        XNameAccess nameAccess = getNameAccess(doc);
+        try {
+            return Optional.ofNullable((XTextSection)
+                                       ((Any) nameAccess.getByName(name))
+                                       .getObject());
+        } catch (NoSuchElementException ex) {
+            return Optional.empty();
         }
     }
 
@@ -55,19 +69,6 @@ public class UnoTextSection {
                                                name,
                                                range,
                                                absorb);
-    }
-
-    /**
-     *  Get an XTextSection by name.
-     */
-    public static Optional<XTextSection> getByName(XTextDocument doc, String name)
-        throws
-        NoSuchElementException,
-        WrappedTargetException {
-        XTextSectionsSupplier supplier = UnoCast.unoQI(XTextSectionsSupplier.class, doc);
-        return Optional.ofNullable((XTextSection)
-                                   ((Any) supplier.getTextSections().getByName(name))
-                                   .getObject());
     }
 }
 
