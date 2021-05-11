@@ -579,7 +579,7 @@ class OOBibBase {
         checkStylesExistInTheDocument(style, doc);
 
         CitationGroups cgs = fr.cgs;
-        final boolean hadBibSection = (UnoBookmark.getTextRange(doc, OOBibBase.BIB_SECTION_NAME)
+        final boolean hadBibSection = (UnoBookmark.getAnchor(doc, OOBibBase.BIB_SECTION_NAME)
                                        .isPresent());
 
         for (Map.Entry<CitationGroupID, OOFormattedText> kv : citMarkers.entrySet()) {
@@ -604,7 +604,7 @@ class OOBibBase {
             }
 
             if (hadBibSection
-                && (UnoBookmark.getTextRange(doc, OOBibBase.BIB_SECTION_NAME)
+                && (UnoBookmark.getAnchor(doc, OOBibBase.BIB_SECTION_NAME)
                     .isEmpty())) {
                 // Overwriting text already there is too harsh.
                 // I am making it an error, to see if we ever get here.
@@ -684,7 +684,7 @@ class OOBibBase {
         CreationException,
         NoDocumentException {
 
-        Optional<XTextRange> sectionRange = UnoTextSection.getTextRange(doc, OOBibBase.BIB_SECTION_NAME);
+        Optional<XTextRange> sectionRange = UnoTextSection.getAnchor(doc, OOBibBase.BIB_SECTION_NAME);
         if (sectionRange.isEmpty()) {
             createBibTextSection2(doc);
             return;

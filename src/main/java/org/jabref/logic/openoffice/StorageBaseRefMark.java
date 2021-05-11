@@ -138,7 +138,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         throws
         NoDocumentException,
         WrappedTargetException {
-        return (UnoReferenceMark.getTextRange(doc, refMarkName)
+        return (UnoReferenceMark.getAnchor(doc, refMarkName)
                 .map(e -> new StorageBaseRefMark(refMarkName)));
     }
 
@@ -166,7 +166,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
      *
      * @return Optional.empty if the reference mark is missing.
      *
-     * See: UnoReferenceMark.getTextRange
+     * See: UnoReferenceMark.getAnchor
      */
     @Override
     public Optional<XTextRange> getMarkRange(XTextDocument doc)
@@ -174,7 +174,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         NoDocumentException,
         WrappedTargetException {
         String name = this.getName();
-        return UnoReferenceMark.getTextRange(doc, name);
+        return UnoReferenceMark.getAnchor(doc, name);
     }
 
     /**

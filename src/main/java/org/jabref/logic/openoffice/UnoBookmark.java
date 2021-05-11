@@ -36,7 +36,7 @@ public class UnoBookmark {
      * @param name The name of the bookmark to find.
      * @return The XTextRange for the bookmark, or Optional.empty().
      */
-    public static Optional<XTextRange> getTextRange(XTextDocument doc, String name)
+    public static Optional<XTextRange> getAnchor(XTextDocument doc, String name)
         throws
         WrappedTargetException,
         NoDocumentException {

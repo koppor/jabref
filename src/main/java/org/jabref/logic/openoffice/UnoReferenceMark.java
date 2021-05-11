@@ -92,7 +92,7 @@ public class UnoReferenceMark {
     /**
      *  XTextRange for the named reference mark, Optional.empty if not found.
      */
-    public static Optional<XTextRange> getTextRange(XTextDocument doc, String name)
+    public static Optional<XTextRange> getAnchor(XTextDocument doc, String name)
         throws
         NoDocumentException,
         WrappedTargetException {
