@@ -56,14 +56,12 @@ import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.container.NoSuchElementException;
-import com.sun.star.container.XNameAccess;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextSection;
-import com.sun.star.uno.Any;
 import com.sun.star.util.InvalidStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -688,32 +686,14 @@ class OOBibBase {
         CreationException,
         NoDocumentException {
 
-        XNameAccess nameAccess = UnoTextSection.getTextSections(doc);
-        if (!nameAccess.hasByName(OOBibBase.BIB_SECTION_NAME)) {
+        Optional<XTextSection> section = UnoTextSection.getByName(doc, OOBibBase.BIB_SECTION_NAME);
+        if (section.isEmpty()) {
             createBibTextSection2(doc);
             return;
-        }
-
-        try {
-            Any a = ((Any) nameAccess.getByName(OOBibBase.BIB_SECTION_NAME));
-            XTextSection section = (XTextSection) a.getObject();
-            // Clear it:
-
-            XTextCursor cursor = doc.getText().createTextCursorByRange(section.getAnchor());
-
-            cursor.gotoRange(section.getAnchor(), false);
+        } else {
+            // Clear it
+            XTextCursor cursor = doc.getText().createTextCursorByRange(section.get().getAnchor());
             cursor.setString("");
-        } catch (NoSuchElementException ex) {
-            // NoSuchElementException: is thrown by child access
-            // methods of collections, if the addressed child does
-            // not exist.
-
-            // We got this exception from nameAccess.getByName() despite
-            // the nameAccess.hasByName() check just above.
-
-            // Try to create.
-            LOGGER.warn("Could not get section '" + OOBibBase.BIB_SECTION_NAME + "'", ex);
-            createBibTextSection2(doc);
         }
     }
 
@@ -729,6 +709,7 @@ class OOBibBase {
                                         boolean alwaysAddCitedOnPages)
         throws
         NoSuchElementException,
+        NoDocumentException,
         WrappedTargetException,
         PropertyVetoException,
         UnknownPropertyException,
