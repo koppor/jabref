@@ -19,7 +19,7 @@ public class UnoTextSection {
     /**
      *  @return An XNameAccess to find sections by name.
      */
-    public static XNameAccess getTextSections(XTextDocument doc)
+    public static XNameAccess getNameAccess(XTextDocument doc)
         throws
         NoDocumentException {
 
@@ -27,7 +27,10 @@ public class UnoTextSection {
         try {
             return supplier.getTextSections();
         } catch (DisposedException ex) {
-            throw new NoDocumentException("getTextSections failed with" + ex);
+            throw new NoDocumentException("UnoTextSection.getNameAccess failed with" + ex);
+        }
+    }
+
         }
     }
 
