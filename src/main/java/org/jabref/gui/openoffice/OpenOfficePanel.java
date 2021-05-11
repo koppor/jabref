@@ -374,7 +374,10 @@ public class OpenOfficePanel {
                 databases.add(libraryTab.getDatabase());
             }
         } else {
-            databases.add(frame.getCurrentLibraryTab().getDatabase());
+            LibraryTab libraryTab = frame.getCurrentLibraryTab();
+            if (libraryTab != null) {
+                databases.add(libraryTab.getDatabase());
+            }
         }
 
         return databases;
