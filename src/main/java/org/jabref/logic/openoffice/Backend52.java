@@ -294,7 +294,7 @@ public class Backend52 {
                 UnoUserDefinedProperty.createStringProperty(doc, refMarkName, pageInfoString);
             } else {
                 // do not inherit from trash
-                UnoUserDefinedProperty.remove(doc, refMarkName);
+                UnoUserDefinedProperty.removeIfExists(doc, refMarkName);
             }
             CitationGroup cg = new CitationGroup(cgid,
                                                  sr,
@@ -364,7 +364,7 @@ public class Backend52 {
 
         String refMarkName = cg.cgRangeStorage.getName();
         cg.cgRangeStorage.removeFromDocument(doc);
-        UnoUserDefinedProperty.remove(doc, refMarkName);
+        UnoUserDefinedProperty.removeIfExists(doc, refMarkName);
     }
 
     /**

@@ -140,4 +140,30 @@ public class UnoUserDefinedProperty {
                                       property));
         }
     }
+
+    /**
+     * @param property Name of a custom document property in the
+     *        current document.
+     */
+    public static void removeIfExists(XTextDocument doc, String property)
+        throws
+        NotRemoveableException,
+        PropertyExistException,
+        IllegalTypeException,
+        IllegalArgumentException {
+
+        Objects.requireNonNull(property);
+
+        Optional<XPropertyContainer> xPropertyContainer = UnoUserDefinedProperty.getPropertyContainer(doc);
+
+        if (xPropertyContainer.isEmpty()) {
+            throw new RuntimeException("getUserDefinedPropertiesAsXPropertyContainer failed");
+        }
+
+        try {
+            xPropertyContainer.get().removeProperty(property);
+        } catch (UnknownPropertyException ex) {
+            // did not exist
+        }
+    }
 }
