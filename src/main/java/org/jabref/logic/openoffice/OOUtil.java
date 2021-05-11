@@ -48,7 +48,6 @@ public class OOUtil {
      *
      *  The actual context may be smaller than requested.
      *
-     *  @param documentConnection
      *  @param cursor
      *  @param charBefore Number of characters requested.
      *  @param charAfter  Number of characters requested.
@@ -56,8 +55,7 @@ public class OOUtil {
      *                    reference mark is surrounded by bold html tag.
      *
      */
-    public static String getCursorStringWithContext(DocumentConnection documentConnection,
-                                                    XTextCursor cursor,
+    public static String getCursorStringWithContext(XTextCursor cursor,
                                                     int charBefore,
                                                     int charAfter,
                                                     boolean htmlMarkup)

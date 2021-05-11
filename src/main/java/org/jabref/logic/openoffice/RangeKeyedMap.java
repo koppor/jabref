@@ -52,11 +52,11 @@ public class RangeKeyedMap<V> {
     }
 
     private static int comparator(XTextRange a, XTextRange b) {
-        int startOrder = DocumentConnection.javaCompareRegionStarts(a, b);
+        int startOrder = UnoTextRange.compareStarts(a, b);
         if (startOrder != 0) {
             return startOrder;
         }
-        return DocumentConnection.javaCompareRegionEnds(a, b);
+        return UnoTextRange.compareEnds(a, b);
     }
 
     public V put(XTextRange r, V value) {

@@ -139,18 +139,16 @@ public class RangeSortVisual {
      */
     public static <T> List<RangeSort.RangeSortable<T>>
     visualSort(List<RangeSort.RangeSortable<T>> vses,
-               DocumentConnection documentConnection,
+               XTextDocument doc,
                String messageOnFailureToObtainAFunctionalXTextViewCursor)
         throws
         WrappedTargetException,
         NoDocumentException,
         JabRefException {
 
-        XTextDocument doc = documentConnection.asXTextDocument();
-
         final int inputSize = vses.size();
 
-        if (DocumentConnection.hasControllersLocked(doc)) {
+        if (UnoScreenRefresh.hasControllersLocked(doc)) {
             LOGGER.warn("visualSort:"
                         + " with ControllersLocked, viewCursor.gotoRange"
                         + " is probably useless");
@@ -174,7 +172,7 @@ public class RangeSortVisual {
          *
          * Still, we have a problem when the cursor is in a comment
          * (referred to as "annotation" in OO API): in this case
-         * initialSelection is null, and documentConnection.select()
+         * initialSelection is null, and Documentconnection.select()
          * does not help to get a function viewCursor. Having no
          * better idea, we ask the user to move the cursor into the
          * document.
@@ -185,7 +183,7 @@ public class RangeSortVisual {
          */
         final boolean debugThisFun = false;
 
-        XServiceInfo initialSelection = DocumentConnection.getSelectionAsXServiceInfo(doc).orElse(null);
+        XServiceInfo initialSelection = UnoSelection.getSelectionAsXServiceInfo(doc).orElse(null);
 
         if (initialSelection != null) {
             if (Arrays.stream(initialSelection.getSupportedServiceNames())
@@ -199,8 +197,8 @@ public class RangeSortVisual {
                     LOGGER.info("visualSort: initialSelection does not support TextRanges."
                                 + " We need to change the viewCursor.");
                 }
-                XTextRange newSelection = documentConnection.getXText().getStart();
-                DocumentConnection.select(doc, newSelection);
+                XTextRange newSelection = doc.getText().getStart();
+                UnoSelection.select(doc, newSelection);
             }
         } else {
             if (debugThisFun) {
@@ -208,7 +206,7 @@ public class RangeSortVisual {
             }
         }
 
-        XTextViewCursor viewCursor = DocumentConnection.getViewCursor(doc).orElse(null);
+        XTextViewCursor viewCursor = UnoCursor.getViewCursor(doc).orElse(null);
         Objects.requireNonNull(viewCursor);
         try {
             viewCursor.getStart();
@@ -228,7 +226,7 @@ public class RangeSortVisual {
          * Restore initial state of selection (and thus viewCursor)
          */
         if (initialSelection != null) {
-            DocumentConnection.select(doc, initialSelection);
+            UnoSelection.select(doc, initialSelection);
         }
 
         if (positions.size() != inputSize) {

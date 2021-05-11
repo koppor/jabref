@@ -36,7 +36,6 @@ import com.sun.star.text.XParagraphCursor;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
-import com.sun.star.uno.UnoRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -259,8 +258,7 @@ public class OOFormattedTextIntoOOV1 {
                     String value = kv.getValue();
                     switch (key) {
                     case "target":
-                        DocumentConnection
-                            .insertReferenceToPageNumberOfReferenceMark(doc, value, cursor);
+                        UnoCrossRef.insertReferenceToPageNumberOfReferenceMark(doc, value, cursor);
                         break;
                     default:
                         LOGGER.warn(String.format("Unexpected attribute '%s' for <%s>", key, tagName));
@@ -351,7 +349,7 @@ public class OOFormattedTextIntoOOV1 {
      */
     public static void removeDirectFormatting(XTextCursor cursor) {
 
-        XMultiPropertyStates mpss = unoQI(XMultiPropertyStates.class, cursor);
+        XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
 
         /*
          * Now that we have setAllPropertiesToDefault, check which properties
@@ -360,8 +358,8 @@ public class OOFormattedTextIntoOOV1 {
          * Note: tested with LibreOffice : 6.4.6.2
          */
 
-        XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
-        XPropertyState propertyState = unoQI(XPropertyState.class, cursor);
+        XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
+        XPropertyState propertyState = UnoCast.unoQI(XPropertyState.class, cursor);
 
         try {
             // Special handling
@@ -389,7 +387,7 @@ public class OOFormattedTextIntoOOV1 {
                                                "ParaStyleName");
 
         // query again, just in case it matters
-        propertySet = unoQI(XPropertySet.class, cursor);
+        propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
         XPropertySetInfo psi = propertySet.getPropertySetInfo();
 
         // check the result
@@ -444,17 +442,6 @@ public class OOFormattedTextIntoOOV1 {
     }
 
     /**
-     * unoQI : short for UnoRuntime.queryInterface
-     *
-     * @return A reference to the requested UNO interface type if available,
-     *         otherwise null
-     */
-    private static <T> T unoQI(Class<T> zInterface,
-                               Object object) {
-        return UnoRuntime.queryInterface(zInterface, object);
-    }
-
-    /**
      * Remove direct formatting of propertyName from propertySet.
      *
      * Observation: while
@@ -499,7 +486,7 @@ public class OOFormattedTextIntoOOV1 {
         if (false) {
             // This is what should "simply work".
             // However it loses e.g. font color when propertyName is "CharWeight".
-            XPropertyState propertyState = unoQI(XPropertyState.class, cursor);
+            XPropertyState propertyState = UnoCast.unoQI(XPropertyState.class, cursor);
             propertyState.setPropertyToDefault(propertyName);
         } else if (false) {
 
@@ -519,9 +506,9 @@ public class OOFormattedTextIntoOOV1 {
             // from the level above" happens to be a different value,
             // then the two behaviours yield different results.
 
-            XPropertyState propertyState = unoQI(XPropertyState.class, cursor);
+            XPropertyState propertyState = UnoCast.unoQI(XPropertyState.class, cursor);
             Object value = propertyState.getPropertyDefault(propertyName);
-            XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
+            XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
             propertySet.setPropertyValue(propertyName, value);
         } else {
 
@@ -575,7 +562,7 @@ public class OOFormattedTextIntoOOV1 {
             } else {
                 namesToDefault.add(propertyName);
             }
-            XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
+            XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
             XPropertySetInfo psi = propertySet.getPropertySetInfo();
 
             // Remember those we shall we restore later
@@ -628,7 +615,7 @@ public class OOFormattedTextIntoOOV1 {
     private static boolean isPropertyDefault(XTextCursor cursor, String propertyName)
         throws
         UnknownPropertyException {
-        XPropertyState propertyState = unoQI(XPropertyState.class, cursor);
+        XPropertyState propertyState = UnoCast.unoQI(XPropertyState.class, cursor);
         PropertyState pst = propertyState.getPropertyState(propertyName);
         if (pst == PropertyState.AMBIGUOUS_VALUE) {
             throw new RuntimeException("PropertyState.AMBIGUOUS_VALUE"
@@ -647,7 +634,7 @@ public class OOFormattedTextIntoOOV1 {
         if (isPropertyDefault(cursor, propertyName)) {
             return Optional.empty();
         } else {
-            XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
+            XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
             return Optional.of(propertySet.getPropertyValue(propertyName));
         }
     }
@@ -660,7 +647,7 @@ public class OOFormattedTextIntoOOV1 {
         UnknownPropertyException,
         PropertyVetoException,
         WrappedTargetException {
-        XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
+        XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
         if (value.isPresent()) {
             propertySet.setPropertyValue(propertyName, value.get());
         } else {
@@ -782,7 +769,7 @@ public class OOFormattedTextIntoOOV1 {
 
             if (!started) {
                 oldValue = getPropertyValue(cursor, propertyName).map(e -> (T) e);
-                XPropertyState propertyState = unoQI(XPropertyState.class, cursor);
+                XPropertyState propertyState = UnoCast.unoQI(XPropertyState.class, cursor);
                 started = true;
             }
 
@@ -925,8 +912,8 @@ public class OOFormattedTextIntoOOV1 {
                                          String parStyle)
         throws
         UndefinedParagraphFormatException {
-        XParagraphCursor parCursor = unoQI(XParagraphCursor.class, cursor);
-        XPropertySet props = unoQI(XPropertySet.class, parCursor);
+        XParagraphCursor parCursor = UnoCast.unoQI(XParagraphCursor.class, cursor);
+        XPropertySet props = UnoCast.unoQI(XPropertySet.class, parCursor);
         try {
             props.setPropertyValue(PARA_STYLE_NAME, parStyle);
         } catch (UnknownPropertyException

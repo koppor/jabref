@@ -100,7 +100,7 @@ public class RangeKeyedMapList<V> {
                 }
                 if ((i + 1) < oxs.size()) {
                     XTextRange b = oxs.get(i + 1);
-                    int cmp = DocumentConnection.javaCompareRegionStarts(a.getEnd(), b.getStart());
+                    int cmp = UnoTextRange.compareStarts(a.getEnd(), b.getStart());
                     if (cmp > 0 || (includeTouching && (cmp == 0))) {
                         // found overlap or touch
                         List<V> bvs = xs.get(b);

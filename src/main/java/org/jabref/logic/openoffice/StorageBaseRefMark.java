@@ -102,14 +102,9 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                                    ? ""
                                    : left + right);
 
-        cursor.getText().insertString(cursor,
-                                      bracketedContent,
-                                      true);
+        cursor.getText().insertString(cursor, bracketedContent, true);
 
-        DocumentConnection.insertReferenceMark(doc,
-                                               refMarkName,
-                                               cursor,
-                                               true /* absorb */);
+        UnoReferenceMark.create(doc, refMarkName, cursor, true /* absorb */);
 
         cursorBefore.goRight((short) 1, true);
         cursorBefore.setString("");
@@ -119,14 +114,13 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         }
     }
 
-    private static StorageBaseRefMark create(DocumentConnection documentConnection,
+    private static StorageBaseRefMark create(XTextDocument doc,
                                             String refMarkName,
                                             XTextCursor position,
                                             boolean insertSpaceAfter,
                                             boolean withoutBrackets)
         throws
         CreationException {
-        XTextDocument doc = documentConnection.asXTextDocument();
 
         createReprInDocument(doc,
                              refMarkName,
@@ -144,7 +138,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         throws
         NoDocumentException,
         WrappedTargetException {
-        return (DocumentConnection.getReferenceMarkRange(doc, refMarkName)
+        return (UnoReferenceMark.getTextRange(doc, refMarkName)
                 .map(e -> new StorageBaseRefMark(refMarkName)));
     }
 
@@ -159,7 +153,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         WrappedTargetException,
         NoDocumentException,
         NoSuchElementException {
-        DocumentConnection.removeReferenceMark(doc, this.getName());
+        UnoReferenceMark.remove(doc, this.getName());
     }
 
     @Override
@@ -172,7 +166,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
      *
      * @return Optional.empty if the reference mark is missing.
      *
-     * See: getReferenceMarkRange
+     * See: UnoReferenceMark.getTextRange
      */
     @Override
     public Optional<XTextRange> getMarkRange(XTextDocument doc)
@@ -180,7 +174,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         NoDocumentException,
         WrappedTargetException {
         String name = this.getName();
-        return DocumentConnection.getReferenceMarkRange(doc, name);
+        return UnoReferenceMark.getTextRange(doc, name);
     }
 
     /**
@@ -193,25 +187,23 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
      * See: getRawCursorForCitationGroup
      */
     @Override
-    public Optional<XTextCursor> getRawCursor(DocumentConnection documentConnection)
+    public Optional<XTextCursor> getRawCursor(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException,
         CreationException {
 
-        XTextDocument doc = documentConnection.asXTextDocument();
         String name = this.getName();
         Optional<XTextCursor> full = Optional.empty();
 
-        Optional<XTextContent> markAsTextContent = (DocumentConnection
-                                                    .getReferenceMarkAsTextContent(doc, name));
+        Optional<XTextContent> markAsTextContent = UnoReferenceMark.getAsTextContent(doc, name);
 
         if (markAsTextContent.isEmpty()) {
             String msg = String.format("getRawCursor: markAsTextContent(%s).isEmpty()", name);
             LOGGER.warn(msg);
         }
 
-        full = DocumentConnection.getTextCursorOfTextContent(markAsTextContent.get());
+        full = UnoCursor.getTextCursorOfTextContent(markAsTextContent.get());
         if (full.isEmpty()) {
             String msg = "getRawCursor: full.isEmpty()";
             LOGGER.warn(msg);
@@ -224,13 +216,11 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
      * See: getFillCursorForCitationGroup
      */
     @Override
-    public XTextCursor getFillCursor(DocumentConnection documentConnection)
+    public XTextCursor getFillCursor(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException,
         CreationException {
-
-        XTextDocument doc = documentConnection.asXTextDocument();
 
         String name = this.getName();
 
@@ -243,8 +233,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         XTextCursor full = null;
         String fullText = null;
         for (int i = 1; i <= 2; i++) {
-            Optional<XTextContent> markAsTextContent =
-                DocumentConnection.getReferenceMarkAsTextContent(doc, name);
+            Optional<XTextContent> markAsTextContent = UnoReferenceMark.getAsTextContent(doc, name);
 
             if (markAsTextContent.isEmpty()) {
                 String msg = String.format("getFillCursor:"
@@ -254,7 +243,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                 throw new RuntimeException(msg);
             }
 
-            full = DocumentConnection.getTextCursorOfTextContent(markAsTextContent.get()).orElse(null);
+            full = UnoCursor.getTextCursorOfTextContent(markAsTextContent.get()).orElse(null);
             if (full == null) {
                 String msg = String.format("getFillCursor: full == null (attempt %d)", i);
                 throw new RuntimeException(msg);
@@ -286,7 +275,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                 }
                 full.setString("");
                 try {
-                    DocumentConnection.removeReferenceMark(doc, name);
+                    UnoReferenceMark.remove(doc, name);
                 } catch (NoSuchElementException ex) {
                     String msg = String.format("getFillCursor got NoSuchElementException"
                                                + " for '%s'",
@@ -423,7 +412,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
      * See: cleanFillCursorForCitationGroup
      */
     @Override
-    public void cleanFillCursor(DocumentConnection documentConnection)
+    public void cleanFillCursor(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException,
@@ -444,7 +433,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
 
         String name = this.getName();
 
-        XTextCursor full = this.getRawCursor(documentConnection).orElseThrow(RuntimeException::new);
+        XTextCursor full = this.getRawCursor(doc).orElseThrow(RuntimeException::new);
         final String fullText = full.getString();
         final int fullTextLength = fullText.length();
 
@@ -500,19 +489,19 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
     private static List<String> getUsedNames(XTextDocument doc)
         throws
         NoDocumentException {
-        return DocumentConnection.getReferenceMarkNames(doc);
+        return UnoReferenceMark.getListOfNames(doc);
     }
 
     public static class Manager implements StorageBase.NamedRangeManager {
         @Override
-        public StorageBase.NamedRange create(DocumentConnection documentConnection,
+        public StorageBase.NamedRange create(XTextDocument doc,
                                              String refMarkName,
                                              XTextCursor position,
                                              boolean insertSpaceAfter,
                                              boolean withoutBrackets)
             throws
             CreationException {
-            return StorageBaseRefMark.create(documentConnection,
+            return StorageBaseRefMark.create(doc,
                                              refMarkName,
                                              position,
                                              insertSpaceAfter,

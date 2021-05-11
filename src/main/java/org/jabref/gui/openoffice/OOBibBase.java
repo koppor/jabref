@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.jabref.architecture.AllowedToUseAwt;
 import org.jabref.gui.DialogService;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
@@ -27,12 +26,20 @@ import org.jabref.logic.oostyle.OOFormat;
 import org.jabref.logic.oostyle.OOFormatBibliography;
 import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.logic.openoffice.CreationException;
-import org.jabref.logic.openoffice.DocumentConnection;
 import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.OOFormattedTextIntoOO;
 import org.jabref.logic.openoffice.OOFrontend;
 import org.jabref.logic.openoffice.UndefinedCharacterFormatException;
 import org.jabref.logic.openoffice.UndefinedParagraphFormatException;
+import org.jabref.logic.openoffice.UnoBookmark;
+import org.jabref.logic.openoffice.UnoCrossRef;
+import org.jabref.logic.openoffice.UnoCursor;
+import org.jabref.logic.openoffice.UnoRedlines;
+import org.jabref.logic.openoffice.UnoScreenRefresh;
+import org.jabref.logic.openoffice.UnoStyle;
+import org.jabref.logic.openoffice.UnoTextRange;
+import org.jabref.logic.openoffice.UnoTextSection;
+import org.jabref.logic.openoffice.UnoUndo;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
@@ -65,7 +72,6 @@ import org.slf4j.LoggerFactory;
  * Class for manipulating the Bibliography of the currently started
  * document in OpenOffice.
  */
-@AllowedToUseAwt("Requires AWT for italics and bold")
 class OOBibBase {
 
     private static final String BIB_SECTION_NAME = "JR_bib";
@@ -78,20 +84,12 @@ class OOBibBase {
     private final DialogService dialogService;
     private final boolean alwaysAddCitedOnPages;
 
-    /**
-     * Created when connected to a document.
-     *
-     * Cleared (to null) when we discover we lost the connection.
-     */
-    // private DocumentConnection xDocumentConnection;
-
-    private OOBibBaseConnect connection;
+    private final OOBibBaseConnect connection;
 
     /*
      * Constructor
      */
-    public OOBibBase(Path loPath,
-                     DialogService dialogService)
+    public OOBibBase(Path loPath, DialogService dialogService)
         throws
         BootstrapException,
         CreationException {
@@ -112,8 +110,8 @@ class OOBibBase {
     /**
      * A simple test for document availability.
      *
-     * See also `documentConnectionMissing` for a test
-     * actually attempting to use teh connection.
+     * See also `isDocumentConnectionMissing` for a test
+     * actually attempting to use the connection.
      *
      */
     public boolean isConnectedToDocument() {
@@ -123,20 +121,14 @@ class OOBibBase {
     /**
      * @return true if we are connected to a document
      */
-    public boolean documentConnectionMissing() {
-        return this.connection.documentConnectionMissing();
+    public boolean isDocumentConnectionMissing() {
+        return this.connection.isDocumentConnectionMissing();
     }
 
     /**
-     * Either return a valid DocumentConnection or throw
+     * Either return an XTextDocument or throw
      * NoDocumentException.
      */
-    public DocumentConnection getDocumentConnectionOrThrow()
-        throws
-        NoDocumentException {
-        return this.connection.getDocumentConnectionOrThrow();
-    }
-
     public XTextDocument getXTextDocumentOrThrow()
         throws
         NoDocumentException {
@@ -165,12 +157,11 @@ class OOBibBase {
         PropertyVetoException,
         JabRefException {
 
-        DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
+        XTextDocument doc = this.getXTextDocumentOrThrow();
 
-        checkIfOpenOfficeIsRecordingChanges(documentConnection);
-
-        OOFrontend fr = new OOFrontend(documentConnection);
-        return fr.getCitationEntries(documentConnection);
+        checkIfOpenOfficeIsRecordingChanges(doc);
+        OOFrontend fr = new OOFrontend(doc);
+        return fr.getCitationEntries(doc);
     }
 
     /**
@@ -180,7 +171,7 @@ class OOBibBase {
      * Does not change presentation.
      *
      * Note: we use no undo context here, because only
-     *       documentConnection.setCustomProperty() is called,
+     *       DocumentConnection.setUserDefinedStringPropertyValue() is called,
      *       and Undo in LO will not undo that.
      *
      * GUI: "Manage citations" dialog "OK" button.
@@ -209,12 +200,12 @@ class OOBibBase {
         NoDocumentException,
         WrappedTargetException {
 
-        DocumentConnection documentConnection = getDocumentConnectionOrThrow();
-        OOFrontend fr = new OOFrontend(documentConnection);
-        fr.applyCitationEntries(documentConnection, citationEntries);
+        XTextDocument doc = this.getXTextDocumentOrThrow();
+        OOFrontend fr = new OOFrontend(doc);
+        fr.applyCitationEntries(doc, citationEntries);
     }
 
-    private static void fillCitationMarkInCursor(DocumentConnection documentConnection,
+    private static void fillCitationMarkInCursor(XTextDocument doc,
                                                  XTextCursor cursor,
                                                  OOFormattedText citationText,
                                                  boolean withText,
@@ -231,7 +222,6 @@ class OOBibBase {
         Objects.requireNonNull(cursor);
         Objects.requireNonNull(citationText);
         Objects.requireNonNull(style);
-        XTextDocument doc = documentConnection.asXTextDocument();
 
         if (withText) {
             OOFormattedText citationText2 = OOFormat.setLocaleNone(citationText);
@@ -251,8 +241,6 @@ class OOBibBase {
     /**
      *  Inserts a citation group in the document: creates and fills it.
      *
-     * @param fr
-     * @param documentConnection Connection to a document.
      * @param citationKeys BibTeX keys of
      * @param pageInfosForCitations
      * @param itcType
@@ -269,7 +257,7 @@ class OOBibBase {
      *             reference mark.
      */
     private void createAndFillCitationGroup(OOFrontend fr,
-                                            DocumentConnection documentConnection,
+                                            XTextDocument doc,
                                             List<String> citationKeys,
                                             List<OOFormattedText> pageInfosForCitations,
                                             InTextCitationType itcType,
@@ -292,7 +280,7 @@ class OOBibBase {
         IllegalTypeException,
         NoSuchElementException {
 
-        CitationGroupID cgid = fr.createCitationGroup(documentConnection,
+        CitationGroupID cgid = fr.createCitationGroup(doc,
                                                       citationKeys,
                                                       pageInfosForCitations,
                                                       itcType,
@@ -301,16 +289,11 @@ class OOBibBase {
                                                       !withText /* withoutBrackets */);
 
         if (withText) {
-            XTextCursor c2 = fr.getFillCursorForCitationGroup(documentConnection,
-                                                              cgid);
+            XTextCursor c2 = fr.getFillCursorForCitationGroup(doc, cgid);
 
-            fillCitationMarkInCursor(documentConnection,
-                                     c2,
-                                     citationText,
-                                     withText,
-                                     style);
+            fillCitationMarkInCursor(doc, c2, citationText, withText, style);
 
-            fr.cleanFillCursorForCitationGroup(documentConnection, cgid);
+            fr.cleanFillCursorForCitationGroup(doc, cgid);
         }
         position.collapseToEnd();
     }
@@ -425,26 +408,23 @@ class OOBibBase {
         }
         final int nEntries = entries.size();
 
-        DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
         XTextDocument doc = this.getXTextDocumentOrThrow();
 
-        checkStylesExistInTheDocument(style, documentConnection);
-        checkIfOpenOfficeIsRecordingChanges(documentConnection);
+        checkStylesExistInTheDocument(style, doc);
+        checkIfOpenOfficeIsRecordingChanges(doc);
 
-        OOFrontend fr = new OOFrontend(documentConnection);
-        // CitationGroups cgs = new CitationGroups(documentConnection);
-        // TODO: imposeLocalOrder
+        OOFrontend fr = new OOFrontend(doc);
 
         boolean useUndoContext = true;
 
         try {
             if (useUndoContext) {
-                DocumentConnection.enterUndoContext(doc, "Insert citation");
+                UnoUndo.enterUndoContext(doc, "Insert citation");
             }
             XTextCursor cursor;
             // Get the cursor positioned by the user.
             try {
-                cursor = DocumentConnection.getViewCursor(doc).orElse(null);
+                cursor = UnoCursor.getViewCursor(doc).orElse(null);
             } catch (RuntimeException ex) {
                 // com.sun.star.uno.RuntimeException
                 throw new JabRefException("Could not get the cursor",
@@ -502,7 +482,7 @@ class OOBibBase {
             }
 
             createAndFillCitationGroup(fr,
-                                       documentConnection,
+                                       doc,
                                        citationKeys,
                                        pageInfosForCitations,
                                        itcType,
@@ -519,24 +499,24 @@ class OOBibBase {
             if (sync) {
                 // To account for numbering and for uniqueLetters, we
                 // must refresh the cite markers:
-                OOFrontend fr2 = new OOFrontend(documentConnection);
-                fr2.imposeGlobalOrder(documentConnection);
+                OOFrontend fr2 = new OOFrontend(doc);
+                fr2.imposeGlobalOrder(doc);
                 OOProcess.ProduceCitationMarkersResult x =
                     OOProcess.produceCitationMarkers(fr2.cgs, allBases, style);
                 try {
-                    DocumentConnection.lockControllers(doc);
-                    applyNewCitationMarkers(documentConnection,
+                    UnoScreenRefresh.lockControllers(doc);
+                    applyNewCitationMarkers(doc,
                                             fr2,
                                             x.citMarkers,
                                             style);
                     // Insert it at the current position:
-                    rebuildBibTextSection(documentConnection,
+                    rebuildBibTextSection(doc,
                                           style,
                                           fr2,
                                           x.getBibliography(),
                                           this.alwaysAddCitedOnPages);
                 } finally {
-                    DocumentConnection.unlockControllers(doc);
+                    UnoScreenRefresh.unlockControllers(doc);
                 }
 
                 /*
@@ -558,7 +538,7 @@ class OOBibBase {
             throw new ConnectionLostException(ex.getMessage());
         } finally {
             if (useUndoContext) {
-                DocumentConnection.leaveUndoContext(doc);
+                UnoUndo.leaveUndoContext(doc);
             }
         }
     }
@@ -576,7 +556,6 @@ class OOBibBase {
      * After each fillCitationMarkInCursor call check if we lost the
      * OOBibBase.BIB_SECTION_NAME bookmark and recreate it if we did.
      *
-     * @param documentConnection
      * @param fr
      *
      * @param citMarkers Corresponding text for each reference mark,
@@ -585,7 +564,7 @@ class OOBibBase {
      * @param style Bibliography style to use.
      *
      */
-    private void applyNewCitationMarkers(DocumentConnection documentConnection,
+    private void applyNewCitationMarkers(XTextDocument doc,
                                          OOFrontend fr,
                                          Map<CitationGroupID, OOFormattedText> citMarkers,
                                          OOBibStyle style)
@@ -599,13 +578,10 @@ class OOBibBase {
         NoSuchElementException,
         JabRefException {
 
-        XTextDocument doc = documentConnection.asXTextDocument();
-
-        checkStylesExistInTheDocument(style, documentConnection);
+        checkStylesExistInTheDocument(style, doc);
 
         CitationGroups cgs = fr.cgs;
-        final boolean hadBibSection = (DocumentConnection
-                                       .getBookmarkRange(doc, OOBibBase.BIB_SECTION_NAME)
+        final boolean hadBibSection = (UnoBookmark.getTextRange(doc, OOBibBase.BIB_SECTION_NAME)
                                        .isPresent());
 
         for (Map.Entry<CitationGroupID, OOFormattedText> kv : citMarkers.entrySet()) {
@@ -622,21 +598,15 @@ class OOBibBase {
 
             if (withText) {
 
-                XTextCursor cursor = fr.getFillCursorForCitationGroup(documentConnection,
-                                                                      cgid);
+                XTextCursor cursor = fr.getFillCursorForCitationGroup(doc, cgid);
 
-                fillCitationMarkInCursor(documentConnection,
-                                         cursor,
-                                         citationText,
-                                         withText,
-                                         style);
+                fillCitationMarkInCursor(doc, cursor, citationText, withText, style);
 
-                fr.cleanFillCursorForCitationGroup(documentConnection, cgid);
+                fr.cleanFillCursorForCitationGroup(doc, cgid);
             }
 
             if (hadBibSection
-                && (DocumentConnection
-                    .getBookmarkRange(doc, OOBibBase.BIB_SECTION_NAME)
+                && (UnoBookmark.getTextRange(doc, OOBibBase.BIB_SECTION_NAME)
                     .isEmpty())) {
                 // Overwriting text already there is too harsh.
                 // I am making it an error, to see if we ever get here.
@@ -658,7 +628,7 @@ class OOBibBase {
      *  Note: assumes fresh `jabRefReferenceMarkNamesSortedByPosition`
      *  if `style.isSortByPosition()`
      */
-    private void rebuildBibTextSection(DocumentConnection documentConnection,
+    private void rebuildBibTextSection(XTextDocument doc,
                                        OOBibStyle style,
                                        OOFrontend fr,
                                        CitedKeys bibliography,
@@ -673,9 +643,9 @@ class OOBibBase {
         UndefinedParagraphFormatException,
         NoDocumentException {
 
-        clearBibTextSectionContent2(documentConnection);
+        clearBibTextSectionContent2(doc);
 
-        populateBibTextSection(documentConnection,
+        populateBibTextSection(doc,
                                fr,
                                bibliography,
                                style,
@@ -687,25 +657,21 @@ class OOBibBase {
      *
      * Only called from `clearBibTextSectionContent2`
      */
-    private void createBibTextSection2(DocumentConnection documentConnection)
+    private void createBibTextSection2(XTextDocument doc)
         throws
         IllegalArgumentException,
         CreationException {
 
-        XTextDocument doc = documentConnection.asXTextDocument();
-
-        // Always creating at the end of documentConnection.getText()
+        // Always creating at the end of the document.
         // Alternatively, we could receive a cursor.
         XTextCursor textCursor = doc.getText().createTextCursor();
         textCursor.gotoEnd(false);
-
-        // OOUtil.insertParagraphBreak(documentConnection.xText, textCursor);
         textCursor.collapseToEnd();
 
-        DocumentConnection.insertTextSection(doc,
-                                             OOBibBase.BIB_SECTION_NAME,
-                                             textCursor,
-                                             false);
+        UnoTextSection.create(doc,
+                              OOBibBase.BIB_SECTION_NAME,
+                              textCursor,
+                              false);
     }
 
     /**
@@ -715,17 +681,16 @@ class OOBibBase {
      * Only called from: `rebuildBibTextSection`
      *
      */
-    private void clearBibTextSectionContent2(DocumentConnection documentConnection)
+    private void clearBibTextSectionContent2(XTextDocument doc)
         throws
         WrappedTargetException,
         IllegalArgumentException,
         CreationException,
         NoDocumentException {
 
-        XTextDocument doc = documentConnection.asXTextDocument();
-        XNameAccess nameAccess = DocumentConnection.getTextSections(doc);
+        XNameAccess nameAccess = UnoTextSection.getTextSections(doc);
         if (!nameAccess.hasByName(OOBibBase.BIB_SECTION_NAME)) {
-            createBibTextSection2(documentConnection);
+            createBibTextSection2(doc);
             return;
         }
 
@@ -734,8 +699,7 @@ class OOBibBase {
             XTextSection section = (XTextSection) a.getObject();
             // Clear it:
 
-            XTextCursor cursor =
-                (documentConnection.getXText().createTextCursorByRange(section.getAnchor()));
+            XTextCursor cursor = doc.getText().createTextCursorByRange(section.getAnchor());
 
             cursor.gotoRange(section.getAnchor(), false);
             cursor.setString("");
@@ -749,7 +713,7 @@ class OOBibBase {
 
             // Try to create.
             LOGGER.warn("Could not get section '" + OOBibBase.BIB_SECTION_NAME + "'", ex);
-            createBibTextSection2(documentConnection);
+            createBibTextSection2(doc);
         }
     }
 
@@ -758,7 +722,7 @@ class OOBibBase {
      *
      * Assumes the section named `OOBibBase.BIB_SECTION_NAME` exists.
      */
-    private void populateBibTextSection(DocumentConnection documentConnection,
+    private void populateBibTextSection(XTextDocument doc,
                                         OOFrontend fr,
                                         CitedKeys bibliography,
                                         OOBibStyle style,
@@ -771,14 +735,11 @@ class OOBibBase {
         UndefinedParagraphFormatException,
         IllegalArgumentException,
         CreationException {
-        XTextDocument doc = documentConnection.asXTextDocument();
 
-        XTextSection section = (DocumentConnection
-                                .getTextSectionByName(doc, OOBibBase.BIB_SECTION_NAME)
+        XTextSection section = (UnoTextSection.getByName(doc, OOBibBase.BIB_SECTION_NAME)
                                 .orElseThrow(RuntimeException::new));
 
-        XTextCursor cursor =
-            (documentConnection.getXText().createTextCursorByRange(section.getAnchor()));
+        XTextCursor cursor = doc.getText().createTextCursorByRange(section.getAnchor());
 
         // emit the title of the bibliography
         OOFormattedTextIntoOO.removeDirectFormatting(cursor);
@@ -790,16 +751,12 @@ class OOBibBase {
         cursor.collapseToEnd();
 
         // remove the inital empty paragraph from the section.
-        XTextCursor initialParagraph =
-            (documentConnection.getXText().createTextCursorByRange(section.getAnchor()));
+        XTextCursor initialParagraph = doc.getText().createTextCursorByRange(section.getAnchor());
         initialParagraph.collapseToStart();
         initialParagraph.goRight((short) 1, true);
         initialParagraph.setString("");
 
-        DocumentConnection.insertBookmark(doc,
-                                          OOBibBase.BIB_SECTION_END_NAME,
-                                          cursor,
-                                          true);
+        UnoBookmark.create(doc, OOBibBase.BIB_SECTION_END_NAME, cursor, true);
         cursor.collapseToEnd();
     }
 
@@ -841,21 +798,21 @@ class OOBibBase {
         Objects.requireNonNull(style);
 
         final boolean useLockControllers = true;
-        DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
+
         XTextDocument doc = this.getXTextDocumentOrThrow();
 
-        checkStylesExistInTheDocument(style, documentConnection);
-        checkIfOpenOfficeIsRecordingChanges(documentConnection);
+        checkStylesExistInTheDocument(style, doc);
+        checkIfOpenOfficeIsRecordingChanges(doc);
 
-        OOFrontend fr = new OOFrontend(documentConnection);
+        OOFrontend fr = new OOFrontend(doc);
 
         try {
-            DocumentConnection.enterUndoContext(doc, "Merge citations");
+            UnoUndo.enterUndoContext(doc, "Merge citations");
 
             boolean madeModifications = false;
 
             List<CitationGroupID> referenceMarkNames =
-                fr.getCitationGroupIDsSortedWithinPartitions(documentConnection,
+                fr.getCitationGroupIDsSortedWithinPartitions(doc,
                                                              false /* mapFootnotesToFootnoteMarks */);
 
             final int nRefMarks = referenceMarkNames.size();
@@ -863,7 +820,7 @@ class OOBibBase {
             try {
 
                 if (useLockControllers) {
-                    DocumentConnection.lockControllers(doc);
+                    UnoScreenRefresh.lockControllers(doc);
                 }
 
                 /*
@@ -920,12 +877,11 @@ class OOBibBase {
                         if (addToGroup && prev != null) {
                             Objects.requireNonNull(prevRange);
                             Objects.requireNonNull(currentRange);
-                            if (!DocumentConnection.comparableRanges(prevRange, currentRange)) {
+                            if (!UnoTextRange.comparables(prevRange, currentRange)) {
                                 addToGroup = false;
                             } else {
 
-                                int textOrder = DocumentConnection.javaCompareRegionStarts(prevRange,
-                                                                                           currentRange);
+                                int textOrder = UnoTextRange.compareStarts(prevRange, currentRange);
 
                                 if (textOrder != (-1)) {
                                     String msg =
@@ -947,8 +903,7 @@ class OOBibBase {
                         if (addToGroup && (cursorBetween != null)) {
                             Objects.requireNonNull(currentGroupCursor);
                             // assume: currentGroupCursor.getEnd() == cursorBetween.getEnd()
-                            if (DocumentConnection
-                                .javaCompareRegionEnds(cursorBetween, currentGroupCursor) != 0) {
+                            if (UnoTextRange.compareEnds(cursorBetween, currentGroupCursor) != 0) {
                                 String msg = ("combineCiteMarkers:"
                                               + " cursorBetween.end != currentGroupCursor.end");
                                 throw new RuntimeException(msg);
@@ -963,8 +918,7 @@ class OOBibBase {
                                  .createTextCursorByRange(cursorBetween.getEnd()));
 
                             while (couldExpand &&
-                                   (DocumentConnection
-                                    .javaCompareRegionEnds(cursorBetween, rangeStart) < 0)) {
+                                   (UnoTextRange.compareEnds(cursorBetween, rangeStart) < 0)) {
                                 couldExpand = cursorBetween.goRight((short) 1, true);
                                 currentGroupCursor.goRight((short) 1, true);
                                 //
@@ -976,8 +930,7 @@ class OOBibBase {
                                     || !thisChar.trim().isEmpty()) {
                                     couldExpand = false;
                                 }
-                                if (DocumentConnection
-                                    .javaCompareRegionEnds(cursorBetween, currentGroupCursor) != 0) {
+                                if (UnoTextRange.compareEnds(cursorBetween, currentGroupCursor) != 0) {
                                     String msg = ("combineCiteMarkers:"
                                                   + " cursorBetween.end != currentGroupCursor.end"
                                                   + " (during expand)");
@@ -1029,8 +982,7 @@ class OOBibBase {
                             // include self in currentGroupCursor
                             currentGroupCursor.goRight((short) (currentRange.getString().length()), true);
 
-                            if (DocumentConnection
-                                .javaCompareRegionEnds(cursorBetween, currentGroupCursor) != 0) {
+                            if (UnoTextRange.compareEnds(cursorBetween, currentGroupCursor) != 0) {
                                 /*
                                  * A problem discovered using this check:
                                  * when viewing the document in
@@ -1055,9 +1007,7 @@ class OOBibBase {
                                                        + "cursorBetween: '%s'\n"
                                                        + "currentRange: '%s'\n"
                                                        + "currentGroupCursor: '%s'\n",
-                                                       DocumentConnection
-                                                       .javaCompareRegionEnds(cursorBetween,
-                                                                              currentGroupCursor),
+                                                       UnoTextRange.compareEnds(cursorBetween, currentGroupCursor),
                                                        cursorBetween.getString(),
                                                        currentRange.getString(),
                                                        currentGroupCursor.getString())
@@ -1106,7 +1056,7 @@ class OOBibBase {
 
                     // Remove the old citation groups from the document.
                     for (int gj = 0; gj < joinableGroup.size(); gj++) {
-                        fr.removeCitationGroups(joinableGroup, documentConnection);
+                        fr.removeCitationGroups(joinableGroup, doc);
                     }
 
                     XTextCursor textCursor = joinableGroupsCursors.get(gi);
@@ -1124,7 +1074,7 @@ class OOBibBase {
                      */
                     boolean insertSpaceAfter = false;
                     createAndFillCitationGroup(fr,
-                                               documentConnection,
+                                               doc,
                                                citationKeys,
                                                pageInfosForCitations,
                                                itcType, // InTextCitationType.AUTHORYEAR_PAR
@@ -1139,37 +1089,36 @@ class OOBibBase {
 
             } finally {
                 if (useLockControllers) {
-                    DocumentConnection.unlockControllers(doc);
+                    UnoScreenRefresh.unlockControllers(doc);
                 }
             }
 
             if (madeModifications) {
-                DocumentConnection.refresh(doc);
-                OOFrontend fr2 = new OOFrontend(documentConnection);
-                fr2.imposeGlobalOrder(documentConnection);
+                UnoCrossRef.refresh(doc);
+                OOFrontend fr2 = new OOFrontend(doc);
+                fr2.imposeGlobalOrder(doc);
                 OOProcess.ProduceCitationMarkersResult x =
                     OOProcess.produceCitationMarkers(fr2.cgs,
                                                      databases,
                                                      style);
                 try {
                     if (useLockControllers) {
-                        DocumentConnection.lockControllers(doc);
+                        UnoScreenRefresh.lockControllers(doc);
                     }
-                    applyNewCitationMarkers(documentConnection,
+                    applyNewCitationMarkers(doc,
                                             fr2,
                                             x.citMarkers,
                                             style);
                     // bibliography is not refreshed
                 } finally {
                     if (useLockControllers) {
-                        DocumentConnection.unlockControllers(doc);
+                        UnoScreenRefresh.unlockControllers(doc);
                     }
                 }
             }
         } finally {
-            DocumentConnection.leaveUndoContext(doc);
+            UnoUndo.leaveUndoContext(doc);
         }
-        // documentConnection.refresh();
     } // combineCiteMarkers
 
     /**
@@ -1201,16 +1150,16 @@ class OOBibBase {
         Objects.requireNonNull(style);
 
         final boolean useLockControllers = true;
-        DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
+
         XTextDocument doc = this.getXTextDocumentOrThrow();
 
-        checkStylesExistInTheDocument(style, documentConnection);
-        checkIfOpenOfficeIsRecordingChanges(documentConnection);
+        checkStylesExistInTheDocument(style, doc);
+        checkIfOpenOfficeIsRecordingChanges(doc);
 
-        OOFrontend fr = new OOFrontend(documentConnection);
+        OOFrontend fr = new OOFrontend(doc);
 
         try {
-            DocumentConnection.enterUndoContext(doc, "Separate citations");
+            UnoUndo.enterUndoContext(doc, "Separate citations");
             boolean madeModifications = false;
 
             // {@code names} does not need to be sorted.
@@ -1218,7 +1167,7 @@ class OOBibBase {
 
             try {
                 if (useLockControllers) {
-                    DocumentConnection.lockControllers(doc);
+                    UnoScreenRefresh.lockControllers(doc);
                 }
 
                 int pivot = 0;
@@ -1243,7 +1192,7 @@ class OOBibBase {
                     List<String> keys =
                         cits.stream().map(cit -> cit.citationKey).collect(Collectors.toList());
 
-                    fr.removeCitationGroup(cg, documentConnection);
+                    fr.removeCitationGroup(cg, doc);
 
                     // Now we own the content of cits
 
@@ -1258,7 +1207,7 @@ class OOBibBase {
                         boolean insertSpaceAfter = (i != last);
                         boolean withText = cg.itcType != InTextCitationType.INVISIBLE_CIT; // true
                         createAndFillCitationGroup(fr,
-                                                   documentConnection,
+                                                   doc,
                                                    keys.subList(i, i + 1), // citationKeys,
                                                    pageInfosForCitations.subList(i, i + 1), // pageInfos,
                                                    InTextCitationType.AUTHORYEAR_PAR, // itcType,
@@ -1275,32 +1224,31 @@ class OOBibBase {
                 }
             } finally {
                 if (useLockControllers) {
-                    DocumentConnection.unlockControllers(doc);
+                    UnoScreenRefresh.unlockControllers(doc);
                 }
             }
 
             if (madeModifications) {
-                DocumentConnection.refresh(doc);
-                OOFrontend fr2 = new OOFrontend(documentConnection);
-                fr2.imposeGlobalOrder(documentConnection);
+                UnoCrossRef.refresh(doc);
+                OOFrontend fr2 = new OOFrontend(doc);
+                fr2.imposeGlobalOrder(doc);
                 OOProcess.ProduceCitationMarkersResult x =
                     OOProcess.produceCitationMarkers(fr2.cgs, databases, style);
                 try {
                     if (useLockControllers) {
-                        DocumentConnection.lockControllers(doc);
+                        UnoScreenRefresh.lockControllers(doc);
                     }
-                    applyNewCitationMarkers(documentConnection, fr2, x.citMarkers, style);
+                    applyNewCitationMarkers(doc, fr2, x.citMarkers, style);
                     // bibliography is not refreshed
                 } finally {
                     if (useLockControllers) {
-                        DocumentConnection.unlockControllers(doc);
+                        UnoScreenRefresh.unlockControllers(doc);
                     }
                 }
             }
         } finally {
-            DocumentConnection.leaveUndoContext(doc);
+            UnoUndo.leaveUndoContext(doc);
         }
-        // documentConnection.refresh();
     }
 
     static class ExportCitedHelperResult {
@@ -1317,15 +1265,11 @@ class OOBibBase {
     }
 
     /**
-     * Helper for GUI action "Export cited"
-     *
-     * Refreshes citation markers, (although the user did not ask for that).
-     * Actually, we only call produceCitationMarkers to get x.unresolvedKeys
+     * GUI action for "Export cited"
      *
      * Does not refresh the bibliography.
      */
-    public ExportCitedHelperResult exportCitedHelper(List<BibDatabase> databases,
-                                                     OOBibStyle style)
+    public ExportCitedHelperResult exportCitedHelper(List<BibDatabase> databases)
         throws
         WrappedTargetException,
         NoSuchElementException,
@@ -1337,14 +1281,13 @@ class OOBibBase {
         CreationException,
         InvalidStateException {
 
-        DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
         XTextDocument doc = this.getXTextDocumentOrThrow();
 
         try {
-            DocumentConnection.enterUndoContext(doc, "Changes during \"Export cited\"");
-            return this.generateDatabase(databases, documentConnection);
+            UnoUndo.enterUndoContext(doc, "Changes during \"Export cited\"");
+            return this.generateDatabase(databases, doc);
         } finally {
-            DocumentConnection.leaveUndoContext(doc);
+            UnoUndo.leaveUndoContext(doc);
         }
     }
 
@@ -1352,7 +1295,6 @@ class OOBibBase {
      * Used from GUI: "Export cited"
      *
      * @param databases The databases to look up the citation keys in the document from.
-     * @param documentConnection
      * @return A new database, with cloned entries.
      *
      * If a key is not found, it is added to result.unresolvedKeys
@@ -1362,14 +1304,14 @@ class OOBibBase {
      * If it is not found, it is silently ignored.
      */
     private ExportCitedHelperResult generateDatabase(List<BibDatabase> databases,
-                                                     DocumentConnection documentConnection)
+                                                     XTextDocument doc)
         throws
         NoSuchElementException,
         WrappedTargetException,
         NoDocumentException,
         UnknownPropertyException {
 
-        OOFrontend fr = new OOFrontend(documentConnection);
+        OOFrontend fr = new OOFrontend(doc);
         CitedKeys cks = fr.cgs.getCitedKeys();
         cks.lookupInDatabases(databases);
 
@@ -1417,15 +1359,14 @@ class OOBibBase {
      * Throw JabRefException if recording changes or the document contains
      * recorded changes.
      */
-    public void checkIfOpenOfficeIsRecordingChanges(DocumentConnection documentConnection)
+    private static void checkIfOpenOfficeIsRecordingChanges(XTextDocument doc)
         throws
         UnknownPropertyException,
         WrappedTargetException,
         PropertyVetoException,
         JabRefException {
-        XTextDocument doc = documentConnection.asXTextDocument();
-        boolean recordingChanges = DocumentConnection.getRecordChanges(doc);
-        int nRedlines = DocumentConnection.countRedlines(doc);
+        boolean recordingChanges = UnoRedlines.getRecordChanges(doc);
+        int nRedlines = UnoRedlines.countRedlines(doc);
         if (recordingChanges || nRedlines > 0) {
             String msg = "";
             if (recordingChanges) {
@@ -1446,6 +1387,20 @@ class OOBibBase {
         }
     }
 
+    /*
+     * Called from GUI.
+     */
+    public void checkIfOpenOfficeIsRecordingChanges()
+        throws
+        UnknownPropertyException,
+        WrappedTargetException,
+        PropertyVetoException,
+        JabRefException,
+        NoDocumentException {
+        XTextDocument doc = this.getXTextDocumentOrThrow();
+        checkIfOpenOfficeIsRecordingChanges(doc);
+    }
+
     void styleIsRequired(OOBibStyle style)
         throws
         JabRefException {
@@ -1458,15 +1413,15 @@ class OOBibBase {
     }
 
     public void checkParagraphStyleExistsInTheDocument(String styleName,
-                                                       DocumentConnection documentConnection,
+                                                       XTextDocument doc,
                                                        String labelInJstyleFile,
                                                        String pathToStyleFile)
         throws
         JabRefException,
         NoSuchElementException,
         WrappedTargetException {
-        XTextDocument doc = documentConnection.asXTextDocument();
-        Optional<String> internalName = DocumentConnection.getInternalNameOfParagraphStyle(doc, styleName);
+
+        Optional<String> internalName = UnoStyle.getInternalNameOfParagraphStyle(doc, styleName);
 
         if (internalName.isEmpty()) {
             String msg =
@@ -1498,16 +1453,15 @@ class OOBibBase {
     }
 
     public void checkCharacterStyleExistsInTheDocument(String styleName,
-                                                       DocumentConnection documentConnection,
+                                                       XTextDocument doc,
                                                        String labelInJstyleFile,
                                                        String pathToStyleFile)
         throws
         JabRefException,
         NoSuchElementException,
         WrappedTargetException {
-        XTextDocument doc = documentConnection.asXTextDocument();
-        Optional<String> internalName = (DocumentConnection
-                                         .getInternalNameOfCharacterStyle(doc, styleName));
+
+        Optional<String> internalName = UnoStyle.getInternalNameOfCharacterStyle(doc, styleName);
 
         if (internalName.isEmpty()) {
             String msg =
@@ -1537,7 +1491,7 @@ class OOBibBase {
         }
     }
 
-    public void checkStylesExistInTheDocument(OOBibStyle style, DocumentConnection documentConnection)
+    public void checkStylesExistInTheDocument(OOBibStyle style, XTextDocument doc)
         throws
         JabRefException,
         NoSuchElementException,
@@ -1546,17 +1500,17 @@ class OOBibBase {
         String pathToStyleFile = style.getPath();
 
         checkParagraphStyleExistsInTheDocument(style.getReferenceHeaderParagraphFormat(),
-                                               documentConnection,
+                                               doc,
                                                "ReferenceHeaderParagraphFormat",
                                                pathToStyleFile);
 
         checkParagraphStyleExistsInTheDocument(style.getReferenceParagraphFormat(),
-                                               documentConnection,
+                                               doc,
                                                "ReferenceParagraphFormat",
                                                pathToStyleFile);
         if (style.isFormatCitations()) {
             checkCharacterStyleExistsInTheDocument(style.getCitationCharacterFormat(),
-                                                   documentConnection,
+                                                   doc,
                                                    "CitationCharacterFormat",
                                                    pathToStyleFile);
         }
@@ -1588,52 +1542,44 @@ class OOBibBase {
 
         styleIsRequired(style);
 
-        DocumentConnection documentConnection = this.getDocumentConnectionOrThrow();
         XTextDocument doc = this.getXTextDocumentOrThrow();
 
-        checkStylesExistInTheDocument(style, documentConnection);
-        checkIfOpenOfficeIsRecordingChanges(documentConnection);
+        checkStylesExistInTheDocument(style, doc);
+        checkIfOpenOfficeIsRecordingChanges(doc);
 
         try {
-            DocumentConnection.enterUndoContext(doc, "Refresh bibliography");
+            UnoUndo.enterUndoContext(doc, "Refresh bibliography");
 
             boolean requireSeparation = false;
-            // CitationGroups cgs = new CitationGroups(documentConnection);
-            OOFrontend fr = new OOFrontend(documentConnection);
+
+            OOFrontend fr = new OOFrontend(doc);
 
             // Check Range overlaps
             int maxReportedOverlaps = 10;
-            fr.checkRangeOverlaps(documentConnection,
-                                  requireSeparation,
-                                  maxReportedOverlaps);
+            fr.checkRangeOverlaps(doc, requireSeparation, maxReportedOverlaps);
 
             final boolean useLockControllers = true;
-            fr.imposeGlobalOrder(documentConnection);
+            fr.imposeGlobalOrder(doc);
             OOProcess.ProduceCitationMarkersResult x =
-                OOProcess.produceCitationMarkers(fr.cgs,
-                                                 databases,
-                                                 style);
+                OOProcess.produceCitationMarkers(fr.cgs, databases, style);
             try {
                 if (useLockControllers) {
-                    DocumentConnection.lockControllers(doc);
+                    UnoScreenRefresh.lockControllers(doc);
                 }
-                applyNewCitationMarkers(documentConnection,
-                                        fr,
-                                        x.citMarkers,
-                                        style);
-                rebuildBibTextSection(documentConnection,
+                applyNewCitationMarkers(doc, fr, x.citMarkers, style);
+                rebuildBibTextSection(doc,
                                       style,
                                       fr,
                                       x.getBibliography(),
                                       this.alwaysAddCitedOnPages);
                 return x.getUnresolvedKeys();
             } finally {
-                if (useLockControllers && DocumentConnection.hasControllersLocked(doc)) {
-                    DocumentConnection.unlockControllers(doc);
+                if (useLockControllers && UnoScreenRefresh.hasControllersLocked(doc)) {
+                    UnoScreenRefresh.unlockControllers(doc);
                 }
             }
         } finally {
-            DocumentConnection.leaveUndoContext(doc);
+            UnoUndo.leaveUndoContext(doc);
         }
     }
 

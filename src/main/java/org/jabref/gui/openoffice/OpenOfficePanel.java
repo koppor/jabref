@@ -48,7 +48,6 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.StyleLoader;
 import org.jabref.logic.openoffice.CreationException;
-import org.jabref.logic.openoffice.DocumentConnection;
 import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.OpenOfficeFileSearch;
 import org.jabref.logic.openoffice.OpenOfficePreferences;
@@ -282,8 +281,7 @@ public class OpenOfficePanel {
         manageCitations.setMaxWidth(Double.MAX_VALUE);
         manageCitations.setOnAction(e -> {
            try {
-               DocumentConnection documentConnection = ooBase.getDocumentConnectionOrThrow();
-               ooBase.checkIfOpenOfficeIsRecordingChanges(documentConnection);
+               ooBase.checkIfOpenOfficeIsRecordingChanges();
            } catch (JabRefException ex) {
                 dialogService.showErrorDialogAndWait(
                     Localization.lang("JabRefException"),
@@ -347,7 +345,7 @@ public class OpenOfficePanel {
                 return;
             }
 
-            OOBibBase.ExportCitedHelperResult r = ooBase.exportCitedHelper(databases, style);
+            OOBibBase.ExportCitedHelperResult r = ooBase.exportCitedHelper(databases);
             List<String> unresolvedKeys = r.unresolvedKeys;
             BibDatabase newDatabase = r.newDatabase;
             if (!unresolvedKeys.isEmpty()) {
@@ -520,8 +518,7 @@ public class OpenOfficePanel {
         }
 
         try {
-            DocumentConnection documentConnection = ooBase.getDocumentConnectionOrThrow();
-            ooBase.checkIfOpenOfficeIsRecordingChanges(documentConnection);
+            ooBase.checkIfOpenOfficeIsRecordingChanges();
         } catch (JabRefException ex) {
             dialogService.showErrorDialogAndWait(
                 Localization.lang("JabRefException"),

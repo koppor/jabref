@@ -9,8 +9,9 @@ import java.util.stream.Collectors;
 import org.jabref.gui.DialogService;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.openoffice.CreationException;
-import org.jabref.logic.openoffice.DocumentConnection;
 import org.jabref.logic.openoffice.NoDocumentException;
+import org.jabref.logic.openoffice.UnoCast;
+import org.jabref.logic.openoffice.UnoTextDocument;
 
 import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.container.NoSuchElementException;
@@ -21,7 +22,6 @@ import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.text.XTextDocument;
-import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ class OOBibBaseConnect {
      *
      * Cleared (to null) when we discover we lost the connection.
      */
-    private DocumentConnection xDocumentConnection;
+    private XTextDocument xTextDocument;
 
     /*
      * Constructor
@@ -74,7 +74,7 @@ class OOBibBaseConnect {
         } catch (Exception e) {
             throw new CreationException(e.getMessage());
         }
-        return unoQI(XDesktop.class, desktop);
+        return UnoCast.unoQI(XDesktop.class, desktop);
     }
 
     private static List<XTextDocument> getTextDocuments(XDesktop desktop)
@@ -89,8 +89,8 @@ class OOBibBaseConnect {
 
         while (compEnum.hasMoreElements()) {
             Object next = compEnum.nextElement();
-            XComponent comp = unoQI(XComponent.class, next);
-            XTextDocument doc = unoQI(XTextDocument.class, comp);
+            XComponent comp = UnoCast.unoQI(XComponent.class, next);
+            XTextDocument doc = UnoCast.unoQI(XTextDocument.class, comp);
             if (doc != null) {
                 result.add(doc);
             }
@@ -115,7 +115,7 @@ class OOBibBaseConnect {
 
             public DocumentTitleViewModel(XTextDocument xTextDocument) {
                 this.xTextDocument = xTextDocument;
-                this.description = DocumentConnection.getDocumentTitle(xTextDocument).orElse("");
+                this.description = UnoTextDocument.getFrameTitle(xTextDocument).orElse("");
             }
 
             public XTextDocument getXtextDocument() {
@@ -160,7 +160,7 @@ class OOBibBaseConnect {
      * and extracts some frequently used parts (starting points for
      * managing its content).
      *
-     * Finally initializes this.xDocumentConnection with the selected
+     * Finally initializes this.xTextDocument with the selected
      * document and parts extracted.
      *
      */
@@ -185,7 +185,7 @@ class OOBibBaseConnect {
             return;
         }
 
-        this.xDocumentConnection = new DocumentConnection(selected);
+        this.xTextDocument = selected;
     }
 
     /**
@@ -193,78 +193,59 @@ class OOBibBaseConnect {
      *
      */
     private void forgetDocument() {
-        this.xDocumentConnection = null;
+        this.xTextDocument = null;
     }
 
     /**
      * A simple test for document availability.
      *
-     * See also `documentConnectionMissing` for a test
+     * See also `isDocumentConnectionMissing` for a test
      * actually attempting to use teh connection.
      *
      */
     public boolean isConnectedToDocument() {
-        return this.xDocumentConnection != null;
+        return this.xTextDocument != null;
     }
 
     /**
      * @return true if we are connected to a document
      */
-    public boolean documentConnectionMissing() {
-        if (this.xDocumentConnection == null) {
-            return true;
-        }
-        XTextDocument doc = this.xDocumentConnection.asXTextDocument();
+    public boolean isDocumentConnectionMissing() {
+        XTextDocument doc = this.xTextDocument;
+
         if (doc == null) {
+            return true;
+        }
+
+        if (UnoTextDocument.isDocumentConnectionMissing(doc)) {
             forgetDocument();
             return true;
         }
-        boolean res = DocumentConnection.documentConnectionMissing(doc);
-        if (res) {
-            forgetDocument();
-        }
-        return res;
+        return false;
     }
 
     /**
-     * Either return a valid DocumentConnection or throw
+     * Either return a valid XTextDocument or throw
      * NoDocumentException.
      */
-    public DocumentConnection getDocumentConnectionOrThrow()
-        throws
-        NoDocumentException {
-        if (documentConnectionMissing()) {
-            throw new NoDocumentException("Not connected to document");
-        }
-        return this.xDocumentConnection;
-    }
-
     public XTextDocument getXTextDocumentOrThrow()
         throws
         NoDocumentException {
-        return getDocumentConnectionOrThrow().asXTextDocument();
+        if (isDocumentConnectionMissing()) {
+            throw new NoDocumentException("Not connected to document");
+        }
+        return this.xTextDocument;
     }
 
     /**
      *  The title of the current document, or Optional.empty()
      */
     public Optional<String> getCurrentDocumentTitle() {
-        if (documentConnectionMissing()) {
+        if (isDocumentConnectionMissing()) {
             return Optional.empty();
         } else {
-            return DocumentConnection.getDocumentTitle(this.xDocumentConnection.asXTextDocument());
+            return UnoTextDocument.getFrameTitle(this.xTextDocument);
         }
-    }
-
-    /**
-     * unoQI : short for UnoRuntime.queryInterface
-     *
-     * @return A reference to the requested UNO interface type if
-     *         available, otherwise null.
-     */
-    private static <T> T unoQI(Class<T> zInterface,
-                               Object object) {
-        return UnoRuntime.queryInterface(zInterface, object);
     }
 
 } // end of OOBibBaseConnect

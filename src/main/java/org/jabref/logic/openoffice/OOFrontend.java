@@ -36,7 +36,7 @@ public class OOFrontend {
     public final Backend52 backend;
     public final CitationGroups cgs;
 
-    public OOFrontend(DocumentConnection documentConnection)
+    public OOFrontend(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {
@@ -47,11 +47,11 @@ public class OOFrontend {
         this.backend = new Backend52();
 
         // Get the citationGroupNames
-        List<String> citationGroupNames = this.backend.getJabRefReferenceMarkNames(documentConnection);
+        List<String> citationGroupNames = this.backend.getJabRefReferenceMarkNames(doc);
 
         Map<CitationGroupID, CitationGroup> citationGroups =
             readCitationGroupsFromDocument(this.backend,
-                                           documentConnection,
+                                           doc,
                                            citationGroupNames);
         this.cgs = new CitationGroups(backend.dataModel, citationGroups);
     }
@@ -60,15 +60,15 @@ public class OOFrontend {
         return backend.dataModel;
     }
 
-    public Optional<String> healthReport(DocumentConnection documentConnection)
+    public Optional<String> healthReport(XTextDocument doc)
         throws
         NoDocumentException {
-        return backend.healthReport(documentConnection);
+        return backend.healthReport(doc);
     }
 
     private static Map<CitationGroupID, CitationGroup>
     readCitationGroupsFromDocument(Backend52 backend,
-                                   DocumentConnection documentConnection,
+                                   XTextDocument doc,
                                    List<String> citationGroupNames)
         throws
         WrappedTargetException,
@@ -78,7 +78,7 @@ public class OOFrontend {
         for (int i = 0; i < citationGroupNames.size(); i++) {
             final String name = citationGroupNames.get(i);
             CitationGroup cg =
-                backend.readCitationGroupFromDocumentOrThrow(documentConnection, name);
+                backend.readCitationGroupFromDocumentOrThrow(doc, name);
             citationGroups.put(cg.cgid, cg);
         }
         return citationGroups;
@@ -99,20 +99,18 @@ public class OOFrontend {
      * unique indexes within the original partition (not after
      * mapFootnotesToFootnoteMarks).
      *
-     * @param documentConnection Connection to the document.
      * @param mapFootnotesToFootnoteMarks If true, replace ranges in
      *        footnotes with the range of the corresponding footnote
      *        mark. This is used for numbering the citations.
      *
      */
     private List<RangeSort.RangeSortable<CitationGroupID>>
-    createVisualSortInput(DocumentConnection documentConnection,
+    createVisualSortInput(XTextDocument doc,
                           boolean mapFootnotesToFootnoteMarks)
         throws
         NoDocumentException,
         WrappedTargetException {
 
-        XTextDocument doc = documentConnection.asXTextDocument();
         List<CitationGroupID> cgids = new ArrayList<>(cgs.getCitationGroupIDs());
 
         List<RangeSort.RangeSortEntry> vses = new ArrayList<>();
@@ -167,7 +165,7 @@ public class OOFrontend {
                     RangeSort.RangeSortEntry<CitationGroupID> v = avs.get(j);
                     v.indexInPosition = indexInPartition++;
                     if (mapFootnotesToFootnoteMarks) {
-                        Optional<XTextRange> fmr = DocumentConnection.getFootnoteMarkRange(v.getRange());
+                        Optional<XTextRange> fmr = UnoTextRange.getFootnoteMarkRange(v.getRange());
                         // Adjust range if we are inside a footnote:
                         if (fmr.isPresent()) {
                             v.range = fmr.get();
@@ -198,7 +196,7 @@ public class OOFrontend {
      *        order.
      *
      */
-    private List<CitationGroupID> getVisuallySortedCitationGroupIDs(DocumentConnection documentConnection,
+    private List<CitationGroupID> getVisuallySortedCitationGroupIDs(XTextDocument doc,
                                                                     boolean mapFootnotesToFootnoteMarks)
         throws
         WrappedTargetException,
@@ -206,7 +204,7 @@ public class OOFrontend {
         JabRefException {
 
         List<RangeSort.RangeSortable<CitationGroupID>> vses =
-            createVisualSortInput(documentConnection,
+            createVisualSortInput(doc,
                                   mapFootnotesToFootnoteMarks);
 
         if (vses.size() != this.cgs.numberOfCitationGroups()) {
@@ -222,7 +220,7 @@ public class OOFrontend {
                                 + " but could not get it.");
         List<RangeSort.RangeSortable<CitationGroupID>> sorted =
             RangeSortVisual.visualSort(vses,
-                                       documentConnection,
+                                       doc,
                                        messageOnFailureToObtainAFunctionalXTextViewCursor);
 
         if (sorted.size() != this.cgs.numberOfCitationGroups()) {
@@ -240,7 +238,7 @@ public class OOFrontend {
      * Calculate and return citation group IDs in visual order.
      */
     public List<CitationGroupID>
-    getCitationGroupIDsSortedWithinPartitions(DocumentConnection documentConnection,
+    getCitationGroupIDsSortedWithinPartitions(XTextDocument doc,
                                               boolean mapFootnotesToFootnoteMarks)
         throws
         NoDocumentException,
@@ -248,7 +246,7 @@ public class OOFrontend {
         // This is like getVisuallySortedCitationGroupIDs,
         // but we skip the visualSort part.
         List<RangeSort.RangeSortable<CitationGroupID>> vses =
-            createVisualSortInput(documentConnection,
+            createVisualSortInput(doc,
                                   mapFootnotesToFootnoteMarks);
 
         if (vses.size() != this.cgs.numberOfCitationGroups()) {
@@ -297,7 +295,6 @@ public class OOFrontend {
      *  On return {@code position} is collapsed, and is after the
      *  inserted space, or at the end of the reference mark.
      *
-     * @param documentConnection Connection to document.
      * @param citationKeys
      * @param pageInfosForCitations
      * @param itcType
@@ -310,7 +307,7 @@ public class OOFrontend {
      *                         For use with INVISIBLE_CIT.
      *
      */
-    public CitationGroupID createCitationGroup(DocumentConnection documentConnection,
+    public CitationGroupID createCitationGroup(XTextDocument doc,
                                                List<String> citationKeys,
                                                List<OOFormattedText> pageInfosForCitations,
                                                InTextCitationType itcType,
@@ -326,7 +323,7 @@ public class OOFrontend {
         PropertyVetoException,
         IllegalTypeException {
 
-        CitationGroup cg = backend.createCitationGroup(documentConnection,
+        CitationGroup cg = backend.createCitationGroup(doc,
                                                        citationKeys,
                                                        pageInfosForCitations,
                                                        itcType,
@@ -353,8 +350,7 @@ public class OOFrontend {
      *             it is easier to reread everything for a refresh.
      *
      */
-    public void removeCitationGroup(CitationGroup cg,
-                                    DocumentConnection documentConnection)
+    public void removeCitationGroup(CitationGroup cg, XTextDocument doc)
         throws
         WrappedTargetException,
         NoDocumentException,
@@ -364,11 +360,11 @@ public class OOFrontend {
         IllegalTypeException {
 
         // Apply
-        backend.removeCitationGroup(cg, documentConnection);
+        backend.removeCitationGroup(cg, doc);
         this.cgs.afterRemoveCitationGroup(cg);
     }
 
-    public void removeCitationGroups(List<CitationGroup> xcgs, DocumentConnection documentConnection)
+    public void removeCitationGroups(List<CitationGroup> xcgs, XTextDocument doc)
         throws
         WrappedTargetException,
         NoDocumentException,
@@ -378,7 +374,7 @@ public class OOFrontend {
         IllegalTypeException {
 
         for (CitationGroup cg : xcgs) {
-            removeCitationGroup(cg, documentConnection);
+            removeCitationGroup(cg, doc);
         }
     }
 
@@ -389,8 +385,7 @@ public class OOFrontend {
      * @return Null if the reference mark is missing.
      *
      */
-    public Optional<XTextRange> getMarkRange(XTextDocument doc,
-                                             CitationGroupID cgid)
+    public Optional<XTextRange> getMarkRange(XTextDocument doc, CitationGroupID cgid)
         throws
         NoDocumentException,
         WrappedTargetException {
@@ -402,8 +397,7 @@ public class OOFrontend {
      * Cursor for the reference marks as is, not prepared for filling,
      * but does not need cleanFillCursorForCitationGroup either.
      */
-    public Optional<XTextCursor> getRawCursorForCitationGroup(CitationGroupID cgid,
-                                                              DocumentConnection documentConnection)
+    public Optional<XTextCursor> getRawCursorForCitationGroup(CitationGroupID cgid, XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException,
@@ -413,33 +407,31 @@ public class OOFrontend {
         if (cg.isEmpty()) {
             return Optional.empty();
         }
-        return backend.getRawCursorForCitationGroup(cg.get(), documentConnection);
+        return backend.getRawCursorForCitationGroup(cg.get(), doc);
     }
 
-    public XTextCursor getFillCursorForCitationGroup(DocumentConnection documentConnection,
-                                                     CitationGroupID cgid)
+    public XTextCursor getFillCursorForCitationGroup(XTextDocument doc, CitationGroupID cgid)
         throws
         NoDocumentException,
         WrappedTargetException,
         CreationException {
 
         CitationGroup cg = this.cgs.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
-        return backend.getFillCursorForCitationGroup(cg, documentConnection);
+        return backend.getFillCursorForCitationGroup(cg, doc);
     }
 
         /**
      * Remove brackets, but if the result would become empty, leave
      * them; if the result would be a single characer, leave the left bracket.
      */
-    public void cleanFillCursorForCitationGroup(DocumentConnection documentConnection,
-                                                CitationGroupID cgid)
+    public void cleanFillCursorForCitationGroup(XTextDocument doc, CitationGroupID cgid)
         throws
         NoDocumentException,
         WrappedTargetException,
         CreationException {
 
         CitationGroup cg = this.cgs.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
-        backend.cleanFillCursorForCitationGroup(cg, documentConnection);
+        backend.cleanFillCursorForCitationGroup(cg, doc);
     }
 
     /**
@@ -447,12 +439,11 @@ public class OOFrontend {
      *
      *  result.size() == nRefMarks
      */
-    public List<RangeForOverlapCheck> citationRanges(DocumentConnection documentConnection)
+    public List<RangeForOverlapCheck> citationRanges(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {
 
-        XTextDocument doc = documentConnection.asXTextDocument();
         List<RangeForOverlapCheck> xs = new ArrayList<>(cgs.numberOfCitationGroups());
 
         List<CitationGroupID> cgids = new ArrayList<>(cgs.getCitationGroupIDs());
@@ -483,7 +474,7 @@ public class OOFrontend {
      *        footnote marks does not depend on how do we mark or
      *        structure those ranges.
      */
-    public List<RangeForOverlapCheck> footnoteMarkRanges(DocumentConnection documentConnection)
+    public List<RangeForOverlapCheck> footnoteMarkRanges(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {
@@ -494,12 +485,12 @@ public class OOFrontend {
 
         List<RangeForOverlapCheck> xs = new ArrayList<>();
 
-        List<RangeForOverlapCheck> citRanges = citationRanges(documentConnection);
+        List<RangeForOverlapCheck> citRanges = citationRanges(doc);
 
         for (RangeForOverlapCheck base : citRanges) {
             XTextRange r = base.range;
 
-            Optional<XTextRange> footnoteMarkRange = DocumentConnection.getFootnoteMarkRange(r);
+            Optional<XTextRange> footnoteMarkRange = UnoTextRange.getFootnoteMarkRange(r);
 
             if (footnoteMarkRange.isEmpty()) {
                 // not in footnote
@@ -523,7 +514,7 @@ public class OOFrontend {
      * @param reportAtMost Limit number of overlaps reported (0 for no limit)
      *
      */
-    public void checkRangeOverlaps(DocumentConnection documentConnection,
+    public void checkRangeOverlaps(XTextDocument doc,
                                    boolean requireSeparation,
                                    int reportAtMost)
         throws
@@ -533,8 +524,8 @@ public class OOFrontend {
 
         final boolean debugPartitions = false;
 
-        List<RangeForOverlapCheck> xs = citationRanges(documentConnection);
-        xs.addAll(footnoteMarkRanges(documentConnection));
+        List<RangeForOverlapCheck> xs = citationRanges(doc);
+        xs.addAll(footnoteMarkRanges(doc));
 
         RangeKeyedMapList<RangeForOverlapCheck> xall = new RangeKeyedMapList<>();
         for (RangeForOverlapCheck x : xs) {
@@ -602,17 +593,16 @@ public class OOFrontend {
      *               the GUI could move the cursor in the document to
      *               the entry.
      */
-    public List<CitationEntry> getCitationEntries(DocumentConnection documentConnection)
+    public List<CitationEntry> getCitationEntries(XTextDocument doc)
         throws
         UnknownPropertyException,
         WrappedTargetException,
         NoDocumentException,
         CreationException {
-        return this.backend.getCitationEntries(documentConnection, cgs);
+        return this.backend.getCitationEntries(doc, cgs);
     }
 
-    public void applyCitationEntries(DocumentConnection documentConnection,
-                                     List<CitationEntry> citationEntries)
+    public void applyCitationEntries(XTextDocument doc, List<CitationEntry> citationEntries)
         throws
         UnknownPropertyException,
         NotRemoveableException,
@@ -622,10 +612,10 @@ public class OOFrontend {
         IllegalArgumentException,
         NoDocumentException,
         WrappedTargetException {
-        this.backend.applyCitationEntries(documentConnection, citationEntries);
+        this.backend.applyCitationEntries(doc, citationEntries);
     }
 
-    public void imposeGlobalOrder(DocumentConnection documentConnection)
+    public void imposeGlobalOrder(XTextDocument doc)
         throws
         WrappedTargetException,
         NoDocumentException,
@@ -633,8 +623,7 @@ public class OOFrontend {
 
         boolean mapFootnotesToFootnoteMarks = true;
         List<CitationGroupID> sortedCitationGroupIDs =
-            getVisuallySortedCitationGroupIDs(documentConnection,
-                                              mapFootnotesToFootnoteMarks);
+            getVisuallySortedCitationGroupIDs(doc, mapFootnotesToFootnoteMarks);
         cgs.setGlobalOrder(sortedCitationGroupIDs);
     }
 }

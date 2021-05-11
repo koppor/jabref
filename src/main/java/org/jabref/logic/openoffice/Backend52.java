@@ -47,10 +47,9 @@ public class Backend52 {
      * Note: the names returned are in arbitrary order.
      *
      */
-    public List<String> getJabRefReferenceMarkNames(DocumentConnection documentConnection)
+    public List<String> getJabRefReferenceMarkNames(XTextDocument doc)
         throws
         NoDocumentException {
-        XTextDocument doc = documentConnection.asXTextDocument();
         List<String> allNames = this.citationStorageManager.getUsedNames(doc);
         return Codec52.filterIsJabRefReferenceMarkName(allNames);
     }
@@ -62,9 +61,8 @@ public class Backend52 {
      * @param citationGroupNames These are the names that are used.
      *
      */
-    private List<String> findUnusedJabrefPropertyNames(DocumentConnection documentConnection,
+    private List<String> findUnusedJabrefPropertyNames(XTextDocument doc,
                                                        List<String> citationGroupNames) {
-        XTextDocument doc = documentConnection.asXTextDocument();
 
         // Collect unused jabrefPropertyNames
         Set<String> citationGroupNamesSet =
@@ -72,7 +70,7 @@ public class Backend52 {
 
         List<String> pageInfoThrash = new ArrayList<>();
         List<String> jabrefPropertyNames =
-            DocumentConnection.getUserDefinedPropertiesNames(doc)
+            UnoUserDefinedProperty.getListOfNames(doc)
             .stream()
             .filter(Codec52::isJabRefReferenceMarkName)
             .collect(Collectors.toList());
@@ -87,12 +85,11 @@ public class Backend52 {
     /**
      *  @return Optional.empty if all is OK, message text otherwise.
      */
-    public Optional<String> healthReport(DocumentConnection documentConnection)
+    public Optional<String> healthReport(XTextDocument doc)
         throws
         NoDocumentException {
         List<String> pageInfoThrash =
-            this.findUnusedJabrefPropertyNames(documentConnection,
-                                               this.getJabRefReferenceMarkNames(documentConnection));
+            this.findUnusedJabrefPropertyNames(doc, this.getJabRefReferenceMarkNames(doc));
         if (pageInfoThrash.isEmpty()) {
             return Optional.empty(); // "Backend52: found no unused pageInfo data";
         }
@@ -122,13 +119,10 @@ public class Backend52 {
      *  We have circular dependency here: backend uses
      *  class from ...
      */
-    public CitationGroup readCitationGroupFromDocumentOrThrow(DocumentConnection documentConnection,
-                                                              String refMarkName)
+    public CitationGroup readCitationGroupFromDocumentOrThrow(XTextDocument doc, String refMarkName)
         throws
         WrappedTargetException,
         NoDocumentException {
-
-        XTextDocument doc = documentConnection.asXTextDocument();
 
         Optional<Codec52.ParsedMarkName> op = Codec52.parseMarkName(refMarkName);
         if (op.isEmpty()) {
@@ -142,7 +136,7 @@ public class Backend52 {
                                     .collect(Collectors.toList()));
 
         Optional<OOFormattedText> pageInfo =
-            (DocumentConnection.getUserDefinedStringPropertyValue(doc, refMarkName)
+            (UnoUserDefinedProperty.getStringValue(doc, refMarkName)
              .map(OOFormattedText::fromString));
 
         setPageInfoInData(citations, pageInfo);
@@ -225,7 +219,6 @@ public class Backend52 {
      *  On return {@code position} is collapsed, and is after the
      *  inserted space, or at the end of the reference mark.
      *
-     *  @param documentConnection Connection to document.
      *  @param position Collapsed to its end.
      *  @param insertSpaceAfter We insert a space after the mark, that
      *                          carries on format of characters from
@@ -235,7 +228,7 @@ public class Backend52 {
      *                          For use with INVISIBLE_CIT.
      *
      */
-    public CitationGroup createCitationGroup(DocumentConnection documentConnection,
+    public CitationGroup createCitationGroup(XTextDocument doc,
                                              List<String> citationKeys,
                                              List<OOFormattedText> pageInfosForCitations,
                                              InTextCitationType itcType,
@@ -250,8 +243,6 @@ public class Backend52 {
         PropertyExistException,
         PropertyVetoException,
         IllegalTypeException {
-
-        XTextDocument doc = documentConnection.asXTextDocument();
 
         String xkey = (citationKeys.stream()
                        .collect(Collectors.joining(",")));
@@ -289,7 +280,7 @@ public class Backend52 {
         /*
          * Apply to document
          */
-        StorageBase.NamedRange sr = this.citationStorageManager.create(documentConnection,
+        StorageBase.NamedRange sr = this.citationStorageManager.create(doc,
                                                                        refMarkName,
                                                                        position,
                                                                        insertSpaceAfter,
@@ -299,13 +290,11 @@ public class Backend52 {
         case JabRef52:
             Optional<OOFormattedText> pageInfo = getJabRef52PageInfoFromList(pageInfosForCitations);
             if (pageInfo.isPresent() && !"".equals(OOFormattedText.toString(pageInfo.get()))) {
-                DocumentConnection.setOrCreateUserDefinedStringPropertyValue(doc,
-                                                                             refMarkName,
-                                                                             OOFormattedText
-                                                                             .toString(pageInfo.get()));
+                String pageInfoString = OOFormattedText.toString(pageInfo.get());
+                UnoUserDefinedProperty.createStringProperty(doc, refMarkName, pageInfoString);
             } else {
                 // do not inherit from trash
-                DocumentConnection.removeUserDefinedProperty(doc, refMarkName);
+                UnoUserDefinedProperty.remove(doc, refMarkName);
             }
             CitationGroup cg = new CitationGroup(cgid,
                                                  sr,
@@ -364,7 +353,7 @@ public class Backend52 {
         return combinePageInfosCommon(this.dataModel, joinableGroup);
     }
 
-    public void removeCitationGroup(CitationGroup cg, DocumentConnection documentConnection)
+    public void removeCitationGroup(CitationGroup cg, XTextDocument doc)
         throws
         WrappedTargetException,
         NoDocumentException,
@@ -373,11 +362,9 @@ public class Backend52 {
         IllegalTypeException,
         PropertyExistException {
 
-        XTextDocument doc = documentConnection.asXTextDocument();
-
         String refMarkName = cg.cgRangeStorage.getName();
         cg.cgRangeStorage.removeFromDocument(doc);
-        DocumentConnection.removeUserDefinedProperty(doc, refMarkName);
+        UnoUserDefinedProperty.remove(doc, refMarkName);
     }
 
     /**
@@ -385,8 +372,7 @@ public class Backend52 {
      * @return Optional.empty if the reference mark is missing.
      *
      */
-    public Optional<XTextRange> getMarkRange(CitationGroup cg,
-                                             XTextDocument doc)
+    public Optional<XTextRange> getMarkRange(CitationGroup cg, XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {
@@ -398,40 +384,36 @@ public class Backend52 {
      * Cursor for the reference marks as is, not prepared for filling,
      * but does not need cleanFillCursorForCitationGroup either.
      */
-    public Optional<XTextCursor> getRawCursorForCitationGroup(CitationGroup cg,
-                                                              DocumentConnection documentConnection)
+    public Optional<XTextCursor> getRawCursorForCitationGroup(CitationGroup cg, XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException,
         CreationException {
-        return cg.cgRangeStorage.getRawCursor(documentConnection);
+        return cg.cgRangeStorage.getRawCursor(doc);
     }
 
     /**
      * Must be followed by call to cleanFillCursorForCitationGroup
      */
-    public XTextCursor getFillCursorForCitationGroup(CitationGroup cg,
-                                                     DocumentConnection documentConnection)
+    public XTextCursor getFillCursorForCitationGroup(CitationGroup cg, XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException,
         CreationException {
 
-        return cg.cgRangeStorage.getFillCursor(documentConnection);
+        return cg.cgRangeStorage.getFillCursor(doc);
     }
 
     /** To be called after getFillCursorForCitationGroup */
-    public void cleanFillCursorForCitationGroup(CitationGroup cg,
-                                                DocumentConnection documentConnection)
+    public void cleanFillCursorForCitationGroup(CitationGroup cg, XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException,
         CreationException {
-        cg.cgRangeStorage.cleanFillCursor(documentConnection);
+        cg.cgRangeStorage.cleanFillCursor(doc);
     }
 
-    public List<CitationEntry> getCitationEntries(DocumentConnection documentConnection,
-                                                  CitationGroups cgs)
+    public List<CitationEntry> getCitationEntries(XTextDocument doc, CitationGroups cgs)
         throws
         UnknownPropertyException,
         WrappedTargetException,
@@ -448,10 +430,9 @@ public class Backend52 {
                 CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
                 String name = cgid.asString();
                 XTextCursor cursor = (this
-                                      .getRawCursorForCitationGroup(cg, documentConnection)
+                                      .getRawCursorForCitationGroup(cg, doc)
                                       .orElseThrow(RuntimeException::new));
-                String context = OOUtil.getCursorStringWithContext(documentConnection,
-                                                                   cursor, 30, 30, true);
+                String context = OOUtil.getCursorStringWithContext(cursor, 30, 30, true);
                 Optional<String> pageInfo = (cg.citations.size() > 0
                                              ? (cg.citations
                                                 .get(cg.citations.size() - 1)
@@ -472,8 +453,7 @@ public class Backend52 {
         }
     }
 
-    public void applyCitationEntries(DocumentConnection documentConnection,
-                                     List<CitationEntry> citationEntries)
+    public void applyCitationEntries(XTextDocument doc, List<CitationEntry> citationEntries)
         throws
         UnknownPropertyException,
         NotRemoveableException,
@@ -484,15 +464,13 @@ public class Backend52 {
         NoDocumentException,
         WrappedTargetException {
 
-        XTextDocument doc = documentConnection.asXTextDocument();
         switch (dataModel) {
         case JabRef52:
             for (CitationEntry entry : citationEntries) {
                 Optional<String> pageInfo = entry.getPageInfo();
                 if (pageInfo.isPresent()) {
-                    DocumentConnection.setOrCreateUserDefinedStringPropertyValue(doc,
-                                                                                 entry.getRefMarkName(),
-                                                                                 pageInfo.get());
+                    String name = entry.getRefMarkName();
+                    UnoUserDefinedProperty.createStringProperty(doc, name, pageInfo.get());
                 }
             }
             break;

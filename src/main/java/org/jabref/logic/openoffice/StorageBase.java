@@ -29,7 +29,7 @@ public class StorageBase {
          * Cursor for the reference marks as is, not prepared for filling,
          * but does not need cleanFillCursorForCitationGroup either.
          */
-        public Optional<XTextCursor> getRawCursor(DocumentConnection documentConnection)
+        public Optional<XTextCursor> getRawCursor(XTextDocument doc)
             throws
             NoDocumentException,
             WrappedTargetException,
@@ -40,7 +40,7 @@ public class StorageBase {
          *
          * Must be followed by cleanFillCursor()
          */
-        public XTextCursor getFillCursor(DocumentConnection documentConnection)
+        public XTextCursor getFillCursor(XTextDocument doc)
             throws
             NoDocumentException,
             WrappedTargetException,
@@ -51,7 +51,7 @@ public class StorageBase {
          * them; if the result would be a single characer, leave the left bracket.
          *
          */
-        public void cleanFillCursor(DocumentConnection documentConnection)
+        public void cleanFillCursor(XTextDocument doc)
             throws
             NoDocumentException,
             WrappedTargetException,
@@ -72,8 +72,8 @@ public class StorageBase {
     }
 
     interface NamedRangeManager {
-        public NamedRange create(DocumentConnection documentConnection,
-                                 String refMarkName,
+        public NamedRange create(XTextDocument doc,
+                                 String markName,
                                  XTextCursor position,
                                  boolean insertSpaceAfter,
                                  boolean withoutBrackets)
@@ -84,8 +84,7 @@ public class StorageBase {
             throws
             NoDocumentException;
 
-        public Optional<NamedRange> getFromDocument(XTextDocument doc,
-                                                    String refMarkName)
+        public Optional<NamedRange> getFromDocument(XTextDocument doc, String markName)
             throws
             NoDocumentException,
             WrappedTargetException;

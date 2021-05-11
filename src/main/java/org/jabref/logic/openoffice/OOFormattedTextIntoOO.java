@@ -37,7 +37,6 @@ import com.sun.star.text.XParagraphCursor;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
-import com.sun.star.uno.UnoRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -324,7 +323,7 @@ public class OOFormattedTextIntoOO {
         MyPropertyStack(XTextCursor cursor)
             throws UnknownPropertyException {
 
-            XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
+            XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
             XPropertySetInfo psi = propertySet.getPropertySetInfo();
 
             this.goodNameToIndex = new HashMap<>();
@@ -362,17 +361,17 @@ public class OOFormattedTextIntoOO {
             */
 
             // This throws:
-            // XPropertyAccess xPropertyAccess = unoQI(XPropertyAccess.class, cursor);
+            // XPropertyAccess xPropertyAccess = UnoCast.unoQI(XPropertyAccess.class, cursor);
             // if (xPropertyAccess == null) {
             //     throw new RuntimeException("MyPropertyStack: xPropertyAccess is null");
             // }
 
             // we could use:
             // import com.sun.star.beans.XMultiPropertyStates;
-            XMultiPropertyStates mpss = unoQI(XMultiPropertyStates.class, cursor);
+            XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
             PropertyState[] propertyStates = mpss.getPropertyStates(goodNames);
 
-            XMultiPropertySet mps = unoQI(XMultiPropertySet.class, cursor);
+            XMultiPropertySet mps = UnoCast.unoQI(XMultiPropertySet.class, cursor);
             Object[] initialValues = mps.getPropertyValues(goodNames);
 
             ArrayList<Optional<Object>> initialValuesOpt = new ArrayList<>(goodSize);
@@ -415,8 +414,8 @@ public class OOFormattedTextIntoOO {
 
         void apply(XTextCursor cursor) {
             // removeDirectFormatting(cursor);
-            XMultiPropertySet mps = unoQI(XMultiPropertySet.class, cursor);
-            XMultiPropertyStates mpss = unoQI(XMultiPropertyStates.class, cursor);
+            XMultiPropertySet mps = UnoCast.unoQI(XMultiPropertySet.class, cursor);
+            XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
             ArrayList<Optional<Object>> topLayer = layers.peek();
             try {
                 // select values to be set
@@ -626,8 +625,7 @@ public class OOFormattedTextIntoOO {
                     String value = kv.getValue();
                     switch (key) {
                     case "target":
-                        DocumentConnection
-                            .insertReferenceToPageNumberOfReferenceMark(doc, value, cursor);
+                        UnoCrossRef.insertReferenceToPageNumberOfReferenceMark(doc, value, cursor);
                         break;
                     default:
                         LOGGER.warn(String.format("Unexpected attribute '%s' for <%s>", key, tagName));
@@ -725,7 +723,7 @@ public class OOFormattedTextIntoOO {
      */
     public static void removeDirectFormatting(XTextCursor cursor) {
 
-        XMultiPropertyStates mpss = unoQI(XMultiPropertyStates.class, cursor);
+        XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
 
         /*
          * Now that we have setAllPropertiesToDefault, check which properties
@@ -734,8 +732,8 @@ public class OOFormattedTextIntoOO {
          * Note: tested with LibreOffice : 6.4.6.2
          */
 
-        XPropertySet propertySet = unoQI(XPropertySet.class, cursor);
-        XPropertyState propertyState = unoQI(XPropertyState.class, cursor);
+        XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
+        XPropertyState propertyState = UnoCast.unoQI(XPropertyState.class, cursor);
 
         try {
             // Special handling
@@ -763,7 +761,7 @@ public class OOFormattedTextIntoOO {
                                                "ParaStyleName");
 
         // query again, just in case it matters
-        propertySet = unoQI(XPropertySet.class, cursor);
+        propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
         XPropertySetInfo psi = propertySet.getPropertySetInfo();
 
         // check the result
@@ -817,17 +815,6 @@ public class OOFormattedTextIntoOO {
         return res;
     }
 
-    /**
-     * unoQI : short for UnoRuntime.queryInterface
-     *
-     * @return A reference to the requested UNO interface type if available,
-     *         otherwise null
-     */
-    private static <T> T unoQI(Class<T> zInterface,
-                               Object object) {
-        return UnoRuntime.queryInterface(zInterface, object);
-    }
-
     /*
      * We rely on property values being either DIRECT_VALUE or
      * DEFAULT_VALUE (not AMBIGUOUS_VALUE). If the cursor covers a homogeneous region,
@@ -836,7 +823,7 @@ public class OOFormattedTextIntoOO {
     private static boolean isPropertyDefault(XTextCursor cursor, String propertyName)
         throws
         UnknownPropertyException {
-        XPropertyState propertyState = unoQI(XPropertyState.class, cursor);
+        XPropertyState propertyState = UnoCast.unoQI(XPropertyState.class, cursor);
         PropertyState pst = propertyState.getPropertyState(propertyName);
         if (pst == PropertyState.AMBIGUOUS_VALUE) {
             throw new RuntimeException("PropertyState.AMBIGUOUS_VALUE"
@@ -968,8 +955,8 @@ public class OOFormattedTextIntoOO {
                                          String parStyle)
         throws
         UndefinedParagraphFormatException {
-        XParagraphCursor parCursor = unoQI(XParagraphCursor.class, cursor);
-        XPropertySet props = unoQI(XPropertySet.class, parCursor);
+        XParagraphCursor parCursor = UnoCast.unoQI(XParagraphCursor.class, cursor);
+        XPropertySet props = UnoCast.unoQI(XPropertySet.class, parCursor);
         try {
             props.setPropertyValue(PARA_STYLE_NAME, parStyle);
         } catch (UnknownPropertyException
