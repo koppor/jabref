@@ -664,8 +664,6 @@ class OOBibBase {
         // Alternatively, we could receive a cursor.
         XTextCursor textCursor = doc.getText().createTextCursor();
         textCursor.gotoEnd(false);
-        textCursor.collapseToEnd();
-
         UnoTextSection.create(doc,
                               OOBibBase.BIB_SECTION_NAME,
                               textCursor,
