@@ -104,8 +104,8 @@ public class UnoReferenceMark {
      * Insert a new reference mark at the provided cursor
      * position.
      *
-     * The text in the cursor range will be the text with gray
-     * background.
+     * If {@code absorb} is true, the text in the cursor range will become
+     * the text with gray background.
      *
      * Note: LibreOffice 6.4.6.2 will create multiple reference marks
      *       with the same name without error or renaming.

@@ -28,7 +28,7 @@ public class UnoCursor {
      * @return null if mark is null, otherwise cursor.
      *
      */
-    public static Optional<XTextCursor> getTextCursorOfTextContent(XTextContent mark) {
+    public static Optional<XTextCursor> getTextCursorOfTextContentAnchor(XTextContent mark) {
         if (mark == null) {
             return Optional.empty();
         }

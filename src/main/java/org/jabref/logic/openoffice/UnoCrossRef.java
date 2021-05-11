@@ -70,6 +70,6 @@ public class UnoCrossRef {
         XTextContent xRefContent = (XTextContent) UnoCast.unoQI(XTextContent.class, xFieldProps);
 
         // Insert the text field
-        doc.getText().insertTextContent(cursor.getEnd(), xRefContent, false);
+        cursor.getText().insertTextContent(cursor.getEnd(), xRefContent, false);
     }
 }

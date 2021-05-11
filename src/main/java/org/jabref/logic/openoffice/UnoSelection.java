@@ -74,7 +74,7 @@ public class UnoSelection {
      *
      * Presumably result from {@code XSelectionSupplier.getSelection()} is
      * usually OK. It also accepted
-     * {@code XTextRange newSelection = documentConnection.xText.getStart();}
+     * {@code XTextRange newSelection = doc.getText().getStart();}
      *
      */
     public static void select(XTextDocument doc, Object newSelection) {

@@ -203,7 +203,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
             LOGGER.warn(msg);
         }
 
-        full = UnoCursor.getTextCursorOfTextContent(markAsTextContent.get());
+        full = UnoCursor.getTextCursorOfTextContentAnchor(markAsTextContent.get());
         if (full.isEmpty()) {
             String msg = "getRawCursor: full.isEmpty()";
             LOGGER.warn(msg);
@@ -243,7 +243,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
                 throw new RuntimeException(msg);
             }
 
-            full = UnoCursor.getTextCursorOfTextContent(markAsTextContent.get()).orElse(null);
+            full = UnoCursor.getTextCursorOfTextContentAnchor(markAsTextContent.get()).orElse(null);
             if (full == null) {
                 String msg = String.format("getFillCursor: full == null (attempt %d)", i);
                 throw new RuntimeException(msg);

@@ -44,7 +44,7 @@ public class UnoTextDocument {
     }
 
     /**
-     *  @param doc The XTextDocument we want the title for. Null allowed.
+     *  @param doc The XTextDocument we want the frame title for. Null allowed.
      *  @return The title or Optional.empty()
      */
     public static Optional<String> getFrameTitle(XTextDocument doc) {
