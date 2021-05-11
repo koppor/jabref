@@ -34,7 +34,7 @@ public class UnoBookmark {
      * Get the XTextRange corresponding to the named bookmark.
      *
      * @param name The name of the bookmark to find.
-     * @return The XTextRange for the bookmark, or null.
+     * @return The XTextRange for the bookmark, or Optional.empty().
      */
     public static Optional<XTextRange> getTextRange(XTextDocument doc, String name)
         throws
