@@ -1,6 +1,7 @@
 package org.jabref.logic.oostyle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -21,22 +22,22 @@ public class CitationGroup {
     /*
      * Identifies this citation group.
      */
-    public CitationGroupID cgid;
+    public final CitationGroupID cgid;
 
     /*
      * Identifies location in the document for the backend.
      * Could be moved to the backend (which is currently stateless),
      * and use cgid to identify.
      */
-    public StorageBase.NamedRange cgRangeStorage;
+    public final StorageBase.NamedRange cgRangeStorage;
 
 
     /*
      * The core data, stored in the document:
      * The type of citation and citations in storage order.
      */
-    public InTextCitationType citationType;
-    public List<Citation> citationsInStorageOrder;
+    public final InTextCitationType citationType;
+    public final List<Citation> citationsInStorageOrder;
 
     /*
      * Extra data added during processing:
@@ -46,8 +47,10 @@ public class CitationGroup {
      * Indices into citations: citations[localOrder[i]] provides ith
      * citation according to the currently imposed local order for
      * presentation.
+     *
+     * Initialized to (0..(nCitations-1)) in the constructor.
      */
-    public List<Integer> localOrder;
+    private List<Integer> localOrder;
 
     /*
      * A name of a reference mark to link to by formatCitedOnPages.
@@ -79,6 +82,10 @@ public class CitationGroup {
 
     public int numberOfCitations() {
         return citationsInStorageOrder.size();
+    }
+
+    public List<Integer> getLocalOrder() {
+        return Collections.unmodifiableList(localOrder);
     }
 
     public void setIndexInGlobalOrder(Optional<Integer> i) {

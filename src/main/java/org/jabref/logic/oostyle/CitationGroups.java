@@ -160,7 +160,7 @@ public class CitationGroups {
         for (CitationGroupID cgid : globalOrder.get()) {
             CitationGroup cg = getCitationGroup(cgid)
                 .orElseThrow(RuntimeException::new);
-            for (int i : cg.localOrder) {
+            for (int i : cg.getLocalOrder()) {
                 Citation cit = cg.citationsInStorageOrder.get(i);
                 String citationKey = cit.citationKey;
                 CitationPath p = new CitationPath(cgid, i);
@@ -311,7 +311,7 @@ public class CitationGroups {
             OOFormattedText thePageInfo = cg.citationsInStorageOrder.get(last).pageInfo.orElse(null);
 
             // For JabRef52 the citation last in localOrder gets the pageInfo.
-            final int theLastInLocalOrder = cg.localOrder.get(last);
+            final int theLastInLocalOrder = cg.getLocalOrder().get(last);
             List<OOFormattedText> result = new ArrayList<>(nCitations);
             for (int i = 0; i < nCitations; i++) {
                 if (i == theLastInLocalOrder) {
@@ -343,7 +343,7 @@ public class CitationGroups {
         List<OOFormattedText> result = new ArrayList<>(nCitations);
         List<OOFormattedText> inStorageOrder = getPageInfosForCitationsInStorageOrder(dataModel, cg);
         for (int i = 0; i < nCitations; i++) {
-            result.add(inStorageOrder.get(cg.localOrder.get(i)));
+            result.add(inStorageOrder.get(cg.getLocalOrder().get(i)));
         }
         return result;
     }
