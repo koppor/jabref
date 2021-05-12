@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class OOFrontend {
     private static final Logger LOGGER = LoggerFactory.getLogger(OOFrontend.class);
     public final Backend52 backend;
-    public final CitationGroups cgs;
+    public final CitationGroups citationGroups;
 
     public OOFrontend(XTextDocument doc)
         throws
@@ -51,10 +51,8 @@ public class OOFrontend {
         List<String> citationGroupNames = this.backend.getJabRefReferenceMarkNames(doc);
 
         Map<CitationGroupID, CitationGroup> citationGroups =
-            readCitationGroupsFromDocument(this.backend,
-                                           doc,
-                                           citationGroupNames);
-        this.cgs = new CitationGroups(backend.dataModel, citationGroups);
+            readCitationGroupsFromDocument(this.backend, doc, citationGroupNames);
+        this.citationGroups = new CitationGroups(citationGroups);
     }
 
     public OOStyleDataModelVersion getDataModel() {
@@ -78,8 +76,7 @@ public class OOFrontend {
         Map<CitationGroupID, CitationGroup> citationGroups = new HashMap<>();
         for (int i = 0; i < citationGroupNames.size(); i++) {
             final String name = citationGroupNames.get(i);
-            CitationGroup cg =
-                backend.readCitationGroupFromDocumentOrThrow(doc, name);
+            CitationGroup cg = backend.readCitationGroupFromDocumentOrThrow(doc, name);
             citationGroups.put(cg.cgid, cg);
         }
         return citationGroups;
@@ -106,33 +103,32 @@ public class OOFrontend {
      *
      */
     private List<RangeSort.RangeSortable<CitationGroupID>>
-    createVisualSortInput(XTextDocument doc,
-                          boolean mapFootnotesToFootnoteMarks)
+    createVisualSortInput(XTextDocument doc, boolean mapFootnotesToFootnoteMarks)
         throws
         NoDocumentException,
         WrappedTargetException {
 
-        List<CitationGroupID> cgids = new ArrayList<>(cgs.getCitationGroupIDsUnordered());
+        List<CitationGroupID> cgids = new ArrayList<>(citationGroups.getCitationGroupIDsUnordered());
 
-        List<RangeSort.RangeSortEntry> vses = new ArrayList<>();
+        List<RangeSort.RangeSortEntry> sortables = new ArrayList<>();
         for (CitationGroupID cgid : cgids) {
             XTextRange range = (this
                                 .getMarkRange(doc, cgid)
                                 .orElseThrow(RuntimeException::new));
-            vses.add(new RangeSort.RangeSortEntry(range, 0, cgid));
+            sortables.add(new RangeSort.RangeSortEntry(range, 0, cgid));
         }
 
         /*
-         *  At this point we are almost ready to return vses.
+         *  At this point we are almost ready to return sortables.
          *
-         *  For example we may want to number citations in a footnote
+         *  But we may want to number citations in a footnote
          *  as if it appeared where the footnote mark is.
          *
          *  The following code replaces ranges within footnotes with
          *  the range for the corresponding footnote mark.
          *
          *  This brings further ambiguity if we have multiple
-         *  citations within the same footnote: for the comparison
+         *  citation groups within the same footnote: for the comparison
          *  they become indistinguishable. Numbering between them is
          *  not controlled. Also combineCiteMarkers will see them in
          *  the wrong order (if we use this comparison), and will not
@@ -143,10 +139,8 @@ public class OOFrontend {
          */
 
         // Sort within partitions
-        RangeKeyedMapList<RangeSort.RangeSortEntry<CitationGroupID>> xxs
-            = new RangeKeyedMapList<>();
-
-        for (RangeSort.RangeSortEntry v : vses) {
+        RangeKeyedMapList<RangeSort.RangeSortEntry<CitationGroupID>> xxs = new RangeKeyedMapList<>();
+        for (RangeSort.RangeSortEntry v : sortables) {
             xxs.add(v.getRange(), v);
         }
 
@@ -156,11 +150,11 @@ public class OOFrontend {
         for (TreeMap<XTextRange, List<RangeSort.RangeSortEntry<CitationGroupID>>>
                  xs : xxs.partitionValues()) {
 
-            List<XTextRange> oxs = new ArrayList<>(xs.keySet());
+            List<XTextRange> orderedRanges = new ArrayList<>(xs.keySet());
 
             int indexInPartition = 0;
-            for (int i = 0; i < oxs.size(); i++) {
-                XTextRange a = oxs.get(i);
+            for (int i = 0; i < orderedRanges.size(); i++) {
+                XTextRange a = orderedRanges.get(i);
                 List<RangeSort.RangeSortEntry<CitationGroupID>> avs = xs.get(a);
                 for (int j = 0; j < avs.size(); j++) {
                     RangeSort.RangeSortEntry<CitationGroupID> v = avs.get(j);
@@ -204,13 +198,13 @@ public class OOFrontend {
         NoDocumentException,
         JabRefException {
 
-        List<RangeSort.RangeSortable<CitationGroupID>> vses =
+        List<RangeSort.RangeSortable<CitationGroupID>> sortables =
             createVisualSortInput(doc,
                                   mapFootnotesToFootnoteMarks);
 
-        if (vses.size() != this.cgs.numberOfCitationGroups()) {
+        if (sortables.size() != this.citationGroups.numberOfCitationGroups()) {
             throw new RuntimeException("getVisuallySortedCitationGroupIDs:"
-                                       + " vses.size() != cgs.citationGroups.size()");
+                                       + " sortables.size() != cgs.citationGroups.size()");
         }
 
         String messageOnFailureToObtainAFunctionalXTextViewCursor =
@@ -220,11 +214,11 @@ public class OOFrontend {
                                 + " I need to move the cursor around,"
                                 + " but could not get it.");
         List<RangeSort.RangeSortable<CitationGroupID>> sorted =
-            RangeSortVisual.visualSort(vses,
+            RangeSortVisual.visualSort(sortables,
                                        doc,
                                        messageOnFailureToObtainAFunctionalXTextViewCursor);
 
-        if (sorted.size() != this.cgs.numberOfCitationGroups()) {
+        if (sorted.size() != this.citationGroups.numberOfCitationGroups()) {
             // This Fired
             throw new RuntimeException("getVisuallySortedCitationGroupIDs:"
                                        + " sorted.size() != cgs.numberOfCitationGroups()");
@@ -239,24 +233,21 @@ public class OOFrontend {
      * Calculate and return citation group IDs in visual order.
      */
     public List<CitationGroupID>
-    getCitationGroupIDsSortedWithinPartitions(XTextDocument doc,
-                                              boolean mapFootnotesToFootnoteMarks)
+    getCitationGroupIDsSortedWithinPartitions(XTextDocument doc, boolean mapFootnotesToFootnoteMarks)
         throws
         NoDocumentException,
         WrappedTargetException {
         // This is like getVisuallySortedCitationGroupIDs,
         // but we skip the visualSort part.
-        List<RangeSort.RangeSortable<CitationGroupID>> vses =
-            createVisualSortInput(doc,
-                                  mapFootnotesToFootnoteMarks);
+        List<RangeSort.RangeSortable<CitationGroupID>> sortables =
+            createVisualSortInput(doc, mapFootnotesToFootnoteMarks);
 
-        if (vses.size() != this.cgs.numberOfCitationGroups()) {
+        if (sortables.size() != this.citationGroups.numberOfCitationGroups()) {
             throw new RuntimeException("getCitationGroupIDsSortedWithinPartitions:"
-                                       + " vses.size() != cgs.numberOfCitationGroups()");
+                                       + " sortables.size() != citationGroups.numberOfCitationGroups()");
         }
-        return (vses.stream()
-                .map(e -> e.getContent())
-                .collect(Collectors.toList()));
+
+        return (sortables.stream().map(e -> e.getContent()).collect(Collectors.toList()));
     }
 
     /**
@@ -336,12 +327,12 @@ public class OOFrontend {
                                                        insertSpaceAfter,
                                                        withoutBrackets);
 
-        this.cgs.afterCreateCitationGroup(cg);
+        this.citationGroups.afterCreateCitationGroup(cg);
         return cg.cgid;
     }
 
     /**
-     * Remove {@code cg} both from the document and notify {@code cgs}
+     * Remove {@code cg} both from the document and notify {@code citationGroups}
      */
     public void removeCitationGroup(CitationGroup cg, XTextDocument doc)
         throws
@@ -354,7 +345,7 @@ public class OOFrontend {
 
         // Apply
         backend.removeCitationGroup(cg, doc);
-        this.cgs.afterRemoveCitationGroup(cg);
+        this.citationGroups.afterRemoveCitationGroup(cg);
     }
 
     public void removeCitationGroups(List<CitationGroup> xcgs, XTextDocument doc)
@@ -382,7 +373,7 @@ public class OOFrontend {
         throws
         NoDocumentException,
         WrappedTargetException {
-        CitationGroup cg = this.cgs.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
+        CitationGroup cg = this.citationGroups.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
         return backend.getMarkRange(cg, doc);
     }
 
@@ -396,7 +387,7 @@ public class OOFrontend {
         WrappedTargetException,
         CreationException {
 
-        Optional<CitationGroup> cg = this.cgs.getCitationGroup(cgid);
+        Optional<CitationGroup> cg = this.citationGroups.getCitationGroup(cgid);
         if (cg.isEmpty()) {
             return Optional.empty();
         }
@@ -409,7 +400,7 @@ public class OOFrontend {
         WrappedTargetException,
         CreationException {
 
-        CitationGroup cg = this.cgs.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
+        CitationGroup cg = this.citationGroups.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
         return backend.getFillCursorForCitationGroup(cg, doc);
     }
 
@@ -423,7 +414,7 @@ public class OOFrontend {
         WrappedTargetException,
         CreationException {
 
-        CitationGroup cg = this.cgs.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
+        CitationGroup cg = this.citationGroups.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
         backend.cleanFillCursorForCitationGroup(cg, doc);
     }
 
@@ -437,13 +428,13 @@ public class OOFrontend {
         NoDocumentException,
         WrappedTargetException {
 
-        List<RangeForOverlapCheck> xs = new ArrayList<>(cgs.numberOfCitationGroups());
+        List<RangeForOverlapCheck> xs = new ArrayList<>(citationGroups.numberOfCitationGroups());
 
-        List<CitationGroupID> cgids = new ArrayList<>(cgs.getCitationGroupIDsUnordered());
+        List<CitationGroupID> cgids = new ArrayList<>(citationGroups.getCitationGroupIDsUnordered());
 
         for (CitationGroupID cgid : cgids) {
             XTextRange r = this.getMarkRange(doc, cgid).orElseThrow(RuntimeException::new);
-            CitationGroup cg = cgs.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
+            CitationGroup cg = citationGroups.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
             String name = cg.cgRangeStorage.getName();
             xs.add(new RangeForOverlapCheck(r,
                                             cgid,
@@ -529,7 +520,6 @@ public class OOFrontend {
         List<RangeKeyedMapList<RangeForOverlapCheck>.RangeOverlap> ovs =
             xall.findOverlappingRanges(reportAtMost, requireSeparation);
 
-        // checkSortedPartitionForOverlap(requireSeparation, oxs);
         if (ovs.size() > 0) {
             String msg = "";
             for (RangeKeyedMapList<RangeForOverlapCheck>.RangeOverlap e : ovs) {
@@ -592,7 +582,7 @@ public class OOFrontend {
         WrappedTargetException,
         NoDocumentException,
         CreationException {
-        return this.backend.getCitationEntries(doc, cgs);
+        return this.backend.getCitationEntries(doc, citationGroups);
     }
 
     public void applyCitationEntries(XTextDocument doc, List<CitationEntry> citationEntries)
@@ -617,6 +607,6 @@ public class OOFrontend {
         boolean mapFootnotesToFootnoteMarks = true;
         List<CitationGroupID> sortedCitationGroupIDs =
             getVisuallySortedCitationGroupIDs(doc, mapFootnotesToFootnoteMarks);
-        cgs.setGlobalOrder(sortedCitationGroupIDs);
+        citationGroups.setGlobalOrder(sortedCitationGroupIDs);
     }
 }

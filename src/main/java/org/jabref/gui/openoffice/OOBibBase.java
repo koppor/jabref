@@ -504,7 +504,7 @@ class OOBibBase {
                 OOFrontend fr2 = new OOFrontend(doc);
                 fr2.imposeGlobalOrder(doc);
                 OOProcess.ProduceCitationMarkersResult x =
-                    OOProcess.produceCitationMarkers(fr2.cgs, allBases, style);
+                    OOProcess.produceCitationMarkers(fr2.citationGroups, allBases, style);
                 try {
                     UnoScreenRefresh.lockControllers(doc);
                     applyNewCitationMarkers(doc,
@@ -582,7 +582,7 @@ class OOBibBase {
 
         checkStylesExistInTheDocument(style, doc);
 
-        CitationGroups cgs = fr.cgs;
+        CitationGroups cgs = fr.citationGroups;
         final boolean hadBibSection = (UnoBookmark.getAnchor(doc, OOBibBase.BIB_SECTION_NAME)
                                        .isPresent());
 
@@ -726,7 +726,7 @@ class OOBibBase {
 
         // emit the title of the bibliography
         OOFormattedTextIntoOO.removeDirectFormatting(cursor);
-        OOFormattedText bibliographyText = OOFormatBibliography.formatBibliography(fr.cgs,
+        OOFormattedText bibliographyText = OOFormatBibliography.formatBibliography(fr.citationGroups,
                                                                                    bibliography,
                                                                                    style,
                                                                                    alwaysAddCitedOnPages);
@@ -828,7 +828,7 @@ class OOBibBase {
                     XTextRange prevRange = null;
 
                     for (CitationGroupID cgid : referenceMarkNames) {
-                        CitationGroup cg = fr.cgs.getCitationGroupOrThrow(cgid);
+                        CitationGroup cg = fr.citationGroups.getCitationGroupOrThrow(cgid);
 
                         XTextRange currentRange = (fr
                                                    .getMarkRange(doc, cgid)
@@ -1077,7 +1077,7 @@ class OOBibBase {
                 OOFrontend fr2 = new OOFrontend(doc);
                 fr2.imposeGlobalOrder(doc);
                 OOProcess.ProduceCitationMarkersResult x =
-                    OOProcess.produceCitationMarkers(fr2.cgs,
+                    OOProcess.produceCitationMarkers(fr2.citationGroups,
                                                      databases,
                                                      style);
                 try {
@@ -1142,7 +1142,8 @@ class OOBibBase {
             boolean madeModifications = false;
 
             // {@code names} does not need to be sorted.
-            List<CitationGroupID> names = new ArrayList<>(fr.cgs.getCitationGroupIDsUnordered());
+            List<CitationGroupID> names =
+                new ArrayList<>(fr.citationGroups.getCitationGroupIDsUnordered());
 
             try {
                 if (useLockControllers) {
@@ -1153,7 +1154,7 @@ class OOBibBase {
 
                 while (pivot < (names.size())) {
                     CitationGroupID cgid = names.get(pivot);
-                    CitationGroup cg = fr.cgs.getCitationGroupOrThrow(cgid);
+                    CitationGroup cg = fr.citationGroups.getCitationGroupOrThrow(cgid);
                     XTextRange range1 = (fr
                                          .getMarkRange(doc, cgid)
                                          .orElseThrow(RuntimeException::new));
@@ -1213,7 +1214,7 @@ class OOBibBase {
                 OOFrontend fr2 = new OOFrontend(doc);
                 fr2.imposeGlobalOrder(doc);
                 OOProcess.ProduceCitationMarkersResult x =
-                    OOProcess.produceCitationMarkers(fr2.cgs, databases, style);
+                    OOProcess.produceCitationMarkers(fr2.citationGroups, databases, style);
                 try {
                     if (useLockControllers) {
                         UnoScreenRefresh.lockControllers(doc);
@@ -1292,7 +1293,7 @@ class OOBibBase {
         UnknownPropertyException {
 
         OOFrontend fr = new OOFrontend(doc);
-        CitedKeys cks = fr.cgs.getCitedKeysUnordered();
+        CitedKeys cks = fr.citationGroups.getCitedKeysUnordered();
         cks.lookupInDatabases(databases);
 
         List<String> unresolvedKeys = new ArrayList<>();
@@ -1541,7 +1542,7 @@ class OOBibBase {
             final boolean useLockControllers = true;
             fr.imposeGlobalOrder(doc);
             OOProcess.ProduceCitationMarkersResult x =
-                OOProcess.produceCitationMarkers(fr.cgs, databases, style);
+                OOProcess.produceCitationMarkers(fr.citationGroups, databases, style);
             try {
                 if (useLockControllers) {
                     UnoScreenRefresh.lockControllers(doc);

@@ -15,21 +15,16 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.CitationDatabaseLookup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
-import org.jabref.model.oostyle.OOStyleDataModelVersion;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * CitationGroups : the set of citation groups in the document.
- *
- *
  */
 public class CitationGroups {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CitationGroups.class);
-
-    private final OOStyleDataModelVersion dataModel;
 
     /**
      *  Original CitationGroups Data
@@ -57,15 +52,9 @@ public class CitationGroups {
     /**
      * Constructor
      */
-    public CitationGroups(OOStyleDataModelVersion dataModel,
-                          Map<CitationGroupID, CitationGroup> citationGroups) {
+    public CitationGroups(Map<CitationGroupID, CitationGroup> citationGroups) {
 
-        this.dataModel = dataModel;
         this.citationGroupsUnordered = citationGroups;
-
-        // Now we have almost every information from the document about citations.
-        // What is left out: the ranges controlled by the reference marks.
-        // But (I guess) those change too easily, so we only ask when actually needed.
 
         this.globalOrder = Optional.empty();
         this.bibliography = Optional.empty();
