@@ -3,6 +3,7 @@ package org.jabref.logic.openoffice;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,8 +66,7 @@ public class Backend52 {
                                                        List<String> citationGroupNames) {
 
         // Collect unused jabrefPropertyNames
-        Set<String> citationGroupNamesSet =
-            citationGroupNames.stream().collect(Collectors.toSet());
+        Set<String> citationGroupNamesSet = citationGroupNames.stream().collect(Collectors.toSet());
 
         List<String> pageInfoThrash = new ArrayList<>();
         List<String> jabrefPropertyNames =
@@ -100,14 +100,24 @@ public class Backend52 {
         return Optional.of(msg);
     }
 
-    private static void setPageInfoInData(List<Citation> citations, Optional<OOFormattedText> pageInfo) {
-        // attribute to last citation (in storage order)
+    private static void setPageInfoInDataInitial(List<Citation> citations,
+                                                 Optional<OOFormattedText> pageInfo) {
+        // attribute to last citation (initially localOrder == storageOrder)
         if (citations.size() > 0) {
             citations.get(citations.size() - 1).pageInfo = pageInfo;
         }
     }
 
-    private static Optional<OOFormattedText> getPageInfoFromData(List<Citation> citations) {
+    private static void setPageInfoInData(CitationGroup cg,
+                                          Optional<OOFormattedText> pageInfo) {
+        List<Citation> citations = cg.getCitationsInLocalOrder();
+        if (citations.size() > 0) {
+            citations.get(citations.size() - 1).pageInfo = pageInfo;
+        }
+    }
+
+    private static Optional<OOFormattedText> getPageInfoFromData(CitationGroup cg) {
+        List<Citation> citations = cg.getCitationsInLocalOrder();
         if (citations.size() > 0) {
             return citations.get(citations.size() - 1).pageInfo;
         } else {
@@ -139,7 +149,7 @@ public class Backend52 {
             (UnoUserDefinedProperty.getStringValue(doc, refMarkName)
              .map(OOFormattedText::fromString));
 
-        setPageInfoInData(citations, pageInfo);
+        setPageInfoInDataInitial(citations, pageInfo);
 
         Optional<StorageBase.NamedRange> storedRange = (citationStorageManager
                                                         .getFromDocument(doc, refMarkName));
@@ -169,53 +179,8 @@ public class Backend52 {
     }
 
     /**
-     * Return the last pageInfo from the list, if there is one.
-     */
-    private static Optional<OOFormattedText>
-    getJabRef52PageInfoFromList(List<OOFormattedText> pageInfosForCitations) {
-        if (pageInfosForCitations == null) {
-            return Optional.empty();
-        }
-        int n = pageInfosForCitations.size();
-        if (n == 0) {
-            return Optional.empty();
-        }
-        return normalizePageInfoToOptional(pageInfosForCitations.get(n - 1));
-    }
-
-    /**
      *  Create a reference mark with the given name, at the
      *  end of position.
-     *
-     *  To reduce the difference from the original representation, we
-     *  only insist on having at least two characters inside reference
-     *  marks. These may be ZERO_WIDTH_SPACE characters or other
-     *  placeholder not likely to appear in a citation mark.
-     *
-     *  This placeholder is only needed if the citation mark is
-     *  otherwise empty (e.g. when we just create it).
-     *
-     *  getFillCursorForCitationGroup yields a bracketed cursor, that
-     *  can be used to fill in / overwrite the value inside.
-     *
-     *  After each getFillCursorForCitationGroup, we require a call to
-     *  cleanFillCursorForCitationGroup, which removes the brackets,
-     *  unless if it would make the content less than two
-     *  characters. If we need only one placeholder, we keep the left
-     *  bracket.  If we need two, then the content is empty. The
-     *  removeBracketsFromEmpty parameter of
-     *  cleanFillCursorForCitationGroup overrides this, and for empty
-     *  citations it will remove the brackets, leaving an empty
-     *  reference mark. The idea behind this is that we do not need to
-     *  refill empty marks (citationType: INVISIBLE_CIT), and the caller
-     *  can tell us that we are dealing with one of these.
-     *
-     *  Thus the only user-visible difference in citation marks is
-     *  that instead of empty marks we use two brackets, for
-     *  single-character marks we add a left bracket before.
-     *
-     *  Character-attribute inheritance: updates inherit from the
-     *  first character inside, not from the left.
      *
      *  On return {@code position} is collapsed, and is after the
      *  inserted space, or at the end of the reference mark.
@@ -245,21 +210,31 @@ public class Backend52 {
         PropertyVetoException,
         IllegalTypeException {
 
+        Objects.requireNonNull(pageInfosForCitations);
+        if (pageInfosForCitations.size() != citationKeys.size()) {
+            throw new RuntimeException("pageInfosForCitations.size != citationKeys.size");
+        }
+
+        // Get a new refMarkName
         Set<String> usedNames = new HashSet<>(this.citationStorageManager.getUsedNames(doc));
         String xkey = (citationKeys.stream().collect(Collectors.joining(",")));
         String refMarkName = Codec52.getUniqueMarkName(usedNames, xkey, citationType);
 
         CitationGroupID cgid = new CitationGroupID(refMarkName);
 
-        List<Citation> citations = new ArrayList<>(citationKeys.size());
-        for (int i = 0; i < citationKeys.size(); i++) {
+        final int nCitations = citationKeys.size();
+        final int last = nCitations - 1;
+
+        // Build citations, add pageInfo to each citation
+        List<Citation> citations = new ArrayList<>(nCitations);
+        for (int i = 0; i < nCitations; i++) {
             Citation cit = new Citation(citationKeys.get(i));
             citations.add(cit);
 
             Optional<OOFormattedText> pageInfo = normalizePageInfoToOptional(pageInfosForCitations.get(i));
             switch (dataModel) {
             case JabRef52:
-                if (i == citationKeys.size() - 1) {
+                if (i == last) {
                     cit.pageInfo = pageInfo;
                 } else {
                     if (pageInfo.isPresent()) {
@@ -281,7 +256,9 @@ public class Backend52 {
 
         switch (dataModel) {
         case JabRef52:
-            Optional<OOFormattedText> pageInfo = getJabRef52PageInfoFromList(pageInfosForCitations);
+            Optional<OOFormattedText> pageInfo =
+                normalizePageInfoToOptional(pageInfosForCitations.get(last));
+
             if (pageInfo.isPresent() && !"".equals(OOFormattedText.toString(pageInfo.get()))) {
                 String pageInfoString = OOFormattedText.toString(pageInfo.get());
                 UnoUserDefinedProperty.createStringProperty(doc, refMarkName, pageInfoString);
@@ -299,7 +276,7 @@ public class Backend52 {
     }
 
     /**
-     * @return A list with one nullable pageInfo entry for each citation in
+     * @return A list with a nullable pageInfo entry for each citation in
      *         joinableGroups.
      *
      *  TODO: JabRef52 combinePageInfos is not reversible. Should warn
@@ -312,7 +289,7 @@ public class Backend52 {
             // collect to cgPageInfos
             List<Optional<OOFormattedText>> cgPageInfos =
                 (joinableGroup.stream()
-                 .map(cg -> getPageInfoFromData(cg.citationsInStorageOrder))
+                 .map(cg -> getPageInfoFromData(cg))
                  .collect(Collectors.toList()));
 
             // Try to do something of the cgPageInfos.
@@ -426,14 +403,10 @@ public class Backend52 {
                                       .orElseThrow(RuntimeException::new));
                 String context = OOUtil.getCursorStringWithContext(cursor, 30, 30, true);
                 Optional<String> pageInfo = (cg.numberOfCitations() > 0
-                                             ? (cg.citationsInStorageOrder
-                                                .get(cg.numberOfCitations() - 1)
-                                                .getPageInfo()
+                                             ? (getPageInfoFromData(cg)
                                                 .map(e -> OOFormattedText.toString(e)))
                                              : Optional.empty());
-                CitationEntry entry = new CitationEntry(name,
-                                                        context,
-                                                        pageInfo);
+                CitationEntry entry = new CitationEntry(name, context, pageInfo);
                 citations.add(entry);
             }
             return citations;
@@ -445,6 +418,9 @@ public class Backend52 {
         }
     }
 
+    /*
+     * Only applies to storage. Citation markers are not changed.
+     */
     public void applyCitationEntries(XTextDocument doc, List<CitationEntry> citationEntries)
         throws
         UnknownPropertyException,

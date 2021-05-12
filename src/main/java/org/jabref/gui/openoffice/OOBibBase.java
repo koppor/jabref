@@ -278,6 +278,10 @@ class OOBibBase {
         IllegalTypeException,
         NoSuchElementException {
 
+        Objects.requireNonNull(pageInfosForCitations);
+        if (pageInfosForCitations.size() != citationKeys.size()) {
+            throw new RuntimeException("pageInfosForCitations.size != citationKeys.size");
+        }
         CitationGroupID cgid = fr.createCitationGroup(doc,
                                                       citationKeys,
                                                       pageInfosForCitations,
@@ -1157,7 +1161,7 @@ class OOBibBase {
 
                     // Note: JabRef52 returns cg.pageInfo for the last citation.
                     List<OOFormattedText> pageInfosForCitations =
-                        fr.cgs.getPageInfosForCitationsInStorageOrder(cg);
+                        cg.getPageInfosForCitationsInStorageOrder();
 
                     List<Citation> cits = cg.citationsInStorageOrder;
                     if (cits.size() <= 1) {

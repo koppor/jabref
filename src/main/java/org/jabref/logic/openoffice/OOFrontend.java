@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -323,6 +324,10 @@ public class OOFrontend {
         PropertyVetoException,
         IllegalTypeException {
 
+        Objects.requireNonNull(pageInfosForCitations);
+        if (pageInfosForCitations.size() != citationKeys.size()) {
+            throw new RuntimeException("pageInfosForCitations.size != citationKeys.size");
+        }
         CitationGroup cg = backend.createCitationGroup(doc,
                                                        citationKeys,
                                                        pageInfosForCitations,
@@ -336,19 +341,7 @@ public class OOFrontend {
     }
 
     /**
-     * Remove {@code cg} both from {@code cgs} and the document.
-     *
-     * Note: we invalidate the extra data we are storing
-     *       (bibliography).
-     *
-     *       Update would be complicated, since we do not know how the
-     *       bibliography was generated: it was partially done outside
-     *       CitationGroups, and we did not store how.
-     *
-     *       So we stay with invalidating.
-     *       Note: localOrder, numbering, uniqueLetters are not adjusted,
-     *             it is easier to reread everything for a refresh.
-     *
+     * Remove {@code cg} both from the document and notify {@code cgs}
      */
     public void removeCitationGroup(CitationGroup cg, XTextDocument doc)
         throws

@@ -253,7 +253,7 @@ public class OOProcess {
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
             List<Integer> numbers = cg.getCitationNumbersInLocalOrder();
-            List<OOFormattedText> pageInfos = cgs.getPageInfosForCitationsInLocalOrder(cg);
+            List<OOFormattedText> pageInfos = cg.getPageInfosForCitationsInLocalOrder();
             citMarkers.put(cgid,
                            style.getNumCitationMarker(numbers,
                                                       minGroupingCount,
@@ -282,7 +282,7 @@ public class OOProcess {
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
             List<Integer> numbers = cg.getCitationNumbersInLocalOrder();
-            List<OOFormattedText> pageInfos = cgs.getPageInfosForCitationsInLocalOrder(cg);
+            List<OOFormattedText> pageInfos = cg.getPageInfosForCitationsInLocalOrder();
             citMarkers.put(cgid,
                            style.getNumCitationMarker(numbers,
                                                       minGroupingCount,
@@ -325,7 +325,7 @@ public class OOProcess {
 
             List<Citation> cits = cg.getCitationsInLocalOrder();
             final int nCitedEntries = cits.size();
-            List<OOFormattedText> pageInfosForCitations = cgs.getPageInfosForCitationsInLocalOrder(cg);
+            List<OOFormattedText> pageInfosForCitations = cg.getPageInfosForCitationsInLocalOrder();
 
             List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nCitedEntries);
 

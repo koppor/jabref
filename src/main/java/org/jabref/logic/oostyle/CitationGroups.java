@@ -1,6 +1,5 @@
 package org.jabref.logic.oostyle;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.jabref.logic.openoffice.Pair;
 import org.jabref.model.database.BibDatabase;
@@ -17,7 +15,6 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.CitationDatabaseLookup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
-import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.oostyle.OOStyleDataModelVersion;
 
 import org.slf4j.Logger;
@@ -180,7 +177,7 @@ public class CitationGroups {
      */
     public CitedKeys getCitedKeysSortedInOrderOfAppearance() {
         LinkedHashMap<String, CitedKey> res = new LinkedHashMap<>();
-        if (globalOrder.isEmpty()) {
+        if (!hasGlobalOrder()) {
             throw new RuntimeException("getSortedCitedKeys: no globalOrder");
         }
         for (CitationGroupID cgid : globalOrder.get()) {
@@ -267,100 +264,7 @@ public class CitationGroups {
         return getCitationGroup(cgid).map(cg -> cg.citationType);
     }
 
-    /**
-     * @return List of nullable pageInfo values, one for each citation,
-     *         instrage order.
-     *
-     *         Result contains null for missing pageInfo values.
-     *         The list itself is not null.
-     *
-     *         For JabRef52 compatibility the last citation in
-     *         localOrder gets the single pageInfo from the last in
-     *         storage order, to make sure it is presented after the citations.
-     *         This can only be done after localOrder is set.
-     *
-     *         The result is passed to OOBibStyle.getCitationMarker or
-     *         OOBibStyle.getNumCitationMarker
-     *
-     *         TODO: we may want class DataModel52, DataModel53 and split this.
-     */
-    private static List<OOFormattedText>
-    getPageInfosForCitationsInStorageOrder(OOStyleDataModelVersion dataModel,
-                                           CitationGroup cg) {
-        switch (dataModel) {
-        case JabRef52:
-            // check conformance to dataModel
-            final int nCitations = cg.numberOfCitations();
-            final int last = nCitations - 1;
-            final boolean checkDataModelConformance = false;
-            if (checkDataModelConformance) {
-                for (int i = 0; i < last; i++) {
-                    if (cg.citationsInStorageOrder.get(i).pageInfo.isPresent()) {
-                        throw new RuntimeException("getPageInfosForCitations:"
-                                                   + " found Citation.pageInfo"
-                                                   + " outside last citation under JabRef52 dataModel");
-                    }
-                }
-            }
-            OOFormattedText thePageInfo = cg.citationsInStorageOrder.get(last).pageInfo.orElse(null);
-
-            // For JabRef52 the citation last in localOrder gets the pageInfo.
-            final int theLastInLocalOrder = cg.getLocalOrder().get(last);
-            List<OOFormattedText> result = new ArrayList<>(nCitations);
-            for (int i = 0; i < nCitations; i++) {
-                if (i == theLastInLocalOrder) {
-                    result.add(thePageInfo);
-                } else {
-                    result.add(null);
-                }
-            }
-            return result;
-        case JabRef53:
-            // pageInfo values from citations, empty mapped to null.
-            return (cg.citationsInStorageOrder.stream()
-                    .map(cit -> cit.pageInfo.orElse(null))
-                    .collect(Collectors.toList()));
-
-        default:
-            throw new RuntimeException("getPageInfosForCitationsInStorageOrder:"
-                                       + "unhandled dataModel");
-        }
-    }
-
-    /**
-     * @return List of nullable pageInfo values, one for each citation,
-     *         in localOrder.
-     */
-    private static List<OOFormattedText>
-    getPageInfosForCitationsInLocalOrder(OOStyleDataModelVersion dataModel, CitationGroup cg) {
-        final int nCitations = cg.numberOfCitations();
-        List<OOFormattedText> result = new ArrayList<>(nCitations);
-        List<OOFormattedText> inStorageOrder = getPageInfosForCitationsInStorageOrder(dataModel, cg);
-        for (int i = 0; i < nCitations; i++) {
-            result.add(inStorageOrder.get(cg.getLocalOrder().get(i)));
-        }
-        return result;
-    }
-
-    public List<OOFormattedText> getPageInfosForCitationsInStorageOrder(CitationGroup cg) {
-        return getPageInfosForCitationsInStorageOrder(this.dataModel, cg);
-    }
-
-    public List<OOFormattedText> getPageInfosForCitationsInStorageOrder(CitationGroupID cgid) {
-        CitationGroup cg = getCitationGroupOrThrow(cgid);
-        return getPageInfosForCitationsInStorageOrder(cg);
-    }
-
-    public List<OOFormattedText> getPageInfosForCitationsInLocalOrder(CitationGroup cg) {
-        return getPageInfosForCitationsInLocalOrder(this.dataModel, cg);
-    }
-
-    public List<OOFormattedText> getPageInfosForCitationsInLocalOrder(CitationGroupID cgid) {
-        CitationGroup cg = getCitationGroupOrThrow(cgid);
-        return getPageInfosForCitationsInLocalOrder(cg);
-    }
-
-    public Optional<List<Citation>> getCitations(CitationGroupID cgid) {
+    public Optional<List<Citation>> getCitationsInStorageOrder(CitationGroupID cgid) {
         return getCitationGroup(cgid).map(cg -> cg.citationsInStorageOrder);
     }
 
@@ -393,6 +297,19 @@ public class CitationGroups {
         // how it was imposed. We leave it to an upper level.
     }
 
+    /*
+     * Note: we invalidate the extra data we are storing
+     *       (bibliography).
+     *
+     *       Update would be complicated, since we do not know how the
+     *       bibliography was generated: it was partially done outside
+     *       CitationGroups, and we did not store how.
+     *
+     *       So we stay with invalidating.
+     *       Note: localOrder, numbering, uniqueLetters are not adjusted,
+     *             it is easier to reread everything for a refresh.
+     *
+     */
     public void afterRemoveCitationGroup(CitationGroup cg) {
 
         this.citationGroupsUnordered.remove(cg.cgid);

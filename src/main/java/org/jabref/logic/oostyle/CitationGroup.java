@@ -131,6 +131,17 @@ public class CitationGroup {
 
         // Pair citations with their storage index in citations
         final int nCitations = citationsInStorageOrder.size();
+
+        // For JabRef52 the single pageInfo is always in the
+        // last-in-localorder citation.
+        // We adjust here accordingly.
+        final int last = nCitations - 1;
+        Optional<OOFormattedText> lastPageInfo = Optional.empty();
+        if (dataModel == OOStyleDataModelVersion.JabRef52) {
+            lastPageInfo = getCitationsInLocalOrder().get(last).pageInfo;
+            getCitationsInLocalOrder().get(last).pageInfo = Optional.empty();
+        }
+
         List<CitationAndIndex> cis = new ArrayList<>(nCitations);
         for (int i = 0; i < nCitations; i++) {
             Citation c = citationsInStorageOrder.get(i);
@@ -146,6 +157,10 @@ public class CitationGroup {
             ordered.add(ci.i);
         }
         this.localOrder = ordered;
+
+        if (dataModel == OOStyleDataModelVersion.JabRef52) {
+            getCitationsInLocalOrder().get(last).pageInfo = lastPageInfo;
+        }
     }
 
     public List<Integer> getLocalOrder() {
@@ -172,6 +187,33 @@ public class CitationGroup {
         List<Citation> cits = getCitationsInLocalOrder();
         return (cits.stream()
                 .map(cit -> cit.number.orElseThrow(RuntimeException::new))
+                .collect(Collectors.toList()));
+    }
+
+    /**
+     * @return List of nullable pageInfo values, one for each citation,
+     *         instrage order.
+     *
+     *         Result contains null for missing pageInfo values.
+     *         The list itself is not null.
+     *
+     */
+    public List<OOFormattedText> getPageInfosForCitationsInStorageOrder() {
+        CitationGroup cg = this;
+        // pageInfo values from citations, empty mapped to null.
+        return (cg.citationsInStorageOrder.stream()
+                .map(cit -> cit.pageInfo.orElse(null))
+                .collect(Collectors.toList()));
+    }
+
+    /**
+     * @return List of nullable pageInfo values, one for each citation, in localOrder.
+     */
+    public List<OOFormattedText> getPageInfosForCitationsInLocalOrder() {
+        CitationGroup cg = this;
+        // pageInfo values from citations, empty mapped to null.
+        return (cg.getCitationsInLocalOrder().stream()
+                .map(cit -> cit.pageInfo.orElse(null))
                 .collect(Collectors.toList()));
     }
 
