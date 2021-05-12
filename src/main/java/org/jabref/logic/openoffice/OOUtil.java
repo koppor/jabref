@@ -61,8 +61,7 @@ public class OOUtil {
                                                     boolean htmlMarkup)
         throws
         WrappedTargetException,
-        NoDocumentException,
-        CreationException {
+        NoDocumentException {
 
         String citPart = cursor.getString();
 

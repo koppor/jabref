@@ -356,8 +356,7 @@ public class Backend52 {
     public Optional<XTextCursor> getRawCursorForCitationGroup(CitationGroup cg, XTextDocument doc)
         throws
         NoDocumentException,
-        WrappedTargetException,
-        CreationException {
+        WrappedTargetException {
         return cg.cgRangeStorage.getRawCursor(doc);
     }
 
@@ -386,8 +385,7 @@ public class Backend52 {
         throws
         UnknownPropertyException,
         WrappedTargetException,
-        NoDocumentException,
-        CreationException {
+        NoDocumentException {
 
         switch (dataModel) {
         case JabRef52:

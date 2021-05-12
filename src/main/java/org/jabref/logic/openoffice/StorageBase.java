@@ -32,8 +32,7 @@ public class StorageBase {
         public Optional<XTextCursor> getRawCursor(XTextDocument doc)
             throws
             NoDocumentException,
-            WrappedTargetException,
-            CreationException;
+            WrappedTargetException;
 
         /**
          * Get a cursor for filling in text.

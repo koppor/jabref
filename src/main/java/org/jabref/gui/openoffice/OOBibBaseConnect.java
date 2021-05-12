@@ -7,9 +7,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jabref.gui.DialogService;
+import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.openoffice.CreationException;
 import org.jabref.logic.openoffice.NoDocumentException;
+import org.jabref.logic.openoffice.Result;
 import org.jabref.logic.openoffice.UnoCast;
 import org.jabref.logic.openoffice.UnoTextDocument;
 
@@ -235,6 +237,17 @@ class OOBibBaseConnect {
             throw new NoDocumentException("Not connected to document");
         }
         return this.xTextDocument;
+    }
+
+    public Result<XTextDocument, JabRefException> getXTextDocument() {
+        if (isDocumentConnectionMissing()) {
+            final String msg = Localization.lang("Not connected to any Writer document."
+                                                 + " Please make sure a document is open,"
+                                                 + " and use the 'Select Writer document' button"
+                                                 + " to connect to it.");
+            return Result.Error(new JabRefException("Not connected to document", msg));
+        }
+        return Result.OK(this.xTextDocument);
     }
 
     /**

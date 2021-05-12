@@ -1,6 +1,5 @@
 package org.jabref.gui.openoffice;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
@@ -56,6 +55,7 @@ import org.jabref.logic.openoffice.UndefinedParagraphFormatException;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.preferences.PreferencesService;
 
 import com.sun.star.beans.IllegalTypeException;
@@ -202,32 +202,15 @@ public class OpenOfficePanel {
                 }
 
                 List<BibDatabase> databases = getBaseList();
-                List<String> unresolvedKeys = ooBase.updateDocumentActionHelper(databases, style);
+                ooBase.updateDocumentActionHelper(databases, style);
 
-                if (!unresolvedKeys.isEmpty()) {
-                    dialogService.showErrorDialogAndWait(Localization.lang("Unable to synchronize bibliography"),
-                                                         Localization.lang("Your OpenOffice/LibreOffice document references the citation key '%0', which could not be found in your current library.",
-                                                                           unresolvedKeys.get(0)));
-                }
-            } catch (JabRefException ex) {
-                dialogService.showErrorDialogAndWait(
-                    Localization.lang("JabRefException"),
-                    ex.getLocalizedMessage());
-            } catch (UndefinedCharacterFormatException ex) {
-                reportUndefinedCharacterFormat(ex);
-            } catch (UndefinedParagraphFormatException ex) {
-                reportUndefinedParagraphFormat(ex);
             } catch (ConnectionLostException ex) {
-                showConnectionLostErrorMessage();
-            } catch (NoDocumentException ex) {
-                showNoDocumentErrorMessage();
+                showConnectionLostErrorMessage(dialogService);
             } catch (IOException ex) {
                 LOGGER.warn("Problem with style file", ex);
                 dialogService.showErrorDialogAndWait(Localization.lang("No valid style file defined"),
                                                      Localization.lang("You must select either a valid style file, or use one of the default styles."));
-            } catch (com.sun.star.lang.IllegalArgumentException | PropertyVetoException | UnknownPropertyException | WrappedTargetException | NoSuchElementException |
-                     InvalidStateException |
-                     CreationException ex) {
+            } catch (com.sun.star.lang.IllegalArgumentException ex) {
                 LOGGER.warn("Could not update bibliography", ex);
             }
         });
@@ -242,9 +225,9 @@ public class OpenOfficePanel {
                     Localization.lang("JabRefException"),
                     ex.getLocalizedMessage());
             } catch (UndefinedCharacterFormatException ex) {
-                reportUndefinedCharacterFormat(ex);
+                reportUndefinedCharacterFormat(dialogService, ex);
             } catch (NoDocumentException ex) {
-                showNoDocumentErrorMessage();
+                showNoDocumentErrorMessage(dialogService);
             } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
                      CreationException | NoSuchElementException | WrappedTargetException | IOException |
                      NotRemoveableException | IllegalTypeException | InvalidStateException |
@@ -263,9 +246,9 @@ public class OpenOfficePanel {
                     Localization.lang("JabRefException"),
                     ex.getLocalizedMessage());
             } catch (NoDocumentException ex) {
-                showNoDocumentErrorMessage();
+                showNoDocumentErrorMessage(dialogService);
             } catch (UndefinedCharacterFormatException ex) {
-                reportUndefinedCharacterFormat(ex);
+                reportUndefinedCharacterFormat(dialogService, ex);
             } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
                      CreationException | NoSuchElementException | WrappedTargetException | IOException |
                      PropertyExistException | IllegalTypeException | NotRemoveableException |
@@ -280,22 +263,11 @@ public class OpenOfficePanel {
         settingsB.setOnAction(e -> settingsMenu.show(settingsB, Side.BOTTOM, 0, 0));
         manageCitations.setMaxWidth(Double.MAX_VALUE);
         manageCitations.setOnAction(e -> {
-           try {
-               ooBase.checkIfOpenOfficeIsRecordingChanges();
-           } catch (JabRefException ex) {
-                dialogService.showErrorDialogAndWait(
-                    Localization.lang("JabRefException"),
-                    ex.getLocalizedMessage());
-                return;
-           } catch (NoDocumentException ex) {
-               showNoDocumentErrorMessage();
-               return;
-           } catch (UnknownPropertyException
-                    | PropertyVetoException
-                    | WrappedTargetException ex) {
-               LOGGER.warn("Problem during checkIfOpenOfficeIsRecordingChanges", ex);
-           }
-           dialogService.showCustomDialogAndWait(new ManageCitationsDialogView(ooBase));
+               Optional<List<CitationEntry>> citations = ooBase.getCitationEntries();
+               if (citations.isPresent()) {
+                   dialogService.showCustomDialogAndWait(new ManageCitationsDialogView(ooBase,
+                                                                                       citations.get()));
+               }
         });
 
         exportCitations.setMaxWidth(Double.MAX_VALUE);
@@ -357,8 +329,12 @@ public class OpenOfficePanel {
 
             BibDatabaseContext databaseContext = new BibDatabaseContext(newDatabase);
             this.frame.addTab(databaseContext, true);
+        } catch (JabRefException ex) {
+            dialogService.showErrorDialogAndWait(
+                Localization.lang("JabRefException"),
+                ex.getLocalizedMessage());
         } catch (NoDocumentException ex) {
-            showNoDocumentErrorMessage();
+            showNoDocumentErrorMessage(dialogService);
         } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
                  UndefinedCharacterFormatException | NoSuchElementException | WrappedTargetException | IOException |
                  InvalidStateException |
@@ -528,7 +504,7 @@ public class OpenOfficePanel {
                 ex.getLocalizedMessage());
             return;
         } catch (NoDocumentException ex) {
-            showNoDocumentErrorMessage();
+            showNoDocumentErrorMessage(dialogService);
             return;
         } catch (UnknownPropertyException
                  | PropertyVetoException
@@ -580,40 +556,21 @@ public class OpenOfficePanel {
                         style = loader.getUsedStyle();
                         if (style == null) {
                             dialogService.showErrorDialogAndWait(
-                                Localization.lang("No style for citation"),
+                                Localization.lang("No valid style file defined"),
                                 Localization.lang(
                                     "No bibliography style is selected for citation.")
                                 + "\n"
-                                + Localization.lang("Select one before citing."));
+                                + Localization.lang("Select one before citing.")
+                                + "\n"
+                                + Localization.lang("You must select either a valid style file, or use one of the default styles."));
                             return;
                         }
                     }
                     ooBase.insertEntry(entries, database, getBaseList(), style, inParenthesis, withText, pageInfo,
                                        ooPrefs.getSyncWhenCiting());
-                } catch (FileNotFoundException ex) {
-
-                    dialogService.showErrorDialogAndWait(
-                                                         Localization.lang("No valid style file defined"),
-                                                         Localization.lang("You must select either a valid style file, or use one of the default styles."));
-
-                    LOGGER.warn("Problem with style file", ex);
-                } catch (NoDocumentException ex) {
-                    showNoDocumentErrorMessage();
                 } catch (ConnectionLostException ex) {
-                    showConnectionLostErrorMessage();
-                } catch (UndefinedCharacterFormatException ex) {
-                    reportUndefinedCharacterFormat(ex);
-                } catch (UndefinedParagraphFormatException ex) {
-                    reportUndefinedParagraphFormat(ex);
-                } catch (JabRefException ex) {
-                    dialogService.showErrorDialogAndWait(
-                        Localization.lang("JabRefException"),
-                        ex.getLocalizedMessage());
-                } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
-                         CreationException | NoSuchElementException | WrappedTargetException | IOException |
-                         IllegalTypeException | PropertyExistException |
-                         InvalidStateException |
-                         NotRemoveableException ex) {
+                    showConnectionLostErrorMessage(dialogService);
+                } catch (com.sun.star.lang.IllegalArgumentException ex) {
                     LOGGER.warn("Could not insert entry", ex);
                 }
             }
@@ -680,24 +637,24 @@ public class OpenOfficePanel {
         }
     }
 
-    private void showConnectionLostErrorMessage() {
+    public static void showConnectionLostErrorMessage(DialogService dialogService) {
         dialogService.showErrorDialogAndWait(Localization.lang("Connection lost"),
                                              Localization.lang("Connection to OpenOffice/LibreOffice has been lost. Please make sure OpenOffice/LibreOffice is running, and try to reconnect."));
     }
 
-    private void showNoDocumentErrorMessage() {
+    public static void showNoDocumentErrorMessage(DialogService dialogService) {
         dialogService.showErrorDialogAndWait(Localization.lang("Connection to document lost"),
                                              Localization.lang("Connection to OpenOffice/LibreOffice document has been lost. Please make sure OpenOffice/LibreOffice is running, and try to reconnect."));
     }
 
-    private void reportUndefinedParagraphFormat(UndefinedParagraphFormatException ex) {
+    public static void reportUndefinedParagraphFormat(DialogService dialogService, UndefinedParagraphFormatException ex) {
         dialogService.showErrorDialogAndWait(Localization.lang("Undefined paragraph format"),
                                              Localization.lang("Your style file specifies the paragraph format '%0', "
                                                                + "which is undefined in your current OpenOffice/LibreOffice document.",
                                                                ex.getFormatName()) + "\n" + Localization.lang("The paragraph format is controlled by the property 'ReferenceParagraphFormat' or 'ReferenceHeaderParagraphFormat' in the style file."));
     }
 
-    private void reportUndefinedCharacterFormat(UndefinedCharacterFormatException ex) {
+    public static void reportUndefinedCharacterFormat(DialogService dialogService, UndefinedCharacterFormatException ex) {
         dialogService.showErrorDialogAndWait(Localization.lang("Undefined character format"),
                                              Localization.lang("Your style file specifies the character format '%0', "
                                                                + "which is undefined in your current OpenOffice/LibreOffice document.",

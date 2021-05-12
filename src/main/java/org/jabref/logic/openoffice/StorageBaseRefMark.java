@@ -190,8 +190,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
     public Optional<XTextCursor> getRawCursor(XTextDocument doc)
         throws
         NoDocumentException,
-        WrappedTargetException,
-        CreationException {
+        WrappedTargetException {
 
         String name = this.getName();
         Optional<XTextCursor> full = Optional.empty();

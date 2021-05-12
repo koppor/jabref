@@ -1,5 +1,7 @@
 package org.jabref.gui.openoffice;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import javafx.fxml.FXML;
@@ -17,6 +19,7 @@ import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.ValueTableCellFactory;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
+import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.strings.StringUtil;
 
 import com.airhacks.afterburner.views.ViewLoader;
@@ -30,6 +33,7 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
     private static final String HTML_BOLD_START_TAG = "<b>";
 
     private final OOBibBase ooBase;
+    private final List<CitationEntry> citations;
 
     @FXML private TableView<CitationEntryViewModel> citationsTableView;
     @FXML private TableColumn<CitationEntryViewModel, String> citation;
@@ -39,8 +43,9 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
 
     private ManageCitationsDialogViewModel viewModel;
 
-    public ManageCitationsDialogView(OOBibBase ooBase) {
+    public ManageCitationsDialogView(OOBibBase ooBase, List<CitationEntry> citations) {
         this.ooBase = ooBase;
+        this.citations = citations;
 
         ViewLoader.view(this)
                   .load()
@@ -59,7 +64,7 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
     @FXML
     private void initialize() throws NoSuchElementException, WrappedTargetException, UnknownPropertyException, JabRefException {
 
-        viewModel = new ManageCitationsDialogViewModel(ooBase, dialogService);
+        viewModel = new ManageCitationsDialogViewModel(ooBase, citations, dialogService);
 
         citation.setCellValueFactory(cellData -> cellData.getValue().citationProperty());
         new ValueTableCellFactory<CitationEntryViewModel, String>().withGraphic(this::getText).install(citation);
