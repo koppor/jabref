@@ -111,7 +111,7 @@ public class OOFrontend {
         NoDocumentException,
         WrappedTargetException {
 
-        List<CitationGroupID> cgids = new ArrayList<>(cgs.getCitationGroupIDs());
+        List<CitationGroupID> cgids = new ArrayList<>(cgs.getCitationGroupIDsUnordered());
 
         List<RangeSort.RangeSortEntry> vses = new ArrayList<>();
         for (CitationGroupID cgid : cgids) {
@@ -446,7 +446,7 @@ public class OOFrontend {
 
         List<RangeForOverlapCheck> xs = new ArrayList<>(cgs.numberOfCitationGroups());
 
-        List<CitationGroupID> cgids = new ArrayList<>(cgs.getCitationGroupIDs());
+        List<CitationGroupID> cgids = new ArrayList<>(cgs.getCitationGroupIDsUnordered());
 
         for (CitationGroupID cgid : cgids) {
             XTextRange r = this.getMarkRange(doc, cgid).orElseThrow(RuntimeException::new);

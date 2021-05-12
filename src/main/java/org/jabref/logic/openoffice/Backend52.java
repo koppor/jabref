@@ -149,7 +149,8 @@ public class Backend52 {
                                                + " referenceMarkName is not in the document");
         }
 
-        CitationGroup cg = new CitationGroup(id,
+        CitationGroup cg = new CitationGroup(OOStyleDataModelVersion.JabRef52,
+                                             id,
                                              storedRange.get(),
                                              ov.citationType,
                                              citations,
@@ -288,8 +289,9 @@ public class Backend52 {
                 // do not inherit from trash
                 UnoUserDefinedProperty.removeIfExists(doc, refMarkName);
             }
-            CitationGroup cg =
-                new CitationGroup(cgid, storedRange, citationType, citations, Optional.of(refMarkName));
+            CitationGroup cg = new CitationGroup(OOStyleDataModelVersion.JabRef52,
+                                                 cgid, storedRange, citationType, citations,
+                                                 Optional.of(refMarkName));
             return cg;
         default:
             throw new RuntimeException("Backend52 requires JabRef52 dataModel");
@@ -416,7 +418,7 @@ public class Backend52 {
             // For DataModel.JabRef53 (Backend53) we need one context per Citation
             int n = cgs.numberOfCitationGroups();
             List<CitationEntry> citations = new ArrayList<>(n);
-            for (CitationGroupID cgid : cgs.getCitationGroupIDs()) {
+            for (CitationGroupID cgid : cgs.getCitationGroupIDsUnordered()) {
                 CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
                 String name = cgid.asString();
                 XTextCursor cursor = (this

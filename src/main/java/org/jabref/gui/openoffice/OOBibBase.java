@@ -1138,7 +1138,7 @@ class OOBibBase {
             boolean madeModifications = false;
 
             // {@code names} does not need to be sorted.
-            List<CitationGroupID> names = new ArrayList<>(fr.cgs.getCitationGroupIDs());
+            List<CitationGroupID> names = new ArrayList<>(fr.cgs.getCitationGroupIDsUnordered());
 
             try {
                 if (useLockControllers) {
@@ -1288,7 +1288,7 @@ class OOBibBase {
         UnknownPropertyException {
 
         OOFrontend fr = new OOFrontend(doc);
-        CitedKeys cks = fr.cgs.getCitedKeys();
+        CitedKeys cks = fr.cgs.getCitedKeysUnordered();
         cks.lookupInDatabases(databases);
 
         List<String> unresolvedKeys = new ArrayList<>();

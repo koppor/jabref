@@ -13,11 +13,14 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOStyleDataModelVersion;
 
 /*
  * A CitationGroup describes a group of citations.
  */
 public class CitationGroup {
+
+    public final OOStyleDataModelVersion dataModel;
 
     /*
      * Identifies this citation group.
@@ -26,11 +29,8 @@ public class CitationGroup {
 
     /*
      * Identifies location in the document for the backend.
-     * Could be moved to the backend (which is currently stateless),
-     * and use cgid to identify.
      */
     public final StorageBase.NamedRange cgRangeStorage;
-
 
     /*
      * The core data, stored in the document:
@@ -40,8 +40,17 @@ public class CitationGroup {
     public final List<Citation> citationsInStorageOrder;
 
     /*
-     * Extra data added during processing:
+     * Extra data
      */
+
+    /*
+     * A name of a reference mark to link to by formatCitedOnPages.
+     * May be ininitially empty, if backend does not use reference marks.
+     *
+     * produceCitationMarkers might want fill it to support
+     * cross-references to citation groups from the bibliography.
+     */
+    private Optional<String> referenceMarkNameForLinking;
 
     /*
      * Indices into citations: citations[localOrder[i]] provides ith
@@ -53,28 +62,21 @@ public class CitationGroup {
     private List<Integer> localOrder;
 
     /*
-     * A name of a reference mark to link to by formatCitedOnPages.
-     * May be empty, if Backend does not use reference marks.
-     *
-     * produceCitationMarkers might want fill it to support
-     * cross-references to citation groups from the bibliography.
-     */
-    private Optional<String> referenceMarkNameForLinking;
-
-    /*
      * "Cited on pages" uses this to sort the cross-references.
      */
     private Optional<Integer> indexInGlobalOrder;
 
-    public CitationGroup(CitationGroupID cgid,
+    public CitationGroup(OOStyleDataModelVersion dataModel,
+                         CitationGroupID cgid,
                          StorageBase.NamedRange cgRangeStorage,
                          InTextCitationType citationType,
                          List<Citation> citationsInStorageOrder,
                          Optional<String> referenceMarkNameForLinking) {
+        this.dataModel = dataModel;
         this.cgid = cgid;
         this.cgRangeStorage = cgRangeStorage;
         this.citationType = citationType;
-        this.citationsInStorageOrder = citationsInStorageOrder;
+        this.citationsInStorageOrder = Collections.unmodifiableList(citationsInStorageOrder);
         this.localOrder = makeIndices(citationsInStorageOrder.size());
         this.referenceMarkNameForLinking = referenceMarkNameForLinking;
         this.indexInGlobalOrder = Optional.empty();
@@ -84,55 +86,20 @@ public class CitationGroup {
         return citationsInStorageOrder.size();
     }
 
-    public List<Integer> getLocalOrder() {
-        return Collections.unmodifiableList(localOrder);
-    }
-
-    public void setIndexInGlobalOrder(Optional<Integer> i) {
-        this.indexInGlobalOrder = i;
-    }
-
-    public Optional<Integer> getIndexInGlobalOrder() {
-        return this.indexInGlobalOrder;
-    }
-
-    public Optional<String> getReferenceMarkNameForLinking() {
-        return referenceMarkNameForLinking;
-    }
-
-    public void setReferenceMarkNameForLinking(Optional<String> referenceMarkNameForLinking) {
-        this.referenceMarkNameForLinking = referenceMarkNameForLinking;
-    }
+    /*
+     * localOrder
+     */
 
     /** Integers 0..(n-1) */
     static List<Integer> makeIndices(int n) {
         return Stream.iterate(0, i -> i + 1).limit(n).collect(Collectors.toList());
     }
 
-    public List<Citation> getCitationsInLocalOrder() {
-        List<Citation> res = new ArrayList<>(citationsInStorageOrder.size());
-        for (int i : localOrder) {
-            res.add(citationsInStorageOrder.get(i));
-        }
-        return res;
-    }
-
-    /*
-     * Values of the number fields of the citations according to
-     * localOrder.
-     */
-    public List<Integer> getCitationNumbersInLocalOrder() {
-        List<Citation> cits = getCitationsInLocalOrder();
-        return (cits.stream()
-                .map(cit -> cit.number.orElseThrow(RuntimeException::new))
-                .collect(Collectors.toList()));
-    }
-
     /*
      * Helper class for imposeLocalOrderByComparator: a citation
      * paired with its storage index.
      */
-    class CitationAndIndex implements CitationSort.ComparableCitation {
+    private class CitationAndIndex implements CitationSort.ComparableCitation {
         Citation c;
         int i;
 
@@ -164,20 +131,71 @@ public class CitationGroup {
 
         // Pair citations with their storage index in citations
         final int nCitations = citationsInStorageOrder.size();
-        List<CitationAndIndex> cks = new ArrayList<>(nCitations);
+        List<CitationAndIndex> cis = new ArrayList<>(nCitations);
         for (int i = 0; i < nCitations; i++) {
             Citation c = citationsInStorageOrder.get(i);
-            cks.add(new CitationAndIndex(c, i));
+            cis.add(new CitationAndIndex(c, i));
         }
 
         // Sort the list
-        cks.sort(new CitationSort.CitationComparator(entryComparator, true));
+        cis.sort(new CitationSort.CitationComparator(entryComparator, true));
 
         // Copy ordered storage indices to localOrder
-        List<Integer> o = new ArrayList<>(nCitations);
-        for (CitationAndIndex ck : cks) {
-            o.add(ck.i);
+        List<Integer> ordered = new ArrayList<>(nCitations);
+        for (CitationAndIndex ci : cis) {
+            ordered.add(ci.i);
         }
-        this.localOrder = o;
+        this.localOrder = ordered;
+    }
+
+    public List<Integer> getLocalOrder() {
+        return Collections.unmodifiableList(localOrder);
+    }
+
+    /*
+     * citations
+     */
+
+    public List<Citation> getCitationsInLocalOrder() {
+        List<Citation> res = new ArrayList<>(citationsInStorageOrder.size());
+        for (int i : localOrder) {
+            res.add(citationsInStorageOrder.get(i));
+        }
+        return res;
+    }
+
+    /*
+     * Values of the number fields of the citations according to
+     * localOrder.
+     */
+    public List<Integer> getCitationNumbersInLocalOrder() {
+        List<Citation> cits = getCitationsInLocalOrder();
+        return (cits.stream()
+                .map(cit -> cit.number.orElseThrow(RuntimeException::new))
+                .collect(Collectors.toList()));
+    }
+
+    /*
+     * indexInGlobalOrder
+     */
+
+    public void setIndexInGlobalOrder(Optional<Integer> i) {
+        this.indexInGlobalOrder = i;
+    }
+
+    public Optional<Integer> getIndexInGlobalOrder() {
+        return this.indexInGlobalOrder;
+    }
+
+    /*
+     * referenceMarkNameForLinking
+     */
+
+    public Optional<String> getReferenceMarkNameForLinking() {
+        return referenceMarkNameForLinking;
+    }
+
+    public void setReferenceMarkNameForLinking(Optional<String> referenceMarkNameForLinking) {
+        this.referenceMarkNameForLinking = referenceMarkNameForLinking;
     }
 } // class CitationGroup

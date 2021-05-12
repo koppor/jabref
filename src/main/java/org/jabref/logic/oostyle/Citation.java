@@ -2,6 +2,7 @@ package org.jabref.logic.oostyle;
 
 import java.util.Optional;
 
+import org.jabref.logic.openoffice.Pair;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.CitationDatabaseLookup;
 import org.jabref.model.oostyle.OOFormattedText;
@@ -50,5 +51,20 @@ public class Citation implements CitationSort.ComparableCitation {
         return (db.isPresent()
                 ? Optional.of(db.get().entry)
                 : Optional.empty());
+    }
+
+    public static void setDatabaseLookupResult(Pair<Citation, Optional<CitationDatabaseLookup.Result>> x) {
+        Citation cit = x.a;
+        cit.db = x.b;
+    }
+
+    public static void setNumber(Pair<Citation, Optional<Integer>> x) {
+        Citation cit = x.a;
+        cit.number = x.b;
+    }
+
+    public static void setUniqueLetter(Pair<Citation, Optional<String>> x) {
+        Citation cit = x.a;
+        cit.uniqueLetter = x.b;
     }
 }

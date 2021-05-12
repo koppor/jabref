@@ -233,8 +233,8 @@ public class OOFormattedTextIntoOOV1 {
                 OOUtil.insertParagraphBreak(text, cursor);
                 cursor.collapseToEnd();
                 for (Pair<String, String> kv : attributes) {
-                    String key = kv.getKey();
-                    String value = kv.getValue();
+                    String key = kv.a;
+                    String value = kv.b;
                     switch (key) {
                     case "oo:ParaStyleName":
                         // <p oo:ParaStyleName="Standard">
@@ -254,8 +254,8 @@ public class OOFormattedTextIntoOOV1 {
                 break;
             case "oo:referenceToPageNumberOfReferenceMark":
                 for (Pair<String, String> kv : attributes) {
-                    String key = kv.getKey();
-                    String value = kv.getValue();
+                    String key = kv.a;
+                    String value = kv.b;
                     switch (key) {
                     case "target":
                         UnoCrossRef.insertReferenceToPageNumberOfReferenceMark(doc, value, cursor);
@@ -274,8 +274,8 @@ public class OOFormattedTextIntoOOV1 {
             case "span":
                 Formatters fs = new Formatters();
                 for (Pair<String, String> kv : attributes) {
-                    String key = kv.getKey();
-                    String value = kv.getValue();
+                    String key = kv.a;
+                    String value = kv.b;
                     switch (key) {
                     case "oo:CharStyleName":
                         // <span oo:CharStyleName="Standard">
@@ -407,23 +407,6 @@ public class OOFormattedTextIntoOOV1 {
             }
             LOGGER.warn(String.format("OOFormattedTextIntoOO.removeDirectFormatting failed on '%s'",
                                       p.Name));
-        }
-    }
-
-    private static class Pair<K, V> {
-        K key;
-        V value;
-        public Pair(K k, V v) {
-            key = k;
-            value = v;
-        }
-
-        K getKey() {
-            return key;
-        }
-
-        V getValue() {
-            return value;
         }
     }
 

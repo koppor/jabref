@@ -392,13 +392,13 @@ public class OOFormattedTextIntoOO {
             ArrayList<Optional<Object>> oldLayer = layers.peek();
             ArrayList<Optional<Object>> newLayer = new ArrayList<>(oldLayer);
             for (Pair<String, Object> kv : settings) {
-                String name = kv.getKey();
+                String name = kv.a;
                 Integer i = goodNameToIndex.get(name);
                 if (i == null) {
                     LOGGER.warn(String.format("pushLayer: '%s' is not in goodNameToIndex", name));
                     continue;
                 }
-                Object newValue = kv.getValue();
+                Object newValue = kv.b;
                 newLayer.set(i, Optional.ofNullable(newValue));
             }
             layers.push(newLayer);
@@ -596,8 +596,8 @@ public class OOFormattedTextIntoOO {
                 OOUtil.insertParagraphBreak(text, cursor);
                 cursor.collapseToEnd();
                 for (Pair<String, String> kv : attributes) {
-                    String key = kv.getKey();
-                    String value = kv.getValue();
+                    String key = kv.a;
+                    String value = kv.b;
                     switch (key) {
                     case "oo:ParaStyleName":
                         // <p oo:ParaStyleName="Standard">
@@ -621,8 +621,8 @@ public class OOFormattedTextIntoOO {
                 break;
             case "oo:referenceToPageNumberOfReferenceMark":
                 for (Pair<String, String> kv : attributes) {
-                    String key = kv.getKey();
-                    String value = kv.getValue();
+                    String key = kv.a;
+                    String value = kv.b;
                     switch (key) {
                     case "target":
                         UnoCrossRef.insertReferenceToPageNumberOfReferenceMark(doc, value, cursor);
@@ -641,8 +641,8 @@ public class OOFormattedTextIntoOO {
             case "span":
                 List<Pair<String, Object>> settings = new ArrayList<>();
                 for (Pair<String, String> kv : attributes) {
-                    String key = kv.getKey();
-                    String value = kv.getValue();
+                    String key = kv.a;
+                    String value = kv.b;
                     switch (key) {
                     case "oo:CharStyleName":
                         // <span oo:CharStyleName="Standard">
@@ -781,23 +781,6 @@ public class OOFormattedTextIntoOO {
             }
             LOGGER.warn(String.format("OOFormattedTextIntoOO.removeDirectFormatting failed on '%s'",
                                       p.Name));
-        }
-    }
-
-    private static class Pair<K, V> {
-        K key;
-        V value;
-        public Pair(K k, V v) {
-            key = k;
-            value = v;
-        }
-
-        K getKey() {
-            return key;
-        }
-
-        V getValue() {
-            return value;
         }
     }
 
