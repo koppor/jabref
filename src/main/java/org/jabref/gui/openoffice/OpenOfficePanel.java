@@ -239,7 +239,7 @@ public class OpenOfficePanel {
                 final String title = Localization.lang("Problem combining cite markers");
                 // check usedStylesExistInDocument
             try {
-                ooBase.combineCiteMarkers(getBaseList(), style);
+                ooBase.guiActionMergeCitationGroups(getBaseList(), style);
             } catch (JabRefException ex) {
                 OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
             } catch (NoDocumentException ex) {
