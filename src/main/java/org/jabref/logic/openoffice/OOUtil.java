@@ -1,7 +1,5 @@
 package org.jabref.logic.openoffice;
 
-// import org.jabref.architecture.AllowedToUseAwt;
-
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.container.NoSuchElementException;
@@ -15,7 +13,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility methods for processing OO Writer documents.
  */
-// @AllowedToUseAwt("Requires AWT for changing document properties")
 public class OOUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OOUtil.class);

@@ -7,10 +7,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jabref.gui.DialogService;
-import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.openoffice.CreationException;
 import org.jabref.logic.openoffice.NoDocumentException;
+import org.jabref.logic.openoffice.NoDocumentFoundException;
 import org.jabref.logic.openoffice.Result;
 import org.jabref.logic.openoffice.UnoCast;
 import org.jabref.logic.openoffice.UnoTextDocument;
@@ -156,7 +156,7 @@ class OOBibBaseConnect {
      *
      * If there is a single document to choose from, selects that.
      * If there are more than one, shows selection dialog.
-     * If there are none, throws NoDocumentException
+     * If there are none, throws NoDocumentFoundException
      *
      * After successful selection connects to the selected document
      * and extracts some frequently used parts (starting points for
@@ -166,17 +166,17 @@ class OOBibBaseConnect {
      * document and parts extracted.
      *
      */
-    public void selectDocument()
+    public void selectDocument(boolean autoSelectForSingle)
         throws
-        NoDocumentException,
+        NoDocumentFoundException,
         NoSuchElementException,
         WrappedTargetException {
 
         XTextDocument selected;
         List<XTextDocument> textDocumentList = getTextDocuments(this.xDesktop);
         if (textDocumentList.isEmpty()) {
-            throw new NoDocumentException("No Writer documents found");
-        } else if (textDocumentList.size() == 1) {
+            throw new NoDocumentFoundException("No Writer documents found");
+        } else if (textDocumentList.size() == 1 && autoSelectForSingle) {
             selected = textDocumentList.get(0); // Get the only one
         } else { // Bring up a dialog
             selected = OOBibBaseConnect.selectDocumentDialog(textDocumentList,
@@ -239,13 +239,9 @@ class OOBibBaseConnect {
         return this.xTextDocument;
     }
 
-    public Result<XTextDocument, JabRefException> getXTextDocument() {
+    public Result<XTextDocument, OOError> getXTextDocument() {
         if (isDocumentConnectionMissing()) {
-            final String msg = Localization.lang("Not connected to any Writer document."
-                                                 + " Please make sure a document is open,"
-                                                 + " and use the 'Select Writer document' button"
-                                                 + " to connect to it.");
-            return Result.Error(new JabRefException("Not connected to document", msg));
+            return Result.Error(OOError.from(new NoDocumentException()));
         }
         return Result.OK(this.xTextDocument);
     }

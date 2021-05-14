@@ -30,7 +30,7 @@ public class ManageCitationsDialogViewModel {
 
     public void storeSettings() {
         List<CitationEntry> ciationEntries = citations.stream().map(CitationEntryViewModel::toCitationEntry).collect(Collectors.toList());
-        ooBase.applyCitationEntries(ciationEntries);
+        ooBase.guiActionApplyCitationEntries(ciationEntries);
     }
 
     public ListProperty<CitationEntryViewModel> citationsProperty() {

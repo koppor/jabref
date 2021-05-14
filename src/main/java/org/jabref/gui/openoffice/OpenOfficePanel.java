@@ -46,12 +46,11 @@ import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.StyleLoader;
+import org.jabref.logic.openoffice.ConnectionLostException;
 import org.jabref.logic.openoffice.CreationException;
 import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.OpenOfficeFileSearch;
 import org.jabref.logic.openoffice.OpenOfficePreferences;
-import org.jabref.logic.openoffice.UndefinedCharacterFormatException;
-import org.jabref.logic.openoffice.UndefinedParagraphFormatException;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
@@ -145,23 +144,40 @@ public class OpenOfficePanel {
         return vbox;
     }
 
+    /* Note: the style may still be null on return.
+     *
+     * Return true is failed and dialog is already shown.
+     */
+    private boolean getOrUpdateTheStyle(String title) {
+        final boolean FAIL = true;
+        final boolean PASS = false;
+
+        if (style == null) {
+            style = loader.getUsedStyle();
+        } else {
+            try {
+                style.ensureUpToDate();
+            } catch (IOException ex) {
+                LOGGER.warn("Unable to reload style file '" + style.getPath() + "'", ex);
+                String msg = (Localization.lang("Unable to reload style file")
+                              + "'" + style.getPath() + "'"
+                              + "\n" + ex.getMessage());
+                new OOError(title, msg, ex).showErrorDialog(dialogService);
+                return FAIL;
+            }
+        }
+        return PASS;
+    }
+
     private void initPanel() {
 
         connect.setOnAction(e -> connectAutomatically());
         manualConnect.setOnAction(e -> connectManually());
 
         selectDocument.setTooltip(new Tooltip(Localization.lang("Select which open Writer document to work on")));
-        selectDocument.setOnAction(e -> {
 
-            try {
-                ooBase.selectDocument();
-                dialogService.notify(Localization.lang("Connected to document") + ": "
-                                     + ooBase.getCurrentDocumentTitle().orElse(""));
-            } catch (WrappedTargetException | IndexOutOfBoundsException |
-                     NoSuchElementException | NoDocumentException ex) {
-                LOGGER.warn("Problem connecting", ex);
-                dialogService.showErrorDialogAndWait(ex);
-            }
+        selectDocument.setOnAction(e -> {
+                ooBase.guiActionSelectDocument(false);
         });
 
         setStyleFile.setMaxWidth(Double.MAX_VALUE);
@@ -194,51 +210,54 @@ public class OpenOfficePanel {
         update.setTooltip(new Tooltip(Localization.lang("Ensure that the bibliography is up-to-date")));
 
         update.setOnAction(event -> {
+            String title = Localization.lang("Could not update bibliography");
+            if (getOrUpdateTheStyle(title)) {
+                return;
+            }
+            if (style == null) {
+                OOError.noValidStyleSelected()
+                    .setTitle(title)
+                    .showErrorDialog(dialogService);
+                return;
+            }
+
+            List<BibDatabase> databases = getBaseList();
+
             try {
-                if (style == null) {
-                    style = loader.getUsedStyle();
-                } else {
-                    style.ensureUpToDate();
-                }
-
-                List<BibDatabase> databases = getBaseList();
-                ooBase.updateDocumentActionHelper(databases, style);
-
+                ooBase.guiActionUpdateDocument(databases, style);
             } catch (ConnectionLostException ex) {
-                showConnectionLostErrorMessage(dialogService);
-            } catch (IOException ex) {
-                LOGGER.warn("Problem with style file", ex);
-                dialogService.showErrorDialogAndWait(Localization.lang("No valid style file defined"),
-                                                     Localization.lang("You must select either a valid style file, or use one of the default styles."));
+                OOError.from(ex).showErrorDialog(dialogService);
             } catch (com.sun.star.lang.IllegalArgumentException ex) {
                 LOGGER.warn("Could not update bibliography", ex);
+                OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
             }
         });
 
         merge.setMaxWidth(Double.MAX_VALUE);
         merge.setTooltip(new Tooltip(Localization.lang("Combine pairs of citations that are separated by spaces only")));
         merge.setOnAction(e -> {
+                final String title = Localization.lang("Problem combining cite markers");
+                // check usedStylesExistInDocument
             try {
                 ooBase.combineCiteMarkers(getBaseList(), style);
             } catch (JabRefException ex) {
-                dialogService.showErrorDialogAndWait(
-                    Localization.lang("JabRefException"),
-                    ex.getLocalizedMessage());
-            } catch (UndefinedCharacterFormatException ex) {
-                reportUndefinedCharacterFormat(dialogService, ex);
+                OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
             } catch (NoDocumentException ex) {
-                showNoDocumentErrorMessage(dialogService);
+                OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
             } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
                      CreationException | NoSuchElementException | WrappedTargetException | IOException |
                      NotRemoveableException | IllegalTypeException | InvalidStateException |
                      PropertyExistException ex) {
                 LOGGER.warn("Problem combining cite markers", ex);
+                OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
             }
         });
 
         unmerge.setMaxWidth(Double.MAX_VALUE);
         unmerge.setTooltip(new Tooltip(Localization.lang("Separate merged citations")));
         unmerge.setOnAction(e -> {
+                final String title = Localization.lang("Problem during separating cite markers");
+                // check usedStylesExistInDocument
             try {
                 ooBase.unCombineCiteMarkers(getBaseList(), style);
             } catch (JabRefException ex) {
@@ -246,14 +265,13 @@ public class OpenOfficePanel {
                     Localization.lang("JabRefException"),
                     ex.getLocalizedMessage());
             } catch (NoDocumentException ex) {
-                showNoDocumentErrorMessage(dialogService);
-            } catch (UndefinedCharacterFormatException ex) {
-                reportUndefinedCharacterFormat(dialogService, ex);
+                OOError.from(ex).showErrorDialog(dialogService);
             } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
                      CreationException | NoSuchElementException | WrappedTargetException | IOException |
                      PropertyExistException | IllegalTypeException | NotRemoveableException |
                      InvalidStateException ex) {
-                LOGGER.warn("Problem uncombining cite markers", ex);
+                LOGGER.warn("Problem during separating cite markers", ex);
+                OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
             }
         });
 
@@ -263,7 +281,7 @@ public class OpenOfficePanel {
         settingsB.setOnAction(e -> settingsMenu.show(settingsB, Side.BOTTOM, 0, 0));
         manageCitations.setMaxWidth(Double.MAX_VALUE);
         manageCitations.setOnAction(e -> {
-               Optional<List<CitationEntry>> citations = ooBase.getCitationEntries();
+               Optional<List<CitationEntry>> citations = ooBase.guiActionGetCitationEntries();
                if (citations.isPresent()) {
                    dialogService.showCustomDialogAndWait(new ManageCitationsDialogView(ooBase,
                                                                                        citations.get()));
@@ -273,16 +291,7 @@ public class OpenOfficePanel {
         exportCitations.setMaxWidth(Double.MAX_VALUE);
         exportCitations.setOnAction(event -> exportEntries());
 
-        selectDocument.setDisable(true);
-        pushEntries.setDisable(true);
-        pushEntriesInt.setDisable(true);
-        pushEntriesEmpty.setDisable(true);
-        pushEntriesAdvanced.setDisable(true);
-        update.setDisable(true);
-        merge.setDisable(true);
-        unmerge.setDisable(true);
-        manageCitations.setDisable(true);
-        exportCitations.setDisable(true);
+        updateButtonAvailability();
 
         HBox hbox = new HBox();
         hbox.getChildren().addAll(connect, manualConnect, selectDocument, update, help);
@@ -302,44 +311,29 @@ public class OpenOfficePanel {
     }
 
     private void exportEntries() {
+        final String title = Localization.lang("Problem generating new database.");
         try {
-            if (style == null) {
-                style = loader.getUsedStyle();
-            } else {
-                style.ensureUpToDate();
-            }
-
             List<BibDatabase> databases = getBaseList();
             if (databases.isEmpty()) {
-                dialogService.showErrorDialogAndWait(
-                    Localization.lang("No database is open"),
-                    Localization.lang("We need a database to export from. Open one."));
+                OOError.noDataBaseIsOpenForExport().showErrorDialog(dialogService);
                 return;
             }
-
-            OOBibBase.ExportCitedHelperResult r = ooBase.exportCitedHelper(databases);
-            List<String> unresolvedKeys = r.unresolvedKeys;
-            BibDatabase newDatabase = r.newDatabase;
-            if (!unresolvedKeys.isEmpty()) {
-
-                dialogService.showErrorDialogAndWait(Localization.lang("Unable to generate new library"),
-                                                     Localization.lang("Your OpenOffice/LibreOffice document references the citation key '%0', which could not be found in your current library.",
-                                                                       unresolvedKeys.get(0)));
+            boolean returnPartialResult = false;
+            Optional<BibDatabase> newDatabase = ooBase.exportCitedHelper(databases, returnPartialResult);
+            if (newDatabase.isPresent()) {
+                BibDatabaseContext databaseContext = new BibDatabaseContext(newDatabase.get());
+                this.frame.addTab(databaseContext, true);
             }
-
-            BibDatabaseContext databaseContext = new BibDatabaseContext(newDatabase);
-            this.frame.addTab(databaseContext, true);
         } catch (JabRefException ex) {
-            dialogService.showErrorDialogAndWait(
-                Localization.lang("JabRefException"),
-                ex.getLocalizedMessage());
+            OOError.from(ex).showErrorDialog(dialogService);
         } catch (NoDocumentException ex) {
-            showNoDocumentErrorMessage(dialogService);
+            OOError.from(ex).showErrorDialog(dialogService);
         } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
-                 UndefinedCharacterFormatException | NoSuchElementException | WrappedTargetException | IOException |
+                 NoSuchElementException | WrappedTargetException | IOException |
                  InvalidStateException |
-                 CreationException e) {
-            LOGGER.warn("Problem generating new database.", e);
+                 CreationException ex) {
+            LOGGER.warn("Problem generating new database.", ex);
+            OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
         }
     }
 
@@ -420,6 +414,32 @@ public class OpenOfficePanel {
         }
     }
 
+    private void updateButtonAvailability() {
+        boolean isConnected = (ooBase != null);
+        boolean isConnectedToDocument = isConnected && !ooBase.isDocumentConnectionMissing();
+
+        // For these, we need to watch something
+        boolean hasStyle = true; // (style != null);
+        boolean hasDatabase = true; // !getBaseList().isEmpty();
+        boolean hasSelectedBibEntry = true;
+
+        selectDocument.setDisable(!(isConnected));
+        pushEntries.setDisable(!(isConnectedToDocument && hasStyle && hasDatabase));
+
+        boolean canCite = isConnectedToDocument && hasStyle && hasSelectedBibEntry;
+        pushEntriesInt.setDisable(!canCite);
+        pushEntriesEmpty.setDisable(!canCite);
+        pushEntriesAdvanced.setDisable(!canCite);
+
+        boolean canRefreshDocument = isConnectedToDocument && hasStyle;
+        update.setDisable(!canRefreshDocument);
+        merge.setDisable(!canRefreshDocument);
+        unmerge.setDisable(!canRefreshDocument);
+        manageCitations.setDisable(!canRefreshDocument);
+
+        exportCitations.setDisable(!(isConnectedToDocument && hasDatabase));
+    }
+
     private void connect() {
         ooPrefs = preferencesService.getOpenOfficePreferences();
 
@@ -437,29 +457,12 @@ public class OpenOfficePanel {
         connectTask.setOnSucceeded(value -> {
             ooBase = connectTask.getValue();
 
-            try {
-                ooBase.selectDocument();
-            } catch (NoSuchElementException | WrappedTargetException | NoDocumentException ex) {
-                dialogService.showErrorDialogAndWait(Localization.lang("Error connecting to Writer document"), Localization.lang("You need to open Writer with a document before connecting"), ex);
-                LOGGER.error("Error connecting to writer document", ex);
-            }
-
-            if (ooBase.isConnectedToDocument()) {
-                dialogService.notify(Localization.lang("Connected to document") + ": " + ooBase.getCurrentDocumentTitle().orElse(""));
-            }
+            ooBase.guiActionSelectDocument(true);
 
             // Enable actions that depend on Connect:
-            selectDocument.setDisable(false);
-            pushEntries.setDisable(false);
-            pushEntriesInt.setDisable(false);
-            pushEntriesEmpty.setDisable(false);
-            pushEntriesAdvanced.setDisable(false);
-            update.setDisable(false);
-            merge.setDisable(false);
-            unmerge.setDisable(false);
-            manageCitations.setDisable(false);
-            exportCitations.setDisable(false);
+            updateButtonAvailability();
         });
+
         connectTask.setOnFailed(value -> {
             Throwable ex = connectTask.getException();
             if (ex instanceof UnsatisfiedLinkError) {
@@ -472,9 +475,9 @@ public class OpenOfficePanel {
 
                 dialogService.showErrorDialogAndWait(Localization.lang("Could not connect to running OpenOffice/LibreOffice."),
                                                      Localization.lang("Could not connect to running OpenOffice/LibreOffice.")
-                                                                                                                                + "\n"
-                                                                                                                                + Localization.lang("Make sure you have installed OpenOffice/LibreOffice with Java support.") + "\n"
-                                                                                                                                + Localization.lang("If connecting manually, please verify program and library paths.") + "\n" + "\n" + Localization.lang("Error message:"),
+                                                     + "\n"
+                                                     + Localization.lang("Make sure you have installed OpenOffice/LibreOffice with Java support.") + "\n"
+                                                     + Localization.lang("If connecting manually, please verify program and library paths.") + "\n" + "\n" + Localization.lang("Error message:"),
                                                      ex);
             } else {
                 dialogService.showErrorDialogAndWait(Localization.lang("Autodetection failed"), Localization.lang("Autodetection failed"), ex);
@@ -491,25 +494,44 @@ public class OpenOfficePanel {
     }
 
     private void pushEntries(boolean inParenthesisIn, boolean withText, boolean addPageInfo) {
-        if (!ooBase.isConnectedToDocument()) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"), Localization.lang("Not connected to any Writer document. Please" + " make sure a document is open, and use the 'Select Writer document' button to connect to it."));
+        final String title = Localization.lang("Error pushing entries");
+        if (ooBase.guiCheckIfConnectedToDocument(title)
+            || ooBase.guiCheckIfOpenOfficeIsRecordingChanges(title)) {
             return;
         }
 
-        try {
-            ooBase.checkIfOpenOfficeIsRecordingChanges();
-        } catch (JabRefException ex) {
-            dialogService.showErrorDialogAndWait(
-                Localization.lang("JabRefException"),
-                ex.getLocalizedMessage());
+        LibraryTab libraryTab = frame.getCurrentLibraryTab();
+        if (libraryTab == null) {
+            OOError.noDataBaseIsOpenForCiting()
+                .setTitle(title)
+                .showErrorDialog(dialogService);
             return;
-        } catch (NoDocumentException ex) {
-            showNoDocumentErrorMessage(dialogService);
+        }
+
+        final BibDatabase database = libraryTab.getDatabase();
+        if (database == null) {
+            OOError.noDataBaseIsOpenForCiting()
+                .setTitle(title)
+                .showErrorDialog(dialogService);
             return;
-        } catch (UnknownPropertyException
-                 | PropertyVetoException
-                 | WrappedTargetException ex) {
-            LOGGER.warn("Problem during checkIfOpenOfficeIsRecordingChanges", ex);
+        }
+
+        List<BibEntry> entries = libraryTab.getSelectedEntries();
+        if (entries.isEmpty()) {
+            OOError.noEntriesSelectedForCitation()
+                .setTitle(title)
+                .showErrorDialog(dialogService);
+            return;
+        }
+
+        if (getOrUpdateTheStyle(title)) {
+            return;
+        }
+        if (style == null) {
+            OOError.noValidStyleSelected()
+                .setTitle(title)
+                .showErrorDialog(dialogService);
+            return;
         }
 
         Boolean inParenthesis = inParenthesisIn;
@@ -527,62 +549,18 @@ public class OpenOfficePanel {
             }
         }
 
-        LibraryTab libraryTab = frame.getCurrentLibraryTab();
-        if (libraryTab != null) {
-            final BibDatabase database = libraryTab.getDatabase();
-            if (database == null) {
-                dialogService.showErrorDialogAndWait(
-                    Localization.lang("No database"),
-                    Localization.lang(
-                        "No bibliography database is open for citation.")
-                    + "\n"
-                    + Localization.lang("Open one before citing."));
-                return;
-            }
-            List<BibEntry> entries = libraryTab.getSelectedEntries();
-            if (entries.isEmpty()) {
-                dialogService.showErrorDialogAndWait(
-                    Localization.lang("No entries selected for citation"),
-                    Localization.lang(
-                        "No bibliography entries are selected for citation.")
-                    + "\n"
-                    + Localization.lang("Select some before citing."));
-                return;
-            }
-            if (!entries.isEmpty() && checkThatEntriesHaveKeys(entries)) {
+        if (!entries.isEmpty() && checkThatEntriesHaveKeys(entries)) {
+            try {
 
-                try {
-                    if (style == null) {
-                        style = loader.getUsedStyle();
-                        if (style == null) {
-                            dialogService.showErrorDialogAndWait(
-                                Localization.lang("No valid style file defined"),
-                                Localization.lang(
-                                    "No bibliography style is selected for citation.")
-                                + "\n"
-                                + Localization.lang("Select one before citing.")
-                                + "\n"
-                                + Localization.lang("You must select either a valid style file, or use one of the default styles."));
-                            return;
-                        }
-                    }
-                    ooBase.insertEntry(entries, database, getBaseList(), style, inParenthesis, withText, pageInfo,
+                    ooBase.guiActionInsertEntry(entries, database, getBaseList(), style, inParenthesis, withText, pageInfo,
                                        ooPrefs.getSyncWhenCiting());
                 } catch (ConnectionLostException ex) {
-                    showConnectionLostErrorMessage(dialogService);
+                    OOError.from(ex).showErrorDialog(dialogService);
                 } catch (com.sun.star.lang.IllegalArgumentException ex) {
                     LOGGER.warn("Could not insert entry", ex);
+                    OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
                 }
             }
-        } else { // libraryTab == null
-            dialogService.showErrorDialogAndWait(
-                Localization.lang("No database"),
-                Localization.lang(
-                    "No bibliography database is open for citation.")
-                + "\n"
-                + Localization.lang("Open one before citing."));
-            return;
-        }
     }
 
     /**
@@ -635,32 +613,6 @@ public class OpenOfficePanel {
             // No, we canceled (or there is no panel to get the database from, highly unlikely)
             return false;
         }
-    }
-
-    public static void showConnectionLostErrorMessage(DialogService dialogService) {
-        dialogService.showErrorDialogAndWait(Localization.lang("Connection lost"),
-                                             Localization.lang("Connection to OpenOffice/LibreOffice has been lost. Please make sure OpenOffice/LibreOffice is running, and try to reconnect."));
-    }
-
-    public static void showNoDocumentErrorMessage(DialogService dialogService) {
-        dialogService.showErrorDialogAndWait(Localization.lang("Connection to document lost"),
-                                             Localization.lang("Connection to OpenOffice/LibreOffice document has been lost. Please make sure OpenOffice/LibreOffice is running, and try to reconnect."));
-    }
-
-    public static void reportUndefinedParagraphFormat(DialogService dialogService, UndefinedParagraphFormatException ex) {
-        dialogService.showErrorDialogAndWait(Localization.lang("Undefined paragraph format"),
-                                             Localization.lang("Your style file specifies the paragraph format '%0', "
-                                                               + "which is undefined in your current OpenOffice/LibreOffice document.",
-                                                               ex.getFormatName()) + "\n" + Localization.lang("The paragraph format is controlled by the property 'ReferenceParagraphFormat' or 'ReferenceHeaderParagraphFormat' in the style file."));
-    }
-
-    public static void reportUndefinedCharacterFormat(DialogService dialogService, UndefinedCharacterFormatException ex) {
-        dialogService.showErrorDialogAndWait(Localization.lang("Undefined character format"),
-                                             Localization.lang("Your style file specifies the character format '%0', "
-                                                               + "which is undefined in your current OpenOffice/LibreOffice document.",
-                                                               ex.getFormatName()) + "\n" + Localization.lang("The character format is controlled by the citation property 'CitationCharacterFormat' in the style file.")
-
-        );
     }
 
     private ContextMenu createSettingsPopup() {

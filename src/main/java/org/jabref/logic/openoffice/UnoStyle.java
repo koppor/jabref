@@ -15,18 +15,26 @@ import com.sun.star.text.XTextDocument;
  */
 public class UnoStyle {
 
+    public static final String CHARACTER_STYLES = "CharacterStyles";
+    public static final String PARAGRAPH_STYLES = "ParagraphStyles";
+
     private UnoStyle() { }
 
     private static Optional<XStyle> getStyleFromFamily(XTextDocument doc,
                                                        String familyName,
                                                        String styleName)
         throws
-        NoSuchElementException,
         WrappedTargetException {
 
         XStyleFamiliesSupplier fss = UnoCast.unoQI(XStyleFamiliesSupplier.class, doc);
         XNameAccess fs = UnoCast.unoQI(XNameAccess.class, fss.getStyleFamilies());
-        XNameContainer xFamily = UnoCast.unoQI(XNameContainer.class, fs.getByName(familyName));
+        XNameContainer xFamily;
+        try {
+            xFamily = UnoCast.unoQI(XNameContainer.class, fs.getByName(familyName));
+        } catch (NoSuchElementException ex) {
+            String msg = String.format("Style family name '%s' is not recognized", familyName);
+            throw new RuntimeException(msg, ex);
+        }
 
         try {
             Object s = xFamily.getByName(styleName);
@@ -39,31 +47,33 @@ public class UnoStyle {
 
     public static Optional<XStyle> getParagraphStyle(XTextDocument doc, String styleName)
         throws
-        NoSuchElementException,
         WrappedTargetException {
-        return getStyleFromFamily(doc, "ParagraphStyles", styleName);
+        return getStyleFromFamily(doc, PARAGRAPH_STYLES, styleName);
     }
 
     public static Optional<XStyle> getCharacterStyle(XTextDocument doc, String styleName)
         throws
-        NoSuchElementException,
         WrappedTargetException {
-        return getStyleFromFamily(doc, "CharacterStyles", styleName);
+        return getStyleFromFamily(doc, CHARACTER_STYLES, styleName);
+    }
+
+    public static Optional<String> getInternalNameOfStyle(XTextDocument doc, String familyName,
+                                                          String name)
+        throws
+        WrappedTargetException {
+        return (getStyleFromFamily(doc, familyName, name)
+                .map(e -> e.getName()));
     }
 
     public static Optional<String> getInternalNameOfParagraphStyle(XTextDocument doc, String name)
         throws
-        NoSuchElementException,
         WrappedTargetException {
-        return (getParagraphStyle(doc, name)
-                .map(e -> e.getName()));
+        return getInternalNameOfStyle(doc, PARAGRAPH_STYLES, name);
     }
 
     public static Optional<String> getInternalNameOfCharacterStyle(XTextDocument doc, String name)
         throws
-        NoSuchElementException,
         WrappedTargetException {
-        return (getCharacterStyle(doc, name)
-                .map(e -> e.getName()));
+        return getInternalNameOfStyle(doc, CHARACTER_STYLES, name);
     }
 }

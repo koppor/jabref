@@ -73,11 +73,12 @@ public class Result<R, E> {
         return this;
     }
 
-    public Result<R, E> setIfPresent(Settable<R> out) {
-        if (isPresent()) {
-            out.set(get());
+    public VoidResult<E> asVoidResult() {
+        if (isError()) {
+            return VoidResult.Error(getError());
+        } else {
+            return VoidResult.OK();
         }
-        return this;
     }
 
 }

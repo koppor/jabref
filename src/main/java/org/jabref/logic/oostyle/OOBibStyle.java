@@ -1038,7 +1038,10 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      *                        for freshly inserted citations without
      *                        going throw the uniquefication process.
      *
-     * @return The formatted citation.
+     * @return The formatted citation. The result does not include
+     *         the standard wrappers:
+     *         OOFormat.setLocaleNone() and OOFormat.setCharStyle().
+     *         These are added by decorateCitationMarker()
      */
     public OOFormattedText getCitationMarker(List<CitationMarkerEntry> citationMarkerEntries,
                                              boolean inParenthesis,
@@ -1047,6 +1050,21 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
                                                              citationMarkerEntries,
                                                              inParenthesis,
                                                              nonUniqueCitationMarkerHandling);
+    }
+
+    /**
+     * Add setLocaleNone and optionally setCharStyle(CitationCharacterFormat) around
+     * citationText.  Called in fillCitationMarkInCursor, so these are
+     * also applied to "Unresolved()" entries and numeric styles.
+     */
+    public OOFormattedText decorateCitationMarker(OOFormattedText citationText) {
+        OOBibStyle style = this;
+        OOFormattedText citationText2 = OOFormat.setLocaleNone(citationText);
+        if (style.isFormatCitations()) {
+            String charStyle = style.getCitationCharacterFormat();
+            citationText2 = OOFormat.setCharStyle(citationText2, charStyle);
+        }
+        return citationText2;
     }
 
     /*

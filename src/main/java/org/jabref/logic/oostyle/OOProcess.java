@@ -385,10 +385,9 @@ public class OOProcess {
                 /*
                  * All entries are resolved.
                  */
-                OOFormattedText citMarker =
-                    style.getCitationMarker(citationMarkerEntries,
-                                            inParenthesis,
-                                            strictlyUnique);
+                OOFormattedText citMarker = style.getCitationMarker(citationMarkerEntries,
+                                                                    inParenthesis,
+                                                                    strictlyUnique);
                 citMarkers.put(cgid, citMarker);
             }
         }

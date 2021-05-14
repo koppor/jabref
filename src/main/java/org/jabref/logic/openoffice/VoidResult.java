@@ -2,6 +2,7 @@ package org.jabref.logic.openoffice;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /*
  * error cannot be null
@@ -38,6 +39,14 @@ public class VoidResult<E> {
             fun.accept(getError());
         }
         return this;
+    }
+
+    public <F> VoidResult<F> mapError(Function<E, F> fun) {
+        if (isError()) {
+            return Error(fun.apply(getError()));
+        } else {
+            return OK();
+        }
     }
 }
 

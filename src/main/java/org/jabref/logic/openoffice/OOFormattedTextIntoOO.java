@@ -516,20 +516,19 @@ public class OOFormattedTextIntoOO {
         NoSuchElementException,
         CreationException {
 
-        final boolean useSetString = true;
+        final boolean debugThisFun = false;
 
         String lText = OOFormattedText.toString(ootext);
 
-        // System.out.println(lText);
+        if (debugThisFun) {
+            System.out.println(lText);
+        }
 
         XText text = position.getText();
         XTextCursor cursor = text.createTextCursorByRange(position);
         cursor.collapseToEnd();
 
         MyPropertyStack formatStack = new MyPropertyStack(cursor);
-
-        // Stack<Formatter> formatters = new Stack<>();
-
         Stack<String> expectEnd = new Stack<>();
 
         // We need to extract formatting. Use a simple regexp search iteration:
@@ -539,11 +538,7 @@ public class OOFormattedTextIntoOO {
 
             String currentSubstring = lText.substring(piv, m.start());
             if (!currentSubstring.isEmpty()) {
-                if (useSetString) {
-                    cursor.setString(currentSubstring);
-                } else {
-                    text.insertString(cursor, currentSubstring, true);
-                }
+                cursor.setString(currentSubstring);
             }
             formatStack.apply(cursor);
             cursor.collapseToEnd();
@@ -603,14 +598,16 @@ public class OOFormattedTextIntoOO {
                         // <p oo:ParaStyleName="Standard">
                         if (value != null && !value.equals("")) {
                             // LOGGER.warn(String.format("oo:ParaStyleName=\"%s\" found", value));
-                            try {
-                                setParagraphStyle(cursor, value);
-                            } catch (UndefinedParagraphFormatException ex) {
-                                LOGGER.warn(String.format("oo:ParaStyleName=\"%s\" failed with"
-                                                          + " UndefinedParagraphFormatException", value));
+                            if (setParagraphStyle(cursor, value)) {
+                                if (debugThisFun) {
+                                    // Presumably tested already:
+                                    LOGGER.warn(String.format("oo:ParaStyleName=\"%s\" failed", value));
+                                }
                             }
                         } else {
-                            LOGGER.warn(String.format("oo:ParaStyleName inherited"));
+                            if (debugThisFun) {
+                                LOGGER.warn(String.format("oo:ParaStyleName inherited"));
+                            }
                         }
                         break;
                     default:
@@ -695,11 +692,7 @@ public class OOFormattedTextIntoOO {
         }
 
         if (piv < lText.length()) {
-            if (useSetString) {
-                cursor.setString(lText.substring(piv));
-            } else {
-                text.insertString(cursor, lText.substring(piv), true);
-            }
+            cursor.setString(lText.substring(piv));
         }
         formatStack.apply(cursor);
         cursor.collapseToEnd();
@@ -934,19 +927,23 @@ public class OOFormattedTextIntoOO {
                               formatStack);
     }
 
-    public static void setParagraphStyle(XTextCursor cursor,
-                                         String parStyle)
-        throws
-        UndefinedParagraphFormatException {
+    /*
+     * @return true on failure
+     */
+    public static boolean setParagraphStyle(XTextCursor cursor, String parStyle) {
+        final boolean FAIL = true;
+        final boolean PASS = false;
+
         XParagraphCursor parCursor = UnoCast.unoQI(XParagraphCursor.class, cursor);
         XPropertySet props = UnoCast.unoQI(XPropertySet.class, parCursor);
         try {
             props.setPropertyValue(PARA_STYLE_NAME, parStyle);
+            return PASS;
         } catch (UnknownPropertyException
                  | PropertyVetoException
                  | IllegalArgumentException
                  | WrappedTargetException ex) {
-            throw new UndefinedParagraphFormatException(parStyle);
+            return FAIL;
         }
     }
 
