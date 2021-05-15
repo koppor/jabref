@@ -4,25 +4,22 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.jabref.gui.DialogService;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.oostyle.CitedKey;
-import org.jabref.logic.oostyle.CitedKeys;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.openoffice.ConnectionLostException;
 import org.jabref.logic.openoffice.CreationException;
 import org.jabref.logic.openoffice.EditInsert;
 import org.jabref.logic.openoffice.EditMerge;
 import org.jabref.logic.openoffice.EditSeparate;
+import org.jabref.logic.openoffice.ExportCited;
 import org.jabref.logic.openoffice.ManageCitations;
 import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.NoDocumentFoundException;
@@ -36,7 +33,6 @@ import org.jabref.logic.openoffice.Update;
 import org.jabref.logic.openoffice.VoidResult;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.openoffice.CitationEntry;
 
@@ -715,19 +711,6 @@ class OOBibBase {
         }
     }
 
-    static class GenerateDatabaseResult {
-        /**
-         * null: not done; isEmpty: no unresolved
-         */
-        List<String> unresolvedKeys;
-        BibDatabase newDatabase;
-        GenerateDatabaseResult(List<String> unresolvedKeys,
-                               BibDatabase newDatabase) {
-            this.unresolvedKeys = unresolvedKeys;
-            this.newDatabase = newDatabase;
-        }
-    }
-
     /**
      * GUI action for "Export cited"
      *
@@ -763,13 +746,13 @@ class OOBibBase {
 
         try {
 
-            GenerateDatabaseResult result;
+            ExportCited.GenerateDatabaseResult result;
             try {
                 UnoUndo.enterUndoContext(doc, "Changes during \"Export cited\"");
-                result = this.generateDatabase(databases, doc);
+                result = ExportCited.generateDatabase(doc, databases);
             } finally {
-                // There should be no changes, thus no Undo entry
-                // in LibreOffice
+                // There should be no changes, thus no Undo entry should appear
+                // in LibreOffice.
                 UnoUndo.leaveUndoContext(doc);
             }
 
@@ -808,69 +791,6 @@ class OOBibBase {
             OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
         }
         return FAIL;
-    }
-
-    /**
-     * Used from GUI: "Export cited"
-     *
-     * @param databases The databases to look up the citation keys in the document from.
-     * @return A new database, with cloned entries.
-     *
-     * If a key is not found, it is added to result.unresolvedKeys
-     *
-     * Cross references (in StandardField.CROSSREF) are followed (not recursively):
-     * if the referenced entry is found, it is included in the result.
-     * If it is not found, it is silently ignored.
-     */
-    private GenerateDatabaseResult generateDatabase(List<BibDatabase> databases, XTextDocument doc)
-        throws
-        NoSuchElementException,
-        WrappedTargetException,
-        NoDocumentException,
-        UnknownPropertyException {
-
-        OOFrontend fr = new OOFrontend(doc);
-        CitedKeys cks = fr.citationGroups.getCitedKeysUnordered();
-        cks.lookupInDatabases(databases);
-
-        List<String> unresolvedKeys = new ArrayList<>();
-        BibDatabase resultDatabase = new BibDatabase();
-
-        List<BibEntry> entriesToInsert = new ArrayList<>();
-        Set<String> seen = new HashSet<>(); // Only add crossReference once.
-
-        for (CitedKey ck : cks.values()) {
-            if (ck.db.isEmpty()) {
-                unresolvedKeys.add(ck.citationKey);
-                continue;
-            } else {
-                BibEntry entry = ck.db.get().entry;
-                BibDatabase loopDatabase = ck.db.get().database;
-
-                // If entry found
-                BibEntry clonedEntry = (BibEntry) entry.clone();
-
-                // Insert a copy of the entry
-                entriesToInsert.add(clonedEntry);
-
-                // Check if the cloned entry has a cross-reference field
-                clonedEntry
-                    .getField(StandardField.CROSSREF)
-                    .ifPresent(crossReference -> {
-                            boolean isNew = !seen.contains(crossReference);
-                            if (isNew) {
-                                // Add it if it is in the current library
-                                loopDatabase
-                                    .getEntryByCitationKey(crossReference)
-                                    .ifPresent(entriesToInsert::add);
-                                seen.add(crossReference);
-                            }
-                        });
-            }
-        }
-
-        resultDatabase.insertEntries(entriesToInsert);
-        return new GenerateDatabaseResult(unresolvedKeys, resultDatabase);
     }
 
     /**
