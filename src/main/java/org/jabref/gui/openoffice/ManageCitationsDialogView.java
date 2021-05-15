@@ -3,11 +3,9 @@ package org.jabref.gui.openoffice;
 import javax.inject.Inject;
 
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogEvent;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -18,14 +16,10 @@ import javafx.scene.text.Text;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.ValueTableCellFactory;
-import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.strings.StringUtil;
 
 import com.airhacks.afterburner.views.ViewLoader;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
-import com.sun.star.lang.WrappedTargetException;
 
 public class ManageCitationsDialogView extends BaseDialog<Void> {
 
@@ -60,49 +54,19 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
     }
 
     @FXML
-    private void initialize() throws NoSuchElementException, WrappedTargetException, UnknownPropertyException, JabRefException {
+    private void initialize() {
 
         viewModel = new ManageCitationsDialogViewModel(ooBase, dialogService);
-        if (viewModel.citationEntries.isEmpty()) {
-            dialogService.showErrorDialogAndWait("citationEntries is empty, now trying this.close()");
 
-            final int variant = 4;
-            switch (variant) {
-            case 1:
-                // vvv This is not effective. The dialog still comes up.
-                this.close();
-                break;
-            case 2:
-                // vvv This is not effective. The dialog still comes up.
-                ManageCitationsDialogView thisDialog = this;
-                this.setOnShowing​(new EventHandler<DialogEvent>() {
-                        @Override
-                        public void handle(DialogEvent arg0) {
-                            thisDialog.close();
-                        }
-                    });
-                break;
-            case 3:
-                // vvv This is not effective. The dialog still comes up.
-                ManageCitationsDialogView thisDialog = this;
-                this.setOnShown(new EventHandler<DialogEvent>() {
-                        @Override
-                        public void handle(DialogEvent arg0) {
-                            thisDialog.close();
-                        }
-                    });
-                break;
-            case 4:
-                // vvv This lets the window to be shown for
-                // a fraction of a second, then closes it.
-                ManageCitationsDialogView thisDialog = this;
-                Platform.runLater(new Runnable() {
-                        @Override public void run() {
-                            thisDialog.close();
-                        }
-                    });
-                break;
-            }
+        if (viewModel.citationEntries.getValue().isEmpty()) {
+            // Close the window if ooBase.guiActionGetCitationEntries();
+            // returned Optional.empty();
+            ManageCitationsDialogView thisDialog = this;
+            Platform.runLater(new Runnable() {
+                    @Override public void run() {
+                        thisDialog.close();
+                    }
+                });
         }
 
         citation.setCellValueFactory(cellData -> cellData.getValue().citationProperty());
