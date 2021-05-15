@@ -29,8 +29,7 @@ class OOBibStyleGetCitationMarker {
      * @param number The number of the author to return.
      * @return The author name, or an empty String if inapplicable.
      */
-    private static String getAuthorLastName(AuthorList al,
-                                            int number) {
+    private static String getAuthorLastName(AuthorList al, int number) {
         StringBuilder sb = new StringBuilder();
 
         if (al.getNumberOfAuthors() > number) {
