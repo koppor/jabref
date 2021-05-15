@@ -9,7 +9,6 @@ import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.CitationMarkerEntry;
 import org.jabref.logic.oostyle.CitationMarkerEntryImpl;
 import org.jabref.logic.oostyle.OOBibStyle;
-import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.InTextCitationType;
@@ -62,8 +61,7 @@ public class EditInsert {
                                            BibDatabase database,
                                            List<BibDatabase> allBases,
                                            OOBibStyle style,
-                                           boolean inParenthesis,
-                                           boolean withText,
+                                           InTextCitationType citationType,
                                            String pageInfo,
                                            boolean sync,
                                            boolean alwaysAddCitedOnPages)
@@ -82,8 +80,6 @@ public class EditInsert {
                 entries.stream()
                 .map(EditInsert::insertEntryGetCitationKey)
                 .collect(Collectors.toList());
-
-            InTextCitationType citationType = OOProcess.citationTypeFromOptions(withText, inParenthesis);
 
             final int nEntries = entries.size();
             // JabRef53 style pageInfo list
@@ -109,7 +105,7 @@ public class EditInsert {
                 (style.isNumberEntries()
                  ? OOFormattedText.fromString("[-]") // A dash only. Only refresh later.
                  : style.getCitationMarker(citationMarkerEntries,
-                                           inParenthesis,
+                                           citationType.inParenthesis(),
                                            NonUniqueCitationMarker.FORGIVEN));
 
             if ("".equals(OOFormattedText.toString(citeText))) {
@@ -123,7 +119,6 @@ public class EditInsert {
                                                              citationType,
                                                              citeText,
                                                              cursor,
-                                                             withText,
                                                              style,
                                                              true /* insertSpaceAfter */);
 

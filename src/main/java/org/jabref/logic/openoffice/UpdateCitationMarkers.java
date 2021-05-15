@@ -121,7 +121,6 @@ public class UpdateCitationMarkers {
      *             placeholder if not yet available.
      *
      * @param position Location to insert at.
-     * @param withText If false, citationText is not shown.
      * @param style
      * @param insertSpaceAfter A space inserted after the reference
      *             mark makes it easier to separate from the text
@@ -135,7 +134,6 @@ public class UpdateCitationMarkers {
                                                   InTextCitationType citationType,
                                                   OOFormattedText citationText,
                                                   XTextCursor position,
-                                                  boolean withText,
                                                   OOBibStyle style,
                                                   boolean insertSpaceAfter)
         throws
@@ -160,8 +158,9 @@ public class UpdateCitationMarkers {
                                                       pageInfosForCitations,
                                                       citationType,
                                                       position,
-                                                      insertSpaceAfter,
-                                                      !withText /* withoutBrackets */);
+                                                      insertSpaceAfter);
+
+        final boolean withText = citationType.withText();
 
         if (withText) {
             XTextCursor c2 = fr.getFillCursorForCitationGroup(doc, cgid);

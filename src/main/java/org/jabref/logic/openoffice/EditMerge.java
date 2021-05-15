@@ -316,7 +316,6 @@ public class EditMerge {
                                                                  citationType,
                                                                  OOFormattedText.fromString("tmp"),
                                                                  textCursor,
-                                                                 true, // withText
                                                                  style,
                                                                  insertSpaceAfter);
             } // for gi

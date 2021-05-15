@@ -303,12 +303,11 @@ class OOBibBase {
      *
      * @param style         The bibliography style we are using.
      *
-     * @param inParenthesis Indicates whether it is an in-text
-     *                      citation or a citation in parenthesis.
-     *                      This is not relevant if
-     *                      numbered citations are used.
-     * @param withText      Indicates whether this should be a visible
-     *                      citation (true) or an empty (invisible) citation (false).
+     * @param citationType Indicates whether it is an in-text
+     *                     citation, a citation in parenthesis or
+     *                     an invisible citation.
+     *                     The in-text/in-parenthesis distionction is not relevant if
+     *                     numbered citations are used.
      *
      * @param pageInfo      A single page-info for these entries. Stored in custom property
      *                      with the same name as the reference mark.
@@ -337,8 +336,7 @@ class OOBibBase {
                                      BibDatabase database,
                                      List<BibDatabase> allBases,
                                      OOBibStyle style,
-                                     boolean inParenthesis,
-                                     boolean withText,
+                                     InTextCitationType citationType,
                                      String pageInfo,
                                      boolean sync) {
 
@@ -410,8 +408,7 @@ class OOBibBase {
                                            database,
                                            allBases,
                                            style,
-                                           inParenthesis,
-                                           withText,
+                                           citationType,
                                            pageInfo,
                                            sync,
                                            this.alwaysAddCitedOnPages);
@@ -592,19 +589,16 @@ class OOBibBase {
                     final int last = keys.size() - 1;
                     for (int i = 0; i < keys.size(); i++) {
                         boolean insertSpaceAfter = (i != last);
-                        boolean withText = cg.citationType != InTextCitationType.INVISIBLE_CIT;
                         List<String> citationKeys1 = keys.subList(i, i + 1);
                         List<OOFormattedText> pageInfos1 = pageInfosForCitations.subList(i, i + 1);
-                        InTextCitationType citationType1 = InTextCitationType.AUTHORYEAR_PAR;
                         OOFormattedText citationText1 = OOFormattedText.fromString("tmp");
                         UpdateCitationMarkers.createAndFillCitationGroup(fr,
                                                                          doc,
                                                                          citationKeys1,
                                                                          pageInfos1,
-                                                                         citationType1,
+                                                                         cg.citationType,
                                                                          citationText1,
                                                                          textCursor,
-                                                                         withText,
                                                                          style,
                                                                          insertSpaceAfter);
                         textCursor.collapseToEnd();

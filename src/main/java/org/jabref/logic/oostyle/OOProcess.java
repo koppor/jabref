@@ -183,23 +183,6 @@ public class OOProcess {
      * **************************************/
 
     /**
-     * Given the withText and inParenthesis options,
-     * return the corresponding citationType.
-     *
-     * @param withText False means invisible citation (no text).
-     * @param inParenthesis True means "(Au and Thor 2000)".
-     *                      False means "Au and Thor (2000)".
-     */
-    public static InTextCitationType citationTypeFromOptions(boolean withText, boolean inParenthesis) {
-        if (!withText) {
-            return InTextCitationType.INVISIBLE_CIT;
-        }
-        return (inParenthesis
-                ? InTextCitationType.AUTHORYEAR_PAR
-                : InTextCitationType.AUTHORYEAR_INTEXT);
-    }
-
-    /**
      *  Produce citation markers for the case when the citation
      *  markers are the citation keys themselves, separated by commas.
      */

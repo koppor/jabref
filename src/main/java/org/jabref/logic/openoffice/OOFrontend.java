@@ -247,18 +247,13 @@ public class OOFrontend {
      * @param insertSpaceAfter If true, we insert a space after the mark, that
      *                         carries on format of characters from
      *                         the original position.
-     *
-     * @param withoutBrackets  Force empty reference mark (no brackets).
-     *                         For use with INVISIBLE_CIT.
-     *
      */
     public CitationGroupID createCitationGroup(XTextDocument doc,
                                                List<String> citationKeys,
                                                List<OOFormattedText> pageInfosForCitations,
                                                InTextCitationType citationType,
                                                XTextCursor position,
-                                               boolean insertSpaceAfter,
-                                               boolean withoutBrackets)
+                                               boolean insertSpaceAfter)
         throws
         CreationException,
         NoDocumentException,
@@ -277,8 +272,7 @@ public class OOFrontend {
                                                        pageInfosForCitations,
                                                        citationType,
                                                        position,
-                                                       insertSpaceAfter,
-                                                       withoutBrackets);
+                                                       insertSpaceAfter);
 
         this.citationGroups.afterCreateCitationGroup(cg);
         return cg.cgid;

@@ -189,18 +189,13 @@ public class Backend52 {
      *  @param insertSpaceAfter We insert a space after the mark, that
      *                          carries on format of characters from
      *                          the original position.
-     *
-     *  @param withoutBrackets  Force empty reference mark (no brackets).
-     *                          For use with INVISIBLE_CIT.
-     *
      */
     public CitationGroup createCitationGroup(XTextDocument doc,
                                              List<String> citationKeys,
                                              List<OOFormattedText> pageInfosForCitations,
                                              InTextCitationType citationType,
                                              XTextCursor position,
-                                             boolean insertSpaceAfter,
-                                             boolean withoutBrackets)
+                                             boolean insertSpaceAfter)
         throws
         CreationException,
         NoDocumentException,
@@ -250,6 +245,7 @@ public class Backend52 {
         /*
          * Apply to document
          */
+        boolean withoutBrackets = (citationType == InTextCitationType.INVISIBLE_CIT);
         StorageBase.NamedRange storedRange =
             this.citationStorageManager.create(doc, refMarkName, position, insertSpaceAfter,
                                                withoutBrackets);
