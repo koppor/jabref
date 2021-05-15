@@ -13,6 +13,7 @@ import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.oostyle.OOStyleDataModelVersion;
 
@@ -109,7 +110,7 @@ public class EditInsert {
                  ? OOFormattedText.fromString("[-]") // A dash only. Only refresh later.
                  : style.getCitationMarker(citationMarkerEntries,
                                            inParenthesis,
-                                           OOBibStyle.NonUniqueCitationMarker.FORGIVEN));
+                                           NonUniqueCitationMarker.FORGIVEN));
 
             if ("".equals(OOFormattedText.toString(citeText))) {
                 citeText = OOFormattedText.fromString("[?]");

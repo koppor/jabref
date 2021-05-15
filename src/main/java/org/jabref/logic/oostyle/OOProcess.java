@@ -17,6 +17,7 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 
 import org.slf4j.Logger;
@@ -361,8 +362,7 @@ public class OOProcess {
             //       not needed anymore.
 
             final boolean inParenthesis = (cg.citationType == InTextCitationType.AUTHORYEAR_PAR);
-            final OOBibStyle.NonUniqueCitationMarker strictlyUnique =
-                OOBibStyle.NonUniqueCitationMarker.THROWS;
+            final NonUniqueCitationMarker strictlyUnique = NonUniqueCitationMarker.THROWS;
             if (hasUnresolved) {
                 /*
                  * Some entries are unresolved.

@@ -12,6 +12,7 @@ import org.jabref.model.entry.AuthorList;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.OrFields;
+import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.strings.StringUtil;
 
@@ -567,7 +568,7 @@ class OOBibStyleGetCitationMarker {
     getCitationMarker(OOBibStyle style,
                       List<CitationMarkerEntry> citationMarkerEntries,
                       boolean inParenthesis,
-                      OOBibStyle.NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
+                      NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
 
         final int nEntries = citationMarkerEntries.size();
 
@@ -701,7 +702,7 @@ class OOBibStyleGetCitationMarker {
                                                          && !k2.equals(k1));
 
                 if (uniqueLetterDoesNotMakeUnique &&
-                    nonUniqueCitationMarkerHandling == OOBibStyle.NonUniqueCitationMarker.THROWS) {
+                    nonUniqueCitationMarkerHandling == NonUniqueCitationMarker.THROWS) {
                     throw new RuntimeException("different citation keys,"
                                                + " but same normalizedMarker and uniqueLetter");
                 }

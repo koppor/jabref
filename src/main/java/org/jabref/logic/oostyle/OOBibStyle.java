@@ -30,6 +30,7 @@ import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.EntryTypeFactory;
+import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 
 import org.slf4j.Logger;
@@ -999,17 +1000,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
 
     public OOFormattedText getNormalizedCitationMarker(CitationMarkerEntry ce) {
         return OOBibStyleGetCitationMarker.getNormalizedCitationMarker(this, ce, Optional.empty());
-    }
-
-    /**
-     * What should getCitationMarker do if it discovers that
-     * uniqueLetters provided are not sufficient for unique presentation?
-     */
-    public enum NonUniqueCitationMarker {
-        /** Give an insufficient representation anyway.  */
-        FORGIVEN,
-        /** Throw a RuntimeException */
-        THROWS
     }
 
     /**
