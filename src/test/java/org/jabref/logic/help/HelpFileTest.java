@@ -8,13 +8,11 @@ import java.util.stream.Stream;
 
 import org.jabref.logic.net.URLDownload;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled("help links changed, waiting for upstream to update")
 class HelpFileTest {
 
     private final String jabrefHelp = "https://docs.jabref.org/";
