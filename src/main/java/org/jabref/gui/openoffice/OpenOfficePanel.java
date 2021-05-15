@@ -59,9 +59,6 @@ import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.preferences.PreferencesService;
 
-import com.sun.star.beans.IllegalTypeException;
-import com.sun.star.beans.NotRemoveableException;
-import com.sun.star.beans.PropertyExistException;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.comp.helper.BootstrapException;
@@ -238,43 +235,13 @@ public class OpenOfficePanel {
         merge.setMaxWidth(Double.MAX_VALUE);
         merge.setTooltip(new Tooltip(Localization.lang("Combine pairs of citations that are separated by spaces only")));
         merge.setOnAction(e -> {
-                final String title = Localization.lang("Problem combining cite markers");
-                // check usedStylesExistInDocument
-            try {
                 ooBase.guiActionMergeCitationGroups(getBaseList(), style);
-            } catch (JabRefException ex) {
-                OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
-            } catch (NoDocumentException ex) {
-                OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
-            } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
-                     CreationException | NoSuchElementException | WrappedTargetException | IOException |
-                     NotRemoveableException | IllegalTypeException | InvalidStateException |
-                     PropertyExistException ex) {
-                LOGGER.warn("Problem combining cite markers", ex);
-                OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
-            }
         });
 
         unmerge.setMaxWidth(Double.MAX_VALUE);
         unmerge.setTooltip(new Tooltip(Localization.lang("Separate merged citations")));
         unmerge.setOnAction(e -> {
-                final String title = Localization.lang("Problem during separating cite markers");
-                // check usedStylesExistInDocument
-            try {
-                ooBase.unCombineCiteMarkers(getBaseList(), style);
-            } catch (JabRefException ex) {
-                dialogService.showErrorDialogAndWait(
-                    Localization.lang("JabRefException"),
-                    ex.getLocalizedMessage());
-            } catch (NoDocumentException ex) {
-                OOError.from(ex).showErrorDialog(dialogService);
-            } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
-                     CreationException | NoSuchElementException | WrappedTargetException | IOException |
-                     PropertyExistException | IllegalTypeException | NotRemoveableException |
-                     InvalidStateException ex) {
-                LOGGER.warn("Problem during separating cite markers", ex);
-                OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
-            }
+                ooBase.guiActionSeparateCitations(getBaseList(), style);
         });
 
         ContextMenu settingsMenu = createSettingsPopup();
@@ -514,10 +481,6 @@ public class OpenOfficePanel {
 
     private void pushEntries(InTextCitationType citationType, boolean addPageInfo) {
         final String title = Localization.lang("Error pushing entries");
-        if (ooBase.guiCheckIfConnectedToDocument(title)
-            || ooBase.guiCheckIfOpenOfficeIsRecordingChanges(title)) {
-            return;
-        }
 
         LibraryTab libraryTab = frame.getCurrentLibraryTab();
         if (libraryTab == null) {

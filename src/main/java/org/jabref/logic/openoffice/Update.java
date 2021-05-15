@@ -28,15 +28,15 @@ public class Update {
                                               boolean doUpdateBibliography,
                                               boolean alwaysAddCitedOnPages)
         throws
-        JabRefException,
         ConnectionLostException,
+        CreationException,
+        JabRefException,
         NoDocumentException,
-        com.sun.star.lang.IllegalArgumentException,
+        NoSuchElementException,
         PropertyVetoException,
         UnknownPropertyException,
         WrappedTargetException,
-        NoSuchElementException,
-        CreationException {
+        com.sun.star.lang.IllegalArgumentException {
 
         final boolean useLockControllers = true;
 

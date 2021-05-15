@@ -336,7 +336,7 @@ public class EditMerge {
                                   databases,
                                   style,
                                   false, /* doUpdateBibliography */
-                                  false);
+                                  false /* alwaysAddCitedOnPages */);
         }
     }
 }
