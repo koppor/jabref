@@ -2,7 +2,6 @@ package org.jabref.gui.openoffice;
 
 import javax.inject.Inject;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
@@ -58,17 +57,6 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
 
         viewModel = new ManageCitationsDialogViewModel(ooBase, dialogService);
 
-        if (viewModel.citationEntries.getValue().isEmpty()) {
-            // Close the window if ooBase.guiActionGetCitationEntries();
-            // returned Optional.empty();
-            ManageCitationsDialogView thisDialog = this;
-            Platform.runLater(new Runnable() {
-                    @Override public void run() {
-                        thisDialog.close();
-                    }
-                });
-        }
-
         citation.setCellValueFactory(cellData -> cellData.getValue().citationProperty());
         new ValueTableCellFactory<CitationEntryViewModel, String>().withGraphic(this::getText).install(citation);
 
@@ -98,5 +86,12 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
 
         FlowPane flow = new FlowPane(startText, inBetweenText, endText);
         return flow;
+    }
+
+    public boolean isOkToShowThisDialog() {
+        if (viewModel == null || viewModel.failedToGetCitationEntries) {
+            return false;
+        }
+        return true;
     }
 }

@@ -226,7 +226,10 @@ public class OpenOfficePanel {
         settingsB.setOnAction(e -> settingsMenu.show(settingsB, Side.BOTTOM, 0, 0));
         manageCitations.setMaxWidth(Double.MAX_VALUE);
         manageCitations.setOnAction(e -> {
-                dialogService.showCustomDialogAndWait(new ManageCitationsDialogView(ooBase));
+                ManageCitationsDialogView dialog = new ManageCitationsDialogView(ooBase);
+                if (dialog.isOkToShowThisDialog()) {
+                    dialogService.showCustomDialogAndWait(dialog);
+                }
         });
 
         exportCitations.setMaxWidth(Double.MAX_VALUE);
