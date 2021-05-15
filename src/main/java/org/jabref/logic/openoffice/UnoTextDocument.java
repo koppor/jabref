@@ -34,6 +34,8 @@ public class UnoTextDocument {
                 UnoReferenceMark.getNameAccess(doc);
             } catch (NoDocumentException ex) {
                 missing = true;
+            } catch (com.sun.star.lang.DisposedException ex) {
+                missing = true;
             }
         }
         return missing;
