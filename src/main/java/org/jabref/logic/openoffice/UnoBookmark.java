@@ -2,12 +2,14 @@ package org.jabref.logic.openoffice;
 
 import java.util.Optional;
 
+import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.container.XNamed;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XBookmarksSupplier;
+import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 
@@ -72,5 +74,25 @@ public class UnoBookmark {
                                                name,
                                                range,
                                                absorb);
+    }
+
+    /**
+     * Remove the named bookmark if it exists.
+     */
+    public static void remove(XTextDocument doc, String name)
+        throws
+        NoDocumentException,
+        NoSuchElementException,
+        WrappedTargetException {
+
+        XNameAccess marks = UnoBookmark.getNameAccess(doc);
+
+        if (marks.hasByName(name)) {
+            Optional<XTextContent> mark = UnoNameAccess.getTextContentByName(marks, name);
+            if (mark.isEmpty()) {
+                return;
+            }
+            doc.getText().removeTextContent(mark.get());
+        }
     }
 }

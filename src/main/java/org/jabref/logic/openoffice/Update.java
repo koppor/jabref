@@ -53,9 +53,9 @@ public class Update {
 
             if (doUpdateBibliography) {
                 UpdateBibliography.rebuildBibTextSection(doc,
-                                                         style,
                                                          fr,
                                                          x.getBibliography(),
+                                                         style,
                                                          alwaysAddCitedOnPages);
             }
             return x.getUnresolvedKeys();

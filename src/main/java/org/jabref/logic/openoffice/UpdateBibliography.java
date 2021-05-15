@@ -23,22 +23,14 @@ public class UpdateBibliography {
 
     private static final String BIB_SECTION_NAME = "JR_bib";
     private static final String BIB_SECTION_END_NAME = "JR_bib_end";
-    /* **************************************************
-     *
-     *     Bibliography: needs uniqueLetters or numbers
-     *
-     * **************************************************/
 
     /**
      * Rebuilds the bibliography.
-     *
-     *  Note: assumes fresh `jabRefReferenceMarkNamesSortedByPosition`
-     *  if `style.isSortByPosition()`
      */
     static void rebuildBibTextSection(XTextDocument doc,
-                                      OOBibStyle style,
                                       OOFrontend fr,
                                       CitedKeys bibliography,
+                                      OOBibStyle style,
                                       boolean alwaysAddCitedOnPages)
         throws
         NoSuchElementException,
@@ -65,17 +57,14 @@ public class UpdateBibliography {
      */
     private static void createBibTextSection2(XTextDocument doc)
         throws
-        IllegalArgumentException,
-        CreationException {
+        CreationException,
+        IllegalArgumentException {
 
         // Always creating at the end of the document.
         // Alternatively, we could receive a cursor.
         XTextCursor textCursor = doc.getText().createTextCursor();
         textCursor.gotoEnd(false);
-        UnoTextSection.create(doc,
-                              BIB_SECTION_NAME,
-                              textCursor,
-                              false);
+        UnoTextSection.create(doc, BIB_SECTION_NAME, textCursor, false);
     }
 
     /**
@@ -87,10 +76,10 @@ public class UpdateBibliography {
      */
     private static void clearBibTextSectionContent2(XTextDocument doc)
         throws
-        WrappedTargetException,
-        IllegalArgumentException,
         CreationException,
-        NoDocumentException {
+        IllegalArgumentException,
+        NoDocumentException,
+        WrappedTargetException {
 
         Optional<XTextRange> sectionRange = UnoTextSection.getAnchor(doc, BIB_SECTION_NAME);
         if (sectionRange.isEmpty()) {
@@ -114,13 +103,13 @@ public class UpdateBibliography {
                                                OOBibStyle style,
                                                boolean alwaysAddCitedOnPages)
         throws
-        NoSuchElementException,
+        CreationException,
+        IllegalArgumentException,
         NoDocumentException,
-        WrappedTargetException,
+        NoSuchElementException,
         PropertyVetoException,
         UnknownPropertyException,
-        IllegalArgumentException,
-        CreationException {
+        WrappedTargetException {
 
         XTextSection section = (UnoTextSection.getByName(doc, BIB_SECTION_NAME)
                                 .orElseThrow(RuntimeException::new));
@@ -142,7 +131,9 @@ public class UpdateBibliography {
         initialParagraph.goRight((short) 1, true);
         initialParagraph.setString("");
 
+        UnoBookmark.remove(doc, BIB_SECTION_END_NAME);
         UnoBookmark.create(doc, BIB_SECTION_END_NAME, cursor, true);
+
         cursor.collapseToEnd();
     }
 
