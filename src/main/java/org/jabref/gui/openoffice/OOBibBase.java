@@ -1,6 +1,5 @@
 package org.jabref.gui.openoffice;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -720,17 +719,7 @@ class OOBibBase {
      *       shall we return an otherwise nonempty result, or Optional.empty()?
      */
     public Optional<BibDatabase> exportCitedHelper(List<BibDatabase> databases,
-                                                   boolean returnPartialResult)
-        throws
-        WrappedTargetException,
-        NoSuchElementException,
-        NoDocumentException,
-        UnknownPropertyException,
-        PropertyVetoException,
-        IOException,
-        CreationException,
-        InvalidStateException,
-        JabRefException {
+                                                   boolean returnPartialResult) {
 
         final Optional<BibDatabase> FAIL = Optional.empty();
         final String title = Localization.lang("Unable to generate new library");
@@ -784,9 +773,10 @@ class OOBibBase {
             return Optional.of(result.newDatabase);
         } catch (NoDocumentException ex) {
                 OOError.from(ex).showErrorDialog(dialogService);
-        } catch (UnknownPropertyException
-                 | NoSuchElementException
-                 | WrappedTargetException ex) {
+        } catch (NoSuchElementException
+                 | UnknownPropertyException
+                 | WrappedTargetException
+                 | com.sun.star.lang.IllegalArgumentException ex) {
             LOGGER.warn("Problem generating new database.", ex);
             OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
         }

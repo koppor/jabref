@@ -39,17 +39,14 @@ import org.jabref.gui.undo.UndoableKeyChange;
 import org.jabref.gui.util.BackgroundTask;
 import org.jabref.gui.util.DirectoryDialogConfiguration;
 import org.jabref.gui.util.TaskExecutor;
-import org.jabref.logic.JabRefException;
 import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
 import org.jabref.logic.citationkeypattern.CitationKeyPatternPreferences;
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.StyleLoader;
-import org.jabref.logic.openoffice.ConnectionLostException;
 import org.jabref.logic.openoffice.CreationException;
 import org.jabref.logic.openoffice.EditInsert;
-import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.OpenOfficeFileSearch;
 import org.jabref.logic.openoffice.OpenOfficePreferences;
 import org.jabref.model.database.BibDatabase;
@@ -59,12 +56,7 @@ import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.preferences.PreferencesService;
 
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.comp.helper.BootstrapException;
-import com.sun.star.container.NoSuchElementException;
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.util.InvalidStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +137,7 @@ public class OpenOfficePanel {
 
     /* Note: the style may still be null on return.
      *
-     * Return true is failed and dialog is already shown.
+     * Return true if failed. In this case the dialog is already shown.
      */
     private boolean getOrUpdateTheStyle(String title) {
         final boolean FAIL = true;
@@ -213,23 +205,8 @@ public class OpenOfficePanel {
             if (getOrUpdateTheStyle(title)) {
                 return;
             }
-            if (style == null) {
-                OOError.noValidStyleSelected()
-                    .setTitle(title)
-                    .showErrorDialog(dialogService);
-                return;
-            }
-
             List<BibDatabase> databases = getBaseList();
-
-            try {
-                ooBase.guiActionUpdateDocument(databases, style);
-            } catch (ConnectionLostException ex) {
-                OOError.from(ex).showErrorDialog(dialogService);
-            } catch (com.sun.star.lang.IllegalArgumentException ex) {
-                LOGGER.warn("Could not update bibliography", ex);
-                OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
-            }
+            ooBase.guiActionUpdateDocument(databases, style);
         });
 
         merge.setMaxWidth(Double.MAX_VALUE);
@@ -281,28 +258,12 @@ public class OpenOfficePanel {
 
     private void exportEntries() {
         final String title = Localization.lang("Problem generating new database.");
-        try {
-            List<BibDatabase> databases = getBaseList();
-            if (databases.isEmpty()) {
-                OOError.noDataBaseIsOpenForExport().showErrorDialog(dialogService);
-                return;
-            }
-            boolean returnPartialResult = false;
-            Optional<BibDatabase> newDatabase = ooBase.exportCitedHelper(databases, returnPartialResult);
-            if (newDatabase.isPresent()) {
-                BibDatabaseContext databaseContext = new BibDatabaseContext(newDatabase.get());
-                this.frame.addTab(databaseContext, true);
-            }
-        } catch (JabRefException ex) {
-            OOError.from(ex).showErrorDialog(dialogService);
-        } catch (NoDocumentException ex) {
-            OOError.from(ex).showErrorDialog(dialogService);
-        } catch (com.sun.star.lang.IllegalArgumentException | UnknownPropertyException | PropertyVetoException |
-                 NoSuchElementException | WrappedTargetException | IOException |
-                 InvalidStateException |
-                 CreationException ex) {
-            LOGGER.warn("Problem generating new database.", ex);
-            OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
+        List<BibDatabase> databases = getBaseList();
+        boolean returnPartialResult = false;
+        Optional<BibDatabase> newDatabase = ooBase.exportCitedHelper(databases, returnPartialResult);
+        if (newDatabase.isPresent()) {
+            BibDatabaseContext databaseContext = new BibDatabaseContext(newDatabase.get());
+            this.frame.addTab(databaseContext, true);
         }
     }
 
@@ -509,18 +470,11 @@ public class OpenOfficePanel {
         if (getOrUpdateTheStyle(title)) {
             return;
         }
-        if (style == null) {
-            OOError.noValidStyleSelected()
-                .setTitle(title)
-                .showErrorDialog(dialogService);
-            return;
-        }
-
-        Boolean inParenthesis = citationType.inParenthesis();
-        boolean withText = citationType.withText();
 
         String pageInfo = null;
         if (addPageInfo) {
+            Boolean inParenthesis = citationType.inParenthesis();
+            boolean withText = citationType.withText();
 
             Optional<AdvancedCiteDialogViewModel> citeDialogViewModel = dialogService.showCustomDialogAndWait(new AdvancedCiteDialogView());
             if (citeDialogViewModel.isPresent()) {
@@ -530,30 +484,29 @@ public class OpenOfficePanel {
                     pageInfo = model.pageInfoProperty().getValue();
                 }
                 inParenthesis = model.citeInParProperty().getValue();
+                citationType = citationTypeFromOptions(withText, inParenthesis);
+            } else {
+                // user canceled
+                return;
             }
         }
 
-        if (!entries.isEmpty() && checkThatEntriesHaveKeys(entries)) {
-            try {
-                Optional<EditInsert.SyncOptions> syncOptions =
-                    (ooPrefs.getSyncWhenCiting()
-                     ? Optional.of(new EditInsert.SyncOptions(getBaseList()))
-                     : Optional.empty());
-
-                ooBase.guiActionInsertEntry(entries,
-                                            database,
-                                            style,
-                                            citationTypeFromOptions(withText, inParenthesis),
-                                            pageInfo,
-                                            syncOptions);
-
-            } catch (ConnectionLostException ex) {
-                OOError.from(ex).showErrorDialog(dialogService);
-            } catch (com.sun.star.lang.IllegalArgumentException ex) {
-                LOGGER.warn("Could not insert entry", ex);
-                OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
-            }
+        if (!checkThatEntriesHaveKeys(entries)) {
+            // Not all entries have keys and key generation was declined.
+            return;
         }
+
+        Optional<EditInsert.SyncOptions> syncOptions =
+            (ooPrefs.getSyncWhenCiting()
+             ? Optional.of(new EditInsert.SyncOptions(getBaseList()))
+             : Optional.empty());
+
+        ooBase.guiActionInsertEntry(entries,
+                                    database,
+                                    style,
+                                    citationType,
+                                    pageInfo,
+                                    syncOptions);
     }
 
     /**

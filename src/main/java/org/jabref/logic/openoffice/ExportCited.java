@@ -44,10 +44,10 @@ public class ExportCited {
      */
     public static GenerateDatabaseResult generateDatabase(XTextDocument doc, List<BibDatabase> databases)
         throws
-        NoSuchElementException,
-        WrappedTargetException,
         NoDocumentException,
-        UnknownPropertyException {
+        NoSuchElementException,
+        UnknownPropertyException,
+        WrappedTargetException {
 
         OOFrontend fr = new OOFrontend(doc);
         CitedKeys cks = fr.citationGroups.getCitedKeysUnordered();
