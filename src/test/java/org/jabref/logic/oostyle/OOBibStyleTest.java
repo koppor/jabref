@@ -21,6 +21,7 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.entry.types.UnknownEntryType;
+import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -315,12 +316,12 @@ class OOBibStyleTest {
         assertEquals("[Boström et al., 2006]",
                      style.getCitationMarker(citationMarkerEntries,
                                              true,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
 
         assertEquals("Boström et al. [2006]",
                      style.getCitationMarker(citationMarkerEntries,
                                              false,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
 
         /*
          * Currently there is no way override for getMaxAuthors(), except
@@ -333,7 +334,7 @@ class OOBibStyleTest {
         assertEquals("[Boström, Wäyrynen, Bodén, Beznosov & Kruchten, 2006]",
                      style.getCitationMarker(citationMarkerEntries,
                                              true,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
     }
 
     @Test
@@ -410,13 +411,13 @@ class OOBibStyleTest {
                          +"; Boström, Wäyrynen, Bodén, Beznosov & NotKruchten, 2006c]",
                          style.getCitationMarker(citationMarkerEntries,
                                                  true,
-                                                 OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                                 NonUniqueCitationMarker.THROWS).asString());
 
             assertEquals("Boström, Wäyrynen, Bodén, Beznosov & Kruchten [2006a,b]"
                          + "; Boström, Wäyrynen, Bodén, Beznosov & NotKruchten [2006c]",
                          style.getCitationMarker(citationMarkerEntries,
                                                  false,
-                                                 OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                                 NonUniqueCitationMarker.THROWS).asString());
         }
 
         // Without pageInfo, only the first is isFirstAppearanceOfSource.
@@ -438,7 +439,7 @@ class OOBibStyleTest {
                          +"; Boström et al., 2006c]",
                          style.getCitationMarker(citationMarkerEntries,
                                                  true,
-                                                 OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                                 NonUniqueCitationMarker.THROWS).asString());
 
         }
         // Without pageInfo, only the second is isFirstAppearanceOfSource.
@@ -462,7 +463,7 @@ class OOBibStyleTest {
                          + "; Boström et al., 2006c]",
                          style.getCitationMarker(citationMarkerEntries,
                                                  true,
-                                                 OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                                 NonUniqueCitationMarker.THROWS).asString());
         }
 
         // Without pageInfo, only the neither is isFirstAppearanceOfSource.
@@ -484,7 +485,7 @@ class OOBibStyleTest {
             assertEquals("[Boström et al., 2006a,b,c]",
                          style.getCitationMarker(citationMarkerEntries,
                                                  true,
-                                                 OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                                 NonUniqueCitationMarker.THROWS).asString());
         }
 
         // With pageInfo: different entries with identical non-null pageInfo: not joined.
@@ -506,7 +507,7 @@ class OOBibStyleTest {
                          + "; Boström et al., 2006c; p1]",
                          style.getCitationMarker(citationMarkerEntries,
                                                  true,
-                                                 OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                                 NonUniqueCitationMarker.THROWS).asString());
         }
 
         // With pageInfo: same entries with identical non-null pageInfo: collapsed.
@@ -527,7 +528,7 @@ class OOBibStyleTest {
             assertEquals("[Boström et al., 2006a; p1]",
                          style.getCitationMarker(citationMarkerEntries,
                                                  true,
-                                                 OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                                 NonUniqueCitationMarker.THROWS).asString());
         }
         // With pageInfo: same entries with different pageInfo: kept separate.
         // Empty ("") and null pageInfos considered equal her, collapsed.
@@ -551,7 +552,7 @@ class OOBibStyleTest {
                          + "; Boström et al., 2006a]",
                          style.getCitationMarker(citationMarkerEntries,
                                                  true,
-                                                 OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                                 NonUniqueCitationMarker.THROWS).asString());
         }
     }
 
@@ -641,7 +642,7 @@ class OOBibStyleTest {
         assertEquals("[JabRef Development Team, 2016]",
                      style.getCitationMarker(citationMarkerEntries,
                                              true,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
     }
 
     @Test
@@ -666,7 +667,7 @@ class OOBibStyleTest {
         assertEquals("[von Beta, 2016]",
                      style.getCitationMarker(citationMarkerEntries,
                                              true,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
     }
 
     @Test
@@ -689,7 +690,7 @@ class OOBibStyleTest {
         assertEquals("[, 2016]",
                      style.getCitationMarker(citationMarkerEntries,
                                              true,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
     }
 
     @Test
@@ -712,7 +713,7 @@ class OOBibStyleTest {
         assertEquals("[von Beta, ]",
                      style.getCitationMarker(citationMarkerEntries,
                                              true,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
     }
 
     @Test
@@ -733,7 +734,7 @@ class OOBibStyleTest {
 
         assertEquals("[, ]", style.getCitationMarker(citationMarkerEntries,
                                                      true,
-                                                     OOBibStyle.NonUniqueCitationMarker.THROWS)
+                                                     NonUniqueCitationMarker.THROWS)
                      .asString());
     }
 
@@ -788,7 +789,7 @@ class OOBibStyleTest {
         try {
             style.getCitationMarker(citationMarkerEntriesA,
                                     false,
-                                    OOBibStyle.NonUniqueCitationMarker.THROWS);
+                                    NonUniqueCitationMarker.THROWS);
         } catch (RuntimeException ex) {
             doesItThrow = true;
         }
@@ -798,12 +799,12 @@ class OOBibStyleTest {
         assertEquals("[Beta, 2000; Beta, 2000; Epsilon, 2001]",
                      style.getCitationMarker(citationMarkerEntriesA,
                                              true,
-                                             OOBibStyle.NonUniqueCitationMarker.FORGIVEN).asString());
+                                             NonUniqueCitationMarker.FORGIVEN).asString());
 
         assertEquals("Beta [2000]; Beta [2000]; Epsilon [2001]",
                      style.getCitationMarker(citationMarkerEntriesA,
                                              false,
-                                             OOBibStyle.NonUniqueCitationMarker.FORGIVEN).asString());
+                                             NonUniqueCitationMarker.FORGIVEN).asString());
 
 
         // With uniquefiers
@@ -820,12 +821,12 @@ class OOBibStyleTest {
         assertEquals("[Beta, 2000a,b; Epsilon, 2001]",
                      style.getCitationMarker(citationMarkerEntriesB,
                                              true,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
 
         assertEquals("Beta [2000a,b]; Epsilon [2001]",
                      style.getCitationMarker(citationMarkerEntriesB,
                                              false,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
     }
 
 
@@ -869,12 +870,12 @@ class OOBibStyleTest {
         assertEquals("[Beta, 2000a,b,c]",
                      style.getCitationMarker(citationMarkerEntries,
                                              true,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
 
         assertEquals("Beta [2000a,b,c]",
                      style.getCitationMarker(citationMarkerEntries,
                                              false,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
     }
 
     @Test
@@ -937,7 +938,7 @@ class OOBibStyleTest {
         assertEquals("von Beta, Epsilon, & Tau, 2016",
                      style.getCitationMarker(citationMarkerEntries,
                                              true,
-                                             OOBibStyle.NonUniqueCitationMarker.THROWS).asString());
+                                             NonUniqueCitationMarker.THROWS).asString());
     }
 
     @Test

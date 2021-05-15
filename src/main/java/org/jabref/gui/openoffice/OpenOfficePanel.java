@@ -48,6 +48,7 @@ import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.StyleLoader;
 import org.jabref.logic.openoffice.ConnectionLostException;
 import org.jabref.logic.openoffice.CreationException;
+import org.jabref.logic.openoffice.EditInsert;
 import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.OpenOfficeFileSearch;
 import org.jabref.logic.openoffice.OpenOfficePreferences;
@@ -571,17 +572,25 @@ public class OpenOfficePanel {
 
         if (!entries.isEmpty() && checkThatEntriesHaveKeys(entries)) {
             try {
-                    ooBase.guiActionInsertEntry(entries, database, getBaseList(), style,
-                                                citationTypeFromOptions(withText, inParenthesis),
-                                                pageInfo,
-                                                ooPrefs.getSyncWhenCiting());
-                } catch (ConnectionLostException ex) {
-                    OOError.from(ex).showErrorDialog(dialogService);
-                } catch (com.sun.star.lang.IllegalArgumentException ex) {
-                    LOGGER.warn("Could not insert entry", ex);
-                    OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
-                }
+                Optional<EditInsert.SyncOptions> syncOptions =
+                    (ooPrefs.getSyncWhenCiting()
+                     ? Optional.of(new EditInsert.SyncOptions(getBaseList()))
+                     : Optional.empty());
+
+                ooBase.guiActionInsertEntry(entries,
+                                            database,
+                                            style,
+                                            citationTypeFromOptions(withText, inParenthesis),
+                                            pageInfo,
+                                            syncOptions);
+
+            } catch (ConnectionLostException ex) {
+                OOError.from(ex).showErrorDialog(dialogService);
+            } catch (com.sun.star.lang.IllegalArgumentException ex) {
+                LOGGER.warn("Could not insert entry", ex);
+                OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
             }
+        }
     }
 
     /**

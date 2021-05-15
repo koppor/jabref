@@ -74,6 +74,12 @@ class OOBibBase {
     private final DialogService dialogService;
 
     /*
+     * After inserting a citation, if ooPrefs.getSyncWhenCiting() returns true,
+     * shall we also update the bibliography?
+     */
+    private final boolean refreshBibliographyDuringSyncWhenCiting;
+
+    /*
      * Shall we add "Cited on pages: ..." to resolved bibliography entries?
      */
     private final boolean alwaysAddCitedOnPages;
@@ -90,6 +96,8 @@ class OOBibBase {
 
         this.dialogService = dialogService;
         this.connection = new OOBibBaseConnect(loPath, dialogService);
+
+        this.refreshBibliographyDuringSyncWhenCiting = false;
         this.alwaysAddCitedOnPages = false;
     }
 
@@ -189,6 +197,229 @@ class OOBibBase {
     }
 
     /*
+     * Get the cursor positioned by the user for inserting text.
+     */
+    Result<XTextCursor, OOError> getUserCursorForTextInsertion(XTextDocument doc, String title) {
+
+        XTextCursor cursor;
+        // Get the cursor positioned by the user.
+        try {
+            cursor = UnoCursor.getViewCursor(doc).orElse(null);
+        } catch (RuntimeException ex) {
+            return Result.Error(new OOError(title,
+                                            Localization.lang("Could not get the cursor."),
+                                            ex));
+        }
+
+        // Check for crippled XTextViewCursor
+        Objects.requireNonNull(cursor);
+        try {
+            cursor.getStart();
+        } catch (com.sun.star.uno.RuntimeException ex) {
+            String msg =
+                Localization.lang("Please move the cursor"
+                                  + " to the location for the new citation.")
+                + "\n"
+                + Localization.lang("I cannot insert to the cursors current location.");
+            return Result.Error(new OOError(title, msg, ex));
+        }
+        return Result.OK(cursor);
+    }
+
+    /*
+     * Tests for preconditions.
+     */
+
+    private static VoidResult<OOError> checkIfOpenOfficeIsRecordingChanges(XTextDocument doc) {
+
+        String title = Localization.lang("Recording and/or Recorded changes");
+        try {
+            boolean recordingChanges = UnoRedlines.getRecordChanges(doc);
+            int nRedlines = UnoRedlines.countRedlines(doc);
+            if (recordingChanges || nRedlines > 0) {
+                String msg = "";
+                if (recordingChanges) {
+                    msg += Localization.lang("Cannot work with"
+                                             + " [Edit]/[Track Changes]/[Record] turned on.");
+                }
+                if (nRedlines > 0) {
+                    if (recordingChanges) {
+                        msg += "\n";
+                    }
+                    msg += Localization.lang("Changes by JabRef"
+                                             + " could result in unexpected interactions with"
+                                             + " recorded changes.");
+                    msg += "\n";
+                    msg += Localization.lang("Use [Edit]/[Track Changes]/[Manage] to resolve them first.");
+                }
+                return VoidResult.Error(new OOError(title, msg));
+            }
+        } catch (UnknownPropertyException | WrappedTargetException ex) {
+            String msg = Localization.lang("Error while checking if Writer"
+                                           + " is recording changes or has recorded changes.");
+            return VoidResult.Error(new OOError(title, msg, ex));
+        }
+        return VoidResult.OK();
+    }
+
+    /*
+     * Called from GUI.
+     * @return true on error, false if OK.
+     */
+    public boolean guiCheckIfOpenOfficeIsRecordingChanges(String title) {
+        final boolean FAIL = true;
+        final boolean PASS = false;
+        Result<XTextDocument, OOError> odoc = getXTextDocument();
+        if (testDialog(title, odoc.asVoidResult())) {
+            return FAIL;
+        }
+        XTextDocument doc = odoc.get();
+
+        if (testDialog(title, checkIfOpenOfficeIsRecordingChanges(doc))) {
+            return FAIL;
+        }
+        return PASS;
+    }
+
+    public boolean guiCheckIfConnectedToDocument(String title) {
+        final boolean FAIL = true;
+        final boolean PASS = false;
+        if (!isConnectedToDocument()) {
+            String msg = Localization.lang("Not connected to any Writer document."
+                                           + " Please make sure a document is open,"
+                                           + " and use the 'Select Writer document' button"
+                                           + " to connect to it.");
+            dialogService.showErrorDialogAndWait(title, msg);
+            return FAIL;
+        }
+        return PASS;
+    }
+
+    VoidResult<OOError> styleIsRequired(OOBibStyle style) {
+        if (style == null) {
+            return VoidResult.Error(OOError.noValidStyleSelected());
+        } else {
+            return VoidResult.OK();
+        }
+    }
+
+    VoidResult<OOError> databaseIsRequired(List<BibDatabase> databases,
+                                           Supplier<OOError> fun) {
+        if (databases == null || databases.isEmpty()) {
+            return VoidResult.Error(fun.get());
+        } else {
+            return VoidResult.OK();
+        }
+    }
+
+    VoidResult<OOError> selectedBibEntryIsRequired(List<BibEntry> entries,
+                                                   Supplier<OOError> fun) {
+        if (entries == null || entries.isEmpty()) {
+            return VoidResult.Error(fun.get());
+        } else {
+            return VoidResult.OK();
+        }
+    }
+
+    /*
+     * Checks existence and also checks if it is not an internal name.
+     */
+    public VoidResult<OOError> checkStyleExistsInTheDocument(String familyName,
+                                                             String styleName,
+                                                             XTextDocument doc,
+                                                             String labelInJstyleFile,
+                                                             String pathToStyleFile)
+        throws
+        NoSuchElementException,
+        WrappedTargetException {
+
+        Optional<String> internalName = UnoStyle.getInternalNameOfStyle(doc, familyName, styleName);
+
+        if (internalName.isEmpty()) {
+            String msg =
+                switch (familyName) {
+                case UnoStyle.PARAGRAPH_STYLES ->
+                Localization.lang("The %0 paragraph style '%1' is missing from the document",
+                                  labelInJstyleFile,
+                                  styleName);
+                case UnoStyle.CHARACTER_STYLES ->
+                Localization.lang("The %0 character style '%1' is missing from the document",
+                                  labelInJstyleFile,
+                                  styleName);
+                default ->
+                throw new RuntimeException("Expected " + UnoStyle.CHARACTER_STYLES
+                                           + " or " + UnoStyle.PARAGRAPH_STYLES
+                                           + " for familyName");
+                }
+                + "\n"
+                + Localization.lang("Please create it in the document or change in the file:")
+                + "\n"
+                + pathToStyleFile;
+                return VoidResult.Error(new OOError("StyleIsNotKnown", msg));
+        }
+
+        if (!internalName.get().equals(styleName)) {
+            String msg =
+                switch (familyName) {
+                case UnoStyle.PARAGRAPH_STYLES ->
+                Localization.lang("The %0 paragraph style '%1' is a display name for '%2'.",
+                                  labelInJstyleFile,
+                                  styleName,
+                                  internalName.get());
+                case UnoStyle.CHARACTER_STYLES ->
+                Localization.lang("The %0 character style '%1' is a display name for '%2'.",
+                                  labelInJstyleFile,
+                                  styleName,
+                                  internalName.get());
+                default ->
+                throw new RuntimeException("Expected " + UnoStyle.CHARACTER_STYLES
+                                           + " or " + UnoStyle.PARAGRAPH_STYLES
+                                           + " for familyName");
+                }
+                + "\n"
+                + Localization.lang("Please use the latter in the style file below"
+                                    + " to avoid localization problems.")
+                + "\n"
+                + pathToStyleFile;
+                return VoidResult.Error(new OOError("StyleNameIsNotInternal", msg));
+        }
+        return VoidResult.OK();
+    }
+
+    public VoidResult<OOError> checkStylesExistInTheDocument(OOBibStyle style, XTextDocument doc) {
+
+        String pathToStyleFile = style.getPath();
+
+        List<VoidResult<OOError>> results = new ArrayList<>();
+        try {
+            results.add(checkStyleExistsInTheDocument(UnoStyle.PARAGRAPH_STYLES,
+                                                      style.getReferenceHeaderParagraphFormat(),
+                                                      doc,
+                                                      "ReferenceHeaderParagraphFormat",
+                                                      pathToStyleFile));
+            results.add(checkStyleExistsInTheDocument(UnoStyle.PARAGRAPH_STYLES,
+                                                      style.getReferenceParagraphFormat(),
+                                                      doc,
+                                                      "ReferenceParagraphFormat",
+                                                      pathToStyleFile));
+            if (style.isFormatCitations()) {
+                results.add(checkStyleExistsInTheDocument(UnoStyle.CHARACTER_STYLES,
+                                                          style.getCitationCharacterFormat(),
+                                                          doc,
+                                                          "CitationCharacterFormat",
+                                                          pathToStyleFile));
+            }
+        } catch (NoSuchElementException
+                 | WrappedTargetException ex) {
+            results.add(VoidResult.Error(new OOError("Other error in checkStyleExistsInTheDocument",
+                                                     ex.getMessage(),
+                                                     ex)));
+        }
+
+        return collectResults("checkStyleExistsInTheDocument failed", results);
+    }
+
+    /*
      *
      * ManageCitationsDialogView
      *
@@ -204,7 +435,7 @@ class OOBibBase {
         }
         XTextDocument doc = odoc.get();
 
-        if (testDialog(title, checkIfOpenOfficeIsRecordingChanges2(doc))) {
+        if (testDialog(title, checkIfOpenOfficeIsRecordingChanges(doc))) {
             LOGGER.warn(title);
             return FAIL;
         }
@@ -298,9 +529,6 @@ class OOBibBase {
      * @param database      The database the entries belong to (all of them).
      *                      Used when creating the citation mark.
      *
-     * @param allBases      Used if sync is true. The list of all databases
-     *                      we may need to refresh the document.
-     *
      * @param style         The bibliography style we are using.
      *
      * @param citationType Indicates whether it is an in-text
@@ -327,18 +555,19 @@ class OOBibBase {
      *                                       \citealp[pp.~21--23]{smith2003}}
      *                      """
      *
-     * @param sync          Indicates whether the reference list and in-text citations
+     * @param syncOptions   Indicates whether in-text citations
      *                      should be refreshed in the document.
+     *                      Optional.empty() indicates no refresh.
+     *                      Otherwise provides options for refreshing the reference list.
      *
      *
      */
     public void guiActionInsertEntry(List<BibEntry> entries,
                                      BibDatabase database,
-                                     List<BibDatabase> allBases,
                                      OOBibStyle style,
                                      InTextCitationType citationType,
                                      String pageInfo,
-                                     boolean sync) {
+                                     Optional<EditInsert.SyncOptions> syncOptions) {
 
         final String title = "Could not insert entry";
 
@@ -346,21 +575,29 @@ class OOBibBase {
         if (testDialog(title,
                        odoc.asVoidResult(),
                        styleIsRequired(style),
-                       databaseIsRequired(allBases, OOError::noDataBaseIsOpenForCiting))) {
-            return;
-        }
-
-        if (entries == null || entries.size() == 0) {
-            OOError.noEntriesSelectedForCitation().showErrorDialog(dialogService);
+                       selectedBibEntryIsRequired(entries, OOError::noEntriesSelectedForCitation))) {
             return;
         }
 
         XTextDocument doc = odoc.get();
+        Result<XTextCursor, OOError> cursor = getUserCursorForTextInsertion(doc, title);
 
         if (testDialog(title,
+                       cursor.asVoidResult(),
                        checkStylesExistInTheDocument(style, doc),
-                       checkIfOpenOfficeIsRecordingChanges2(doc))) {
+                       checkIfOpenOfficeIsRecordingChanges(doc))) {
             return;
+        }
+
+        syncOptions
+            .map(e -> e.setUpdateBibliography(this.refreshBibliographyDuringSyncWhenCiting))
+            .map(e -> e.setAlwaysAddCitedOnPages(this.alwaysAddCitedOnPages));
+
+        if (syncOptions.isPresent()) {
+            if (testDialog(databaseIsRequired(syncOptions.get().databases,
+                                              OOError::noDataBaseIsOpenForSyncingAfterCitation))) {
+                return;
+            }
         }
 
         boolean useUndoContext = true;
@@ -372,46 +609,15 @@ class OOBibBase {
 
             OOFrontend fr = new OOFrontend(doc);
 
-            XTextCursor cursor;
-            // Get the cursor positioned by the user.
-            try {
-                cursor = UnoCursor.getViewCursor(doc).orElse(null);
-            } catch (RuntimeException ex) {
-                cursor = null;
-            }
-
-            if (cursor == null) {
-                showDialog(title,
-                           new OOError(Localization.lang("Could not get the cursor."),
-                                       Localization.lang("Could not get the cursor.")));
-                return;
-            }
-
-            // Check for crippled XTextViewCursor
-            Objects.requireNonNull(cursor);
-            try {
-                cursor.getStart();
-            } catch (com.sun.star.uno.RuntimeException ex) {
-                String msg =
-                    Localization.lang("Please move the cursor"
-                                      + " to the location for the new citation.")
-                    + "\n"
-                    + Localization.lang("I cannot insert to the cursors current location.");
-                showDialog(title, new OOError(title, msg, ex));
-                return;
-            }
-
             EditInsert.insertCitationGroup(doc,
                                            fr,
-                                           cursor,
+                                           cursor.get(),
                                            entries,
                                            database,
-                                           allBases,
                                            style,
                                            citationType,
                                            pageInfo,
-                                           sync,
-                                           this.alwaysAddCitedOnPages);
+                                           syncOptions);
 
         } catch (NoDocumentException ex) {
             OOError.from(ex).showErrorDialog(dialogService);
@@ -479,7 +685,7 @@ class OOBibBase {
 
         if (testDialog(title,
                        checkStylesExistInTheDocument(style, doc),
-                       checkIfOpenOfficeIsRecordingChanges2(doc))) {
+                       checkIfOpenOfficeIsRecordingChanges(doc))) {
             return;
         }
 
@@ -530,16 +736,13 @@ class OOBibBase {
             return;
         }
 
-        Objects.requireNonNull(databases);
-        Objects.requireNonNull(style);
-
         final boolean useLockControllers = true;
 
         XTextDocument doc = odoc.get();
 
         if (testDialog(title,
                        checkStylesExistInTheDocument(style, doc),
-                       checkIfOpenOfficeIsRecordingChanges2(doc))) {
+                       checkIfOpenOfficeIsRecordingChanges(doc))) {
             return;
         }
 
@@ -787,217 +990,6 @@ class OOBibBase {
         return new GenerateDatabaseResult(unresolvedKeys, resultDatabase);
     }
 
-    /*
-     * Throw JabRefException if recording changes or the document contains
-     * recorded changes.
-     */
-    private static void checkIfOpenOfficeIsRecordingChanges(XTextDocument doc)
-        throws
-        UnknownPropertyException,
-        WrappedTargetException,
-        JabRefException {
-        boolean recordingChanges = UnoRedlines.getRecordChanges(doc);
-        int nRedlines = UnoRedlines.countRedlines(doc);
-        if (recordingChanges || nRedlines > 0) {
-            String msg = "";
-            if (recordingChanges) {
-                msg += Localization.lang("Cannot work with [Edit]/[Track Changes]/[Record] turned on.");
-            }
-            if (nRedlines > 0) {
-                if (recordingChanges) {
-                    msg += "\n";
-                }
-                msg += Localization.lang("Changes by JabRef"
-                                         + " could result in unexpected interactions with"
-                                         + " recorded changes.");
-                msg += "\n";
-                msg += Localization.lang("Use [Edit]/[Track Changes]/[Manage] to resolve them first.");
-            }
-            String title = Localization.lang("Recording and/or Recorded changes");
-            throw new JabRefException(title, msg);
-        }
-    }
-
-    private static VoidResult<OOError> checkIfOpenOfficeIsRecordingChanges2(XTextDocument doc) {
-
-        String title = Localization.lang("Recording and/or Recorded changes");
-        try {
-            boolean recordingChanges = UnoRedlines.getRecordChanges(doc);
-            int nRedlines = UnoRedlines.countRedlines(doc);
-            if (recordingChanges || nRedlines > 0) {
-                String msg = "";
-                if (recordingChanges) {
-                    msg += Localization.lang("Cannot work with"
-                                             + " [Edit]/[Track Changes]/[Record] turned on.");
-                }
-                if (nRedlines > 0) {
-                    if (recordingChanges) {
-                        msg += "\n";
-                    }
-                    msg += Localization.lang("Changes by JabRef"
-                                             + " could result in unexpected interactions with"
-                                             + " recorded changes.");
-                    msg += "\n";
-                    msg += Localization.lang("Use [Edit]/[Track Changes]/[Manage] to resolve them first.");
-                }
-                return VoidResult.Error(new OOError(title, msg));
-            }
-        } catch (UnknownPropertyException | WrappedTargetException ex) {
-            String msg = Localization.lang("Error while checking if Writer"
-                                           + " is recording changes or has recorded changes.");
-            return VoidResult.Error(new OOError(title, msg, ex));
-        }
-        return VoidResult.OK();
-    }
-
-    /*
-     * Called from GUI.
-     * @return true on error, false if OK.
-     */
-    public boolean guiCheckIfOpenOfficeIsRecordingChanges(String title) {
-        final boolean FAIL = true;
-        final boolean PASS = false;
-        Result<XTextDocument, OOError> odoc = getXTextDocument();
-        if (testDialog(title, odoc.asVoidResult())) {
-            return FAIL;
-        }
-        XTextDocument doc = odoc.get();
-
-        if (testDialog(title, checkIfOpenOfficeIsRecordingChanges2(doc))) {
-            return FAIL;
-        }
-        return PASS;
-    }
-
-    public boolean guiCheckIfConnectedToDocument(String title) {
-        final boolean FAIL = true;
-        final boolean PASS = false;
-        if (!isConnectedToDocument()) {
-            String msg = Localization.lang("Not connected to any Writer document."
-                                           + " Please make sure a document is open,"
-                                           + " and use the 'Select Writer document' button"
-                                           + " to connect to it.");
-            dialogService.showErrorDialogAndWait(title, msg);
-            return FAIL;
-        }
-        return PASS;
-    }
-
-    VoidResult<OOError> styleIsRequired(OOBibStyle style) {
-        if (style == null) {
-            return VoidResult.Error(OOError.noValidStyleSelected());
-        } else {
-            return VoidResult.OK();
-        }
-    }
-
-    VoidResult<OOError> databaseIsRequired(List<BibDatabase> databases,
-                                           Supplier<OOError> fun) {
-        if (databases == null || databases.isEmpty()) {
-            return VoidResult.Error(fun.get());
-        } else {
-            return VoidResult.OK();
-        }
-    }
-
-    /*
-     * Checks existence and also checks if it is not an internal name.
-     */
-    public VoidResult<OOError> checkStyleExistsInTheDocument(String familyName,
-                                                             String styleName,
-                                                             XTextDocument doc,
-                                                             String labelInJstyleFile,
-                                                             String pathToStyleFile)
-        throws
-        NoSuchElementException,
-        WrappedTargetException {
-
-        Optional<String> internalName = UnoStyle.getInternalNameOfStyle(doc, familyName, styleName);
-
-        if (internalName.isEmpty()) {
-            String msg =
-                switch (familyName) {
-                case UnoStyle.PARAGRAPH_STYLES ->
-                Localization.lang("The %0 paragraph style '%1' is missing from the document",
-                                  labelInJstyleFile,
-                                  styleName);
-                case UnoStyle.CHARACTER_STYLES ->
-                Localization.lang("The %0 character style '%1' is missing from the document",
-                                  labelInJstyleFile,
-                                  styleName);
-                default ->
-                throw new RuntimeException("Expected " + UnoStyle.CHARACTER_STYLES
-                                           + " or " + UnoStyle.PARAGRAPH_STYLES
-                                           + " for familyName");
-                }
-                + "\n"
-                + Localization.lang("Please create it in the document or change in the file:")
-                + "\n"
-                + pathToStyleFile;
-                return VoidResult.Error(new OOError("StyleIsNotKnown", msg));
-        }
-
-        if (!internalName.get().equals(styleName)) {
-            String msg =
-                switch (familyName) {
-                case UnoStyle.PARAGRAPH_STYLES ->
-                Localization.lang("The %0 paragraph style '%1' is a display name for '%2'.",
-                                  labelInJstyleFile,
-                                  styleName,
-                                  internalName.get());
-                case UnoStyle.CHARACTER_STYLES ->
-                Localization.lang("The %0 character style '%1' is a display name for '%2'.",
-                                  labelInJstyleFile,
-                                  styleName,
-                                  internalName.get());
-                default ->
-                throw new RuntimeException("Expected " + UnoStyle.CHARACTER_STYLES
-                                           + " or " + UnoStyle.PARAGRAPH_STYLES
-                                           + " for familyName");
-                }
-                + "\n"
-                + Localization.lang("Please use the latter in the style file below"
-                                    + " to avoid localization problems.")
-                + "\n"
-                + pathToStyleFile;
-                return VoidResult.Error(new OOError("StyleNameIsNotInternal", msg));
-        }
-        return VoidResult.OK();
-    }
-
-    public VoidResult<OOError> checkStylesExistInTheDocument(OOBibStyle style, XTextDocument doc) {
-
-        String pathToStyleFile = style.getPath();
-
-        List<VoidResult<OOError>> results = new ArrayList<>();
-        try {
-            results.add(checkStyleExistsInTheDocument(UnoStyle.PARAGRAPH_STYLES,
-                                                      style.getReferenceHeaderParagraphFormat(),
-                                                      doc,
-                                                      "ReferenceHeaderParagraphFormat",
-                                                      pathToStyleFile));
-            results.add(checkStyleExistsInTheDocument(UnoStyle.PARAGRAPH_STYLES,
-                                                      style.getReferenceParagraphFormat(),
-                                                      doc,
-                                                      "ReferenceParagraphFormat",
-                                                      pathToStyleFile));
-            if (style.isFormatCitations()) {
-                results.add(checkStyleExistsInTheDocument(UnoStyle.CHARACTER_STYLES,
-                                                          style.getCitationCharacterFormat(),
-                                                          doc,
-                                                          "CitationCharacterFormat",
-                                                          pathToStyleFile));
-            }
-        } catch (NoSuchElementException
-                 | WrappedTargetException ex) {
-            results.add(VoidResult.Error(new OOError("Other error in checkStyleExistsInTheDocument",
-                                                     ex.getMessage(),
-                                                     ex)));
-        }
-
-        return collectResults("checkStyleExistsInTheDocument failed", results);
-    }
-
     /**
      * GUI action, refreshes citation markers and bibliography.
      *
@@ -1012,18 +1004,19 @@ class OOBibBase {
         try {
 
             Result<XTextDocument, OOError> odoc = getXTextDocument();
-            if (testDialog(title, List.of(odoc.asVoidResult(), styleIsRequired(style)))) {
+            if (testDialog(title,
+                           odoc.asVoidResult(),
+                           styleIsRequired(style))) {
                 return;
             }
 
             XTextDocument doc = odoc.get();
 
-            if (testDialog(title, List.of(styleIsRequired(style),
-                                          checkStylesExistInTheDocument(style, doc)))) {
+            if (testDialog(title,
+                           checkStylesExistInTheDocument(style, doc),
+                           checkIfOpenOfficeIsRecordingChanges(doc))) {
                 return;
             }
-
-            checkIfOpenOfficeIsRecordingChanges(doc);
 
             OOFrontend fr = new OOFrontend(doc);
             // Check Range overlaps

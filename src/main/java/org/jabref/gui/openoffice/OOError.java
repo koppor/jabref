@@ -99,6 +99,14 @@ class OOError extends JabRefException {
             + Localization.lang("Open one before citing."));
     }
 
+    public static OOError noDataBaseIsOpenForSyncingAfterCitation() {
+        return new OOError(
+            Localization.lang("No database"),
+            Localization.lang("No database is open for updating citation markers after citing.")
+            + "\n"
+            + Localization.lang("Open one before citing."));
+    }
+
     // noDataBaseIsOpenForExport
     public static OOError noDataBaseIsOpenForExport() {
         return new OOError(

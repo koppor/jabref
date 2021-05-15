@@ -51,6 +51,29 @@ public class EditInsert {
         return key.get();
     }
 
+    public static class SyncOptions {
+
+        public final List<BibDatabase> databases;
+        boolean updateBibliography;
+        boolean alwaysAddCitedOnPages;
+
+        public SyncOptions(List<BibDatabase> databases) {
+            this.databases = databases;
+            this.updateBibliography = false;
+            this.alwaysAddCitedOnPages = false;
+        }
+
+        public SyncOptions setUpdateBibliography(boolean value) {
+            this.updateBibliography = value;
+            return this;
+        }
+
+        public SyncOptions setAlwaysAddCitedOnPages(boolean value) {
+            this.alwaysAddCitedOnPages = value;
+            return this;
+        }
+    }
+
     /*
      * @param cursor Where to insert.
      */
@@ -59,12 +82,10 @@ public class EditInsert {
                                            XTextCursor cursor,
                                            List<BibEntry> entries,
                                            BibDatabase database,
-                                           List<BibDatabase> allBases,
                                            OOBibStyle style,
                                            InTextCitationType citationType,
                                            String pageInfo,
-                                           boolean sync,
-                                           boolean alwaysAddCitedOnPages)
+                                           Optional<SyncOptions> sync)
         throws
         UnknownPropertyException,
         NoDocumentException,
@@ -76,80 +97,80 @@ public class EditInsert {
         CreationException,
         IllegalTypeException,
         JabRefException {
-            List<String> citationKeys =
-                entries.stream()
-                .map(EditInsert::insertEntryGetCitationKey)
-                .collect(Collectors.toList());
 
-            final int nEntries = entries.size();
-            // JabRef53 style pageInfo list
-            List<OOFormattedText> pageInfosForCitations =
-                OOStyleDataModelVersion.fakePageInfosForCitations(pageInfo, nEntries);
+        List<String> citationKeys =
+            entries.stream()
+            .map(EditInsert::insertEntryGetCitationKey)
+            .collect(Collectors.toList());
 
-            List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nEntries);
-            for (int i = 0; i < nEntries; i++) {
-                // Using the same database for each entry.
-                // Probably the GUI limits selection to a single database.
-                CitationMarkerEntry cm =
-                    new CitationMarkerEntryImpl(citationKeys.get(i),
-                                                Optional.ofNullable(entries.get(i)),
-                                                Optional.ofNullable(database),
-                                                Optional.empty(), // uniqueLetter
-                                                Optional.ofNullable(pageInfosForCitations.get(i)),
-                                                false /* isFirstAppearanceOfSource */);
-                citationMarkerEntries.add(cm);
-            }
+        final int nEntries = entries.size();
+        // JabRef53 style pageInfo list
+        List<OOFormattedText> pageInfosForCitations =
+            OOStyleDataModelVersion.fakePageInfosForCitations(pageInfo, nEntries);
 
-            // The text we insert
-            OOFormattedText citeText =
-                (style.isNumberEntries()
-                 ? OOFormattedText.fromString("[-]") // A dash only. Only refresh later.
-                 : style.getCitationMarker(citationMarkerEntries,
-                                           citationType.inParenthesis(),
-                                           NonUniqueCitationMarker.FORGIVEN));
+        List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nEntries);
+        for (int i = 0; i < nEntries; i++) {
+            // Using the same database for each entry.
+            // Probably the GUI limits selection to a single database.
+            CitationMarkerEntry cm =
+                new CitationMarkerEntryImpl(citationKeys.get(i),
+                                            Optional.ofNullable(entries.get(i)),
+                                            Optional.ofNullable(database),
+                                            Optional.empty(), // uniqueLetter
+                                            Optional.ofNullable(pageInfosForCitations.get(i)),
+                                            false /* isFirstAppearanceOfSource */);
+            citationMarkerEntries.add(cm);
+        }
 
-            if ("".equals(OOFormattedText.toString(citeText))) {
-                citeText = OOFormattedText.fromString("[?]");
-            }
+        // The text we insert
+        OOFormattedText citeText =
+            (style.isNumberEntries()
+             ? OOFormattedText.fromString("[-]") // A dash only. Only refresh later.
+             : style.getCitationMarker(citationMarkerEntries,
+                                       citationType.inParenthesis(),
+                                       NonUniqueCitationMarker.FORGIVEN));
 
-            UpdateCitationMarkers.createAndFillCitationGroup(fr,
-                                                             doc,
-                                                             citationKeys,
-                                                             pageInfosForCitations,
-                                                             citationType,
-                                                             citeText,
-                                                             cursor,
-                                                             style,
-                                                             true /* insertSpaceAfter */);
+        if ("".equals(OOFormattedText.toString(citeText))) {
+            citeText = OOFormattedText.fromString("[?]");
+        }
 
+        UpdateCitationMarkers.createAndFillCitationGroup(fr,
+                                                         doc,
+                                                         citationKeys,
+                                                         pageInfosForCitations,
+                                                         citationType,
+                                                         citeText,
+                                                         cursor,
+                                                         style,
+                                                         true /* insertSpaceAfter */);
+
+        if (sync.isPresent()) {
             // Remember this position: we will come back here in the
             // end.
             XTextRange position = cursor.getEnd();
 
-            if (sync) {
-                // To account for numbering and for uniqueLetters, we
-                // must refresh the cite markers:
-                OOFrontend fr2 = new OOFrontend(doc);
+            // To account for numbering and for uniqueLetters, we
+            // must refresh the cite markers:
+            OOFrontend fr2 = new OOFrontend(doc);
 
-                Update.updateDocument(doc,
-                                      fr2,
-                                      allBases,
-                                      style,
-                                      true, /* doUpdateBibliography */
-                                      alwaysAddCitedOnPages);
+            Update.updateDocument(doc,
+                                  fr2,
+                                  sync.get().databases,
+                                  style,
+                                  sync.get().updateBibliography,
+                                  sync.get().alwaysAddCitedOnPages);
 
-                /*
-                 * Problem: insertEntry in bibliography
-                 * Reference is destroyed when we want to get there.
-                 */
-                // Go back to the relevant position:
-                try {
-                    cursor.gotoRange(position, false);
-                } catch (com.sun.star.uno.RuntimeException ex) {
-                    LOGGER.warn("insertCitationGroup:"
-                                + " Could not go back to end of in-text citation", ex);
-                }
+            /*
+             * Problem: insertEntry in bibliography
+             * Reference is destroyed when we want to get there.
+             */
+            // Go back to the relevant position:
+            try {
+                cursor.gotoRange(position, false);
+            } catch (com.sun.star.uno.RuntimeException ex) {
+                LOGGER.warn("insertCitationGroup:"
+                            + " Could not go back to end of in-text citation", ex);
             }
-
+        }
     }
 }
