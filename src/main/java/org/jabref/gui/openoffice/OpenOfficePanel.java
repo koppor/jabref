@@ -53,7 +53,6 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.InTextCitationType;
-import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.preferences.PreferencesService;
 
 import com.sun.star.comp.helper.BootstrapException;
@@ -227,11 +226,7 @@ public class OpenOfficePanel {
         settingsB.setOnAction(e -> settingsMenu.show(settingsB, Side.BOTTOM, 0, 0));
         manageCitations.setMaxWidth(Double.MAX_VALUE);
         manageCitations.setOnAction(e -> {
-               Optional<List<CitationEntry>> citations = ooBase.guiActionGetCitationEntries();
-               if (citations.isPresent()) {
-                   dialogService.showCustomDialogAndWait(new ManageCitationsDialogView(ooBase,
-                                                                                       citations.get()));
-               }
+                dialogService.showCustomDialogAndWait(new ManageCitationsDialogView(ooBase));
         });
 
         exportCitations.setMaxWidth(Double.MAX_VALUE);

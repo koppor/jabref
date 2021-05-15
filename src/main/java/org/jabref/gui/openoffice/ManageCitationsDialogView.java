@@ -1,12 +1,13 @@
 package org.jabref.gui.openoffice;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogEvent;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -19,7 +20,6 @@ import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.ValueTableCellFactory;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.strings.StringUtil;
 
 import com.airhacks.afterburner.views.ViewLoader;
@@ -33,7 +33,6 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
     private static final String HTML_BOLD_START_TAG = "<b>";
 
     private final OOBibBase ooBase;
-    private final List<CitationEntry> citations;
 
     @FXML private TableView<CitationEntryViewModel> citationsTableView;
     @FXML private TableColumn<CitationEntryViewModel, String> citation;
@@ -43,9 +42,8 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
 
     private ManageCitationsDialogViewModel viewModel;
 
-    public ManageCitationsDialogView(OOBibBase ooBase, List<CitationEntry> citations) {
+    public ManageCitationsDialogView(OOBibBase ooBase) {
         this.ooBase = ooBase;
-        this.citations = citations;
 
         ViewLoader.view(this)
                   .load()
@@ -64,7 +62,48 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
     @FXML
     private void initialize() throws NoSuchElementException, WrappedTargetException, UnknownPropertyException, JabRefException {
 
-        viewModel = new ManageCitationsDialogViewModel(ooBase, citations, dialogService);
+        viewModel = new ManageCitationsDialogViewModel(ooBase, dialogService);
+        if (viewModel.citationEntries.isEmpty()) {
+            dialogService.showErrorDialogAndWait("citationEntries is empty, now trying this.close()");
+
+            final int variant = 4;
+            switch (variant) {
+            case 1:
+                // vvv This is not effective. The dialog still comes up.
+                this.close();
+                break;
+            case 2:
+                // vvv This is not effective. The dialog still comes up.
+                ManageCitationsDialogView thisDialog = this;
+                this.setOnShowing​(new EventHandler<DialogEvent>() {
+                        @Override
+                        public void handle(DialogEvent arg0) {
+                            thisDialog.close();
+                        }
+                    });
+                break;
+            case 3:
+                // vvv This is not effective. The dialog still comes up.
+                ManageCitationsDialogView thisDialog = this;
+                this.setOnShown(new EventHandler<DialogEvent>() {
+                        @Override
+                        public void handle(DialogEvent arg0) {
+                            thisDialog.close();
+                        }
+                    });
+                break;
+            case 4:
+                // vvv This lets the window to be shown for
+                // a fraction of a second, then closes it.
+                ManageCitationsDialogView thisDialog = this;
+                Platform.runLater(new Runnable() {
+                        @Override public void run() {
+                            thisDialog.close();
+                        }
+                    });
+                break;
+            }
+        }
 
         citation.setCellValueFactory(cellData -> cellData.getValue().citationProperty());
         new ValueTableCellFactory<CitationEntryViewModel, String>().withGraphic(this::getText).install(citation);

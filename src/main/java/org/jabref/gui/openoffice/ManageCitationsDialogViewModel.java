@@ -1,6 +1,7 @@
 package org.jabref.gui.openoffice;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javafx.beans.property.ListProperty;
@@ -12,17 +13,22 @@ import org.jabref.model.openoffice.CitationEntry;
 
 public class ManageCitationsDialogViewModel {
 
+    Optional<List<CitationEntry>> citationEntries;
+
     private final ListProperty<CitationEntryViewModel> citations = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final OOBibBase ooBase;
     private final DialogService dialogService;
 
-    public ManageCitationsDialogViewModel(OOBibBase ooBase,
-                                          List<CitationEntry> citationEntries,
-                                          DialogService dialogService) {
+    public ManageCitationsDialogViewModel(OOBibBase ooBase, DialogService dialogService) {
         this.ooBase = ooBase;
         this.dialogService = dialogService;
 
-        for (CitationEntry entry : citationEntries) {
+        this.citationEntries = ooBase.guiActionGetCitationEntries();
+        if (citationEntries.isEmpty()) {
+            return;
+        }
+
+        for (CitationEntry entry : citationEntries.get()) {
             CitationEntryViewModel itemViewModelEntry = new CitationEntryViewModel(entry);
             citations.add(itemViewModelEntry);
         }
