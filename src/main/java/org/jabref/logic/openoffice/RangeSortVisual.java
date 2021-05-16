@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.jabref.model.openoffice.RangeSortable;
+
 import com.sun.star.awt.Point;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextDocument;

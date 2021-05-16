@@ -22,6 +22,8 @@ import org.jabref.model.openoffice.RangeForOverlapCheck;
 import org.jabref.model.openoffice.RangeKeyedMap;
 import org.jabref.model.openoffice.RangeKeyedMapList;
 import org.jabref.model.openoffice.RangeOverlap;
+import org.jabref.model.openoffice.RangeSortEntry;
+import org.jabref.model.openoffice.RangeSortable;
 import org.jabref.model.openoffice.VoidResult;
 
 import com.sun.star.beans.IllegalTypeException;
