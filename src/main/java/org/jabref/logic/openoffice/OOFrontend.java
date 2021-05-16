@@ -107,7 +107,7 @@ public class OOFrontend {
      *        mark. This is used for numbering the citations.
      *
      */
-    private List<RangeSort.RangeSortable<CitationGroupID>>
+    private List<RangeSortable<CitationGroupID>>
     createVisualSortInput(XTextDocument doc, boolean mapFootnotesToFootnoteMarks)
         throws
         NoDocumentException,
@@ -115,12 +115,12 @@ public class OOFrontend {
 
         List<CitationGroupID> cgids = new ArrayList<>(citationGroups.getCitationGroupIDsUnordered());
 
-        List<RangeSort.RangeSortEntry> sortables = new ArrayList<>();
+        List<RangeSortEntry> sortables = new ArrayList<>();
         for (CitationGroupID cgid : cgids) {
             XTextRange range = (this
                                 .getMarkRange(doc, cgid)
                                 .orElseThrow(RuntimeException::new));
-            sortables.add(new RangeSort.RangeSortEntry(range, 0, cgid));
+            sortables.add(new RangeSortEntry(range, 0, cgid));
         }
 
         /*
@@ -144,16 +144,16 @@ public class OOFrontend {
          */
 
         // Sort within partitions
-        RangeKeyedMapList<RangeSort.RangeSortEntry<CitationGroupID>> rangeSorter =
+        RangeKeyedMapList<RangeSortEntry<CitationGroupID>> rangeSorter =
             new RangeKeyedMapList<>();
-        for (RangeSort.RangeSortEntry sortable : sortables) {
+        for (RangeSortEntry sortable : sortables) {
             rangeSorter.add(sortable.getRange(), sortable);
         }
 
         // build final list
-        List<RangeSort.RangeSortEntry<CitationGroupID>> result = new ArrayList<>();
+        List<RangeSortEntry<CitationGroupID>> result = new ArrayList<>();
 
-        for (TreeMap<XTextRange, List<RangeSort.RangeSortEntry<CitationGroupID>>>
+        for (TreeMap<XTextRange, List<RangeSortEntry<CitationGroupID>>>
                  partition : rangeSorter.partitionValues()) {
 
             List<XTextRange> orderedRanges = new ArrayList<>(partition.keySet());
@@ -161,8 +161,8 @@ public class OOFrontend {
             int indexInPartition = 0;
             for (int i = 0; i < orderedRanges.size(); i++) {
                 XTextRange aRange = orderedRanges.get(i);
-                List<RangeSort.RangeSortEntry<CitationGroupID>> sortablesAtARange = partition.get(aRange);
-                for (RangeSort.RangeSortEntry<CitationGroupID> sortable : sortablesAtARange) {
+                List<RangeSortEntry<CitationGroupID>> sortablesAtARange = partition.get(aRange);
+                for (RangeSortEntry<CitationGroupID> sortable : sortablesAtARange) {
                     sortable.indexInPosition = indexInPartition++;
                     if (mapFootnotesToFootnoteMarks) {
                         Optional<XTextRange> footnoteMarkRange =
@@ -202,10 +202,10 @@ public class OOFrontend {
         NoDocumentException,
         JabRefException {
 
-        List<RangeSort.RangeSortable<CitationGroupID>> sortables =
+        List<RangeSortable<CitationGroupID>> sortables =
             createVisualSortInput(doc, mapFootnotesToFootnoteMarks);
 
-        List<RangeSort.RangeSortable<CitationGroupID>> sorted =
+        List<RangeSortable<CitationGroupID>> sorted =
             RangeSortVisual.visualSort(sortables,
                                        doc,
                                        fcursor);
@@ -228,7 +228,7 @@ public class OOFrontend {
         WrappedTargetException {
         // This is like getVisuallySortedCitationGroupIDs,
         // but we skip the visualSort part.
-        List<RangeSort.RangeSortable<CitationGroupID>> sortables =
+        List<RangeSortable<CitationGroupID>> sortables =
             createVisualSortInput(doc, mapFootnotesToFootnoteMarks);
 
         return (sortables.stream().map(e -> e.getContent()).collect(Collectors.toList()));
@@ -435,39 +435,36 @@ public class OOFrontend {
         NoDocumentException,
         WrappedTargetException {
 
-        final boolean debugPartitions = false;
+        List<RangeForOverlapCheck<CitationGroupID>> ranges = citationRanges(doc);
+        ranges.addAll(footnoteMarkRanges(doc));
 
-        List<RangeForOverlapCheck<CitationGroupID>> xs = citationRanges(doc);
-        xs.addAll(footnoteMarkRanges(doc));
-
-        RangeKeyedMapList<RangeForOverlapCheck<CitationGroupID>> xall = new RangeKeyedMapList<>();
-        for (RangeForOverlapCheck<CitationGroupID> x : xs) {
-            XTextRange key = x.range;
-            xall.add(key, x);
+        RangeKeyedMapList<RangeForOverlapCheck<CitationGroupID>> sorted = new RangeKeyedMapList<>();
+        for (RangeForOverlapCheck<CitationGroupID> aRange : ranges) {
+            sorted.add(aRange.range, aRange);
         }
 
-        List<RangeOverlap<RangeForOverlapCheck<CitationGroupID>>> ovs =
-            RangeOverlapFinder.findOverlappingRanges(xall, reportAtMost, requireSeparation);
+        List<RangeOverlap<RangeForOverlapCheck<CitationGroupID>>> overlaps =
+            RangeOverlapFinder.findOverlappingRanges(sorted, reportAtMost, requireSeparation);
 
-        if (ovs.size() > 0) {
-            String msg = "";
-            for (RangeOverlap<RangeForOverlapCheck<CitationGroupID>> e : ovs) {
-                String l = (": "
-                            + (e.valuesForOverlappingRanges.stream()
-                               .map(v -> String.format("'%s'", v.format()))
-                               .collect(Collectors.joining(", ")))
-                            + "\n");
+        if (overlaps.size() > 0) {
+            StringBuilder msg = new StringBuilder();
+            for (RangeOverlap<RangeForOverlapCheck<CitationGroupID>> overlap : overlaps) {
+                String listOfRanges = (overlap.valuesForOverlappingRanges.stream()
+                                       .map(v -> String.format("'%s'", v.format()))
+                                       .collect(Collectors.joining(", ")));
 
-                switch (e.kind) {
-                case EQUAL_RANGE: msg = msg + Localization.lang("Found identical ranges") + l;
-                    break;
-                case OVERLAP: msg = msg + Localization.lang("Found overlapping ranges") + l;
-                    break;
-                case TOUCH: msg = msg + Localization.lang("Found touching ranges") + l;
-                    break;
-                }
+                msg.append(
+                    switch (overlap.kind) {
+                    case EQUAL_RANGE -> Localization.lang("Found identical ranges");
+                    case OVERLAP -> Localization.lang("Found overlapping ranges");
+                    case TOUCH -> Localization.lang("Found touching ranges");
+                    });
+                msg.append(": ");
+                msg.append(listOfRanges);
+                msg.append("\n");
             }
-            return VoidResult.Error(new JabRefException("Found overlapping or touching ranges", msg));
+            return VoidResult.Error(new JabRefException("Found overlapping or touching ranges",
+                                                        msg.toString()));
         } else {
             return VoidResult.OK();
         }

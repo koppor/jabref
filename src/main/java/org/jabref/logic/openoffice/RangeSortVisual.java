@@ -126,8 +126,8 @@ public class RangeSortVisual {
      * @return The input, sorted by the elements XTextRange and
      *          getIndexInPosition.
      */
-    public static <T> List<RangeSort.RangeSortable<T>>
-    visualSort(List<RangeSort.RangeSortable<T>> vses,
+    public static <T> List<RangeSortable<T>>
+    visualSort(List<RangeSortable<T>> vses,
                XTextDocument doc,
                FunctionalTextViewCursor fcursor)
         throws
@@ -147,7 +147,7 @@ public class RangeSortVisual {
         // find coordinates
         List<Point> positions = new ArrayList<>(vses.size());
 
-        for (RangeSort.RangeSortable<T> v : vses) {
+        for (RangeSortable<T> v : vses) {
             positions.add(findPositionOfTextRange(v.getRange(),
                                                   viewCursor));
         }
@@ -159,7 +159,7 @@ public class RangeSortVisual {
         }
 
         // order by position
-        Set<ComparableMark<RangeSort.RangeSortable<T>>> set = new TreeSet<>();
+        Set<ComparableMark<RangeSortable<T>>> set = new TreeSet<>();
         for (int i = 0; i < vses.size(); i++) {
             set.add(new ComparableMark<>(positions.get(i),
                                          vses.get(i).getIndexInPosition(),
@@ -171,8 +171,8 @@ public class RangeSortVisual {
         }
 
         // collect CitationGroupIDs in order
-        List<RangeSort.RangeSortable<T>> result = new ArrayList<>(set.size());
-        for (ComparableMark<RangeSort.RangeSortable<T>> mark : set) {
+        List<RangeSortable<T>> result = new ArrayList<>(set.size());
+        for (ComparableMark<RangeSortable<T>> mark : set) {
             result.add(mark.getContent());
         }
 
