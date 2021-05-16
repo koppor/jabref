@@ -1,10 +1,8 @@
-package org.jabref.logic.openoffice;
+package org.jabref.model.openoffice;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import org.jabref.model.openoffice.VoidResult;
 
 /*
  * error cannot be null

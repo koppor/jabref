@@ -23,7 +23,6 @@ import org.jabref.logic.openoffice.ManageCitations;
 import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.NoDocumentFoundException;
 import org.jabref.logic.openoffice.OOFrontend;
-import org.jabref.logic.openoffice.Result;
 import org.jabref.logic.openoffice.UnoCursor;
 import org.jabref.logic.openoffice.UnoRedlines;
 import org.jabref.logic.openoffice.UnoStyle;
@@ -33,6 +32,7 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.openoffice.CitationEntry;
+import org.jabref.model.openoffice.Result;
 import org.jabref.model.openoffice.VoidResult;
 
 import com.sun.star.beans.IllegalTypeException;

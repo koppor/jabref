@@ -11,9 +11,9 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.openoffice.CreationException;
 import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.NoDocumentFoundException;
-import org.jabref.logic.openoffice.Result;
 import org.jabref.logic.openoffice.UnoCast;
 import org.jabref.logic.openoffice.UnoTextDocument;
+import org.jabref.model.openoffice.Result;
 
 import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.container.NoSuchElementException;
