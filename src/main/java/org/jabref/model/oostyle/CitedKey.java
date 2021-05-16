@@ -1,4 +1,4 @@
-package org.jabref.logic.oostyle;
+package org.jabref.model.oostyle;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -6,8 +6,6 @@ import java.util.Optional;
 
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.oostyle.CitationDatabaseLookup;
-import org.jabref.model.oostyle.OOFormattedText;
 
 public class CitedKey implements CitationSort.ComparableCitation {
     public String citationKey;

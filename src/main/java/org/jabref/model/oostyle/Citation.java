@@ -1,10 +1,8 @@
-package org.jabref.logic.oostyle;
+package org.jabref.model.oostyle;
 
 import java.util.Optional;
 
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.oostyle.CitationDatabaseLookup;
-import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.openoffice.Pair;
 
 public class Citation implements CitationSort.ComparableCitation {

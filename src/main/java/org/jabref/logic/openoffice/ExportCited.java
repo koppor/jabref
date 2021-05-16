@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jabref.logic.oostyle.CitedKey;
-import org.jabref.logic.oostyle.CitedKeys;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.oostyle.CitedKey;
+import org.jabref.model.oostyle.CitedKeys;
 import org.jabref.model.openoffice.NoDocumentException;
 
 import com.sun.star.beans.UnknownPropertyException;

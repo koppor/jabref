@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.jabref.logic.JabRefException;
-import org.jabref.logic.oostyle.CitationGroup;
-import org.jabref.logic.oostyle.CitationGroups;
 import org.jabref.logic.oostyle.OOBibStyle;
+import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroupID;
+import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.openoffice.CreationException;

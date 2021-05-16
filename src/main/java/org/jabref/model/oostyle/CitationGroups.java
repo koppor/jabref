@@ -1,4 +1,4 @@
-package org.jabref.logic.oostyle;
+package org.jabref.model.oostyle;
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -11,9 +11,6 @@ import java.util.function.Consumer;
 
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.oostyle.CitationDatabaseLookup;
-import org.jabref.model.oostyle.CitationGroupID;
-import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.openoffice.Pair;
 
 import org.slf4j.Logger;

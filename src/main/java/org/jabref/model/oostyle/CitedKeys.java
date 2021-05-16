@@ -1,4 +1,4 @@
-package org.jabref.logic.oostyle;
+package org.jabref.model.oostyle;
 
 import java.util.ArrayList;
 import java.util.Comparator;

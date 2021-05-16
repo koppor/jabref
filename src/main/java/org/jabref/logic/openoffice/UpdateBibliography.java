@@ -2,9 +2,9 @@ package org.jabref.logic.openoffice;
 
 import java.util.Optional;
 
-import org.jabref.logic.oostyle.CitedKeys;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.OOFormatBibliography;
+import org.jabref.model.oostyle.CitedKeys;
 import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;

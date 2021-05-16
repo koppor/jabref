@@ -1,6 +1,4 @@
-package org.jabref.logic.oostyle;
-
-import org.jabref.model.oostyle.CitationGroupID;
+package org.jabref.model.oostyle;
 
 /**
  * Identifies a citation with the citation group containing it and

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
+import org.jabref.model.oostyle.CitationSort;
 import org.jabref.model.oostyle.OOFormattedText;
 
 class OOBibStyleGetNumCitationMarker {
@@ -30,7 +31,7 @@ class OOBibStyleGetNumCitationMarker {
     private static int compareNumberWithPageInfo(NumberWithPageInfo a, NumberWithPageInfo b) {
         int res = Integer.compare(a.num, b.num);
         if (res == 0) {
-            res = OOBibStyle.comparePageInfo(a.pageInfo, b.pageInfo);
+            res = CitationSort.comparePageInfo(a.pageInfo, b.pageInfo);
         }
         return res;
     }

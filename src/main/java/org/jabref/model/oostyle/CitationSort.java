@@ -1,14 +1,13 @@
-package org.jabref.logic.oostyle;
+package org.jabref.model.oostyle;
 
 import java.util.Comparator;
 import java.util.Optional;
 
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.oostyle.OOFormattedText;
 
-class CitationSort {
+public class CitationSort {
 
-    interface ComparableCitation {
+    public interface ComparableCitation {
 
         public String getCitationKey();
 
@@ -17,7 +16,7 @@ class CitationSort {
         public Optional<OOFormattedText> getPageInfo();
     }
 
-    static class CitationComparator implements Comparator<ComparableCitation> {
+    public static class CitationComparator implements Comparator<ComparableCitation> {
 
         Comparator<BibEntry> entryComparator;
         boolean unresolvedComesFirst;
@@ -50,11 +49,39 @@ class CitationSort {
             }
             // Also consider pageInfo
             if (res == 0) {
-                OOBibStyle.comparePageInfo(a.getPageInfo().orElse(null),
-                                           b.getPageInfo().orElse(null));
+                CitationSort.comparePageInfo(a.getPageInfo().orElse(null),
+                                             b.getPageInfo().orElse(null));
             }
             return res;
         }
     }
 
+    public static String regularizePageInfoToString(OOFormattedText p) {
+        if (p == null) {
+            return null;
+        }
+        String pt = OOFormattedText.toString(p).trim();
+        return (pt.equals("") ? null : pt);
+    }
+
+    /**
+     * Defines sort order for pageInfo strings.
+     *
+     * null comes before non-null
+     */
+    public static int comparePageInfo(OOFormattedText a, OOFormattedText b) {
+
+        String aa = regularizePageInfoToString(a);
+        String bb = regularizePageInfoToString(b);
+        if (aa == null && bb == null) {
+            return 0;
+        }
+        if (aa == null) {
+            return -1;
+        }
+        if (bb == null) {
+            return +1;
+        }
+        return aa.compareTo(bb);
+    }
 }

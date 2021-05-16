@@ -30,6 +30,7 @@ import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.EntryTypeFactory;
+import org.jabref.model.oostyle.CitationSort;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 
@@ -940,15 +941,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     }
 
     public static OOFormattedText regularizePageInfo(OOFormattedText p) {
-        if (p == null) {
-            return null;
-        }
-        String pt = OOFormattedText.toString(p).trim();
-        if (pt.equals("")) {
-            return null;
-        } else {
-            return OOFormattedText.fromString(pt);
-        }
+        return OOFormattedText.fromString(CitationSort.regularizePageInfoToString(p));
     }
 
     /**
@@ -976,26 +969,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
             }
             return res;
         }
-    }
-
-    /**
-     * Defines sort order for pageInfo strings.
-     *
-     * null comes before non-null
-     */
-    public static int comparePageInfo(OOFormattedText a, OOFormattedText b) {
-        String aa = OOFormattedText.toString(regularizePageInfo(a));
-        String bb = OOFormattedText.toString(regularizePageInfo(b));
-        if (aa == null && bb == null) {
-            return 0;
-        }
-        if (aa == null) {
-            return -1;
-        }
-        if (bb == null) {
-            return +1;
-        }
-        return aa.compareTo(bb);
     }
 
     public OOFormattedText getNormalizedCitationMarker(CitationMarkerEntry ce) {
