@@ -11,9 +11,9 @@ import com.sun.star.text.XTextRange;
  * checking, we need a {@code description} that can be understood
  * by the user.
  *
- * To be able to refer back to more extended data, we might need
- * to identify its {@code kind}, and index ({@code i}) in the
- * corresponding tables.
+ * To be able to refer back to more extended data, we might need to
+ * identify its {@code kind}, and its index in the corresponding
+ * tables or other identifier within its kind ({@code idWithinKind})
  *
  */
 public class RangeForOverlapCheck<T> {
@@ -22,13 +22,13 @@ public class RangeForOverlapCheck<T> {
 
     public final XTextRange range;
     public final int kind;
-    public final T i; // TODO: rename to content if identifier or cgid
+    public final T idWithinKind;
     private final String description;
 
-    public RangeForOverlapCheck(XTextRange range, T i, int kind, String description) {
+    public RangeForOverlapCheck(XTextRange range, T idWithinKind, int kind, String description) {
         this.range = range;
         this.kind = kind;
-        this.i = i;
+        this.idWithinKind = idWithinKind;
         this.description = description;
     }
 

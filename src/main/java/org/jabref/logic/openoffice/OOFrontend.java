@@ -415,7 +415,7 @@ public class OOFrontend {
             if (!seenContains) {
                 seen.put(footnoteMarkRange.get(), true);
                 result.add(new RangeForOverlapCheck(footnoteMarkRange.get(),
-                                                    base.i, // cgid :: identifies of citation group
+                                                    base.idWithinKind,
                                                     RangeForOverlapCheck.FOOTNOTE_MARK_KIND,
                                                     "FootnoteMark for " + base.format()));
             }
