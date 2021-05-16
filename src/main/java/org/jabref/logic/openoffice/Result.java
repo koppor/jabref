@@ -2,6 +2,7 @@ package org.jabref.logic.openoffice;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /*
  * error cannot be null
