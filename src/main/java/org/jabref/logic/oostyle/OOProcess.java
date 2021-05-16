@@ -19,6 +19,8 @@ import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
+import org.jabref.model.oostyle.CitationMarkerEntry;
+import org.jabref.model.oostyle.CitationMarkerEntryImpl;
 import org.jabref.model.oostyle.CitedKey;
 import org.jabref.model.oostyle.CitedKeys;
 import org.jabref.model.oostyle.InTextCitationType;

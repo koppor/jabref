@@ -6,11 +6,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jabref.logic.JabRefException;
-import org.jabref.logic.oostyle.CitationMarkerEntry;
-import org.jabref.logic.oostyle.CitationMarkerEntryImpl;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.oostyle.CitationMarkerEntry;
+import org.jabref.model.oostyle.CitationMarkerEntryImpl;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
