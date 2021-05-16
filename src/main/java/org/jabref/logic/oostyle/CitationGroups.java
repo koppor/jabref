@@ -9,12 +9,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.jabref.logic.openoffice.Pair;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.CitationDatabaseLookup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.openoffice.Pair;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

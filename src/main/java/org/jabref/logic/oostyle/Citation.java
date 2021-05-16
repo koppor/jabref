@@ -2,10 +2,10 @@ package org.jabref.logic.oostyle;
 
 import java.util.Optional;
 
-import org.jabref.logic.openoffice.Pair;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.CitationDatabaseLookup;
 import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.openoffice.Pair;
 
 public class Citation implements CitationSort.ComparableCitation {
 

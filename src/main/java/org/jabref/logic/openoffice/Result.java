@@ -94,19 +94,19 @@ public class Result<R, E> {
         return this;
     }
 
+    public <S> Result<S, E> map(Function<R, S> fun) {
+        if (isError()) {
+            return Error(getError());
+        } else {
+            return OK(fun.apply(get()));
+        }
+    }
+
     public <F> Result<R, F> mapError(Function<E, F> fun) {
         if (isError()) {
             return Error(fun.apply(getError()));
         } else {
             return OK(get());
-        }
-    }
-
-    public <F> Result<R, F> map(Function<R, S> fun) {
-        if (isError()) {
-            return Error(getError());
-        } else {
-            return OK(fun.apply(get()));
         }
     }
 
