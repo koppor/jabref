@@ -16,10 +16,10 @@ import com.sun.star.text.XTextRange;
  *          (of type V)
  *
  * Since XTextRange values are only comparable if they share the same
- * r.getText(), we group them by these.
+ * range.getText(), we group them by these.
  *
  * Within such groups (partitions) we may define comparison, here
- * based on (r.getStart(),r.getEnd()), thus equality means identical
+ * based on (range.getStart(),range.getEnd()), thus equality means identical
  * ranges.
  *
  * For finding overlapping ranges this class proved insufficient,
@@ -28,27 +28,28 @@ import com.sun.star.text.XTextRange;
  *
  */
 public class RangeKeyedMap<V> {
-    private final Map<XText, TreeMap<XTextRange, V>> xxs;
+
+    private final Map<XText, TreeMap<XTextRange, V>> partitions;
 
     public RangeKeyedMap() {
-        this.xxs = new HashMap<>();
+        this.partitions = new HashMap<>();
     }
 
-    public boolean containsKey(XTextRange r) {
-        Objects.requireNonNull(r);
-        XText partitionKey = r.getText();
-        if (!xxs.containsKey(partitionKey)) {
+    public boolean containsKey(XTextRange range) {
+        Objects.requireNonNull(range);
+        XText partitionKey = range.getText();
+        if (!partitions.containsKey(partitionKey)) {
             return false;
         }
-        return xxs.get(partitionKey).containsKey(r);
+        return partitions.get(partitionKey).containsKey(range);
     }
 
-    public V get(XTextRange r) {
-        TreeMap<XTextRange, V> xs = xxs.get(r.getText());
-        if (xs == null) {
+    public V get(XTextRange range) {
+        TreeMap<XTextRange, V> partition = partitions.get(range.getText());
+        if (partition == null) {
             return null;
         }
-        return xs.get(r);
+        return partition.get(range);
     }
 
     private static int comparator(XTextRange a, XTextRange b) {
@@ -59,19 +60,19 @@ public class RangeKeyedMap<V> {
         return UnoTextRange.compareEnds(a, b);
     }
 
-    public V put(XTextRange r, V value) {
-        TreeMap<XTextRange, V> xs = xxs.get(r.getText());
-        if (xs == null) {
-            xs = new TreeMap<>(RangeKeyedMap::comparator);
-            xxs.put(r.getText(), xs);
+    public V put(XTextRange range, V value) {
+        TreeMap<XTextRange, V> partition = partitions.get(range.getText());
+        if (partition == null) {
+            partition = new TreeMap<>(RangeKeyedMap::comparator);
+            partitions.put(range.getText(), partition);
         }
-        return xs.put(r, value);
+        return partition.put(range, value);
     }
 
     /**
      * @return A list of the partitions.
      */
     public List<TreeMap<XTextRange, V>> partitionValues() {
-        return new ArrayList(xxs.values());
+        return new ArrayList(partitions.values());
     }
 }
