@@ -221,7 +221,7 @@ class OOBibBase {
     }
 
     /**
-     * This may move the user cursor.
+     * This may move the view cursor.
      */
     Result<FunctionalTextViewCursor, OOError> getFunctionalTextViewCursor(XTextDocument doc,
                                                                           String title) {
@@ -566,6 +566,13 @@ class OOBibBase {
         XTextDocument doc = odoc.get();
         Result<XTextCursor, OOError> cursor = getUserCursorForTextInsertion(doc, title);
 
+        if (testDialog(title,
+                       cursor.asVoidResult(),
+                       checkStylesExistInTheDocument(style, doc),
+                       checkIfOpenOfficeIsRecordingChanges(doc))) {
+            return;
+        }
+
         /*
          * For sync we need a FunctionalTextViewCursor.
          */
@@ -577,13 +584,6 @@ class OOBibBase {
                 return;
             }
             fcursorOpt = fcursor.getOptional();
-        }
-
-        if (testDialog(title,
-                       cursor.asVoidResult(),
-                       checkStylesExistInTheDocument(style, doc),
-                       checkIfOpenOfficeIsRecordingChanges(doc))) {
-            return;
         }
 
         syncOptions
