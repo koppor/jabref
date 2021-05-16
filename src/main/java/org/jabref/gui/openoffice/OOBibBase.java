@@ -29,11 +29,11 @@ import org.jabref.logic.openoffice.UnoRedlines;
 import org.jabref.logic.openoffice.UnoStyle;
 import org.jabref.logic.openoffice.UnoUndo;
 import org.jabref.logic.openoffice.Update;
-import org.jabref.logic.openoffice.VoidResult;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.openoffice.CitationEntry;
+import org.jabref.model.openoffice.VoidResult;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
