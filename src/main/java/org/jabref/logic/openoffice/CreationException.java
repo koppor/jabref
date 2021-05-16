@@ -1,8 +1,10 @@
 package org.jabref.logic.openoffice;
 
 /**
- * Exception used to indicate that the plugin attempted to set a character format that is
- * not defined in the current OpenOffice document.
+ * Exception used to indicate failure in either
+ *
+ *  XMultiServiceFactory.createInstance()
+ *  XMultiComponentFactory.createInstanceWithContext()
  */
 public class CreationException extends Exception {
 
