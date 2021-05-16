@@ -13,7 +13,6 @@ import org.jabref.gui.DialogService;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.oostyle.OOBibStyle;
-import org.jabref.logic.openoffice.ConnectionLostException;
 import org.jabref.logic.openoffice.CreationException;
 import org.jabref.logic.openoffice.EditInsert;
 import org.jabref.logic.openoffice.EditMerge;
@@ -90,17 +89,21 @@ class OOBibBase {
     }
 
     public void guiActionSelectDocument(boolean autoSelectForSingle) {
+        final String title = Localization.lang("Problem connecting");
+
         try {
 
             this.connection.selectDocument(autoSelectForSingle);
 
         } catch (NoDocumentFoundException ex) {
             OOError.from(ex).showErrorDialog(dialogService);
+        } catch (DisposedException ex) {
+            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (WrappedTargetException
                  | IndexOutOfBoundsException
                  | NoSuchElementException ex) {
             LOGGER.warn("Problem connecting", ex);
-            dialogService.showErrorDialogAndWait(ex);
+            OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
         }
 
         if (this.isConnectedToDocument()) {
@@ -404,7 +407,10 @@ class OOBibBase {
             return Optional.of(ManageCitations.getCitationEntries(doc));
 
         } catch (NoDocumentException ex) {
-            OOError.from(ex).showErrorDialog(dialogService);
+            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
+            return FAIL;
+        } catch (DisposedException ex) {
+            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
             return FAIL;
         } catch (UnknownPropertyException
                  | WrappedTargetException ex) {
@@ -454,6 +460,8 @@ class OOBibBase {
             ManageCitations.applyCitationEntries(doc, citationEntries);
 
         } catch (NoDocumentException ex) {
+            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
+        } catch (DisposedException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (UnknownPropertyException
                  | NotRemoveableException
@@ -578,11 +586,7 @@ class OOBibBase {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
             return;
         } catch (DisposedException ex) {
-            // We need to catch this one here because the OpenOfficePanel class is
-            // loaded before connection, and therefore cannot directly reference
-            // or catch a DisposedException (which is in a OO JAR file).
-            // throw new ConnectionLostException(ex.getMessage());
-            OOError.from(new ConnectionLostException("DisposedException")).showErrorDialog(dialogService);
+            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
             return;
         } catch (JabRefException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
@@ -638,6 +642,8 @@ class OOBibBase {
 
         } catch (NoDocumentException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
+        } catch (DisposedException ex) {
+            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (JabRefException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (CreationException
@@ -690,6 +696,8 @@ class OOBibBase {
             EditSeparate.separateCitations(doc, fr, databases, style);
 
         } catch (NoDocumentException ex) {
+            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
+        } catch (DisposedException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (JabRefException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
@@ -772,7 +780,9 @@ class OOBibBase {
             }
             return Optional.of(result.newDatabase);
         } catch (NoDocumentException ex) {
-                OOError.from(ex).showErrorDialog(dialogService);
+            OOError.from(ex).showErrorDialog(dialogService);
+        } catch (DisposedException ex) {
+            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (NoSuchElementException
                  | UnknownPropertyException
                  | WrappedTargetException
@@ -847,11 +857,11 @@ class OOBibBase {
             }
 
         } catch (JabRefException ex) {
-            OOError.from(ex).showErrorDialog(dialogService);
-        } catch (ConnectionLostException ex) {
-            OOError.from(ex).showErrorDialog(dialogService);
+            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (NoDocumentException ex) {
-            OOError.from(ex).showErrorDialog(dialogService);
+            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
+        } catch (DisposedException ex) {
+            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (CreationException
                  | NoSuchElementException
                  | PropertyVetoException

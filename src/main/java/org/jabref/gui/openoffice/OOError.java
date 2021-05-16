@@ -3,9 +3,10 @@ package org.jabref.gui.openoffice;
 import org.jabref.gui.DialogService;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.openoffice.ConnectionLostException;
 import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.NoDocumentFoundException;
+
+import com.sun.star.lang.DisposedException;
 
 class OOError extends JabRefException {
 
@@ -53,19 +54,14 @@ class OOError extends JabRefException {
         return from(ex);
     }
 
-    // For ConnectionLostException
-    public static OOError from(ConnectionLostException ex) {
+    // For DisposedException
+    public static OOError from(DisposedException ex) {
         return new OOError(
             Localization.lang("Connection lost"),
             Localization.lang("Connection to OpenOffice/LibreOffice has been lost."
                               + " Please make sure OpenOffice/LibreOffice is running,"
                               + " and try to reconnect."),
             ex);
-    }
-
-    public static void
-    showConnectionLostErrorMessage(DialogService dialogService, ConnectionLostException ex) {
-        OOError.from(ex).showErrorDialog(dialogService);
     }
 
     // For NoDocumentException

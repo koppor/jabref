@@ -28,7 +28,6 @@ public class Update {
                                               boolean doUpdateBibliography,
                                               boolean alwaysAddCitedOnPages)
         throws
-        ConnectionLostException,
         CreationException,
         JabRefException,
         NoDocumentException,
