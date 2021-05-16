@@ -147,7 +147,7 @@ public class OOFrontend {
         }
 
         // build final list
-        List<RangeSort.RangeSortEntry<CitationGroupID>> res = new ArrayList<>();
+        List<RangeSort.RangeSortEntry<CitationGroupID>> result = new ArrayList<>();
 
         for (TreeMap<XTextRange, List<RangeSort.RangeSortEntry<CitationGroupID>>>
                  partition : rangeSorter.partitionValues()) {
@@ -168,11 +168,11 @@ public class OOFrontend {
                             sortable.range = footnoteMarkRange.get();
                         }
                     }
-                    res.add(sortable);
+                    result.add(sortable);
                 }
             }
         }
-        return res.stream().map(e -> e).collect(Collectors.toList());
+        return result.stream().map(e -> e).collect(Collectors.toList());
     }
 
     /**
@@ -400,11 +400,10 @@ public class OOFrontend {
 
         List<RangeForOverlapCheck> result = new ArrayList<>();
 
-        List<RangeForOverlapCheck> citRanges = citationRanges(doc);
+        for (RangeForOverlapCheck citationRange : citationRanges(doc)) {
 
-        for (RangeForOverlapCheck base : citRanges) {
-
-            Optional<XTextRange> footnoteMarkRange = UnoTextRange.getFootnoteMarkRange(base.range);
+            Optional<XTextRange> footnoteMarkRange =
+                UnoTextRange.getFootnoteMarkRange(citationRange.range);
 
             if (footnoteMarkRange.isEmpty()) {
                 // not in footnote
@@ -415,9 +414,9 @@ public class OOFrontend {
             if (!seenContains) {
                 seen.put(footnoteMarkRange.get(), true);
                 result.add(new RangeForOverlapCheck(footnoteMarkRange.get(),
-                                                    base.idWithinKind,
+                                                    citationRange.idWithinKind,
                                                     RangeForOverlapCheck.FOOTNOTE_MARK_KIND,
-                                                    "FootnoteMark for " + base.format()));
+                                                    "FootnoteMark for " + citationRange.format()));
             }
         }
         return result;
