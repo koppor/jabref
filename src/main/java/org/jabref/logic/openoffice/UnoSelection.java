@@ -1,22 +1,40 @@
 package org.jabref.logic.openoffice;
 
+import java.util.Objects;
 import java.util.Optional;
 
+import com.sun.star.frame.XController;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.view.XSelectionSupplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Selection in the document.
  */
 public class UnoSelection {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UnoSelection.class);
+
     private UnoSelection() { }
 
     private static Optional<XSelectionSupplier> getSelectionSupplier(XTextDocument doc) {
-        return (Optional.ofNullable(doc)
-                .map(e -> UnoTextDocument.getCurrentController(e))
-                .flatMap(e -> UnoCast.optUnoQI(XSelectionSupplier.class, e)));
+        if (doc == null) {
+            LOGGER.warn("UnoSelection.getSelectionSupplier: doc is null");
+            return Optional.empty();
+        }
+        Optional<XController> controller = UnoTextDocument.getCurrentController(doc);
+        if (controller.isEmpty()) {
+            LOGGER.warn("UnoSelection.getSelectionSupplier: getCurrentController(doc) returned empty");
+            return Optional.empty();
+        }
+        XSelectionSupplier supplier = UnoCast.unoQI(XSelectionSupplier.class, controller.get());
+        if (supplier == null) {
+            LOGGER.warn("UnoSelection.getSelectionSupplier: unoQI(XSelectionSupplier) returned null");
+            return Optional.empty();
+        }
+        return Optional.of(supplier);
     }
 
     /**
@@ -63,9 +81,22 @@ public class UnoSelection {
      *      "com.sun.star.text.TextGraphicObject"
      */
     public static Optional<XServiceInfo> getSelectionAsXServiceInfo(XTextDocument doc) {
-        return (getSelectionSupplier(doc)
-                .flatMap(e -> Optional.ofNullable(e.getSelection()))
-                .flatMap(e -> UnoCast.optUnoQI(XServiceInfo.class, e)));
+        Objects.requireNonNull(doc);
+        Optional<XSelectionSupplier> supplier = getSelectionSupplier(doc);
+        if (supplier.isEmpty()) {
+            LOGGER.warn("getSelectionSupplier returned empty");
+            return Optional.empty();
+        }
+        Object selection = supplier.get().getSelection();
+        if (selection == null) {
+            return Optional.empty();
+        }
+        XServiceInfo result = UnoCast.unoQI(XServiceInfo.class, selection);
+        if (result == null) {
+            LOGGER.warn("unoQI(XServiceInfo) returned null");
+            return Optional.empty();
+        }
+        return Optional.of(result);
     }
 
     /**
@@ -78,6 +109,7 @@ public class UnoSelection {
      *
      */
     public static void select(XTextDocument doc, Object newSelection) {
+        Objects.requireNonNull(doc);
         getSelectionSupplier(doc).ifPresent(e -> e.select(newSelection));
     }
 }

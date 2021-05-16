@@ -25,7 +25,7 @@ public class UnoCursor {
     /**
      * Create a text cursor for a textContent.
      *
-     * @return null if mark is null, otherwise cursor.
+     * @return Optional.empty if mark is null, otherwise cursor.
      *
      */
     public static Optional<XTextCursor> getTextCursorOfTextContentAnchor(XTextContent mark) {
@@ -37,5 +37,9 @@ public class UnoCursor {
             return Optional.empty();
         }
         return Optional.of(markAnchor.getText().createTextCursorByRange(markAnchor));
+    }
+
+    public static XTextCursor createTextCursorByRange(XTextRange r) {
+        return r.getText().createTextCursorByRange(r);
     }
 }

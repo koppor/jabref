@@ -42,7 +42,15 @@ public class UnoTextDocument {
     }
 
     public static Optional<XController> getCurrentController(XTextDocument doc) {
-        return Optional.ofNullable(doc).flatMap(e -> Optional.ofNullable(e.getCurrentController()));
+        if (doc == null) {
+            return Optional.empty();
+        }
+        XController controller = doc.getCurrentController();
+        if (controller == null) {
+            LOGGER.warn("doc.getCurrentController() returned null");
+            return Optional.empty();
+        }
+        return Optional.of(controller);
     }
 
     /**

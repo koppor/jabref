@@ -18,6 +18,7 @@ import org.jabref.logic.openoffice.EditInsert;
 import org.jabref.logic.openoffice.EditMerge;
 import org.jabref.logic.openoffice.EditSeparate;
 import org.jabref.logic.openoffice.ExportCited;
+import org.jabref.logic.openoffice.FunctionalTextViewCursor;
 import org.jabref.logic.openoffice.ManageCitations;
 import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.NoDocumentFoundException;
@@ -217,6 +218,22 @@ class OOBibBase {
             return Result.Error(new OOError(title, msg, ex));
         }
         return Result.OK(cursor);
+    }
+
+    /**
+     * This may move the user cursor.
+     */
+    Result<FunctionalTextViewCursor, OOError> getFunctionalTextViewCursor(XTextDocument doc,
+                                                                          String title) {
+        String messageOnFailureToObtain =
+            Localization.lang("Please move the cursor into the document text.")
+            + "\n"
+            + Localization.lang("To get the visual positions of your citations"
+                                + " I need to move the cursor around,"
+                                + " but could not get it.");
+        Result<FunctionalTextViewCursor, JabRefException> result =
+            FunctionalTextViewCursor.get(doc, messageOnFailureToObtain);
+        return result.mapError(e -> OOError.from(e).setTitle(title));
     }
 
     /*
@@ -549,6 +566,19 @@ class OOBibBase {
         XTextDocument doc = odoc.get();
         Result<XTextCursor, OOError> cursor = getUserCursorForTextInsertion(doc, title);
 
+        /*
+         * For sync we need a FunctionalTextViewCursor.
+         */
+        Optional<FunctionalTextViewCursor> fcursorOpt = Optional.empty();
+
+        if (syncOptions.isPresent()) {
+            Result<FunctionalTextViewCursor, OOError> fcursor = getFunctionalTextViewCursor(doc, title);
+            if (testDialog(title, fcursor.asVoidResult())) {
+                return;
+            }
+            fcursorOpt = fcursor.getOptional();
+        }
+
         if (testDialog(title,
                        cursor.asVoidResult(),
                        checkStylesExistInTheDocument(style, doc),
@@ -580,7 +610,8 @@ class OOBibBase {
                                            style,
                                            citationType,
                                            pageInfo,
-                                           syncOptions);
+                                           syncOptions,
+                                           fcursorOpt);
 
         } catch (NoDocumentException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
@@ -625,7 +656,10 @@ class OOBibBase {
 
         XTextDocument doc = odoc.get();
 
+        Result<FunctionalTextViewCursor, OOError> fcursor = getFunctionalTextViewCursor(doc, title);
+
         if (testDialog(title,
+                       fcursor.asVoidResult(),
                        checkStylesExistInTheDocument(style, doc),
                        checkIfOpenOfficeIsRecordingChanges(doc))) {
             return;
@@ -638,7 +672,8 @@ class OOBibBase {
             EditMerge.mergeCitationGroups(doc,
                                           fr,
                                           databases,
-                                          style);
+                                          style,
+                                          fcursor.get());
 
         } catch (NoDocumentException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
@@ -682,8 +717,10 @@ class OOBibBase {
         }
 
         XTextDocument doc = odoc.get();
+        Result<FunctionalTextViewCursor, OOError> fcursor = getFunctionalTextViewCursor(doc, title);
 
         if (testDialog(title,
+                       fcursor.asVoidResult(),
                        checkStylesExistInTheDocument(style, doc),
                        checkIfOpenOfficeIsRecordingChanges(doc))) {
             return;
@@ -693,7 +730,7 @@ class OOBibBase {
             UnoUndo.enterUndoContext(doc, "Separate citations");
 
             OOFrontend fr = new OOFrontend(doc);
-            EditSeparate.separateCitations(doc, fr, databases, style);
+            EditSeparate.separateCitations(doc, fr, databases, style, fcursor.get());
 
         } catch (NoDocumentException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
@@ -815,7 +852,10 @@ class OOBibBase {
 
             XTextDocument doc = odoc.get();
 
+            Result<FunctionalTextViewCursor, OOError> fcursor = getFunctionalTextViewCursor(doc, title);
+
             if (testDialog(title,
+                           fcursor.asVoidResult(),
                            checkStylesExistInTheDocument(style, doc),
                            checkIfOpenOfficeIsRecordingChanges(doc))) {
                 return;
@@ -841,6 +881,7 @@ class OOBibBase {
                                                    fr,
                                                    databases,
                                                    style,
+                                                   fcursor.get(),
                                                    doUpdateBibliography,
                                                    this.alwaysAddCitedOnPages);
             } finally {

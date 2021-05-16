@@ -76,6 +76,13 @@ public class EditInsert {
 
     /*
      * @param cursor Where to insert.
+     *
+     * @param sync If not empty, update citation markers and,
+     *             depending on the embedded options, the
+     *             bibliography.
+     *
+     * @param fcursor If sync.isPresent(), it must provide a
+     *                FunctionalTextViewCursor. Otherwise not used.
      */
     public static void insertCitationGroup(XTextDocument doc,
                                            OOFrontend fr,
@@ -85,7 +92,8 @@ public class EditInsert {
                                            OOBibStyle style,
                                            InTextCitationType citationType,
                                            String pageInfo,
-                                           Optional<SyncOptions> sync)
+                                           Optional<SyncOptions> sync,
+                                           Optional<FunctionalTextViewCursor> fcursor)
         throws
         UnknownPropertyException,
         NoDocumentException,
@@ -157,6 +165,7 @@ public class EditInsert {
                                   fr2,
                                   sync.get().databases,
                                   style,
+                                  fcursor.get(),
                                   sync.get().updateBibliography,
                                   sync.get().alwaysAddCitedOnPages);
 

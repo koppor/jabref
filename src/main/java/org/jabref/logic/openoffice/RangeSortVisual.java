@@ -1,17 +1,13 @@
 package org.jabref.logic.openoffice;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jabref.logic.JabRefException;
-
 import com.sun.star.awt.Point;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.lang.XServiceInfo;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextViewCursor;
@@ -126,13 +122,6 @@ public class RangeSortVisual {
      * Sort its input {@code vses} visually.
      *
      * Requires a functional {@code XTextViewCursor}.
-     * In case the user selected a frame, it can get one,
-     * but not if the cursor is in a comment. In the latter case
-     * it throws a JabRefException asking the user to move the cursor.
-     *
-     * @param messageOnFailureToObtainAFunctionalXTextViewCursor
-     *        A localized message to the user, asking to move the cursor
-     *        into the document.
      *
      * @return The input, sorted by the elements XTextRange and
      *          getIndexInPosition.
@@ -140,11 +129,10 @@ public class RangeSortVisual {
     public static <T> List<RangeSort.RangeSortable<T>>
     visualSort(List<RangeSort.RangeSortable<T>> vses,
                XTextDocument doc,
-               String messageOnFailureToObtainAFunctionalXTextViewCursor)
+               FunctionalTextViewCursor fcursor)
         throws
         WrappedTargetException,
-        NoDocumentException,
-        JabRefException {
+        NoDocumentException {
 
         final int inputSize = vses.size();
 
@@ -154,65 +142,7 @@ public class RangeSortVisual {
                         + " is probably useless");
         }
 
-        /*
-         * A problem with XTextViewCursor: if it is not in text,
-         * then we get a crippled version that does not support
-         * viewCursor.getStart() or viewCursor.gotoRange(range,false),
-         * and will throw an exception instead.
-         *
-         * Our hope is that either we can move the cursor with a
-         * page- or scrolling-based method that does not throw, (see
-         * https://docs.libreoffice.org/sw/html/unotxvw_8cxx_source.html#l00896
-         * ) or that we can manipulate the cursor via getSelection and
-         * select (of XSelectionSupplier).
-         *
-         * Here we implemented the second, selection-based method.
-         * Seems to work when the user selected a frame or image.
-         * In these cases restoring the selection works, too.
-         *
-         * Still, we have a problem when the cursor is in a comment
-         * (referred to as "annotation" in OO API): in this case
-         * initialSelection is null, and Documentconnection.select()
-         * does not help to get a function viewCursor. Having no
-         * better idea, we ask the user to move the cursor into the
-         * document.
-         */
-
-        /*
-         *  Selection-based
-         */
-        final boolean debugThisFun = false;
-
-        XServiceInfo initialSelection = UnoSelection.getSelectionAsXServiceInfo(doc).orElse(null);
-
-        if (initialSelection != null) {
-            if (Arrays.stream(initialSelection.getSupportedServiceNames())
-                .anyMatch("com.sun.star.text.TextRanges"::equals)) {
-                // we are probably OK with the viewCursor
-                if (debugThisFun) {
-                    LOGGER.info("visualSort: initialSelection supports TextRanges: no action needed.");
-                }
-            } else {
-                if (debugThisFun) {
-                    LOGGER.info("visualSort: initialSelection does not support TextRanges."
-                                + " We need to change the viewCursor.");
-                }
-                XTextRange newSelection = doc.getText().getStart();
-                UnoSelection.select(doc, newSelection);
-            }
-        } else {
-            if (debugThisFun) {
-                LOGGER.info("visualSort: initialSelection is null: no idea what to do.");
-            }
-        }
-
-        XTextViewCursor viewCursor = UnoCursor.getViewCursor(doc).orElse(null);
-        Objects.requireNonNull(viewCursor);
-        try {
-            viewCursor.getStart();
-        } catch (com.sun.star.uno.RuntimeException ex) {
-            throw new JabRefException(messageOnFailureToObtainAFunctionalXTextViewCursor, ex);
-        }
+        XTextViewCursor viewCursor = fcursor.getViewCursor();
 
         // find coordinates
         List<Point> positions = new ArrayList<>(vses.size());
@@ -222,12 +152,7 @@ public class RangeSortVisual {
                                                   viewCursor));
         }
 
-        /*
-         * Restore initial state of selection (and thus viewCursor)
-         */
-        if (initialSelection != null) {
-            UnoSelection.select(doc, initialSelection);
-        }
+        fcursor.restore(doc);
 
         if (positions.size() != inputSize) {
             throw new RuntimeException("visualSort: positions.size() != inputSize");

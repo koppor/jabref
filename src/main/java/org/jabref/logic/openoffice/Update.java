@@ -25,6 +25,7 @@ public class Update {
                                               OOFrontend fr,
                                               List<BibDatabase> databases,
                                               OOBibStyle style,
+                                              FunctionalTextViewCursor fcursor,
                                               boolean doUpdateBibliography,
                                               boolean alwaysAddCitedOnPages)
         throws
@@ -39,7 +40,7 @@ public class Update {
 
         final boolean useLockControllers = true;
 
-        fr.imposeGlobalOrder(doc);
+        fr.imposeGlobalOrder(doc, fcursor);
         OOProcess.ProduceCitationMarkersResult x =
             OOProcess.produceCitationMarkers(fr.citationGroups, databases, style);
 

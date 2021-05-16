@@ -190,7 +190,9 @@ public class OOFrontend {
      *
      */
     private List<CitationGroupID>
-    getVisuallySortedCitationGroupIDs(XTextDocument doc, boolean mapFootnotesToFootnoteMarks)
+    getVisuallySortedCitationGroupIDs(XTextDocument doc,
+                                      boolean mapFootnotesToFootnoteMarks,
+                                      FunctionalTextViewCursor fcursor)
         throws
         WrappedTargetException,
         NoDocumentException,
@@ -199,16 +201,10 @@ public class OOFrontend {
         List<RangeSort.RangeSortable<CitationGroupID>> sortables =
             createVisualSortInput(doc, mapFootnotesToFootnoteMarks);
 
-        String messageOnFailureToObtainAFunctionalXTextViewCursor =
-            Localization.lang("Please move the cursor into the document text.")
-            + "\n"
-            + Localization.lang("To get the visual positions of your citations"
-                                + " I need to move the cursor around,"
-                                + " but could not get it.");
         List<RangeSort.RangeSortable<CitationGroupID>> sorted =
             RangeSortVisual.visualSort(sortables,
                                        doc,
-                                       messageOnFailureToObtainAFunctionalXTextViewCursor);
+                                       fcursor);
 
         return (sorted.stream().map(e -> e.getContent()).collect(Collectors.toList()));
     }
@@ -527,7 +523,7 @@ public class OOFrontend {
         this.backend.applyCitationEntries(doc, citationEntries);
     }
 
-    public void imposeGlobalOrder(XTextDocument doc)
+    public void imposeGlobalOrder(XTextDocument doc, FunctionalTextViewCursor fcursor)
         throws
         WrappedTargetException,
         NoDocumentException,
@@ -535,7 +531,7 @@ public class OOFrontend {
 
         boolean mapFootnotesToFootnoteMarks = true;
         List<CitationGroupID> sortedCitationGroupIDs =
-            getVisuallySortedCitationGroupIDs(doc, mapFootnotesToFootnoteMarks);
+            getVisuallySortedCitationGroupIDs(doc, mapFootnotesToFootnoteMarks, fcursor);
         citationGroups.setGlobalOrder(sortedCitationGroupIDs);
     }
 }

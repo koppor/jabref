@@ -35,7 +35,8 @@ public class EditMerge {
     public static void mergeCitationGroups(XTextDocument doc,
                                            OOFrontend fr,
                                            List<BibDatabase> databases,
-                                           OOBibStyle style)
+                                           OOBibStyle style,
+                                           FunctionalTextViewCursor fcursor)
         throws
         CreationException,
         IllegalArgumentException,
@@ -335,6 +336,7 @@ public class EditMerge {
                                   fr2,
                                   databases,
                                   style,
+                                  fcursor,
                                   false, /* doUpdateBibliography */
                                   false /* alwaysAddCitedOnPages */);
         }

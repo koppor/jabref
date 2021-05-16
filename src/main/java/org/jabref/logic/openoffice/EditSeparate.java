@@ -29,7 +29,8 @@ public class EditSeparate {
     public static void separateCitations(XTextDocument doc,
                                          OOFrontend fr,
                                          List<BibDatabase> databases,
-                                         OOBibStyle style)
+                                         OOBibStyle style,
+                                         FunctionalTextViewCursor fcursor)
         throws
         CreationException,
         IllegalTypeException,
@@ -118,6 +119,7 @@ public class EditSeparate {
                                   fr2,
                                   databases,
                                   style,
+                                  fcursor,
                                   false, /* doUpdateBibliography */
                                   false /* alwaysAddCitedOnPages */);
         }
