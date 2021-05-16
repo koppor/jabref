@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice;
+package org.jabref.model.openoffice;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,11 +11,11 @@ import com.sun.star.text.XTextRange;
 
 public class StorageBase {
 
-    interface HasName {
+    public interface HasName {
         public String getName();
     }
 
-    interface HasTextRange {
+    public interface HasTextRange {
 
         /**
          * @return Optional.empty if the mark is missing from the document.
@@ -70,7 +70,7 @@ public class StorageBase {
         // nothing new here
     }
 
-    interface NamedRangeManager {
+    public interface NamedRangeManager {
         public NamedRange create(XTextDocument doc,
                                  String markName,
                                  XTextCursor position,

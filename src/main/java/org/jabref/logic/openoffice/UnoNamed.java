@@ -1,5 +1,7 @@
 package org.jabref.logic.openoffice;
 
+import org.jabref.model.openoffice.CreationException;
+
 import com.sun.star.container.XNamed;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.text.XTextContent;

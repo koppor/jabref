@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice;
+package org.jabref.model.openoffice;
 
 /**
  * Exception used to indicate failure in either

@@ -2,6 +2,8 @@ package org.jabref.logic.openoffice;
 
 import java.util.Optional;
 
+import org.jabref.model.openoffice.NoDocumentException;
+
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.document.XDocumentProperties;
 import com.sun.star.document.XDocumentPropertiesSupplier;

@@ -3,8 +3,8 @@ package org.jabref.gui.openoffice;
 import org.jabref.gui.DialogService;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.openoffice.NoDocumentException;
 import org.jabref.logic.openoffice.NoDocumentFoundException;
+import org.jabref.model.openoffice.NoDocumentException;
 
 import com.sun.star.lang.DisposedException;
 

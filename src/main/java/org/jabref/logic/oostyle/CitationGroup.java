@@ -8,12 +8,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jabref.logic.openoffice.StorageBase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.oostyle.OOStyleDataModelVersion;
+import org.jabref.model.openoffice.StorageBase;
 
 /*
  * A CitationGroup describes a group of citations.

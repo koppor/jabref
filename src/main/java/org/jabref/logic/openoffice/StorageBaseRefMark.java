@@ -3,6 +3,10 @@ package org.jabref.logic.openoffice;
 import java.util.List;
 import java.util.Optional;
 
+import org.jabref.model.openoffice.CreationException;
+import org.jabref.model.openoffice.NoDocumentException;
+import org.jabref.model.openoffice.StorageBase;
+
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XText;

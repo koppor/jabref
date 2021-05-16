@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.openoffice.NoDocumentException;
 
 /**
  *  How and what is encoded in a mark names.
@@ -92,7 +93,8 @@ class Codec52 {
     public static String getUniqueMarkName(Set<String> usedNames,
                                            String bibtexKey,
                                            InTextCitationType citationType)
-        throws NoDocumentException {
+        throws
+        NoDocumentException {
 
         int i = 0;
         int j = InTextCitationTypeToInt(citationType);

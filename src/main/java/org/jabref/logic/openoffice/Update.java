@@ -6,6 +6,8 @@ import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.model.database.BibDatabase;
+import org.jabref.model.openoffice.CreationException;
+import org.jabref.model.openoffice.NoDocumentException;
 
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;

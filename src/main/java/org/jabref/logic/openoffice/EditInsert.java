@@ -15,6 +15,8 @@ import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.oostyle.OOStyleDataModelVersion;
+import org.jabref.model.openoffice.CreationException;
+import org.jabref.model.openoffice.NoDocumentException;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;

@@ -1,5 +1,7 @@
 package org.jabref.logic.openoffice;
 
+import org.jabref.model.openoffice.CreationException;
+
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;

@@ -3,6 +3,7 @@ package org.jabref.logic.openoffice;
 import java.util.List;
 
 import org.jabref.model.openoffice.CitationEntry;
+import org.jabref.model.openoffice.NoDocumentException;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
