@@ -406,7 +406,7 @@ public class OpenOfficePanel {
                                                                                                                                 + "\n"
                                                                                                                                 + Localization.lang("Make sure you have installed OpenOffice/LibreOffice with Java support.") + "\n"
                                                                                                                                 + Localization.lang("If connecting manually, please verify program and library paths.") + "\n" + "\n" + Localization.lang("Error message:"),
-                                                     ex);                                                                                                                                + "\n"
+                                                     ex);
             } else {
                 dialogService.showErrorDialogAndWait(Localization.lang("Autodetection failed"), Localization.lang("Autodetection failed"), ex);
             }
