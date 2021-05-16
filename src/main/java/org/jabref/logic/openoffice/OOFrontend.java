@@ -453,7 +453,7 @@ public class OOFrontend {
             String msg = "";
             for (RangeKeyedMapList<RangeForOverlapCheck>.RangeOverlap e : ovs) {
                 String l = (": "
-                            + (e.vs.stream()
+                            + (e.valuesForOverlappingRanges.stream()
                                .map(v -> String.format("'%s'", v.format()))
                                .collect(Collectors.joining(", ")))
                             + "\n");

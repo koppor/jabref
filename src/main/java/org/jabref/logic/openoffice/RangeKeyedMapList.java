@@ -7,28 +7,28 @@ import java.util.TreeMap;
 import com.sun.star.text.XTextRange;
 
 public class RangeKeyedMapList<V> {
-    RangeKeyedMap<List<V>> xxs;
+    RangeKeyedMap<List<V>> partitions;
 
     public RangeKeyedMapList() {
-        this.xxs = new RangeKeyedMap<>();
+        this.partitions = new RangeKeyedMap<>();
     }
 
-    public boolean containsKey(XTextRange r) {
-        return xxs.containsKey(r);
+    public boolean containsKey(XTextRange range) {
+        return partitions.containsKey(range);
     }
 
-    public List<V> get(XTextRange r) {
-        return xxs.get(r);
+    public List<V> get(XTextRange range) {
+        return partitions.get(range);
     }
 
-    public void add(XTextRange r, V value) {
-        List<V> vs = xxs.get(r);
-        if (vs == null) {
-            vs = new ArrayList<>();
-            vs.add(value);
-            xxs.put(r, vs);
+    public void add(XTextRange range, V value) {
+        List<V> values = partitions.get(range);
+        if (values == null) {
+            values = new ArrayList<>();
+            values.add(value);
+            partitions.put(range, values);
         } else {
-            vs.add(value);
+            values.add(value);
         }
     }
 
@@ -36,7 +36,7 @@ public class RangeKeyedMapList<V> {
      * @return A list of the partitions.
      */
     public List<TreeMap<XTextRange, List<V>>> partitionValues() {
-        return this.xxs.partitionValues();
+        return this.partitions.partitionValues();
     }
 
     /**
@@ -68,11 +68,11 @@ public class RangeKeyedMapList<V> {
      */
     public class RangeOverlap {
         public final OverlapKind kind;
-        public final List<V> vs;
+        public final List<V> valuesForOverlappingRanges;
 
-        public RangeOverlap(OverlapKind kind, List<V> vs) {
+        public RangeOverlap(OverlapKind kind, List<V> valuesForOverlappingRanges) {
             this.kind = kind;
-            this.vs = vs;
+            this.valuesForOverlappingRanges = valuesForOverlappingRanges;
         }
     }
 
@@ -86,36 +86,36 @@ public class RangeKeyedMapList<V> {
      *        Zero or negative {@code atMost} means no limit.
      */
     public List<RangeOverlap> findOverlappingRanges(int atMost, boolean includeTouching) {
-        List<RangeOverlap> res = new ArrayList<>();
-        for (TreeMap<XTextRange, List<V>> xs : xxs.partitionValues()) {
-            List<XTextRange> oxs = new ArrayList<>(xs.keySet());
-            for (int i = 0; i < oxs.size(); i++) {
-                XTextRange a = oxs.get(i);
-                List<V> avs = xs.get(a);
-                if (avs.size() > 1) {
-                    res.add(new RangeOverlap(OverlapKind.EQUAL_RANGE, avs));
-                    if (atMost > 0 && res.size() >= atMost) {
-                        return res;
+        List<RangeOverlap> result = new ArrayList<>();
+        for (TreeMap<XTextRange, List<V>> partition : partitions.partitionValues()) {
+            List<XTextRange> orderedRanges = new ArrayList<>(partition.keySet());
+            for (int i = 0; i < orderedRanges.size(); i++) {
+                XTextRange aRange = orderedRanges.get(i);
+                List<V> aValues = partition.get(aRange);
+                if (aValues.size() > 1) {
+                    result.add(new RangeOverlap(OverlapKind.EQUAL_RANGE, aValues));
+                    if (atMost > 0 && result.size() >= atMost) {
+                        return result;
                     }
                 }
-                if ((i + 1) < oxs.size()) {
-                    XTextRange b = oxs.get(i + 1);
-                    int cmp = UnoTextRange.compareStarts(a.getEnd(), b.getStart());
+                if ((i + 1) < orderedRanges.size()) {
+                    XTextRange bRange = orderedRanges.get(i + 1);
+                    int cmp = UnoTextRange.compareStarts(aRange.getEnd(), bRange.getStart());
                     if (cmp > 0 || (includeTouching && (cmp == 0))) {
                         // found overlap or touch
-                        List<V> bvs = xs.get(b);
-                        List<V> vs = new ArrayList<>();
-                        vs.add(avs.get(0));
-                        vs.add(bvs.get(0));
-                        res.add(new RangeOverlap((cmp == 0) ? OverlapKind.TOUCH : OverlapKind.OVERLAP,
-                                                 vs));
+                        List<V> bValues = partition.get(bRange);
+                        List<V> valuesForOverlappingRanges = new ArrayList<>();
+                        valuesForOverlappingRanges.add(aValues.get(0));
+                        valuesForOverlappingRanges.add(bValues.get(0));
+                        result.add(new RangeOverlap((cmp == 0) ? OverlapKind.TOUCH : OverlapKind.OVERLAP,
+                                                    valuesForOverlappingRanges));
                     }
-                    if (atMost > 0 && res.size() >= atMost) {
-                        return res;
+                    if (atMost > 0 && result.size() >= atMost) {
+                        return result;
                     }
                 }
             }
         }
-        return res;
+        return result;
     }
 }
