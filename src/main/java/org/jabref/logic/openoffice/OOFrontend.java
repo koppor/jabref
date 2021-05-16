@@ -18,6 +18,10 @@ import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.oostyle.OOStyleDataModelVersion;
 import org.jabref.model.openoffice.CitationEntry;
+import org.jabref.model.openoffice.RangeForOverlapCheck;
+import org.jabref.model.openoffice.RangeKeyedMap;
+import org.jabref.model.openoffice.RangeKeyedMapList;
+import org.jabref.model.openoffice.RangeOverlap;
 import org.jabref.model.openoffice.VoidResult;
 
 import com.sun.star.beans.IllegalTypeException;
@@ -350,12 +354,13 @@ public class OOFrontend {
      *
      *  result.size() == nRefMarks
      */
-    private List<RangeForOverlapCheck> citationRanges(XTextDocument doc)
+    private List<RangeForOverlapCheck<CitationGroupID>> citationRanges(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {
 
-        List<RangeForOverlapCheck> result = new ArrayList<>(citationGroups.numberOfCitationGroups());
+        List<RangeForOverlapCheck<CitationGroupID>> result =
+            new ArrayList<>(citationGroups.numberOfCitationGroups());
 
         List<CitationGroupID> cgids = new ArrayList<>(citationGroups.getCitationGroupIDsUnordered());
 
@@ -385,7 +390,7 @@ public class OOFrontend {
      *        footnote marks does not depend on how do we mark or
      *        structure those ranges.
      */
-    private List<RangeForOverlapCheck> footnoteMarkRanges(XTextDocument doc)
+    private List<RangeForOverlapCheck<CitationGroupID>> footnoteMarkRanges(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {
@@ -394,9 +399,9 @@ public class OOFrontend {
         // Could use RangeSet if we had that.
         RangeKeyedMap<Boolean> seen = new RangeKeyedMap<>();
 
-        List<RangeForOverlapCheck> result = new ArrayList<>();
+        List<RangeForOverlapCheck<CitationGroupID>> result = new ArrayList<>();
 
-        for (RangeForOverlapCheck citationRange : citationRanges(doc)) {
+        for (RangeForOverlapCheck<CitationGroupID> citationRange : citationRanges(doc)) {
 
             Optional<XTextRange> footnoteMarkRange =
                 UnoTextRange.getFootnoteMarkRange(citationRange.range);
@@ -432,21 +437,21 @@ public class OOFrontend {
 
         final boolean debugPartitions = false;
 
-        List<RangeForOverlapCheck> xs = citationRanges(doc);
+        List<RangeForOverlapCheck<CitationGroupID>> xs = citationRanges(doc);
         xs.addAll(footnoteMarkRanges(doc));
 
-        RangeKeyedMapList<RangeForOverlapCheck> xall = new RangeKeyedMapList<>();
-        for (RangeForOverlapCheck x : xs) {
+        RangeKeyedMapList<RangeForOverlapCheck<CitationGroupID>> xall = new RangeKeyedMapList<>();
+        for (RangeForOverlapCheck<CitationGroupID> x : xs) {
             XTextRange key = x.range;
             xall.add(key, x);
         }
 
-        List<RangeKeyedMapList<RangeForOverlapCheck>.RangeOverlap> ovs =
-            xall.findOverlappingRanges(reportAtMost, requireSeparation);
+        List<RangeOverlap<RangeForOverlapCheck<CitationGroupID>>> ovs =
+            RangeOverlapFinder.findOverlappingRanges(xall, reportAtMost, requireSeparation);
 
         if (ovs.size() > 0) {
             String msg = "";
-            for (RangeKeyedMapList<RangeForOverlapCheck>.RangeOverlap e : ovs) {
+            for (RangeOverlap<RangeForOverlapCheck<CitationGroupID>> e : ovs) {
                 String l = (": "
                             + (e.valuesForOverlappingRanges.stream()
                                .map(v -> String.format("'%s'", v.format()))

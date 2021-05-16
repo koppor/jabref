@@ -60,4 +60,17 @@ public class UnoTextRange {
         final XTextRangeCompare compare = UnoCast.unoQI(XTextRangeCompare.class, a.getText());
         return (-1) * compare.compareRegionEnds(a, b);
     }
+
+    public static int compareStartsThenEnds(XTextRange a, XTextRange b) {
+        if (!comparables(a, b)) {
+            throw new RuntimeException("compareStartsThenEnds: got incomparable regions");
+        }
+        final XTextRangeCompare compare = UnoCast.unoQI(XTextRangeCompare.class, a.getText());
+        int res = (-1) * compare.compareRegionStarts(a, b);
+        if (res != 0) {
+            return res;
+        }
+        return (-1) * compare.compareRegionEnds(a, b);
+    }
+
 }

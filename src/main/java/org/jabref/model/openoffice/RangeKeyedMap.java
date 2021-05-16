@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice;
+package org.jabref.model.openoffice;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,8 @@ import java.util.TreeMap;
 
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextRange;
+import com.sun.star.text.XTextRangeCompare;
+import com.sun.star.uno.UnoRuntime;
 
 /**
  * Purpose: in order to check overlaps of XTextRange values, sort
@@ -52,12 +54,22 @@ public class RangeKeyedMap<V> {
         return partition.get(range);
     }
 
+    /*
+     * Same as UnoTextRange.compareStartsThenEnds in logic.
+     */
     private static int comparator(XTextRange a, XTextRange b) {
-        int startOrder = UnoTextRange.compareStarts(a, b);
-        if (startOrder != 0) {
-            return startOrder;
+        if (a.getText() != b.getText()) {
+            throw new RuntimeException("comparator: got incomparable regions");
         }
-        return UnoTextRange.compareEnds(a, b);
+
+        final XTextRangeCompare compare =
+            UnoRuntime.queryInterface(XTextRangeCompare.class, a.getText());
+
+        int cmpStart = (-1) * compare.compareRegionStarts(a, b);
+        if (cmpStart != 0) {
+            return cmpStart;
+        }
+        return (-1) * compare.compareRegionEnds(a, b);
     }
 
     public V put(XTextRange range, V value) {
