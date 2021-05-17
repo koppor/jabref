@@ -52,36 +52,6 @@ public class CitationSort {
         }
     }
 
-    /*
-     * Empty (after trimming) becomes null
-     */
-    public static String regularizePageInfoToString(OOFormattedText p) {
-        if (p == null) {
-            return null;
-        }
-        String pt = OOFormattedText.toString(p).trim();
-        return (pt.equals("") ? null : pt);
-    }
-
-    public static OOFormattedText regularizePageInfo(OOFormattedText p) {
-        String reg = CitationSort.regularizePageInfoToString(p);
-        if (reg == null) {
-            return null;
-        }
-        return OOFormattedText.fromString(reg);
-    }
-
-    public static Optional<OOFormattedText> regularizeOptionalPageInfo(Optional<OOFormattedText> p) {
-        if (p.isEmpty()) {
-            return Optional.empty();
-        }
-        String reg = CitationSort.regularizePageInfoToString(p.get());
-        if (reg == null) {
-            return Optional.empty();
-        }
-        return Optional.of(OOFormattedText.fromString(reg));
-    }
-
     /**
      * Defines sort order for pageInfo strings.
      *
@@ -89,8 +59,8 @@ public class CitationSort {
      */
     public static int comparePageInfo(Optional<OOFormattedText> a, Optional<OOFormattedText> b) {
 
-        Optional<OOFormattedText> aa = regularizeOptionalPageInfo(a);
-        Optional<OOFormattedText> bb = regularizeOptionalPageInfo(b);
+        Optional<OOFormattedText> aa = Citation.normalizePageInfo(a);
+        Optional<OOFormattedText> bb = Citation.normalizePageInfo(b);
         if (aa.isEmpty() && bb.isEmpty()) {
             return 0;
         }

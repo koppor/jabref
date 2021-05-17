@@ -69,4 +69,16 @@ public class Citation implements CitationSort.ComparableCitation {
         Citation cit = x.a;
         cit.uniqueLetter = x.b;
     }
+
+
+    public static Optional<OOFormattedText> normalizePageInfo(Optional<OOFormattedText> o) {
+        if (o == null || o.isEmpty() || "".equals(OOFormattedText.toString(o.get()))) {
+            return Optional.empty();
+        }
+        String s = OOFormattedText.toString(o.get());
+        if (s.trim().equals("")) {
+            return Optional.empty();
+        }
+        return Optional.of(OOFormattedText.fromString(s));
+    }
 }

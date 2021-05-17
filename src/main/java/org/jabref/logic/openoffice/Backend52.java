@@ -171,17 +171,6 @@ public class Backend52 {
         return cg;
     }
 
-    static Optional<OOFormattedText> normalizePageInfo(Optional<OOFormattedText> o) {
-        if (o == null || o.isEmpty() || "".equals(OOFormattedText.toString(o.get()))) {
-            return Optional.empty();
-        }
-        String s = OOFormattedText.toString(o.get());
-        if (s.trim().equals("")) {
-            return Optional.empty();
-        }
-        return Optional.of(OOFormattedText.fromString(s));
-    }
-
     /**
      *  Create a reference mark with the given name, at the
      *  end of position.
@@ -230,7 +219,7 @@ public class Backend52 {
             Citation cit = new Citation(citationKeys.get(i));
             citations.add(cit);
 
-            Optional<OOFormattedText> pageInfo = normalizePageInfo(pageInfosForCitations.get(i));
+            Optional<OOFormattedText> pageInfo = Citation.normalizePageInfo(pageInfosForCitations.get(i));
             switch (dataModel) {
             case JabRef52:
                 if (i == last) {
@@ -256,7 +245,8 @@ public class Backend52 {
 
         switch (dataModel) {
         case JabRef52:
-            Optional<OOFormattedText> pageInfo = normalizePageInfo(pageInfosForCitations.get(last));
+            Optional<OOFormattedText> pageInfo =
+                Citation.normalizePageInfo(pageInfosForCitations.get(last));
 
             if (pageInfo.isPresent()) {
                 String pageInfoString = OOFormattedText.toString(pageInfo.get());

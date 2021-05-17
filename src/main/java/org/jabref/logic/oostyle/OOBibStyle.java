@@ -30,8 +30,8 @@ import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.EntryTypeFactory;
+import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationMarkerEntry;
-import org.jabref.model.oostyle.CitationSort;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 
@@ -965,7 +965,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
             List<Optional<OOFormattedText>> res = new ArrayList<>(nCitations);
             for (int i = 0; i < nCitations; i++) {
                 Optional<OOFormattedText> p = pageInfosForCitations.get(i);
-                res.add(CitationSort.regularizeOptionalPageInfo(p));
+                res.add(Citation.normalizePageInfo(p));
             }
             return res;
         }
