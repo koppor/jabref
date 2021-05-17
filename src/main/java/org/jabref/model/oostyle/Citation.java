@@ -22,13 +22,9 @@ public class Citation implements CitationSort.ComparableCitation {
     /** pageInfo */
     private Optional<OOFormattedText> pageInfo;
 
-    /* missing: something that differentiates this from other
-     * citations of the same citationKey. In particular, a
-     * CitationGroup may contain multiple citations of the same
-     * source. We use CitationPath.storageIndexInGroup to refer to
-     * citations.
+    /**
+     *
      */
-
     public Citation(String citationKey) {
         this.citationKey = citationKey;
         this.db = Optional.empty();
