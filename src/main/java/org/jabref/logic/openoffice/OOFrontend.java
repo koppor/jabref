@@ -255,7 +255,7 @@ public class OOFrontend {
      */
     public CitationGroupID createCitationGroup(XTextDocument doc,
                                                List<String> citationKeys,
-                                               List<OOFormattedText> pageInfosForCitations,
+                                               List<Optional<OOFormattedText>> pageInfosForCitations,
                                                InTextCitationType citationType,
                                                XTextCursor position,
                                                boolean insertSpaceAfter)

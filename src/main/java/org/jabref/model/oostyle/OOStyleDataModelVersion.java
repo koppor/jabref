@@ -2,6 +2,7 @@ package org.jabref.model.oostyle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**   What is the data stored?   */
 public enum OOStyleDataModelVersion {
@@ -36,14 +37,14 @@ public enum OOStyleDataModelVersion {
      * @param pageInfo Nullable.
      * @return JabRef53 style pageInfo list
      */
-    public static List<OOFormattedText> fakePageInfosForCitations(String pageInfo,
-                                                                  int nCitations) {
-        List<OOFormattedText> pageInfosForCitations = new ArrayList<>(nCitations);
+    public static List<Optional<OOFormattedText>> fakePageInfosForCitations(String pageInfo,
+                                                                            int nCitations) {
+        List<Optional<OOFormattedText>> pageInfosForCitations = new ArrayList<>(nCitations);
         for (int i = 0; i < nCitations; i++) {
-            if (i == nCitations - 1) {
-                pageInfosForCitations.add(OOFormattedText.fromString(pageInfo));
+            if (i == (nCitations - 1) && (pageInfo != null)) {
+                pageInfosForCitations.add(Optional.of(OOFormattedText.fromString(pageInfo)));
             } else {
-                pageInfosForCitations.add(null);
+                pageInfosForCitations.add(Optional.empty());
             }
         }
         return pageInfosForCitations;

@@ -444,7 +444,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      */
     public OOFormattedText getNumCitationMarker(List<Integer> number,
                                                 int minGroupingCount,
-                                                List<OOFormattedText> pageInfosForCitations) {
+                                                List<Optional<OOFormattedText>> pageInfosForCitations) {
         return OOBibStyleGetNumCitationMarker.getNumCitationMarker(this,
                                                                    number,
                                                                    minGroupingCount,
@@ -941,21 +941,20 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
                                                                                   number);
     }
 
-    public static OOFormattedText regularizePageInfo(OOFormattedText p) {
-        return OOFormattedText.fromString(CitationSort.regularizePageInfoToString(p));
-    }
-
     /**
      *  Make sure that (1) we have exactly one entry for each
-     *  citation, (2) each entry is either null or is not empty when trimmed.
+     *  citation, (2) each entry is either Optional.empty or its content is not empty when trimmed.
+     *
+     *  As a special case: pageInfosForCitations may be null. In this case
+     *  the result is a list filled with Optional.empty() values.
      */
-    public static List<OOFormattedText>
-    regularizePageInfosForCitations(List<OOFormattedText> pageInfosForCitations,
+    public static List<Optional<OOFormattedText>>
+    regularizePageInfosForCitations(List<Optional<OOFormattedText>> pageInfosForCitations,
                                     int nCitations) {
         if (pageInfosForCitations == null) {
-            List<OOFormattedText> res = new ArrayList<>(nCitations);
+            List<Optional<OOFormattedText>> res = new ArrayList<>(nCitations);
             for (int i = 0; i < nCitations; i++) {
-                res.add(null);
+                res.add(Optional.empty());
             }
             return res;
         } else {
@@ -963,10 +962,10 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
                 throw new RuntimeException("regularizePageInfosForCitations:"
                                            + " pageInfosForCitations.size() != nCitations");
             }
-            List<OOFormattedText> res = new ArrayList<>(nCitations);
+            List<Optional<OOFormattedText>> res = new ArrayList<>(nCitations);
             for (int i = 0; i < nCitations; i++) {
-                OOFormattedText p = pageInfosForCitations.get(i);
-                res.add(regularizePageInfo(p));
+                Optional<OOFormattedText> p = pageInfosForCitations.get(i);
+                res.add(CitationSort.regularizeOptionalPageInfo(p));
             }
             return res;
         }

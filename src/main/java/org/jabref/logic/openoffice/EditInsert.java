@@ -116,7 +116,7 @@ public class EditInsert {
 
         final int nEntries = entries.size();
         // JabRef53 style pageInfo list
-        List<OOFormattedText> pageInfosForCitations =
+        List<Optional<OOFormattedText>> pageInfosForCitations =
             OOStyleDataModelVersion.fakePageInfosForCitations(pageInfo, nEntries);
 
         List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nEntries);
@@ -131,7 +131,7 @@ public class EditInsert {
                                             // Optional.ofNullable(entries.get(i)),
                                             // Optional.ofNullable(database),
                                             Optional.empty(), // uniqueLetter
-                                            Optional.ofNullable(pageInfosForCitations.get(i)),
+                                            pageInfosForCitations.get(i),
                                             false /* isFirstAppearanceOfSource */);
             citationMarkerEntries.add(cm);
         }

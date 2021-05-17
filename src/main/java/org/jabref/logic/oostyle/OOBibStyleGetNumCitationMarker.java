@@ -3,6 +3,7 @@ package org.jabref.logic.oostyle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.ToIntFunction;
 
 import org.jabref.model.oostyle.CitationSort;
@@ -16,8 +17,8 @@ class OOBibStyleGetNumCitationMarker {
      */
     private static class NumberWithPageInfo {
         int num;
-        OOFormattedText pageInfo;
-        NumberWithPageInfo(int num, OOFormattedText pageInfo) {
+        Optional<OOFormattedText> pageInfo;
+        NumberWithPageInfo(int num, Optional<OOFormattedText> pageInfo) {
             this.num = num;
             this.pageInfo = pageInfo;
         }
@@ -49,7 +50,7 @@ class OOBibStyleGetNumCitationMarker {
     public static OOFormattedText getNumCitationMarker(OOBibStyle style,
                                                        List<Integer> numbers,
                                                        int minGroupingCount,
-                                                       List<OOFormattedText> pageInfosForCitations) {
+                                                       List<Optional<OOFormattedText>> pageInfosForCitations) {
         return getNumCitationMarkerCommon(style,
                                           numbers,
                                           minGroupingCount,
@@ -101,8 +102,8 @@ class OOBibStyleGetNumCitationMarker {
      *                 - If their pageInfos differ, the number is emitted with each
      *                    distinct pageInfo.
      *
-     *                    For pageInfo null and "" (after
-     *                    pageInfo.trim()) are considered equal (and missing).
+     *                    For pageInfo Optional.empty and "" (after
+     *                    pageInfo.get(),trim()) are considered equal (and missing).
      *
      * @param minGroupingCount Zero and negative means never group
      *
@@ -113,8 +114,8 @@ class OOBibStyleGetNumCitationMarker {
      *                                   and BRACKET_AFTER_IN_LIST over BRACKET_AFTER.
      *                                Ignore pageInfosForCitations.
      *
-     * @param pageInfosForCitations  Null for "none", or a list with a
-     *        pageInfo for each citation. Any or all of these can be null as well.
+     * @param pageInfosForCitations  Null for "none", or a list with an optional
+     *        pageInfo for each citation. Any or all of these can be Optional.empty
      *
      * @return The text for the citation.
      *
@@ -124,7 +125,7 @@ class OOBibStyleGetNumCitationMarker {
                                List<Integer> numbers,
                                int minGroupingCount,
                                CitationMarkerPurpose purpose,
-                               List<OOFormattedText> pageInfosForCitations) {
+                               List<Optional<OOFormattedText>> pageInfosForCitations) {
 
         final boolean joinIsDisabled = (minGroupingCount <= 0);
         final int notFoundInDatabases = 0;
@@ -183,7 +184,7 @@ class OOBibStyleGetNumCitationMarker {
          *    get here, and {@code purpose==BIBLIOGRAPHY}, then we just fill
          *    pageInfos with null values.
          */
-        List<OOFormattedText> pageInfos =
+        List<Optional<OOFormattedText>> pageInfos =
             OOBibStyle.regularizePageInfosForCitations((purpose == CitationMarkerPurpose.BIBLIOGRAPHY
                                                         ? null
                                                         : pageInfosForCitations),
@@ -248,9 +249,10 @@ class OOBibStyleGetNumCitationMarker {
                           ? OOBibStyle.UNDEFINED_CITATION_MARKER
                           : String.valueOf(num));
                 // Emit pageInfo
-                OOFormattedText pageInfo = block.get(0).pageInfo;
-                if (pageInfo != null) {
-                    sb.append(style.getPageInfoSeparator() + OOFormattedText.toString(pageInfo));
+                Optional<OOFormattedText> pageInfo = block.get(0).pageInfo;
+                if (pageInfo.isPresent()) {
+                    sb.append(style.getPageInfoSeparator());
+                    sb.append(OOFormattedText.toString(pageInfo.get()));
                 }
             } else {
                 // block has at least 2 elements
@@ -262,8 +264,8 @@ class OOBibStyleGetNumCitationMarker {
                 // None of these elements has a pageInfo,
                 // because if it had, we would not join.
                 for (NumberWithPageInfo x : block) {
-                    if (x.pageInfo != null) {
-                        throw new RuntimeException("impossible: (x.pageInfo != null)");
+                    if (x.pageInfo.isPresent()) {
+                        throw new RuntimeException("impossible: (x.pageInfo.isPresent())");
                     }
                 }
                 // None of these elements needs UNDEFINED_CITATION_MARKER,
@@ -343,8 +345,8 @@ class OOBibStyleGetNumCitationMarker {
                 } else if (compareNumberWithPageInfo(current, prev) == 0) {
                     // Same as prev, just forget it.
                 } else if ((current.num == (prev.num + 1))
-                           && (prev.pageInfo == null)
-                           && (current.pageInfo == null)) {
+                           && (prev.pageInfo.isEmpty())
+                           && (current.pageInfo.isEmpty())) {
                     // Just two consecutive numbers without pageInfo: join
                     currentBlock.add(current);
                 } else {

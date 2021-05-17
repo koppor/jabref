@@ -3,6 +3,7 @@ package org.jabref.logic.openoffice;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jabref.logic.JabRefException;
@@ -290,7 +291,7 @@ public class EditMerge {
                 // cgPageInfos belong to the CitationGroup (DataModel JabRef52),
                 // but it is not clear how should we handle them here.
                 // We delegate the problem to the backend.
-                List<OOFormattedText> pageInfosForCitations =
+                List<Optional<OOFormattedText>> pageInfosForCitations =
                     fr.backend.combinePageInfos(joinableGroup);
 
                 // Remove the old citation groups from the document.

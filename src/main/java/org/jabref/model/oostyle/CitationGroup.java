@@ -194,22 +194,22 @@ public class CitationGroup {
      *         The list itself is not null.
      *
      */
-    public List<OOFormattedText> getPageInfosForCitationsInStorageOrder() {
+    public List<Optional<OOFormattedText>> getPageInfosForCitationsInStorageOrder() {
         CitationGroup cg = this;
         // pageInfo values from citations, empty mapped to null.
         return (cg.citationsInStorageOrder.stream()
-                .map(cit -> cit.pageInfo.orElse(null))
+                .map(cit -> cit.pageInfo)
                 .collect(Collectors.toList()));
     }
 
     /**
-     * @return List of nullable pageInfo values, one for each citation, in localOrder.
+     * @return List of optional pageInfo values, one for each citation, in localOrder.
      */
-    public List<OOFormattedText> getPageInfosForCitationsInLocalOrder() {
+    public List<Optional<OOFormattedText>> getPageInfosForCitationsInLocalOrder() {
         CitationGroup cg = this;
-        // pageInfo values from citations, empty mapped to null.
+        // pageInfo values from citations
         return (cg.getCitationsInLocalOrder().stream()
-                .map(cit -> cit.pageInfo.orElse(null))
+                .map(cit -> cit.pageInfo)
                 .collect(Collectors.toList()));
     }
 

@@ -243,7 +243,7 @@ public class OOProcess {
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
             List<Integer> numbers = cg.getCitationNumbersInLocalOrder();
-            List<OOFormattedText> pageInfos = cg.getPageInfosForCitationsInLocalOrder();
+            List<Optional<OOFormattedText>> pageInfos = cg.getPageInfosForCitationsInLocalOrder();
             citMarkers.put(cgid,
                            style.getNumCitationMarker(numbers,
                                                       minGroupingCount,
@@ -272,7 +272,7 @@ public class OOProcess {
         for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
             List<Integer> numbers = cg.getCitationNumbersInLocalOrder();
-            List<OOFormattedText> pageInfos = cg.getPageInfosForCitationsInLocalOrder();
+            List<Optional<OOFormattedText>> pageInfos = cg.getPageInfosForCitationsInLocalOrder();
             citMarkers.put(cgid,
                            style.getNumCitationMarker(numbers,
                                                       minGroupingCount,
@@ -289,8 +289,7 @@ public class OOProcess {
      * @param style              Bibliography style.
      */
     private static Map<CitationGroupID, OOFormattedText>
-    produceCitationMarkersForNormalStyle(CitationGroups cgs,
-                                         OOBibStyle style) {
+    produceCitationMarkersForNormalStyle(CitationGroups cgs, OOBibStyle style) {
 
         assert !style.isCitationKeyCiteMarkers();
         assert !style.isNumberEntries();
@@ -315,7 +314,7 @@ public class OOProcess {
 
             List<Citation> cits = cg.getCitationsInLocalOrder();
             final int nCitedEntries = cits.size();
-            List<OOFormattedText> pageInfosForCitations = cg.getPageInfosForCitationsInLocalOrder();
+            List<Optional<OOFormattedText>> pageInfosForCitations = cg.getPageInfosForCitationsInLocalOrder();
 
             List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nCitedEntries);
 
@@ -337,7 +336,7 @@ public class OOProcess {
                     new CitationMarkerEntryImpl(currentKey,
                                                 cit.db,
                                                 uniqueLetterForKey,
-                                                Optional.ofNullable(pageInfosForCitations.get(j)),
+                                                pageInfosForCitations.get(j),
                                                 isFirst);
                 citationMarkerEntries.add(cm);
             }

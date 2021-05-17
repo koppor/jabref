@@ -3,6 +3,7 @@ package org.jabref.logic.openoffice;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
@@ -132,7 +133,7 @@ public class UpdateCitationMarkers {
     public static void createAndFillCitationGroup(OOFrontend fr,
                                                   XTextDocument doc,
                                                   List<String> citationKeys,
-                                                  List<OOFormattedText> pageInfosForCitations,
+                                                  List<Optional<OOFormattedText>> pageInfosForCitations,
                                                   InTextCitationType citationType,
                                                   OOFormattedText citationText,
                                                   XTextCursor position,

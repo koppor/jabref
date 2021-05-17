@@ -171,14 +171,15 @@ public class Backend52 {
         return cg;
     }
 
-    static Optional<OOFormattedText> normalizePageInfoToOptional(OOFormattedText o) {
-        String s;
-        if (o == null || "".equals(OOFormattedText.toString(o))) {
-            s = null;
-        } else {
-            s = OOFormattedText.toString(o);
+    static Optional<OOFormattedText> normalizePageInfo(Optional<OOFormattedText> o) {
+        if (o == null || o.isEmpty() || "".equals(OOFormattedText.toString(o.get()))) {
+            return Optional.empty();
         }
-        return Optional.ofNullable(OOFormattedText.fromString(s));
+        String s = OOFormattedText.toString(o.get());
+        if (s.trim().equals("")) {
+            return Optional.empty();
+        }
+        return Optional.of(OOFormattedText.fromString(s));
     }
 
     /**
@@ -195,7 +196,7 @@ public class Backend52 {
      */
     public CitationGroup createCitationGroup(XTextDocument doc,
                                              List<String> citationKeys,
-                                             List<OOFormattedText> pageInfosForCitations,
+                                             List<Optional<OOFormattedText>> pageInfosForCitations,
                                              InTextCitationType citationType,
                                              XTextCursor position,
                                              boolean insertSpaceAfter)
@@ -229,7 +230,7 @@ public class Backend52 {
             Citation cit = new Citation(citationKeys.get(i));
             citations.add(cit);
 
-            Optional<OOFormattedText> pageInfo = normalizePageInfoToOptional(pageInfosForCitations.get(i));
+            Optional<OOFormattedText> pageInfo = normalizePageInfo(pageInfosForCitations.get(i));
             switch (dataModel) {
             case JabRef52:
                 if (i == last) {
@@ -255,10 +256,9 @@ public class Backend52 {
 
         switch (dataModel) {
         case JabRef52:
-            Optional<OOFormattedText> pageInfo =
-                normalizePageInfoToOptional(pageInfosForCitations.get(last));
+            Optional<OOFormattedText> pageInfo = normalizePageInfo(pageInfosForCitations.get(last));
 
-            if (pageInfo.isPresent() && !"".equals(OOFormattedText.toString(pageInfo.get()))) {
+            if (pageInfo.isPresent()) {
                 String pageInfoString = OOFormattedText.toString(pageInfo.get());
                 UnoUserDefinedProperty.createStringProperty(doc, refMarkName, pageInfoString);
             } else {
@@ -281,8 +281,9 @@ public class Backend52 {
      *  TODO: JabRef52 combinePageInfos is not reversible. Should warn
      *        user to check the result. Or ask what to do.
      */
-    public static List<OOFormattedText> combinePageInfosCommon(OOStyleDataModelVersion dataModel,
-                                                               List<CitationGroup> joinableGroup) {
+    public static List<Optional<OOFormattedText>>
+    combinePageInfosCommon(OOStyleDataModelVersion dataModel,
+                           List<CitationGroup> joinableGroup) {
         switch (dataModel) {
         case JabRef52:
             // collect to cgPageInfos
@@ -301,13 +302,15 @@ public class Backend52 {
             int nCitations = (joinableGroup.stream()
                               .map(cg -> cg.numberOfCitations())
                               .mapToInt(Integer::intValue).sum());
-
+            if ("".equals(cgPageInfo)) {
+                cgPageInfo = null;
+            }
             return OOStyleDataModelVersion.fakePageInfosForCitations(cgPageInfo, nCitations);
 
         case JabRef53:
             return (joinableGroup.stream()
                     .flatMap(cg -> (cg.citationsInStorageOrder.stream()
-                                    .map(cit -> cit.pageInfo.orElse(null))))
+                                    .map(cit -> cit.pageInfo)))
                     .collect(Collectors.toList()));
         default:
             throw new RuntimeException("unhandled dataModel here");
@@ -317,7 +320,7 @@ public class Backend52 {
     /**
      *
      */
-    public List<OOFormattedText> combinePageInfos(List<CitationGroup> joinableGroup) {
+    public List<Optional<OOFormattedText>> combinePageInfos(List<CitationGroup> joinableGroup) {
         return combinePageInfosCommon(this.dataModel, joinableGroup);
     }
 

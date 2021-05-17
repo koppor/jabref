@@ -2,6 +2,7 @@ package org.jabref.logic.openoffice;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jabref.logic.JabRefException;
@@ -70,7 +71,7 @@ public class EditSeparate {
                 XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
 
                 // Note: JabRef52 returns cg.pageInfo for the last citation.
-                List<OOFormattedText> pageInfosForCitations =
+                List<Optional<OOFormattedText>> pageInfosForCitations =
                     cg.getPageInfosForCitationsInStorageOrder();
 
                 List<Citation> cits = cg.citationsInStorageOrder;
@@ -91,8 +92,10 @@ public class EditSeparate {
                 for (int i = 0; i < keys.size(); i++) {
                     boolean insertSpaceAfter = (i != last);
                     List<String> citationKeys1 = keys.subList(i, i + 1);
-                    List<OOFormattedText> pageInfos1 = pageInfosForCitations.subList(i, i + 1);
-                    OOFormattedText citationText1 = OOFormattedText.fromString("tmp");
+                    List<Optional<OOFormattedText>> pageInfos1 = pageInfosForCitations.subList(i, i + 1);
+                    // String tmpLabel = "tmp";
+                    String tmpLabel = keys.get(i);
+                    OOFormattedText citationText1 = OOFormattedText.fromString(tmpLabel);
                     UpdateCitationMarkers.createAndFillCitationGroup(fr,
                                                                      doc,
                                                                      citationKeys1,

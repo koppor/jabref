@@ -1,10 +1,13 @@
 package org.jabref.model.oostyle;
 
+import java.util.Objects;
+
 public class OOFormattedText {
 
     private final String data;
 
     private OOFormattedText(String data) {
+        Objects.requireNonNull(data);
         this.data = data;
     }
 
@@ -24,5 +27,26 @@ public class OOFormattedText {
 
     public String asString() {
         return data;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof OOFormattedText)) {
+            return false;
+        }
+
+        OOFormattedText c = (OOFormattedText) o;
+
+        return data.equals(c.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return data.hashCode();
     }
 }

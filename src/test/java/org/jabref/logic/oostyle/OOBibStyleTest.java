@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jabref.logic.layout.Layout;
 import org.jabref.logic.layout.LayoutFormatterPreferences;
@@ -88,10 +89,11 @@ class OOBibStyleTest {
         assertTrue(style.isSortByPosition());
     }
 
-    List<OOFormattedText> asOOFormattedText(List<String> s) {
-        return (s.stream()
-         .map(OOFormattedText::fromString)
-         .collect(Collectors.toList()));
+    List<Optional<OOFormattedText>> asPageInfos(String... s) {
+        return (Stream.of(s)
+                .map(OOFormattedText::fromString)
+                .map(Optional::ofNullable)
+                .collect(Collectors.toList()));
     }
 
     @Test
@@ -99,7 +101,7 @@ class OOBibStyleTest {
         OOBibStyle style = new OOBibStyle(StyleLoader.DEFAULT_NUMERICAL_STYLE_PATH,
                 layoutFormatterPreferences);
 
-        List<OOFormattedText> empty = null;
+        List<Optional<OOFormattedText>> empty = null;
 
         // Unfortunately these two are both "; " in
         // jabref/src/main/resources/resource/openoffice/default_numerical.jstyle
@@ -129,8 +131,8 @@ class OOBibStyleTest {
         assertEquals("[1; p1a; 1; p1b; 2; p2; 3]",
                      style.getNumCitationMarker(Arrays.asList(1,1,2,2,3,3),
                                                 1,
-                                                asOOFormattedText(Arrays.asList("p1a","p1b","p2","p2",
-                                                                                null, null))).asString());
+                                                asPageInfos("p1a","p1b","p2","p2",
+                                                            null, null)).asString());
 
         // Consecutive numbers can become a range ...
         assertEquals("[1-3]",
@@ -152,22 +154,22 @@ class OOBibStyleTest {
         // ... a pageInfo needs to be emitted
         assertEquals("[1; p1; 2-3]",
                      style.getNumCitationMarker(Arrays.asList(1, 2, 3),
-                                                         1, /* minGroupingCount */
-                                                asOOFormattedText(Arrays.asList("p1",null,null)))
+                                                1, /* minGroupingCount */
+                                                asPageInfos("p1",null,null))
                      .asString());
 
         // null and "" pageInfos are taken as equal.
         // Due to trimming, "   " is the same as well.
         assertEquals("[1]",
                      style.getNumCitationMarker(Arrays.asList(1, 1, 1),
-                                                         1, /* minGroupingCount */
-                                                asOOFormattedText(Arrays.asList("",null,"  ")))
+                                                1, /* minGroupingCount */
+                                                asPageInfos("",null,"  "))
                      .asString());
         // pageInfos are trimmed
         assertEquals("[1; p1]",
                      style.getNumCitationMarker(Arrays.asList(1, 1, 1),
-                                                         1, /* minGroupingCount */
-                                                asOOFormattedText(Arrays.asList("p1"," p1","p1 ")))
+                                                1, /* minGroupingCount */
+                                                asPageInfos("p1"," p1","p1 "))
                      .asString());
 
         // The citation numbers come out sorted
@@ -181,24 +183,24 @@ class OOBibStyleTest {
         //  but not empty-or-null)
         assertEquals("[3; p3; 4; p4; 5; p5; 7; p7; 10; px; 11; px; 12; px]",
                      style.getNumCitationMarker(Arrays.asList(12, 7, 3, 4, 11, 10, 5),
-                                                         1,
-                                                asOOFormattedText(Arrays.asList("px", "p7", "p3", "p4",
-                                                                                "px", "px", "p5")))
+                                                1,
+                                                asPageInfos("px", "p7", "p3", "p4",
+                                                            "px", "px", "p5"))
                      .asString());
 
 
         // pageInfo sorting (for the same number)
         assertEquals("[1; 1; a; 1; b]",
                      style.getNumCitationMarker(Arrays.asList(1, 1, 1),
-                                                         1, /* minGroupingCount */
-                                                asOOFormattedText(Arrays.asList("","b","a ")))
+                                                1, /* minGroupingCount */
+                                                asPageInfos("","b","a "))
                      .asString());
 
         // pageInfo sorting (for the same number) is not numeric.
         assertEquals("[1; p100; 1; p20; 1; p9]",
                      style.getNumCitationMarker(Arrays.asList(1, 1, 1),
-                                                         1, /* minGroupingCount */
-                                                asOOFormattedText(Arrays.asList("p20","p9","p100")))
+                                                1, /* minGroupingCount */
+                                                asPageInfos("p20","p9","p100"))
                      .asString());
 
         assertEquals("[1-3]",
@@ -238,30 +240,30 @@ class OOBibStyleTest {
         OOBibStyle style = new OOBibStyle(StyleLoader.DEFAULT_NUMERICAL_STYLE_PATH,
                 layoutFormatterPreferences);
 
-        List<OOFormattedText> empty = null;
+        List<Optional<OOFormattedText>> empty = null;
 
         // unresolved citations look like [??]
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "]",
                      style.getNumCitationMarker(Arrays.asList(0),
-                                                         1,
-                                                         empty).asString());
+                                                1,
+                                                empty).asString());
 
         // pageInfo is shown for unresolved citations
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "; p1]",
                      style.getNumCitationMarker(Arrays.asList(0),
-                                                         1,
-                                                asOOFormattedText(Arrays.asList("p1"))).asString());
+                                                1,
+                                                asPageInfos("p1")).asString());
 
         // unresolved citations sorted to the front
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "; 2-4]",
                      style.getNumCitationMarker(Arrays.asList(4, 2, 3, 0),
-                                                         1,
-                                                         empty).asString());
+                                                1,
+                                                empty).asString());
 
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "; 1-3]",
                      style.getNumCitationMarker(Arrays.asList(1, 2, 3, 0),
-                                                         1,
-                                                         empty).asString());
+                                                1,
+                                                empty).asString());
 
         // multiple unresolved citations are not collapsed
         assertEquals("["
@@ -269,8 +271,8 @@ class OOBibStyleTest {
                      + OOBibStyle.UNDEFINED_CITATION_MARKER + "; "
                      + OOBibStyle.UNDEFINED_CITATION_MARKER + "]",
                      style.getNumCitationMarker(Arrays.asList(0, 0, 0),
-                                                         1,
-                                                         empty).asString());
+                                                1,
+                                                empty).asString());
 
         /*
          * BIBLIOGRAPHY

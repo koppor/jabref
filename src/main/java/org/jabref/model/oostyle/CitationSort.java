@@ -45,13 +45,16 @@ public class CitationSort {
             }
             // Also consider pageInfo
             if (res == 0) {
-                CitationSort.comparePageInfo(a.getPageInfo().orElse(null),
-                                             b.getPageInfo().orElse(null));
+                CitationSort.comparePageInfo(a.getPageInfo(),
+                                             b.getPageInfo());
             }
             return res;
         }
     }
 
+    /*
+     * Empty (after trimming) becomes null
+     */
     public static String regularizePageInfoToString(OOFormattedText p) {
         if (p == null) {
             return null;
@@ -60,24 +63,43 @@ public class CitationSort {
         return (pt.equals("") ? null : pt);
     }
 
+    public static OOFormattedText regularizePageInfo(OOFormattedText p) {
+        String reg = CitationSort.regularizePageInfoToString(p);
+        if (reg == null) {
+            return null;
+        }
+        return OOFormattedText.fromString(reg);
+    }
+
+    public static Optional<OOFormattedText> regularizeOptionalPageInfo(Optional<OOFormattedText> p) {
+        if (p.isEmpty()) {
+            return Optional.empty();
+        }
+        String reg = CitationSort.regularizePageInfoToString(p.get());
+        if (reg == null) {
+            return Optional.empty();
+        }
+        return Optional.of(OOFormattedText.fromString(reg));
+    }
+
     /**
      * Defines sort order for pageInfo strings.
      *
      * null comes before non-null
      */
-    public static int comparePageInfo(OOFormattedText a, OOFormattedText b) {
+    public static int comparePageInfo(Optional<OOFormattedText> a, Optional<OOFormattedText> b) {
 
-        String aa = regularizePageInfoToString(a);
-        String bb = regularizePageInfoToString(b);
-        if (aa == null && bb == null) {
+        Optional<OOFormattedText> aa = regularizeOptionalPageInfo(a);
+        Optional<OOFormattedText> bb = regularizeOptionalPageInfo(b);
+        if (aa.isEmpty() && bb.isEmpty()) {
             return 0;
         }
-        if (aa == null) {
+        if (aa.isEmpty()) {
             return -1;
         }
-        if (bb == null) {
+        if (bb.isEmpty()) {
             return +1;
         }
-        return aa.compareTo(bb);
+        return aa.get().asString().compareTo(bb.get().asString());
     }
 }
