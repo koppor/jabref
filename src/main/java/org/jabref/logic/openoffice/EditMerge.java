@@ -35,6 +35,266 @@ public class EditMerge {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EditMerge.class);
 
+    private static class JoinableGroupData {
+        /*
+         * A list of consecutive citation groups only separated by spaces.
+         */
+        List<CitationGroup> group;
+        /*
+         * A cursor covering the XTextRange of each entry in group
+         * (and the spaces between them)
+         */
+        XTextCursor groupCursor;
+
+        JoinableGroupData(List<CitationGroup> group, XTextCursor groupCursor) {
+            this.group = group;
+            this.groupCursor = groupCursor;
+        }
+    }
+
+    private static class ScanState {
+
+        // Citation groups in the current group
+        List<CitationGroup> currentGroup;
+
+        // A cursor that covers the Citation groups in currentGroup,
+        // including the space between them.
+        // Null if currentGroup.isEmpty()
+        XTextCursor currentGroupCursor;
+
+        // A cursor starting at the end of the last CitationGroup in
+        // currentGroup. Null if currentGroup.isEmpty()
+        XTextCursor cursorBetween;
+
+        // The last element of currentGroup.
+        //  Null if currentGroup.isEmpty()
+        CitationGroup prev;
+
+        // The XTextRange for prev.
+        //  Null if currentGroup.isEmpty()
+        XTextRange prevRange;
+
+        ScanState() {
+            reset();
+        }
+
+        void reset() {
+            currentGroup = new ArrayList<>();
+            currentGroupCursor = null;
+            cursorBetween = null;
+            prev = null;
+            prevRange = null;
+        }
+    }
+
+    /**
+     * Decide if cg could be added to state.currentGroup
+     *
+     * @param cg The CitationGroup to test
+     * @param currentRange The XTextRange corresponding to cg.
+     *
+     * @return false if cannot add, true if can.  If returned true,
+     *  then state.cursorBetween and state.currentGroupCursor are
+     *  expanded to end at the start of currentRange.
+     */
+    private static boolean checkAddToGroup(ScanState state, CitationGroup cg, XTextRange currentRange) {
+
+        if (state.currentGroup.isEmpty()) {
+            return false;
+        }
+
+        Objects.requireNonNull(state.currentGroupCursor);
+        Objects.requireNonNull(state.cursorBetween);
+        Objects.requireNonNull(state.prev);
+        Objects.requireNonNull(state.prevRange);
+
+        // Only combine (Author 2000) type citations
+        if (cg.citationType != InTextCitationType.AUTHORYEAR_PAR) {
+            return false;
+        }
+
+        if (state.prev != null) {
+
+            // Even if we combine AUTHORYEAR_INTEXT citations, we
+            // would not mix them with AUTHORYEAR_PAR
+            if (cg.citationType != state.prev.citationType) {
+                return false;
+            }
+
+            if (!UnoTextRange.comparables(state.prevRange, currentRange)) {
+                return false;
+            }
+
+            // Sanity check: the current range should start later than
+            // the previous.
+            int textOrder = UnoTextRange.compareStarts(state.prevRange, currentRange);
+            if (textOrder != (-1)) {
+                String msg =
+                    String.format("MergeCitationGroups:"
+                                  + " \"%s\" supposed to be followed by \"%s\","
+                                  + " but %s",
+                                  state.prevRange.getString(),
+                                  currentRange.getString(),
+                                  ((textOrder == 0)
+                                   ? "they start at the same position"
+                                   : ("the start of the latter precedes"
+                                      + " the start of the first")));
+                LOGGER.warn(msg);
+                return false;
+            }
+        }
+
+        if (state.cursorBetween == null) {
+            return false;
+        }
+
+        Objects.requireNonNull(state.cursorBetween);
+        Objects.requireNonNull(state.currentGroupCursor);
+
+        // assume: currentGroupCursor.getEnd() == cursorBetween.getEnd()
+        if (UnoTextRange.compareEnds(state.cursorBetween, state.currentGroupCursor) != 0) {
+            String msg = ("MergeCitationGroups:"
+                          + " cursorBetween.end != currentGroupCursor.end");
+            throw new RuntimeException(msg);
+        }
+
+        /*
+         * Try to expand state.currentGroupCursor and state.cursorBetween by going right
+         * to reach rangeStart.
+         */
+        XTextRange rangeStart = currentRange.getStart();
+        boolean couldExpand = true;
+        XTextCursor thisCharCursor =
+            (currentRange.getText().createTextCursorByRange(state.cursorBetween.getEnd()));
+
+        while (couldExpand && (UnoTextRange.compareEnds(state.cursorBetween, rangeStart) < 0)) {
+            couldExpand = state.cursorBetween.goRight((short) 1, true);
+            state.currentGroupCursor.goRight((short) 1, true);
+            //
+            // Check that we only walk through inline whitespace.
+            //
+            thisCharCursor.goRight((short) 1, true);
+            String thisChar = thisCharCursor.getString();
+            thisCharCursor.collapseToEnd();
+            if (thisChar.isEmpty() || thisChar.equals("\n") || !thisChar.trim().isEmpty()) {
+                couldExpand = false;
+            }
+
+            // These two should move in sync:
+            if (UnoTextRange.compareEnds(state.cursorBetween, state.currentGroupCursor) != 0) {
+                String msg = ("MergeCitationGroups:"
+                              + " cursorBetween.end != currentGroupCursor.end"
+                              + " (during expand)");
+                throw new RuntimeException(msg);
+            }
+        } // while
+
+        if (!couldExpand) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Add cg to state.currentGroup
+     * Set state.cursorBetween to start at currentRange.getEnd()
+     * Expand state.currentGroupCursor to also cover currentRange
+     * Set state.prev to cg, state.prevRange to currentRange
+     */
+    private static void addToCurrentGroup(ScanState state, CitationGroup cg, XTextRange currentRange) {
+        final boolean isNewGroup = state.currentGroup.isEmpty();
+        if (!isNewGroup) {
+            Objects.requireNonNull(state.currentGroupCursor);
+            Objects.requireNonNull(state.cursorBetween);
+            Objects.requireNonNull(state.prev);
+            Objects.requireNonNull(state.prevRange);
+        }
+
+        // Add the current entry to a group.
+        state.currentGroup.add(cg);
+
+        // Set up cursorBetween to start at currentRange.getEnd()
+        XTextRange rangeEnd = currentRange.getEnd();
+        state.cursorBetween = currentRange.getText().createTextCursorByRange(rangeEnd);
+
+        // If new group, create currentGroupCursor
+        if (isNewGroup) {
+            state.currentGroupCursor = (currentRange.getText()
+                                        .createTextCursorByRange(currentRange.getStart()));
+        }
+
+        // include currentRange in currentGroupCursor
+        state.currentGroupCursor.goRight((short) (currentRange.getString().length()), true);
+
+        if (UnoTextRange.compareEnds(state.cursorBetween, state.currentGroupCursor) != 0) {
+            String msg = ("MergeCitationGroups: cursorBetween.end != currentGroupCursor.end");
+            throw new RuntimeException(msg);
+        }
+
+        /* Store data about last entry in currentGroup */
+        state.prev = cg;
+        state.prevRange = currentRange;
+    }
+
+    /**
+     *  Scan the document for joinable groups. Return those found.
+     */
+    private static List<JoinableGroupData> scan(XTextDocument doc, OOFrontend fr)
+        throws
+        NoDocumentException,
+        WrappedTargetException {
+        List<JoinableGroupData> result = new ArrayList<>();
+
+        List<CitationGroupID> cgids =
+            fr.getCitationGroupIDsSortedWithinPartitions(doc,
+                                                         false /* mapFootnotesToFootnoteMarks */);
+        if (cgids.isEmpty()) {
+            return result;
+        }
+
+        ScanState state = new ScanState();
+
+        for (CitationGroupID cgid : cgids) {
+            CitationGroup cg = fr.citationGroups.getCitationGroupOrThrow(cgid);
+
+            XTextRange currentRange = (fr.getMarkRange(doc, cgid)
+                                       .orElseThrow(RuntimeException::new));
+
+            /*
+             * Decide if we add cg to the group. False when the group is empty.
+             */
+            boolean addToGroup = checkAddToGroup(state, cg, currentRange);
+
+            /*
+             * Even if we do not add it to an existing group,
+             * we might use it to start a new group.
+             *
+             * Can it start a new group?
+             */
+            boolean canStartGroup = (cg.citationType == InTextCitationType.AUTHORYEAR_PAR);
+
+            if (!addToGroup) {
+                // close currentGroup
+                if (state.currentGroup.size() > 1) {
+                    result.add(new JoinableGroupData(state.currentGroup, state.currentGroupCursor));
+                }
+                // Start a new, empty group
+                state.reset();
+            }
+
+            if (addToGroup || canStartGroup) {
+                addToCurrentGroup(state, cg, currentRange);
+            }
+        } // for cgid
+
+        // close currentGroup
+        if (state.currentGroup.size() > 1) {
+            result.add(new JoinableGroupData(state.currentGroup, state.currentGroupCursor));
+        }
+        return result;
+    }
+
     public static void mergeCitationGroups(XTextDocument doc,
                                            OOFrontend fr,
                                            List<BibDatabase> databases,
@@ -54,252 +314,38 @@ public class EditMerge {
         UnknownPropertyException,
         WrappedTargetException {
 
-        final boolean useLockControllers = true;
         boolean madeModifications = false;
 
-        List<CitationGroupID> referenceMarkNames =
-            fr.getCitationGroupIDsSortedWithinPartitions(doc,
-                                                         false /* mapFootnotesToFootnoteMarks */);
-
-        final int nRefMarks = referenceMarkNames.size();
-
         try {
+            UnoScreenRefresh.lockControllers(doc);
 
-            if (useLockControllers) {
-                UnoScreenRefresh.lockControllers(doc);
-            }
+            List<JoinableGroupData> joinableGroups = EditMerge.scan(doc, fr);
 
-            /*
-             * joinableGroups collects lists of CitationGroup values
-             * that we think are joinable.
-             *
-             * joinableGroupsCursors provides the range for each group
-             */
-            List<List<CitationGroup>> joinableGroups = new ArrayList<>();
-            List<XTextCursor> joinableGroupsCursors = new ArrayList<>();
+            for (JoinableGroupData joinableGroupData : joinableGroups) {
 
-            // Since we only join groups with identical citationTypes, we
-            // can get citationType from the first element of each
-            // joinableGroup.
-
-            if (referenceMarkNames.size() > 0) {
-                // current group of CitationGroup values
-                List<CitationGroup> currentGroup = new ArrayList<>();
-                XTextCursor currentGroupCursor = null;
-                XTextCursor cursorBetween = null;
-                CitationGroup prev = null;
-                XTextRange prevRange = null;
-
-                for (CitationGroupID cgid : referenceMarkNames) {
-                    CitationGroup cg = fr.citationGroups.getCitationGroupOrThrow(cgid);
-
-                    XTextRange currentRange = (fr
-                                               .getMarkRange(doc, cgid)
-                                               .orElseThrow(RuntimeException::new));
-
-                    boolean addToGroup = true;
-                    /*
-                     * Decide if we add cg to the group
-                     */
-
-                    // Only combine (Author 2000) type citations
-                    if (cg.citationType != InTextCitationType.AUTHORYEAR_PAR) {
-                        addToGroup = false;
-                    }
-
-                    // Even if we combine AUTHORYEAR_INTEXT citations, we
-                    // would not mix them with AUTHORYEAR_PAR
-                    if (addToGroup && (prev != null)) {
-                        if (cg.citationType != prev.citationType) {
-                            addToGroup = false;
-                        }
-                    }
-
-                    if (addToGroup && prev != null) {
-                        Objects.requireNonNull(prevRange);
-                        Objects.requireNonNull(currentRange);
-                        if (!UnoTextRange.comparables(prevRange, currentRange)) {
-                            addToGroup = false;
-                        } else {
-                            int textOrder = UnoTextRange.compareStarts(prevRange, currentRange);
-                            if (textOrder != (-1)) {
-                                String msg =
-                                    String.format("MergeCitationGroups:"
-                                                  + " \"%s\" supposed to be followed by \"%s\","
-                                                  + " but %s",
-                                                  prevRange.getString(),
-                                                  currentRange.getString(),
-                                                  ((textOrder == 0)
-                                                   ? "they start at the same position"
-                                                   : ("the start of the latter precedes"
-                                                      + " the start of the first")));
-                                LOGGER.warn(msg);
-                                addToGroup = false;
-                            }
-                        }
-                    }
-
-                    if (addToGroup && (cursorBetween != null)) {
-                        Objects.requireNonNull(currentGroupCursor);
-                        // assume: currentGroupCursor.getEnd() == cursorBetween.getEnd()
-                        if (UnoTextRange.compareEnds(cursorBetween, currentGroupCursor) != 0) {
-                            String msg = ("MergeCitationGroups:"
-                                          + " cursorBetween.end != currentGroupCursor.end");
-                            throw new RuntimeException(msg);
-                        }
-
-                        XTextRange rangeStart = currentRange.getStart();
-
-                        boolean couldExpand = true;
-
-                        XTextCursor thisCharCursor =
-                            (currentRange.getText()
-                             .createTextCursorByRange(cursorBetween.getEnd()));
-
-                        while (couldExpand &&
-                               (UnoTextRange.compareEnds(cursorBetween, rangeStart) < 0)) {
-                            couldExpand = cursorBetween.goRight((short) 1, true);
-                            currentGroupCursor.goRight((short) 1, true);
-                            //
-                            thisCharCursor.goRight((short) 1, true);
-                            String thisChar = thisCharCursor.getString();
-                            thisCharCursor.collapseToEnd();
-                            if (thisChar.isEmpty()
-                                || thisChar.equals("\n")
-                                || !thisChar.trim().isEmpty()) {
-                                couldExpand = false;
-                            }
-                            if (UnoTextRange.compareEnds(cursorBetween, currentGroupCursor) != 0) {
-                                String msg = ("MergeCitationGroups:"
-                                              + " cursorBetween.end != currentGroupCursor.end"
-                                              + " (during expand)");
-                                throw new RuntimeException(msg);
-                            }
-                        } // while
-
-                        if (!couldExpand) {
-                            addToGroup = false;
-                        }
-                    }
-
-                    /*
-                     * Even if we do not add it to an existing group,
-                     * we might use it to start a new group.
-                     *
-                     * Can it start a new group?
-                     */
-                    boolean canStartGroup = (cg.citationType == InTextCitationType.AUTHORYEAR_PAR);
-
-                    if (!addToGroup) {
-                        // close currentGroup
-                        if (currentGroup.size() > 1) {
-                            joinableGroups.add(currentGroup);
-                            joinableGroupsCursors.add(currentGroupCursor);
-                        }
-                        // Start a new, empty group
-                        currentGroup = new ArrayList<>();
-                        currentGroupCursor = null;
-                        cursorBetween = null;
-                        prev = null;
-                        prevRange = null;
-                    }
-
-                    if (addToGroup || canStartGroup) {
-                        // Add the current entry to a group.
-                        currentGroup.add(cg);
-                        // ... and start new cursorBetween
-                        // Set up cursorBetween
-                        //
-                        XTextRange rangeEnd = currentRange.getEnd();
-                        cursorBetween =
-                            currentRange.getText().createTextCursorByRange(rangeEnd);
-                        // If new group, create currentGroupCursor
-                        if (currentGroupCursor == null) {
-                            currentGroupCursor = (currentRange.getText()
-                                                  .createTextCursorByRange(currentRange.getStart()));
-                        }
-                        // include self in currentGroupCursor
-                        currentGroupCursor.goRight((short) (currentRange.getString().length()), true);
-
-                        if (UnoTextRange.compareEnds(cursorBetween, currentGroupCursor) != 0) {
-                            /*
-                             * A problem discovered using this check:
-                             * when viewing the document in
-                             * two-pages-side-by-side mode, our visual
-                             * firstAppearanceOrder follows the visual
-                             * ordering on the screen. The problem
-                             * this caused: it sees a citation on the
-                             * 2nd line of the 1st page as appearing
-                             * after one at the 1st line of 2nd
-                             * page. Since we create cursorBetween at
-                             * the end of range1Full (on 1st page), it
-                             * is now BEFORE currentGroupCursor (on
-                             * 2nd page).
-                             */
-                            String msg =
-                                "MergeCitationGroups: "
-                                + "cursorBetween.end != currentGroupCursor.end"
-                                + String.format(" (after %s)",
-                                                addToGroup ? "addToGroup" : "startGroup")
-                                + (addToGroup
-                                   ? String.format(" comparisonResult: %d\n"
-                                                   + "cursorBetween: '%s'\n"
-                                                   + "currentRange: '%s'\n"
-                                                   + "currentGroupCursor: '%s'\n",
-                                                   UnoTextRange.compareEnds(cursorBetween,
-                                                                            currentGroupCursor),
-                                                   cursorBetween.getString(),
-                                                   currentRange.getString(),
-                                                   currentGroupCursor.getString())
-                                   : "");
-                            throw new RuntimeException(msg);
-                        }
-                        prev = cg;
-                        prevRange = currentRange;
-                    }
-                } // for cgid
-
-                // close currentGroup
-                if (currentGroup.size() > 1) {
-                    joinableGroups.add(currentGroup);
-                    joinableGroupsCursors.add(currentGroupCursor);
-                }
-            } // if (referenceMarkNames.size() > 0)
-
-            /*
-             * Now we can process the joinable groups
-             */
-            for (int gi = 0; gi < joinableGroups.size(); gi++) {
-
-                List<CitationGroup> joinableGroup = joinableGroups.get(gi);
-                /*
-                 * Join those in joinableGroups.get(gi)
-                 */
-
-                //
-                // Note: we are taking ownership of the citations (by
-                //       adding to newGroupCitations, then removing
-                //       the original CitationGroup values)
+                List<CitationGroup> cgs = joinableGroupData.group;
 
                 List<Citation> newGroupCitations = new ArrayList<>();
-                for (CitationGroup rk : joinableGroup) {
-                    newGroupCitations.addAll(rk.citationsInStorageOrder);
+                for (CitationGroup cg : cgs) {
+                    newGroupCitations.addAll(cg.citationsInStorageOrder);
                 }
 
-                InTextCitationType citationType = joinableGroup.get(0).citationType;
+                // Since we only join groups with identical citationTypes, we
+                // can get citationType from the first element of each
+                // joinable group.
+                InTextCitationType citationType = cgs.get(0).citationType;
 
                 // cgPageInfos belong to the CitationGroup (DataModel JabRef52),
                 // but it is not clear how should we handle them here.
                 // We delegate the problem to the backend.
                 List<Optional<OOFormattedText>> pageInfosForCitations =
-                    fr.backend.combinePageInfos(joinableGroup);
+                    fr.backend.combinePageInfos(cgs);
 
                 // Remove the old citation groups from the document.
-                for (int gj = 0; gj < joinableGroup.size(); gj++) {
-                    fr.removeCitationGroups(joinableGroup, doc);
-                }
+                fr.removeCitationGroups(cgs, doc);
 
-                XTextCursor textCursor = joinableGroupsCursors.get(gi);
+                XTextCursor textCursor = joinableGroupData.groupCursor;
+
                 // Also remove the spaces between.
                 textCursor.setString("");
 
@@ -309,9 +355,7 @@ public class EditMerge {
 
                 // Insert reference mark:
 
-                /* insertSpaceAfter: no, it is already there (or could
-                 * be)
-                 */
+                /* insertSpaceAfter: no, it is already there (or could be) */
                 boolean insertSpaceAfter = false;
                 UpdateCitationMarkers.createAndFillCitationGroup(fr,
                                                                  doc,
@@ -322,14 +366,12 @@ public class EditMerge {
                                                                  textCursor,
                                                                  style,
                                                                  insertSpaceAfter);
-            } // for gi
+            }
 
-            madeModifications = (joinableGroups.size() > 0);
+            madeModifications = !joinableGroups.isEmpty();
 
         } finally {
-            if (useLockControllers) {
-                UnoScreenRefresh.unlockControllers(doc);
-            }
+            UnoScreenRefresh.unlockControllers(doc);
         }
 
         if (madeModifications) {
