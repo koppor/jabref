@@ -72,7 +72,7 @@ public class OOProcess {
      *
      *  Yes, they are always sorted one way or another.
      */
-    private static Comparator<BibEntry> comparatorForMulticite(OOBibStyle style) {
+    public static Comparator<BibEntry> comparatorForMulticite(OOBibStyle style) {
         if (style.getMultiCiteChronological()) {
             return OOProcess.YEAR_AUTHOR_TITLE_COMPARATOR;
         } else {

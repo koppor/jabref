@@ -151,6 +151,7 @@ public class Backend52 {
         Optional<OOFormattedText> pageInfo =
             (UnoUserDefinedProperty.getStringValue(doc, refMarkName)
              .map(OOFormattedText::fromString));
+        pageInfo = Citation.normalizePageInfo(pageInfo);
 
         setPageInfoInDataInitial(citations, pageInfo);
 
@@ -427,10 +428,11 @@ public class Backend52 {
         switch (dataModel) {
         case JabRef52:
             for (CitationEntry entry : citationEntries) {
-                Optional<String> pageInfo = entry.getPageInfo();
+                Optional<OOFormattedText> pageInfo = entry.getPageInfo().map(OOFormattedText::fromString);
+                pageInfo = Citation.normalizePageInfo(pageInfo);
                 if (pageInfo.isPresent()) {
                     String name = entry.getRefMarkName();
-                    UnoUserDefinedProperty.createStringProperty(doc, name, pageInfo.get());
+                    UnoUserDefinedProperty.createStringProperty(doc, name, pageInfo.get().asString());
                 }
             }
             break;

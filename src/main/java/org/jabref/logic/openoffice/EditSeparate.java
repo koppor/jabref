@@ -2,11 +2,10 @@ package org.jabref.logic.openoffice;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
+import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
@@ -50,71 +49,58 @@ public class EditSeparate {
 
         boolean madeModifications = false;
 
-        // {@code names} does not need to be sorted.
-        List<CitationGroupID> names =
-            new ArrayList<>(fr.citationGroups.getCitationGroupIDsUnordered());
+        // To reduce surprises in JabRef52 mode, impose localOrder to
+        // decide the visually last Citation i the group. Unless the
+        // style changed since refresh this is the last on the screen
+        // as well.
+        fr.citationGroups.lookupEntriesInDatabases(databases);
+        fr.citationGroups.imposeLocalOrderByComparator(OOProcess.comparatorForMulticite(style));
 
-        final boolean useLockControllers = true;
+        List<CitationGroupID> names = new ArrayList<>(fr.citationGroups.getCitationGroupIDsUnordered());
+
         try {
-            if (useLockControllers) {
-                UnoScreenRefresh.lockControllers(doc);
-            }
+            UnoScreenRefresh.lockControllers(doc);
 
-            int pivot = 0;
+            for (CitationGroupID cgid : names) {
 
-            while (pivot < (names.size())) {
-                CitationGroupID cgid = names.get(pivot);
                 CitationGroup cg = fr.citationGroups.getCitationGroupOrThrow(cgid);
                 XTextRange range1 = (fr
                                      .getMarkRange(doc, cgid)
                                      .orElseThrow(RuntimeException::new));
                 XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
 
-                // Note: JabRef52 returns cg.pageInfo for the last citation.
-                List<Optional<OOFormattedText>> pageInfosForCitations =
-                    cg.getPageInfosForCitationsInStorageOrder();
-
-                List<Citation> cits = cg.citationsInStorageOrder;
+                List<Citation> cits = cg.getCitationsInStorageOrder();
                 if (cits.size() <= 1) {
-                    pivot++;
                     continue;
                 }
 
-                List<String> keys =
-                    cits.stream().map(cit -> cit.citationKey).collect(Collectors.toList());
-
                 fr.removeCitationGroup(cg, doc);
-
                 // Now we own the content of cits
 
-                // Insert mark for each key
-                final int last = keys.size() - 1;
-                for (int i = 0; i < keys.size(); i++) {
+                // Create a citation group for each citation.
+                final int last = cits.size() - 1;
+                for (int i = 0; i < cits.size(); i++) {
                     boolean insertSpaceAfter = (i != last);
-                    List<String> citationKeys1 = keys.subList(i, i + 1);
-                    List<Optional<OOFormattedText>> pageInfos1 = pageInfosForCitations.subList(i, i + 1);
-                    // String tmpLabel = "tmp";
-                    String tmpLabel = keys.get(i);
-                    OOFormattedText citationText1 = OOFormattedText.fromString(tmpLabel);
-                    UpdateCitationMarkers.createAndFillCitationGroup(fr,
-                                                                     doc,
-                                                                     citationKeys1,
-                                                                     pageInfos1,
-                                                                     cg.citationType,
-                                                                     citationText1,
-                                                                     textCursor,
-                                                                     style,
-                                                                     insertSpaceAfter);
+                    Citation cit = cits.get(i);
+
+                    UpdateCitationMarkers.createAndFillCitationGroup(
+                        fr,
+                        doc,
+                        List.of(cit.citationKey),
+                        List.of(cit.getPageInfo()),
+                        cg.citationType,
+                        OOFormattedText.fromString(cit.citationKey),
+                        textCursor,
+                        style,
+                        insertSpaceAfter);
+
                     textCursor.collapseToEnd();
                 }
 
                 madeModifications = true;
-                pivot++;
             }
         } finally {
-            if (useLockControllers) {
-                UnoScreenRefresh.unlockControllers(doc);
-            }
+            UnoScreenRefresh.unlockControllers(doc);
         }
 
         if (madeModifications) {
