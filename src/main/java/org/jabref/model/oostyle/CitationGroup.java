@@ -167,10 +167,6 @@ public class CitationGroup {
      * citations
      */
 
-    public List<Citation> getCitationsInStorageOrder() {
-        return new ArrayList<>(citationsInStorageOrder);
-    }
-
     public List<Citation> getCitationsInLocalOrder() {
         List<Citation> res = new ArrayList<>(citationsInStorageOrder.size());
         for (int i : localOrder) {

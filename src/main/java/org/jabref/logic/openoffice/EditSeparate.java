@@ -69,7 +69,7 @@ public class EditSeparate {
                                      .orElseThrow(RuntimeException::new));
                 XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
 
-                List<Citation> cits = cg.getCitationsInStorageOrder();
+                List<Citation> cits = cg.citationsInStorageOrder;
                 if (cits.size() <= 1) {
                     continue;
                 }
