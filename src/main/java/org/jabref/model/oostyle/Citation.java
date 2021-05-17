@@ -8,11 +8,14 @@ import org.jabref.model.openoffice.Pair;
 public class Citation implements CitationSort.ComparableCitation {
 
     /** key in database */
-    public String citationKey;
+    public final String citationKey;
+
     /** Result from database lookup. Optional.empty() if not found. */
-    public Optional<CitationDatabaseLookup.Result> db;
+    private Optional<CitationDatabaseLookup.Result> db;
+
     /** The number used for numbered citation styles . */
     public Optional<Integer> number;
+
     /** Letter that makes the in-text citation unique. */
     public Optional<String> uniqueLetter;
 
@@ -69,7 +72,6 @@ public class Citation implements CitationSort.ComparableCitation {
         Citation cit = x.a;
         cit.uniqueLetter = x.b;
     }
-
 
     public static Optional<OOFormattedText> normalizePageInfo(Optional<OOFormattedText> o) {
         if (o == null || o.isEmpty() || "".equals(OOFormattedText.toString(o.get()))) {

@@ -328,13 +328,13 @@ public class OOProcess {
                     seenBefore.add(currentKey);
                 }
                 Optional<String> uniqueLetterForKey = cit.uniqueLetter;
-                if (cit.db.isEmpty()) {
+                if (cit.getDatabaseLookupResult().isEmpty()) {
                     hasUnresolved = true;
                 }
 
                 CitationMarkerEntry cm =
                     new CitationMarkerEntryImpl(currentKey,
-                                                cit.db,
+                                                cit.getDatabaseLookupResult(),
                                                 uniqueLetterForKey,
                                                 pageInfosForCitations.get(j),
                                                 isFirst);

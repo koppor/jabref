@@ -19,7 +19,7 @@ public class CitedKey implements CitationSort.ComparableCitation {
         this.citationKey = citationKey;
         this.where = new LinkedHashSet<>(); // remember order
         this.where.add(p);
-        this.db = cit.db;
+        this.db = cit.getDatabaseLookupResult();
         this.number = cit.number;
         this.uniqueLetter = cit.uniqueLetter;
         this.normCitMarker = Optional.empty();
@@ -52,7 +52,7 @@ public class CitedKey implements CitationSort.ComparableCitation {
      */
     void addPath(CitationPath p, Citation cit) {
         this.where.add(p);
-        if (cit.db != this.db) {
+        if (cit.getDatabaseLookupResult() != this.db) {
             throw new RuntimeException("CitedKey.addPath: mismatch on cit.db");
         }
         if (cit.number != this.number) {
