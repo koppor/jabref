@@ -14,7 +14,7 @@ public class Citation implements CitationSort.ComparableCitation {
     private Optional<CitationDatabaseLookup.Result> db;
 
     /** The number used for numbered citation styles . */
-    public Optional<Integer> number;
+    private Optional<Integer> number;
 
     /** Letter that makes the in-text citation unique. */
     public Optional<String> uniqueLetter;
@@ -58,6 +58,13 @@ public class Citation implements CitationSort.ComparableCitation {
         return db;
     }
 
+    public Optional<Integer> getNumber() {
+        return number;
+    }
+
+    /*
+     * Setters for CitationGroups.distribute()
+     */
     public static void setDatabaseLookupResult(Pair<Citation, Optional<CitationDatabaseLookup.Result>> x) {
         Citation cit = x.a;
         cit.db = x.b;
@@ -73,6 +80,9 @@ public class Citation implements CitationSort.ComparableCitation {
         cit.uniqueLetter = x.b;
     }
 
+    /*
+     * pageInfo normalization
+     */
     public static Optional<OOFormattedText> normalizePageInfo(Optional<OOFormattedText> o) {
         if (o == null || o.isEmpty() || "".equals(OOFormattedText.toString(o.get()))) {
             return Optional.empty();

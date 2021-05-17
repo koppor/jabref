@@ -182,7 +182,7 @@ public class CitationGroup {
     public List<Integer> getCitationNumbersInLocalOrder() {
         List<Citation> cits = getCitationsInLocalOrder();
         return (cits.stream()
-                .map(cit -> cit.number.orElseThrow(RuntimeException::new))
+                .map(cit -> cit.getNumber().orElseThrow(RuntimeException::new))
                 .collect(Collectors.toList()));
     }
 
