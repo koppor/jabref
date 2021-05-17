@@ -91,6 +91,6 @@ public class Citation implements CitationSort.ComparableCitation {
         if (s.trim().equals("")) {
             return Optional.empty();
         }
-        return Optional.of(OOFormattedText.fromString(s));
+        return Optional.of(OOFormattedText.fromString(s.trim()));
     }
 }
