@@ -244,9 +244,6 @@ class OOBibStyleGetCitationMarker {
      * Any number of backup fields can be used if the primary field is
      * empty.
      *
-     * @param entry    The entry.
-     * @param database The database the entry belongs to.
-     *
      * @param fields   A list of fields, to look up, using first nonempty hit.
      *
      *                 If backup fields are needed, separate field
@@ -264,14 +261,12 @@ class OOBibStyleGetCitationMarker {
      *
      */
     private static String getCitationMarkerField(OOBibStyle style,
-                                                 BibEntry entry,
-                                                 BibDatabase database,
+                                                 CitationDatabaseLookup.Result db,
                                                  OrFields fields) {
-        Objects.requireNonNull(entry, "Entry cannot be null");
-        Objects.requireNonNull(database, "database cannot be null");
+        Objects.requireNonNull(db);
 
         Optional<FieldAndContent> optionalFieldAndContent =
-            getRawCitationMarkerField(entry, database, fields);
+            getRawCitationMarkerField(db.entry, db.database, fields);
 
         if (optionalFieldAndContent.isEmpty()) {
             // No luck? Return an empty string:
@@ -292,17 +287,13 @@ class OOBibStyleGetCitationMarker {
         return result;
     }
 
-    private static AuthorList getAuthorList(OOBibStyle style,
-                                            CitationDatabaseLookup.Result db) {
+    private static AuthorList getAuthorList(OOBibStyle style, CitationDatabaseLookup.Result db) {
 
         // The bibtex fields providing author names, e.g. "author" or
         // "editor".
         OrFields authorFieldNames = style.getAuthorFieldNames();
 
-        String authorListAsString = getCitationMarkerField(style,
-                                                           db.entry,
-                                                           db.database,
-                                                           authorFieldNames);
+        String authorListAsString = getCitationMarkerField(style, db, authorFieldNames);
         return AuthorList.parse(authorListAsString);
     }
 
@@ -318,8 +309,7 @@ class OOBibStyleGetCitationMarker {
      *
      * If ce is unresolved, return 0.
      */
-    private static int calculateNAuthorsToEmit(OOBibStyle style,
-                                               CitationMarkerEntry ce) {
+    private static int calculateNAuthorsToEmit(OOBibStyle style, CitationMarkerEntry ce) {
 
         int maxAuthors = (ce.getIsFirstAppearanceOfSource()
                           ? style.getMaxAuthorsFirst()
@@ -330,8 +320,7 @@ class OOBibStyleGetCitationMarker {
             return 0;
         }
 
-        AuthorList authorList = getAuthorList(style,
-                                              ce.getDatabaseLookupResult().get());
+        AuthorList authorList = getAuthorList(style, ce.getDatabaseLookupResult().get());
         int nAuthors = authorList.getNumberOfAuthors();
 
         if (maxAuthors == -1) {
@@ -446,8 +435,7 @@ class OOBibStyleGetCitationMarker {
                 sb.append(String.format("Unresolved(%s)", ce.getCitationKey()));
             } else {
 
-                BibEntry currentEntry = ce.getDatabaseLookupResult().get().entry;
-                BibDatabase currentDatabase = ce.getDatabaseLookupResult().get().database;
+                final CitationDatabaseLookup.Result db = ce.getDatabaseLookupResult().get();
 
                 int maxAuthors = (purpose == AuthorYearMarkerPurpose.NORMALIZED
                                   ? style.getMaxAuthors()
@@ -457,8 +445,7 @@ class OOBibStyleGetCitationMarker {
                     maxAuthors = maxAuthorsOverride.get();
                 }
 
-                AuthorList authorList = getAuthorList(style,
-                                                      ce.getDatabaseLookupResult().get());
+                AuthorList authorList = getAuthorList(style, db);
                 String authorString = formatAuthorList(style, authorList, maxAuthors, andString);
                 sb.append(authorString);
                 sb.append(yearSep);
@@ -467,10 +454,7 @@ class OOBibStyleGetCitationMarker {
                     sb.append(startBrace);
                 }
 
-                String year = getCitationMarkerField(style,
-                                                     currentEntry,
-                                                     currentDatabase,
-                                                     yearFieldNames);
+                String year = getCitationMarkerField(style, db, yearFieldNames);
                 if (year != null) {
                     sb.append(year);
                 }
