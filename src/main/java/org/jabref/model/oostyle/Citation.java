@@ -17,10 +17,10 @@ public class Citation implements CitationSort.ComparableCitation {
     private Optional<Integer> number;
 
     /** Letter that makes the in-text citation unique. */
-    public Optional<String> uniqueLetter;
+    private Optional<String> uniqueLetter;
 
-    /** pageInfo: For Compat.DataModel.JabRef53 */
-    public Optional<OOFormattedText> pageInfo;
+    /** pageInfo */
+    private Optional<OOFormattedText> pageInfo;
 
     /* missing: something that differentiates this from other
      * citations of the same citationKey. In particular, a
@@ -60,6 +60,18 @@ public class Citation implements CitationSort.ComparableCitation {
 
     public Optional<Integer> getNumber() {
         return number;
+    }
+
+    public Optional<String> getUniqueLetter() {
+        return uniqueLetter;
+    }
+
+    public void setPageInfo(Optional<OOFormattedText> v) {
+        Optional<OOFormattedText> vv = normalizePageInfo(v);
+        if (!vv.equals(v)) {
+            throw new RuntimeException("setPageInfo argument is not normalied");
+        }
+        this.pageInfo = vv;
     }
 
     /*

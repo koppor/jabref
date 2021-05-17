@@ -116,7 +116,7 @@ public class CitationGroup {
 
         @Override
         public Optional<OOFormattedText> getPageInfo() {
-            return c.pageInfo;
+            return c.getPageInfo();
         }
     }
 
@@ -134,8 +134,8 @@ public class CitationGroup {
         final int last = nCitations - 1;
         Optional<OOFormattedText> lastPageInfo = Optional.empty();
         if (dataModel == OOStyleDataModelVersion.JabRef52) {
-            lastPageInfo = getCitationsInLocalOrder().get(last).pageInfo;
-            getCitationsInLocalOrder().get(last).pageInfo = Optional.empty();
+            lastPageInfo = getCitationsInLocalOrder().get(last).getPageInfo();
+            getCitationsInLocalOrder().get(last).setPageInfo(Optional.empty());
         }
 
         List<CitationAndIndex> cis = new ArrayList<>(nCitations);
@@ -155,7 +155,7 @@ public class CitationGroup {
         this.localOrder = ordered;
 
         if (dataModel == OOStyleDataModelVersion.JabRef52) {
-            getCitationsInLocalOrder().get(last).pageInfo = lastPageInfo;
+            getCitationsInLocalOrder().get(last).setPageInfo(lastPageInfo);
         }
     }
 
@@ -198,7 +198,7 @@ public class CitationGroup {
         CitationGroup cg = this;
         // pageInfo values from citations, empty mapped to null.
         return (cg.citationsInStorageOrder.stream()
-                .map(cit -> cit.pageInfo)
+                .map(cit -> cit.getPageInfo())
                 .collect(Collectors.toList()));
     }
 
@@ -209,7 +209,7 @@ public class CitationGroup {
         CitationGroup cg = this;
         // pageInfo values from citations
         return (cg.getCitationsInLocalOrder().stream()
-                .map(cit -> cit.pageInfo)
+                .map(cit -> cit.getPageInfo())
                 .collect(Collectors.toList()));
     }
 

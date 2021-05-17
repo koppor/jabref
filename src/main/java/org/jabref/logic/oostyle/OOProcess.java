@@ -327,7 +327,7 @@ public class OOProcess {
                     isFirst = true;
                     seenBefore.add(currentKey);
                 }
-                Optional<String> uniqueLetterForKey = cit.uniqueLetter;
+                Optional<String> uniqueLetterForKey = cit.getUniqueLetter();
                 if (cit.getDatabaseLookupResult().isEmpty()) {
                     hasUnresolved = true;
                 }

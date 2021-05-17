@@ -107,7 +107,7 @@ public class Backend52 {
                                                  Optional<OOFormattedText> pageInfo) {
         // attribute to last citation (initially localOrder == storageOrder)
         if (citations.size() > 0) {
-            citations.get(citations.size() - 1).pageInfo = pageInfo;
+            citations.get(citations.size() - 1).setPageInfo(pageInfo);
         }
     }
 
@@ -115,14 +115,14 @@ public class Backend52 {
                                           Optional<OOFormattedText> pageInfo) {
         List<Citation> citations = cg.getCitationsInLocalOrder();
         if (citations.size() > 0) {
-            citations.get(citations.size() - 1).pageInfo = pageInfo;
+            citations.get(citations.size() - 1).setPageInfo(pageInfo);
         }
     }
 
     private static Optional<OOFormattedText> getPageInfoFromData(CitationGroup cg) {
         List<Citation> citations = cg.getCitationsInLocalOrder();
         if (citations.size() > 0) {
-            return citations.get(citations.size() - 1).pageInfo;
+            return citations.get(citations.size() - 1).getPageInfo();
         } else {
             return Optional.empty();
         }
@@ -223,15 +223,17 @@ public class Backend52 {
             switch (dataModel) {
             case JabRef52:
                 if (i == last) {
-                    cit.pageInfo = pageInfo;
+                    cit.setPageInfo(pageInfo);
                 } else {
                     if (pageInfo.isPresent()) {
                         LOGGER.warn("dataModel JabRef52"
                                     + " only supports pageInfo for the last citation of a group");
                     }
                 }
+                break;
             case JabRef53:
-                cit.pageInfo = pageInfo;
+                cit.setPageInfo(pageInfo);
+                break;
             }
         }
 
@@ -300,7 +302,7 @@ public class Backend52 {
         case JabRef53:
             return (joinableGroup.stream()
                     .flatMap(cg -> (cg.citationsInStorageOrder.stream()
-                                    .map(cit -> cit.pageInfo)))
+                                    .map(cit -> cit.getPageInfo())))
                     .collect(Collectors.toList()));
         default:
             throw new RuntimeException("unhandled dataModel here");

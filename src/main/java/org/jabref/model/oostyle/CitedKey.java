@@ -21,7 +21,7 @@ public class CitedKey implements CitationSort.ComparableCitation {
         this.where.add(p);
         this.db = cit.getDatabaseLookupResult();
         this.number = cit.getNumber();
-        this.uniqueLetter = cit.uniqueLetter;
+        this.uniqueLetter = cit.getUniqueLetter();
         this.normCitMarker = Optional.empty();
     }
 
@@ -58,7 +58,7 @@ public class CitedKey implements CitationSort.ComparableCitation {
         if (cit.getNumber() != this.number) {
             throw new RuntimeException("CitedKey.addPath: mismatch on cit.number");
         }
-        if (cit.uniqueLetter != this.uniqueLetter) {
+        if (cit.getUniqueLetter() != this.uniqueLetter) {
             throw new RuntimeException("CitedKey.addPath: mismatch on cit.uniqueLetter");
         }
     }
