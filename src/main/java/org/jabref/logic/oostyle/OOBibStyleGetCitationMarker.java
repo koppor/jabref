@@ -12,6 +12,7 @@ import org.jabref.model.entry.AuthorList;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.OrFields;
+import org.jabref.model.oostyle.CitationDatabaseLookup;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
@@ -292,16 +293,15 @@ class OOBibStyleGetCitationMarker {
     }
 
     private static AuthorList getAuthorList(OOBibStyle style,
-                                            BibEntry entry,
-                                            BibDatabase database) {
+                                            CitationDatabaseLookup.Result db) {
 
         // The bibtex fields providing author names, e.g. "author" or
         // "editor".
         OrFields authorFieldNames = style.getAuthorFieldNames();
 
         String authorListAsString = getCitationMarkerField(style,
-                                                           entry,
-                                                           database,
+                                                           db.entry,
+                                                           db.database,
                                                            authorFieldNames);
         return AuthorList.parse(authorListAsString);
     }
@@ -325,14 +325,13 @@ class OOBibStyleGetCitationMarker {
                           ? style.getMaxAuthorsFirst()
                           : style.getMaxAuthors());
 
-        BibEntry bibEntry = ce.getBibEntry().orElse(null);
-        BibDatabase database = ce.getDatabase().orElse(null);
-        boolean isUnresolved = (bibEntry == null) || (database == null);
-        if (isUnresolved) {
+        if (ce.getDatabaseLookupResult().isEmpty()) {
+            // unresolved
             return 0;
         }
 
-        AuthorList authorList = getAuthorList(style, bibEntry, database);
+        AuthorList authorList = getAuthorList(style,
+                                              ce.getDatabaseLookupResult().get());
         int nAuthors = authorList.getNumberOfAuthors();
 
         if (maxAuthors == -1) {
@@ -443,14 +442,12 @@ class OOBibStyleGetCitationMarker {
                 sb.append(citationSeparator);
             }
 
-            BibDatabase currentDatabase = ce.getDatabase().orElse(null);
-            BibEntry currentEntry = ce.getBibEntry().orElse(null);
-
-            boolean isUnresolved = (currentEntry == null) || (currentDatabase == null);
-
-            if (isUnresolved) {
+            if (ce.getDatabaseLookupResult().isEmpty()) {
                 sb.append(String.format("Unresolved(%s)", ce.getCitationKey()));
             } else {
+
+                BibEntry currentEntry = ce.getDatabaseLookupResult().get().entry;
+                BibDatabase currentDatabase = ce.getDatabaseLookupResult().get().database;
 
                 int maxAuthors = (purpose == AuthorYearMarkerPurpose.NORMALIZED
                                   ? style.getMaxAuthors()
@@ -461,8 +458,7 @@ class OOBibStyleGetCitationMarker {
                 }
 
                 AuthorList authorList = getAuthorList(style,
-                                                      currentEntry,
-                                                      currentDatabase);
+                                                      ce.getDatabaseLookupResult().get());
                 String authorString = formatAuthorList(style, authorList, maxAuthors, andString);
                 sb.append(authorString);
                 sb.append(yearSep);
@@ -622,14 +618,8 @@ class OOBibStyleGetCitationMarker {
             String nm1 = OOFormattedText.toString(normalizedMarkers.get(i - 1));
             String nm2 = OOFormattedText.toString(normalizedMarkers.get(i));
 
-            BibEntry bibEntry1 = ce1.getBibEntry().orElse(null);
-            BibEntry bibEntry2 = ce2.getBibEntry().orElse(null);
-
-            BibDatabase database1 = ce1.getDatabase().orElse(null);
-            BibDatabase database2 = ce2.getDatabase().orElse(null);
-
-            boolean isUnresolved1 = (bibEntry1 == null) || (database1 == null);
-            boolean isUnresolved2 = (bibEntry2 == null) || (database2 == null);
+            boolean isUnresolved1 = ce1.getDatabaseLookupResult().isEmpty();
+            boolean isUnresolved2 = ce2.getDatabaseLookupResult().isEmpty();
 
             boolean startingNewGroup;
             boolean sameAsPrev;

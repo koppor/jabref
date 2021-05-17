@@ -9,6 +9,7 @@ import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.oostyle.CitationDatabaseLookup;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitationMarkerEntryImpl;
 import org.jabref.model.oostyle.InTextCitationType;
@@ -122,10 +123,13 @@ public class EditInsert {
         for (int i = 0; i < nEntries; i++) {
             // Using the same database for each entry.
             // Probably the GUI limits selection to a single database.
+            Optional<CitationDatabaseLookup.Result> db =
+                Optional.of(new CitationDatabaseLookup.Result(entries.get(i), database));
             CitationMarkerEntry cm =
                 new CitationMarkerEntryImpl(citationKeys.get(i),
-                                            Optional.ofNullable(entries.get(i)),
-                                            Optional.ofNullable(database),
+                                            db,
+                                            // Optional.ofNullable(entries.get(i)),
+                                            // Optional.ofNullable(database),
                                             Optional.empty(), // uniqueLetter
                                             Optional.ofNullable(pageInfosForCitations.get(i)),
                                             false /* isFirstAppearanceOfSource */);

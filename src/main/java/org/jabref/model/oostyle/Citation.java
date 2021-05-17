@@ -51,6 +51,10 @@ public class Citation implements CitationSort.ComparableCitation {
                 : Optional.empty());
     }
 
+    public Optional<CitationDatabaseLookup.Result> getDatabaseLookupResult() {
+        return db;
+    }
+
     public static void setDatabaseLookupResult(Pair<Citation, Optional<CitationDatabaseLookup.Result>> x) {
         Citation cit = x.a;
         cit.db = x.b;

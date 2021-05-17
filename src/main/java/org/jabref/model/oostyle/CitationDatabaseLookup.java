@@ -3,6 +3,7 @@ package org.jabref.model.oostyle;
 // import org.jabref.model.oostyle.CitationDatabaseLookup;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.jabref.model.database.BibDatabase;
@@ -13,14 +14,15 @@ public class CitationDatabaseLookup {
     public static class Result {
         public final BibEntry entry;
         public final BibDatabase database;
-        Result(BibEntry entry, BibDatabase database) {
+        public Result(BibEntry entry, BibDatabase database) {
+            Objects.requireNonNull(entry);
+            Objects.requireNonNull(database);
             this.entry = entry;
             this.database = database;
         }
     }
 
-    public static Optional<Result> lookup(List<BibDatabase> databases,
-                                          String key) {
+    public static Optional<Result> lookup(List<BibDatabase> databases, String key) {
         for (BibDatabase database : databases) {
             Optional<BibEntry> entry = database.getEntryByCitationKey(key);
             if (entry.isPresent()) {

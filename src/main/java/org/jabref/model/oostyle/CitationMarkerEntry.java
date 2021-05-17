@@ -2,9 +2,6 @@ package org.jabref.model.oostyle;
 
 import java.util.Optional;
 
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.BibEntry;
-
 /**
  * This is what we need for getCitationMarker to produce author-year
  * citation markers.
@@ -28,21 +25,12 @@ public interface CitationMarkerEntry {
      */
     String getCitationKey();
 
-    /** Bibliography entry looked up from databases.
-     *
-     * May be empty if not found. In this case getDatabase()
-     * should also return empty.
+    /** Result of looking up citation key in databases.
      */
-    Optional<BibEntry> getBibEntry();
+    Optional<CitationDatabaseLookup.Result> getDatabaseLookupResult();
 
     /**
-     * The database where BibEntry was found.
-     * May be empty, if not found (otherwise not).
-     */
-    Optional<BibDatabase> getDatabase();
-
-    /**
-     * uniqueLetter or null if not needed.
+     * uniqueLetter or Optional.empty() if not needed.
      */
     Optional<String> getUniqueLetter();
 

@@ -95,8 +95,7 @@ public class OOProcess {
         // for uniqueness checking purposes:
         // createNormalizedCitationMarker
         CitationMarkerEntry ce = new CitationMarkerEntryImpl(ck.citationKey,
-                                                             ck.db.map(e -> e.entry),
-                                                             ck.db.map(e -> e.database),
+                                                             ck.db,
                                                              Optional.empty(), // uniqueLetter
                                                              Optional.empty(), // pageInfo
                                                              false /* isFirstAppearanceOfSource */);
@@ -333,13 +332,10 @@ public class OOProcess {
                 if (cit.db.isEmpty()) {
                     hasUnresolved = true;
                 }
-                Optional<BibDatabase> database = cit.db.map(e -> e.database);
-                Optional<BibEntry> bibEntry = cit.db.map(e -> e.entry);
 
                 CitationMarkerEntry cm =
                     new CitationMarkerEntryImpl(currentKey,
-                                                bibEntry,
-                                                database,
+                                                cit.db,
                                                 uniqueLetterForKey,
                                                 Optional.ofNullable(pageInfosForCitations.get(j)),
                                                 isFirst);
@@ -361,7 +357,7 @@ public class OOProcess {
                 for (int j = 0; j < nCitedEntries; j++) {
 
                     CitationMarkerEntry cm = citationMarkerEntries.get(j);
-                    if (cm.getBibEntry().isPresent()) {
+                    if (cm.getDatabaseLookupResult().isPresent()) {
                         s = (s
                              + style.getCitationMarker(citationMarkerEntries.subList(j, j + 1),
                                                        inParenthesis,
