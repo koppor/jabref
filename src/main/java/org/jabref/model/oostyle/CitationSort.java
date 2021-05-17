@@ -21,31 +21,27 @@ public class CitationSort {
         Comparator<BibEntry> entryComparator;
         boolean unresolvedComesFirst;
 
-        CitationComparator(Comparator<BibEntry> entryComparator,
-                           boolean unresolvedComesFirst) {
+        CitationComparator(Comparator<BibEntry> entryComparator, boolean unresolvedComesFirst) {
             this.entryComparator = entryComparator;
             this.unresolvedComesFirst = unresolvedComesFirst;
         }
 
         public int compare(ComparableCitation a, ComparableCitation b) {
-            Optional<BibEntry> abe = a.getBibEntry();
-            Optional<BibEntry> bbe = b.getBibEntry();
+            Optional<BibEntry> aBibEntry = a.getBibEntry();
+            Optional<BibEntry> bBibEntry = b.getBibEntry();
             final int mul = unresolvedComesFirst ? (+1) : (-1);
 
             int res = 0;
-            if (abe.isEmpty() && bbe.isEmpty()) {
+            if (aBibEntry.isEmpty() && bBibEntry.isEmpty()) {
                 // Both are unresolved: compare them by citation key.
-                String ack = a.getCitationKey();
-                String bck = b.getCitationKey();
-                res = ack.compareTo(bck);
-            } else if (abe.isEmpty()) {
+                res = a.getCitationKey().compareTo(b.getCitationKey());
+            } else if (aBibEntry.isEmpty()) {
                 return -mul;
-            } else if (bbe.isEmpty()) {
+            } else if (bBibEntry.isEmpty()) {
                 return mul;
             } else {
                 // Proper comparison of entries
-                res = entryComparator.compare(abe.get(),
-                                              bbe.get());
+                res = entryComparator.compare(aBibEntry.get(), bBibEntry.get());
             }
             // Also consider pageInfo
             if (res == 0) {
