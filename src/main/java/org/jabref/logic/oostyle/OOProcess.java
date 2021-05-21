@@ -312,6 +312,7 @@ public class OOProcess {
         createUniqueLetters(sortedCitedKeys, cgs); // calls distributeUniqueLetters(cgs)
         cgs.createPlainBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
 
+        // Mark first appearance of each citationKey
         setIsFirstAppearanceOfSourceInCitations(cgs);
 
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
@@ -320,22 +321,9 @@ public class OOProcess {
             List<Citation> cits = cg.getCitationsInLocalOrder();
             final int nCitedEntries = cits.size();
 
-            // Check unresolved entries
-            // Convert each Citation to CitationMarkerEntry
-            // Mark first appearance of each citationKey
-
             boolean hasUnresolved = cits.stream().anyMatch(cit -> cit.isUnresolved());
 
-            List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nCitedEntries);
-            for (Citation cit : cits) {
-                CitationMarkerEntry cm =
-                    new CitationMarkerEntryImpl(cit.citationKey,
-                                                cit.getDatabaseLookupResult(),
-                                                cit.getUniqueLetter(),
-                                                cit.getPageInfo(),
-                                                cit.getIsFirstAppearanceOfSource());
-                citationMarkerEntries.add(cm);
-            }
+            List<CitationMarkerEntry> citationMarkerEntries = ListUtil.map(cits, e -> e);
 
             // TODO: Now we can pass CitationMarkerEntry values with unresolved
             //       keys to style.getCitationMarker,
