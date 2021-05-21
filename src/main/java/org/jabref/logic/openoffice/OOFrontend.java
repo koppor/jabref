@@ -117,14 +117,12 @@ public class OOFrontend {
         NoDocumentException,
         WrappedTargetException {
 
-        List<CitationGroupID> cgids = new ArrayList<>(citationGroups.getCitationGroupIDsUnordered());
-
         List<RangeSortEntry> sortables = new ArrayList<>();
-        for (CitationGroupID cgid : cgids) {
+        for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
             XTextRange range = (this
-                                .getMarkRange(doc, cgid)
+                                .getMarkRange(doc, cg.cgid)
                                 .orElseThrow(RuntimeException::new));
-            sortables.add(new RangeSortEntry(range, 0, cgid));
+            sortables.add(new RangeSortEntry(range, 0, cg.cgid));
         }
 
         /*
