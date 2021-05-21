@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.StorageBase;
@@ -118,9 +117,7 @@ public class CitationGroup {
      */
 
     public List<Citation> getCitationsInLocalOrder() {
-        return (localOrder.stream()
-                .map(i -> citationsInStorageOrder.get(i))
-                .collect(Collectors.toList()));
+        return ListUtil.map(localOrder, i -> citationsInStorageOrder.get(i));
     }
 
     /*
@@ -128,37 +125,24 @@ public class CitationGroup {
      * localOrder.
      */
     public List<Integer> getCitationNumbersInLocalOrder() {
-        List<Citation> cits = getCitationsInLocalOrder();
-        return (cits.stream()
-                .map(cit -> cit.getNumber().orElseThrow(RuntimeException::new))
-                .collect(Collectors.toList()));
+        return ListUtil.map(localOrder, i -> (citationsInStorageOrder.get(i)
+                                              .getNumber()
+                                              .orElseThrow(RuntimeException::new)));
     }
 
     /**
-     * @return List of nullable pageInfo values, one for each citation,
-     *         instrage order.
-     *
-     *         Result contains null for missing pageInfo values.
-     *         The list itself is not null.
-     *
+     * @return List of pageInfo values, one for each citation, in
+     *         storage order.
      */
     public List<Optional<OOFormattedText>> getPageInfosForCitationsInStorageOrder() {
-        CitationGroup cg = this;
-        // pageInfo values from citations, empty mapped to null.
-        return (cg.citationsInStorageOrder.stream()
-                .map(cit -> cit.getPageInfo())
-                .collect(Collectors.toList()));
+        return ListUtil.map(citationsInStorageOrder, Citation::getPageInfo);
     }
 
     /**
      * @return List of optional pageInfo values, one for each citation, in localOrder.
      */
     public List<Optional<OOFormattedText>> getPageInfosForCitationsInLocalOrder() {
-        CitationGroup cg = this;
-        // pageInfo values from citations
-        return (cg.getCitationsInLocalOrder().stream()
-                .map(cit -> cit.getPageInfo())
-                .collect(Collectors.toList()));
+        return ListUtil.map(getCitationsInLocalOrder(), Citation::getPageInfo);
     }
 
     /*
