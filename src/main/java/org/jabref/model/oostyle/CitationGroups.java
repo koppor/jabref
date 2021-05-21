@@ -99,16 +99,6 @@ public class CitationGroups {
     }
 
     /**
-     * Citation group IDs in {@code globalOrder}
-     */
-    public List<CitationGroupID> getSortedCitationGroupIDs() {
-        if (globalOrder.isEmpty()) {
-            throw new RuntimeException("getSortedCitationGroupIDs: not ordered yet");
-        }
-        return globalOrder.get();
-    }
-
-    /**
      * Citation groups in {@code globalOrder}
      */
     public List<CitationGroup> getSortedCitationGroups() {
