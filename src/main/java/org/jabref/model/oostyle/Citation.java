@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.Pair;
 
-public class Citation implements CitationSort.ComparableCitation {
+public class Citation implements CitationSort.ComparableCitation, CitationMarkerEntry {
 
     /** key in database */
     public final String citationKey;
@@ -22,6 +22,9 @@ public class Citation implements CitationSort.ComparableCitation {
     /** pageInfo */
     private Optional<OOFormattedText> pageInfo;
 
+    /** isFirstAppearanceOfSource */
+    private boolean isFirstAppearanceOfSource;
+
     /**
      *
      */
@@ -31,6 +34,7 @@ public class Citation implements CitationSort.ComparableCitation {
         this.number = Optional.empty();
         this.uniqueLetter = Optional.empty();
         this.pageInfo = Optional.empty();
+        this.isFirstAppearanceOfSource = false;
     }
 
     @Override
@@ -41,6 +45,11 @@ public class Citation implements CitationSort.ComparableCitation {
     @Override
     public Optional<OOFormattedText> getPageInfo() {
         return pageInfo;
+    }
+
+    @Override
+    public boolean getIsFirstAppearanceOfSource() {
+        return isFirstAppearanceOfSource;
     }
 
     @Override
@@ -76,6 +85,10 @@ public class Citation implements CitationSort.ComparableCitation {
             throw new RuntimeException("setPageInfo argument is not normalied");
         }
         this.pageInfo = vv;
+    }
+
+    public void setIsFirstAppearanceOfSource(boolean value) {
+        isFirstAppearanceOfSource = value;
     }
 
     /*
