@@ -388,9 +388,8 @@ public class Backend52 {
             // For DataModel.JabRef53 (Backend53) we need one context per Citation
             int n = cgs.numberOfCitationGroups();
             List<CitationEntry> citations = new ArrayList<>(n);
-            for (CitationGroupID cgid : cgs.getCitationGroupIDsUnordered()) {
-                CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
-                String name = cgid.asString();
+            for (CitationGroup cg : cgs.getCitationGroupsUnordered()) {
+                String name = cg.cgid.asString();
                 XTextCursor cursor = (this
                                       .getRawCursorForCitationGroup(cg, doc)
                                       .orElseThrow(RuntimeException::new));
