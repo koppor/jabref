@@ -125,34 +125,24 @@ public class CitationGroup {
      */
     void imposeLocalOrderByComparator(Comparator<BibEntry> entryComparator) {
 
-        // Pair citations with their storage index in citations
         final int nCitations = citationsInStorageOrder.size();
 
-        // For JabRef52 the single pageInfo is always in the
-        // last-in-localorder citation.
-        // We adjust here accordingly.
+        // For JabRef52 the single pageInfo is always in the last-in-localorder citation.
+        // We adjust here accordingly by taking it out and adding it back after sorting.
         final int last = nCitations - 1;
         Optional<OOFormattedText> lastPageInfo = Optional.empty();
         if (dataModel == OOStyleDataModelVersion.JabRef52) {
-            lastPageInfo = getCitationsInLocalOrder().get(last).getPageInfo();
-            getCitationsInLocalOrder().get(last).setPageInfo(Optional.empty());
+            Citation lastCitation = getCitationsInLocalOrder().get(last);
+            lastPageInfo = lastCitation.getPageInfo();
+            lastCitation.setPageInfo(Optional.empty());
         }
 
-        List<CitationAndIndex> cis = new ArrayList<>(nCitations);
-        for (int i = 0; i < nCitations; i++) {
-            Citation c = citationsInStorageOrder.get(i);
-            cis.add(new CitationAndIndex(c, i));
-        }
-
-        // Sort the list
-        cis.sort(new CitationSort.CitationComparator(entryComparator, true));
-
-        // Copy ordered storage indices to localOrder
-        List<Integer> ordered = new ArrayList<>(nCitations);
-        for (CitationAndIndex ci : cis) {
-            ordered.add(ci.i);
-        }
-        this.localOrder = ordered;
+        this.localOrder = (makeIndices(nCitations)
+                           .stream()
+                           .map(i -> new CitationAndIndex(citationsInStorageOrder.get(i), i))
+                           .sorted(new CitationSort.CitationComparator(entryComparator, true))
+                           .map(ci -> ci.i)
+                           .collect(Collectors.toList()));
 
         if (dataModel == OOStyleDataModelVersion.JabRef52) {
             getCitationsInLocalOrder().get(last).setPageInfo(lastPageInfo);
