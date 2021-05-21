@@ -12,24 +12,35 @@ import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextViewCursor;
 
 /*
- * A problem with XTextViewCursor: if it is not in text,
- * then we get a crippled version that does not support
- * viewCursor.getStart() or viewCursor.gotoRange(range,false),
- * and will throw an exception instead.
+ * A problem with XTextViewCursor: if it is not in text, then we get a
+ * crippled version that does not support viewCursor.getStart() or
+ * viewCursor.gotoRange(range,false), and will throw an exception
+ * instead.
  *
- * Here we manipulate the cursor via getSelection and
- * select (of XSelectionSupplier) to move it to the text.
+ * Here we manipulate the cursor via XSelectionSupplier.getSelection and
+ * XSelectionSupplierselect to move it to the text.
  *
  * Seems to work when the user selected a frame or image.
  * In these cases restoring the selection works, too.
  *
- * When the cursor is in a comment
- * (referred to as "annotation" in OO API) then
- * initialSelection is null, and select()
- * does not help to get a function viewCursor.
+ * When the cursor is in a comment (referred to as "annotation" in OO
+ * API) then initialSelection is null, and select() does not help to
+ * get a functional viewCursor.
  *
- * If get reports error, we have to ask the user
- * to move the cursor into the document text.
+ * If get() reports error, we have to ask the user to move the cursor
+ * into the document text.
+ *
+ * Usage:
+ *
+ *  Result<FunctionalTextViewCursor, JabRefException> fcursor = FunctionalTextViewCursor.get(doc, msg);
+ *  if (fcursor.isError()) {
+ *     ...
+ *  } else {
+ *      XTextViewCursor viewCursor = fcursor.get().getViewCursor();
+ *      ...
+ *      fc.restore();
+ *  }
+ *
  */
 public class FunctionalTextViewCursor {
 
