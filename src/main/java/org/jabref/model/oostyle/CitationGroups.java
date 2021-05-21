@@ -108,6 +108,16 @@ public class CitationGroups {
         return globalOrder.get();
     }
 
+    /**
+     * Citation groups in {@code globalOrder}
+     */
+    public List<CitationGroup> getSortedCitationGroups() {
+        if (globalOrder.isEmpty()) {
+            throw new RuntimeException("getSortedCitationGroups: not ordered yet");
+        }
+        return ListUtil.map(globalOrder.get(), cgid -> citationGroupsUnordered.get(cgid));
+    }
+
     public void setGlobalOrder(List<CitationGroupID> globalOrder) {
         Objects.requireNonNull(globalOrder);
         if (globalOrder.size() != citationGroupsUnordered.size()) {
