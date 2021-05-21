@@ -366,14 +366,11 @@ public class OOFrontend {
         List<RangeForOverlapCheck<CitationGroupID>> result =
             new ArrayList<>(citationGroups.numberOfCitationGroups());
 
-        List<CitationGroupID> cgids = new ArrayList<>(citationGroups.getCitationGroupIDsUnordered());
-
-        for (CitationGroupID cgid : cgids) {
-            XTextRange range = this.getMarkRange(doc, cgid).orElseThrow(RuntimeException::new);
-            CitationGroup cg = citationGroups.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
+        for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
+            XTextRange range = this.getMarkRange(doc, cg.cgid).orElseThrow(RuntimeException::new);
             String name = cg.cgRangeStorage.getName();
             result.add(new RangeForOverlapCheck(range,
-                                                cgid,
+                                                cg.cgid,
                                                 RangeForOverlapCheck.REFERENCE_MARK_KIND,
                                                 name));
         }

@@ -1,5 +1,6 @@
 package org.jabref.model.oostyle;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -96,6 +97,10 @@ public class CitationGroups {
 
     public Set<CitationGroupID> getCitationGroupIDsUnordered() {
         return citationGroupsUnordered.keySet();
+    }
+
+    public List<CitationGroup> getCitationGroupsUnordered() {
+        return new ArrayList<>(citationGroupsUnordered.values());
     }
 
     /**
