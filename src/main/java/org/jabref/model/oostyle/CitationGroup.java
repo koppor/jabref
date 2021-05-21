@@ -1,12 +1,10 @@
 package org.jabref.model.oostyle;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.StorageBase;
@@ -73,7 +71,7 @@ public class CitationGroup {
         this.cgRangeStorage = cgRangeStorage;
         this.citationType = citationType;
         this.citationsInStorageOrder = Collections.unmodifiableList(citationsInStorageOrder);
-        this.localOrder = makeIndices(citationsInStorageOrder.size());
+        this.localOrder = ListUtil.makeIndices(citationsInStorageOrder.size());
         this.referenceMarkNameForLinking = referenceMarkNameForLinking;
         this.indexInGlobalOrder = Optional.empty();
     }
@@ -85,11 +83,6 @@ public class CitationGroup {
     /*
      * localOrder
      */
-
-    /** Integers 0..(n-1) */
-    static List<Integer> makeIndices(int n) {
-        return Stream.iterate(0, i -> i + 1).limit(n).collect(Collectors.toList());
-    }
 
     /*
      * Helper class for imposeLocalOrderByComparator: a citation
@@ -137,12 +130,8 @@ public class CitationGroup {
             lastCitation.setPageInfo(Optional.empty());
         }
 
-        this.localOrder = (makeIndices(nCitations)
-                           .stream()
-                           .map(i -> new CitationAndIndex(citationsInStorageOrder.get(i), i))
-                           .sorted(new CitationSort.CitationComparator(entryComparator, true))
-                           .map(ci -> ci.i)
-                           .collect(Collectors.toList()));
+        this.localOrder = ListUtil.order(citationsInStorageOrder,
+                                         new CitationSort.CitationComparator(entryComparator, true));
 
         if (dataModel == OOStyleDataModelVersion.JabRef52) {
             getCitationsInLocalOrder().get(last).setPageInfo(lastPageInfo);
@@ -158,11 +147,9 @@ public class CitationGroup {
      */
 
     public List<Citation> getCitationsInLocalOrder() {
-        List<Citation> res = new ArrayList<>(citationsInStorageOrder.size());
-        for (int i : localOrder) {
-            res.add(citationsInStorageOrder.get(i));
-        }
-        return res;
+        return (localOrder.stream()
+                .map(i -> citationsInStorageOrder.get(i))
+                .collect(Collectors.toList()));
     }
 
     /*
