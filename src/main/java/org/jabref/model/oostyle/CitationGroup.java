@@ -88,11 +88,9 @@ public class CitationGroup {
      */
     void imposeLocalOrderByComparator(Comparator<BibEntry> entryComparator) {
 
-        final int nCitations = citationsInStorageOrder.size();
-
         // For JabRef52 the single pageInfo is always in the last-in-localorder citation.
         // We adjust here accordingly by taking it out and adding it back after sorting.
-        final int last = nCitations - 1;
+        final int last = this.numberOfCitations() - 1;
         Optional<OOFormattedText> lastPageInfo = Optional.empty();
         if (dataModel == OOStyleDataModelVersion.JabRef52) {
             Citation lastCitation = getCitationsInLocalOrder().get(last);
@@ -118,31 +116,6 @@ public class CitationGroup {
 
     public List<Citation> getCitationsInLocalOrder() {
         return ListUtil.map(localOrder, i -> citationsInStorageOrder.get(i));
-    }
-
-    /*
-     * Values of the number fields of the citations according to
-     * localOrder.
-     */
-    public List<Integer> getCitationNumbersInLocalOrder() {
-        return ListUtil.map(localOrder, i -> (citationsInStorageOrder.get(i)
-                                              .getNumber()
-                                              .orElseThrow(RuntimeException::new)));
-    }
-
-    /**
-     * @return List of pageInfo values, one for each citation, in
-     *         storage order.
-     */
-    public List<Optional<OOFormattedText>> getPageInfosForCitationsInStorageOrder() {
-        return ListUtil.map(citationsInStorageOrder, Citation::getPageInfo);
-    }
-
-    /**
-     * @return List of optional pageInfo values, one for each citation, in localOrder.
-     */
-    public List<Optional<OOFormattedText>> getPageInfosForCitationsInLocalOrder() {
-        return ListUtil.map(getCitationsInLocalOrder(), Citation::getPageInfo);
     }
 
     /*
