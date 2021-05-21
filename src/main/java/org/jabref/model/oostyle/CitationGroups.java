@@ -95,10 +95,6 @@ public class CitationGroups {
         return cks;
     }
 
-    public Set<CitationGroupID> getCitationGroupIDsUnordered() {
-        return citationGroupsUnordered.keySet();
-    }
-
     public List<CitationGroup> getCitationGroupsUnordered() {
         return new ArrayList<>(citationGroupsUnordered.values());
     }
