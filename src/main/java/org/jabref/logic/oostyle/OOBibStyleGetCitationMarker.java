@@ -561,10 +561,10 @@ class OOBibStyleGetCitationMarker {
      *
      */
     public static OOFormattedText
-    getCitationMarker(OOBibStyle style,
-                      List<CitationMarkerEntry> citationMarkerEntries,
-                      boolean inParenthesis,
-                      NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
+    getCitationMarker2(OOBibStyle style,
+                       List<CitationMarkerEntry> citationMarkerEntries,
+                       boolean inParenthesis,
+                       NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
 
         final int nEntries = citationMarkerEntries.size();
 

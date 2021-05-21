@@ -318,47 +318,16 @@ public class OOProcess {
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
         for (CitationGroup cg : cgs.getSortedCitationGroups()) {
-            List<Citation> cits = cg.getCitationsInLocalOrder();
-            final int nCitedEntries = cits.size();
-
-            boolean hasUnresolved = cits.stream().anyMatch(cit -> cit.isUnresolved());
-
-            List<CitationMarkerEntry> citationMarkerEntries = ListUtil.map(cits, e -> e);
-
-            // TODO: Now we can pass CitationMarkerEntry values with unresolved
-            //       keys to style.getCitationMarker,
-            //       maybe the fall back to ungrouped citations here is
-            //       not needed anymore.
 
             final boolean inParenthesis = (cg.citationType == InTextCitationType.AUTHORYEAR_PAR);
             final NonUniqueCitationMarker strictlyUnique = NonUniqueCitationMarker.THROWS;
-            if (hasUnresolved) {
-                /*
-                 * Some entries are unresolved.
-                 */
-                String s = "";
-                for (int j = 0; j < nCitedEntries; j++) {
 
-                    CitationMarkerEntry cm = citationMarkerEntries.get(j);
-                    if (cm.getDatabaseLookupResult().isPresent()) {
-                        s = (s
-                             + style.getCitationMarker(citationMarkerEntries.subList(j, j + 1),
-                                                       inParenthesis,
-                                                       strictlyUnique));
-                    } else {
-                        s = s + String.format("(Unresolved(%s))", cm.getCitationKey());
-                    }
-                }
-                citMarkers.put(cg.cgid, OOFormattedText.fromString(s));
-            } else {
-                /*
-                 * All entries are resolved.
-                 */
-                OOFormattedText citMarker = style.getCitationMarker(citationMarkerEntries,
-                                                                    inParenthesis,
-                                                                    strictlyUnique);
-                citMarkers.put(cg.cgid, citMarker);
-            }
+            List<Citation> cits = cg.getCitationsInLocalOrder();
+            List<CitationMarkerEntry> citationMarkerEntries = ListUtil.map(cits, e -> e);
+            OOFormattedText citMarker = style.getCitationMarker2(citationMarkerEntries,
+                                                                 inParenthesis,
+                                                                 strictlyUnique);
+            citMarkers.put(cg.cgid, citMarker);
         }
 
         return citMarkers;
