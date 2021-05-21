@@ -54,8 +54,16 @@ public class Citation implements CitationSort.ComparableCitation {
         return db;
     }
 
+    public boolean isUnresolved() {
+        return db.isEmpty();
+    }
+
     public Optional<Integer> getNumber() {
         return number;
+    }
+
+    public int getNumberOrThrow() {
+        return number.get();
     }
 
     public Optional<String> getUniqueLetter() {

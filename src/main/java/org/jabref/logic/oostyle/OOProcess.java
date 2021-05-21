@@ -224,8 +224,7 @@ public class OOProcess {
      *
      */
     private static Map<CitationGroupID, OOFormattedText>
-    produceCitationMarkersForIsNumberEntriesIsSortByPosition(CitationGroups cgs,
-                                                             OOBibStyle style) {
+    produceCitationMarkersForIsNumberEntriesIsSortByPosition(CitationGroups cgs, OOBibStyle style) {
 
         assert style.isNumberEntries();
         assert style.isSortByPosition();
@@ -236,14 +235,12 @@ public class OOProcess {
 
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
-        for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
-            CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
-            List<Integer> numbers = cg.getCitationNumbersInLocalOrder();
-            List<Optional<OOFormattedText>> pageInfos = cg.getPageInfosForCitationsInLocalOrder();
-            citMarkers.put(cgid,
-                           style.getNumCitationMarker(numbers,
+        for (CitationGroup cg : cgs.getSortedCitationGroups()) {
+            List<Citation> cits = cg.getCitationsInLocalOrder();
+            citMarkers.put(cg.cgid,
+                           style.getNumCitationMarker(ListUtil.map(cits, Citation::getNumberOrThrow),
                                                       minGroupingCount,
-                                                      pageInfos));
+                                                      ListUtil.map(cits, Citation::getPageInfo)));
         }
 
         return citMarkers;
@@ -254,8 +251,7 @@ public class OOProcess {
      * when the bibliography is not sorted by position.
      */
     private static Map<CitationGroupID, OOFormattedText>
-    produceCitationMarkersForIsNumberEntriesNotSortByPosition(CitationGroups cgs,
-                                                              OOBibStyle style) {
+    produceCitationMarkersForIsNumberEntriesNotSortByPosition(CitationGroups cgs, OOBibStyle style) {
         assert style.isNumberEntries();
         assert !style.isSortByPosition();
 
@@ -265,15 +261,14 @@ public class OOProcess {
 
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
-        for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
-            CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
-            List<Integer> numbers = cg.getCitationNumbersInLocalOrder();
-            List<Optional<OOFormattedText>> pageInfos = cg.getPageInfosForCitationsInLocalOrder();
-            citMarkers.put(cgid,
-                           style.getNumCitationMarker(numbers,
+        for (CitationGroup cg : cgs.getSortedCitationGroups()) {
+            List<Citation> cits = cg.getCitationsInLocalOrder();
+            citMarkers.put(cg.cgid,
+                           style.getNumCitationMarker(ListUtil.map(cits, Citation::getNumberOrThrow),
                                                       minGroupingCount,
-                                                      pageInfos));
+                                                      ListUtil.map(cits, Citation::getPageInfo)));
         }
+
         return citMarkers;
     }
 
@@ -305,34 +300,32 @@ public class OOProcess {
 
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
-        for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
-            CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
-
+        for (CitationGroup cg : cgs.getSortedCitationGroups()) {
             List<Citation> cits = cg.getCitationsInLocalOrder();
             final int nCitedEntries = cits.size();
-            List<Optional<OOFormattedText>> pageInfosForCitations = cg.getPageInfosForCitationsInLocalOrder();
 
-            List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nCitedEntries);
-
+            // Check unresolved entries
+            // Convert each Citation to CitationMarkerEntry
+            // Mark first appearance of each citationKey
             boolean hasUnresolved = false;
-            for (int j = 0; j < nCitedEntries; j++) {
-                Citation cit = cits.get(j);
+            List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nCitedEntries);
+            for (Citation cit : cits) {
                 String currentKey = cit.citationKey;
                 boolean isFirst = false;
                 if (!seenBefore.contains(currentKey)) {
                     isFirst = true;
                     seenBefore.add(currentKey);
                 }
-                Optional<String> uniqueLetterForKey = cit.getUniqueLetter();
-                if (cit.getDatabaseLookupResult().isEmpty()) {
+
+                if (cit.isUnresolved()) {
                     hasUnresolved = true;
                 }
 
                 CitationMarkerEntry cm =
                     new CitationMarkerEntryImpl(currentKey,
                                                 cit.getDatabaseLookupResult(),
-                                                uniqueLetterForKey,
-                                                pageInfosForCitations.get(j),
+                                                cit.getUniqueLetter(),
+                                                cit.getPageInfo(),
                                                 isFirst);
                 citationMarkerEntries.add(cm);
             }
@@ -361,7 +354,7 @@ public class OOProcess {
                         s = s + String.format("(Unresolved(%s))", cm.getCitationKey());
                     }
                 }
-                citMarkers.put(cgid, OOFormattedText.fromString(s));
+                citMarkers.put(cg.cgid, OOFormattedText.fromString(s));
             } else {
                 /*
                  * All entries are resolved.
@@ -369,7 +362,7 @@ public class OOProcess {
                 OOFormattedText citMarker = style.getCitationMarker(citationMarkerEntries,
                                                                     inParenthesis,
                                                                     strictlyUnique);
-                citMarkers.put(cgid, citMarker);
+                citMarkers.put(cg.cgid, citMarker);
             }
         }
 
