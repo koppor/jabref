@@ -84,35 +84,6 @@ public class CitationGroup {
      * localOrder
      */
 
-    /*
-     * Helper class for imposeLocalOrderByComparator: a citation
-     * paired with its storage index.
-     */
-    private class CitationAndIndex implements CitationSort.ComparableCitation {
-        Citation c;
-        int i;
-
-        CitationAndIndex(Citation c, int i) {
-            this.c = c;
-            this.i = i;
-        }
-
-        @Override
-        public String getCitationKey() {
-            return c.getCitationKey();
-        }
-
-        @Override
-        public Optional<BibEntry> getBibEntry() {
-            return c.getBibEntry();
-        }
-
-        @Override
-        public Optional<OOFormattedText> getPageInfo() {
-            return c.getPageInfo();
-        }
-    }
-
     /**
      * Sort citations for presentation within a CitationGroup.
      */
