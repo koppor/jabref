@@ -7,7 +7,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class ListUtil {
+public class ListUtil {
+
     public static <T, U> List<U> map(List<T> list, Function<T, U> fun) {
         return list.stream().map(e -> fun.apply(e)).collect(Collectors.toList());
     }
