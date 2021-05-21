@@ -273,6 +273,26 @@ public class OOProcess {
     }
 
     /**
+     * Set isFirstAppearanceOfSource in each citation.
+     *
+     * Preconditions: globalOrder, localOrder
+     */
+    private static void setIsFirstAppearanceOfSourceInCitations(CitationGroups cgs) {
+        Set<String> seenBefore = new HashSet<>();
+        for (CitationGroup cg : cgs.getSortedCitationGroups()) {
+            for (Citation cit : cg.getCitationsInLocalOrder()) {
+                String currentKey = cit.citationKey;
+                if (!seenBefore.contains(currentKey)) {
+                    cit.setIsFirstAppearanceOfSource(true);
+                    seenBefore.add(currentKey);
+                } else {
+                    cit.setIsFirstAppearanceOfSource(false);
+                }
+            }
+        }
+    }
+
+    /**
      * Produce citMarkers for normal
      * (!isCitationKeyCiteMarkers &amp;&amp; !isNumberEntries) styles.
      *
@@ -292,11 +312,7 @@ public class OOProcess {
         createUniqueLetters(sortedCitedKeys, cgs); // calls distributeUniqueLetters(cgs)
         cgs.createPlainBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
 
-        // Finally, go through all citation markers, and update
-        // those referring to entries in our current list:
-        final int maxAuthorsFirst = style.getMaxAuthorsFirst();
-
-        Set<String> seenBefore = new HashSet<>();
+        setIsFirstAppearanceOfSourceInCitations(cgs);
 
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
@@ -307,26 +323,17 @@ public class OOProcess {
             // Check unresolved entries
             // Convert each Citation to CitationMarkerEntry
             // Mark first appearance of each citationKey
-            boolean hasUnresolved = false;
+
+            boolean hasUnresolved = cits.stream().anyMatch(cit -> cit.isUnresolved());
+
             List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nCitedEntries);
             for (Citation cit : cits) {
-                String currentKey = cit.citationKey;
-                boolean isFirst = false;
-                if (!seenBefore.contains(currentKey)) {
-                    isFirst = true;
-                    seenBefore.add(currentKey);
-                }
-
-                if (cit.isUnresolved()) {
-                    hasUnresolved = true;
-                }
-
                 CitationMarkerEntry cm =
-                    new CitationMarkerEntryImpl(currentKey,
+                    new CitationMarkerEntryImpl(cit.citationKey,
                                                 cit.getDatabaseLookupResult(),
                                                 cit.getUniqueLetter(),
                                                 cit.getPageInfo(),
-                                                isFirst);
+                                                cit.getIsFirstAppearanceOfSource());
                 citationMarkerEntries.add(cm);
             }
 
