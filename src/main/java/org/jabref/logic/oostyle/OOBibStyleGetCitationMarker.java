@@ -404,8 +404,9 @@ class OOBibStyleGetCitationMarker {
 
         StringBuilder sb = new StringBuilder();
         sb.append(style.getCitationGroupMarkupBefore());
+
         if (inParenthesis) {
-            sb.append(startBrace);
+            sb.append(startBrace); // shared parenthesis
         }
 
         for (int j = 0; j < ces.size(); j++) {
@@ -432,11 +433,25 @@ class OOBibStyleGetCitationMarker {
                 sb.append(citationSeparator);
             }
 
-            if (ce.getDatabaseLookupResult().isEmpty()) {
+            StringBuilder pageInfoPart = new StringBuilder("");
+            if (purpose != AuthorYearMarkerPurpose.NORMALIZED) {
+                Optional<OOFormattedText> pageInfo =
+                    Citation.normalizePageInfo(ce.getPageInfo());
+                if (pageInfo.isPresent()) {
+                    pageInfoPart.append(pageInfoSeparator);
+                    pageInfoPart.append(OOFormattedText.toString(pageInfo.get()));
+                }
+            }
+
+            final boolean isUnresolved = ce.getDatabaseLookupResult().isEmpty();
+            if (isUnresolved) {
                 sb.append(String.format("Unresolved(%s)", ce.getCitationKey()));
+                if (purpose != AuthorYearMarkerPurpose.NORMALIZED) {
+                    sb.append(pageInfoPart);
+                }
             } else {
 
-                final CitationDatabaseLookup.Result db = ce.getDatabaseLookupResult().get();
+                CitationDatabaseLookup.Result db = ce.getDatabaseLookupResult().get();
 
                 int maxAuthors = (purpose == AuthorYearMarkerPurpose.NORMALIZED
                                   ? style.getMaxAuthors()
@@ -452,7 +467,7 @@ class OOBibStyleGetCitationMarker {
                 sb.append(yearSep);
 
                 if (!inParenthesis) {
-                    sb.append(startBrace);
+                    sb.append(startBrace); // parenthesis before year
                 }
 
                 String year = getCitationMarkerField(style, db, yearFieldNames);
@@ -465,23 +480,20 @@ class OOBibStyleGetCitationMarker {
                     if (uniqueLetter != null) {
                         sb.append(uniqueLetter);
                     }
+                }
 
-                    Optional<OOFormattedText> pageInfo =
-                        Citation.normalizePageInfo(ce.getPageInfo());
-                    if (pageInfo.isPresent()) {
-                        sb.append(pageInfoSeparator);
-                        sb.append(OOFormattedText.toString(pageInfo.get()));
-                    }
+                if (purpose != AuthorYearMarkerPurpose.NORMALIZED) {
+                    sb.append(pageInfoPart);
                 }
 
                 if (!inParenthesis && endingAGroup) {
-                    sb.append(endBrace);
+                    sb.append(endBrace);  // parenthesis after year
                 }
             }
         } // for j
 
         if (inParenthesis) {
-            sb.append(endBrace);
+            sb.append(endBrace); // shared parenthesis
         }
         sb.append(style.getCitationGroupMarkupAfter());
         return OOFormattedText.fromString(sb.toString());
