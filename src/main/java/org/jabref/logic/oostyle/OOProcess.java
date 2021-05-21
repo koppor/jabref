@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.jabref.logic.bibtex.comparator.FieldComparator;
 import org.jabref.logic.bibtex.comparator.FieldComparatorStack;
@@ -24,6 +23,7 @@ import org.jabref.model.oostyle.CitationMarkerEntryImpl;
 import org.jabref.model.oostyle.CitedKey;
 import org.jabref.model.oostyle.CitedKeys;
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.ListUtil;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 
@@ -193,8 +193,7 @@ public class OOProcess {
      *  markers are the citation keys themselves, separated by commas.
      */
     private static Map<CitationGroupID, OOFormattedText>
-    produceCitationMarkersForIsCitationKeyCiteMarkers(CitationGroups cgs,
-                                                      OOBibStyle style) {
+    produceCitationMarkersForIsCitationKeyCiteMarkers(CitationGroups cgs, OOBibStyle style) {
 
         assert style.isCitationKeyCiteMarkers();
 
@@ -202,15 +201,12 @@ public class OOProcess {
 
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
-        for (CitationGroupID cgid : cgs.getSortedCitationGroupIDs()) {
-            List<Citation> cits = cgs.getCitationsInLocalOrder(cgid);
+        for (CitationGroup cg : cgs.getSortedCitationGroups()) {
             String citMarker =
                 style.getCitationGroupMarkupBefore()
-                + (cits.stream()
-                   .map(cit -> cit.citationKey)
-                   .collect(Collectors.joining(",")))
+                + String.join(",", ListUtil.map(cg.getCitationsInLocalOrder(), Citation::getCitationKey))
                 + style.getCitationGroupMarkupAfter();
-            citMarkers.put(cgid, OOFormattedText.fromString(citMarker));
+            citMarkers.put(cg.cgid, OOFormattedText.fromString(citMarker));
         }
         return citMarkers;
     }
