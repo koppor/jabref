@@ -30,14 +30,14 @@ public class Result<R, E> {
     /**
      * @param result Null is not allowed.
      */
-    public static <R, E> Result<R, E> OK(R result) {
+    public static <R, E> Result<R, E> ok(R result) {
         return new Result(Optional.of(result), Optional.empty());
     }
 
     /**
      * @param error Null is not allowed.
      */
-    public static <R, E> Result<R, E> Error(E error) {
+    public static <R, E> Result<R, E> error(E error) {
         return new Result(Optional.empty(), Optional.of(error));
     }
 
@@ -96,17 +96,17 @@ public class Result<R, E> {
 
     public <S> Result<S, E> map(Function<R, S> fun) {
         if (isError()) {
-            return Error(getError());
+            return error(getError());
         } else {
-            return OK(fun.apply(get()));
+            return ok(fun.apply(get()));
         }
     }
 
     public <F> Result<R, F> mapError(Function<E, F> fun) {
         if (isError()) {
-            return Error(fun.apply(getError()));
+            return error(fun.apply(getError()));
         } else {
-            return OK(get());
+            return ok(get());
         }
     }
 
@@ -118,9 +118,9 @@ public class Result<R, E> {
     /** Throw away the result part. */
     public VoidResult<E> asVoidResult() {
         if (isError()) {
-            return VoidResult.Error(getError());
+            return VoidResult.error(getError());
         } else {
-            return VoidResult.OK();
+            return VoidResult.ok();
         }
     }
 

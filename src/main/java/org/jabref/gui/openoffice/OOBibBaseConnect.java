@@ -241,9 +241,9 @@ class OOBibBaseConnect {
 
     public Result<XTextDocument, OOError> getXTextDocument() {
         if (isDocumentConnectionMissing()) {
-            return Result.Error(OOError.from(new NoDocumentException()));
+            return Result.error(OOError.from(new NoDocumentException()));
         }
-        return Result.OK(this.xTextDocument);
+        return Result.ok(this.xTextDocument);
     }
 
     /**

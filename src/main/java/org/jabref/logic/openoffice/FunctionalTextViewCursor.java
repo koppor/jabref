@@ -82,7 +82,9 @@ public class FunctionalTextViewCursor {
             try {
                 initialPosition = UnoCursor.createTextCursorByRange(viewCursor);
                 viewCursor.getStart();
-                return Result.OK(new FunctionalTextViewCursor(initialPosition, initialSelection, viewCursor));
+                return Result.ok(new FunctionalTextViewCursor(initialPosition,
+                                                              initialSelection,
+                                                              viewCursor));
             } catch (com.sun.star.uno.RuntimeException ex) {
                 // bad cursor
                 viewCursor = null;
@@ -93,7 +95,7 @@ public class FunctionalTextViewCursor {
         if (initialSelection == null) {
             String errorMessage = ("Selection is not available:"
                                    + " cannot provide a functional view cursor");
-            return Result.Error(new JabRefException(errorMessage, messageOnFailure));
+            return Result.error(new JabRefException(errorMessage, messageOnFailure));
         } else if (!Arrays.stream(initialSelection.getSupportedServiceNames())
                    .anyMatch("com.sun.star.text.TextRanges"::equals)) {
             // initialSelection does not support TextRanges.
@@ -106,7 +108,7 @@ public class FunctionalTextViewCursor {
         if (viewCursor == null) {
             restore(doc, initialPosition, initialSelection);
             String errorMessage = "Could not get the view cursor";
-            return Result.Error(new JabRefException(errorMessage, messageOnFailure));
+            return Result.error(new JabRefException(errorMessage, messageOnFailure));
         }
 
         try {
@@ -114,10 +116,10 @@ public class FunctionalTextViewCursor {
         } catch (com.sun.star.uno.RuntimeException ex) {
             restore(doc, initialPosition, initialSelection);
             String errorMessage = "The view cursor failed the functionality test";
-            return Result.Error(new JabRefException(errorMessage, messageOnFailure));
+            return Result.error(new JabRefException(errorMessage, messageOnFailure));
         }
 
-        return Result.OK(new FunctionalTextViewCursor(initialPosition, initialSelection, viewCursor));
+        return Result.ok(new FunctionalTextViewCursor(initialPosition, initialSelection, viewCursor));
     }
 
     public XTextViewCursor getViewCursor() {

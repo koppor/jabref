@@ -165,9 +165,9 @@ class OOBibBase {
                       .map(e -> e.getError().getLocalizedMessage())
                       .collect(Collectors.joining("\n\n")));
         if (msg.isEmpty()) {
-            return VoidResult.OK();
+            return VoidResult.ok();
         } else {
-            return VoidResult.Error(new OOError(title, msg));
+            return VoidResult.error(new OOError(title, msg));
         }
     }
 
@@ -200,7 +200,7 @@ class OOBibBase {
         try {
             cursor = UnoCursor.getViewCursor(doc).orElse(null);
         } catch (RuntimeException ex) {
-            return Result.Error(new OOError(title,
+            return Result.error(new OOError(title,
                                             Localization.lang("Could not get the cursor."),
                                             ex));
         }
@@ -215,9 +215,9 @@ class OOBibBase {
                                   + " to the location for the new citation.")
                 + "\n"
                 + Localization.lang("I cannot insert to the cursors current location.");
-            return Result.Error(new OOError(title, msg, ex));
+            return Result.error(new OOError(title, msg, ex));
         }
-        return Result.OK(cursor);
+        return Result.ok(cursor);
     }
 
     /**
@@ -264,39 +264,39 @@ class OOBibBase {
                     msg += "\n";
                     msg += Localization.lang("Use [Edit]/[Track Changes]/[Manage] to resolve them first.");
                 }
-                return VoidResult.Error(new OOError(title, msg));
+                return VoidResult.error(new OOError(title, msg));
             }
         } catch (UnknownPropertyException | WrappedTargetException ex) {
             String msg = Localization.lang("Error while checking if Writer"
                                            + " is recording changes or has recorded changes.");
-            return VoidResult.Error(new OOError(title, msg, ex));
+            return VoidResult.error(new OOError(title, msg, ex));
         }
-        return VoidResult.OK();
+        return VoidResult.ok();
     }
 
     VoidResult<OOError> styleIsRequired(OOBibStyle style) {
         if (style == null) {
-            return VoidResult.Error(OOError.noValidStyleSelected());
+            return VoidResult.error(OOError.noValidStyleSelected());
         } else {
-            return VoidResult.OK();
+            return VoidResult.ok();
         }
     }
 
     VoidResult<OOError> databaseIsRequired(List<BibDatabase> databases,
                                            Supplier<OOError> fun) {
         if (databases == null || databases.isEmpty()) {
-            return VoidResult.Error(fun.get());
+            return VoidResult.error(fun.get());
         } else {
-            return VoidResult.OK();
+            return VoidResult.ok();
         }
     }
 
     VoidResult<OOError> selectedBibEntryIsRequired(List<BibEntry> entries,
                                                    Supplier<OOError> fun) {
         if (entries == null || entries.isEmpty()) {
-            return VoidResult.Error(fun.get());
+            return VoidResult.error(fun.get());
         } else {
-            return VoidResult.OK();
+            return VoidResult.ok();
         }
     }
 
@@ -334,7 +334,7 @@ class OOBibBase {
                 + Localization.lang("Please create it in the document or change in the file:")
                 + "\n"
                 + pathToStyleFile;
-                return VoidResult.Error(new OOError("StyleIsNotKnown", msg));
+                return VoidResult.error(new OOError("StyleIsNotKnown", msg));
         }
 
         if (!internalName.get().equals(styleName)) {
@@ -360,9 +360,9 @@ class OOBibBase {
                                     + " to avoid localization problems.")
                 + "\n"
                 + pathToStyleFile;
-                return VoidResult.Error(new OOError("StyleNameIsNotInternal", msg));
+                return VoidResult.error(new OOError("StyleNameIsNotInternal", msg));
         }
-        return VoidResult.OK();
+        return VoidResult.ok();
     }
 
     public VoidResult<OOError> checkStylesExistInTheDocument(OOBibStyle style, XTextDocument doc) {
@@ -390,7 +390,7 @@ class OOBibBase {
             }
         } catch (NoSuchElementException
                  | WrappedTargetException ex) {
-            results.add(VoidResult.Error(new OOError("Other error in checkStyleExistsInTheDocument",
+            results.add(VoidResult.error(new OOError("Other error in checkStyleExistsInTheDocument",
                                                      ex.getMessage(),
                                                      ex)));
         }

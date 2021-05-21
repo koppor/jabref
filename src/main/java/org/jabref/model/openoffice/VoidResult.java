@@ -14,11 +14,11 @@ public class VoidResult<E> {
         this.error = error;
     }
 
-    public static <E> VoidResult<E> OK() {
+    public static <E> VoidResult<E> ok() {
         return new VoidResult(Optional.empty());
     }
 
-    public static <E> VoidResult<E> Error(E error) {
+    public static <E> VoidResult<E> error(E error) {
         return new VoidResult(Optional.of(error));
     }
 
@@ -43,9 +43,9 @@ public class VoidResult<E> {
 
     public <F> VoidResult<F> mapError(Function<E, F> fun) {
         if (isError()) {
-            return Error(fun.apply(getError()));
+            return error(fun.apply(getError()));
         } else {
-            return OK();
+            return ok();
         }
     }
 }

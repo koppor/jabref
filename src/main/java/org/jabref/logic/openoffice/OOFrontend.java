@@ -467,10 +467,10 @@ public class OOFrontend {
                 msg.append(listOfRanges);
                 msg.append("\n");
             }
-            return VoidResult.Error(new JabRefException("Found overlapping or touching ranges",
+            return VoidResult.error(new JabRefException("Found overlapping or touching ranges",
                                                         msg.toString()));
         } else {
-            return VoidResult.OK();
+            return VoidResult.ok();
         }
     }
 
