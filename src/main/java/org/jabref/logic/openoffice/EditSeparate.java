@@ -1,6 +1,5 @@
 package org.jabref.logic.openoffice;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jabref.logic.JabRefException;
@@ -9,7 +8,6 @@ import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
@@ -56,16 +54,15 @@ public class EditSeparate {
         fr.citationGroups.lookupEntriesInDatabases(databases);
         fr.citationGroups.imposeLocalOrderByComparator(OOProcess.comparatorForMulticite(style));
 
-        List<CitationGroupID> names = new ArrayList<>(fr.citationGroups.getCitationGroupIDsUnordered());
+        List<CitationGroup> cgs = fr.citationGroups.getCitationGroupsUnordered();
 
         try {
             UnoScreenRefresh.lockControllers(doc);
 
-            for (CitationGroupID cgid : names) {
+            for (CitationGroup cg : cgs) {
 
-                CitationGroup cg = fr.citationGroups.getCitationGroupOrThrow(cgid);
                 XTextRange range1 = (fr
-                                     .getMarkRange(doc, cgid)
+                                     .getMarkRange(doc, cg.cgid)
                                      .orElseThrow(RuntimeException::new));
                 XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
 
