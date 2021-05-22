@@ -68,8 +68,8 @@ public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry {
         this.db = Citation.lookup(databases, this.citationKey);
     }
 
-    void distributeDatabaseLookupResult(CitationGroups cgs) {
-        cgs.distributeToCitations(where, Citation::setDatabaseLookupResult, db);
+    void distributeLookupResult(CitationGroups cgs) {
+        cgs.distributeToCitations(where, Citation::setLookupResult, db);
     }
 
     void distributeNumber(CitationGroups cgs) {

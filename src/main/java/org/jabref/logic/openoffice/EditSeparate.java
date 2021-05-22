@@ -50,8 +50,8 @@ public class EditSeparate {
         // decide the visually last Citation i the group. Unless the
         // style changed since refresh this is the last on the screen
         // as well.
-        fr.citationGroups.lookupEntriesInDatabases(databases);
-        fr.citationGroups.imposeLocalOrderByComparator(OOProcess.comparatorForMulticite(style));
+        fr.citationGroups.lookupCitations(databases);
+        fr.citationGroups.imposeLocalOrder(OOProcess.comparatorForMulticite(style));
 
         List<CitationGroup> cgs = fr.citationGroups.getCitationGroupsUnordered();
 

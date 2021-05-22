@@ -79,7 +79,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
         return db;
     }
 
-    public void setDatabaseLookupResult(Optional<CitationLookupResult> db) {
+    public void setLookupResult(Optional<CitationLookupResult> db) {
         this.db = db;
     }
 
@@ -118,7 +118,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
     /*
      * Setters for CitationGroups.distribute()
      */
-    public static void setDatabaseLookupResult(Pair<Citation, Optional<CitationLookupResult>> x) {
+    public static void setLookupResult(Pair<Citation, Optional<CitationLookupResult>> x) {
         Citation cit = x.a;
         cit.db = x.b;
     }

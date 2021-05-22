@@ -74,8 +74,8 @@ public class OOProcess {
             throw new RuntimeException("produceCitationMarkers: globalOrder is misssing in cgs");
         }
 
-        cgs.lookupEntriesInDatabases(databases);
-        cgs.imposeLocalOrderByComparator(comparatorForMulticite(style));
+        cgs.lookupCitations(databases);
+        cgs.imposeLocalOrder(comparatorForMulticite(style));
 
         // fill CitationGroup.citationMarker
         if (style.isCitationKeyCiteMarkers()) {

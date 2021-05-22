@@ -81,12 +81,12 @@ public class CitationGroups {
         }
     }
 
-    public CitedKeys lookupEntriesInDatabases(List<BibDatabase> databases) {
+    public CitedKeys lookupCitations(List<BibDatabase> databases) {
         CitationGroups cgs = this;
         CitedKeys cks = cgs.getCitedKeysUnordered();
 
         cks.lookupInDatabases(databases);
-        cks.distributeDatabaseLookupResults(cgs);
+        cks.distributeLookupResults(cgs);
         return cks;
     }
 
@@ -118,9 +118,9 @@ public class CitationGroups {
         }
     }
 
-    public void imposeLocalOrderByComparator(Comparator<BibEntry> entryComparator) {
+    public void imposeLocalOrder(Comparator<BibEntry> entryComparator) {
         for (CitationGroup cg : citationGroupsUnordered.values()) {
-            cg.imposeLocalOrderByComparator(entryComparator);
+            cg.imposeLocalOrder(entryComparator);
         }
     }
 

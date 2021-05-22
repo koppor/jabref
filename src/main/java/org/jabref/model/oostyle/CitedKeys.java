@@ -58,9 +58,9 @@ public class CitedKeys {
         }
     }
 
-    void distributeDatabaseLookupResults(CitationGroups cgs) {
+    void distributeLookupResults(CitationGroups cgs) {
         for (CitedKey ck : this.data.values()) {
-            ck.distributeDatabaseLookupResult(cgs);
+            ck.distributeLookupResult(cgs);
         }
     }
 
