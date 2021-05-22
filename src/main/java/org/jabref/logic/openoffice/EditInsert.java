@@ -94,7 +94,7 @@ public class EditInsert {
         List<CitationMarkerEntry> citations = new ArrayList<>(nEntries);
         for (int i = 0; i < nEntries; i++) {
             Citation cit = new Citation(citationKeys.get(i));
-            cit.lookup(Collections.singletonList(database));
+            cit.lookupInDatabases(Collections.singletonList(database));
             cit.setPageInfo(pageInfosForCitations.get(i));
             citations.add(cit);
         }

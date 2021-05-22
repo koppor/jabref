@@ -304,7 +304,7 @@ class OOBibStyleTest {
                                                                boolean isFirstAppearanceOfSource) {
         Objects.requireNonNull(citationKey);
         Citation result = new Citation(citationKey);
-        result.setDatabaseLookupResult(Optional.of(new CitationDatabaseLookup.Result(entry, database)));
+        result.setDatabaseLookupResult(Optional.of(new CitationDatabaseLookupResult(entry, database)));
         result.setUniqueLetter(Optional.ofNullable(uniqueLetterQ));
         Optional<OOFormattedText> pageInfo = Optional.ofNullable(OOFormattedText.fromString(pageInfoQ));
         result.setPageInfo(Citation.normalizePageInfo(pageInfo));

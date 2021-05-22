@@ -13,7 +13,7 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.oostyle.Citation;
-import org.jabref.model.oostyle.CitationDatabaseLookup;
+import org.jabref.model.oostyle.CitationDatabaseLookupResult;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitationMarkerNormEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
@@ -263,7 +263,7 @@ class OOBibStyleGetCitationMarker {
      *
      */
     private static String getCitationMarkerField(OOBibStyle style,
-                                                 CitationDatabaseLookup.Result db,
+                                                 CitationDatabaseLookupResult db,
                                                  OrFields fields) {
         Objects.requireNonNull(db);
 
@@ -289,7 +289,7 @@ class OOBibStyleGetCitationMarker {
         return result;
     }
 
-    private static AuthorList getAuthorList(OOBibStyle style, CitationDatabaseLookup.Result db) {
+    private static AuthorList getAuthorList(OOBibStyle style, CitationDatabaseLookupResult db) {
 
         // The bibtex fields providing author names, e.g. "author" or
         // "editor".
@@ -451,7 +451,7 @@ class OOBibStyleGetCitationMarker {
                 }
             } else {
 
-                CitationDatabaseLookup.Result db = ce.getDatabaseLookupResult().get();
+                CitationDatabaseLookupResult db = ce.getDatabaseLookupResult().get();
 
                 int maxAuthors = (purpose == AuthorYearMarkerPurpose.NORMALIZED
                                   ? style.getMaxAuthors()
@@ -521,7 +521,7 @@ class OOBibStyleGetCitationMarker {
         }
 
         @Override
-        public Optional<CitationDatabaseLookup.Result> getDatabaseLookupResult() {
+        public Optional<CitationDatabaseLookupResult> getDatabaseLookupResult() {
             return inner.getDatabaseLookupResult();
         }
 

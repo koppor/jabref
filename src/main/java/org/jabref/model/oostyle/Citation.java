@@ -13,7 +13,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
     public final String citationKey;
 
     /** Result from database lookup. Optional.empty() if not found. */
-    private Optional<CitationDatabaseLookup.Result> db;
+    private Optional<CitationDatabaseLookupResult> db;
 
     /** The number used for numbered citation styles . */
     private Optional<Integer> number;
@@ -61,15 +61,25 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
                 : Optional.empty());
     }
 
-    public void lookup(List<BibDatabase> databases) {
-        db = CitationDatabaseLookup.lookup(databases, citationKey);
+    public static Optional<CitationDatabaseLookupResult> lookup(List<BibDatabase> databases, String key) {
+        for (BibDatabase database : databases) {
+            Optional<BibEntry> entry = database.getEntryByCitationKey(key);
+            if (entry.isPresent()) {
+                return Optional.of(new CitationDatabaseLookupResult(entry.get(), database));
+            }
+        }
+        return Optional.empty();
     }
 
-    public Optional<CitationDatabaseLookup.Result> getDatabaseLookupResult() {
+    public void lookupInDatabases(List<BibDatabase> databases) {
+        db = Citation.lookup(databases, citationKey);
+    }
+
+    public Optional<CitationDatabaseLookupResult> getDatabaseLookupResult() {
         return db;
     }
 
-    public void setDatabaseLookupResult(Optional<CitationDatabaseLookup.Result> db) {
+    public void setDatabaseLookupResult(Optional<CitationDatabaseLookupResult> db) {
         this.db = db;
     }
 
@@ -108,7 +118,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
     /*
      * Setters for CitationGroups.distribute()
      */
-    public static void setDatabaseLookupResult(Pair<Citation, Optional<CitationDatabaseLookup.Result>> x) {
+    public static void setDatabaseLookupResult(Pair<Citation, Optional<CitationDatabaseLookupResult>> x) {
         Citation cit = x.a;
         cit.db = x.b;
     }
