@@ -59,6 +59,11 @@ public class CitationGroup {
      */
     private Optional<Integer> indexInGlobalOrder;
 
+    /*
+     * Citation marker.
+     */
+    private Optional<OOFormattedText> citationMarker;
+
     public CitationGroup(OODataModel dataModel,
                          CitationGroupID cgid,
                          StorageBase.NamedRange cgRangeStorage,
@@ -73,6 +78,7 @@ public class CitationGroup {
         this.localOrder = ListUtil.makeIndices(citationsInStorageOrder.size());
         this.referenceMarkNameForLinking = referenceMarkNameForLinking;
         this.indexInGlobalOrder = Optional.empty();
+        this.citationMarker = Optional.empty();
     }
 
     public int numberOfCitations() {
@@ -141,4 +147,13 @@ public class CitationGroup {
     public void setReferenceMarkNameForLinking(Optional<String> referenceMarkNameForLinking) {
         this.referenceMarkNameForLinking = referenceMarkNameForLinking;
     }
+
+    public void setCitationMarker(Optional<OOFormattedText> citationMarker) {
+        this.citationMarker = citationMarker;
+    }
+
+    public Optional<OOFormattedText> getCitationMarker() {
+        return this.citationMarker;
+    }
+
 } // class CitationGroup

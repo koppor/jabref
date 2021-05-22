@@ -43,24 +43,23 @@ public class Update {
         final boolean useLockControllers = true;
 
         fr.imposeGlobalOrder(doc, fcursor);
-        OOProcess.ProduceCitationMarkersResult x =
-            OOProcess.produceCitationMarkers(fr.citationGroups, databases, style);
+        OOProcess.produceCitationMarkers(fr.citationGroups, databases, style);
 
         try {
             if (useLockControllers) {
                 UnoScreenRefresh.lockControllers(doc);
             }
 
-            UpdateCitationMarkers.applyNewCitationMarkers(doc, fr, x.citMarkers, style);
+            UpdateCitationMarkers.applyNewCitationMarkers(doc, fr, style);
 
             if (doUpdateBibliography) {
                 UpdateBibliography.rebuildBibTextSection(doc,
                                                          fr,
-                                                         x.getBibliography(),
+                                                         fr.citationGroups.getBibliography().get(),
                                                          style,
                                                          alwaysAddCitedOnPages);
             }
-            return x.getUnresolvedKeys();
+            return fr.citationGroups.getUnresolvedKeys();
         } finally {
             if (useLockControllers && UnoScreenRefresh.hasControllersLocked(doc)) {
                 UnoScreenRefresh.unlockControllers(doc);

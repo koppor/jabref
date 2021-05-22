@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitedKey;
@@ -132,8 +131,7 @@ class OOProcessAuthorYearMarkers {
      * @param cgs
      * @param style              Bibliography style.
      */
-    static Map<CitationGroupID, OOFormattedText>
-    produceCitationMarkers(CitationGroups cgs, OOBibStyle style) {
+    static void produceCitationMarkers(CitationGroups cgs, OOBibStyle style) {
 
         assert !style.isCitationKeyCiteMarkers();
         assert !style.isNumberEntries();
@@ -148,8 +146,6 @@ class OOProcessAuthorYearMarkers {
         // Mark first appearance of each citationKey
         setIsFirstAppearanceOfSourceInCitations(cgs);
 
-        Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
-
         for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
 
             final boolean inParenthesis = (cg.citationType == InTextCitationType.AUTHORYEAR_PAR);
@@ -160,10 +156,8 @@ class OOProcessAuthorYearMarkers {
             OOFormattedText citMarker = style.getCitationMarker2(citationMarkerEntries,
                                                                  inParenthesis,
                                                                  strictlyUnique);
-            citMarkers.put(cg.cgid, citMarker);
+            cg.setCitationMarker(Optional.of(citMarker));
         }
-
-        return citMarkers;
     }
 
 }

@@ -1,7 +1,6 @@
 package org.jabref.logic.openoffice;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,11 +23,16 @@ import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*
  * Update document: citation marks and bibliography
  */
 public class UpdateCitationMarkers {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateCitationMarkers.class);
+
     /**
      * Visit each reference mark in referenceMarkNames, overwrite its
      * text content.
@@ -38,15 +42,11 @@ public class UpdateCitationMarkers {
      *
      * @param fr
      *
-     * @param citMarkers Corresponding text for each reference mark,
-     *                   that replaces the old text.
-     *
      * @param style Bibliography style to use.
      *
      */
     static void applyNewCitationMarkers(XTextDocument doc,
                                         OOFrontend fr,
-                                        Map<CitationGroupID, OOFormattedText> citMarkers,
                                         OOBibStyle style)
         throws
         NoDocumentException,
@@ -57,29 +57,27 @@ public class UpdateCitationMarkers {
         NoSuchElementException,
         JabRefException {
 
-        // checkStylesExistInTheDocument(style, doc);
+        CitationGroups citationGroups = fr.citationGroups;
 
-        CitationGroups cgs = fr.citationGroups;
-
-        for (Map.Entry<CitationGroupID, OOFormattedText> kv : citMarkers.entrySet()) {
-
-            CitationGroupID cgid = kv.getKey();
-            Objects.requireNonNull(cgid);
-
-            OOFormattedText citationText = kv.getValue();
-            Objects.requireNonNull(citationText);
-
-            CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
+        for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
 
             boolean withText = (cg.citationType != InTextCitationType.INVISIBLE_CIT);
+            Optional<OOFormattedText> marker = cg.getCitationMarker();
 
-            if (withText) {
+            if (!marker.isPresent()) {
+                String msg = String.format("applyNewCitationMarkers: no marker for %s",
+                                           cg.cgid.asString());
+                LOGGER.warn(msg);
+                continue;
+            }
 
-                XTextCursor cursor = fr.getFillCursorForCitationGroup(doc, cgid);
+            if (withText && marker.isPresent()) {
 
-                fillCitationMarkInCursor(doc, cursor, citationText, withText, style);
+                XTextCursor cursor = fr.getFillCursorForCitationGroup(doc, cg.cgid);
 
-                fr.cleanFillCursorForCitationGroup(doc, cgid);
+                fillCitationMarkInCursor(doc, cursor, marker.get(), withText, style);
+
+                fr.cleanFillCursorForCitationGroup(doc, cg.cgid);
             }
 
         }

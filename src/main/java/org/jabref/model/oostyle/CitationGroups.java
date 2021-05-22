@@ -174,6 +174,21 @@ public class CitationGroups {
         return bibliography;
     }
 
+    public List<String> getUnresolvedKeys() {
+        Optional<CitedKeys> bib = getBibliography();
+        if (bib.isEmpty()) {
+            throw new RuntimeException("getUnresolvedKeys:"
+                                       + " CitationGroups does not have a bibliography");
+        }
+        List<String> unresolvedKeys = new ArrayList<>();
+        for (CitedKey ck : bib.get().values()) {
+            if (ck.db.isEmpty()) {
+                unresolvedKeys.add(ck.citationKey);
+            }
+        }
+        return unresolvedKeys;
+    }
+
     public void createNumberedBibliographySortedInOrderOfAppearance() {
         CitationGroups cgs = this;
         if (!cgs.bibliography.isEmpty()) {
