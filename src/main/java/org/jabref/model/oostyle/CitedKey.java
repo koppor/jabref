@@ -10,7 +10,7 @@ import org.jabref.model.entry.BibEntry;
 public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry {
     public String citationKey;
     public LinkedHashSet<CitationPath> where;
-    public Optional<CitationDatabaseLookupResult> db;
+    public Optional<CitationLookupResult> db;
     public Optional<Integer> number; // For Numbered citation styles.
     public Optional<String> uniqueLetter; // For AuthorYear citation styles.
     public Optional<OOFormattedText> normCitMarker;  // For AuthorYear citation styles.
@@ -44,7 +44,7 @@ public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry {
      * Implement CitationMarkerNormEntry
      */
     @Override
-    public Optional<CitationDatabaseLookupResult> getDatabaseLookupResult() {
+    public Optional<CitationLookupResult> getDatabaseLookupResult() {
         return db;
     }
 

@@ -19,5 +19,5 @@ public interface CitationMarkerNormEntry {
 
     /** Result of looking up citation key in databases.
      */
-    Optional<CitationDatabaseLookupResult> getDatabaseLookupResult();
+    Optional<CitationLookupResult> getDatabaseLookupResult();
 }

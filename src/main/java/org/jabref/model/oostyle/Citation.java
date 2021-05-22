@@ -13,7 +13,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
     public final String citationKey;
 
     /** Result from database lookup. Optional.empty() if not found. */
-    private Optional<CitationDatabaseLookupResult> db;
+    private Optional<CitationLookupResult> db;
 
     /** The number used for numbered citation styles . */
     private Optional<Integer> number;
@@ -61,11 +61,11 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
                 : Optional.empty());
     }
 
-    public static Optional<CitationDatabaseLookupResult> lookup(List<BibDatabase> databases, String key) {
+    public static Optional<CitationLookupResult> lookup(List<BibDatabase> databases, String key) {
         for (BibDatabase database : databases) {
             Optional<BibEntry> entry = database.getEntryByCitationKey(key);
             if (entry.isPresent()) {
-                return Optional.of(new CitationDatabaseLookupResult(entry.get(), database));
+                return Optional.of(new CitationLookupResult(entry.get(), database));
             }
         }
         return Optional.empty();
@@ -75,11 +75,11 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
         db = Citation.lookup(databases, citationKey);
     }
 
-    public Optional<CitationDatabaseLookupResult> getDatabaseLookupResult() {
+    public Optional<CitationLookupResult> getDatabaseLookupResult() {
         return db;
     }
 
-    public void setDatabaseLookupResult(Optional<CitationDatabaseLookupResult> db) {
+    public void setDatabaseLookupResult(Optional<CitationLookupResult> db) {
         this.db = db;
     }
 
@@ -118,7 +118,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
     /*
      * Setters for CitationGroups.distribute()
      */
-    public static void setDatabaseLookupResult(Pair<Citation, Optional<CitationDatabaseLookupResult>> x) {
+    public static void setDatabaseLookupResult(Pair<Citation, Optional<CitationLookupResult>> x) {
         Citation cit = x.a;
         cit.db = x.b;
     }

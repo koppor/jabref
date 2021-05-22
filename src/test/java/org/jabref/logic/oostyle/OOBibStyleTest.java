@@ -26,7 +26,7 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.entry.types.UnknownEntryType;
 import org.jabref.model.oostyle.Citation;
-import org.jabref.model.oostyle.CitationDatabaseLookup;
+import org.jabref.model.oostyle.CitationLookupResult;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
@@ -304,7 +304,7 @@ class OOBibStyleTest {
                                                                boolean isFirstAppearanceOfSource) {
         Objects.requireNonNull(citationKey);
         Citation result = new Citation(citationKey);
-        result.setDatabaseLookupResult(Optional.of(new CitationDatabaseLookupResult(entry, database)));
+        result.setDatabaseLookupResult(Optional.of(new CitationLookupResult(entry, database)));
         result.setUniqueLetter(Optional.ofNullable(uniqueLetterQ));
         Optional<OOFormattedText> pageInfo = Optional.ofNullable(OOFormattedText.fromString(pageInfoQ));
         result.setPageInfo(Citation.normalizePageInfo(pageInfo));
