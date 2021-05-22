@@ -13,7 +13,7 @@ import org.jabref.model.openoffice.StorageBase;
  */
 public class CitationGroup {
 
-    public final OOStyleDataModelVersion dataModel;
+    public final OODataModel dataModel;
 
     /*
      * Identifies this citation group.
@@ -59,7 +59,7 @@ public class CitationGroup {
      */
     private Optional<Integer> indexInGlobalOrder;
 
-    public CitationGroup(OOStyleDataModelVersion dataModel,
+    public CitationGroup(OODataModel dataModel,
                          CitationGroupID cgid,
                          StorageBase.NamedRange cgRangeStorage,
                          InTextCitationType citationType,
@@ -92,7 +92,7 @@ public class CitationGroup {
         // We adjust here accordingly by taking it out and adding it back after sorting.
         final int last = this.numberOfCitations() - 1;
         Optional<OOFormattedText> lastPageInfo = Optional.empty();
-        if (dataModel == OOStyleDataModelVersion.JabRef52) {
+        if (dataModel == OODataModel.JabRef52) {
             Citation lastCitation = getCitationsInLocalOrder().get(last);
             lastPageInfo = lastCitation.getPageInfo();
             lastCitation.setPageInfo(Optional.empty());
@@ -101,7 +101,7 @@ public class CitationGroup {
         this.localOrder = ListUtil.order(citationsInStorageOrder,
                                          new CompareCitation(entryComparator, true));
 
-        if (dataModel == OOStyleDataModelVersion.JabRef52) {
+        if (dataModel == OODataModel.JabRef52) {
             getCitationsInLocalOrder().get(last).setPageInfo(lastPageInfo);
         }
     }

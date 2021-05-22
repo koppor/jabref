@@ -15,8 +15,8 @@ import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.OODataModel;
 import org.jabref.model.oostyle.OOFormattedText;
-import org.jabref.model.oostyle.OOStyleDataModelVersion;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
@@ -64,7 +64,7 @@ public class OOFrontend {
         this.citationGroups = new CitationGroups(citationGroups);
     }
 
-    public OOStyleDataModelVersion getDataModel() {
+    public OODataModel getDataModel() {
         return backend.dataModel;
     }
 

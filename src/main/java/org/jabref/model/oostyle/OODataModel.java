@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**   What is the data stored?   */
-public enum OOStyleDataModelVersion {
+public enum OODataModel {
     /**
      * JabRef52:
      *    pageInfo belongs to CitationGroup, not Citation.

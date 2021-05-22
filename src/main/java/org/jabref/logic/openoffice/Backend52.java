@@ -13,8 +13,8 @@ import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.OODataModel;
 import org.jabref.model.oostyle.OOFormattedText;
-import org.jabref.model.oostyle.OOStyleDataModelVersion;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
@@ -35,12 +35,12 @@ import org.slf4j.LoggerFactory;
 
 public class Backend52 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Backend52.class);
-    public final OOStyleDataModelVersion dataModel;
+    public final OODataModel dataModel;
     public final StorageBase.NamedRangeManager citationStorageManager;
 
     // uses: Codec52
     public Backend52() {
-        this.dataModel = OOStyleDataModelVersion.JabRef52;
+        this.dataModel = OODataModel.JabRef52;
         this.citationStorageManager = new StorageBaseRefMark.Manager();
     }
 
@@ -163,7 +163,7 @@ public class Backend52 {
                                                + " referenceMarkName is not in the document");
         }
 
-        CitationGroup cg = new CitationGroup(OOStyleDataModelVersion.JabRef52,
+        CitationGroup cg = new CitationGroup(OODataModel.JabRef52,
                                              id,
                                              storedRange.get(),
                                              ov.citationType,
@@ -258,7 +258,7 @@ public class Backend52 {
                 // do not inherit from trash
                 UnoUserDefinedProperty.removeIfExists(doc, refMarkName);
             }
-            CitationGroup cg = new CitationGroup(OOStyleDataModelVersion.JabRef52,
+            CitationGroup cg = new CitationGroup(OODataModel.JabRef52,
                                                  cgid, storedRange, citationType, citations,
                                                  Optional.of(refMarkName));
             return cg;
@@ -275,8 +275,7 @@ public class Backend52 {
      *        user to check the result. Or ask what to do.
      */
     public static List<Optional<OOFormattedText>>
-    combinePageInfosCommon(OOStyleDataModelVersion dataModel,
-                           List<CitationGroup> joinableGroup) {
+    combinePageInfosCommon(OODataModel dataModel, List<CitationGroup> joinableGroup) {
         switch (dataModel) {
         case JabRef52:
             // collect to cgPageInfos
@@ -298,7 +297,7 @@ public class Backend52 {
             if ("".equals(cgPageInfo)) {
                 cgPageInfo = null;
             }
-            return OOStyleDataModelVersion.fakePageInfosForCitations(cgPageInfo, nCitations);
+            return OODataModel.fakePageInfosForCitations(cgPageInfo, nCitations);
 
         case JabRef53:
             return (joinableGroup.stream()

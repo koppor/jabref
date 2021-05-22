@@ -14,8 +14,8 @@ import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.ListUtil;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
+import org.jabref.model.oostyle.OODataModel;
 import org.jabref.model.oostyle.OOFormattedText;
-import org.jabref.model.oostyle.OOStyleDataModelVersion;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
 
@@ -115,7 +115,7 @@ public class EditInsert {
 
         // JabRef53 style pageInfo list
         List<Optional<OOFormattedText>> pageInfosForCitations =
-            OOStyleDataModelVersion.fakePageInfosForCitations(pageInfo, nEntries);
+            OODataModel.fakePageInfosForCitations(pageInfo, nEntries);
 
         List<CitationMarkerEntry> citations = new ArrayList<>(nEntries);
         for (int i = 0; i < nEntries; i++) {
