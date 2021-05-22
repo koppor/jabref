@@ -14,17 +14,21 @@ public class CitedKeys {
     /**
      * Order-preserving map from citation keys to associated data.
      */
-    public LinkedHashMap<String, CitedKey> data;
+    private LinkedHashMap<String, CitedKey> data;
 
     CitedKeys(LinkedHashMap<String, CitedKey> data) {
         this.data = data;
     }
 
     /**
-     *  The cited keys in sorted order.
+     *  The cited keys in their current order.
      */
     public List<CitedKey> values() {
         return new ArrayList<>(data.values());
+    }
+
+    public CitedKey get(String citationKey) {
+        return data.get(citationKey);
     }
 
     /**

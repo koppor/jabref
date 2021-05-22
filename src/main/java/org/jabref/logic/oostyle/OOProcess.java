@@ -91,7 +91,7 @@ public class OOProcess {
     private static void createNormalizedCitationMarkersForNormalStyle(CitedKeys sortedCitedKeys,
                                                                       OOBibStyle style) {
 
-        for (CitedKey ck : sortedCitedKeys.data.values()) {
+        for (CitedKey ck : sortedCitedKeys.values()) {
             ck.normCitMarker = Optional.of(style.getNormalizedCitationMarker(ck));
         }
     }
@@ -111,53 +111,50 @@ public class OOProcess {
      *
      *  Depends on: style, citations and their order.
      */
-    private static void createUniqueLetters(CitedKeys sortedCitedKeys,
-                                            CitationGroups cgs) {
+    private static void createUniqueLetters(CitedKeys sortedCitedKeys, CitationGroups cgs) {
 
-        // ncm2clks: ncm (normCitMarker) to clks (clashing keys : list of citation keys fighting for it).
+        // The entries in the clashingKeys lists preserve
+        // firstAppearance order from sortedCitedKeys.values().
         //
-        //          The entries in the clks lists preserve firstAppearance order
-        //          from sortedCitedKeys.data.values().
+        // The index of the citationKey in this order will decide
+        // which unique letter it receives.
         //
-        //          The index of the citationKey in this order will decide which
-        //          unique letter it receives.
-        //
-        Map<String, List<String>> ncm2clks = new HashMap<>();
-        for (CitedKey ck : sortedCitedKeys.values()) {
-            String ncm = OOFormattedText.toString(ck.normCitMarker.get());
-            String citationKey = ck.citationKey;
+        Map<String, List<String>> normCitMarkerToClachingKeys = new HashMap<>();
+        for (CitedKey citedKey : sortedCitedKeys.values()) {
+            String normCitMarker = OOFormattedText.toString(citedKey.normCitMarker.get());
+            String citationKey = citedKey.citationKey;
 
-            if (!ncm2clks.containsKey(ncm)) {
+            if (!normCitMarkerToClachingKeys.containsKey(normCitMarker)) {
                 // Found new normCitMarker
-                List<String> clks = new ArrayList<>(1);
-                ncm2clks.put(ncm, clks);
-                clks.add(citationKey);
+                List<String> clashingKeys = new ArrayList<>(1);
+                normCitMarkerToClachingKeys.put(normCitMarker, clashingKeys);
+                clashingKeys.add(citationKey);
             } else {
-                List<String> clks = ncm2clks.get(ncm);
-                if (!clks.contains(citationKey)) {
+                List<String> clashingKeys = normCitMarkerToClachingKeys.get(normCitMarker);
+                if (!clashingKeys.contains(citationKey)) {
                     // First appearance of citationKey, add to list.
-                    clks.add(citationKey);
+                    clashingKeys.add(citationKey);
                 }
             }
         }
 
         // Clear old uniqueLetter values.
-        for (CitedKey ck : sortedCitedKeys.data.values()) {
-            ck.uniqueLetter = Optional.empty();
+        for (CitedKey citedKey : sortedCitedKeys.values()) {
+            citedKey.uniqueLetter = Optional.empty();
         }
 
         // For sets of citation keys figthing for a normCitMarker
         // add unique letters to the year.
-        for (List<String> clks : ncm2clks.values()) {
-            if (clks.size() <= 1) {
+        for (List<String> clashingKeys : normCitMarkerToClachingKeys.values()) {
+            if (clashingKeys.size() <= 1) {
                 continue; // No fight, no letters.
             }
-            // Multiple citation keys: they get their letters according to their order in clks.
+            // Multiple citation keys: they get their letters
+            // according to their order in clashingKeys.
             int nextUniqueLetter = 'a';
-            for (String citationKey : clks) {
-                // uniqueLetters.put(citationKey, String.valueOf((char) nextUniqueLetter));
+            for (String citationKey : clashingKeys) {
                 String ul = String.valueOf((char) nextUniqueLetter);
-                sortedCitedKeys.data.get(citationKey).uniqueLetter = Optional.of(ul);
+                sortedCitedKeys.get(citationKey).uniqueLetter = Optional.of(ul);
                 nextUniqueLetter++;
             }
         }
