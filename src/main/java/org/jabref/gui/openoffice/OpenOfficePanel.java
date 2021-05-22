@@ -45,9 +45,9 @@ import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.StyleLoader;
-import org.jabref.logic.openoffice.EditInsert;
 import org.jabref.logic.openoffice.OpenOfficeFileSearch;
 import org.jabref.logic.openoffice.OpenOfficePreferences;
+import org.jabref.logic.openoffice.Update;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
@@ -494,9 +494,9 @@ public class OpenOfficePanel {
             return;
         }
 
-        Optional<EditInsert.SyncOptions> syncOptions =
+        Optional<Update.SyncOptions> syncOptions =
             (ooPrefs.getSyncWhenCiting()
-             ? Optional.of(new EditInsert.SyncOptions(getBaseList()))
+             ? Optional.of(new Update.SyncOptions(getBaseList()))
              : Optional.empty());
 
         ooBase.guiActionInsertEntry(entries,

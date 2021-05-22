@@ -28,7 +28,6 @@ import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
-import com.sun.star.text.XTextRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,29 +53,6 @@ public class EditInsert {
         return key.get();
     }
 
-    public static class SyncOptions {
-
-        public final List<BibDatabase> databases;
-        boolean updateBibliography;
-        boolean alwaysAddCitedOnPages;
-
-        public SyncOptions(List<BibDatabase> databases) {
-            this.databases = databases;
-            this.updateBibliography = false;
-            this.alwaysAddCitedOnPages = false;
-        }
-
-        public SyncOptions setUpdateBibliography(boolean value) {
-            this.updateBibliography = value;
-            return this;
-        }
-
-        public SyncOptions setAlwaysAddCitedOnPages(boolean value) {
-            this.alwaysAddCitedOnPages = value;
-            return this;
-        }
-    }
-
     /*
      * @param cursor Where to insert.
      *
@@ -94,9 +70,7 @@ public class EditInsert {
                                            BibDatabase database,
                                            OOBibStyle style,
                                            InTextCitationType citationType,
-                                           String pageInfo,
-                                           Optional<SyncOptions> sync,
-                                           Optional<FunctionalTextViewCursor> fcursor)
+                                           String pageInfo)
         throws
         UnknownPropertyException,
         NoDocumentException,
@@ -147,34 +121,5 @@ public class EditInsert {
                                                          style,
                                                          true /* insertSpaceAfter */);
 
-        if (sync.isPresent()) {
-            // Remember this position: we will come back here in the
-            // end.
-            XTextRange position = cursor.getEnd();
-
-            // To account for numbering and for uniqueLetters, we
-            // must refresh the cite markers:
-            OOFrontend fr2 = new OOFrontend(doc);
-
-            Update.updateDocument(doc,
-                                  fr2,
-                                  sync.get().databases,
-                                  style,
-                                  fcursor.get(),
-                                  sync.get().updateBibliography,
-                                  sync.get().alwaysAddCitedOnPages);
-
-            /*
-             * Problem: insertEntry in bibliography
-             * Reference is destroyed when we want to get there.
-             */
-            // Go back to the relevant position:
-            try {
-                cursor.gotoRange(position, false);
-            } catch (com.sun.star.uno.RuntimeException ex) {
-                LOGGER.warn("insertCitationGroup:"
-                            + " Could not go back to end of in-text citation", ex);
-            }
-        }
     }
 }

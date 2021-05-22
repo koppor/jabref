@@ -66,4 +66,53 @@ public class Update {
             }
         }
     }
+
+    public static class SyncOptions {
+
+        public final List<BibDatabase> databases;
+        boolean updateBibliography;
+        boolean alwaysAddCitedOnPages;
+
+        public SyncOptions(List<BibDatabase> databases) {
+            this.databases = databases;
+            this.updateBibliography = false;
+            this.alwaysAddCitedOnPages = false;
+        }
+
+        public SyncOptions setUpdateBibliography(boolean value) {
+            this.updateBibliography = value;
+            return this;
+        }
+
+        public SyncOptions setAlwaysAddCitedOnPages(boolean value) {
+            this.alwaysAddCitedOnPages = value;
+            return this;
+        }
+    }
+
+    public static void sync(XTextDocument doc,
+                            OOBibStyle style,
+                            FunctionalTextViewCursor fcursor,
+                            SyncOptions syncOptions)
+        throws
+        CreationException,
+        JabRefException,
+        NoDocumentException,
+        NoSuchElementException,
+        PropertyVetoException,
+        UnknownPropertyException,
+        WrappedTargetException,
+        com.sun.star.lang.IllegalArgumentException {
+
+        OOFrontend fr = new OOFrontend(doc);
+
+        Update.updateDocument(doc,
+                              fr,
+                              syncOptions.databases,
+                              style,
+                              fcursor,
+                              syncOptions.updateBibliography,
+                              syncOptions.alwaysAddCitedOnPages);
+    }
+
 }

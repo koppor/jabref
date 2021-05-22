@@ -551,7 +551,7 @@ class OOBibBase {
                                      OOBibStyle style,
                                      InTextCitationType citationType,
                                      String pageInfo,
-                                     Optional<EditInsert.SyncOptions> syncOptions) {
+                                     Optional<Update.SyncOptions> syncOptions) {
 
         final String title = "Could not insert citation";
 
@@ -576,14 +576,12 @@ class OOBibBase {
         /*
          * For sync we need a FunctionalTextViewCursor.
          */
-        Optional<FunctionalTextViewCursor> fcursorOpt = Optional.empty();
-
+        Result<FunctionalTextViewCursor, OOError> fcursor = null;
         if (syncOptions.isPresent()) {
-            Result<FunctionalTextViewCursor, OOError> fcursor = getFunctionalTextViewCursor(doc, title);
+            fcursor = getFunctionalTextViewCursor(doc, title);
             if (testDialog(title, fcursor.asVoidResult())) {
                 return;
             }
-            fcursorOpt = fcursor.getOptional();
         }
 
         syncOptions
@@ -609,9 +607,11 @@ class OOBibBase {
                                            database,
                                            style,
                                            citationType,
-                                           pageInfo,
-                                           syncOptions,
-                                           fcursorOpt);
+                                           pageInfo);
+
+            if (syncOptions.isPresent()) {
+                Update.sync(doc, style, fcursor.get(), syncOptions.get());
+            }
 
         } catch (NoDocumentException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
