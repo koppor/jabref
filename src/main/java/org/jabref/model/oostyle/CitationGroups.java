@@ -111,6 +111,8 @@ public class CitationGroups {
                                        + " globalOrder.size() != numberOfCitationGroups()");
         }
         this.globalOrder = Optional.of(globalOrder);
+
+        // Propagate to each CitationGroup
         int i = 0;
         for (CitationGroupID cgid : globalOrder) {
             citationGroupsUnordered.get(cgid).setIndexInGlobalOrder(Optional.of(i));

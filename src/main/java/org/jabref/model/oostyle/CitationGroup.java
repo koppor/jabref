@@ -20,11 +20,6 @@ public class CitationGroup {
     public final CitationGroupID cgid;
 
     /*
-     * Identifies location in the document for the backend.
-     */
-    // public final NamedRange cgRangeStorage;
-
-    /*
      * The core data, stored in the document:
      * The type of citation and citations in storage order.
      */
@@ -37,7 +32,7 @@ public class CitationGroup {
 
     /*
      * A name of a reference mark to link to by formatCitedOnPages.
-     * May be ininitially empty, if backend does not use reference marks.
+     * May be initially empty, if backend does not use reference marks.
      *
      * produceCitationMarkers might want fill it to support
      * cross-references to citation groups from the bibliography.
@@ -65,13 +60,11 @@ public class CitationGroup {
 
     public CitationGroup(OODataModel dataModel,
                          CitationGroupID cgid,
-                         // NamedRange cgRangeStorage,
                          InTextCitationType citationType,
                          List<Citation> citationsInStorageOrder,
                          Optional<String> referenceMarkNameForLinking) {
         this.dataModel = dataModel;
         this.cgid = cgid;
-        // this.cgRangeStorage = cgRangeStorage;
         this.citationType = citationType;
         this.citationsInStorageOrder = Collections.unmodifiableList(citationsInStorageOrder);
         this.localOrder = ListUtil.makeIndices(citationsInStorageOrder.size());
@@ -147,6 +140,10 @@ public class CitationGroup {
         this.referenceMarkNameForLinking = referenceMarkNameForLinking;
     }
 
+    /*
+     * citationMarker
+     */
+
     public void setCitationMarker(Optional<OOText> citationMarker) {
         this.citationMarker = citationMarker;
     }
@@ -155,4 +152,4 @@ public class CitationGroup {
         return this.citationMarker;
     }
 
-} // class CitationGroup
+}

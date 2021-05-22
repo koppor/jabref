@@ -209,12 +209,10 @@ public class OOFormatBibliography {
 
         // sort the citationGroups according to their indexInGlobalOrder
         citationGroups.sort((a, b) -> {
-                return (a
-                        .getIndexInGlobalOrder()
-                        .orElseThrow(RuntimeException::new)
-                        .compareTo(b
-                                   .getIndexInGlobalOrder()
-                                   .orElseThrow(RuntimeException::new))); });
+                Integer aa = a.getIndexInGlobalOrder().orElseThrow(RuntimeException::new);
+                Integer bb = b.getIndexInGlobalOrder().orElseThrow(RuntimeException::new);
+                return (aa.compareTo(bb));
+            });
 
         int i = 0;
         for (CitationGroup cg : citationGroups) {
