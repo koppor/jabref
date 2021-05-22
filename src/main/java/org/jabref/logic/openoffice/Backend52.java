@@ -55,7 +55,7 @@ public class Backend52 {
     public List<String> getJabRefReferenceMarkNames(XTextDocument doc)
         throws
         NoDocumentException {
-        List<String> allNames = this.citationStorageManager.getUsedNames(doc);
+        List<String> allNames = this.citationStorageManager.nrmGetUsedNames(doc);
         return Codec52.filterIsJabRefReferenceMarkName(allNames);
     }
 
@@ -157,7 +157,7 @@ public class Backend52 {
         setPageInfoInDataInitial(citations, pageInfo);
 
         Optional<NamedRange> storedRange = (citationStorageManager
-                                            .getFromDocument(doc, refMarkName));
+                                            .nrmGetFromDocument(doc, refMarkName));
 
         if (storedRange.isEmpty()) {
             throw new IllegalArgumentException("readCitationGroupFromDocumentOrThrow:"
@@ -206,7 +206,7 @@ public class Backend52 {
         }
 
         // Get a new refMarkName
-        Set<String> usedNames = new HashSet<>(this.citationStorageManager.getUsedNames(doc));
+        Set<String> usedNames = new HashSet<>(this.citationStorageManager.nrmGetUsedNames(doc));
         String xkey = (citationKeys.stream().collect(Collectors.joining(",")));
         String refMarkName = Codec52.getUniqueMarkName(usedNames, xkey, citationType);
 
@@ -244,8 +244,8 @@ public class Backend52 {
          */
         boolean withoutBrackets = (citationType == InTextCitationType.INVISIBLE_CIT);
         NamedRange storedRange =
-            this.citationStorageManager.create(doc, refMarkName, position, insertSpaceAfter,
-                                               withoutBrackets);
+            this.citationStorageManager.nrmCreate(doc, refMarkName, position, insertSpaceAfter,
+                                                  withoutBrackets);
 
         switch (dataModel) {
         case JabRef52:

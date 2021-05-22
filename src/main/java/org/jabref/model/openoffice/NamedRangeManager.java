@@ -9,19 +9,19 @@ import com.sun.star.text.XTextDocument;
 
 public interface NamedRangeManager {
 
-    public NamedRange create(XTextDocument doc,
-                             String markName,
-                             XTextCursor position,
-                             boolean insertSpaceAfter,
-                             boolean withoutBrackets)
+    public NamedRange nrmCreate(XTextDocument doc,
+                                String markName,
+                                XTextCursor position,
+                                boolean insertSpaceAfter,
+                                boolean withoutBrackets)
         throws
         CreationException;
 
-    public List<String> getUsedNames(XTextDocument doc)
+    public List<String> nrmGetUsedNames(XTextDocument doc)
         throws
         NoDocumentException;
 
-    public Optional<NamedRange> getFromDocument(XTextDocument doc, String markName)
+    public Optional<NamedRange> nrmGetFromDocument(XTextDocument doc, String markName)
         throws
         NoDocumentException,
         WrappedTargetException;
