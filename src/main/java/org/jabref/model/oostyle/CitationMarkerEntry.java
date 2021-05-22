@@ -14,20 +14,7 @@ import java.util.Optional;
  * not need pageInfo, uniqueLetter and isFirstAppearanceOfSource.
  *
  */
-public interface CitationMarkerEntry {
-
-    /** Citation key. This is what we usually get from the document.
-     *
-     *  Used if getBibEntry() and/or getDatabase() returns
-     *  empty, which indicates failure to lookup in the databases.
-     *  The marker created is "Unresolved({citationKey})".
-     *
-     */
-    String getCitationKey();
-
-    /** Result of looking up citation key in databases.
-     */
-    Optional<CitationDatabaseLookup.Result> getDatabaseLookupResult();
+public interface CitationMarkerEntry extends CitationMarkerNormEntry {
 
     /**
      * uniqueLetter or Optional.empty() if not needed.

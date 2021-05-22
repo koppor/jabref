@@ -1,17 +1,16 @@
 package org.jabref.logic.openoffice;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.oostyle.CitationDatabaseLookup;
+import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationMarkerEntry;
-import org.jabref.model.oostyle.CitationMarkerEntryImpl;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.ListUtil;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
@@ -113,30 +112,24 @@ public class EditInsert {
         List<String> citationKeys = ListUtil.map(entries, EditInsert::insertEntryGetCitationKey);
 
         final int nEntries = entries.size();
+
         // JabRef53 style pageInfo list
         List<Optional<OOFormattedText>> pageInfosForCitations =
             OOStyleDataModelVersion.fakePageInfosForCitations(pageInfo, nEntries);
 
-        List<CitationMarkerEntry> citationMarkerEntries = new ArrayList<>(nEntries);
+        List<CitationMarkerEntry> citations = new ArrayList<>(nEntries);
         for (int i = 0; i < nEntries; i++) {
-            // Using the same database for each entry.
-            // Probably the GUI limits selection to a single database.
-            Optional<CitationDatabaseLookup.Result> db =
-                Optional.of(new CitationDatabaseLookup.Result(entries.get(i), database));
-            CitationMarkerEntry cm =
-                new CitationMarkerEntryImpl(citationKeys.get(i),
-                                            db,
-                                            Optional.empty(), // uniqueLetter
-                                            pageInfosForCitations.get(i),
-                                            false /* isFirstAppearanceOfSource */);
-            citationMarkerEntries.add(cm);
+            Citation cit = new Citation(citationKeys.get(i));
+            cit.lookup(Collections.singletonList(database));
+            cit.setPageInfo(pageInfosForCitations.get(i));
+            citations.add(cit);
         }
 
         // The text we insert
         OOFormattedText citeText =
             (style.isNumberEntries()
              ? OOFormattedText.fromString("[-]") // A dash only. Only refresh later.
-             : style.getCitationMarker2(citationMarkerEntries,
+             : style.getCitationMarker2(citations,
                                         citationType.inParenthesis(),
                                         NonUniqueCitationMarker.FORGIVEN));
 

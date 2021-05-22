@@ -19,7 +19,6 @@ import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.CitationMarkerEntry;
-import org.jabref.model.oostyle.CitationMarkerEntryImpl;
 import org.jabref.model.oostyle.CitedKey;
 import org.jabref.model.oostyle.CitedKeys;
 import org.jabref.model.oostyle.InTextCitationType;
@@ -86,22 +85,6 @@ public class OOProcess {
      *
      * **************************************/
 
-    private static OOFormattedText normalizedCitationMarkerForNormalStyle(CitedKey ck,
-                                                                          OOBibStyle style) {
-        if (ck.db.isEmpty()) {
-            return OOFormattedText.fromString(String.format("(Unresolved(%s))", ck.citationKey));
-        }
-        // We need "normalized" (in parenthesis) markers
-        // for uniqueness checking purposes:
-        // createNormalizedCitationMarker
-        CitationMarkerEntry ce = new CitationMarkerEntryImpl(ck.citationKey,
-                                                             ck.db,
-                                                             Optional.empty(), // uniqueLetter
-                                                             Optional.empty(), // pageInfo
-                                                             false /* isFirstAppearanceOfSource */);
-        return style.getNormalizedCitationMarker(ce);
-    }
-
     /**
      *  Fills {@code sortedCitedKeys//normCitMarker}
      */
@@ -109,7 +92,7 @@ public class OOProcess {
                                                                       OOBibStyle style) {
 
         for (CitedKey ck : sortedCitedKeys.data.values()) {
-            ck.normCitMarker = Optional.of(normalizedCitationMarkerForNormalStyle(ck, style));
+            ck.normCitMarker = Optional.of(style.getNormalizedCitationMarker(ck));
         }
     }
 

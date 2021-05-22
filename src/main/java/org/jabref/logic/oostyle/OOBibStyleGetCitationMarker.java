@@ -15,6 +15,7 @@ import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationDatabaseLookup;
 import org.jabref.model.oostyle.CitationMarkerEntry;
+import org.jabref.model.oostyle.CitationMarkerNormEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.strings.StringUtil;
@@ -339,8 +340,7 @@ class OOBibStyleGetCitationMarker {
      *
      *                NORMALIZED omits uniqueLetter and pageInfo,
      *                ignores isFirstAppearanceOfSource (always
-     *                style.getMaxAuthors, not getMaxAuthorsFirst) and
-     *                probably assumes a single CitationMarkerEntry.
+     *                style.getMaxAuthors, not getMaxAuthorsFirst)
      *
      * @param ces   The list of CitationMarkerEntry values to process.
      *
@@ -507,8 +507,42 @@ class OOBibStyleGetCitationMarker {
         return s;
     }
 
+    private static class CitationMarkerNormEntryWrap implements CitationMarkerEntry {
+
+        CitationMarkerNormEntry inner;
+
+        CitationMarkerNormEntryWrap(CitationMarkerNormEntry inner) {
+            this.inner = inner;
+        }
+
+        @Override
+        public String getCitationKey() {
+            return inner.getCitationKey();
+        }
+
+        @Override
+        public Optional<CitationDatabaseLookup.Result> getDatabaseLookupResult() {
+            return inner.getDatabaseLookupResult();
+        }
+
+        @Override
+        public Optional<String> getUniqueLetter() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<OOFormattedText> getPageInfo() {
+            return Optional.empty();
+        }
+
+        @Override
+        public boolean getIsFirstAppearanceOfSource() {
+            return false;
+        }
+    }
+
     /**
-     * @param ce          A citation to process.
+     * @param cne          A citation to process.
      *
      * @return A normalized citation marker for deciding which
      *         citations need uniqueLetters.
@@ -517,10 +551,11 @@ class OOBibStyleGetCitationMarker {
      *
      * Note: now includes some markup.
      */
-    public static OOFormattedText getNormalizedCitationMarker(OOBibStyle style,
-                                                              CitationMarkerEntry ce,
-                                                              Optional<Integer> maxAuthorsOverride) {
+    static OOFormattedText getNormalizedCitationMarker(OOBibStyle style,
+                                                       CitationMarkerNormEntry cne,
+                                                       Optional<Integer> maxAuthorsOverride) {
         boolean[] startsNewGroup = {true};
+        CitationMarkerEntry ce = new CitationMarkerNormEntryWrap(cne);
         return getAuthorYearParenthesisMarker2(style,
                                                AuthorYearMarkerPurpose.NORMALIZED,
                                                Collections.singletonList(ce),

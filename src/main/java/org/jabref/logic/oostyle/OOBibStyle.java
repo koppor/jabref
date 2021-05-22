@@ -32,6 +32,7 @@ import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.EntryTypeFactory;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationMarkerEntry;
+import org.jabref.model.oostyle.CitationMarkerNormEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 
@@ -971,7 +972,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         }
     }
 
-    public OOFormattedText getNormalizedCitationMarker(CitationMarkerEntry ce) {
+    public OOFormattedText getNormalizedCitationMarker(CitationMarkerNormEntry ce) {
         return OOBibStyleGetCitationMarker.getNormalizedCitationMarker(this, ce, Optional.empty());
     }
 

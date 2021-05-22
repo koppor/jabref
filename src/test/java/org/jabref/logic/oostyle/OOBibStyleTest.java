@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 import org.jabref.logic.layout.Layout;
 import org.jabref.logic.layout.LayoutFormatterPreferences;
 import org.jabref.model.database.BibDatabase;
@@ -24,9 +25,9 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.entry.types.UnknownEntryType;
+import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationDatabaseLookup;
 import org.jabref.model.oostyle.CitationMarkerEntry;
-import org.jabref.model.oostyle.CitationMarkerEntryImpl;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 
@@ -301,15 +302,14 @@ class OOBibStyleTest {
                                                                String uniqueLetterQ,
                                                                String pageInfoQ,
                                                                boolean isFirstAppearanceOfSource) {
-        Optional<String> uniqueLetter = Optional.ofNullable(uniqueLetterQ);
-        Optional<OOFormattedText> pageInfo =
-            Optional.ofNullable(OOFormattedText.fromString(pageInfoQ));
         Objects.requireNonNull(citationKey);
-        return new CitationMarkerEntryImpl(citationKey,
-                                           Optional.of(new CitationDatabaseLookup.Result(entry, database)),
-                                           uniqueLetter,
-                                           pageInfo,
-                                           isFirstAppearanceOfSource);
+        Citation result = new Citation(citationKey);
+        result.setDatabaseLookupResult(Optional.of(new CitationDatabaseLookup.Result(entry, database)));
+        result.setUniqueLetter(Optional.ofNullable(uniqueLetterQ));
+        Optional<OOFormattedText> pageInfo = Optional.ofNullable(OOFormattedText.fromString(pageInfoQ));
+        result.setPageInfo(Citation.normalizePageInfo(pageInfo));
+        result.setIsFirstAppearanceOfSource(isFirstAppearanceOfSource);
+        return result;
     }
 
     @Test

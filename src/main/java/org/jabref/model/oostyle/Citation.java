@@ -1,7 +1,9 @@
 package org.jabref.model.oostyle;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.Pair;
 
@@ -59,8 +61,16 @@ public class Citation implements CitationSort.ComparableCitation, CitationMarker
                 : Optional.empty());
     }
 
+    public void lookup(List<BibDatabase> databases) {
+        db = CitationDatabaseLookup.lookup(databases, citationKey);
+    }
+
     public Optional<CitationDatabaseLookup.Result> getDatabaseLookupResult() {
         return db;
+    }
+
+    public void setDatabaseLookupResult(Optional<CitationDatabaseLookup.Result> db) {
+        this.db = db;
     }
 
     public boolean isUnresolved() {
@@ -79,10 +89,14 @@ public class Citation implements CitationSort.ComparableCitation, CitationMarker
         return uniqueLetter;
     }
 
+    public void setUniqueLetter(Optional<String> uniqueLetter) {
+        this.uniqueLetter = uniqueLetter;
+    }
+
     public void setPageInfo(Optional<OOFormattedText> v) {
         Optional<OOFormattedText> vv = normalizePageInfo(v);
         if (!vv.equals(v)) {
-            throw new RuntimeException("setPageInfo argument is not normalied");
+            throw new RuntimeException("setPageInfo argument is not normalized");
         }
         this.pageInfo = vv;
     }
