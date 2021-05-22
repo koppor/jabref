@@ -1,11 +1,9 @@
 package org.jabref.logic.openoffice;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NamedRange;
-import org.jabref.model.openoffice.NamedRangeManager;
 import org.jabref.model.openoffice.NoDocumentException;
 
 import com.sun.star.container.NoSuchElementException;
@@ -18,7 +16,9 @@ import com.sun.star.text.XTextRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class StorageBaseRefMark implements NamedRange {
+// was StorageBaseRefMark
+
+class NamedRangeReferenceMark implements NamedRange {
 
     private static final String ZERO_WIDTH_SPACE = "\u200b";
 
@@ -32,11 +32,11 @@ class StorageBaseRefMark implements NamedRange {
     public static final String
     REFERENCE_MARK_RIGHT_BRACKET = REFERENCE_MARK_USE_INVISIBLE_BRACKETS ? ZERO_WIDTH_SPACE : ">";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StorageBaseRefMark.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NamedRangeReferenceMark.class);
 
     private String id; /* reference mark name */
 
-    private StorageBaseRefMark(String id) {
+    private NamedRangeReferenceMark(String id) {
         this.id = id;
     }
 
@@ -99,8 +99,8 @@ class StorageBaseRefMark implements NamedRange {
         cursor.goRight((short) 1, false);
         // now we are between two spaces
 
-        final String left = StorageBaseRefMark.REFERENCE_MARK_LEFT_BRACKET;
-        final String right = StorageBaseRefMark.REFERENCE_MARK_RIGHT_BRACKET;
+        final String left = NamedRangeReferenceMark.REFERENCE_MARK_LEFT_BRACKET;
+        final String right = NamedRangeReferenceMark.REFERENCE_MARK_RIGHT_BRACKET;
         final short leftLength = (short) left.length();
         final short rightLength = (short) right.length();
         String bracketedContent = (withoutBrackets
@@ -119,11 +119,11 @@ class StorageBaseRefMark implements NamedRange {
         }
     }
 
-    private static StorageBaseRefMark create(XTextDocument doc,
-                                            String refMarkName,
-                                            XTextCursor position,
-                                            boolean insertSpaceAfter,
-                                            boolean withoutBrackets)
+    static NamedRangeReferenceMark create(XTextDocument doc,
+                                          String refMarkName,
+                                          XTextCursor position,
+                                          boolean insertSpaceAfter,
+                                          boolean withoutBrackets)
         throws
         CreationException {
 
@@ -132,19 +132,19 @@ class StorageBaseRefMark implements NamedRange {
                              position,
                              insertSpaceAfter,
                              withoutBrackets);
-        return new StorageBaseRefMark(refMarkName);
+        return new NamedRangeReferenceMark(refMarkName);
     }
 
     /**
      * @return Optional.empty if there is no corresponding range.
      */
-    private static Optional<StorageBaseRefMark> getFromDocument(XTextDocument doc,
-                                                                String refMarkName)
+    static Optional<NamedRangeReferenceMark> getFromDocument(XTextDocument doc,
+                                                             String refMarkName)
         throws
         NoDocumentException,
         WrappedTargetException {
         return (UnoReferenceMark.getAnchor(doc, refMarkName)
-                .map(e -> new StorageBaseRefMark(refMarkName)));
+                .map(e -> new NamedRangeReferenceMark(refMarkName)));
     }
 
     /*
@@ -229,8 +229,8 @@ class StorageBaseRefMark implements NamedRange {
         String name = this.getRangeName();
 
         final boolean debugThisFun = false;
-        final String left = StorageBaseRefMark.REFERENCE_MARK_LEFT_BRACKET;
-        final String right = StorageBaseRefMark.REFERENCE_MARK_RIGHT_BRACKET;
+        final String left = NamedRangeReferenceMark.REFERENCE_MARK_LEFT_BRACKET;
+        final String right = NamedRangeReferenceMark.REFERENCE_MARK_RIGHT_BRACKET;
         final short leftLength = (short) left.length();
         final short rightLength = (short) right.length();
 
@@ -367,7 +367,7 @@ class StorageBaseRefMark implements NamedRange {
                               omega.getString(), right);
         }
 
-        StorageBaseRefMark.checkFillCursor(beta);
+        NamedRangeReferenceMark.checkFillCursor(beta);
         return beta;
     }
 
@@ -487,47 +487,6 @@ class StorageBaseRefMark implements NamedRange {
         if (removeLeft) {
             alpha.goRight(leftLength, true);
             alpha.setString("");
-        }
-    }
-
-    private static List<String> getUsedNames(XTextDocument doc)
-        throws
-        NoDocumentException {
-        return UnoReferenceMark.getListOfNames(doc);
-    }
-
-    public static class Manager implements NamedRangeManager {
-        @Override
-        public NamedRange create(XTextDocument doc,
-                                 String refMarkName,
-                                 XTextCursor position,
-                                 boolean insertSpaceAfter,
-                                 boolean withoutBrackets)
-            throws
-            CreationException {
-            return StorageBaseRefMark.create(doc,
-                                             refMarkName,
-                                             position,
-                                             insertSpaceAfter,
-                                             withoutBrackets);
-        }
-
-        @Override
-        public List<String> getUsedNames(XTextDocument doc)
-            throws
-            NoDocumentException {
-            return StorageBaseRefMark.getUsedNames(doc);
-        }
-
-        @Override
-        public Optional<NamedRange> getFromDocument(XTextDocument doc,
-                                                    String refMarkName)
-            throws
-            NoDocumentException,
-            WrappedTargetException {
-            return (StorageBaseRefMark
-                    .getFromDocument(doc, refMarkName)
-                    .map(x -> x));
         }
     }
 }

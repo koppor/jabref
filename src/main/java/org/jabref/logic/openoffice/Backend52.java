@@ -42,7 +42,7 @@ public class Backend52 {
     // uses: Codec52
     public Backend52() {
         this.dataModel = OODataModel.JabRef52;
-        this.citationStorageManager = new StorageBaseRefMark.Manager();
+        this.citationStorageManager = new NamedRangeManagerReferenceMark();
     }
 
     /**
