@@ -26,60 +26,29 @@ class OOProcessNumericMarkers {
      *
      */
     static Map<CitationGroupID, OOFormattedText>
-    produceCitationMarkersForIsNumberEntriesIsSortByPosition(CitationGroups cgs, OOBibStyle style) {
-
-        assert style.isNumberEntries();
-        assert style.isSortByPosition();
-
-        cgs.createNumberedBibliographySortedInOrderOfAppearance();
-
-        final int minGroupingCount = style.getMinimumGroupingCount();
-
-        Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
-
-        for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
-            List<Citation> cits = cg.getCitationsInLocalOrder();
-            citMarkers.put(cg.cgid,
-                           style.getNumCitationMarker(ListUtil.map(cits, Citation::getNumberOrThrow),
-                                                      minGroupingCount,
-                                                      ListUtil.map(cits, Citation::getPageInfo)));
-        }
-
-        return citMarkers;
-    }
-
-    /**
-     * Produce citation markers for the case of numbered citations
-     * when the bibliography is not sorted by position.
-     */
-    static Map<CitationGroupID, OOFormattedText>
-    produceCitationMarkersForIsNumberEntriesNotSortByPosition(CitationGroups cgs, OOBibStyle style) {
-        assert style.isNumberEntries();
-        assert !style.isSortByPosition();
-
-        cgs.createNumberedBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
-
-        final int minGroupingCount = style.getMinimumGroupingCount();
-
-        Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
-
-        for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
-            List<Citation> cits = cg.getCitationsInLocalOrder();
-            citMarkers.put(cg.cgid,
-                           style.getNumCitationMarker(ListUtil.map(cits, Citation::getNumberOrThrow),
-                                                      minGroupingCount,
-                                                      ListUtil.map(cits, Citation::getPageInfo)));
-        }
-
-        return citMarkers;
-    }
-
-    static Map<CitationGroupID, OOFormattedText>
     produceCitationMarkers(CitationGroups cgs, OOBibStyle style) {
+
+        assert style.isNumberEntries();
+
         if (style.isSortByPosition()) {
-            return produceCitationMarkersForIsNumberEntriesIsSortByPosition(cgs, style);
+            cgs.createNumberedBibliographySortedInOrderOfAppearance();
         } else {
-            return produceCitationMarkersForIsNumberEntriesNotSortByPosition(cgs, style);
+            cgs.createNumberedBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
         }
+
+        final int minGroupingCount = style.getMinimumGroupingCount();
+
+        Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
+
+        for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
+            List<Citation> cits = cg.getCitationsInLocalOrder();
+            citMarkers.put(cg.cgid,
+                           style.getNumCitationMarker(ListUtil.map(cits, Citation::getNumberOrThrow),
+                                                      minGroupingCount,
+                                                      ListUtil.map(cits, Citation::getPageInfo)));
+        }
+
+        return citMarkers;
     }
+
 }
