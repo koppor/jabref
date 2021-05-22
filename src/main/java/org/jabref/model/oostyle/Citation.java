@@ -7,7 +7,7 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.Pair;
 
-public class Citation implements CitationSort.ComparableCitation, CitationMarkerEntry {
+public class Citation implements ComparableCitation, CitationMarkerEntry {
 
     /** key in database */
     public final String citationKey;

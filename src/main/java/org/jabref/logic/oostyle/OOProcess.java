@@ -292,7 +292,7 @@ public class OOProcess {
         CitedKeys sortedCitedKeys = cgs.getCitedKeysSortedInOrderOfAppearance();
 
         createNormalizedCitationMarkersForNormalStyle(sortedCitedKeys, style);
-        createUniqueLetters(sortedCitedKeys, cgs); // calls distributeUniqueLetters(cgs)
+        createUniqueLetters(sortedCitedKeys, cgs);
         cgs.createPlainBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
 
         // Mark first appearance of each citationKey

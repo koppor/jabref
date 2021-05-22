@@ -32,7 +32,7 @@ public class CitedKeys {
      */
     void sortByComparator(Comparator<BibEntry> entryComparator) {
         List<CitedKey> cks = new ArrayList<>(data.values());
-        cks.sort(new CitationSort.CitationComparator(entryComparator, true));
+        cks.sort(new CitedKeyComparator(entryComparator, true));
         LinkedHashMap<String, CitedKey> newData = new LinkedHashMap<>();
         for (CitedKey ck : cks) {
             newData.put(ck.citationKey, ck);

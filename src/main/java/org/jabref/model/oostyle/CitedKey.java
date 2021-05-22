@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 
-public class CitedKey implements CitationSort.ComparableCitation, CitationMarkerNormEntry {
+public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry {
     public String citationKey;
     public LinkedHashSet<CitationPath> where;
     public Optional<CitationDatabaseLookup.Result> db;
@@ -25,6 +25,9 @@ public class CitedKey implements CitationSort.ComparableCitation, CitationMarker
         this.normCitMarker = Optional.empty();
     }
 
+    /*
+     * Implement ComparableCitedKey
+     */
     @Override
     public String getCitationKey() {
         return citationKey;
@@ -35,18 +38,6 @@ public class CitedKey implements CitationSort.ComparableCitation, CitationMarker
         return (db.isPresent()
                 ? Optional.of(db.get().entry)
                 : Optional.empty());
-    }
-
-    /** No pageInfo is needed for sorting the bibliography,
-     *  getPageInfo always returns Optional.empty.
-     *
-     *  Only exists to implement CitationSort.ComparableCitation.
-     *
-     *  @return Optional.empty()
-     */
-    @Override
-    public Optional<OOFormattedText> getPageInfo() {
-        return Optional.empty();
     }
 
     /*

@@ -99,7 +99,7 @@ public class CitationGroup {
         }
 
         this.localOrder = ListUtil.order(citationsInStorageOrder,
-                                         new CitationSort.CitationComparator(entryComparator, true));
+                                         new CompareCitation(entryComparator, true));
 
         if (dataModel == OOStyleDataModelVersion.JabRef52) {
             getCitationsInLocalOrder().get(last).setPageInfo(lastPageInfo);
