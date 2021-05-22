@@ -366,11 +366,11 @@ public class OOFrontend {
 
         for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
             XTextRange range = this.getMarkRange(doc, cg.cgid).orElseThrow(RuntimeException::new);
-            String name = cg.cgRangeStorage.nrGetRangeName();
+            String description = cg.cgid.asString(); // cg.cgRangeStorage.nrGetRangeName();
             result.add(new RangeForOverlapCheck(range,
                                                 cg.cgid,
                                                 RangeForOverlapCheck.REFERENCE_MARK_KIND,
-                                                name));
+                                                description));
         }
         return result;
     }

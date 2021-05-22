@@ -16,10 +16,10 @@ public class NamedRangeManagerReferenceMark implements NamedRangeManager {
 
     @Override
     public NamedRange nrmCreate(XTextDocument doc,
-                             String refMarkName,
-                             XTextCursor position,
-                             boolean insertSpaceAfter,
-                             boolean withoutBrackets)
+                                String refMarkName,
+                                XTextCursor position,
+                                boolean insertSpaceAfter,
+                                boolean withoutBrackets)
         throws
         CreationException {
         return NamedRangeReferenceMark.create(doc,
@@ -37,8 +37,7 @@ public class NamedRangeManagerReferenceMark implements NamedRangeManager {
     }
 
     @Override
-    public Optional<NamedRange> nrmGetFromDocument(XTextDocument doc,
-                                                   String refMarkName)
+    public Optional<NamedRange> nrmGetFromDocument(XTextDocument doc, String refMarkName)
         throws
         NoDocumentException,
         WrappedTargetException {

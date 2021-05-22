@@ -1,8 +1,10 @@
 package org.jabref.logic.openoffice;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -37,12 +39,14 @@ import org.slf4j.LoggerFactory;
 public class Backend52 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Backend52.class);
     public final OODataModel dataModel;
-    public final NamedRangeManager citationStorageManager;
+    private final NamedRangeManager citationStorageManager;
+    private final Map<CitationGroupID, NamedRange> cgidToNamedRange;
 
     // uses: Codec52
     public Backend52() {
         this.dataModel = OODataModel.JabRef52;
         this.citationStorageManager = new NamedRangeManagerReferenceMark();
+        this.cgidToNamedRange = new HashMap<>();
     }
 
     /**
@@ -104,16 +108,14 @@ public class Backend52 {
         return Optional.of(msg);
     }
 
-    private static void setPageInfoInDataInitial(List<Citation> citations,
-                                                 Optional<OOText> pageInfo) {
+    private static void setPageInfoInDataInitial(List<Citation> citations, Optional<OOText> pageInfo) {
         // attribute to last citation (initially localOrder == storageOrder)
         if (citations.size() > 0) {
             citations.get(citations.size() - 1).setPageInfo(pageInfo);
         }
     }
 
-    private static void setPageInfoInData(CitationGroup cg,
-                                          Optional<OOText> pageInfo) {
+    private static void setPageInfoInData(CitationGroup cg, Optional<OOText> pageInfo) {
         List<Citation> citations = cg.getCitationsInLocalOrder();
         if (citations.size() > 0) {
             citations.get(citations.size() - 1).setPageInfo(pageInfo);
@@ -144,7 +146,7 @@ public class Backend52 {
                                                + " found unparsable referenceMarkName");
         }
         Codec52.ParsedMarkName ov = op.get();
-        CitationGroupID id = new CitationGroupID(refMarkName);
+        CitationGroupID cgid = new CitationGroupID(refMarkName);
         List<Citation> citations = (ov.citationKeys.stream()
                                     .map(Citation::new)
                                     .collect(Collectors.toList()));
@@ -156,20 +158,20 @@ public class Backend52 {
 
         setPageInfoInDataInitial(citations, pageInfo);
 
-        Optional<NamedRange> storedRange = (citationStorageManager
-                                            .nrmGetFromDocument(doc, refMarkName));
+        Optional<NamedRange> namedRange = citationStorageManager.nrmGetFromDocument(doc, refMarkName);
 
-        if (storedRange.isEmpty()) {
+        if (namedRange.isEmpty()) {
             throw new IllegalArgumentException("readCitationGroupFromDocumentOrThrow:"
                                                + " referenceMarkName is not in the document");
         }
 
         CitationGroup cg = new CitationGroup(OODataModel.JabRef52,
-                                             id,
-                                             storedRange.get(),
+                                             cgid,
+                                             // namedRange.get(),
                                              ov.citationType,
                                              citations,
                                              Optional.of(refMarkName));
+        this.cgidToNamedRange.put(cgid, namedRange.get());
         return cg;
     }
 
@@ -243,7 +245,7 @@ public class Backend52 {
          * Apply to document
          */
         boolean withoutBrackets = (citationType == InTextCitationType.INVISIBLE_CIT);
-        NamedRange storedRange =
+        NamedRange namedRange =
             this.citationStorageManager.nrmCreate(doc, refMarkName, position, insertSpaceAfter,
                                                   withoutBrackets);
 
@@ -260,8 +262,10 @@ public class Backend52 {
                 UnoUserDefinedProperty.removeIfExists(doc, refMarkName);
             }
             CitationGroup cg = new CitationGroup(OODataModel.JabRef52,
-                                                 cgid, storedRange, citationType, citations,
+                                                 cgid,
+                                                 citationType, citations,
                                                  Optional.of(refMarkName));
+            this.cgidToNamedRange.put(cgid, namedRange);
             return cg;
         default:
             throw new RuntimeException("Backend52 requires JabRef52 dataModel");
@@ -317,6 +321,15 @@ public class Backend52 {
         return combinePageInfosCommon(this.dataModel, joinableGroup);
     }
 
+    private NamedRange getNamedRangeOrThrow(CitationGroup cg) {
+        NamedRange namedRange = this.cgidToNamedRange.get(cg.cgid);
+        if (namedRange == null) {
+            LOGGER.warn("getNamedRange: could not lookup namedRange");
+            throw new RuntimeException("getNamedRange: could not lookup namedRange");
+        }
+        return namedRange;
+    }
+
     public void removeCitationGroup(CitationGroup cg, XTextDocument doc)
         throws
         WrappedTargetException,
@@ -326,9 +339,11 @@ public class Backend52 {
         IllegalTypeException,
         PropertyExistException {
 
-        String refMarkName = cg.cgRangeStorage.nrGetRangeName();
-        cg.cgRangeStorage.nrRemoveFromDocument(doc);
+        NamedRange namedRange = getNamedRangeOrThrow(cg);
+        String refMarkName = namedRange.nrGetRangeName();
+        namedRange.nrRemoveFromDocument(doc);
         UnoUserDefinedProperty.removeIfExists(doc, refMarkName);
+        this.cgidToNamedRange.remove(cg.cgid);
     }
 
     /**
@@ -341,7 +356,8 @@ public class Backend52 {
         NoDocumentException,
         WrappedTargetException {
 
-        return cg.cgRangeStorage.nrGetMarkRange(doc);
+        NamedRange namedRange = getNamedRangeOrThrow(cg);
+        return namedRange.nrGetMarkRange(doc);
     }
 
     /**
@@ -352,7 +368,8 @@ public class Backend52 {
         throws
         NoDocumentException,
         WrappedTargetException {
-        return cg.cgRangeStorage.nrGetRawCursor(doc);
+        NamedRange namedRange = getNamedRangeOrThrow(cg);
+        return namedRange.nrGetRawCursor(doc);
     }
 
     /**
@@ -364,7 +381,8 @@ public class Backend52 {
         WrappedTargetException,
         CreationException {
 
-        return cg.cgRangeStorage.nrGetFillCursor(doc);
+        NamedRange namedRange = getNamedRangeOrThrow(cg);
+        return namedRange.nrGetFillCursor(doc);
     }
 
     /** To be called after getFillCursorForCitationGroup */
@@ -373,7 +391,8 @@ public class Backend52 {
         NoDocumentException,
         WrappedTargetException,
         CreationException {
-        cg.cgRangeStorage.nrCleanFillCursor(doc);
+        NamedRange namedRange = getNamedRangeOrThrow(cg);
+        namedRange.nrCleanFillCursor(doc);
     }
 
     public List<CitationEntry> getCitationEntries(XTextDocument doc, CitationGroups cgs)
