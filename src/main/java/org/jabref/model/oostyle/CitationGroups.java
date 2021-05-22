@@ -106,9 +106,9 @@ public class CitationGroups {
 
     public void setGlobalOrder(List<CitationGroupID> globalOrder) {
         Objects.requireNonNull(globalOrder);
-        if (globalOrder.size() != citationGroupsUnordered.size()) {
+        if (globalOrder.size() != numberOfCitationGroups()) {
             throw new RuntimeException("setGlobalOrder:"
-                                       + " globalOrder.size() != citationGroups.size()");
+                                       + " globalOrder.size() != numberOfCitationGroups()");
         }
         this.globalOrder = Optional.of(globalOrder);
         int i = 0;
