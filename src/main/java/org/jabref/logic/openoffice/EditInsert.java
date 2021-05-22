@@ -13,6 +13,7 @@ import org.jabref.model.oostyle.CitationDatabaseLookup;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitationMarkerEntryImpl;
 import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.ListUtil;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOFormattedText;
 import org.jabref.model.oostyle.OOStyleDataModelVersion;
@@ -109,10 +110,7 @@ public class EditInsert {
         IllegalTypeException,
         JabRefException {
 
-        List<String> citationKeys =
-            entries.stream()
-            .map(EditInsert::insertEntryGetCitationKey)
-            .collect(Collectors.toList());
+        List<String> citationKeys = ListUtil.map(entries, EditInsert::insertEntryGetCitationKey);
 
         final int nEntries = entries.size();
         // JabRef53 style pageInfo list
@@ -128,8 +126,6 @@ public class EditInsert {
             CitationMarkerEntry cm =
                 new CitationMarkerEntryImpl(citationKeys.get(i),
                                             db,
-                                            // Optional.ofNullable(entries.get(i)),
-                                            // Optional.ofNullable(database),
                                             Optional.empty(), // uniqueLetter
                                             pageInfosForCitations.get(i),
                                             false /* isFirstAppearanceOfSource */);
