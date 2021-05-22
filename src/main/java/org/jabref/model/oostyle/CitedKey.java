@@ -19,7 +19,7 @@ public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry {
         this.citationKey = citationKey;
         this.where = new LinkedHashSet<>(); // remember order
         this.where.add(p);
-        this.db = cit.getDatabaseLookupResult();
+        this.db = cit.getLookupResult();
         this.number = cit.getNumber();
         this.uniqueLetter = cit.getUniqueLetter();
         this.normCitMarker = Optional.empty();
@@ -44,7 +44,7 @@ public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry {
      * Implement CitationMarkerNormEntry
      */
     @Override
-    public Optional<CitationLookupResult> getDatabaseLookupResult() {
+    public Optional<CitationLookupResult> getLookupResult() {
         return db;
     }
 
@@ -53,7 +53,7 @@ public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry {
      */
     void addPath(CitationPath p, Citation cit) {
         this.where.add(p);
-        if (cit.getDatabaseLookupResult() != this.db) {
+        if (cit.getLookupResult() != this.db) {
             throw new RuntimeException("CitedKey.addPath: mismatch on cit.db");
         }
         if (cit.getNumber() != this.number) {

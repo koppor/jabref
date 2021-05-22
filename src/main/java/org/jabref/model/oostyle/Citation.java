@@ -75,7 +75,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
         db = Citation.lookup(databases, citationKey);
     }
 
-    public Optional<CitationLookupResult> getDatabaseLookupResult() {
+    public Optional<CitationLookupResult> getLookupResult() {
         return db;
     }
 

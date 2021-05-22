@@ -317,12 +317,12 @@ class OOBibStyleGetCitationMarker {
                           ? style.getMaxAuthorsFirst()
                           : style.getMaxAuthors());
 
-        if (ce.getDatabaseLookupResult().isEmpty()) {
+        if (ce.getLookupResult().isEmpty()) {
             // unresolved
             return 0;
         }
 
-        AuthorList authorList = getAuthorList(style, ce.getDatabaseLookupResult().get());
+        AuthorList authorList = getAuthorList(style, ce.getLookupResult().get());
         int nAuthors = authorList.getNumberOfAuthors();
 
         if (maxAuthors == -1) {
@@ -443,7 +443,7 @@ class OOBibStyleGetCitationMarker {
                 }
             }
 
-            final boolean isUnresolved = ce.getDatabaseLookupResult().isEmpty();
+            final boolean isUnresolved = ce.getLookupResult().isEmpty();
             if (isUnresolved) {
                 sb.append(String.format("Unresolved(%s)", ce.getCitationKey()));
                 if (purpose != AuthorYearMarkerPurpose.NORMALIZED) {
@@ -451,7 +451,7 @@ class OOBibStyleGetCitationMarker {
                 }
             } else {
 
-                CitationLookupResult db = ce.getDatabaseLookupResult().get();
+                CitationLookupResult db = ce.getLookupResult().get();
 
                 int maxAuthors = (purpose == AuthorYearMarkerPurpose.NORMALIZED
                                   ? style.getMaxAuthors()
@@ -521,8 +521,8 @@ class OOBibStyleGetCitationMarker {
         }
 
         @Override
-        public Optional<CitationLookupResult> getDatabaseLookupResult() {
-            return inner.getDatabaseLookupResult();
+        public Optional<CitationLookupResult> getLookupResult() {
+            return inner.getLookupResult();
         }
 
         @Override
@@ -661,8 +661,8 @@ class OOBibStyleGetCitationMarker {
             final String nm1 = OOFormattedText.toString(normalizedMarkers.get(i - 1));
             final String nm2 = OOFormattedText.toString(normalizedMarkers.get(i));
 
-            final boolean isUnresolved1 = ce1.getDatabaseLookupResult().isEmpty();
-            final boolean isUnresolved2 = ce2.getDatabaseLookupResult().isEmpty();
+            final boolean isUnresolved1 = ce1.getLookupResult().isEmpty();
+            final boolean isUnresolved2 = ce2.getLookupResult().isEmpty();
 
             boolean startingNewGroup;
             boolean sameAsPrev; /* true indicates ce2 may be omitted from output */
