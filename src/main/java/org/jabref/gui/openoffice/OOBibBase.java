@@ -21,6 +21,7 @@ import org.jabref.logic.openoffice.FunctionalTextViewCursor;
 import org.jabref.logic.openoffice.ManageCitations;
 import org.jabref.logic.openoffice.NoDocumentFoundException;
 import org.jabref.logic.openoffice.OOFrontend;
+import org.jabref.logic.openoffice.UnoCrossRef;
 import org.jabref.logic.openoffice.UnoCursor;
 import org.jabref.logic.openoffice.UnoRedlines;
 import org.jabref.logic.openoffice.UnoStyle;
@@ -610,7 +611,7 @@ class OOBibBase {
                                            pageInfo);
 
             if (syncOptions.isPresent()) {
-                Update.sync(doc, style, fcursor.get(), syncOptions.get());
+                Update.resync(doc, style, fcursor.get(), syncOptions.get());
             }
 
         } catch (NoDocumentException ex) {
@@ -669,11 +670,12 @@ class OOBibBase {
             UnoUndo.enterUndoContext(doc, "Merge citations");
 
             OOFrontend fr = new OOFrontend(doc);
-            EditMerge.mergeCitationGroups(doc,
-                                          fr,
-                                          databases,
-                                          style,
-                                          fcursor.get());
+            boolean madeModifications = EditMerge.mergeCitationGroups(doc, fr, style);
+            if (madeModifications) {
+                UnoCrossRef.refresh(doc);
+                Update.SyncOptions syncOptions = new Update.SyncOptions(databases);
+                Update.resync(doc, style, fcursor.get(), syncOptions);
+            }
 
         } catch (NoDocumentException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
@@ -695,6 +697,7 @@ class OOBibBase {
             OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
         } finally {
             UnoUndo.leaveUndoContext(doc);
+            fcursor.get().restore(doc);
         }
     } // MergeCitationGroups
 
@@ -730,7 +733,12 @@ class OOBibBase {
             UnoUndo.enterUndoContext(doc, "Separate citations");
 
             OOFrontend fr = new OOFrontend(doc);
-            EditSeparate.separateCitations(doc, fr, databases, style, fcursor.get());
+            boolean madeModifications = EditSeparate.separateCitations(doc, fr, databases, style);
+            if (madeModifications) {
+                UnoCrossRef.refresh(doc);
+                Update.SyncOptions syncOptions = new Update.SyncOptions(databases);
+                Update.resync(doc, style, fcursor.get(), syncOptions);
+            }
 
         } catch (NoDocumentException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
@@ -752,6 +760,7 @@ class OOBibBase {
             OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
         } finally {
             UnoUndo.leaveUndoContext(doc);
+            fcursor.get().restore(doc);
         }
     }
 
@@ -875,17 +884,18 @@ class OOBibBase {
 
             List<String> unresolvedKeys;
             try {
-            UnoUndo.enterUndoContext(doc, "Refresh bibliography");
-            boolean doUpdateBibliography = true;
-            unresolvedKeys = Update.updateDocument(doc,
-                                                   fr,
-                                                   databases,
-                                                   style,
-                                                   fcursor.get(),
-                                                   doUpdateBibliography,
-                                                   this.alwaysAddCitedOnPages);
+                UnoUndo.enterUndoContext(doc, "Refresh bibliography");
+
+                Update.SyncOptions syncOptions = new Update.SyncOptions(databases);
+                syncOptions
+                    .setUpdateBibliography(true)
+                    .setAlwaysAddCitedOnPages(this.alwaysAddCitedOnPages);
+
+                unresolvedKeys = Update.sync(doc, fr, style, fcursor.get(), syncOptions);
+
             } finally {
                 UnoUndo.leaveUndoContext(doc);
+                fcursor.get().restore(doc);
             }
 
             if (!unresolvedKeys.isEmpty()) {

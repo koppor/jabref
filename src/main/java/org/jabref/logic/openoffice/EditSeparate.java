@@ -26,11 +26,10 @@ import com.sun.star.util.InvalidStateException;
 
 public class EditSeparate {
 
-    public static void separateCitations(XTextDocument doc,
-                                         OOFrontend fr,
-                                         List<BibDatabase> databases,
-                                         OOBibStyle style,
-                                         FunctionalTextViewCursor fcursor)
+    public static boolean separateCitations(XTextDocument doc,
+                                            OOFrontend fr,
+                                            List<BibDatabase> databases,
+                                            OOBibStyle style)
         throws
         CreationException,
         IllegalTypeException,
@@ -99,17 +98,6 @@ public class EditSeparate {
         } finally {
             UnoScreenRefresh.unlockControllers(doc);
         }
-
-        if (madeModifications) {
-            UnoCrossRef.refresh(doc);
-            OOFrontend fr2 = new OOFrontend(doc);
-            Update.updateDocument(doc,
-                                  fr2,
-                                  databases,
-                                  style,
-                                  fcursor,
-                                  false, /* doUpdateBibliography */
-                                  false /* alwaysAddCitedOnPages */);
-        }
+        return madeModifications;
     }
 }

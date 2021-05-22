@@ -23,13 +23,13 @@ public class Update {
     /*
      * @return unresolvedKeys
      */
-    public static List<String> updateDocument(XTextDocument doc,
-                                              OOFrontend fr,
-                                              List<BibDatabase> databases,
-                                              OOBibStyle style,
-                                              FunctionalTextViewCursor fcursor,
-                                              boolean doUpdateBibliography,
-                                              boolean alwaysAddCitedOnPages)
+    private static List<String> updateDocument(XTextDocument doc,
+                                               OOFrontend fr,
+                                               List<BibDatabase> databases,
+                                               OOBibStyle style,
+                                               FunctionalTextViewCursor fcursor,
+                                               boolean doUpdateBibliography,
+                                               boolean alwaysAddCitedOnPages)
         throws
         CreationException,
         JabRefException,
@@ -90,10 +90,37 @@ public class Update {
         }
     }
 
-    public static void sync(XTextDocument doc,
-                            OOBibStyle style,
-                            FunctionalTextViewCursor fcursor,
-                            SyncOptions syncOptions)
+    public static List<String> sync(XTextDocument doc,
+                                    OOFrontend fr,
+                                    OOBibStyle style,
+                                    FunctionalTextViewCursor fcursor,
+                                    SyncOptions syncOptions)
+        throws
+        CreationException,
+        JabRefException,
+        NoDocumentException,
+        NoSuchElementException,
+        PropertyVetoException,
+        UnknownPropertyException,
+        WrappedTargetException,
+        com.sun.star.lang.IllegalArgumentException {
+
+        return Update.updateDocument(doc,
+                                     fr,
+                                     syncOptions.databases,
+                                     style,
+                                     fcursor,
+                                     syncOptions.updateBibliography,
+                                     syncOptions.alwaysAddCitedOnPages);
+    }
+
+    /*
+     * Reread document before sync
+     */
+    public static List<String> resync(XTextDocument doc,
+                                      OOBibStyle style,
+                                      FunctionalTextViewCursor fcursor,
+                                      SyncOptions syncOptions)
         throws
         CreationException,
         JabRefException,
@@ -106,13 +133,7 @@ public class Update {
 
         OOFrontend fr = new OOFrontend(doc);
 
-        Update.updateDocument(doc,
-                              fr,
-                              syncOptions.databases,
-                              style,
-                              fcursor,
-                              syncOptions.updateBibliography,
-                              syncOptions.alwaysAddCitedOnPages);
+        return Update.sync(doc, fr, style, fcursor, syncOptions);
     }
 
 }

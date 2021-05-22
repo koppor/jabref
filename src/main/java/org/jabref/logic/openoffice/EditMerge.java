@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
-import org.jabref.model.database.BibDatabase;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroupID;
@@ -295,11 +294,12 @@ public class EditMerge {
         return result;
     }
 
-    public static void mergeCitationGroups(XTextDocument doc,
-                                           OOFrontend fr,
-                                           List<BibDatabase> databases,
-                                           OOBibStyle style,
-                                           FunctionalTextViewCursor fcursor)
+    /*
+     * @return true if modified document
+     */
+    public static boolean mergeCitationGroups(XTextDocument doc,
+                                              OOFrontend fr,
+                                              OOBibStyle style)
         throws
         CreationException,
         IllegalArgumentException,
@@ -374,16 +374,6 @@ public class EditMerge {
             UnoScreenRefresh.unlockControllers(doc);
         }
 
-        if (madeModifications) {
-            UnoCrossRef.refresh(doc);
-            OOFrontend fr2 = new OOFrontend(doc);
-            Update.updateDocument(doc,
-                                  fr2,
-                                  databases,
-                                  style,
-                                  fcursor,
-                                  false, /* doUpdateBibliography */
-                                  false /* alwaysAddCitedOnPages */);
-        }
+        return madeModifications;
     }
 }
