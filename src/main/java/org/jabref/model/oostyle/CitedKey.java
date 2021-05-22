@@ -78,14 +78,14 @@ public class CitedKey implements CitationSort.ComparableCitation, CitationMarker
     }
 
     void distributeDatabaseLookupResult(CitationGroups cgs) {
-        cgs.setDatabaseLookupResults(where, db);
+        cgs.distributeToCitations(where, Citation::setDatabaseLookupResult, db);
     }
 
     void distributeNumber(CitationGroups cgs) {
-        cgs.setNumbers(where, number);
+        cgs.distributeToCitations(where, Citation::setNumber, number);
     }
 
     void distributeUniqueLetter(CitationGroups cgs) {
-        cgs.setUniqueLetters(where, uniqueLetter);
+        cgs.distributeToCitations(where, Citation::setUniqueLetter, uniqueLetter);
     }
 } // class CitedKey

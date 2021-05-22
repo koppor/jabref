@@ -66,24 +66,19 @@ public class CitationGroups {
      * For each citation in {@code where}
      * call {@code fun.accept(new Pair(citation, value));}
      */
-    public <T> void distribute(Set<CitationPath> where,
-                               Consumer<Pair<Citation, T>> fun,
-                               T value) {
+    public <T> void distributeToCitations(Set<CitationPath> where,
+                                          Consumer<Pair<Citation, T>> fun,
+                                          T value) {
 
         for (CitationPath p : where) {
             CitationGroup cg = this.citationGroupsUnordered.get(p.group);
             if (cg == null) {
-                LOGGER.warn("CitationGroups.distribute: group missing");
+                LOGGER.warn("CitationGroups.distributeToCitations: group missing");
                 continue;
             }
             Citation cit = cg.citationsInStorageOrder.get(p.storageIndexInGroup);
             fun.accept(new Pair(cit, value));
         }
-    }
-
-    public void setDatabaseLookupResults(Set<CitationPath> where,
-                                         Optional<CitationDatabaseLookup.Result> db) {
-        distribute(where, Citation::setDatabaseLookupResult, db);
     }
 
     public CitedKeys lookupEntriesInDatabases(List<BibDatabase> databases) {
@@ -121,14 +116,6 @@ public class CitationGroups {
             citationGroupsUnordered.get(cgid).setIndexInGlobalOrder(Optional.of(i));
             i++;
         }
-    }
-
-    public void setNumbers(Set<CitationPath> where, Optional<Integer> number) {
-        distribute(where, Citation::setNumber, number);
-    }
-
-    public void setUniqueLetters(Set<CitationPath> where, Optional<String> uniqueLetter) {
-        distribute(where, Citation::setUniqueLetter, uniqueLetter);
     }
 
     public void imposeLocalOrderByComparator(Comparator<BibEntry> entryComparator) {
