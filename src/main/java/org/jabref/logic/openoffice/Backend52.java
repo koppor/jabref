@@ -14,7 +14,7 @@ import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OODataModel;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
@@ -104,7 +104,7 @@ public class Backend52 {
     }
 
     private static void setPageInfoInDataInitial(List<Citation> citations,
-                                                 Optional<OOFormattedText> pageInfo) {
+                                                 Optional<OOText> pageInfo) {
         // attribute to last citation (initially localOrder == storageOrder)
         if (citations.size() > 0) {
             citations.get(citations.size() - 1).setPageInfo(pageInfo);
@@ -112,14 +112,14 @@ public class Backend52 {
     }
 
     private static void setPageInfoInData(CitationGroup cg,
-                                          Optional<OOFormattedText> pageInfo) {
+                                          Optional<OOText> pageInfo) {
         List<Citation> citations = cg.getCitationsInLocalOrder();
         if (citations.size() > 0) {
             citations.get(citations.size() - 1).setPageInfo(pageInfo);
         }
     }
 
-    private static Optional<OOFormattedText> getPageInfoFromData(CitationGroup cg) {
+    private static Optional<OOText> getPageInfoFromData(CitationGroup cg) {
         List<Citation> citations = cg.getCitationsInLocalOrder();
         if (citations.size() > 0) {
             return citations.get(citations.size() - 1).getPageInfo();
@@ -148,9 +148,9 @@ public class Backend52 {
                                     .map(Citation::new)
                                     .collect(Collectors.toList()));
 
-        Optional<OOFormattedText> pageInfo =
+        Optional<OOText> pageInfo =
             (UnoUserDefinedProperty.getStringValue(doc, refMarkName)
-             .map(OOFormattedText::fromString));
+             .map(OOText::fromString));
         pageInfo = Citation.normalizePageInfo(pageInfo);
 
         setPageInfoInDataInitial(citations, pageInfo);
@@ -186,7 +186,7 @@ public class Backend52 {
      */
     public CitationGroup createCitationGroup(XTextDocument doc,
                                              List<String> citationKeys,
-                                             List<Optional<OOFormattedText>> pageInfosForCitations,
+                                             List<Optional<OOText>> pageInfosForCitations,
                                              InTextCitationType citationType,
                                              XTextCursor position,
                                              boolean insertSpaceAfter)
@@ -220,7 +220,7 @@ public class Backend52 {
             Citation cit = new Citation(citationKeys.get(i));
             citations.add(cit);
 
-            Optional<OOFormattedText> pageInfo = Citation.normalizePageInfo(pageInfosForCitations.get(i));
+            Optional<OOText> pageInfo = Citation.normalizePageInfo(pageInfosForCitations.get(i));
             switch (dataModel) {
             case JabRef52:
                 if (i == last) {
@@ -248,11 +248,11 @@ public class Backend52 {
 
         switch (dataModel) {
         case JabRef52:
-            Optional<OOFormattedText> pageInfo =
+            Optional<OOText> pageInfo =
                 Citation.normalizePageInfo(pageInfosForCitations.get(last));
 
             if (pageInfo.isPresent()) {
-                String pageInfoString = OOFormattedText.toString(pageInfo.get());
+                String pageInfoString = OOText.toString(pageInfo.get());
                 UnoUserDefinedProperty.createStringProperty(doc, refMarkName, pageInfoString);
             } else {
                 // do not inherit from trash
@@ -274,12 +274,12 @@ public class Backend52 {
      *  TODO: JabRef52 combinePageInfos is not reversible. Should warn
      *        user to check the result. Or ask what to do.
      */
-    public static List<Optional<OOFormattedText>>
+    public static List<Optional<OOText>>
     combinePageInfosCommon(OODataModel dataModel, List<CitationGroup> joinableGroup) {
         switch (dataModel) {
         case JabRef52:
             // collect to cgPageInfos
-            List<Optional<OOFormattedText>> cgPageInfos =
+            List<Optional<OOText>> cgPageInfos =
                 (joinableGroup.stream()
                  .map(cg -> getPageInfoFromData(cg))
                  .collect(Collectors.toList()));
@@ -287,7 +287,7 @@ public class Backend52 {
             // Try to do something of the cgPageInfos.
             String cgPageInfo = (cgPageInfos.stream()
                                  .filter(pi -> pi.isPresent())
-                                 .map(pi -> OOFormattedText.toString(pi.get()))
+                                 .map(pi -> OOText.toString(pi.get()))
                                  .distinct()
                                  .collect(Collectors.joining("; ")));
 
@@ -312,7 +312,7 @@ public class Backend52 {
     /**
      *
      */
-    public List<Optional<OOFormattedText>> combinePageInfos(List<CitationGroup> joinableGroup) {
+    public List<Optional<OOText>> combinePageInfos(List<CitationGroup> joinableGroup) {
         return combinePageInfosCommon(this.dataModel, joinableGroup);
     }
 
@@ -395,7 +395,7 @@ public class Backend52 {
                 String context = OOUtil.getCursorStringWithContext(cursor, 30, 30, true);
                 Optional<String> pageInfo = (cg.numberOfCitations() > 0
                                              ? (getPageInfoFromData(cg)
-                                                .map(e -> OOFormattedText.toString(e)))
+                                                .map(e -> OOText.toString(e)))
                                              : Optional.empty());
                 CitationEntry entry = new CitationEntry(name, context, pageInfo);
                 citations.add(entry);
@@ -426,7 +426,7 @@ public class Backend52 {
         switch (dataModel) {
         case JabRef52:
             for (CitationEntry entry : citationEntries) {
-                Optional<OOFormattedText> pageInfo = entry.getPageInfo().map(OOFormattedText::fromString);
+                Optional<OOText> pageInfo = entry.getPageInfo().map(OOText::fromString);
                 pageInfo = Citation.normalizePageInfo(pageInfo);
                 if (pageInfo.isPresent()) {
                     String name = entry.getRefMarkName();

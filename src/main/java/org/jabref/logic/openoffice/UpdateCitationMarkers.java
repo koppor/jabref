@@ -10,7 +10,7 @@ import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.InTextCitationType;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
 
@@ -62,7 +62,7 @@ public class UpdateCitationMarkers {
         for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
 
             boolean withText = (cg.citationType != InTextCitationType.INVISIBLE_CIT);
-            Optional<OOFormattedText> marker = cg.getCitationMarker();
+            Optional<OOText> marker = cg.getCitationMarker();
 
             if (!marker.isPresent()) {
                 String msg = String.format("applyNewCitationMarkers: no marker for %s",
@@ -85,7 +85,7 @@ public class UpdateCitationMarkers {
 
     public static void fillCitationMarkInCursor(XTextDocument doc,
                                                 XTextCursor cursor,
-                                                OOFormattedText citationText,
+                                                OOText citationText,
                                                 boolean withText,
                                                 OOBibStyle style)
     throws
@@ -101,11 +101,11 @@ public class UpdateCitationMarkers {
         Objects.requireNonNull(style);
 
         if (withText) {
-            OOFormattedText citationText2 = style.decorateCitationMarker(citationText);
+            OOText citationText2 = style.decorateCitationMarker(citationText);
             // inject a ZERO_WIDTH_SPACE to hold the initial character format
             final String ZERO_WIDTH_SPACE = "\u200b";
-            citationText2 = OOFormattedText.fromString(ZERO_WIDTH_SPACE + citationText2.asString());
-            OOFormattedTextIntoOO.write(doc, cursor, citationText2);
+            citationText2 = OOText.fromString(ZERO_WIDTH_SPACE + citationText2.asString());
+            OOTextIntoOO.write(doc, cursor, citationText2);
         } else {
             cursor.setString("");
         }
@@ -131,9 +131,9 @@ public class UpdateCitationMarkers {
     public static void createAndFillCitationGroup(OOFrontend fr,
                                                   XTextDocument doc,
                                                   List<String> citationKeys,
-                                                  List<Optional<OOFormattedText>> pageInfosForCitations,
+                                                  List<Optional<OOText>> pageInfosForCitations,
                                                   InTextCitationType citationType,
-                                                  OOFormattedText citationText,
+                                                  OOText citationText,
                                                   XTextCursor position,
                                                   OOBibStyle style,
                                                   boolean insertSpaceAfter)

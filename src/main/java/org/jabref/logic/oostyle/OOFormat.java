@@ -1,6 +1,6 @@
 package org.jabref.logic.oostyle;
 
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 
 public class OOFormat {
 
@@ -17,8 +17,8 @@ public class OOFormat {
      * vendor and browser-specific", so probably best to avoid them if possible.
      *
      */
-    public static OOFormattedText setLocale(OOFormattedText s, String locale) {
-        return OOFormattedText.fromString(String.format("<span lang=\"%s\">", locale)
+    public static OOText setLocale(OOText s, String locale) {
+        return OOText.fromString(String.format("<span lang=\"%s\">", locale)
                                           + s.asString()
                                           + "</span>");
     }
@@ -30,7 +30,7 @@ public class OOFormat {
      * Used around citation marks, probably to turn off spellchecking.
      *
      */
-    public static OOFormattedText setLocaleNone(OOFormattedText s) {
+    public static OOText setLocaleNone(OOText s) {
         return OOFormat.setLocale(s, "zxx");
     }
 
@@ -41,8 +41,8 @@ public class OOFormat {
      * empty for "Standard", which in turn means do not override any properties.
      *
      */
-    public static OOFormattedText setCharStyle(OOFormattedText s, String charStyle) {
-        return OOFormattedText.fromString(String.format("<span oo:CharStyleName=\"%s\">", charStyle)
+    public static OOText setCharStyle(OOText s, String charStyle) {
+        return OOText.fromString(String.format("<span oo:CharStyleName=\"%s\">", charStyle)
                                           + s.asString()
                                           + "</span>");
     }
@@ -50,11 +50,11 @@ public class OOFormat {
     /**
      * Mark {@code s} as part of a paragraph with style {@code paraStyle}
      */
-    public static OOFormattedText paragraph(OOFormattedText s, String paraStyle) {
+    public static OOText paragraph(OOText s, String paraStyle) {
         if (paraStyle == null || "".equals(paraStyle)) {
             return paragraph(s);
         }
-        return OOFormattedText.fromString(String.format("<p oo:ParaStyleName=\"%s\">", paraStyle)
+        return OOText.fromString(String.format("<p oo:ParaStyleName=\"%s\">", paraStyle)
                                           + s.asString()
                                           + "</p>");
     }
@@ -62,15 +62,15 @@ public class OOFormat {
     /**
      * Mark {@code s} as part of a paragraph.
      */
-    public static OOFormattedText paragraph(OOFormattedText s) {
-        return OOFormattedText.fromString("<p>"
+    public static OOText paragraph(OOText s) {
+        return OOText.fromString("<p>"
                                           + s.asString()
                                           + "</p>");
     }
 
-    public static OOFormattedText formatReferenceToPageNumberOfReferenceMark(String referencMarkName) {
+    public static OOText formatReferenceToPageNumberOfReferenceMark(String referencMarkName) {
         String s = String.format("<oo:referenceToPageNumberOfReferenceMark target=\"%s\">",
                                  referencMarkName);
-        return OOFormattedText.fromString(s);
+        return OOText.fromString(s);
     }
  }

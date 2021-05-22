@@ -34,7 +34,7 @@ import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitationMarkerNormEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -443,9 +443,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      * @param number The citation numbers.
      * @return The text for the citation.
      */
-    public OOFormattedText getNumCitationMarker(List<Integer> number,
+    public OOText getNumCitationMarker(List<Integer> number,
                                                 int minGroupingCount,
-                                                List<Optional<OOFormattedText>> pageInfosForCitations) {
+                                                List<Optional<OOText>> pageInfosForCitations) {
         return OOBibStyleGetNumCitationMarker.getNumCitationMarker(this,
                                                                    number,
                                                                    minGroupingCount,
@@ -866,8 +866,8 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     /**
      * Title for the bibliography.
      */
-    public OOFormattedText getReferenceHeaderText() {
-        return OOFormattedText.fromString(getStringProperty(OOBibStyle.TITLE));
+    public OOText getReferenceHeaderText() {
+        return OOText.fromString(getStringProperty(OOBibStyle.TITLE));
     }
 
     /**
@@ -937,7 +937,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     /**
      * Format a number-based bibliography label for the given number.
      */
-    public OOFormattedText getNumCitationMarkerForBibliography(int number) {
+    public OOText getNumCitationMarkerForBibliography(int number) {
         return OOBibStyleGetNumCitationMarker.getNumCitationMarkerForBibliography(this,
                                                                                   number);
     }
@@ -949,11 +949,11 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      *  As a special case: pageInfosForCitations may be null. In this case
      *  the result is a list filled with Optional.empty() values.
      */
-    public static List<Optional<OOFormattedText>>
-    regularizePageInfosForCitations(List<Optional<OOFormattedText>> pageInfosForCitations,
+    public static List<Optional<OOText>>
+    regularizePageInfosForCitations(List<Optional<OOText>> pageInfosForCitations,
                                     int nCitations) {
         if (pageInfosForCitations == null) {
-            List<Optional<OOFormattedText>> res = new ArrayList<>(nCitations);
+            List<Optional<OOText>> res = new ArrayList<>(nCitations);
             for (int i = 0; i < nCitations; i++) {
                 res.add(Optional.empty());
             }
@@ -963,16 +963,16 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
                 throw new RuntimeException("regularizePageInfosForCitations:"
                                            + " pageInfosForCitations.size() != nCitations");
             }
-            List<Optional<OOFormattedText>> res = new ArrayList<>(nCitations);
+            List<Optional<OOText>> res = new ArrayList<>(nCitations);
             for (int i = 0; i < nCitations; i++) {
-                Optional<OOFormattedText> p = pageInfosForCitations.get(i);
+                Optional<OOText> p = pageInfosForCitations.get(i);
                 res.add(Citation.normalizePageInfo(p));
             }
             return res;
         }
     }
 
-    public OOFormattedText getNormalizedCitationMarker(CitationMarkerNormEntry ce) {
+    public OOText getNormalizedCitationMarker(CitationMarkerNormEntry ce) {
         return OOBibStyleGetCitationMarker.getNormalizedCitationMarker(this, ce, Optional.empty());
     }
 
@@ -1007,7 +1007,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      *         OOFormat.setLocaleNone() and OOFormat.setCharStyle().
      *         These are added by decorateCitationMarker()
      */
-    public OOFormattedText getCitationMarker2(List<CitationMarkerEntry> citationMarkerEntries,
+    public OOText getCitationMarker2(List<CitationMarkerEntry> citationMarkerEntries,
                                              boolean inParenthesis,
                                              NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
         return OOBibStyleGetCitationMarker.getCitationMarker2(this,
@@ -1021,9 +1021,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      * citationText.  Called in fillCitationMarkInCursor, so these are
      * also applied to "Unresolved()" entries and numeric styles.
      */
-    public OOFormattedText decorateCitationMarker(OOFormattedText citationText) {
+    public OOText decorateCitationMarker(OOText citationText) {
         OOBibStyle style = this;
-        OOFormattedText citationText2 = OOFormat.setLocaleNone(citationText);
+        OOText citationText2 = OOFormat.setLocaleNone(citationText);
         if (style.isFormatCitations()) {
             String charStyle = style.getCitationCharacterFormat();
             citationText2 = OOFormat.setCharStyle(citationText2, charStyle);
@@ -1210,9 +1210,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         return (s == null ? "" : s);
     }
 
-    public OOFormattedText getFormattedBibliographyTitle() {
+    public OOText getFormattedBibliographyTitle() {
         OOBibStyle style = this;
-        OOFormattedText title = style.getReferenceHeaderText();
+        OOText title = style.getReferenceHeaderText();
         String parStyle = style.getReferenceHeaderParagraphFormat();
         if (parStyle != null) {
             title = OOFormat.paragraph(title, parStyle);

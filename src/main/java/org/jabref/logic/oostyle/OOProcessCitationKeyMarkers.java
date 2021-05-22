@@ -6,7 +6,7 @@ import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.ListUtil;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 
 class OOProcessCitationKeyMarkers {
     /**
@@ -24,7 +24,7 @@ class OOProcessCitationKeyMarkers {
                 style.getCitationGroupMarkupBefore()
                 + String.join(",", ListUtil.map(cg.getCitationsInLocalOrder(), Citation::getCitationKey))
                 + style.getCitationGroupMarkupAfter();
-            cg.setCitationMarker(Optional.of(OOFormattedText.fromString(citMarker)));
+            cg.setCitationMarker(Optional.of(OOText.fromString(citMarker)));
         }
     }
 }

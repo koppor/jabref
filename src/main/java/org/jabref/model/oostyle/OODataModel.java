@@ -37,12 +37,12 @@ public enum OODataModel {
      * @param pageInfo Nullable.
      * @return JabRef53 style pageInfo list
      */
-    public static List<Optional<OOFormattedText>> fakePageInfosForCitations(String pageInfo,
+    public static List<Optional<OOText>> fakePageInfosForCitations(String pageInfo,
                                                                             int nCitations) {
-        List<Optional<OOFormattedText>> pageInfosForCitations = new ArrayList<>(nCitations);
+        List<Optional<OOText>> pageInfosForCitations = new ArrayList<>(nCitations);
         for (int i = 0; i < nCitations; i++) {
             if (i == (nCitations - 1) && (pageInfo != null)) {
-                pageInfosForCitations.add(Optional.of(OOFormattedText.fromString(pageInfo)));
+                pageInfosForCitations.add(Optional.of(OOText.fromString(pageInfo)));
             } else {
                 pageInfosForCitations.add(Optional.empty());
             }

@@ -8,7 +8,7 @@ import org.jabref.logic.oostyle.OOProcess;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
 
@@ -85,7 +85,7 @@ public class EditSeparate {
                         List.of(cit.citationKey),
                         List.of(cit.getPageInfo()),
                         cg.citationType,
-                        OOFormattedText.fromString(cit.citationKey),
+                        OOText.fromString(cit.citationKey),
                         textCursor,
                         style,
                         insertSpaceAfter);

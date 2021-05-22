@@ -25,7 +25,7 @@ public interface CitationMarkerEntry extends CitationMarkerNormEntry {
      * pageInfo for this citation, provided by the user.
      * May be empty, for none.
      */
-    Optional<OOFormattedText> getPageInfo();
+    Optional<OOText> getPageInfo();
 
     /**
      *  @return true if this citation is the first appearance of the

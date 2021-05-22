@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.function.ToIntFunction;
 
 import org.jabref.model.oostyle.CompareCitation;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 
 class OOBibStyleGetNumCitationMarker {
 
@@ -17,8 +17,8 @@ class OOBibStyleGetNumCitationMarker {
      */
     private static class NumberWithPageInfo {
         int num;
-        Optional<OOFormattedText> pageInfo;
-        NumberWithPageInfo(int num, Optional<OOFormattedText> pageInfo) {
+        Optional<OOText> pageInfo;
+        NumberWithPageInfo(int num, Optional<OOText> pageInfo) {
             this.num = num;
             this.pageInfo = pageInfo;
         }
@@ -47,10 +47,10 @@ class OOBibStyleGetNumCitationMarker {
     /**
      * See {@see getNumCitationMarkerCommon} for details.
      */
-    public static OOFormattedText getNumCitationMarker(OOBibStyle style,
+    public static OOText getNumCitationMarker(OOBibStyle style,
                                                        List<Integer> numbers,
                                                        int minGroupingCount,
-                                                       List<Optional<OOFormattedText>> pageInfosForCitations) {
+                                                       List<Optional<OOText>> pageInfosForCitations) {
         return getNumCitationMarkerCommon(style,
                                           numbers,
                                           minGroupingCount,
@@ -71,7 +71,7 @@ class OOBibStyleGetNumCitationMarker {
      *       "]" stands for BRACKET_AFTER_IN_LIST (with fallback BRACKET_AFTER)
      *       "${number}" stands for the formatted number.
      */
-    public static OOFormattedText getNumCitationMarkerForBibliography(OOBibStyle style,
+    public static OOText getNumCitationMarkerForBibliography(OOBibStyle style,
                                                                       int number) {
         return getNumCitationMarkerCommon(style,
                                           Collections.singletonList(number),
@@ -120,12 +120,12 @@ class OOBibStyleGetNumCitationMarker {
      * @return The text for the citation.
      *
      */
-    private static OOFormattedText
+    private static OOText
     getNumCitationMarkerCommon(OOBibStyle style,
                                List<Integer> numbers,
                                int minGroupingCount,
                                CitationMarkerPurpose purpose,
-                               List<Optional<OOFormattedText>> pageInfosForCitations) {
+                               List<Optional<OOText>> pageInfosForCitations) {
 
         final boolean joinIsDisabled = (minGroupingCount <= 0);
         final int notFoundInDatabases = 0;
@@ -171,7 +171,7 @@ class OOBibStyleGetNumCitationMarker {
                           : OOBibStyle.UNDEFINED_CITATION_MARKER);
                 sb.append(bracketAfter);
                 sb.append(style.getCitationGroupMarkupAfter());
-                return OOFormattedText.fromString(sb.toString());
+                return OOText.fromString(sb.toString());
             }
         }
 
@@ -184,7 +184,7 @@ class OOBibStyleGetNumCitationMarker {
          *    get here, and {@code purpose==BIBLIOGRAPHY}, then we just fill
          *    pageInfos with null values.
          */
-        List<Optional<OOFormattedText>> pageInfos =
+        List<Optional<OOText>> pageInfos =
             OOBibStyle.regularizePageInfosForCitations((purpose == CitationMarkerPurpose.BIBLIOGRAPHY
                                                         ? null
                                                         : pageInfosForCitations),
@@ -249,10 +249,10 @@ class OOBibStyleGetNumCitationMarker {
                           ? OOBibStyle.UNDEFINED_CITATION_MARKER
                           : String.valueOf(num));
                 // Emit pageInfo
-                Optional<OOFormattedText> pageInfo = block.get(0).pageInfo;
+                Optional<OOText> pageInfo = block.get(0).pageInfo;
                 if (pageInfo.isPresent()) {
                     sb.append(style.getPageInfoSeparator());
-                    sb.append(OOFormattedText.toString(pageInfo.get()));
+                    sb.append(OOText.toString(pageInfo.get()));
                 }
             } else {
                 // block has at least 2 elements
@@ -385,7 +385,7 @@ class OOBibStyleGetNumCitationMarker {
 
         // Emit: "]"
         sb.append(bracketAfter);
-        return OOFormattedText.fromString(sb.toString());
+        return OOText.fromString(sb.toString());
     }
 
 }

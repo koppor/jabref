@@ -2,23 +2,23 @@ package org.jabref.model.oostyle;
 
 import java.util.Objects;
 
-public class OOFormattedText {
+public class OOText {
 
     private final String data;
 
-    private OOFormattedText(String data) {
+    private OOText(String data) {
         Objects.requireNonNull(data);
         this.data = data;
     }
 
-    public static OOFormattedText fromString(String s) {
+    public static OOText fromString(String s) {
         if (s == null) {
             return null;
         }
-        return new OOFormattedText(s);
+        return new OOText(s);
     }
 
-    public static String toString(OOFormattedText s) {
+    public static String toString(OOText s) {
         if (s == null) {
             return null;
         }
@@ -36,11 +36,11 @@ public class OOFormattedText {
             return true;
         }
 
-        if (!(o instanceof OOFormattedText)) {
+        if (!(o instanceof OOText)) {
             return false;
         }
 
-        OOFormattedText c = (OOFormattedText) o;
+        OOText c = (OOText) o;
 
         return data.equals(c.data);
     }

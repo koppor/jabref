@@ -16,7 +16,7 @@ import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.CitationPath;
 import org.jabref.model.oostyle.CitedKey;
 import org.jabref.model.oostyle.CitedKeys;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 
 public class OOFormatBibliography {
     private static final OOPreFormatter POSTFORMATTER = new OOPreFormatter();
@@ -28,11 +28,11 @@ public class OOFormatBibliography {
     /*
      * @return just the body. No label, "Cited on pages" or paragraph.
      */
-    public static OOFormattedText formatBibliographyEntryBody(CitedKey ck,
-                                                              OOBibStyle style) {
+    public static OOText formatBibliographyEntryBody(CitedKey ck,
+                                                     OOBibStyle style) {
         if (ck.db.isEmpty()) {
             // Unresolved entry
-            return OOFormattedText.fromString(String.format("Unresolved(%s)", ck.citationKey));
+            return OOText.fromString(String.format("Unresolved(%s)", ck.citationKey));
         } else {
             // Resolved entry, use the layout engine
             BibEntry bibentry = ck.db.get().entry;
@@ -49,10 +49,10 @@ public class OOFormatBibliography {
     /*
      * @return a paragraph. Includes label and "Cited on pages".
      */
-    public static OOFormattedText formatBibliographyEntry(CitationGroups cgs,
-                                                          CitedKey ck,
-                                                          OOBibStyle style,
-                                                          boolean alwaysAddCitedOnPages) {
+    public static OOText formatBibliographyEntry(CitationGroups cgs,
+                                                 CitedKey ck,
+                                                 OOBibStyle style,
+                                                 boolean alwaysAddCitedOnPages) {
         StringBuilder sb = new StringBuilder();
 
         // insert marker "[1]"
@@ -64,7 +64,7 @@ public class OOFormatBibliography {
             }
 
             int number = ck.number.get();
-            OOFormattedText marker = style.getNumCitationMarkerForBibliography(number);
+            OOText marker = style.getNumCitationMarkerForBibliography(number);
             sb.append(marker.asString());
         } else {
             // !style.isNumberEntries() : emit no prefix
@@ -72,7 +72,7 @@ public class OOFormatBibliography {
         }
 
         // Add entry body
-        OOFormattedText formattedText = formatBibliographyEntryBody(ck, style);
+        OOText formattedText = formatBibliographyEntryBody(ck, style);
         sb.append(formattedText.asString());
 
         // Add "Cited on pages"
@@ -87,7 +87,7 @@ public class OOFormatBibliography {
         }
 
         // Add paragraph
-        OOFormattedText entryText = OOFormattedText.fromString(sb.toString());
+        OOText entryText = OOText.fromString(sb.toString());
         String parStyle = style.getReferenceParagraphFormat();
         return OOFormat.paragraph(entryText, parStyle);
     }
@@ -95,10 +95,10 @@ public class OOFormatBibliography {
     /**
      * Format body of bibliography.
      */
-    public static OOFormattedText formatBibliographyBody(CitationGroups cgs,
-                                                         CitedKeys bibliography,
-                                                         OOBibStyle style,
-                                                         boolean alwaysAddCitedOnPages) {
+    public static OOText formatBibliographyBody(CitationGroups cgs,
+                                                CitedKeys bibliography,
+                                                OOBibStyle style,
+                                                boolean alwaysAddCitedOnPages) {
 
         final boolean debugThisFun = false;
 
@@ -120,27 +120,27 @@ public class OOFormatBibliography {
                                    : String.format("%02d", ck.number.get())));
             }
 
-            OOFormattedText entryText = formatBibliographyEntry(cgs, ck, style, alwaysAddCitedOnPages);
+            OOText entryText = formatBibliographyEntry(cgs, ck, style, alwaysAddCitedOnPages);
 
             // Add full entry to bibliography.
             stringBuilder.append(entryText.asString());
         } // for CitedKey
 
-        OOFormattedText full = OOFormattedText.fromString(stringBuilder.toString());
+        OOText full = OOText.fromString(stringBuilder.toString());
         return full;
     }
 
-    public static OOFormattedText formatBibliography(CitationGroups cgs,
-                                                     CitedKeys bibliography,
-                                                     OOBibStyle style,
-                                                     boolean alwaysAddCitedOnPages) {
+    public static OOText formatBibliography(CitationGroups cgs,
+                                            CitedKeys bibliography,
+                                            OOBibStyle style,
+                                            boolean alwaysAddCitedOnPages) {
 
-        OOFormattedText title = style.getFormattedBibliographyTitle();
-        OOFormattedText body = OOFormatBibliography.formatBibliographyBody(cgs,
-                                                                           bibliography,
-                                                                           style,
-                                                                           alwaysAddCitedOnPages);
-        return OOFormattedText.fromString(title.asString() + body.asString());
+        OOText title = style.getFormattedBibliographyTitle();
+        OOText body = OOFormatBibliography.formatBibliographyBody(cgs,
+                                                                  bibliography,
+                                                                  style,
+                                                                  alwaysAddCitedOnPages);
+        return OOText.fromString(title.asString() + body.asString());
     }
 
     /**
@@ -151,12 +151,12 @@ public class OOFormatBibliography {
      * @param database   The database the entry belongs to.
      * @param uniquefier Uniqiefier letter, if any, to append to the entry's year.
      *
-     * @return OOFormattedText suitable for insertOOFormattedTextAtCurrentLocation2()
+     * @return OOText suitable for OOTextIntoOO.write()
      */
-    private static OOFormattedText formatFullReferenceOfBibEbtry(Layout layout,
-                                                                 BibEntry entry,
-                                                                 BibDatabase database,
-                                                                 String uniquefier) {
+    private static OOText formatFullReferenceOfBibEbtry(Layout layout,
+                                                        BibEntry entry,
+                                                        BibDatabase database,
+                                                        String uniquefier) {
 
         // Backup the value of the uniq field, just in case the entry already has it:
         Optional<String> oldUniqVal = entry.getField(UNIQUEFIER_FIELD);
@@ -169,7 +169,7 @@ public class OOFormatBibliography {
         }
 
         // Do the layout for this entry:
-        OOFormattedText formattedText = OOFormattedText.fromString(layout.doLayout(entry, database));
+        OOText formattedText = OOText.fromString(layout.doLayout(entry, database));
 
         // Afterwards, reset the old value:
         if (oldUniqVal.isPresent()) {
@@ -181,9 +181,9 @@ public class OOFormatBibliography {
         return formattedText;
     }
 
-    private static OOFormattedText formatCitedOnPages(CitationGroups cgs, CitedKey ck) {
+    private static OOText formatCitedOnPages(CitationGroups cgs, CitedKey ck) {
         if (!cgs.citationGroupsProvideReferenceMarkNameForLinking()) {
-            return OOFormattedText.fromString("");
+            return OOText.fromString("");
         }
 
         // Format links to citations.
@@ -223,13 +223,13 @@ public class OOFormatBibliography {
             }
             String referenceMarkName = (cg.getReferenceMarkNameForLinking()
                                         .orElseThrow(RuntimeException::new));
-            OOFormattedText xref =
+            OOText xref =
                 OOFormat.formatReferenceToPageNumberOfReferenceMark(referenceMarkName);
             sb.append(xref.asString());
             i++;
         }
         sb.append(suffix);
-        return OOFormattedText.fromString(sb.toString());
+        return OOText.fromString(sb.toString());
     }
 
 }

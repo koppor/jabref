@@ -16,7 +16,7 @@ import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OODataModel;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
@@ -253,7 +253,7 @@ public class OOFrontend {
      */
     public CitationGroupID createCitationGroup(XTextDocument doc,
                                                List<String> citationKeys,
-                                               List<Optional<OOFormattedText>> pageInfosForCitations,
+                                               List<Optional<OOText>> pageInfosForCitations,
                                                InTextCitationType citationType,
                                                XTextCursor position,
                                                boolean insertSpaceAfter)

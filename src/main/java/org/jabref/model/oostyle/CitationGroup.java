@@ -62,7 +62,7 @@ public class CitationGroup {
     /*
      * Citation marker.
      */
-    private Optional<OOFormattedText> citationMarker;
+    private Optional<OOText> citationMarker;
 
     public CitationGroup(OODataModel dataModel,
                          CitationGroupID cgid,
@@ -97,7 +97,7 @@ public class CitationGroup {
         // For JabRef52 the single pageInfo is always in the last-in-localorder citation.
         // We adjust here accordingly by taking it out and adding it back after sorting.
         final int last = this.numberOfCitations() - 1;
-        Optional<OOFormattedText> lastPageInfo = Optional.empty();
+        Optional<OOText> lastPageInfo = Optional.empty();
         if (dataModel == OODataModel.JabRef52) {
             Citation lastCitation = getCitationsInLocalOrder().get(last);
             lastPageInfo = lastCitation.getPageInfo();
@@ -148,11 +148,11 @@ public class CitationGroup {
         this.referenceMarkNameForLinking = referenceMarkNameForLinking;
     }
 
-    public void setCitationMarker(Optional<OOFormattedText> citationMarker) {
+    public void setCitationMarker(Optional<OOText> citationMarker) {
         this.citationMarker = citationMarker;
     }
 
-    public Optional<OOFormattedText> getCitationMarker() {
+    public Optional<OOText> getCitationMarker() {
         return this.citationMarker;
     }
 

@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.OOFormatBibliography;
 import org.jabref.model.oostyle.CitedKeys;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
 
@@ -119,12 +119,12 @@ public class UpdateBibliography {
         XTextCursor cursor = doc.getText().createTextCursorByRange(section.getAnchor());
 
         // emit the title of the bibliography
-        OOFormattedTextIntoOO.removeDirectFormatting(cursor);
-        OOFormattedText bibliographyText = OOFormatBibliography.formatBibliography(fr.citationGroups,
-                                                                                   bibliography,
-                                                                                   style,
-                                                                                   alwaysAddCitedOnPages);
-        OOFormattedTextIntoOO.write(doc, cursor, bibliographyText);
+        OOTextIntoOO.removeDirectFormatting(cursor);
+        OOText bibliographyText = OOFormatBibliography.formatBibliography(fr.citationGroups,
+                                                                          bibliography,
+                                                                          style,
+                                                                          alwaysAddCitedOnPages);
+        OOTextIntoOO.write(doc, cursor, bibliographyText);
         cursor.collapseToEnd();
 
         // remove the inital empty paragraph from the section.

@@ -32,10 +32,10 @@ public class CompareCitation implements Comparator<ComparableCitation> {
      *
      * Optional.empty comes before non-empty.
      */
-    public static int comparePageInfo(Optional<OOFormattedText> a, Optional<OOFormattedText> b) {
+    public static int comparePageInfo(Optional<OOText> a, Optional<OOText> b) {
 
-        Optional<OOFormattedText> aa = Citation.normalizePageInfo(a);
-        Optional<OOFormattedText> bb = Citation.normalizePageInfo(b);
+        Optional<OOText> aa = Citation.normalizePageInfo(a);
+        Optional<OOText> bb = Citation.normalizePageInfo(b);
         if (aa.isEmpty() && bb.isEmpty()) {
             return 0;
         }

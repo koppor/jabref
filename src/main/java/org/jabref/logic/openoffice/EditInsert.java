@@ -15,7 +15,7 @@ import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.ListUtil;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OODataModel;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
 
@@ -88,7 +88,7 @@ public class EditInsert {
         final int nEntries = entries.size();
 
         // JabRef53 style pageInfo list
-        List<Optional<OOFormattedText>> pageInfosForCitations =
+        List<Optional<OOText>> pageInfosForCitations =
             OODataModel.fakePageInfosForCitations(pageInfo, nEntries);
 
         List<CitationMarkerEntry> citations = new ArrayList<>(nEntries);
@@ -100,15 +100,15 @@ public class EditInsert {
         }
 
         // The text we insert
-        OOFormattedText citeText =
+        OOText citeText =
             (style.isNumberEntries()
-             ? OOFormattedText.fromString("[-]") // A dash only. Only refresh later.
+             ? OOText.fromString("[-]") // A dash only. Only refresh later.
              : style.getCitationMarker2(citations,
                                         citationType.inParenthesis(),
                                         NonUniqueCitationMarker.FORGIVEN));
 
-        if ("".equals(OOFormattedText.toString(citeText))) {
-            citeText = OOFormattedText.fromString("[?]");
+        if ("".equals(OOText.toString(citeText))) {
+            citeText = OOText.fromString("[?]");
         }
 
         UpdateCitationMarkers.createAndFillCitationGroup(fr,

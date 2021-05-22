@@ -12,7 +12,7 @@ import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
 
@@ -338,7 +338,7 @@ public class EditMerge {
                 // cgPageInfos belong to the CitationGroup (DataModel JabRef52),
                 // but it is not clear how should we handle them here.
                 // We delegate the problem to the backend.
-                List<Optional<OOFormattedText>> pageInfosForCitations =
+                List<Optional<OOText>> pageInfosForCitations =
                     fr.backend.combinePageInfos(cgs);
 
                 // Remove the old citation groups from the document.
@@ -362,7 +362,7 @@ public class EditMerge {
                                                                  citationKeys,
                                                                  pageInfosForCitations,
                                                                  citationType,
-                                                                 OOFormattedText.fromString("tmp"),
+                                                                 OOText.fromString("tmp"),
                                                                  textCursor,
                                                                  style,
                                                                  insertSpaceAfter);

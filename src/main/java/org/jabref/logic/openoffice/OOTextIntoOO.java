@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jabref.architecture.AllowedToUseAwt;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.Pair;
 
@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interpret OOFormattedText into an OpenOffice or LibreOffice writer
+ * Interpret OOText into an OpenOffice or LibreOffice writer
  * document.
  *
  * On the question of what should it understand: apart from what
@@ -61,9 +61,9 @@ import org.slf4j.LoggerFactory;
  *
  */
 @AllowedToUseAwt("Requires AWT for changing document properties")
-public class OOFormattedTextIntoOO {
+public class OOTextIntoOO {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OOFormattedTextIntoOO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OOTextIntoOO.class);
 
     /**
      *  "ParaStyleName" is an OpenOffice Property name.
@@ -103,7 +103,7 @@ public class OOFormattedTextIntoOO {
     private static final Pattern ATTRIBUTE_PATTERN =
         Pattern.compile("\\s+(" + ATTRIBUTE_NAME_REGEXP + ")=" + ATTRIBUTE_VALUE_REGEXP);
 
-    private OOFormattedTextIntoOO() {
+    private OOTextIntoOO() {
         // Just to hide the public constructor
     }
 
@@ -509,7 +509,7 @@ public class OOFormattedTextIntoOO {
      */
     public static void write(XTextDocument doc,
                              XTextCursor position,
-                             OOFormattedText ootext)
+                             OOText ootext)
         throws
         UnknownPropertyException,
         PropertyVetoException,
@@ -520,7 +520,7 @@ public class OOFormattedTextIntoOO {
 
         final boolean debugThisFun = false;
 
-        String lText = OOFormattedText.toString(ootext);
+        String lText = OOText.toString(ootext);
 
         if (debugThisFun) {
             System.out.println(lText);
@@ -704,7 +704,7 @@ public class OOFormattedTextIntoOO {
             for (String s : expectEnd) {
                 rest = String.format("<%s>", s) + rest;
             }
-            LOGGER.warn(String.format("insertOOFormattedTextAtCurrentLocation2:"
+            LOGGER.warn(String.format("OOTextIntoOO.write:"
                                       + " expectEnd stack is not empty at the end: %s%n",
                                       rest));
         }
@@ -774,7 +774,7 @@ public class OOFormattedTextIntoOO {
             if (knownToFail.contains(p.Name)) {
                 continue;
             }
-            LOGGER.warn(String.format("OOFormattedTextIntoOO.removeDirectFormatting failed on '%s'",
+            LOGGER.warn(String.format("OOTextIntoOO.removeDirectFormatting failed on '%s'",
                                       p.Name));
         }
     }

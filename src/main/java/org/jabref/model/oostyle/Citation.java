@@ -22,7 +22,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
     private Optional<String> uniqueLetter;
 
     /** pageInfo */
-    private Optional<OOFormattedText> pageInfo;
+    private Optional<OOText> pageInfo;
 
     /** isFirstAppearanceOfSource */
     private boolean isFirstAppearanceOfSource;
@@ -45,7 +45,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
     }
 
     @Override
-    public Optional<OOFormattedText> getPageInfo() {
+    public Optional<OOText> getPageInfo() {
         return pageInfo;
     }
 
@@ -103,8 +103,8 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
         this.uniqueLetter = uniqueLetter;
     }
 
-    public void setPageInfo(Optional<OOFormattedText> v) {
-        Optional<OOFormattedText> vv = normalizePageInfo(v);
+    public void setPageInfo(Optional<OOText> v) {
+        Optional<OOText> vv = normalizePageInfo(v);
         if (!vv.equals(v)) {
             throw new RuntimeException("setPageInfo argument is not normalized");
         }
@@ -136,14 +136,14 @@ public class Citation implements ComparableCitation, CitationMarkerEntry {
     /*
      * pageInfo normalization
      */
-    public static Optional<OOFormattedText> normalizePageInfo(Optional<OOFormattedText> o) {
-        if (o == null || o.isEmpty() || "".equals(OOFormattedText.toString(o.get()))) {
+    public static Optional<OOText> normalizePageInfo(Optional<OOText> o) {
+        if (o == null || o.isEmpty() || "".equals(OOText.toString(o.get()))) {
             return Optional.empty();
         }
-        String s = OOFormattedText.toString(o.get());
+        String s = OOText.toString(o.get());
         if (s.trim().equals("")) {
             return Optional.empty();
         }
-        return Optional.of(OOFormattedText.fromString(s.trim()));
+        return Optional.of(OOText.fromString(s.trim()));
     }
 }

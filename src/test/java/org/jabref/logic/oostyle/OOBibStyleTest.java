@@ -29,7 +29,7 @@ import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationLookupResult;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,9 +90,9 @@ class OOBibStyleTest {
         assertTrue(style.isSortByPosition());
     }
 
-    List<Optional<OOFormattedText>> asPageInfos(String... s) {
+    List<Optional<OOText>> asPageInfos(String... s) {
         return (Stream.of(s)
-                .map(OOFormattedText::fromString)
+                .map(OOText::fromString)
                 .map(Optional::ofNullable)
                 .collect(Collectors.toList()));
     }
@@ -102,7 +102,7 @@ class OOBibStyleTest {
         OOBibStyle style = new OOBibStyle(StyleLoader.DEFAULT_NUMERICAL_STYLE_PATH,
                 layoutFormatterPreferences);
 
-        List<Optional<OOFormattedText>> empty = null;
+        List<Optional<OOText>> empty = null;
 
         // Unfortunately these two are both "; " in
         // jabref/src/main/resources/resource/openoffice/default_numerical.jstyle
@@ -241,7 +241,7 @@ class OOBibStyleTest {
         OOBibStyle style = new OOBibStyle(StyleLoader.DEFAULT_NUMERICAL_STYLE_PATH,
                 layoutFormatterPreferences);
 
-        List<Optional<OOFormattedText>> empty = null;
+        List<Optional<OOText>> empty = null;
 
         // unresolved citations look like [??]
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "]",
@@ -306,7 +306,7 @@ class OOBibStyleTest {
         Citation result = new Citation(citationKey);
         result.setLookupResult(Optional.of(new CitationLookupResult(entry, database)));
         result.setUniqueLetter(Optional.ofNullable(uniqueLetterQ));
-        Optional<OOFormattedText> pageInfo = Optional.ofNullable(OOFormattedText.fromString(pageInfoQ));
+        Optional<OOText> pageInfo = Optional.ofNullable(OOText.fromString(pageInfoQ));
         result.setPageInfo(Citation.normalizePageInfo(pageInfo));
         result.setIsFirstAppearanceOfSource(isFirstAppearanceOfSource);
         return result;

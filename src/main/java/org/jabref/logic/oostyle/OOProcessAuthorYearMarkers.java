@@ -17,7 +17,7 @@ import org.jabref.model.oostyle.CitedKeys;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.ListUtil;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
-import org.jabref.model.oostyle.OOFormattedText;
+import org.jabref.model.oostyle.OOText;
 
 class OOProcessAuthorYearMarkers {
 
@@ -57,7 +57,7 @@ class OOProcessAuthorYearMarkers {
         //
         Map<String, List<String>> normCitMarkerToClachingKeys = new HashMap<>();
         for (CitedKey citedKey : sortedCitedKeys.values()) {
-            String normCitMarker = OOFormattedText.toString(citedKey.normCitMarker.get());
+            String normCitMarker = OOText.toString(citedKey.normCitMarker.get());
             String citationKey = citedKey.citationKey;
 
             if (!normCitMarkerToClachingKeys.containsKey(normCitMarker)) {
@@ -153,9 +153,9 @@ class OOProcessAuthorYearMarkers {
 
             List<Citation> cits = cg.getCitationsInLocalOrder();
             List<CitationMarkerEntry> citationMarkerEntries = ListUtil.map(cits, e -> e);
-            OOFormattedText citMarker = style.getCitationMarker2(citationMarkerEntries,
-                                                                 inParenthesis,
-                                                                 strictlyUnique);
+            OOText citMarker = style.getCitationMarker2(citationMarkerEntries,
+                                                        inParenthesis,
+                                                        strictlyUnique);
             cg.setCitationMarker(Optional.of(citMarker));
         }
     }

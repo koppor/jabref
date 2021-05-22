@@ -13,7 +13,7 @@ public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry {
     public Optional<CitationLookupResult> db;
     public Optional<Integer> number; // For Numbered citation styles.
     public Optional<String> uniqueLetter; // For AuthorYear citation styles.
-    public Optional<OOFormattedText> normCitMarker;  // For AuthorYear citation styles.
+    public Optional<OOText> normCitMarker;  // For AuthorYear citation styles.
 
     CitedKey(String citationKey, CitationPath p, Citation cit) {
         this.citationKey = citationKey;
