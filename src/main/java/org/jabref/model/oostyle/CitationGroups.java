@@ -180,10 +180,10 @@ public class CitationGroups {
             throw new RuntimeException("createNumberedBibliographySortedInOrderOfAppearance:"
                                        + " already have a bibliography");
         }
-        CitedKeys sortedCitedKeys = cgs.getCitedKeysSortedInOrderOfAppearance();
-        sortedCitedKeys.numberCitedKeysInCurrentOrder();
-        sortedCitedKeys.distributeNumbers(cgs);
-        cgs.bibliography = Optional.of(sortedCitedKeys);
+        CitedKeys citedKeys = cgs.getCitedKeysSortedInOrderOfAppearance();
+        citedKeys.numberCitedKeysInCurrentOrder();
+        citedKeys.distributeNumbers(cgs);
+        cgs.bibliography = Optional.of(citedKeys);
     }
 
     /**

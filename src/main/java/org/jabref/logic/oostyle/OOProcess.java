@@ -31,10 +31,8 @@ import org.slf4j.LoggerFactory;
 
 public class OOProcess {
 
-    private static final Comparator<BibEntry> AUTHOR_YEAR_TITLE_COMPARATOR =
-        makeAuthorYearTitleComparator();
-    private static final Comparator<BibEntry> YEAR_AUTHOR_TITLE_COMPARATOR =
-        makeYearAuthorTitleComparator();
+    static final Comparator<BibEntry> AUTHOR_YEAR_TITLE_COMPARATOR = makeAuthorYearTitleComparator();
+    static final Comparator<BibEntry> YEAR_AUTHOR_TITLE_COMPARATOR = makeYearAuthorTitleComparator();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OOProcess.class);
 
@@ -169,29 +167,6 @@ public class OOProcess {
      * **************************************/
 
     /**
-     *  Produce citation markers for the case when the citation
-     *  markers are the citation keys themselves, separated by commas.
-     */
-    private static Map<CitationGroupID, OOFormattedText>
-    produceCitationMarkersForIsCitationKeyCiteMarkers(CitationGroups cgs, OOBibStyle style) {
-
-        assert style.isCitationKeyCiteMarkers();
-
-        cgs.createPlainBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
-
-        Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
-
-        for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
-            String citMarker =
-                style.getCitationGroupMarkupBefore()
-                + String.join(",", ListUtil.map(cg.getCitationsInLocalOrder(), Citation::getCitationKey))
-                + style.getCitationGroupMarkupAfter();
-            citMarkers.put(cg.cgid, OOFormattedText.fromString(citMarker));
-        }
-        return citMarkers;
-    }
-
-    /**
      * Produce citation markers for the case of numbered citations
      * with bibliography sorted by first appearance in the text.
      *
@@ -286,10 +261,10 @@ public class OOProcess {
         assert !style.isNumberEntries();
         // Citations in (Au1, Au2 2000) form
 
-        CitedKeys sortedCitedKeys = cgs.getCitedKeysSortedInOrderOfAppearance();
+        CitedKeys citedKeys = cgs.getCitedKeysSortedInOrderOfAppearance();
 
-        createNormalizedCitationMarkersForNormalStyle(sortedCitedKeys, style);
-        createUniqueLetters(sortedCitedKeys, cgs);
+        createNormalizedCitationMarkersForNormalStyle(citedKeys, style);
+        createUniqueLetters(citedKeys, cgs);
         cgs.createPlainBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
 
         // Mark first appearance of each citationKey
@@ -372,7 +347,7 @@ public class OOProcess {
         Map<String, String> uniqueLetters = new HashMap<>();
 
         if (style.isCitationKeyCiteMarkers()) {
-            citMarkers = produceCitationMarkersForIsCitationKeyCiteMarkers(cgs, style);
+            citMarkers = OOProcessCitationKeyMarkers.produceCitationMarkers(cgs, style);
         } else if (style.isNumberEntries()) {
             if (style.isSortByPosition()) {
                 citMarkers = produceCitationMarkersForIsNumberEntriesIsSortByPosition(cgs, style);
