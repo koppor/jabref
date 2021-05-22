@@ -325,7 +325,7 @@ public class Backend52 {
         IllegalTypeException,
         PropertyExistException {
 
-        String refMarkName = cg.cgRangeStorage.getName();
+        String refMarkName = cg.cgRangeStorage.getRangeName();
         cg.cgRangeStorage.removeFromDocument(doc);
         UnoUserDefinedProperty.removeIfExists(doc, refMarkName);
     }

@@ -11,11 +11,9 @@ import com.sun.star.text.XTextRange;
 
 public class StorageBase {
 
-    public interface HasName {
-        public String getName();
-    }
+    public interface NamedRange {
 
-    public interface HasTextRange {
+        public String getRangeName();
 
         /**
          * @return Optional.empty if the mark is missing from the document.
@@ -64,10 +62,6 @@ public class StorageBase {
             WrappedTargetException,
             NoDocumentException,
             NoSuchElementException;
-    }
-
-    public interface NamedRange extends HasName, HasTextRange {
-        // nothing new here
     }
 
     public interface NamedRangeManager {

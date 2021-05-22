@@ -157,11 +157,11 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         WrappedTargetException,
         NoDocumentException,
         NoSuchElementException {
-        UnoReferenceMark.remove(doc, this.getName());
+        UnoReferenceMark.remove(doc, this.getRangeName());
     }
 
     @Override
-    public String getName() {
+    public String getRangeName() {
         return id;
     }
 
@@ -177,7 +177,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         throws
         NoDocumentException,
         WrappedTargetException {
-        String name = this.getName();
+        String name = this.getRangeName();
         return UnoReferenceMark.getAnchor(doc, name);
     }
 
@@ -196,7 +196,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         NoDocumentException,
         WrappedTargetException {
 
-        String name = this.getName();
+        String name = this.getRangeName();
         Optional<XTextCursor> full = Optional.empty();
 
         Optional<XTextContent> markAsTextContent = UnoReferenceMark.getAsTextContent(doc, name);
@@ -225,7 +225,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         WrappedTargetException,
         CreationException {
 
-        String name = this.getName();
+        String name = this.getRangeName();
 
         final boolean debugThisFun = false;
         final String left = StorageBaseRefMark.REFERENCE_MARK_LEFT_BRACKET;
@@ -434,7 +434,7 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         final short leftLength = (short) left.length();
         final short rightLength = (short) right.length();
 
-        String name = this.getName();
+        String name = this.getRangeName();
 
         XTextCursor full = this.getRawCursor(doc).orElseThrow(RuntimeException::new);
         final String fullText = full.getString();
