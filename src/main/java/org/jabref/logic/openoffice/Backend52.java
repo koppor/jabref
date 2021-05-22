@@ -17,8 +17,9 @@ import org.jabref.model.oostyle.OODataModel;
 import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
+import org.jabref.model.openoffice.NamedRange;
+import org.jabref.model.openoffice.NamedRangeManager;
 import org.jabref.model.openoffice.NoDocumentException;
-import org.jabref.model.openoffice.StorageBase;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
@@ -36,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public class Backend52 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Backend52.class);
     public final OODataModel dataModel;
-    public final StorageBase.NamedRangeManager citationStorageManager;
+    public final NamedRangeManager citationStorageManager;
 
     // uses: Codec52
     public Backend52() {
@@ -155,8 +156,8 @@ public class Backend52 {
 
         setPageInfoInDataInitial(citations, pageInfo);
 
-        Optional<StorageBase.NamedRange> storedRange = (citationStorageManager
-                                                        .getFromDocument(doc, refMarkName));
+        Optional<NamedRange> storedRange = (citationStorageManager
+                                            .getFromDocument(doc, refMarkName));
 
         if (storedRange.isEmpty()) {
             throw new IllegalArgumentException("readCitationGroupFromDocumentOrThrow:"
@@ -242,7 +243,7 @@ public class Backend52 {
          * Apply to document
          */
         boolean withoutBrackets = (citationType == InTextCitationType.INVISIBLE_CIT);
-        StorageBase.NamedRange storedRange =
+        NamedRange storedRange =
             this.citationStorageManager.create(doc, refMarkName, position, insertSpaceAfter,
                                                withoutBrackets);
 

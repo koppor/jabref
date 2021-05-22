@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jabref.model.openoffice.CreationException;
+import org.jabref.model.openoffice.NamedRange;
+import org.jabref.model.openoffice.NamedRangeManager;
 import org.jabref.model.openoffice.NoDocumentException;
-import org.jabref.model.openoffice.StorageBase;
 
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
@@ -17,7 +18,7 @@ import com.sun.star.text.XTextRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class StorageBaseRefMark implements StorageBase.NamedRange {
+class StorageBaseRefMark implements NamedRange {
 
     private static final String ZERO_WIDTH_SPACE = "\u200b";
 
@@ -495,13 +496,13 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         return UnoReferenceMark.getListOfNames(doc);
     }
 
-    public static class Manager implements StorageBase.NamedRangeManager {
+    public static class Manager implements NamedRangeManager {
         @Override
-        public StorageBase.NamedRange create(XTextDocument doc,
-                                             String refMarkName,
-                                             XTextCursor position,
-                                             boolean insertSpaceAfter,
-                                             boolean withoutBrackets)
+        public NamedRange create(XTextDocument doc,
+                                 String refMarkName,
+                                 XTextCursor position,
+                                 boolean insertSpaceAfter,
+                                 boolean withoutBrackets)
             throws
             CreationException {
             return StorageBaseRefMark.create(doc,
@@ -519,8 +520,8 @@ class StorageBaseRefMark implements StorageBase.NamedRange {
         }
 
         @Override
-        public Optional<StorageBase.NamedRange> getFromDocument(XTextDocument doc,
-                                                                String refMarkName)
+        public Optional<NamedRange> getFromDocument(XTextDocument doc,
+                                                    String refMarkName)
             throws
             NoDocumentException,
             WrappedTargetException {

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.openoffice.StorageBase;
+import org.jabref.model.openoffice.NamedRange;
 
 /*
  * A CitationGroup describes a group of citations.
@@ -23,7 +23,7 @@ public class CitationGroup {
     /*
      * Identifies location in the document for the backend.
      */
-    public final StorageBase.NamedRange cgRangeStorage;
+    public final NamedRange cgRangeStorage;
 
     /*
      * The core data, stored in the document:
@@ -66,7 +66,7 @@ public class CitationGroup {
 
     public CitationGroup(OODataModel dataModel,
                          CitationGroupID cgid,
-                         StorageBase.NamedRange cgRangeStorage,
+                         NamedRange cgRangeStorage,
                          InTextCitationType citationType,
                          List<Citation> citationsInStorageOrder,
                          Optional<String> referenceMarkNameForLinking) {
