@@ -184,7 +184,7 @@ public class OOProcess {
 
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
-        for (CitationGroup cg : cgs.getSortedCitationGroups()) {
+        for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
             String citMarker =
                 style.getCitationGroupMarkupBefore()
                 + String.join(",", ListUtil.map(cg.getCitationsInLocalOrder(), Citation::getCitationKey))
@@ -218,7 +218,7 @@ public class OOProcess {
 
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
-        for (CitationGroup cg : cgs.getSortedCitationGroups()) {
+        for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
             List<Citation> cits = cg.getCitationsInLocalOrder();
             citMarkers.put(cg.cgid,
                            style.getNumCitationMarker(ListUtil.map(cits, Citation::getNumberOrThrow),
@@ -244,7 +244,7 @@ public class OOProcess {
 
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
-        for (CitationGroup cg : cgs.getSortedCitationGroups()) {
+        for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
             List<Citation> cits = cg.getCitationsInLocalOrder();
             citMarkers.put(cg.cgid,
                            style.getNumCitationMarker(ListUtil.map(cits, Citation::getNumberOrThrow),
@@ -262,7 +262,7 @@ public class OOProcess {
      */
     private static void setIsFirstAppearanceOfSourceInCitations(CitationGroups cgs) {
         Set<String> seenBefore = new HashSet<>();
-        for (CitationGroup cg : cgs.getSortedCitationGroups()) {
+        for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
             for (Citation cit : cg.getCitationsInLocalOrder()) {
                 String currentKey = cit.citationKey;
                 if (!seenBefore.contains(currentKey)) {
@@ -300,7 +300,7 @@ public class OOProcess {
 
         Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
 
-        for (CitationGroup cg : cgs.getSortedCitationGroups()) {
+        for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
 
             final boolean inParenthesis = (cg.citationType == InTextCitationType.AUTHORYEAR_PAR);
             final NonUniqueCitationMarker strictlyUnique = NonUniqueCitationMarker.THROWS;

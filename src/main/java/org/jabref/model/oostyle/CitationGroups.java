@@ -97,9 +97,9 @@ public class CitationGroups {
     /**
      * Citation groups in {@code globalOrder}
      */
-    public List<CitationGroup> getSortedCitationGroups() {
+    public List<CitationGroup> getCitationGroupsInGlobalOrder() {
         if (globalOrder.isEmpty()) {
-            throw new RuntimeException("getSortedCitationGroups: not ordered yet");
+            throw new RuntimeException("getCitationGroupsInGlobalOrder: not ordered yet");
         }
         return ListUtil.map(globalOrder.get(), cgid -> citationGroupsUnordered.get(cgid));
     }
