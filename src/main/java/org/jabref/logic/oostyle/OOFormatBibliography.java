@@ -25,25 +25,35 @@ public class OOFormatBibliography {
     private OOFormatBibliography() {
     }
 
-    /*
-     * @return just the body. No label, "Cited on pages" or paragraph.
+    /**
+     * Format the bibliography, including its title.
      */
-    public static OOText formatBibliographyEntryBody(CitedKey ck,
-                                                     OOBibStyle style) {
-        if (ck.db.isEmpty()) {
-            // Unresolved entry
-            return OOText.fromString(String.format("Unresolved(%s)", ck.citationKey));
-        } else {
-            // Resolved entry, use the layout engine
-            BibEntry bibentry = ck.db.get().entry;
-            Layout layout = style.getReferenceFormat(bibentry.getType());
-            layout.setPostFormatter(POSTFORMATTER);
+    public static OOText formatBibliography(CitationGroups cgs,
+                                            CitedKeys bibliography,
+                                            OOBibStyle style,
+                                            boolean alwaysAddCitedOnPages) {
 
-            return formatFullReferenceOfBibEbtry(layout,
-                                                 bibentry,
-                                                 ck.db.get().database,
-                                                 ck.uniqueLetter.orElse(null));
+        OOText title = style.getFormattedBibliographyTitle();
+        OOText body = formatBibliographyBody(cgs, bibliography, style, alwaysAddCitedOnPages);
+        return OOText.fromString(title.asString() + body.asString());
+    }
+
+    /**
+     * Format the body of bibliography. Excludes the title.
+     */
+    public static OOText formatBibliographyBody(CitationGroups cgs,
+                                                CitedKeys bibliography,
+                                                OOBibStyle style,
+                                                boolean alwaysAddCitedOnPages) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (CitedKey ck : bibliography.values()) {
+            OOText entryText = formatBibliographyEntry(cgs, ck, style, alwaysAddCitedOnPages);
+            stringBuilder.append(entryText.asString());
         }
+
+        return OOText.fromString(stringBuilder.toString());
     }
 
     /*
@@ -57,33 +67,22 @@ public class OOFormatBibliography {
 
         // insert marker "[1]"
         if (style.isNumberEntries()) {
-
             if (ck.number.isEmpty()) {
                 throw new RuntimeException("formatBibliographyEntry:"
                                            + " numbered style, but found unnumbered entry");
             }
-
-            int number = ck.number.get();
-            OOText marker = style.getNumCitationMarkerForBibliography(number);
-            sb.append(marker.asString());
+            sb.append(style.getNumCitationMarkerForBibliography(ck.number.get()).asString());
         } else {
             // !style.isNumberEntries() : emit no prefix
             // Note: We might want [citationKey] prefix for style.isCitationKeyCiteMarkers();
         }
 
         // Add entry body
-        OOText formattedText = formatBibliographyEntryBody(ck, style);
-        sb.append(formattedText.asString());
+        sb.append(formatBibliographyEntryBody(ck, style).asString());
 
         // Add "Cited on pages"
-        if (ck.db.isEmpty()) {
-            // Unresolved entry: add links to citations
+        if (ck.db.isEmpty() || alwaysAddCitedOnPages) {
             sb.append(formatCitedOnPages(cgs, ck).asString());
-        } else {
-            // Resolved entry
-            if (alwaysAddCitedOnPages) {
-                sb.append(formatCitedOnPages(cgs, ck).asString());
-            }
         }
 
         // Add paragraph
@@ -92,55 +91,24 @@ public class OOFormatBibliography {
         return OOFormat.paragraph(entryText, parStyle);
     }
 
-    /**
-     * Format body of bibliography.
+    /*
+     * @return just the body. No label, "Cited on pages" or paragraph.
      */
-    public static OOText formatBibliographyBody(CitationGroups cgs,
-                                                CitedKeys bibliography,
-                                                OOBibStyle style,
-                                                boolean alwaysAddCitedOnPages) {
+    public static OOText formatBibliographyEntryBody(CitedKey ck, OOBibStyle style) {
+        if (ck.db.isEmpty()) {
+            // Unresolved entry
+            return OOText.fromString(String.format("Unresolved(%s)", ck.citationKey));
+        } else {
+            // Resolved entry, use the layout engine
+            BibEntry bibentry = ck.db.get().entry;
+            Layout layout = style.getReferenceFormat(bibentry.getType());
+            layout.setPostFormatter(POSTFORMATTER);
 
-        final boolean debugThisFun = false;
-
-        if (debugThisFun) {
-            System.out.printf("Ref IsSortByPosition %s\n", style.isSortByPosition());
-            System.out.printf("Ref IsNumberEntries  %s\n", style.isNumberEntries());
+            return formatFullReferenceOfBibEntry(layout,
+                                                 bibentry,
+                                                 ck.db.get().database,
+                                                 ck.uniqueLetter.orElse(null));
         }
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        for (CitedKey ck : bibliography.values()) {
-            StringBuilder sb = new StringBuilder();
-
-            if (debugThisFun) {
-                System.out.printf("Ref cit %-20s ck.number %7s%n",
-                                  String.format("'%s'", ck.citationKey),
-                                  (ck.number.isEmpty()
-                                   ? "(empty)"
-                                   : String.format("%02d", ck.number.get())));
-            }
-
-            OOText entryText = formatBibliographyEntry(cgs, ck, style, alwaysAddCitedOnPages);
-
-            // Add full entry to bibliography.
-            stringBuilder.append(entryText.asString());
-        } // for CitedKey
-
-        OOText full = OOText.fromString(stringBuilder.toString());
-        return full;
-    }
-
-    public static OOText formatBibliography(CitationGroups cgs,
-                                            CitedKeys bibliography,
-                                            OOBibStyle style,
-                                            boolean alwaysAddCitedOnPages) {
-
-        OOText title = style.getFormattedBibliographyTitle();
-        OOText body = OOFormatBibliography.formatBibliographyBody(cgs,
-                                                                  bibliography,
-                                                                  style,
-                                                                  alwaysAddCitedOnPages);
-        return OOText.fromString(title.asString() + body.asString());
     }
 
     /**
@@ -153,7 +121,7 @@ public class OOFormatBibliography {
      *
      * @return OOText suitable for OOTextIntoOO.write()
      */
-    private static OOText formatFullReferenceOfBibEbtry(Layout layout,
+    private static OOText formatFullReferenceOfBibEntry(Layout layout,
                                                         BibEntry entry,
                                                         BibDatabase database,
                                                         String uniquefier) {
@@ -181,19 +149,19 @@ public class OOFormatBibliography {
         return formattedText;
     }
 
+    /*
+     * Format links to citations of the source (ck).
+     *
+     * Requires reference marks for citation groups.
+     *
+     * - The links are created as references that show page numbers of the reference marks.
+     *   - We do not control the text shown, that is provided by OpenOffice.
+     */
     private static OOText formatCitedOnPages(CitationGroups cgs, CitedKey ck) {
         if (!cgs.citationGroupsProvideReferenceMarkNameForLinking()) {
             return OOText.fromString("");
         }
 
-        // Format links to citations.
-        //
-        // Requires reference marks for citation groups.
-        //
-        // - With Reference
-        //   - we do not control the text shown
-        //   - using page numbers: useful in print
-        //
         StringBuilder sb = new StringBuilder();
 
         String prefix = String.format(" (%s: ", Localization.lang("Cited on pages"));
@@ -219,10 +187,8 @@ public class OOFormatBibliography {
             if (i > 0) {
                 sb.append(", ");
             }
-            String referenceMarkName = (cg.getReferenceMarkNameForLinking()
-                                        .orElseThrow(RuntimeException::new));
-            OOText xref =
-                OOFormat.formatReferenceToPageNumberOfReferenceMark(referenceMarkName);
+            String markName = cg.getReferenceMarkNameForLinking().orElseThrow(RuntimeException::new);
+            OOText xref = OOFormat.formatReferenceToPageNumberOfReferenceMark(markName);
             sb.append(xref.asString());
             i++;
         }
