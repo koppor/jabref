@@ -326,8 +326,8 @@ public class Backend52 {
         IllegalTypeException,
         PropertyExistException {
 
-        String refMarkName = cg.cgRangeStorage.getRangeName();
-        cg.cgRangeStorage.removeFromDocument(doc);
+        String refMarkName = cg.cgRangeStorage.nrGetRangeName();
+        cg.cgRangeStorage.nrRemoveFromDocument(doc);
         UnoUserDefinedProperty.removeIfExists(doc, refMarkName);
     }
 
@@ -341,7 +341,7 @@ public class Backend52 {
         NoDocumentException,
         WrappedTargetException {
 
-        return cg.cgRangeStorage.getMarkRange(doc);
+        return cg.cgRangeStorage.nrGetMarkRange(doc);
     }
 
     /**
@@ -352,7 +352,7 @@ public class Backend52 {
         throws
         NoDocumentException,
         WrappedTargetException {
-        return cg.cgRangeStorage.getRawCursor(doc);
+        return cg.cgRangeStorage.nrGetRawCursor(doc);
     }
 
     /**
@@ -364,7 +364,7 @@ public class Backend52 {
         WrappedTargetException,
         CreationException {
 
-        return cg.cgRangeStorage.getFillCursor(doc);
+        return cg.cgRangeStorage.nrGetFillCursor(doc);
     }
 
     /** To be called after getFillCursorForCitationGroup */
@@ -373,7 +373,7 @@ public class Backend52 {
         NoDocumentException,
         WrappedTargetException,
         CreationException {
-        cg.cgRangeStorage.cleanFillCursor(doc);
+        cg.cgRangeStorage.nrCleanFillCursor(doc);
     }
 
     public List<CitationEntry> getCitationEntries(XTextDocument doc, CitationGroups cgs)

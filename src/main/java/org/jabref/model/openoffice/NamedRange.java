@@ -10,21 +10,21 @@ import com.sun.star.text.XTextRange;
 
 public interface NamedRange {
 
-    public String getRangeName();
+    public String nrGetRangeName();
 
     /**
      * @return Optional.empty if the mark is missing from the document.
      */
-    public Optional<XTextRange> getMarkRange(XTextDocument doc)
+    public Optional<XTextRange> nrGetMarkRange(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException;
 
     /**
      * Cursor for the reference marks as is, not prepared for filling,
-     * but does not need cleanFillCursorForCitationGroup either.
+     * but does not need nrCleanFillCursor either.
      */
-    public Optional<XTextCursor> getRawCursor(XTextDocument doc)
+    public Optional<XTextCursor> nrGetRawCursor(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException;
@@ -32,9 +32,9 @@ public interface NamedRange {
     /**
      * Get a cursor for filling in text.
      *
-     * Must be followed by cleanFillCursor()
+     * Must be followed by nrCleanFillCursor()
      */
-    public XTextCursor getFillCursor(XTextDocument doc)
+    public XTextCursor nrGetFillCursor(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException,
@@ -45,7 +45,7 @@ public interface NamedRange {
      * them; if the result would be a single characer, leave the left bracket.
      *
      */
-    public void cleanFillCursor(XTextDocument doc)
+    public void nrCleanFillCursor(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException,
@@ -54,7 +54,7 @@ public interface NamedRange {
     /**
      *  Note: create is in NamedRangeManager
      */
-    public void removeFromDocument(XTextDocument doc)
+    public void nrRemoveFromDocument(XTextDocument doc)
         throws
         WrappedTargetException,
         NoDocumentException,
