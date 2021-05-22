@@ -167,67 +167,6 @@ public class OOProcess {
      * **************************************/
 
     /**
-     * Produce citation markers for the case of numbered citations
-     * with bibliography sorted by first appearance in the text.
-     *
-     * @param cgs
-     * @param style
-     *
-     * @return Numbered citation markers for each CitationGroupID.
-     *         Numbering is according to first appearance.
-     *         Assumes global order and local order ae already applied.
-     *
-     */
-    private static Map<CitationGroupID, OOFormattedText>
-    produceCitationMarkersForIsNumberEntriesIsSortByPosition(CitationGroups cgs, OOBibStyle style) {
-
-        assert style.isNumberEntries();
-        assert style.isSortByPosition();
-
-        cgs.createNumberedBibliographySortedInOrderOfAppearance();
-
-        final int minGroupingCount = style.getMinimumGroupingCount();
-
-        Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
-
-        for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
-            List<Citation> cits = cg.getCitationsInLocalOrder();
-            citMarkers.put(cg.cgid,
-                           style.getNumCitationMarker(ListUtil.map(cits, Citation::getNumberOrThrow),
-                                                      minGroupingCount,
-                                                      ListUtil.map(cits, Citation::getPageInfo)));
-        }
-
-        return citMarkers;
-    }
-
-    /**
-     * Produce citation markers for the case of numbered citations
-     * when the bibliography is not sorted by position.
-     */
-    private static Map<CitationGroupID, OOFormattedText>
-    produceCitationMarkersForIsNumberEntriesNotSortByPosition(CitationGroups cgs, OOBibStyle style) {
-        assert style.isNumberEntries();
-        assert !style.isSortByPosition();
-
-        cgs.createNumberedBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
-
-        final int minGroupingCount = style.getMinimumGroupingCount();
-
-        Map<CitationGroupID, OOFormattedText> citMarkers = new HashMap<>();
-
-        for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
-            List<Citation> cits = cg.getCitationsInLocalOrder();
-            citMarkers.put(cg.cgid,
-                           style.getNumCitationMarker(ListUtil.map(cits, Citation::getNumberOrThrow),
-                                                      minGroupingCount,
-                                                      ListUtil.map(cits, Citation::getPageInfo)));
-        }
-
-        return citMarkers;
-    }
-
-    /**
      * Set isFirstAppearanceOfSource in each citation.
      *
      * Preconditions: globalOrder, localOrder
@@ -349,11 +288,7 @@ public class OOProcess {
         if (style.isCitationKeyCiteMarkers()) {
             citMarkers = OOProcessCitationKeyMarkers.produceCitationMarkers(cgs, style);
         } else if (style.isNumberEntries()) {
-            if (style.isSortByPosition()) {
-                citMarkers = produceCitationMarkersForIsNumberEntriesIsSortByPosition(cgs, style);
-            } else {
-                citMarkers = produceCitationMarkersForIsNumberEntriesNotSortByPosition(cgs, style);
-            }
+            citMarkers = OOProcessNumericMarkers.produceCitationMarkers(cgs, style);
         } else {
             /* Normal case, (!isCitationKeyCiteMarkers && !isNumberEntries) */
             citMarkers = produceCitationMarkersForNormalStyle(cgs, style);
