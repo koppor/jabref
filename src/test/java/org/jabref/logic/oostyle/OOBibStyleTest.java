@@ -30,7 +30,6 @@ import org.jabref.model.oostyle.CitationLookupResult;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitationMarkerNumericBibEntry;
 import org.jabref.model.oostyle.CitationMarkerNumericEntry;
-import org.jabref.model.oostyle.CitationMarkerNumericEntryImpl;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.Tuple3;
@@ -97,6 +96,45 @@ class OOBibStyleTest {
     /*
      * Helpers for testing style.getNumCitationMarker2
      */
+
+    /*
+     * Minimal implementation for CitationMarkerNumericEntry
+     */
+    static class CitationMarkerNumericEntryImpl implements CitationMarkerNumericEntry {
+
+        /*
+         * The number encoding "this entry is unresolved" for the constructor.
+         */
+        public final static int UNRESOLVED_ENTRY_NUMBER = 0;
+
+        private String citationKey;
+        private Optional<Integer> num;
+        private Optional<OOText> pageInfo;
+
+        public CitationMarkerNumericEntryImpl(String citationKey, int num, Optional<OOText> pageInfo) {
+            this.citationKey = citationKey;
+            this.num = (num == UNRESOLVED_ENTRY_NUMBER
+                        ? Optional.empty()
+                        : Optional.of(num));
+            this.pageInfo = Citation.normalizePageInfo(pageInfo);
+        }
+
+        @Override
+        public String getCitationKey() {
+            return citationKey;
+        }
+
+        @Override
+        public Optional<Integer> getNumber() {
+            return num;
+        }
+
+        @Override
+        public Optional<OOText> getPageInfo() {
+            return pageInfo;
+        }
+    }
+
     private static CitationMarkerNumericEntry
     CitationMarkerNumericEntryFromTuple(Tuple3<String, Integer, String> x) {
         Optional<OOText> pageInfo = Optional.ofNullable(OOText.fromString(x.c));
