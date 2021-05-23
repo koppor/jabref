@@ -9,21 +9,37 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jabref.model.openoffice.Tuple3;
+
 public class OOListUtil {
 
     public static <T, U> List<U> map(List<T> list, Function<T, U> fun) {
         return list.stream().map(e -> fun.apply(e)).collect(Collectors.toList());
     }
 
-    public static <A, B, R> List<R> zip(List<A> a,
-                                        List<B> b,
-                                        BiFunction<? super A, ? super B, R> fun) {
+    public static <A, B, R> List<R> zipWith(List<A> a,
+                                            List<B> b,
+                                            BiFunction<? super A, ? super B, R> fun) {
         if (a.size() != b.size()) {
             throw new RuntimeException("a.size != b.size");
         }
         List<R> result = new ArrayList<>(a.size());
         for (int i = 0; i < a.size(); i++) {
             result.add(fun.apply(a.get(i), b.get(i)));
+        }
+        return result;
+    }
+
+    public static <A, B, C> List<Tuple3<A, B, C>> zip3(List<A> a, List<B> b, List<C> c) {
+        if (a.size() != b.size()) {
+            throw new RuntimeException("a.size != b.size");
+        }
+        if (a.size() != c.size()) {
+            throw new RuntimeException("a.size != c.size");
+        }
+        List<Tuple3<A, B, C>> result = new ArrayList<>(a.size());
+        for (int i = 0; i < a.size(); i++) {
+            result.add(new Tuple3(a.get(i), b.get(i), c.get(i)));
         }
         return result;
     }

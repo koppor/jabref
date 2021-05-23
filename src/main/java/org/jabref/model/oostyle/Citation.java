@@ -92,6 +92,10 @@ public class Citation implements ComparableCitation, CitationMarkerEntry, Citati
         return number;
     }
 
+    public void setNumber(Optional<Integer> n) {
+        number = n;
+    }
+
     public int getNumberOrThrow() {
         return number.get();
     }

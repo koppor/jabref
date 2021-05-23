@@ -8,6 +8,8 @@ import java.util.Optional;
  */
 public interface CitationMarkerNumericEntry {
 
+    String getCitationKey();
+
     Optional<Integer> getNumber();
 
     Optional<OOText> getPageInfo();

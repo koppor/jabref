@@ -67,7 +67,7 @@ public class OOFormatBibliography {
 
         // insert marker "[1]"
         if (style.isNumberEntries()) {
-            sb.append(style.getNumCitationMarkerForBibliography(ck.number.orElse(0)).asString());
+            sb.append(style.getNumCitationMarkerForBibliography(ck).asString());
         } else {
             // !style.isNumberEntries() : emit no prefix
             // Note: We might want [citationKey] prefix for style.isCitationKeyCiteMarkers();

@@ -33,6 +33,7 @@ import org.jabref.model.entry.types.EntryTypeFactory;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitationMarkerNormEntry;
+import org.jabref.model.oostyle.CitationMarkerNumericBibEntry;
 import org.jabref.model.oostyle.CitationMarkerNumericEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOListUtil;
@@ -464,10 +465,12 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      * @param number The citation numbers.
      * @return The text for the citation.
      */
-    public OOText getNumCitationMarker2(List<Integer> number,
+    public OOText getNumCitationMarker2(List<String> citationKeys,
+                                        List<Integer> number,
                                         int minGroupingCount,
                                         List<Optional<OOText>> pageInfos) {
         return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
+                                                                    citationKeys,
                                                                     number,
                                                                     minGroupingCount,
                                                                     pageInfos);
@@ -958,9 +961,8 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     /**
      * Format a number-based bibliography label for the given number.
      */
-    public OOText getNumCitationMarkerForBibliography(int number) {
-        return OOBibStyleGetNumCitationMarker.getNumCitationMarkerForBibliography(this,
-                                                                                  number);
+    public OOText getNumCitationMarkerForBibliography(CitationMarkerNumericBibEntry entry) {
+        return OOBibStyleGetNumCitationMarker.getNumCitationMarkerForBibliography(this, entry);
     }
 
     /**

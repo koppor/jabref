@@ -7,13 +7,16 @@ import java.util.Optional;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 
-public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry {
+public class CitedKey implements
+                      ComparableCitedKey,
+                      CitationMarkerNormEntry,
+                      CitationMarkerNumericBibEntry {
     public final String citationKey;
     public final LinkedHashSet<CitationPath> where;
-    private Optional<CitationLookupResult> db;
     public Optional<Integer> number; // For Numbered citation styles.
     public Optional<String> uniqueLetter; // For AuthorYear citation styles.
     public Optional<OOText> normCitMarker;  // For AuthorYear citation styles.
+    private Optional<CitationLookupResult> db;
 
     CitedKey(String citationKey, CitationPath p, Citation cit) {
         this.citationKey = citationKey;
@@ -46,6 +49,14 @@ public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry {
     @Override
     public Optional<CitationLookupResult> getLookupResult() {
         return db;
+    }
+
+    /*
+     * Implement CitationMarkerNumericBibEntry
+     */
+    @Override
+    public Optional<Integer> getNumber() {
+        return number;
     }
 
     /**

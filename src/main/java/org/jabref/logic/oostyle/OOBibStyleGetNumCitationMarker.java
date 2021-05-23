@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.jabref.model.oostyle.CitationMarkerNumericBibEntry;
 import org.jabref.model.oostyle.CitationMarkerNumericEntry;
 import org.jabref.model.oostyle.CitationMarkerNumericEntryImpl;
 import org.jabref.model.oostyle.CompareCitation;
 import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
+import org.jabref.model.openoffice.Tuple3;
 
 class OOBibStyleGetNumCitationMarker {
 
@@ -44,14 +46,8 @@ class OOBibStyleGetNumCitationMarker {
      *       "]" stands for BRACKET_AFTER_IN_LIST (with fallback BRACKET_AFTER)
      *       "${number}" stands for the formatted number.
      */
-    public static OOText getNumCitationMarkerForBibliography(OOBibStyle style, int number) {
-        return (getNumCitationMarkerForBibliography(
-                    style,
-                    new CitationMarkerNumericEntryImpl(number, Optional.empty())));
-    }
-
     public static OOText getNumCitationMarkerForBibliography(OOBibStyle style,
-                                                             CitationMarkerNumericEntry entry) {
+                                                             CitationMarkerNumericBibEntry entry) {
         // prefer BRACKET_BEFORE_IN_LIST and BRACKET_AFTER_IN_LIST
         String bracketBefore = style.getBracketBeforeInListWithFallBack();
         String bracketAfter = style.getBracketAfterInListWithFallBack();
@@ -61,7 +57,7 @@ class OOBibStyleGetNumCitationMarker {
         final Optional<Integer> current = entry.getNumber();
         sb.append(current.isPresent()
                   ? String.valueOf(current.get())
-                  : OOBibStyle.UNDEFINED_CITATION_MARKER);
+                  : (OOBibStyle.UNDEFINED_CITATION_MARKER + entry.getCitationKey()));
         sb.append(bracketAfter);
         sb.append(style.getCitationGroupMarkupAfter());
         return OOText.fromString(sb.toString());
@@ -106,12 +102,13 @@ class OOBibStyleGetNumCitationMarker {
 
         if (blockSize == 1) {
             // Add single entry:
-            final Optional<Integer> num = block.get(0).getNumber();
+            CitationMarkerNumericEntry entry = block.get(0);
+            final Optional<Integer> num = entry.getNumber();
             sb.append(num.isEmpty()
-                      ? OOBibStyle.UNDEFINED_CITATION_MARKER
+                      ? (OOBibStyle.UNDEFINED_CITATION_MARKER + entry.getCitationKey())
                       : String.valueOf(num));
             // Emit pageInfo
-            Optional<OOText> pageInfo = block.get(0).getPageInfo();
+            Optional<OOText> pageInfo = entry.getPageInfo();
             if (pageInfo.isPresent()) {
                 sb.append(style.getPageInfoSeparator());
                 sb.append(OOText.toString(pageInfo.get()));
@@ -130,7 +127,7 @@ class OOBibStyleGetNumCitationMarker {
             }
 
             if (block.stream().anyMatch(x -> x.getNumber().isEmpty())) {
-                throw new RuntimeException("Found UNRESOLVED_ENTRY_NUMBER"
+                throw new RuntimeException("Found unresolved entry"
                                            + " in a block with more than one elements");
             }
 
@@ -197,15 +194,20 @@ class OOBibStyleGetNumCitationMarker {
      *
      */
     public static OOText getNumCitationMarker2(OOBibStyle style,
-                                              List<Integer> numbers,
-                                              int minGroupingCount,
-                                              List<Optional<OOText>> pageInfos) {
+                                               List<String> citationKeys,
+                                               List<Integer> numbers,
+                                               int minGroupingCount,
+                                               List<Optional<OOText>> pageInfos) {
         final int nCitations = numbers.size();
+
         List<Optional<OOText>> pageInfosNormalized =
             OOBibStyle.normalizePageInfos(pageInfos, numbers.size());
 
+        List<Tuple3<String, Integer, Optional<OOText>>> xs =
+            OOListUtil.zip3(citationKeys, numbers, pageInfosNormalized);
+
         List<CitationMarkerNumericEntry> entries =
-            OOListUtil.zip(numbers, pageInfosNormalized, CitationMarkerNumericEntryImpl::new);
+            OOListUtil.map(xs, CitationMarkerNumericEntryImpl::from);
 
         return getNumCitationMarker2(style, entries, minGroupingCount);
     }
