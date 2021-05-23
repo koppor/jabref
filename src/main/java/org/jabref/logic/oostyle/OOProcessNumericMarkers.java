@@ -38,9 +38,9 @@ class OOProcessNumericMarkers {
         for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
             List<Citation> cits = cg.getCitationsInLocalOrder();
             OOText citMarker =
-                style.getNumCitationMarker(OOListUtil.map(cits, Citation::getNumberOrThrow),
-                                           minGroupingCount,
-                                           OOListUtil.map(cits, Citation::getPageInfo));
+                style.getNumCitationMarker2(OOListUtil.map(cits, Citation::getNumberOrThrow),
+                                            minGroupingCount,
+                                            OOListUtil.map(cits, Citation::getPageInfo));
             cg.setCitationMarker(Optional.of(citMarker));
         }
     }

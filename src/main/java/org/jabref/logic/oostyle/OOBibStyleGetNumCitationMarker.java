@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jabref.model.oostyle.CompareCitation;
+import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
 
 class OOBibStyleGetNumCitationMarker {
@@ -51,7 +52,7 @@ class OOBibStyleGetNumCitationMarker {
     /**
      * See {@see getNumCitationMarkerCommon} for details.
      */
-    public static OOText getNumCitationMarker(OOBibStyle style,
+    public static OOText getNumCitationMarker2(OOBibStyle style,
                                               List<Integer> numbers,
                                               int minGroupingCount,
                                               List<Optional<OOText>> pageInfos) {
@@ -189,7 +190,7 @@ class OOBibStyleGetNumCitationMarker {
      * Format a number-based citation marker for the given number or numbers.
      *
      * This is the common implementation behind
-     * getNumCitationMarker and
+     * getNumCitationMarker2 and
      * getNumCitationMarkerForBibliography. The latter could be easily
      * separated unless there is (or going to be) a need for handling
      * multiple numbers or page info by getNumCitationMarkerForBibliography.
@@ -258,7 +259,7 @@ class OOBibStyleGetNumCitationMarker {
                 // If (purpose==BIBLIOGRAPHY), then
                 // we expect exactly one number here, and can handle quickly
                 if (nCitations != 1) {
-                    throw new RuntimeException("getNumCitationMarker:"
+                    throw new RuntimeException("getNumCitationMarker2:"
                                                + "nCitations != 1 for purpose==BIBLIOGRAPHY."
                                                + String.format(" nCitations = %d", nCitations));
                 }
@@ -268,7 +269,7 @@ class OOBibStyleGetNumCitationMarker {
                 sb.append(bracketBefore);
                 final int current = numbers.get(0);
                 if (current < 0) {
-                    throw new RuntimeException("getNumCitationMarker: found negative value");
+                    throw new RuntimeException("getNumCitationMarker2: found negative value");
                 }
                 sb.append(current != UNRESOLVED_ENTRY_NUMBER
                           ? String.valueOf(current)
@@ -295,11 +296,8 @@ class OOBibStyleGetNumCitationMarker {
                                           numbers.size());
 
         // Sort the numbers, together with the corresponding pageInfo values
-        List<NumberWithPageInfo> nps = new ArrayList<>();
-        for (int i = 0; i < nCitations; i++) {
-            nps.add(new NumberWithPageInfo(numbers.get(i), pageInfos.get(i)));
-        }
-        nps.sort(OOBibStyleGetNumCitationMarker::compareNumberWithPageInfo);
+        List<NumberWithPageInfo> sorted = OOListUtil.zip(numbers, pageInfos, NumberWithPageInfo::new);
+        sorted.sort(OOBibStyleGetNumCitationMarker::compareNumberWithPageInfo);
 
         // "["
         StringBuilder sb = new StringBuilder(bracketBefore);
@@ -322,9 +320,9 @@ class OOBibStyleGetNumCitationMarker {
 
         for (int i = 0; i < nCitations; i++) {
 
-            final NumberWithPageInfo current = nps.get(i);
+            final NumberWithPageInfo current = sorted.get(i);
             if (current.num < 0) {
-                throw new RuntimeException("getNumCitationMarker: found negative value");
+                throw new RuntimeException("getNumCitationMarker2: found negative value");
             }
 
             if (currentBlock.size() == 0) {

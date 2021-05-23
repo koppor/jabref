@@ -114,47 +114,47 @@ class OOBibStyleTest {
          * but "[1] " with space after "]" for the bibliography.
          */
         assertEquals("[1]",
-                     style.getNumCitationMarker(Arrays.asList(1),
+                     style.getNumCitationMarker2(Arrays.asList(1),
                                                          -1,
                                                          empty).asString());
 
         // Identical numeric entries are joined.
         assertEquals("[1; 2]",
-                     style.getNumCitationMarker(Arrays.asList(1,2,1,2),
+                     style.getNumCitationMarker2(Arrays.asList(1,2,1,2),
                                                          3,
                                                          empty).asString());
         // ... unless minGroupingCount <= 0
         assertEquals("[1; 1; 2; 2]",
-                     style.getNumCitationMarker(Arrays.asList(1,2,1,2),
+                     style.getNumCitationMarker2(Arrays.asList(1,2,1,2),
                                                          0,
                                                          empty).asString());
         // ... or have different pageInfos
         assertEquals("[1; p1a; 1; p1b; 2; p2; 3]",
-                     style.getNumCitationMarker(Arrays.asList(1,1,2,2,3,3),
+                     style.getNumCitationMarker2(Arrays.asList(1,1,2,2,3,3),
                                                 1,
                                                 asPageInfos("p1a","p1b","p2","p2",
                                                             null, null)).asString());
 
         // Consecutive numbers can become a range ...
         assertEquals("[1-3]",
-                     style.getNumCitationMarker(Arrays.asList(1, 2, 3),
+                     style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
                                                          1, /* minGroupingCount */
                                                          empty).asString());
 
         // ... unless minGroupingCount is too high
         assertEquals("[1; 2; 3]",
-                     style.getNumCitationMarker(Arrays.asList(1, 2, 3),
+                     style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
                                                          4, /* minGroupingCount */
                                                          empty).asString());
 
         // ... or if minGroupingCount <= 0
         assertEquals("[1; 2; 3]",
-                     style.getNumCitationMarker(Arrays.asList(1, 2, 3),
+                     style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
                                                          0, /* minGroupingCount */
                                                          empty).asString());
         // ... a pageInfo needs to be emitted
         assertEquals("[1; p1; 2-3]",
-                     style.getNumCitationMarker(Arrays.asList(1, 2, 3),
+                     style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
                                                 1, /* minGroupingCount */
                                                 asPageInfos("p1",null,null))
                      .asString());
@@ -162,20 +162,20 @@ class OOBibStyleTest {
         // null and "" pageInfos are taken as equal.
         // Due to trimming, "   " is the same as well.
         assertEquals("[1]",
-                     style.getNumCitationMarker(Arrays.asList(1, 1, 1),
+                     style.getNumCitationMarker2(Arrays.asList(1, 1, 1),
                                                 1, /* minGroupingCount */
                                                 asPageInfos("",null,"  "))
                      .asString());
         // pageInfos are trimmed
         assertEquals("[1; p1]",
-                     style.getNumCitationMarker(Arrays.asList(1, 1, 1),
+                     style.getNumCitationMarker2(Arrays.asList(1, 1, 1),
                                                 1, /* minGroupingCount */
                                                 asPageInfos("p1"," p1","p1 "))
                      .asString());
 
         // The citation numbers come out sorted
         assertEquals("[3-5; 7; 10-12]",
-                     style.getNumCitationMarker(Arrays.asList(12, 7, 3, 4, 11, 10, 5),
+                     style.getNumCitationMarker2(Arrays.asList(12, 7, 3, 4, 11, 10, 5),
                                                          1,
                                                          empty).asString());
 
@@ -183,7 +183,7 @@ class OOBibStyleTest {
         // (but they inhibit ranges where they are, even if they are identical,
         //  but not empty-or-null)
         assertEquals("[3; p3; 4; p4; 5; p5; 7; p7; 10; px; 11; px; 12; px]",
-                     style.getNumCitationMarker(Arrays.asList(12, 7, 3, 4, 11, 10, 5),
+                     style.getNumCitationMarker2(Arrays.asList(12, 7, 3, 4, 11, 10, 5),
                                                 1,
                                                 asPageInfos("px", "p7", "p3", "p4",
                                                             "px", "px", "p5"))
@@ -192,36 +192,36 @@ class OOBibStyleTest {
 
         // pageInfo sorting (for the same number)
         assertEquals("[1; 1; a; 1; b]",
-                     style.getNumCitationMarker(Arrays.asList(1, 1, 1),
+                     style.getNumCitationMarker2(Arrays.asList(1, 1, 1),
                                                 1, /* minGroupingCount */
                                                 asPageInfos("","b","a "))
                      .asString());
 
         // pageInfo sorting (for the same number) is not numeric.
         assertEquals("[1; p100; 1; p20; 1; p9]",
-                     style.getNumCitationMarker(Arrays.asList(1, 1, 1),
+                     style.getNumCitationMarker2(Arrays.asList(1, 1, 1),
                                                 1, /* minGroupingCount */
                                                 asPageInfos("p20","p9","p100"))
                      .asString());
 
         assertEquals("[1-3]",
-                     style.getNumCitationMarker(Arrays.asList(1, 2, 3),
+                     style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
                                                          1, /* minGroupingCount */
                                                          empty).asString());
         assertEquals("[1; 2; 3]",
-                     style.getNumCitationMarker(Arrays.asList(1, 2, 3),
+                     style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
                                                          5,
                                                          empty).asString());
         assertEquals("[1; 2; 3]",
-                     style.getNumCitationMarker(Arrays.asList(1, 2, 3),
+                     style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
                                                          -1,
                                                          empty).asString());
         assertEquals("[1; 3; 12]",
-                     style.getNumCitationMarker(Arrays.asList(1, 12, 3),
+                     style.getNumCitationMarker2(Arrays.asList(1, 12, 3),
                                                          1,
                                                          empty).asString());
         assertEquals("[3-5; 7; 10-12]",
-                     style.getNumCitationMarker(Arrays.asList(12, 7, 3, 4, 11, 10, 5),
+                     style.getNumCitationMarker2(Arrays.asList(12, 7, 3, 4, 11, 10, 5),
                                                          1,
                                                          empty).asString());
         /*
@@ -245,24 +245,24 @@ class OOBibStyleTest {
 
         // unresolved citations look like [??]
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "]",
-                     style.getNumCitationMarker(Arrays.asList(0),
+                     style.getNumCitationMarker2(Arrays.asList(0),
                                                 1,
                                                 empty).asString());
 
         // pageInfo is shown for unresolved citations
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "; p1]",
-                     style.getNumCitationMarker(Arrays.asList(0),
+                     style.getNumCitationMarker2(Arrays.asList(0),
                                                 1,
                                                 asPageInfos("p1")).asString());
 
         // unresolved citations sorted to the front
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "; 2-4]",
-                     style.getNumCitationMarker(Arrays.asList(4, 2, 3, 0),
+                     style.getNumCitationMarker2(Arrays.asList(4, 2, 3, 0),
                                                 1,
                                                 empty).asString());
 
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "; 1-3]",
-                     style.getNumCitationMarker(Arrays.asList(1, 2, 3, 0),
+                     style.getNumCitationMarker2(Arrays.asList(1, 2, 3, 0),
                                                 1,
                                                 empty).asString());
 
@@ -271,7 +271,7 @@ class OOBibStyleTest {
                      + OOBibStyle.UNDEFINED_CITATION_MARKER + "; "
                      + OOBibStyle.UNDEFINED_CITATION_MARKER + "; "
                      + OOBibStyle.UNDEFINED_CITATION_MARKER + "]",
-                     style.getNumCitationMarker(Arrays.asList(0, 0, 0),
+                     style.getNumCitationMarker2(Arrays.asList(0, 0, 0),
                                                 1,
                                                 empty).asString());
 

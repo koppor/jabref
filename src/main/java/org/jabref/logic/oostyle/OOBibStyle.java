@@ -444,13 +444,13 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      * @param number The citation numbers.
      * @return The text for the citation.
      */
-    public OOText getNumCitationMarker(List<Integer> number,
-                                                int minGroupingCount,
-                                                List<Optional<OOText>> pageInfos) {
-        return OOBibStyleGetNumCitationMarker.getNumCitationMarker(this,
-                                                                   number,
-                                                                   minGroupingCount,
-                                                                   pageInfos);
+    public OOText getNumCitationMarker2(List<Integer> number,
+                                        int minGroupingCount,
+                                        List<Optional<OOText>> pageInfos) {
+        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
+                                                                    number,
+                                                                    minGroupingCount,
+                                                                    pageInfos);
     }
 
     /* moved to OOBibStyleGetCitationMarker
