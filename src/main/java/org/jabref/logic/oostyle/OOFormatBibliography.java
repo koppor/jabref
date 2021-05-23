@@ -103,7 +103,7 @@ public class OOFormatBibliography {
             return formatFullReferenceOfBibEntry(layout,
                                                  bibentry,
                                                  ck.getLookupResult().get().database,
-                                                 ck.uniqueLetter.orElse(null));
+                                                 ck.getUniqueLetter().orElse(null));
         }
     }
 
@@ -165,7 +165,7 @@ public class OOFormatBibliography {
         sb.append(prefix);
 
         List<CitationGroup> citationGroups = new ArrayList();
-        for (CitationPath p : ck.where) {
+        for (CitationPath p : ck.getCitationPaths()) {
             CitationGroupID cgid = p.group;
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
             citationGroups.add(cg);

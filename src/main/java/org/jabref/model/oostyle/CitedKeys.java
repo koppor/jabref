@@ -51,10 +51,10 @@ public class CitedKeys {
         int i = 1;
         for (CitedKey ck : data.values()) {
             if (ck.getLookupResult().isPresent()) {
-                ck.number = Optional.of(i);
+                ck.setNumber(Optional.of(i));
                 i++;
             } else {
-                ck.number = Optional.empty();
+                ck.setNumber(Optional.empty());
             }
         }
     }

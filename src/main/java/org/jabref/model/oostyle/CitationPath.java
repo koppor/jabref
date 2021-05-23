@@ -5,10 +5,12 @@ package org.jabref.model.oostyle;
  * its storage index within.
  */
 public class CitationPath {
+
     public final CitationGroupID group;
+
     public final int storageIndexInGroup;
-    CitationPath(CitationGroupID group,
-                 int storageIndexInGroup) {
+
+    CitationPath(CitationGroupID group, int storageIndexInGroup) {
         this.group = group;
         this.storageIndexInGroup = storageIndexInGroup;
     }

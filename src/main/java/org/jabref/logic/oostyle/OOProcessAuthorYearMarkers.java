@@ -28,7 +28,7 @@ class OOProcessAuthorYearMarkers {
                                                                       OOBibStyle style) {
 
         for (CitedKey ck : sortedCitedKeys.values()) {
-            ck.normCitMarker = Optional.of(style.getNormalizedCitationMarker(ck));
+            ck.setNormalizedCitationMarker(Optional.of(style.getNormalizedCitationMarker(ck)));
         }
     }
 
@@ -57,7 +57,7 @@ class OOProcessAuthorYearMarkers {
         //
         Map<String, List<String>> normCitMarkerToClachingKeys = new HashMap<>();
         for (CitedKey citedKey : sortedCitedKeys.values()) {
-            String normCitMarker = OOText.toString(citedKey.normCitMarker.get());
+            String normCitMarker = OOText.toString(citedKey.getNormalizedCitationMarker().get());
             String citationKey = citedKey.citationKey;
 
             if (!normCitMarkerToClachingKeys.containsKey(normCitMarker)) {
@@ -76,7 +76,7 @@ class OOProcessAuthorYearMarkers {
 
         // Clear old uniqueLetter values.
         for (CitedKey citedKey : sortedCitedKeys.values()) {
-            citedKey.uniqueLetter = Optional.empty();
+            citedKey.setUniqueLetter(Optional.empty());
         }
 
         // For sets of citation keys figthing for a normCitMarker
@@ -90,7 +90,7 @@ class OOProcessAuthorYearMarkers {
             int nextUniqueLetter = 'a';
             for (String citationKey : clashingKeys) {
                 String ul = String.valueOf((char) nextUniqueLetter);
-                sortedCitedKeys.get(citationKey).uniqueLetter = Optional.of(ul);
+                sortedCitedKeys.get(citationKey).setUniqueLetter(Optional.of(ul));
                 nextUniqueLetter++;
             }
         }
