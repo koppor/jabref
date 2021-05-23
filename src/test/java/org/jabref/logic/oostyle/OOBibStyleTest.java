@@ -94,11 +94,20 @@ class OOBibStyleTest {
         assertTrue(style.isSortByPosition());
     }
 
+    /*
+     * Helpers for testing style.getNumCitationMarker2
+     */
+    private static CitationMarkerNumericEntry
+    CitationMarkerNumericEntryFromTuple(Tuple3<String, Integer, String> x) {
+        Optional<OOText> pageInfo = Optional.ofNullable(OOText.fromString(x.c));
+        return new CitationMarkerNumericEntryImpl(x.a, x.b, pageInfo);
+    }
+
     static String mkNum(OOBibStyle style,
                         int minGroupingCount,
                         Tuple3<String,Integer,String>... s) {
         List<CitationMarkerNumericEntry> input = (Stream.of(s)
-                                                  .map(CitationMarkerNumericEntryImpl::fromRaw)
+                                                  .map(OOBibStyleTest::CitationMarkerNumericEntryFromTuple)
                                                   .collect(Collectors.toList()));
         OOText res = style.getNumCitationMarker2(input, minGroupingCount);
         return OOText.toString(res);
@@ -108,6 +117,9 @@ class OOBibStyleTest {
         return new Tuple3(a,b,c);
     }
 
+    /*
+     * For testing getNumCitationMarkerForBibliography
+     */
     static class CitationMarkerNumericBibEntryImpl implements CitationMarkerNumericBibEntry {
         String key;
         Optional<Integer> number;

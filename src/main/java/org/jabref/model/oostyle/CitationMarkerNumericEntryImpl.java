@@ -40,16 +40,4 @@ public class CitationMarkerNumericEntryImpl implements CitationMarkerNumericEntr
     public Optional<OOText> getPageInfo() {
         return pageInfo;
     }
-
-    public static CitationMarkerNumericEntry from(Tuple3<String, Integer, Optional<OOText>> x) {
-        return new CitationMarkerNumericEntryImpl(x.a, x.b, x.c);
-    }
-
-    /*
-     * pageInfo is String and may be null
-     */
-    public static CitationMarkerNumericEntry fromRaw(Tuple3<String, Integer, String> x) {
-        Optional<OOText> pageInfo = Optional.ofNullable(OOText.fromString(x.c));
-        return new CitationMarkerNumericEntryImpl(x.a, x.b, pageInfo);
-    }
 }
