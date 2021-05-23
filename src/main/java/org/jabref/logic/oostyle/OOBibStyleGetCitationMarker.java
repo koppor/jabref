@@ -499,14 +499,6 @@ class OOBibStyleGetCitationMarker {
         return OOText.fromString(sb.toString());
     }
 
-    // "" is more convenient to compare for equality than null-or-String
-    private static String nullToEmptyString(String s) {
-        if (s == null) {
-            return "";
-        }
-        return s;
-    }
-
     private static class CitationMarkerNormEntryWrap implements CitationMarkerEntry {
 
         CitationMarkerNormEntry inner;

@@ -1206,10 +1206,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
                                           getBracketAfter());
     }
 
-    private String nullToEmpty(String s) {
-        return (s == null ? "" : s);
-    }
-
     public OOText getFormattedBibliographyTitle() {
         OOBibStyle style = this;
         OOText title = style.getReferenceHeaderText();
