@@ -89,7 +89,7 @@ public class EditInsert {
 
         // JabRef53 style pageInfo list
         List<Optional<OOText>> pageInfosForCitations =
-            OODataModel.fakePageInfosForCitations(pageInfo, nEntries);
+            OODataModel.fakePageInfos(pageInfo, nEntries);
 
         List<CitationMarkerEntry> citations = new ArrayList<>(nEntries);
         for (int i = 0; i < nEntries; i++) {

@@ -302,7 +302,7 @@ public class Backend52 {
             if ("".equals(cgPageInfo)) {
                 cgPageInfo = null;
             }
-            return OODataModel.fakePageInfosForCitations(cgPageInfo, nCitations);
+            return OODataModel.fakePageInfos(cgPageInfo, nCitations);
 
         case JabRef53:
             return (joinableGroup.stream()
