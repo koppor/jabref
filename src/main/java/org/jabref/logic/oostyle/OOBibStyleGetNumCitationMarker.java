@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.ToIntFunction;
 
 import org.jabref.model.oostyle.CompareCitation;
 import org.jabref.model.oostyle.OOText;
 
 class OOBibStyleGetNumCitationMarker {
+
+    /*
+     * The number encoding "this entry is unresolved"
+     */
+    public final static int UNRESOLVED_ENTRY_NUMBER = 0;
 
     /*
      * Helper class for sorting citation numbers while
@@ -48,9 +52,9 @@ class OOBibStyleGetNumCitationMarker {
      * See {@see getNumCitationMarkerCommon} for details.
      */
     public static OOText getNumCitationMarker(OOBibStyle style,
-                                                       List<Integer> numbers,
-                                                       int minGroupingCount,
-                                                       List<Optional<OOText>> pageInfos) {
+                                              List<Integer> numbers,
+                                              int minGroupingCount,
+                                              List<Optional<OOText>> pageInfos) {
         return getNumCitationMarkerCommon(style,
                                           numbers,
                                           minGroupingCount,
@@ -71,13 +75,114 @@ class OOBibStyleGetNumCitationMarker {
      *       "]" stands for BRACKET_AFTER_IN_LIST (with fallback BRACKET_AFTER)
      *       "${number}" stands for the formatted number.
      */
-    public static OOText getNumCitationMarkerForBibliography(OOBibStyle style,
-                                                                      int number) {
+    public static OOText getNumCitationMarkerForBibliography(OOBibStyle style, int number) {
         return getNumCitationMarkerCommon(style,
                                           Collections.singletonList(number),
                                           0,
                                           CitationMarkerPurpose.BIBLIOGRAPHY,
                                           null);
+    }
+
+    /*
+     * emitBlock
+     *
+     * Given a block containing 1 or (two or more)
+     * NumberWithPageInfo entries that are either singletons or
+     * joinable into an "i-j" form, append to {@code sb} the
+     * formatted text.
+     *
+     * Assumes:
+     *
+     * - block is not empty
+     *
+     * - For a block with a single element the element may have
+     *    pageInfo and its num part may be UNRESOLVED_ENTRY_NUMBER.
+     *
+     * - For a block with two or more elements
+     *
+     *   - The elements do not have pageInfo and their num part is
+     *     not zero.
+     *
+     *   - The elements num parts are consecutive positive integers,
+     *     without repetition.
+     *
+     * Note: this function is long enough to move into a separate method.
+     *       On the other hand, its assumptions strongly tie it to
+     *       the loop below that collects the block.
+     */
+    private static void emitBlock(List<NumberWithPageInfo> block,
+                                  OOBibStyle style,
+                                  int minGroupingCount,
+                                  StringBuilder sb) {
+
+        final int blockSize = block.size();
+        if (blockSize == 0) {
+            throw new RuntimeException("The block is empty");
+        }
+
+        if (blockSize == 1) {
+            // Add single entry:
+            final int num = block.get(0).num;
+            sb.append(num == UNRESOLVED_ENTRY_NUMBER
+                      ? OOBibStyle.UNDEFINED_CITATION_MARKER
+                      : String.valueOf(num));
+            // Emit pageInfo
+            Optional<OOText> pageInfo = block.get(0).pageInfo;
+            if (pageInfo.isPresent()) {
+                sb.append(style.getPageInfoSeparator());
+                sb.append(OOText.toString(pageInfo.get()));
+            }
+            return;
+        }
+
+        if (blockSize >= 2) {
+
+            /*
+             * Check assumptions
+             */
+
+            if (block.stream().anyMatch(x -> x.pageInfo.isPresent())) {
+                throw new RuntimeException("Found pageInfo in a block with more than one elements");
+            }
+
+            if (block.stream().anyMatch(x -> x.num == UNRESOLVED_ENTRY_NUMBER)) {
+                throw new RuntimeException("Found UNRESOLVED_ENTRY_NUMBER"
+                                           + " in a block with more than one elements");
+            }
+
+            for (int j = 1; j < blockSize; j++) {
+                if ((block.get(j).num - block.get(j - 1).num) != 1) {
+                    throw new RuntimeException("Numbers are not consecutive");
+                }
+            }
+
+            /*
+             * Do the actual work
+             */
+
+            if (blockSize >= minGroupingCount) {
+                int first = block.get(0).num;
+                int last = block.get(blockSize - 1).num;
+                if (last != (first + blockSize - 1)) {
+                    throw new RuntimeException("blockSize and length of num range differ");
+                }
+
+                // Emit: "first-last"
+                sb.append(first);
+                sb.append(style.getGroupedNumbersSeparator());
+                sb.append(last);
+            } else {
+
+                // Emit: first, first+1,..., last
+                for (int j = 0; j < blockSize; j++) {
+                    if (j > 0) {
+                        sb.append(style.getCitationSeparator());
+                    }
+                    sb.append(block.get(j).num);
+                }
+            }
+            return;
+        }
     }
 
     /**
@@ -128,7 +233,6 @@ class OOBibStyleGetNumCitationMarker {
                                List<Optional<OOText>> pageInfosIn) {
 
         final boolean joinIsDisabled = (minGroupingCount <= 0);
-        final int notFoundInDatabases = 0;
         final int nCitations = numbers.size();
 
         /*
@@ -166,7 +270,7 @@ class OOBibStyleGetNumCitationMarker {
                 if (current < 0) {
                     throw new RuntimeException("getNumCitationMarker: found negative value");
                 }
-                sb.append(current != notFoundInDatabases
+                sb.append(current != UNRESOLVED_ENTRY_NUMBER
                           ? String.valueOf(current)
                           : OOBibStyle.UNDEFINED_CITATION_MARKER);
                 sb.append(bracketAfter);
@@ -201,116 +305,6 @@ class OOBibStyleGetNumCitationMarker {
         StringBuilder sb = new StringBuilder(bracketBefore);
 
         /*
-         * int emitBlock(List<NumberWithPageInfo> block)
-         *
-         * Given a block containing 1 or (two or more)
-         * NumberWithPageInfo entries collected as singletons or
-         * joinable into an "i-j" form, append to {@code sb} the
-         * formatted text.
-         *
-         * Assumes:
-         *
-         * - block is not empty
-         *
-         * - For a block with a single element the element may have
-         *    pageInfo and its num part may be zero
-         *    (notFoundInDatabases).
-         *
-         * - For a block with two or more elements
-         *
-         *   - The elements do not have pageInfo and their num part is
-         *     not zero.
-         *
-         *   - The elements num parts are consecutive positive integers,
-         *     without repetition.
-         *
-         * Note: this function is long enough to move into a separate method.
-         *       On the other hand, its assumptions strongly tie it to
-         *       the loop below that collects the block.
-         *
-         * @return The number of blocks emitted. Since currently
-         *         throws if the block is empty, the returned value is
-         *         always 1.
-         *
-         */
-        ToIntFunction<List<NumberWithPageInfo>> emitBlock = (List<NumberWithPageInfo> block) -> {
-            // uses:  sb, this,
-
-            final int blockSize = block.size();
-            if (blockSize == 0) {
-                throw new RuntimeException("We should not get here");
-                // return 0;
-            }
-
-            if (blockSize == 1) {
-                // Add single entry:
-                final int num = block.get(0).num;
-                sb.append(num == notFoundInDatabases
-                          ? OOBibStyle.UNDEFINED_CITATION_MARKER
-                          : String.valueOf(num));
-                // Emit pageInfo
-                Optional<OOText> pageInfo = block.get(0).pageInfo;
-                if (pageInfo.isPresent()) {
-                    sb.append(style.getPageInfoSeparator());
-                    sb.append(OOText.toString(pageInfo.get()));
-                }
-            } else {
-                // block has at least 2 elements
-
-                /*
-                 * Check assumptions
-                 */
-
-                // None of these elements has a pageInfo,
-                // because if it had, we would not join.
-                for (NumberWithPageInfo x : block) {
-                    if (x.pageInfo.isPresent()) {
-                        throw new RuntimeException("impossible: (x.pageInfo.isPresent())");
-                    }
-                }
-                // None of these elements needs UNDEFINED_CITATION_MARKER,
-                // because if it did, we would not join.
-                for (NumberWithPageInfo x : block) {
-                    if (x.num == notFoundInDatabases) {
-                        throw new RuntimeException("impossible: (x.num == notFoundInDatabases)");
-                    }
-                }
-                // consecutive elements have consecutive numbers
-                for (int j = 1; j < blockSize; j++) {
-                    if (block.get(j).num != (block.get(j - 1).num + 1)) {
-                        throw new RuntimeException("impossible: consecutive elements"
-                                                   + " without consecutive numbers");
-                    }
-                }
-
-                /*
-                 * Do the actual work
-                 */
-                if (blockSize >= minGroupingCount) {
-                    int first = block.get(0).num;
-                    int last = block.get(blockSize - 1).num;
-                    if (((last + 1) - first) != blockSize) {
-                        throw new RuntimeException("impossible:"
-                                                   + " blockSize and length of num range differ");
-                    }
-                    // Emit: "first-last"
-                    sb.append(first);
-                    sb.append(style.getGroupedNumbersSeparator());
-                    sb.append(last);
-                } else {
-                    // Emit: first, first+1,..., last
-                    for (int j = 0; j < blockSize; j++) {
-                        if (j > 0) {
-                            sb.append(style.getCitationSeparator());
-                        }
-                        sb.append(block.get(j).num);
-                    }
-                }
-            }
-            return 1;
-        };
-
-        /*
          *  Original:
          *  [2,3,4]   -> [2-4]
          *  [0,1,2]   -> [??,1,2]
@@ -322,7 +316,7 @@ class OOBibStyleGetNumCitationMarker {
          *  [1 "pp nn",1 "pp nn"] -> [1 "pp nn"]
          */
 
-        int blocksEmitted = 0;
+        boolean blocksEmitted = false;
         List<NumberWithPageInfo> currentBlock = new ArrayList<>();
         List<NumberWithPageInfo> nextBlock = new ArrayList<>();
 
@@ -337,8 +331,8 @@ class OOBibStyleGetNumCitationMarker {
                 currentBlock.add(current);
             } else {
                 NumberWithPageInfo prev = currentBlock.get(currentBlock.size() - 1);
-                if ((notFoundInDatabases == current.num)
-                     || (notFoundInDatabases == prev.num)) {
+                if ((UNRESOLVED_ENTRY_NUMBER == current.num)
+                     || (UNRESOLVED_ENTRY_NUMBER == prev.num)) {
                     nextBlock.add(current); // do not join if not found
                 } else if (joinIsDisabled) {
                     nextBlock.add(current); // join disabled
@@ -357,19 +351,16 @@ class OOBibStyleGetNumCitationMarker {
 
             if (nextBlock.size() > 0) {
                 // emit current block
-                // We are emitting a block
-                if (blocksEmitted > 0) {
+                if (blocksEmitted) {
                     sb.append(style.getCitationSeparator());
                 }
-                int emittedNow = emitBlock.applyAsInt(currentBlock);
-                if (emittedNow > 0) {
-                    blocksEmitted += emittedNow;
-                    currentBlock = nextBlock;
-                    nextBlock = new ArrayList<>();
-                }
-            } // blockSize != 0
+                emitBlock(currentBlock, style, minGroupingCount, sb);
+                blocksEmitted = true;
+                currentBlock = nextBlock;
+                nextBlock = new ArrayList<>();
+            }
 
-        } // for i
+        }
 
         if (nextBlock.size() != 0) {
             throw new RuntimeException("impossible: (nextBlock.size() != 0) after loop");
@@ -377,10 +368,10 @@ class OOBibStyleGetNumCitationMarker {
 
         if (currentBlock.size() > 0) {
             // We are emitting a block
-            if (blocksEmitted > 0) {
+            if (blocksEmitted) {
                 sb.append(style.getCitationSeparator());
             }
-            emitBlock.applyAsInt(currentBlock);
+            emitBlock(currentBlock, style, minGroupingCount, sb);
         }
 
         // Emit: "]"
