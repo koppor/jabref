@@ -61,12 +61,12 @@ public class ExportCited {
         Set<String> seen = new HashSet<>(); // Only add crossReference once.
 
         for (CitedKey ck : cks.values()) {
-            if (ck.db.isEmpty()) {
+            if (ck.getLookupResult().isEmpty()) {
                 unresolvedKeys.add(ck.citationKey);
                 continue;
             } else {
-                BibEntry entry = ck.db.get().entry;
-                BibDatabase loopDatabase = ck.db.get().database;
+                BibEntry entry = ck.getLookupResult().get().entry;
+                BibDatabase loopDatabase = ck.getLookupResult().get().database;
 
                 // If entry found
                 BibEntry clonedEntry = (BibEntry) entry.clone();

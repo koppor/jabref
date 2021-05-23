@@ -44,11 +44,18 @@ public class CitedKeys {
         data = newData;
     }
 
+    /**
+     * Unresolved citations do not get a number.
+     */
     void numberCitedKeysInCurrentOrder() {
         int i = 1;
         for (CitedKey ck : data.values()) {
-            ck.number = Optional.of(i);
-            i++;
+            if (ck.getLookupResult().isPresent()) {
+                ck.number = Optional.of(i);
+                i++;
+            } else {
+                ck.number = Optional.empty();
+            }
         }
     }
 

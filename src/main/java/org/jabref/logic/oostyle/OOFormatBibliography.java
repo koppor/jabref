@@ -67,11 +67,7 @@ public class OOFormatBibliography {
 
         // insert marker "[1]"
         if (style.isNumberEntries()) {
-            if (ck.number.isEmpty()) {
-                throw new RuntimeException("formatBibliographyEntry:"
-                                           + " numbered style, but found unnumbered entry");
-            }
-            sb.append(style.getNumCitationMarkerForBibliography(ck.number.get()).asString());
+            sb.append(style.getNumCitationMarkerForBibliography(ck.number.orElse(0)).asString());
         } else {
             // !style.isNumberEntries() : emit no prefix
             // Note: We might want [citationKey] prefix for style.isCitationKeyCiteMarkers();
@@ -81,7 +77,7 @@ public class OOFormatBibliography {
         sb.append(formatBibliographyEntryBody(ck, style).asString());
 
         // Add "Cited on pages"
-        if (ck.db.isEmpty() || alwaysAddCitedOnPages) {
+        if (ck.getLookupResult().isEmpty() || alwaysAddCitedOnPages) {
             sb.append(formatCitedOnPages(cgs, ck).asString());
         }
 
@@ -95,18 +91,18 @@ public class OOFormatBibliography {
      * @return just the body. No label, "Cited on pages" or paragraph.
      */
     public static OOText formatBibliographyEntryBody(CitedKey ck, OOBibStyle style) {
-        if (ck.db.isEmpty()) {
+        if (ck.getLookupResult().isEmpty()) {
             // Unresolved entry
             return OOText.fromString(String.format("Unresolved(%s)", ck.citationKey));
         } else {
             // Resolved entry, use the layout engine
-            BibEntry bibentry = ck.db.get().entry;
+            BibEntry bibentry = ck.getLookupResult().get().entry;
             Layout layout = style.getReferenceFormat(bibentry.getType());
             layout.setPostFormatter(POSTFORMATTER);
 
             return formatFullReferenceOfBibEntry(layout,
                                                  bibentry,
-                                                 ck.db.get().database,
+                                                 ck.getLookupResult().get().database,
                                                  ck.uniqueLetter.orElse(null));
         }
     }

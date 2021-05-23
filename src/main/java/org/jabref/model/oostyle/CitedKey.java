@@ -8,9 +8,9 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 
 public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry {
-    public String citationKey;
-    public LinkedHashSet<CitationPath> where;
-    public Optional<CitationLookupResult> db;
+    public final String citationKey;
+    public final LinkedHashSet<CitationPath> where;
+    private Optional<CitationLookupResult> db;
     public Optional<Integer> number; // For Numbered citation styles.
     public Optional<String> uniqueLetter; // For AuthorYear citation styles.
     public Optional<OOText> normCitMarker;  // For AuthorYear citation styles.

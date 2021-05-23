@@ -184,7 +184,7 @@ public class CitationGroups {
         }
         List<String> unresolvedKeys = new ArrayList<>();
         for (CitedKey ck : bib.get().values()) {
-            if (ck.db.isEmpty()) {
+            if (ck.getLookupResult().isEmpty()) {
                 unresolvedKeys.add(ck.citationKey);
             }
         }
