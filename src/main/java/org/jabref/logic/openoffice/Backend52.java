@@ -189,7 +189,7 @@ public class Backend52 {
      */
     public CitationGroup createCitationGroup(XTextDocument doc,
                                              List<String> citationKeys,
-                                             List<Optional<OOText>> pageInfosForCitations,
+                                             List<Optional<OOText>> pageInfos,
                                              InTextCitationType citationType,
                                              XTextCursor position,
                                              boolean insertSpaceAfter)
@@ -202,9 +202,9 @@ public class Backend52 {
         PropertyVetoException,
         IllegalTypeException {
 
-        Objects.requireNonNull(pageInfosForCitations);
-        if (pageInfosForCitations.size() != citationKeys.size()) {
-            throw new RuntimeException("pageInfosForCitations.size != citationKeys.size");
+        Objects.requireNonNull(pageInfos);
+        if (pageInfos.size() != citationKeys.size()) {
+            throw new RuntimeException("pageInfos.size != citationKeys.size");
         }
 
         // Get a new refMarkName
@@ -223,7 +223,7 @@ public class Backend52 {
             Citation cit = new Citation(citationKeys.get(i));
             citations.add(cit);
 
-            Optional<OOText> pageInfo = Citation.normalizePageInfo(pageInfosForCitations.get(i));
+            Optional<OOText> pageInfo = Citation.normalizePageInfo(pageInfos.get(i));
             switch (dataModel) {
             case JabRef52:
                 if (i == last) {
@@ -252,7 +252,7 @@ public class Backend52 {
         switch (dataModel) {
         case JabRef52:
             Optional<OOText> pageInfo =
-                Citation.normalizePageInfo(pageInfosForCitations.get(last));
+                Citation.normalizePageInfo(pageInfos.get(last));
 
             if (pageInfo.isPresent()) {
                 String pageInfoString = OOText.toString(pageInfo.get());

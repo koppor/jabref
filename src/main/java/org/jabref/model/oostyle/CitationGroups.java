@@ -101,7 +101,7 @@ public class CitationGroups {
         if (globalOrder.isEmpty()) {
             throw new RuntimeException("getCitationGroupsInGlobalOrder: not ordered yet");
         }
-        return ListUtil.map(globalOrder.get(), cgid -> citationGroupsUnordered.get(cgid));
+        return OOListUtil.map(globalOrder.get(), cgid -> citationGroupsUnordered.get(cgid));
     }
 
     public void setGlobalOrder(List<CitationGroupID> globalOrder) {

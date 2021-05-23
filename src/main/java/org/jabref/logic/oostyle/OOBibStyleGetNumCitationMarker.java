@@ -50,12 +50,12 @@ class OOBibStyleGetNumCitationMarker {
     public static OOText getNumCitationMarker(OOBibStyle style,
                                                        List<Integer> numbers,
                                                        int minGroupingCount,
-                                                       List<Optional<OOText>> pageInfosForCitations) {
+                                                       List<Optional<OOText>> pageInfos) {
         return getNumCitationMarkerCommon(style,
                                           numbers,
                                           minGroupingCount,
                                           CitationMarkerPurpose.CITATION,
-                                          pageInfosForCitations);
+                                          pageInfos);
     }
 
     /**
@@ -112,9 +112,9 @@ class OOBibStyleGetNumCitationMarker {
      *
      *               If BIBLIOGRAPHY: Prefer BRACKET_BEFORE_IN_LIST over BRACKET_BEFORE,
      *                                   and BRACKET_AFTER_IN_LIST over BRACKET_AFTER.
-     *                                Ignore pageInfosForCitations.
+     *                                Ignore pageInfos.
      *
-     * @param pageInfosForCitations  Null for "none", or a list with an optional
+     * @param pageInfosIn  Null for "none", or a list with an optional
      *        pageInfo for each citation. Any or all of these can be Optional.empty
      *
      * @return The text for the citation.
@@ -125,7 +125,7 @@ class OOBibStyleGetNumCitationMarker {
                                List<Integer> numbers,
                                int minGroupingCount,
                                CitationMarkerPurpose purpose,
-                               List<Optional<OOText>> pageInfosForCitations) {
+                               List<Optional<OOText>> pageInfosIn) {
 
         final boolean joinIsDisabled = (minGroupingCount <= 0);
         final int notFoundInDatabases = 0;
@@ -178,17 +178,17 @@ class OOBibStyleGetNumCitationMarker {
         /*
          * From here:
          *  - formatting for in-text (not for bibliography)
-         *  - need to care about pageInfosForCitations
+         *  - need to care about pageInfos
          *
          *  - In case {@code strictPurpose} above is set to false and allows us to
          *    get here, and {@code purpose==BIBLIOGRAPHY}, then we just fill
          *    pageInfos with null values.
          */
         List<Optional<OOText>> pageInfos =
-            OOBibStyle.regularizePageInfosForCitations((purpose == CitationMarkerPurpose.BIBLIOGRAPHY
-                                                        ? null
-                                                        : pageInfosForCitations),
-                                                       numbers.size());
+            OOBibStyle.normalizePageInfos((purpose == CitationMarkerPurpose.BIBLIOGRAPHY
+                                           ? null
+                                           : pageInfosIn),
+                                          numbers.size());
 
         // Sort the numbers, together with the corresponding pageInfo values
         List<NumberWithPageInfo> nps = new ArrayList<>();

@@ -330,37 +330,23 @@ public class EditMerge {
                     newGroupCitations.addAll(cg.citationsInStorageOrder);
                 }
 
-                // Since we only join groups with identical citationTypes, we
-                // can get citationType from the first element of each
-                // joinable group.
                 InTextCitationType citationType = cgs.get(0).citationType;
+                List<Optional<OOText>> pageInfos = fr.backend.combinePageInfos(cgs);
 
-                // cgPageInfos belong to the CitationGroup (DataModel JabRef52),
-                // but it is not clear how should we handle them here.
-                // We delegate the problem to the backend.
-                List<Optional<OOText>> pageInfosForCitations =
-                    fr.backend.combinePageInfos(cgs);
-
-                // Remove the old citation groups from the document.
                 fr.removeCitationGroups(cgs, doc);
-
                 XTextCursor textCursor = joinableGroupData.groupCursor;
-
-                // Also remove the spaces between.
-                textCursor.setString("");
+                textCursor.setString(""); // Also remove the spaces between.
 
                 List<String> citationKeys = (newGroupCitations.stream()
                                              .map(cit -> cit.citationKey)
                                              .collect(Collectors.toList()));
-
-                // Insert reference mark:
 
                 /* insertSpaceAfter: no, it is already there (or could be) */
                 boolean insertSpaceAfter = false;
                 UpdateCitationMarkers.createAndFillCitationGroup(fr,
                                                                  doc,
                                                                  citationKeys,
-                                                                 pageInfosForCitations,
+                                                                 pageInfos,
                                                                  citationType,
                                                                  OOText.fromString("tmp"),
                                                                  textCursor,

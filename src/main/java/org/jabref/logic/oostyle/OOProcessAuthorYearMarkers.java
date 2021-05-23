@@ -15,8 +15,8 @@ import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitedKey;
 import org.jabref.model.oostyle.CitedKeys;
 import org.jabref.model.oostyle.InTextCitationType;
-import org.jabref.model.oostyle.ListUtil;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
+import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
 
 class OOProcessAuthorYearMarkers {
@@ -152,7 +152,7 @@ class OOProcessAuthorYearMarkers {
             final NonUniqueCitationMarker strictlyUnique = NonUniqueCitationMarker.THROWS;
 
             List<Citation> cits = cg.getCitationsInLocalOrder();
-            List<CitationMarkerEntry> citationMarkerEntries = ListUtil.map(cits, e -> e);
+            List<CitationMarkerEntry> citationMarkerEntries = OOListUtil.map(cits, e -> e);
             OOText citMarker = style.getCitationMarker2(citationMarkerEntries,
                                                         inParenthesis,
                                                         strictlyUnique);

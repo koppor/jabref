@@ -244,7 +244,7 @@ public class OOFrontend {
      *  inserted space, or at the end of the reference mark.
      *
      * @param citationKeys In storage order
-     * @param pageInfosForCitations In storage order
+     * @param pageInfos In storage order
      * @param citationType
      * @param position Collapsed to its end.
      * @param insertSpaceAfter If true, we insert a space after the mark, that
@@ -253,7 +253,7 @@ public class OOFrontend {
      */
     public CitationGroupID createCitationGroup(XTextDocument doc,
                                                List<String> citationKeys,
-                                               List<Optional<OOText>> pageInfosForCitations,
+                                               List<Optional<OOText>> pageInfos,
                                                InTextCitationType citationType,
                                                XTextCursor position,
                                                boolean insertSpaceAfter)
@@ -266,13 +266,13 @@ public class OOFrontend {
         PropertyVetoException,
         IllegalTypeException {
 
-        Objects.requireNonNull(pageInfosForCitations);
-        if (pageInfosForCitations.size() != citationKeys.size()) {
-            throw new RuntimeException("pageInfosForCitations.size != citationKeys.size");
+        Objects.requireNonNull(pageInfos);
+        if (pageInfos.size() != citationKeys.size()) {
+            throw new RuntimeException("pageInfos.size != citationKeys.size");
         }
         CitationGroup cg = backend.createCitationGroup(doc,
                                                        citationKeys,
-                                                       pageInfosForCitations,
+                                                       pageInfos,
                                                        citationType,
                                                        position,
                                                        insertSpaceAfter);

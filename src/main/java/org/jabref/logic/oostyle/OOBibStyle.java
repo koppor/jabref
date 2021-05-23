@@ -34,6 +34,7 @@ import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitationMarkerNormEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
+import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
 
 import org.slf4j.Logger;
@@ -445,11 +446,11 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      */
     public OOText getNumCitationMarker(List<Integer> number,
                                                 int minGroupingCount,
-                                                List<Optional<OOText>> pageInfosForCitations) {
+                                                List<Optional<OOText>> pageInfos) {
         return OOBibStyleGetNumCitationMarker.getNumCitationMarker(this,
                                                                    number,
                                                                    minGroupingCount,
-                                                                   pageInfosForCitations);
+                                                                   pageInfos);
     }
 
     /* moved to OOBibStyleGetCitationMarker
@@ -946,30 +947,28 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      *  Make sure that (1) we have exactly one entry for each
      *  citation, (2) each entry is either Optional.empty or its content is not empty when trimmed.
      *
-     *  As a special case: pageInfosForCitations may be null. In this case
+     *  As a special case: pageInfos may be null. In this case
      *  the result is a list filled with Optional.empty() values.
      */
-    public static List<Optional<OOText>>
-    regularizePageInfosForCitations(List<Optional<OOText>> pageInfosForCitations,
-                                    int nCitations) {
-        if (pageInfosForCitations == null) {
+    static List<Optional<OOText>>
+    normalizePageInfos(List<Optional<OOText>> pageInfos, int nCitations) {
+
+        // translate null to all-empty
+        if (pageInfos == null) {
             List<Optional<OOText>> res = new ArrayList<>(nCitations);
             for (int i = 0; i < nCitations; i++) {
                 res.add(Optional.empty());
             }
             return res;
-        } else {
-            if (pageInfosForCitations.size() != nCitations) {
-                throw new RuntimeException("regularizePageInfosForCitations:"
-                                           + " pageInfosForCitations.size() != nCitations");
-            }
-            List<Optional<OOText>> res = new ArrayList<>(nCitations);
-            for (int i = 0; i < nCitations; i++) {
-                Optional<OOText> p = pageInfosForCitations.get(i);
-                res.add(Citation.normalizePageInfo(p));
-            }
-            return res;
         }
+
+        // not null, check size
+        if (pageInfos.size() != nCitations) {
+            throw new RuntimeException("normalizePageInfos: pageInfos.size() != nCitations");
+        }
+
+        // not null, normalize elementwise
+        return OOListUtil.map(pageInfos, Citation::normalizePageInfo);
     }
 
     public OOText getNormalizedCitationMarker(CitationMarkerNormEntry ce) {

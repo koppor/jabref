@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroups;
-import org.jabref.model.oostyle.ListUtil;
+import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
 
 class OOProcessNumericMarkers {
@@ -38,9 +38,9 @@ class OOProcessNumericMarkers {
         for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
             List<Citation> cits = cg.getCitationsInLocalOrder();
             OOText citMarker =
-                style.getNumCitationMarker(ListUtil.map(cits, Citation::getNumberOrThrow),
+                style.getNumCitationMarker(OOListUtil.map(cits, Citation::getNumberOrThrow),
                                            minGroupingCount,
-                                           ListUtil.map(cits, Citation::getPageInfo));
+                                           OOListUtil.map(cits, Citation::getPageInfo));
             cg.setCitationMarker(Optional.of(citMarker));
         }
     }

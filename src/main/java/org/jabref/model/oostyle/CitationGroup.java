@@ -67,7 +67,7 @@ public class CitationGroup {
         this.cgid = cgid;
         this.citationType = citationType;
         this.citationsInStorageOrder = Collections.unmodifiableList(citationsInStorageOrder);
-        this.localOrder = ListUtil.makeIndices(citationsInStorageOrder.size());
+        this.localOrder = OOListUtil.makeIndices(citationsInStorageOrder.size());
         this.referenceMarkNameForLinking = referenceMarkNameForLinking;
         this.indexInGlobalOrder = Optional.empty();
         this.citationMarker = Optional.empty();
@@ -96,8 +96,8 @@ public class CitationGroup {
             lastCitation.setPageInfo(Optional.empty());
         }
 
-        this.localOrder = ListUtil.order(citationsInStorageOrder,
-                                         new CompareCitation(entryComparator, true));
+        this.localOrder = OOListUtil.order(citationsInStorageOrder,
+                                           new CompareCitation(entryComparator, true));
 
         if (dataModel == OODataModel.JabRef52) {
             getCitationsInLocalOrder().get(last).setPageInfo(lastPageInfo);
@@ -113,7 +113,7 @@ public class CitationGroup {
      */
 
     public List<Citation> getCitationsInLocalOrder() {
-        return ListUtil.map(localOrder, i -> citationsInStorageOrder.get(i));
+        return OOListUtil.map(localOrder, i -> citationsInStorageOrder.get(i));
     }
 
     /*

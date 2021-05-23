@@ -115,7 +115,7 @@ public class UpdateCitationMarkers {
      *  Inserts a citation group in the document: creates and fills it.
      *
      * @param citationKeys BibTeX keys of
-     * @param pageInfosForCitations
+     * @param pageInfos
      * @param citationType
      *
      * @param citationText Text for the citation. A citation mark or
@@ -131,7 +131,7 @@ public class UpdateCitationMarkers {
     public static void createAndFillCitationGroup(OOFrontend fr,
                                                   XTextDocument doc,
                                                   List<String> citationKeys,
-                                                  List<Optional<OOText>> pageInfosForCitations,
+                                                  List<Optional<OOText>> pageInfos,
                                                   InTextCitationType citationType,
                                                   OOText citationText,
                                                   XTextCursor position,
@@ -150,13 +150,13 @@ public class UpdateCitationMarkers {
         IllegalTypeException,
         NoSuchElementException {
 
-        Objects.requireNonNull(pageInfosForCitations);
-        if (pageInfosForCitations.size() != citationKeys.size()) {
-            throw new RuntimeException("pageInfosForCitations.size != citationKeys.size");
+        Objects.requireNonNull(pageInfos);
+        if (pageInfos.size() != citationKeys.size()) {
+            throw new RuntimeException("pageInfos.size != citationKeys.size");
         }
         CitationGroupID cgid = fr.createCitationGroup(doc,
                                                       citationKeys,
-                                                      pageInfosForCitations,
+                                                      pageInfos,
                                                       citationType,
                                                       position,
                                                       insertSpaceAfter);

@@ -12,9 +12,9 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.InTextCitationType;
-import org.jabref.model.oostyle.ListUtil;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OODataModel;
+import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
@@ -83,19 +83,16 @@ public class EditInsert {
         IllegalTypeException,
         JabRefException {
 
-        List<String> citationKeys = ListUtil.map(entries, EditInsert::insertEntryGetCitationKey);
+        List<String> citationKeys = OOListUtil.map(entries, EditInsert::insertEntryGetCitationKey);
 
         final int nEntries = entries.size();
-
-        // JabRef53 style pageInfo list
-        List<Optional<OOText>> pageInfosForCitations =
-            OODataModel.fakePageInfos(pageInfo, nEntries);
+        List<Optional<OOText>> pageInfos = OODataModel.fakePageInfos(pageInfo, nEntries);
 
         List<CitationMarkerEntry> citations = new ArrayList<>(nEntries);
         for (int i = 0; i < nEntries; i++) {
             Citation cit = new Citation(citationKeys.get(i));
             cit.lookupInDatabases(Collections.singletonList(database));
-            cit.setPageInfo(pageInfosForCitations.get(i));
+            cit.setPageInfo(pageInfos.get(i));
             citations.add(cit);
         }
 
@@ -114,7 +111,7 @@ public class EditInsert {
         UpdateCitationMarkers.createAndFillCitationGroup(fr,
                                                          doc,
                                                          citationKeys,
-                                                         pageInfosForCitations,
+                                                         pageInfos,
                                                          citationType,
                                                          citeText,
                                                          cursor,
