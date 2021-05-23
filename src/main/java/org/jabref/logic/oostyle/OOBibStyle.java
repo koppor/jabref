@@ -1067,10 +1067,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         return (String) properties.get(propName);
     }
 
-    //    private int getIntProperty(String key) {
-    //        return (Integer) properties.get(key);
-    //    }
-
     /**
      * Should citation markers be italicized?
      *
@@ -1197,8 +1193,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     }
 
     public String getBracketBeforeInListWithFallBack() {
-        return Objects.requireNonNullElse(getBracketBeforeInList(),
-                                          getBracketBefore());
+        return Objects.requireNonNullElse(getBracketBeforeInList(), getBracketBefore());
     }
 
     /** Closing parenthesis after citation marker in the bibliography */
@@ -1207,8 +1202,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     }
 
     String getBracketAfterInListWithFallBack() {
-        return Objects.requireNonNullElse(getBracketAfterInList(),
-                                          getBracketAfter());
+        return Objects.requireNonNullElse(getBracketAfterInList(), getBracketAfter());
     }
 
     public OOText getFormattedBibliographyTitle() {

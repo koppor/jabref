@@ -62,11 +62,10 @@ class OOBibStyleGetNumCitationMarker {
     }
 
     /*
-     * emitBlock
+     * emitBlock : a helper for getNumCitationMarker2
      *
-     * Given a block containing 1 or (two or more)
-     * CitationMarkerNumericEntryImpl entries that are either singletons or
-     * joinable into an "i-j" form, append to {@code sb} the
+     * Given a block containing either a single entry or two or more
+     * entries that are joinable into an "i-j" form, append to {@code sb} the
      * formatted text.
      *
      * Assumes:
@@ -74,19 +73,16 @@ class OOBibStyleGetNumCitationMarker {
      * - block is not empty
      *
      * - For a block with a single element the element may have
-     *    pageInfo and its num part may be UNRESOLVED_ENTRY_NUMBER.
+     *    pageInfo and its num part may be Optional.empty()
      *
      * - For a block with two or more elements
      *
-     *   - The elements do not have pageInfo and their num part is
-     *     not zero.
+     *   - The elements do not have pageInfo and their number part is
+     *     not empty.
      *
-     *   - The elements num parts are consecutive positive integers,
+     *   - The elements number parts are consecutive positive integers,
      *     without repetition.
      *
-     * Note: this function is long enough to move into a separate method.
-     *       On the other hand, its assumptions strongly tie it to
-     *       the loop below that collects the block.
      */
     private static void emitBlock(List<CitationMarkerNumericEntry> block,
                                   OOBibStyle style,
