@@ -11,10 +11,10 @@ import org.jabref.model.entry.BibEntry;
  */
 public class CompareCitation implements Comparator<ComparableCitation> {
 
-    CitedKeyComparator citedKeyComparator;
+    CompareCitedKey citedKeyComparator;
 
     CompareCitation(Comparator<BibEntry> entryComparator, boolean unresolvedComesFirst) {
-        this.citedKeyComparator = new CitedKeyComparator(entryComparator, unresolvedComesFirst);
+        this.citedKeyComparator = new CompareCitedKey(entryComparator, unresolvedComesFirst);
     }
 
     public int compare(ComparableCitation a, ComparableCitation b) {

@@ -1188,8 +1188,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         return getStringCitProperty(OOBibStyle.BRACKET_BEFORE_IN_LIST);
     }
 
-    // Should be protected, but that needs getNumCitationMarkerCommon
-    // to take over handling Unresolved
     public String getBracketBeforeInListWithFallBack() {
         return Objects.requireNonNullElse(getBracketBeforeInList(),
                                           getBracketBefore());
@@ -1200,7 +1198,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         return getStringCitProperty(OOBibStyle.BRACKET_AFTER_IN_LIST);
     }
 
-    public String getBracketAfterInListWithFallBack() {
+    String getBracketAfterInListWithFallBack() {
         return Objects.requireNonNullElse(getBracketAfterInList(),
                                           getBracketAfter());
     }

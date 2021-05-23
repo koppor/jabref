@@ -1,10 +1,10 @@
 package org.jabref.logic.oostyle;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.jabref.model.oostyle.CitationMarkerNumericEntry;
 import org.jabref.model.oostyle.CompareCitation;
 import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
@@ -17,50 +17,43 @@ class OOBibStyleGetNumCitationMarker {
     public final static int UNRESOLVED_ENTRY_NUMBER = 0;
 
     /*
-     * Helper class for sorting citation numbers while
-     * maintaining their correspondence to pageInfos.
+     * Minimal implementation for CitationMarkerNumericEntry
      */
-    private static class NumberWithPageInfo {
-        int num;
-        Optional<OOText> pageInfo;
+    private static class NumberWithPageInfo implements CitationMarkerNumericEntry {
+
+        private Optional<Integer> num;
+        private Optional<OOText> pageInfo;
+
         NumberWithPageInfo(int num, Optional<OOText> pageInfo) {
-            this.num = num;
+            this.num = (num == UNRESOLVED_ENTRY_NUMBER
+                        ? Optional.empty()
+                        : Optional.of(num));
             this.pageInfo = pageInfo;
         }
+
+        @Override
+        public Optional<Integer> getNumber() {
+            return num;
+        }
+
+        @Override
+        public Optional<OOText> getPageInfo() {
+            return pageInfo;
+        }
     }
 
     /**
-     * Defines sort order for NumberWithPageInfo entries.
-     *
-     * null comes before non-null
+     * Defines sort order for CitationMarkerNumericEntry.
      */
-    private static int compareNumberWithPageInfo(NumberWithPageInfo a, NumberWithPageInfo b) {
-        int res = Integer.compare(a.num, b.num);
+    private static int compareCitationMarkerNumericEntry(CitationMarkerNumericEntry a,
+                                                         CitationMarkerNumericEntry b) {
+        int na = a.getNumber().orElse(UNRESOLVED_ENTRY_NUMBER);
+        int nb = b.getNumber().orElse(UNRESOLVED_ENTRY_NUMBER);
+        int res = Integer.compare(na, nb);
         if (res == 0) {
-            res = CompareCitation.comparePageInfo(a.pageInfo, b.pageInfo);
+            res = CompareCitation.comparePageInfo(a.getPageInfo(), b.getPageInfo());
         }
         return res;
-    }
-
-    private enum CitationMarkerPurpose {
-        /** Creating citation marker for in-text citation. */
-        CITATION,
-        /** Creating citation marker for the bibliography. */
-        BIBLIOGRAPHY
-    }
-
-    /**
-     * See {@see getNumCitationMarkerCommon} for details.
-     */
-    public static OOText getNumCitationMarker2(OOBibStyle style,
-                                              List<Integer> numbers,
-                                              int minGroupingCount,
-                                              List<Optional<OOText>> pageInfos) {
-        return getNumCitationMarkerCommon(style,
-                                          numbers,
-                                          minGroupingCount,
-                                          CitationMarkerPurpose.CITATION,
-                                          pageInfos);
     }
 
     /**
@@ -77,11 +70,26 @@ class OOBibStyleGetNumCitationMarker {
      *       "${number}" stands for the formatted number.
      */
     public static OOText getNumCitationMarkerForBibliography(OOBibStyle style, int number) {
-        return getNumCitationMarkerCommon(style,
-                                          Collections.singletonList(number),
-                                          0,
-                                          CitationMarkerPurpose.BIBLIOGRAPHY,
-                                          null);
+        return (getNumCitationMarkerForBibliography(
+                    style,
+                    new NumberWithPageInfo(number, Optional.empty())));
+    }
+
+    public static OOText getNumCitationMarkerForBibliography(OOBibStyle style,
+                                                             CitationMarkerNumericEntry entry) {
+        // prefer BRACKET_BEFORE_IN_LIST and BRACKET_AFTER_IN_LIST
+        String bracketBefore = style.getBracketBeforeInListWithFallBack();
+        String bracketAfter = style.getBracketAfterInListWithFallBack();
+        StringBuilder sb = new StringBuilder();
+        sb.append(style.getCitationGroupMarkupBefore());
+        sb.append(bracketBefore);
+        final Optional<Integer> current = entry.getNumber();
+        sb.append(current.isPresent()
+                  ? String.valueOf(current.get())
+                  : OOBibStyle.UNDEFINED_CITATION_MARKER);
+        sb.append(bracketAfter);
+        sb.append(style.getCitationGroupMarkupAfter());
+        return OOText.fromString(sb.toString());
     }
 
     /*
@@ -111,7 +119,7 @@ class OOBibStyleGetNumCitationMarker {
      *       On the other hand, its assumptions strongly tie it to
      *       the loop below that collects the block.
      */
-    private static void emitBlock(List<NumberWithPageInfo> block,
+    private static void emitBlock(List<CitationMarkerNumericEntry> block,
                                   OOBibStyle style,
                                   int minGroupingCount,
                                   StringBuilder sb) {
@@ -123,12 +131,12 @@ class OOBibStyleGetNumCitationMarker {
 
         if (blockSize == 1) {
             // Add single entry:
-            final int num = block.get(0).num;
-            sb.append(num == UNRESOLVED_ENTRY_NUMBER
+            final Optional<Integer> num = block.get(0).getNumber();
+            sb.append(num.isEmpty()
                       ? OOBibStyle.UNDEFINED_CITATION_MARKER
                       : String.valueOf(num));
             // Emit pageInfo
-            Optional<OOText> pageInfo = block.get(0).pageInfo;
+            Optional<OOText> pageInfo = block.get(0).getPageInfo();
             if (pageInfo.isPresent()) {
                 sb.append(style.getPageInfoSeparator());
                 sb.append(OOText.toString(pageInfo.get()));
@@ -142,17 +150,17 @@ class OOBibStyleGetNumCitationMarker {
              * Check assumptions
              */
 
-            if (block.stream().anyMatch(x -> x.pageInfo.isPresent())) {
+            if (block.stream().anyMatch(x -> x.getPageInfo().isPresent())) {
                 throw new RuntimeException("Found pageInfo in a block with more than one elements");
             }
 
-            if (block.stream().anyMatch(x -> x.num == UNRESOLVED_ENTRY_NUMBER)) {
+            if (block.stream().anyMatch(x -> x.getNumber().isEmpty())) {
                 throw new RuntimeException("Found UNRESOLVED_ENTRY_NUMBER"
                                            + " in a block with more than one elements");
             }
 
             for (int j = 1; j < blockSize; j++) {
-                if ((block.get(j).num - block.get(j - 1).num) != 1) {
+                if ((block.get(j).getNumber().get() - block.get(j - 1).getNumber().get()) != 1) {
                     throw new RuntimeException("Numbers are not consecutive");
                 }
             }
@@ -162,8 +170,8 @@ class OOBibStyleGetNumCitationMarker {
              */
 
             if (blockSize >= minGroupingCount) {
-                int first = block.get(0).num;
-                int last = block.get(blockSize - 1).num;
+                int first = block.get(0).getNumber().get();
+                int last = block.get(blockSize - 1).getNumber().get();
                 if (last != (first + blockSize - 1)) {
                     throw new RuntimeException("blockSize and length of num range differ");
                 }
@@ -179,7 +187,7 @@ class OOBibStyleGetNumCitationMarker {
                     if (j > 0) {
                         sb.append(style.getCitationSeparator());
                     }
-                    sb.append(block.get(j).num);
+                    sb.append(block.get(j).getNumber().get());
                 }
             }
             return;
@@ -189,15 +197,9 @@ class OOBibStyleGetNumCitationMarker {
     /**
      * Format a number-based citation marker for the given number or numbers.
      *
-     * This is the common implementation behind
-     * getNumCitationMarker2 and
-     * getNumCitationMarkerForBibliography. The latter could be easily
-     * separated unless there is (or going to be) a need for handling
-     * multiple numbers or page info by getNumCitationMarkerForBibliography.
-     *
      * @param numbers The citation numbers.
      *
-     *               A zero in the list means: could not look this up
+     *               A zero (UNRESOLVED_ENTRY_NUMBER) in the list means: could not look this up
      *               in the databases. Positive integers are the valid numbers.
      *
      *               Duplicate citation numbers are allowed:
@@ -209,95 +211,46 @@ class OOBibStyleGetNumCitationMarker {
      *                    distinct pageInfo.
      *
      *                    For pageInfo Optional.empty and "" (after
-     *                    pageInfo.get(),trim()) are considered equal (and missing).
+     *                    pageInfo.get().trim()) are considered equal (and missing).
      *
      * @param minGroupingCount Zero and negative means never group
      *
-     * @param purpose BIBLIOGRAPHY (was: inList==True) when creating for a bibliography entry,
-     *                CITATION (was: inList=false) when creating in-text citation.
-     *
-     *               If BIBLIOGRAPHY: Prefer BRACKET_BEFORE_IN_LIST over BRACKET_BEFORE,
-     *                                   and BRACKET_AFTER_IN_LIST over BRACKET_AFTER.
-     *                                Ignore pageInfos.
-     *
-     * @param pageInfosIn  Null for "none", or a list with an optional
+     * @param pageInfos  Null for "none", or a list with an optional
      *        pageInfo for each citation. Any or all of these can be Optional.empty
      *
      * @return The text for the citation.
      *
      */
+    public static OOText getNumCitationMarker2(OOBibStyle style,
+                                              List<Integer> numbers,
+                                              int minGroupingCount,
+                                              List<Optional<OOText>> pageInfos) {
+        final int nCitations = numbers.size();
+        List<Optional<OOText>> pageInfosNormalized =
+            OOBibStyle.normalizePageInfos(pageInfos, numbers.size());
+
+        List<CitationMarkerNumericEntry> entries =
+            OOListUtil.zip(numbers, pageInfosNormalized, NumberWithPageInfo::new);
+
+        return getNumCitationMarkerCommon(style,
+                                          entries,
+                                          minGroupingCount);
+    }
+
     private static OOText
     getNumCitationMarkerCommon(OOBibStyle style,
-                               List<Integer> numbers,
-                               int minGroupingCount,
-                               CitationMarkerPurpose purpose,
-                               List<Optional<OOText>> pageInfosIn) {
+                               List<CitationMarkerNumericEntry> entries,
+                               int minGroupingCount) {
 
         final boolean joinIsDisabled = (minGroupingCount <= 0);
-        final int nCitations = numbers.size();
-
-        /*
-         * strictPurpose: if true, require (nCitations == 1) when (purpose == BIBLIOGRAPHY),
-         *                otherwise allow multiple citation numbers and process the BIBLIOGRAPHY case
-         *                as CITATION with no pageInfo.
-         */
-        final boolean strictPurpose = true;
+        final int nCitations = entries.size();
 
         String bracketBefore = style.getBracketBefore();
         String bracketAfter = style.getBracketAfter();
 
-        /*
-         * purpose == BIBLIOGRAPHY means: we are formatting for the
-         *                       bibliography, (not for in-text citation).
-         */
-        if (purpose == CitationMarkerPurpose.BIBLIOGRAPHY) {
-            // prefer BRACKET_BEFORE_IN_LIST and BRACKET_AFTER_IN_LIST
-            bracketBefore = style.getBracketBeforeInListWithFallBack();
-            bracketAfter = style.getBracketAfterInListWithFallBack();
-
-            if (strictPurpose) {
-                // If (purpose==BIBLIOGRAPHY), then
-                // we expect exactly one number here, and can handle quickly
-                if (nCitations != 1) {
-                    throw new RuntimeException("getNumCitationMarker2:"
-                                               + "nCitations != 1 for purpose==BIBLIOGRAPHY."
-                                               + String.format(" nCitations = %d", nCitations));
-                }
-                //
-                StringBuilder sb = new StringBuilder();
-                sb.append(style.getCitationGroupMarkupBefore());
-                sb.append(bracketBefore);
-                final int current = numbers.get(0);
-                if (current < 0) {
-                    throw new RuntimeException("getNumCitationMarker2: found negative value");
-                }
-                sb.append(current != UNRESOLVED_ENTRY_NUMBER
-                          ? String.valueOf(current)
-                          : OOBibStyle.UNDEFINED_CITATION_MARKER);
-                sb.append(bracketAfter);
-                sb.append(style.getCitationGroupMarkupAfter());
-                return OOText.fromString(sb.toString());
-            }
-        }
-
-        /*
-         * From here:
-         *  - formatting for in-text (not for bibliography)
-         *  - need to care about pageInfos
-         *
-         *  - In case {@code strictPurpose} above is set to false and allows us to
-         *    get here, and {@code purpose==BIBLIOGRAPHY}, then we just fill
-         *    pageInfos with null values.
-         */
-        List<Optional<OOText>> pageInfos =
-            OOBibStyle.normalizePageInfos((purpose == CitationMarkerPurpose.BIBLIOGRAPHY
-                                           ? null
-                                           : pageInfosIn),
-                                          numbers.size());
-
-        // Sort the numbers, together with the corresponding pageInfo values
-        List<NumberWithPageInfo> sorted = OOListUtil.zip(numbers, pageInfos, NumberWithPageInfo::new);
-        sorted.sort(OOBibStyleGetNumCitationMarker::compareNumberWithPageInfo);
+        // Sort a copy of entries
+        List<CitationMarkerNumericEntry> sorted = OOListUtil.map(entries, e -> e);
+        sorted.sort(OOBibStyleGetNumCitationMarker::compareCitationMarkerNumericEntry);
 
         // "["
         StringBuilder sb = new StringBuilder(bracketBefore);
@@ -315,30 +268,29 @@ class OOBibStyleGetNumCitationMarker {
          */
 
         boolean blocksEmitted = false;
-        List<NumberWithPageInfo> currentBlock = new ArrayList<>();
-        List<NumberWithPageInfo> nextBlock = new ArrayList<>();
+        List<CitationMarkerNumericEntry> currentBlock = new ArrayList<>();
+        List<CitationMarkerNumericEntry> nextBlock = new ArrayList<>();
 
         for (int i = 0; i < nCitations; i++) {
 
-            final NumberWithPageInfo current = sorted.get(i);
-            if (current.num < 0) {
+            final CitationMarkerNumericEntry current = sorted.get(i);
+            if (current.getNumber().isPresent() && current.getNumber().get() < 0) {
                 throw new RuntimeException("getNumCitationMarker2: found negative value");
             }
 
             if (currentBlock.size() == 0) {
                 currentBlock.add(current);
             } else {
-                NumberWithPageInfo prev = currentBlock.get(currentBlock.size() - 1);
-                if ((UNRESOLVED_ENTRY_NUMBER == current.num)
-                     || (UNRESOLVED_ENTRY_NUMBER == prev.num)) {
+                CitationMarkerNumericEntry prev = currentBlock.get(currentBlock.size() - 1);
+                if (current.getNumber().isEmpty() || prev.getNumber().isEmpty()) {
                     nextBlock.add(current); // do not join if not found
                 } else if (joinIsDisabled) {
                     nextBlock.add(current); // join disabled
-                } else if (compareNumberWithPageInfo(current, prev) == 0) {
+                } else if (compareCitationMarkerNumericEntry(current, prev) == 0) {
                     // Same as prev, just forget it.
-                } else if ((current.num == (prev.num + 1))
-                           && (prev.pageInfo.isEmpty())
-                           && (current.pageInfo.isEmpty())) {
+                } else if ((current.getNumber().get() == (prev.getNumber().get() + 1))
+                           && (prev.getPageInfo().isEmpty())
+                           && (current.getPageInfo().isEmpty())) {
                     // Just two consecutive numbers without pageInfo: join
                     currentBlock.add(current);
                 } else {
