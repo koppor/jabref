@@ -6,11 +6,9 @@ import java.util.Optional;
 
 import org.jabref.model.oostyle.CitationMarkerNumericBibEntry;
 import org.jabref.model.oostyle.CitationMarkerNumericEntry;
-import org.jabref.model.oostyle.CitationMarkerNumericEntryImpl;
 import org.jabref.model.oostyle.CompareCitation;
 import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
-import org.jabref.model.openoffice.Tuple3;
 
 class OOBibStyleGetNumCitationMarker {
 
@@ -169,9 +167,9 @@ class OOBibStyleGetNumCitationMarker {
     /**
      * Format a number-based citation marker for the given number or numbers.
      *
-     * @param numbers The citation numbers.
+     * @param entries Provide the citation numbers.
      *
-     *               A zero (UNRESOLVED_ENTRY_NUMBER) in the list means: could not look this up
+     *               An Optional.empty() number means: could not look this up
      *               in the databases. Positive integers are the valid numbers.
      *
      *               Duplicate citation numbers are allowed:
@@ -182,36 +180,14 @@ class OOBibStyleGetNumCitationMarker {
      *                 - If their pageInfos differ, the number is emitted with each
      *                    distinct pageInfo.
      *
-     *                    For pageInfo Optional.empty and "" (after
-     *                    pageInfo.get().trim()) are considered equal (and missing).
+     *                    pageInfos are expected to be normalized
      *
-     * @param minGroupingCount Zero and negative means never group
-     *
-     * @param pageInfos  Null for "none", or a list with an optional
-     *        pageInfo for each citation. Any or all of these can be Optional.empty
+     * @param minGroupingCount Zero and negative means never group.
+     *                    Only used by tests to override the value in style.
      *
      * @return The text for the citation.
      *
      */
-    public static OOText getNumCitationMarker2(OOBibStyle style,
-                                               List<String> citationKeys,
-                                               List<Integer> numbers,
-                                               int minGroupingCount,
-                                               List<Optional<OOText>> pageInfos) {
-        final int nCitations = numbers.size();
-
-        List<Optional<OOText>> pageInfosNormalized =
-            OOBibStyle.normalizePageInfos(pageInfos, numbers.size());
-
-        List<Tuple3<String, Integer, Optional<OOText>>> xs =
-            OOListUtil.zip3(citationKeys, numbers, pageInfosNormalized);
-
-        List<CitationMarkerNumericEntry> entries =
-            OOListUtil.map(xs, CitationMarkerNumericEntryImpl::from);
-
-        return getNumCitationMarker2(style, entries, minGroupingCount);
-    }
-
     public static OOText getNumCitationMarker2(OOBibStyle style,
                                                List<CitationMarkerNumericEntry> entries,
                                                int minGroupingCount) {

@@ -452,28 +452,14 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
                                                                     minGroupingCount);
     }
 
+    /**
+     * For some tests we need to override minGroupingCount.
+     */
     public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries,
                                         int minGroupingCount) {
         return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
                                                                     entries,
                                                                     minGroupingCount);
-    }
-
-    /**
-     * Format a number-based citation marker for the given number.
-     *
-     * @param number The citation numbers.
-     * @return The text for the citation.
-     */
-    public OOText getNumCitationMarker2(List<String> citationKeys,
-                                        List<Integer> number,
-                                        int minGroupingCount,
-                                        List<Optional<OOText>> pageInfos) {
-        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
-                                                                    citationKeys,
-                                                                    number,
-                                                                    minGroupingCount,
-                                                                    pageInfos);
     }
 
     /* moved to OOBibStyleGetCitationMarker
