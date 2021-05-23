@@ -33,6 +33,7 @@ import org.jabref.model.entry.types.EntryTypeFactory;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitationMarkerNormEntry;
+import org.jabref.model.oostyle.CitationMarkerNumericEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
@@ -436,6 +437,25 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         } else {
             return l;
         }
+    }
+
+    /**
+     * Format a number-based citation marker for the given entries.
+     *
+     * @return The text for the citation.
+     */
+    public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries) {
+        final int minGroupingCount = this.getMinimumGroupingCount();
+        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
+                                                                    entries,
+                                                                    minGroupingCount);
+    }
+
+    public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries,
+                                        int minGroupingCount) {
+        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
+                                                                    entries,
+                                                                    minGroupingCount);
     }
 
     /**

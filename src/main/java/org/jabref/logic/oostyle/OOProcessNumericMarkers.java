@@ -3,9 +3,9 @@ package org.jabref.logic.oostyle;
 import java.util.List;
 import java.util.Optional;
 
-import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroups;
+import org.jabref.model.oostyle.CitationMarkerNumericEntry;
 import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
 
@@ -33,14 +33,9 @@ class OOProcessNumericMarkers {
             cgs.createNumberedBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
         }
 
-        final int minGroupingCount = style.getMinimumGroupingCount();
-
         for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
-            List<Citation> cits = cg.getCitationsInLocalOrder();
-            OOText citMarker =
-                style.getNumCitationMarker2(OOListUtil.map(cits, Citation::getNumberOrThrow),
-                                            minGroupingCount,
-                                            OOListUtil.map(cits, Citation::getPageInfo));
+            List<CitationMarkerNumericEntry> cits = OOListUtil.map(cg.getCitationsInLocalOrder(), e -> e);
+            OOText citMarker = style.getNumCitationMarker2(cits);
             cg.setCitationMarker(Optional.of(citMarker));
         }
     }

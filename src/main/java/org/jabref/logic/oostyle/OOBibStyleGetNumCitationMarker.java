@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jabref.model.oostyle.CitationMarkerNumericEntry;
+import org.jabref.model.oostyle.CitationMarkerNumericEntryImpl;
 import org.jabref.model.oostyle.CompareCitation;
 import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
@@ -15,32 +16,6 @@ class OOBibStyleGetNumCitationMarker {
      * The number encoding "this entry is unresolved"
      */
     public final static int UNRESOLVED_ENTRY_NUMBER = 0;
-
-    /*
-     * Minimal implementation for CitationMarkerNumericEntry
-     */
-    private static class NumberWithPageInfo implements CitationMarkerNumericEntry {
-
-        private Optional<Integer> num;
-        private Optional<OOText> pageInfo;
-
-        NumberWithPageInfo(int num, Optional<OOText> pageInfo) {
-            this.num = (num == UNRESOLVED_ENTRY_NUMBER
-                        ? Optional.empty()
-                        : Optional.of(num));
-            this.pageInfo = pageInfo;
-        }
-
-        @Override
-        public Optional<Integer> getNumber() {
-            return num;
-        }
-
-        @Override
-        public Optional<OOText> getPageInfo() {
-            return pageInfo;
-        }
-    }
 
     /**
      * Defines sort order for CitationMarkerNumericEntry.
@@ -72,7 +47,7 @@ class OOBibStyleGetNumCitationMarker {
     public static OOText getNumCitationMarkerForBibliography(OOBibStyle style, int number) {
         return (getNumCitationMarkerForBibliography(
                     style,
-                    new NumberWithPageInfo(number, Optional.empty())));
+                    new CitationMarkerNumericEntryImpl(number, Optional.empty())));
     }
 
     public static OOText getNumCitationMarkerForBibliography(OOBibStyle style,
@@ -96,7 +71,7 @@ class OOBibStyleGetNumCitationMarker {
      * emitBlock
      *
      * Given a block containing 1 or (two or more)
-     * NumberWithPageInfo entries that are either singletons or
+     * CitationMarkerNumericEntryImpl entries that are either singletons or
      * joinable into an "i-j" form, append to {@code sb} the
      * formatted text.
      *
@@ -230,17 +205,14 @@ class OOBibStyleGetNumCitationMarker {
             OOBibStyle.normalizePageInfos(pageInfos, numbers.size());
 
         List<CitationMarkerNumericEntry> entries =
-            OOListUtil.zip(numbers, pageInfosNormalized, NumberWithPageInfo::new);
+            OOListUtil.zip(numbers, pageInfosNormalized, CitationMarkerNumericEntryImpl::new);
 
-        return getNumCitationMarkerCommon(style,
-                                          entries,
-                                          minGroupingCount);
+        return getNumCitationMarker2(style, entries, minGroupingCount);
     }
 
-    private static OOText
-    getNumCitationMarkerCommon(OOBibStyle style,
-                               List<CitationMarkerNumericEntry> entries,
-                               int minGroupingCount) {
+    public static OOText getNumCitationMarker2(OOBibStyle style,
+                                               List<CitationMarkerNumericEntry> entries,
+                                               int minGroupingCount) {
 
         final boolean joinIsDisabled = (minGroupingCount <= 0);
         final int nCitations = entries.size();
