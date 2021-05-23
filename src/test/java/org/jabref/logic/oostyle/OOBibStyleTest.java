@@ -28,8 +28,12 @@ import org.jabref.model.entry.types.UnknownEntryType;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationLookupResult;
 import org.jabref.model.oostyle.CitationMarkerEntry;
+import org.jabref.model.oostyle.CitationMarkerNumericBibEntry;
+import org.jabref.model.oostyle.CitationMarkerNumericEntry;
+import org.jabref.model.oostyle.CitationMarkerNumericEntryImpl;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOText;
+import org.jabref.model.openoffice.Tuple3;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,21 +94,39 @@ class OOBibStyleTest {
         assertTrue(style.isSortByPosition());
     }
 
-    List<CitationMarkerEntry> mkNum(OOBibStyle style,
-                                    int minGroupingCount,
-                                    Tuple3<String,Integer,String>... s) {
-        List<CitationMarkerEntry> input = (Stream.of(s)
-                                           .map(CitationMarkerEntryImpl::fromRaw)
-                                           .collect(Collectors.toList()));
-        return style.getNumCitationMarker2(input, minGroupingCount).asString());
+    static String mkNum(OOBibStyle style,
+                        int minGroupingCount,
+                        Tuple3<String,Integer,String>... s) {
+        List<CitationMarkerNumericEntry> input = (Stream.of(s)
+                                                  .map(CitationMarkerNumericEntryImpl::fromRaw)
+                                                  .collect(Collectors.toList()));
+        OOText res = style.getNumCitationMarker2(input, minGroupingCount);
+        return OOText.toString(res);
     }
 
-//    List<Optional<OOText>> asPageInfos(String... s) {
-//        return (Stream.of(s)
-//                .map(OOText::fromString)
-//                .map(Optional::ofNullable)
-//                .collect(Collectors.toList()));
-//    }
+    static Tuple3<String,Integer,String> tup3(String a,Integer b, String c) {
+        return new Tuple3(a,b,c);
+    }
+
+    static class CitationMarkerNumericBibEntryImpl implements CitationMarkerNumericBibEntry {
+        String key;
+        Optional<Integer> number;
+
+        public CitationMarkerNumericBibEntryImpl(String key, Optional<Integer> number) {
+            this.key = key;
+            this.number = number;
+        }
+
+        @Override
+        public String getCitationKey() {
+            return key;
+        }
+
+        @Override
+        public Optional<Integer> getNumber() {
+            return number;
+        }
+    }
 
     @Test
     void testGetNumCitationMarker() throws IOException {
@@ -120,83 +142,61 @@ class OOBibStyleTest {
         /* The default numerical style uses "[1]", no space after "]" for in-text,
          * but "[1] " with space after "]" for the bibliography.
          */
-        assertEquals("[1]",  mkNum(style, -1, Tuple3("xx", 1, null)).asString());
-        // style.getNumCitationMarker2(Arrays.asList(1), -1, empty).asString());
+        assertEquals("[1]",  mkNum(style, -1, tup3("xx", 1, null)));
 
         // Identical numeric entries are joined.
         assertEquals("[1; 2]", mkNum(style, 3,
-                                     Tuple3("x1",1,null),
-                                     Tuple3("x2",2,null),
-                                     Tuple3("x1",2,null),
-                                     Tuple3("x2",1,null)));
-        // style.getNumCitationMarker2(Arrays.asList(1,2,1,2), 3, empty).asString());
-
+                                     tup3("x1",1,null),
+                                     tup3("x2",2,null),
+                                     tup3("x1",2,null),
+                                     tup3("x2",1,null)));
 
         // ... unless minGroupingCount <= 0
         assertEquals("[1; 1; 2; 2]", mkNum(style, 0,
-                                     Tuple3("x1",1,null),
-                                     Tuple3("x2",2,null),
-                                     Tuple3("x1",2,null),
-                                     Tuple3("x2",1,null)));
-        // style.getNumCitationMarker2(Arrays.asList(1,2,1,2),0,empty).asString());
+                                     tup3("x1",1,null),
+                                     tup3("x2",2,null),
+                                     tup3("x1",2,null),
+                                     tup3("x2",1,null)));
 
         // ... or have different pageInfos
         assertEquals("[1; p1a; 1; p1b; 2; p2; 3]", mkNum(style, 1,
-                                                         Tuple3("x1", 1, "p1a"),
-                                                         Tuple3("x1", 1, "p1b"),
-                                                         Tuple3("x2", 2, "p2"),
-                                                         Tuple3("x2", 2, "p2"),
-                                                         Tuple3("x3", 3, null),
-                                                         Tuple3("x3", 4, null)));
-        // style.getNumCitationMarker2(Arrays.asList(1,1,2,2,3,3),
-        // 1,
-        // asPageInfos("p1a","p1b","p2","p2",
-        // null, null)).asString());
+                                                         tup3("x1", 1, "p1a"),
+                                                         tup3("x1", 1, "p1b"),
+                                                         tup3("x2", 2, "p2"),
+                                                         tup3("x2", 2, "p2"),
+                                                         tup3("x3", 3, null),
+                                                         tup3("x3", 3, null)));
 
         // Consecutive numbers can become a range ...
-        assertEquals("[1-3]", mkNum(style, 1
-                                    Tuple3("x1", 1, null),
-                                    Tuple3("x2", 2, null),
-                                    Tuple3("x3", 3, null)));
-        // style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
-        //                            1, /* minGroupingCount */
-        //                            empty).asString());
+        assertEquals("[1-3]", mkNum(style, 1,
+                                    tup3("x1", 1, null),
+                                    tup3("x2", 2, null),
+                                    tup3("x3", 3, null)));
 
         // ... unless minGroupingCount is too high
         assertEquals("[1; 2; 3]", mkNum(style, 4,
-                                        Tuple3("x1", 1, null),
-                                        Tuple3("x2", 2, null),
-                                        Tuple3("x3", 3, null)));
-        // style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
-        // 4, /* minGroupingCount */
-        // empty).asString());
+                                        tup3("x1", 1, null),
+                                        tup3("x2", 2, null),
+                                        tup3("x3", 3, null)));
 
         // ... or if minGroupingCount <= 0
         assertEquals("[1; 2; 3]", mkNum(style, 0,
-                                        Tuple3("x1", 1, null),
-                                        Tuple3("x2", 2, null),
-                                        Tuple3("x3", 3, null)));
-        // style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
-        // 0, /* minGroupingCount */
-        // empty).asString());
+                                        tup3("x1", 1, null),
+                                        tup3("x2", 2, null),
+                                        tup3("x3", 3, null)));
 
         // ... a pageInfo needs to be emitted
         assertEquals("[1; p1; 2-3]", mkNum(style, 1,
-                                           Tuple3("x1", 1, "p1"),
-                                           Tuple3("x2", 2, null),
-                                           Tuple3("x3", 3, null)));
-
-        // style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
-        // 1, /* minGroupingCount */
-        // asPageInfos("p1",null,null))
-        // .asString());
+                                           tup3("x1", 1, "p1"),
+                                           tup3("x2", 2, null),
+                                           tup3("x3", 3, null)));
 
         // null and "" pageInfos are taken as equal.
         // Due to trimming, "   " is the same as well.
         assertEquals("[1]", mkNum(style, 1,
-                                  Tuple3("x1", 1, ""),
-                                  Tuple3("x1", 1, null),
-                                  Tuple3("x1", 1, "  ")));
+                                  tup3("x1", 1, ""),
+                                  tup3("x1", 1, null),
+                                  tup3("x1", 1, "  ")));
         // style.getNumCitationMarker2(Arrays.asList(1, 1, 1),
         // 1, /* minGroupingCount */
         // asPageInfos("",null,"  "))
@@ -204,117 +204,80 @@ class OOBibStyleTest {
 
         // pageInfos are trimmed
         assertEquals("[1; p1]", mkNum(style, 1,
-                                      Tuple3("x1", 1, "p1"),
-                                      Tuple3("x1", 1, " p1"),
-                                      Tuple3("x1", 1, "p1 ")));
-        // style.getNumCitationMarker2(Arrays.asList(1, 1, 1),
-        // 1, /* minGroupingCount */
-        // asPageInfos("p1"," p1","p1 "))
-        // .asString());
+                                      tup3("x1", 1, "p1"),
+                                      tup3("x1", 1, " p1"),
+                                      tup3("x1", 1, "p1 ")));
 
         // The citation numbers come out sorted
         assertEquals("[3-5; 7; 10-12]", mkNum(style, 1,
-                                              Tuple3("x12", 12, null),
-                                              Tuple3("x7", 7, null),
-                                              Tuple3("x3", 3, null),
-                                              Tuple3("x4", 4, null),
-                                              Tuple3("x11", 11, null),
-                                              Tuple3("x10", 10, null),
-                                              Tuple3("x5", 5, null)));
-        // style.getNumCitationMarker2(Arrays.asList(12, 7, 3, 4, 11, 10, 5),
-        // 1,
-        // empty).asString());
+                                              tup3("x12", 12, null),
+                                              tup3("x7", 7, null),
+                                              tup3("x3", 3, null),
+                                              tup3("x4", 4, null),
+                                              tup3("x11", 11, null),
+                                              tup3("x10", 10, null),
+                                              tup3("x5", 5, null)));
 
         // pageInfos are sorted together with the numbers
         // (but they inhibit ranges where they are, even if they are identical,
         //  but not empty-or-null)
         assertEquals("[3; p3; 4; p4; 5; p5; 7; p7; 10; px; 11; px; 12; px]",
                      mkNum(style, 1,
-                           Tuple3("x12", 12, "px"),
-                           Tuple3("x7", 7, "p7"),
-                           Tuple3("x3", 3, "p3"),
-                           Tuple3("x4", 4, "p4"),
-                           Tuple3("x11", 11, "px"),
-                           Tuple3("x10", 10, "px"),
-                           Tuple3("x5", 5, "p5")));
-
-        // style.getNumCitationMarker2(Arrays.asList(12, 7, 3, 4, 11, 10, 5),
-        // 1,
-        // asPageInfos("px", "p7", "p3", "p4",
-        // "px", "px", "p5"))
-        // .asString());
-
+                           tup3("x12", 12, "px"),
+                           tup3("x7", 7, "p7"),
+                           tup3("x3", 3, "p3"),
+                           tup3("x4", 4, "p4"),
+                           tup3("x11", 11, "px"),
+                           tup3("x10", 10, "px"),
+                           tup3("x5", 5, "p5")));
 
         // pageInfo sorting (for the same number)
         assertEquals("[1; 1; a; 1; b]",
                      mkNum(style, 1,
-                           Tuple3("x1", 1, ""),
-                           Tuple3("x1", 1, "b"),
-                           Tuple3("x1", 1, "a")));
-        // style.getNumCitationMarker2(Arrays.asList(1, 1, 1),
-        // 1, /* minGroupingCount */
-        // asPageInfos("","b","a "))
-        // .asString());
+                           tup3("x1", 1, ""),
+                           tup3("x1", 1, "b"),
+                           tup3("x1", 1, "a")));
 
         // pageInfo sorting (for the same number) is not numeric.
         assertEquals("[1; p100; 1; p20; 1; p9]",
                      mkNum(style, 1,
-                           Tuple3("x1", 1, "p20"),
-                           Tuple3("x1", 1, "p9"),
-                           Tuple3("x1", 1, "p100")));
-        // style.getNumCitationMarker2(Arrays.asList(1, 1, 1),
-        // 1, /* minGroupingCount */
-        // asPageInfos("p20","p9","p100"))
-        // .asString());
+                           tup3("x1", 1, "p20"),
+                           tup3("x1", 1, "p9"),
+                           tup3("x1", 1, "p100")));
 
         assertEquals("[1-3]",
                      mkNum(style, 1,
-                           Tuple3("x1", 1, null),
-                           Tuple3("x2", 2, null),
-                           Tuple3("x3", 3, null)));
-        // style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
-        // 1, /* minGroupingCount */
-        // empty).asString());
+                           tup3("x1", 1, null),
+                           tup3("x2", 2, null),
+                           tup3("x3", 3, null)));
 
         assertEquals("[1; 2; 3]",
                      mkNum(style, 5,
-                           Tuple3("x1", 1, null),
-                           Tuple3("x2", 2, null),
-                           Tuple3("x3", 3, null)));
-        // style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
-        // 5,
-        // empty).asString());
+                           tup3("x1", 1, null),
+                           tup3("x2", 2, null),
+                           tup3("x3", 3, null)));
 
         assertEquals("[1; 2; 3]",
                      mkNum(style, -1,
-                           Tuple3("x1", 1, null),
-                           Tuple3("x2", 2, null),
-                           Tuple3("x3", 3, null)));
-        // style.getNumCitationMarker2(Arrays.asList(1, 2, 3),
-        // -1,
-        // empty).asString());
+                           tup3("x1", 1, null),
+                           tup3("x2", 2, null),
+                           tup3("x3", 3, null)));
 
         assertEquals("[1; 3; 12]",
                      mkNum(style, 1,
-                           Tuple3("x1", 1, null),
-                           Tuple3("x12", 12, null),
-                           Tuple3("x3", 3, null)));
-        // style.getNumCitationMarker2(Arrays.asList(1, 12, 3),
-        // 1,
-        // empty).asString());
+                           tup3("x1", 1, null),
+                           tup3("x12", 12, null),
+                           tup3("x3", 3, null)));
 
         assertEquals("[3-5; 7; 10-12]",
                      mkNum(style, 1,
-                           Tuple3("x12", 12, ""),
-                           Tuple3("x7", 7, ""),
-                           Tuple3("x3", 3, ""),
-                           Tuple3("x4", 4, ""),
-                           Tuple3("x11", 11, ""),
-                           Tuple3("x10", 10, ""),
-                           Tuple3("x5", 5, "")));
-        // style.getNumCitationMarker2(Arrays.asList(12, 7, 3, 4, 11, 10, 5),
-        // 1,
-        // empty).asString());
+                           tup3("x12", 12, ""),
+                           tup3("x7", 7, ""),
+                           tup3("x3", 3, ""),
+                           tup3("x4", 4, ""),
+                           tup3("x11", 11, ""),
+                           tup3("x10", 10, ""),
+                           tup3("x5", 5, "")));
 
         /*
          * BIBLIOGRAPHY : I think
@@ -324,9 +287,7 @@ class OOBibStyleTest {
          * Nor do we need pageInfo in the bibliography.
          */
         {
-            Citation x = new Citation("key");
-            x.setNumber(Optional.of(1));
-            // x.setPageInfo(Optional.empty());
+            CitationMarkerNumericBibEntry x = new CitationMarkerNumericBibEntryImpl("key", Optional.of(1));
             assertEquals("[1] ",
                          style.getNumCitationMarkerForBibliography(x).asString());
         }
@@ -343,61 +304,45 @@ class OOBibStyleTest {
         // unresolved citations look like [??key]
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "key" + "]",
                      mkNum(style, 1,
-                           Tuple3("key",0,null)));
-        // style.getNumCitationMarker2(Arrays.asList(0),
-        // 1,
-        // empty).asString());
+                           tup3("key",0,null)));
 
         // pageInfo is shown for unresolved citations
-        assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "; p1]",
+        assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "key" + "; p1]",
                      mkNum(style, 1,
-                           Tuple3("key",0,"p1")));
-        // style.getNumCitationMarker2(Arrays.asList(0),
-        // 1,
-        // asPageInfos("p1")).asString());
+                           tup3("key",0,"p1")));
 
         // unresolved citations sorted to the front
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "key" + "; 2-4]",
                      mkNum(style, 1,
-                           Tuple3("x4",4,""),
-                           Tuple3("x2",2,""),
-                           Tuple3("x3",3,""),
-                           Tuple3("key",0,"")));
-        // style.getNumCitationMarker2(Arrays.asList(4, 2, 3, 0),
-        // 1,
-        // empty).asString());
+                           tup3("x4",4,""),
+                           tup3("x2",2,""),
+                           tup3("x3",3,""),
+                           tup3("key",0,"")));
 
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "key" + "; 1-3]",
                      mkNum(style, 1,
-                           Tuple3("x1",1,""),
-                           Tuple3("x2",2,""),
-                           Tuple3("y3",3,""),
-                           Tuple3("key",0,"")));
-        // style.getNumCitationMarker2(Arrays.asList(1, 2, 3, 0),
-        // 1,
-        // empty).asString());
+                           tup3("x1",1,""),
+                           tup3("x2",2,""),
+                           tup3("y3",3,""),
+                           tup3("key",0,"")));
 
         // multiple unresolved citations are not collapsed
         assertEquals("["
                      + OOBibStyle.UNDEFINED_CITATION_MARKER + "x1" + "; "
-                     + OOBibStyle.UNDEFINED_CITATION_MARKER + "x1" + "; "
+                     + OOBibStyle.UNDEFINED_CITATION_MARKER + "x2" + "; "
                      + OOBibStyle.UNDEFINED_CITATION_MARKER + "x3" + "]",
                      mkNum(style, 1,
-                           Tuple3("x1",0,""),
-                           Tuple3("x2",0,""),
-                           Tuple3("x3",0,"")));
-        // style.getNumCitationMarker2(Arrays.asList(0, 0, 0),
-        // 1,
-        // empty).asString());
+                           tup3("x1",0,""),
+                           tup3("x2",0,""),
+                           tup3("x3",0,"")));
 
         /*
          * BIBLIOGRAPHY
          */
         {
-            Citation x = new Citation("key");
-            // x.setPageInfo(Optional.empty());
-            // x.setNumber(Optional.empty());
-            assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "] ",
+            CitationMarkerNumericBibEntry x =
+                new CitationMarkerNumericBibEntryImpl("key", Optional.empty());
+            assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "key" + "] ",
                          style.getNumCitationMarkerForBibliography(x).asString());
         }
 

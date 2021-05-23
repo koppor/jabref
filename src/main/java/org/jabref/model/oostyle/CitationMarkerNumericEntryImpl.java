@@ -23,7 +23,7 @@ public class CitationMarkerNumericEntryImpl implements CitationMarkerNumericEntr
         this.num = (num == UNRESOLVED_ENTRY_NUMBER
                     ? Optional.empty()
                     : Optional.of(num));
-        this.pageInfo = pageInfo;
+        this.pageInfo = Citation.normalizePageInfo(pageInfo);
     }
 
     @Override

@@ -106,7 +106,7 @@ class OOBibStyleGetNumCitationMarker {
             final Optional<Integer> num = entry.getNumber();
             sb.append(num.isEmpty()
                       ? (OOBibStyle.UNDEFINED_CITATION_MARKER + entry.getCitationKey())
-                      : String.valueOf(num));
+                      : String.valueOf(num.get()));
             // Emit pageInfo
             Optional<OOText> pageInfo = entry.getPageInfo();
             if (pageInfo.isPresent()) {
