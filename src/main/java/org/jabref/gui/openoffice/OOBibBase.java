@@ -514,6 +514,11 @@ class OOBibBase {
      * @param database      The database the entries belong to (all of them).
      *                      Used when creating the citation mark.
      *
+     *                      Consistency: for each entry in {@entries} looking it up in
+     *                      {@code syncOptions.get().databases} should yield {@code database}.
+     *                      Otherwise we may get a different entry
+     *                      with and without synchronization.
+     *
      * @param style         The bibliography style we are using.
      *
      * @param citationType Indicates whether it is an in-text
