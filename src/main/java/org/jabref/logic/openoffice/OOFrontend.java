@@ -251,12 +251,12 @@ public class OOFrontend {
      *                         carries on format of characters from
      *                         the original position.
      */
-    public CitationGroupID createCitationGroup(XTextDocument doc,
-                                               List<String> citationKeys,
-                                               List<Optional<OOText>> pageInfos,
-                                               InTextCitationType citationType,
-                                               XTextCursor position,
-                                               boolean insertSpaceAfter)
+    public CitationGroup createCitationGroup(XTextDocument doc,
+                                             List<String> citationKeys,
+                                             List<Optional<OOText>> pageInfos,
+                                             InTextCitationType citationType,
+                                             XTextCursor position,
+                                             boolean insertSpaceAfter)
         throws
         CreationException,
         NoDocumentException,
@@ -278,7 +278,7 @@ public class OOFrontend {
                                                        insertSpaceAfter);
 
         this.citationGroups.afterCreateCitationGroup(cg);
-        return cg.cgid;
+        return cg;
     }
 
     /**

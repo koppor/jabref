@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OOText;
@@ -154,22 +153,21 @@ public class UpdateCitationMarkers {
         if (pageInfos.size() != citationKeys.size()) {
             throw new RuntimeException("pageInfos.size != citationKeys.size");
         }
-        CitationGroupID cgid = fr.createCitationGroup(doc,
-                                                      citationKeys,
-                                                      pageInfos,
-                                                      citationType,
-                                                      position,
-                                                      insertSpaceAfter);
+        CitationGroup cg = fr.createCitationGroup(doc,
+                                                  citationKeys,
+                                                  pageInfos,
+                                                  citationType,
+                                                  position,
+                                                  insertSpaceAfter);
 
         final boolean withText = citationType.withText();
 
         if (withText) {
-            CitationGroup cg = fr.citationGroups.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
             XTextCursor c2 = fr.getFillCursorForCitationGroup(doc, cg);
 
             UpdateCitationMarkers.fillCitationMarkInCursor(doc, c2, citationText, withText, style);
 
-            fr.cleanFillCursorForCitationGroup(doc, cgid);
+            fr.cleanFillCursorForCitationGroup(doc, cg.cgid);
         }
         position.collapseToEnd();
     }
