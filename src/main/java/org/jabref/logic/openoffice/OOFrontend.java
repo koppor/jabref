@@ -324,13 +324,11 @@ public class OOFrontend {
         return backend.getMarkRange(cg, doc);
     }
 
-    public XTextCursor getFillCursorForCitationGroup(XTextDocument doc, CitationGroupID cgid)
+    public XTextCursor getFillCursorForCitationGroup(XTextDocument doc, CitationGroup cg)
         throws
         NoDocumentException,
         WrappedTargetException,
         CreationException {
-
-        CitationGroup cg = this.citationGroups.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
         return backend.getFillCursorForCitationGroup(cg, doc);
     }
 

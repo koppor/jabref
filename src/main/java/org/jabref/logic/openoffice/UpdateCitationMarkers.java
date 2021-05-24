@@ -73,7 +73,7 @@ public class UpdateCitationMarkers {
 
             if (withText && marker.isPresent()) {
 
-                XTextCursor cursor = fr.getFillCursorForCitationGroup(doc, cg.cgid);
+                XTextCursor cursor = fr.getFillCursorForCitationGroup(doc, cg);
 
                 fillCitationMarkInCursor(doc, cursor, marker.get(), withText, style);
 
@@ -164,7 +164,8 @@ public class UpdateCitationMarkers {
         final boolean withText = citationType.withText();
 
         if (withText) {
-            XTextCursor c2 = fr.getFillCursorForCitationGroup(doc, cgid);
+            CitationGroup cg = fr.citationGroups.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
+            XTextCursor c2 = fr.getFillCursorForCitationGroup(doc, cg);
 
             UpdateCitationMarkers.fillCitationMarkInCursor(doc, c2, citationText, withText, style);
 
