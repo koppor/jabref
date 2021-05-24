@@ -262,6 +262,10 @@ public class CitationGroups {
         this.bibliography = Optional.of(citedKeys);
     }
 
+    /*
+     * Query by CitationGroupID
+     */
+
     public Optional<CitationGroup> getCitationGroup(CitationGroupID cgid) {
         CitationGroup cg = citationGroupsUnordered.get(cgid);
         return Optional.ofNullable(cg);
@@ -279,22 +283,6 @@ public class CitationGroups {
         return cg;
     }
 
-    private Optional<InTextCitationType> getCitationType(CitationGroupID cgid) {
-        return getCitationGroup(cgid).map(cg -> cg.citationType);
-    }
-
-    public Optional<List<Citation>> getCitationsInStorageOrder(CitationGroupID cgid) {
-        return getCitationGroup(cgid).map(cg -> cg.citationsInStorageOrder);
-    }
-
-    public List<Citation> getCitationsInLocalOrder(CitationGroupID cgid) {
-        Optional<CitationGroup> cg = getCitationGroup(cgid);
-        if (cg.isEmpty()) {
-            throw new RuntimeException("getCitationsInLocalOrder: invalid cgid");
-        }
-        return cg.get().getCitationsInLocalOrder();
-    }
-
     /*
      * @return true if all citation groups have referenceMarkNameForLinking
      */
@@ -306,6 +294,10 @@ public class CitationGroups {
         }
         return true;
     }
+
+    /*
+     * Callbacks.
+     */
 
     public void afterCreateCitationGroup(CitationGroup cg) {
         this.citationGroupsUnordered.put(cg.cgid, cg);
