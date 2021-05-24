@@ -97,7 +97,8 @@ public class OOFrontend {
      * our {@code CitationGroup} values. Originally designed to be
      * passed to {@code visualSort}.
      *
-     * The elements of the returned list are actually of type {@code RangeSortEntry<CitationGroupID>}.
+     * The elements of the returned list are actually of type
+     * {@code RangeSortEntry<CitationGroup>}.
      *
      * The result is sorted within {@code XTextRange.getText()}
      * partitions of the citation groups according to their {@code XTextRange}
@@ -367,6 +368,42 @@ public class OOFrontend {
         return result;
     }
 
+    private List<RangeForOverlapCheck<CitationGroupID>> bibliographyRanges(XTextDocument doc)
+        throws
+        NoDocumentException,
+        WrappedTargetException {
+
+        List<RangeForOverlapCheck<CitationGroupID>> result = new ArrayList<>();
+
+        Optional<XTextRange> range = UpdateBibliography.getBibliographyRange(doc);
+        if (range.isPresent()) {
+            String description = "bibliography";
+            result.add(new RangeForOverlapCheck(range.get(),
+                                                new CitationGroupID("bibliography"),
+                                                RangeForOverlapCheck.BIBLIOGRAPHY_MARK_KIND,
+                                                description));
+        }
+        return result;
+    }
+
+    public List<RangeForOverlapCheck<CitationGroupID>> viewCursorRanges(XTextDocument doc)
+        throws
+        NoDocumentException,
+        WrappedTargetException {
+
+        List<RangeForOverlapCheck<CitationGroupID>> result = new ArrayList<>();
+
+        Optional<XTextRange> range = UnoCursor.getViewCursor(doc).map(e -> e);
+        if (range.isPresent()) {
+            String description = "cursor";
+            result.add(new RangeForOverlapCheck(range.get(),
+                                                new CitationGroupID("cursor"),
+                                                RangeForOverlapCheck.CURSOR_MARK_KIND,
+                                                description));
+        }
+        return result;
+    }
+
     /**
      * @return A range for each footnote mark where the footnote
      *         contains at least one citation group.
@@ -419,14 +456,19 @@ public class OOFrontend {
      * @param reportAtMost Limit number of overlaps reported (0 for no limit)
      *
      */
-    public VoidResult<JabRefException> checkRangeOverlaps(XTextDocument doc,
-                                                          boolean requireSeparation,
-                                                          int reportAtMost)
+    public VoidResult<JabRefException>
+    checkRangeOverlaps(XTextDocument doc,
+                       List<RangeForOverlapCheck<CitationGroupID>> userRanges,
+                       boolean requireSeparation,
+                       int reportAtMost)
         throws
         NoDocumentException,
         WrappedTargetException {
 
-        List<RangeForOverlapCheck<CitationGroupID>> ranges = citationRanges(doc);
+        List<RangeForOverlapCheck<CitationGroupID>> ranges = new ArrayList<>();
+        ranges.addAll(userRanges);
+        ranges.addAll(bibliographyRanges(doc));
+        ranges.addAll(citationRanges(doc));
         ranges.addAll(footnoteMarkRanges(doc));
 
         RangeKeyedMapList<RangeForOverlapCheck<CitationGroupID>> sorted = new RangeKeyedMapList<>();

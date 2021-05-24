@@ -16,7 +16,6 @@ import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
-import com.sun.star.text.XTextSection;
 
 /*
  * Update document: citation marks and bibliography
@@ -25,6 +24,14 @@ public class UpdateBibliography {
 
     private static final String BIB_SECTION_NAME = "JR_bib";
     private static final String BIB_SECTION_END_NAME = "JR_bib_end";
+
+    static Optional<XTextRange> getBibliographyRange(XTextDocument doc)
+        throws
+        NoDocumentException,
+        WrappedTargetException {
+        Optional<XTextRange> sectionRange = UnoTextSection.getAnchor(doc, BIB_SECTION_NAME);
+        return sectionRange;
+    }
 
     /**
      * Rebuilds the bibliography.
@@ -83,7 +90,8 @@ public class UpdateBibliography {
         NoDocumentException,
         WrappedTargetException {
 
-        Optional<XTextRange> sectionRange = UnoTextSection.getAnchor(doc, BIB_SECTION_NAME);
+        // Optional<XTextRange> sectionRange = UnoTextSection.getAnchor(doc, BIB_SECTION_NAME);
+        Optional<XTextRange> sectionRange = getBibliographyRange(doc);
         if (sectionRange.isEmpty()) {
             createBibTextSection2(doc);
             return;
@@ -113,10 +121,9 @@ public class UpdateBibliography {
         UnknownPropertyException,
         WrappedTargetException {
 
-        XTextSection section = (UnoTextSection.getByName(doc, BIB_SECTION_NAME)
-                                .orElseThrow(RuntimeException::new));
+        XTextRange sectionRange = getBibliographyRange(doc).orElseThrow(RuntimeException::new);
 
-        XTextCursor cursor = doc.getText().createTextCursorByRange(section.getAnchor());
+        XTextCursor cursor = doc.getText().createTextCursorByRange(sectionRange);
 
         // emit the title of the bibliography
         OOTextIntoOO.removeDirectFormatting(cursor);
@@ -128,7 +135,7 @@ public class UpdateBibliography {
         cursor.collapseToEnd();
 
         // remove the inital empty paragraph from the section.
-        XTextCursor initialParagraph = doc.getText().createTextCursorByRange(section.getAnchor());
+        XTextCursor initialParagraph = doc.getText().createTextCursorByRange(sectionRange);
         initialParagraph.collapseToStart();
         initialParagraph.goRight((short) 1, true);
         initialParagraph.setString("");

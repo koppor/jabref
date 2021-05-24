@@ -29,10 +29,12 @@ import org.jabref.logic.openoffice.UnoUndo;
 import org.jabref.logic.openoffice.Update;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
+import org.jabref.model.openoffice.RangeForOverlapCheck;
 import org.jabref.model.openoffice.Result;
 import org.jabref.model.openoffice.VoidResult;
 
@@ -237,6 +239,65 @@ class OOBibBase {
         return result.mapError(e -> OOError.from(e).setTitle(title));
     }
 
+    private static VoidResult<OOError>
+    checkRangeOverlaps(XTextDocument doc, OOFrontend fr) {
+        final String title = "checkRangeOverlaps";
+        boolean requireSeparation = false;
+        int maxReportedOverlaps = 10;
+        try {
+            return (fr.checkRangeOverlaps(doc,
+                                          new ArrayList<>(),
+                                          requireSeparation,
+                                          maxReportedOverlaps)
+                    .mapError(OOError::fromJabRefException));
+        } catch (NoDocumentException ex) {
+            return VoidResult.error(OOError.from(ex).setTitle(title));
+        } catch (WrappedTargetException ex) {
+            return VoidResult.error(OOError.fromMisc(ex).setTitle(title));
+        }
+    }
+
+    private static VoidResult<OOError>
+    checkRangeOverlapsWithCursor(XTextDocument doc, OOFrontend fr) {
+        final String title = "checkRangeOverlapsWithCursor";
+
+        VoidResult<OOError> precheck = checkRangeOverlaps(doc, fr);
+        if (precheck.isError()) {
+            return precheck;
+        }
+
+        List<RangeForOverlapCheck<CitationGroupID>> userRanges;
+        try {
+            userRanges = fr.viewCursorRanges(doc);
+        } catch (NoDocumentException ex) {
+            return VoidResult.error(OOError.from(ex).setTitle(title));
+        } catch (WrappedTargetException ex) {
+            return VoidResult.error(OOError.fromMisc(ex).setTitle(title));
+        }
+
+        boolean requireSeparation = false;
+        int maxReportedOverlaps = 10;
+        VoidResult<JabRefException> res;
+        try {
+            res = fr.checkRangeOverlaps(doc,
+                                        userRanges,
+                                        requireSeparation,
+                                        maxReportedOverlaps);
+        } catch (NoDocumentException ex) {
+            return VoidResult.error(OOError.from(ex).setTitle(title));
+        } catch (WrappedTargetException ex) {
+            return VoidResult.error(OOError.fromMisc(ex).setTitle(title));
+        }
+
+        if (res.isError()) {
+            final String xtitle = Localization.lang("The cursor is in protected area.");
+            return VoidResult.error(new OOError(xtitle,
+                                                xtitle + "\n"
+                                                + res.getError().getLocalizedMessage() + "\n"));
+        }
+        return res.mapError(OOError::fromJabRefException);
+    }
+
     /*
      *
      * Tests for preconditions.
@@ -280,6 +341,18 @@ class OOBibBase {
             return VoidResult.error(OOError.noValidStyleSelected());
         } else {
             return VoidResult.ok();
+        }
+    }
+
+    Result<OOFrontend, OOError> getFrontend(XTextDocument doc) {
+        final String title = "getFrontend";
+        try {
+            return Result.ok(new OOFrontend(doc));
+        } catch (NoDocumentException ex) {
+            return Result.error(OOError.from(ex).setTitle(title));
+        } catch (WrappedTargetException
+                 | RuntimeException ex) {
+            return Result.error(OOError.fromMisc(ex).setTitle(title));
         }
     }
 
@@ -568,12 +641,24 @@ class OOBibBase {
                        selectedBibEntryIsRequired(entries, OOError::noEntriesSelectedForCitation))) {
             return;
         }
-
         XTextDocument doc = odoc.get();
+
+        Result<OOFrontend, OOError> ofr = getFrontend(doc);
+        if (testDialog(title, ofr.asVoidResult())) {
+            return;
+        }
+        OOFrontend fr = ofr.get();
+
         Result<XTextCursor, OOError> cursor = getUserCursorForTextInsertion(doc, title);
+        if (testDialog(title, cursor.asVoidResult())) {
+            return;
+        }
+
+        if (testDialog(title, checkRangeOverlapsWithCursor(doc, fr))) {
+            return;
+        }
 
         if (testDialog(title,
-                       cursor.asVoidResult(),
                        checkStylesExistInTheDocument(style, doc),
                        checkIfOpenOfficeIsRecordingChanges(doc))) {
             return;
@@ -603,8 +688,6 @@ class OOBibBase {
 
         try {
             UnoUndo.enterUndoContext(doc, "Insert citation");
-
-            OOFrontend fr = new OOFrontend(doc);
 
             EditInsert.insertCitationGroup(doc,
                                            fr,
@@ -876,14 +959,7 @@ class OOBibBase {
             }
 
             OOFrontend fr = new OOFrontend(doc);
-            // Check Range overlaps
-            boolean requireSeparation = false;
-            int maxReportedOverlaps = 10;
-            VoidResult<OOError> ee = (fr.checkRangeOverlaps(doc,
-                                                            requireSeparation,
-                                                            maxReportedOverlaps)
-                                      .mapError(OOError::fromJabRefException));
-            if (testDialog(title, ee)) {
+            if (testDialog(title, checkRangeOverlaps(doc, fr))) {
                 return;
             }
 

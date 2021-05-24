@@ -19,6 +19,8 @@ import com.sun.star.text.XTextRange;
 public class RangeForOverlapCheck<T> {
     public final static int REFERENCE_MARK_KIND = 0;
     public final static int FOOTNOTE_MARK_KIND = 1;
+    public final static int CURSOR_MARK_KIND = 2;
+    public final static int BIBLIOGRAPHY_MARK_KIND = 3;
 
     public final XTextRange range;
     public final int kind;
