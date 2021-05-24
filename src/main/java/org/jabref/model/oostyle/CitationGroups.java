@@ -188,7 +188,7 @@ public class CitationGroups {
             for (int i : cg.getLocalOrder()) {
                 Citation cit = cg.citationsInStorageOrder.get(i);
                 String citationKey = cit.citationKey;
-                CitationPath p = new CitationPath(cgid, i);
+                CitationPath p = new CitationPath(cg.cgid, i);
                 if (res.containsKey(citationKey)) {
                     res.get(citationKey).addPath(p, cit);
                 } else {

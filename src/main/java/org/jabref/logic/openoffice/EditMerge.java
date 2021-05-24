@@ -10,7 +10,6 @@ import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
@@ -245,17 +244,16 @@ public class EditMerge {
         WrappedTargetException {
         List<JoinableGroupData> result = new ArrayList<>();
 
-        List<CitationGroupID> cgids =
+        List<CitationGroup> cgs =
             fr.getCitationGroupIDsSortedWithinPartitions(doc,
                                                          false /* mapFootnotesToFootnoteMarks */);
-        if (cgids.isEmpty()) {
+        if (cgs.isEmpty()) {
             return result;
         }
 
         ScanState state = new ScanState();
 
-        for (CitationGroupID cgid : cgids) {
-            CitationGroup cg = fr.citationGroups.getCitationGroupOrThrow(cgid);
+        for (CitationGroup cg : cgs) {
 
             XTextRange currentRange = (fr.getMarkRange(doc, cg)
                                        .orElseThrow(RuntimeException::new));
@@ -285,7 +283,7 @@ public class EditMerge {
             if (addToGroup || canStartGroup) {
                 addToCurrentGroup(state, cg, currentRange);
             }
-        } // for cgid
+        }
 
         // close currentGroup
         if (state.currentGroup.size() > 1) {

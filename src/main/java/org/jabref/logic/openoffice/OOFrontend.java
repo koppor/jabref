@@ -16,6 +16,7 @@ import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OODataModel;
+import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
@@ -92,7 +93,7 @@ public class OOFrontend {
     }
 
     /**
-     * Creates a list of {@code RangeSortable<CitationGroupID>} values for
+     * Creates a list of {@code RangeSortable<CitationGroup>} values for
      * our {@code CitationGroup} values. Originally designed to be
      * passed to {@code visualSort}.
      *
@@ -111,7 +112,7 @@ public class OOFrontend {
      *        mark. This is used for numbering the citations.
      *
      */
-    private List<RangeSortable<CitationGroupID>>
+    private List<RangeSortable<CitationGroup>>
     createVisualSortInput(XTextDocument doc, boolean mapFootnotesToFootnoteMarks)
         throws
         NoDocumentException,
@@ -122,7 +123,7 @@ public class OOFrontend {
             XTextRange range = (this
                                 .getMarkRange(doc, cg)
                                 .orElseThrow(RuntimeException::new));
-            sortables.add(new RangeSortEntry(range, 0, cg.cgid));
+            sortables.add(new RangeSortEntry(range, 0, cg));
         }
 
         /*
@@ -146,16 +147,16 @@ public class OOFrontend {
          */
 
         // Sort within partitions
-        RangeKeyedMapList<RangeSortEntry<CitationGroupID>> rangeSorter =
+        RangeKeyedMapList<RangeSortEntry<CitationGroup>> rangeSorter =
             new RangeKeyedMapList<>();
         for (RangeSortEntry sortable : sortables) {
             rangeSorter.add(sortable.getRange(), sortable);
         }
 
         // build final list
-        List<RangeSortEntry<CitationGroupID>> result = new ArrayList<>();
+        List<RangeSortEntry<CitationGroup>> result = new ArrayList<>();
 
-        for (TreeMap<XTextRange, List<RangeSortEntry<CitationGroupID>>>
+        for (TreeMap<XTextRange, List<RangeSortEntry<CitationGroup>>>
                  partition : rangeSorter.partitionValues()) {
 
             List<XTextRange> orderedRanges = new ArrayList<>(partition.keySet());
@@ -163,8 +164,8 @@ public class OOFrontend {
             int indexInPartition = 0;
             for (int i = 0; i < orderedRanges.size(); i++) {
                 XTextRange aRange = orderedRanges.get(i);
-                List<RangeSortEntry<CitationGroupID>> sortablesAtARange = partition.get(aRange);
-                for (RangeSortEntry<CitationGroupID> sortable : sortablesAtARange) {
+                List<RangeSortEntry<CitationGroup>> sortablesAtARange = partition.get(aRange);
+                for (RangeSortEntry<CitationGroup> sortable : sortablesAtARange) {
                     sortable.indexInPosition = indexInPartition++;
                     if (mapFootnotesToFootnoteMarks) {
                         Optional<XTextRange> footnoteMarkRange =
@@ -195,7 +196,7 @@ public class OOFrontend {
      *        order.
      *
      */
-    private List<CitationGroupID>
+    private List<CitationGroup>
     getVisuallySortedCitationGroupIDs(XTextDocument doc,
                                       boolean mapFootnotesToFootnoteMarks,
                                       FunctionalTextViewCursor fcursor)
@@ -204,10 +205,10 @@ public class OOFrontend {
         NoDocumentException,
         JabRefException {
 
-        List<RangeSortable<CitationGroupID>> sortables =
+        List<RangeSortable<CitationGroup>> sortables =
             createVisualSortInput(doc, mapFootnotesToFootnoteMarks);
 
-        List<RangeSortable<CitationGroupID>> sorted =
+        List<RangeSortable<CitationGroup>> sorted =
             RangeSortVisual.visualSort(sortables,
                                        doc,
                                        fcursor);
@@ -223,14 +224,14 @@ public class OOFrontend {
      * consecutive XTextRanges within each XText, (2) not confused by
      * multicolumn layout or multipage display.
      */
-    public List<CitationGroupID>
+    public List<CitationGroup>
     getCitationGroupIDsSortedWithinPartitions(XTextDocument doc, boolean mapFootnotesToFootnoteMarks)
         throws
         NoDocumentException,
         WrappedTargetException {
         // This is like getVisuallySortedCitationGroupIDs,
         // but we skip the visualSort part.
-        List<RangeSortable<CitationGroupID>> sortables =
+        List<RangeSortable<CitationGroup>> sortables =
             createVisualSortInput(doc, mapFootnotesToFootnoteMarks);
 
         return (sortables.stream().map(e -> e.getContent()).collect(Collectors.toList()));
@@ -525,7 +526,8 @@ public class OOFrontend {
 
         boolean mapFootnotesToFootnoteMarks = true;
         List<CitationGroupID> sortedCitationGroupIDs =
-            getVisuallySortedCitationGroupIDs(doc, mapFootnotesToFootnoteMarks, fcursor);
+            OOListUtil.map(getVisuallySortedCitationGroupIDs(doc, mapFootnotesToFootnoteMarks, fcursor),
+                           cg -> cg.cgid);
         citationGroups.setGlobalOrder(sortedCitationGroupIDs);
     }
 }
