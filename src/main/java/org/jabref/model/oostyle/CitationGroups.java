@@ -184,8 +184,7 @@ public class CitationGroups {
         if (!hasGlobalOrder()) {
             throw new RuntimeException("getSortedCitedKeys: no globalOrder");
         }
-        for (CitationGroupID cgid : globalOrder.get()) {
-            CitationGroup cg = getCitationGroup(cgid).orElseThrow(RuntimeException::new);
+        for (CitationGroup cg : getCitationGroupsInGlobalOrder()) {
             for (int i : cg.getLocalOrder()) {
                 Citation cit = cg.citationsInStorageOrder.get(i);
                 String citationKey = cit.citationKey;
