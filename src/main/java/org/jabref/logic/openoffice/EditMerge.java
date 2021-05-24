@@ -245,8 +245,8 @@ public class EditMerge {
         List<JoinableGroupData> result = new ArrayList<>();
 
         List<CitationGroup> cgs =
-            fr.getCitationGroupIDsSortedWithinPartitions(doc,
-                                                         false /* mapFootnotesToFootnoteMarks */);
+            fr.getCitationGroupsSortedWithinPartitions(doc,
+                                                       false /* mapFootnotesToFootnoteMarks */);
         if (cgs.isEmpty()) {
             return result;
         }

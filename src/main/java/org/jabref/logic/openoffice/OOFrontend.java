@@ -183,13 +183,11 @@ public class OOFrontend {
     }
 
     /**
-     *  Return JabRef reference mark names sorted by their visual positions.
-     *
      *  @param mapFootnotesToFootnoteMarks If true, sort reference
      *         marks in footnotes as if they appeared at the
      *         corresponding footnote mark.
      *
-     *  @return JabRef reference mark names sorted by these positions.
+     *  @return citation groups sorted by their visual positions.
      *
      *  Limitation: for two column layout visual (top-down,
      *        left-right) order does not match the expected (textual)
@@ -197,9 +195,9 @@ public class OOFrontend {
      *
      */
     private List<CitationGroup>
-    getVisuallySortedCitationGroupIDs(XTextDocument doc,
-                                      boolean mapFootnotesToFootnoteMarks,
-                                      FunctionalTextViewCursor fcursor)
+    getVisuallySortedCitationGroups(XTextDocument doc,
+                                    boolean mapFootnotesToFootnoteMarks,
+                                    FunctionalTextViewCursor fcursor)
         throws
         WrappedTargetException,
         NoDocumentException,
@@ -217,19 +215,19 @@ public class OOFrontend {
     }
 
     /**
-     * Calculate and return citation group IDs in visual order within
-     * (but not across) XText partitions.
+     * Return citation groups in visual order within (but not across)
+     * XText partitions.
      *
      * This is (1) sufficient for combineCiteMarkers which looks for
      * consecutive XTextRanges within each XText, (2) not confused by
      * multicolumn layout or multipage display.
      */
     public List<CitationGroup>
-    getCitationGroupIDsSortedWithinPartitions(XTextDocument doc, boolean mapFootnotesToFootnoteMarks)
+    getCitationGroupsSortedWithinPartitions(XTextDocument doc, boolean mapFootnotesToFootnoteMarks)
         throws
         NoDocumentException,
         WrappedTargetException {
-        // This is like getVisuallySortedCitationGroupIDs,
+        // This is like getVisuallySortedCitationGroups,
         // but we skip the visualSort part.
         List<RangeSortable<CitationGroup>> sortables =
             createVisualSortInput(doc, mapFootnotesToFootnoteMarks);
@@ -525,9 +523,10 @@ public class OOFrontend {
         JabRefException {
 
         boolean mapFootnotesToFootnoteMarks = true;
+        List<CitationGroup> sortedCitationGroups =
+            getVisuallySortedCitationGroups(doc, mapFootnotesToFootnoteMarks, fcursor);
         List<CitationGroupID> sortedCitationGroupIDs =
-            OOListUtil.map(getVisuallySortedCitationGroupIDs(doc, mapFootnotesToFootnoteMarks, fcursor),
-                           cg -> cg.cgid);
+            OOListUtil.map(sortedCitationGroups, cg -> cg.cgid);
         citationGroups.setGlobalOrder(sortedCitationGroupIDs);
     }
 }
