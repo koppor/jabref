@@ -176,14 +176,15 @@ public class CitationGroups {
         return bibliography;
     }
 
+    /**
+     * @return Citation keys where lookupCitations() failed.
+     */
     public List<String> getUnresolvedKeys() {
-        Optional<CitedKeys> bib = getBibliography();
-        if (bib.isEmpty()) {
-            throw new RuntimeException("getUnresolvedKeys:"
-                                       + " CitationGroups does not have a bibliography");
-        }
+
+        CitedKeys bib = getBibliography().orElse(getCitedKeysUnordered());
+
         List<String> unresolvedKeys = new ArrayList<>();
-        for (CitedKey ck : bib.get().values()) {
+        for (CitedKey ck : bib.values()) {
             if (ck.getLookupResult().isEmpty()) {
                 unresolvedKeys.add(ck.citationKey);
             }
