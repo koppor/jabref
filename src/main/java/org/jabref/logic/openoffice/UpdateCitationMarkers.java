@@ -76,7 +76,7 @@ public class UpdateCitationMarkers {
 
                 fillCitationMarkInCursor(doc, cursor, marker.get(), withText, style);
 
-                fr.cleanFillCursorForCitationGroup(doc, cg.cgid);
+                fr.cleanFillCursorForCitationGroup(doc, cg);
             }
 
         }
@@ -167,7 +167,7 @@ public class UpdateCitationMarkers {
 
             UpdateCitationMarkers.fillCitationMarkInCursor(doc, c2, citationText, withText, style);
 
-            fr.cleanFillCursorForCitationGroup(doc, cg.cgid);
+            fr.cleanFillCursorForCitationGroup(doc, cg);
         }
         position.collapseToEnd();
     }

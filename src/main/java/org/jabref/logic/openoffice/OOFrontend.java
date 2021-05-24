@@ -334,16 +334,13 @@ public class OOFrontend {
 
     /**
      * Remove brackets added by getFillCursorForCitationGroup.
-     *
-     * @param cgid : Must be known, throws if not.
      */
-    public void cleanFillCursorForCitationGroup(XTextDocument doc, CitationGroupID cgid)
+    public void cleanFillCursorForCitationGroup(XTextDocument doc, CitationGroup cg)
         throws
         NoDocumentException,
         WrappedTargetException,
         CreationException {
 
-        CitationGroup cg = this.citationGroups.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
         backend.cleanFillCursorForCitationGroup(cg, doc);
     }
 
