@@ -308,37 +308,17 @@ public class CitationGroups {
     }
 
     public void afterCreateCitationGroup(CitationGroup cg) {
-        // add to our data
         this.citationGroupsUnordered.put(cg.cgid, cg);
-        // invalidate globalOrder.
+
         this.globalOrder = Optional.empty();
-        // Note: we cannot impose localOrder, since we do not know
-        // how it was imposed. We leave it to an upper level.
+        this.bibliography = Optional.empty();
     }
 
-    /*
-     * Note: we invalidate the extra data we are storing
-     *       (bibliography).
-     *
-     *       Update would be complicated, since we do not know how the
-     *       bibliography was generated: it was partially done outside
-     *       CitationGroups, and we did not store how.
-     *
-     *       So we stay with invalidating.
-     *       Note: localOrder, numbering, uniqueLetters are not adjusted,
-     *             it is easier to reread everything for a refresh.
-     *
-     */
     public void afterRemoveCitationGroup(CitationGroup cg) {
-
         this.citationGroupsUnordered.remove(cg.cgid);
-
-        // Update what we can.
         this.globalOrder.map(l -> l.remove(cg.cgid));
-        // Invalidate what we cannot
+
         this.bibliography = Optional.empty();
-        // Could also: reset citation.number, citation.uniqueLetter.
-        // Proper update would need style, we do not do it here.
     }
 
 }
