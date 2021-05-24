@@ -102,13 +102,15 @@ public class CitedKey implements
      */
     void addPath(CitationPath p, Citation cit) {
         this.where.add(p);
-        if (cit.getLookupResult() != this.db) {
+
+        // Check consistency
+        if (!cit.getLookupResult().equals(this.db)) {
             throw new RuntimeException("CitedKey.addPath: mismatch on cit.db");
         }
-        if (cit.getNumber() != this.number) {
+        if (!cit.getNumber().equals(this.number)) {
             throw new RuntimeException("CitedKey.addPath: mismatch on cit.number");
         }
-        if (cit.getUniqueLetter() != this.uniqueLetter) {
+        if (!cit.getUniqueLetter().equals(this.uniqueLetter)) {
             throw new RuntimeException("CitedKey.addPath: mismatch on cit.uniqueLetter");
         }
     }

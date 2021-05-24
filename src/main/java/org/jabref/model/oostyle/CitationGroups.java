@@ -24,21 +24,10 @@ public class CitationGroups {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CitationGroups.class);
 
-    /**
-     *  Original CitationGroups Data
-     */
     private Map<CitationGroupID, CitationGroup> citationGroupsUnordered;
-
-    /*
-     *  Extra Data
-     */
 
     /**
      * Provides order of appearance for the citation groups.
-     *
-     * Background: just getting the reference marks does not provide
-     *    this. Citation groups in footnotes, frames etc make getting
-     *    this order right tricky. {@see class RangeSortVisual}
      */
     private Optional<List<CitationGroupID>> globalOrder;
 
@@ -81,13 +70,39 @@ public class CitationGroups {
         }
     }
 
-    public CitedKeys lookupCitations(List<BibDatabase> databases) {
+    /*
+     * Look up each Citation in databases.
+     */
+    public void lookupCitations(List<BibDatabase> databases) {
         CitationGroups cgs = this;
-        CitedKeys cks = cgs.getCitedKeysUnordered();
-
-        cks.lookupInDatabases(databases);
-        cks.distributeLookupResults(cgs);
-        return cks;
+        /*
+         * It is not clear which of the two solutions below is better.
+         */
+        if (true) {
+            // collect-lookup-distribute
+            //
+            // CitationDatabaseLookupResult for the same citation key
+            // is the same object. Until we insert a new citation from the GUI.
+            CitedKeys cks = cgs.getCitedKeysUnordered();
+            cks.lookupInDatabases(databases);
+            cks.distributeLookupResults(cgs);
+        } else {
+            // lookup each citation directly
+            //
+            // CitationDatabaseLookupResult for the same citation key
+            // may be a different object: CitedKey.addPath has to use equals,
+            // so CitationDatabaseLookupResult has to override Object.equals,
+            // which depends on BibEntry.equals and BibDatabase.equals
+            // doing the right thing. Seems to work. But what we gained
+            // from avoiding collect-and-distribute may be lost in more
+            // complicated consistency checking in addPath.
+            //
+            for (CitationGroup cg : getCitationGroupsUnordered()) {
+                for (Citation cit : cg.citationsInStorageOrder) {
+                    cit.lookupInDatabases(databases);
+                }
+            }
+        }
     }
 
     public List<CitationGroup> getCitationGroupsUnordered() {
@@ -104,6 +119,12 @@ public class CitationGroups {
         return OOListUtil.map(globalOrder.get(), cgid -> citationGroupsUnordered.get(cgid));
     }
 
+    /**
+     * Impose an order of citation groups by providing the order
+     * of their citation group idendifiers.
+     *
+     * Also set indexInGlobalOrder for each citation group.
+     */
     public void setGlobalOrder(List<CitationGroupID> globalOrder) {
         Objects.requireNonNull(globalOrder);
         if (globalOrder.size() != numberOfCitationGroups()) {
@@ -120,12 +141,23 @@ public class CitationGroups {
         }
     }
 
+    public boolean hasGlobalOrder() {
+        return globalOrder.isPresent();
+    }
+
+    /**
+     * Impose an order for citations within each group.
+     */
     public void imposeLocalOrder(Comparator<BibEntry> entryComparator) {
         for (CitationGroup cg : citationGroupsUnordered.values()) {
             cg.imposeLocalOrder(entryComparator);
         }
     }
 
+    /**
+     * Collect citations into a list of cited sources using neither
+     * CitationGroup.globalOrder or Citation.localOrder
+     */
     public CitedKeys getCitedKeysUnordered() {
         LinkedHashMap<String, CitedKey> res = new LinkedHashMap<>();
         for (CitationGroup cg : citationGroupsUnordered.values()) {
@@ -142,10 +174,6 @@ public class CitationGroups {
             }
         }
         return new CitedKeys(res);
-    }
-
-    public boolean hasGlobalOrder() {
-        return globalOrder.isPresent();
     }
 
     /**
