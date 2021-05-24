@@ -26,7 +26,7 @@ public class OOFormatBibliography {
     }
 
     /**
-     * Format the bibliography, including its title.
+     * @return The formatted bibliography, including its title.
      */
     public static OOText formatBibliography(CitationGroups cgs,
                                             CitedKeys bibliography,
@@ -39,7 +39,7 @@ public class OOFormatBibliography {
     }
 
     /**
-     * Format the body of bibliography. Excludes the title.
+     * @return Formatted body of the bibliography. Excludes the title.
      */
     public static OOText formatBibliographyBody(CitationGroups cgs,
                                                 CitedKeys bibliography,
@@ -56,8 +56,8 @@ public class OOFormatBibliography {
         return OOText.fromString(stringBuilder.toString());
     }
 
-    /*
-     * @return a paragraph. Includes label and "Cited on pages".
+    /**
+     * @return A paragraph. Includes label and "Cited on pages".
      */
     public static OOText formatBibliographyEntry(CitationGroups cgs,
                                                  CitedKey ck,
@@ -87,8 +87,8 @@ public class OOFormatBibliography {
         return OOFormat.paragraph(entryText, parStyle);
     }
 
-    /*
-     * @return just the body. No label, "Cited on pages" or paragraph.
+    /**
+     * @return just the body of a bibliography entry. No label, "Cited on pages" or paragraph.
      */
     public static OOText formatBibliographyEntryBody(CitedKey ck, OOBibStyle style) {
         if (ck.getLookupResult().isEmpty()) {
@@ -145,15 +145,16 @@ public class OOFormatBibliography {
         return formattedText;
     }
 
-    /*
+    /**
      * Format links to citations of the source (ck).
      *
-     * Requires reference marks for citation groups.
+     * Requires reference marks for the citation groups.
      *
      * - The links are created as references that show page numbers of the reference marks.
      *   - We do not control the text shown, that is provided by OpenOffice.
      */
     private static OOText formatCitedOnPages(CitationGroups cgs, CitedKey ck) {
+
         if (!cgs.citationGroupsProvideReferenceMarkNameForLinking()) {
             return OOText.fromString("");
         }
