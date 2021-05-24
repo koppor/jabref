@@ -249,7 +249,7 @@ class OOBibBase {
                                           new ArrayList<>(),
                                           requireSeparation,
                                           maxReportedOverlaps)
-                    .mapError(OOError::fromJabRefException));
+                    .mapError(OOError::from));
         } catch (NoDocumentException ex) {
             return VoidResult.error(OOError.from(ex).setTitle(title));
         } catch (WrappedTargetException ex) {
@@ -295,7 +295,7 @@ class OOBibBase {
                                                 xtitle + "\n"
                                                 + res.getError().getLocalizedMessage() + "\n"));
         }
-        return res.mapError(OOError::fromJabRefException);
+        return res.mapError(OOError::from);
     }
 
     /*

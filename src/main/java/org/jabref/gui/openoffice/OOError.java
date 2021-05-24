@@ -35,23 +35,15 @@ class OOError extends JabRefException {
         dialogService.showErrorDialogAndWait(getTitle(), getLocalizedMessage());
     }
 
-    public static OOError fromMisc(Exception ex) {
-        return new OOError(
-            "Exception",
-            ex.getMessage(),
-            ex);
-    }
+    /*
+     * Conversions from exception caught
+     */
 
-    // For JabRefException
     public static OOError from(JabRefException ex) {
         return new OOError(
             Localization.lang("JabRefException"),
             ex.getLocalizedMessage(),
             ex);
-    }
-
-    public static OOError fromJabRefException(JabRefException ex) {
-        return from(ex);
     }
 
     // For DisposedException
@@ -85,6 +77,17 @@ class OOError extends JabRefException {
                               + " to connect to it."),
             ex);
     }
+
+    public static OOError fromMisc(Exception ex) {
+        return new OOError(
+            "Exception",
+            ex.getMessage(),
+            ex);
+    }
+
+    /*
+     * Messages for error dialog. These are not thrown.
+     */
 
     // noDataBaseIsOpenForCiting
     public static OOError noDataBaseIsOpenForCiting() {
