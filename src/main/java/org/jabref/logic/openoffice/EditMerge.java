@@ -257,7 +257,7 @@ public class EditMerge {
         for (CitationGroupID cgid : cgids) {
             CitationGroup cg = fr.citationGroups.getCitationGroupOrThrow(cgid);
 
-            XTextRange currentRange = (fr.getMarkRange(doc, cgid)
+            XTextRange currentRange = (fr.getMarkRange(doc, cg)
                                        .orElseThrow(RuntimeException::new));
 
             /*

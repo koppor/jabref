@@ -120,7 +120,7 @@ public class OOFrontend {
         List<RangeSortEntry> sortables = new ArrayList<>();
         for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
             XTextRange range = (this
-                                .getMarkRange(doc, cg.cgid)
+                                .getMarkRange(doc, cg)
                                 .orElseThrow(RuntimeException::new));
             sortables.add(new RangeSortEntry(range, 0, cg.cgid));
         }
@@ -314,15 +314,13 @@ public class OOFrontend {
     /**
      * ranges controlled by citation groups should not overlap with each other.
      *
-     * @param cgid : Must be known, throws if not.
      * @return Optional.empty() if the reference mark is missing.
      *
      */
-    public Optional<XTextRange> getMarkRange(XTextDocument doc, CitationGroupID cgid)
+    public Optional<XTextRange> getMarkRange(XTextDocument doc, CitationGroup cg)
         throws
         NoDocumentException,
         WrappedTargetException {
-        CitationGroup cg = this.citationGroups.getCitationGroup(cgid).orElseThrow(RuntimeException::new);
         return backend.getMarkRange(cg, doc);
     }
 
@@ -365,7 +363,7 @@ public class OOFrontend {
             new ArrayList<>(citationGroups.numberOfCitationGroups());
 
         for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
-            XTextRange range = this.getMarkRange(doc, cg.cgid).orElseThrow(RuntimeException::new);
+            XTextRange range = this.getMarkRange(doc, cg).orElseThrow(RuntimeException::new);
             String description = cg.cgid.asString(); // cg.cgRangeStorage.nrGetRangeName();
             result.add(new RangeForOverlapCheck(range,
                                                 cg.cgid,
