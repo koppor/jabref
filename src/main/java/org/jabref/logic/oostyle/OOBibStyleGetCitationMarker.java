@@ -12,12 +12,12 @@ import org.jabref.model.entry.AuthorList;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.OrFields;
-import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationLookupResult;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitationMarkerNormEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOText;
+import org.jabref.model.oostyle.PageInfo;
 import org.jabref.model.strings.StringUtil;
 
 class OOBibStyleGetCitationMarker {
@@ -436,7 +436,7 @@ class OOBibStyleGetCitationMarker {
             StringBuilder pageInfoPart = new StringBuilder("");
             if (purpose != AuthorYearMarkerPurpose.NORMALIZED) {
                 Optional<OOText> pageInfo =
-                    Citation.normalizePageInfo(ce.getPageInfo());
+                    PageInfo.normalizePageInfo(ce.getPageInfo());
                 if (pageInfo.isPresent()) {
                     pageInfoPart.append(pageInfoSeparator);
                     pageInfoPart.append(OOText.toString(pageInfo.get()));
@@ -708,8 +708,8 @@ class OOBibStyleGetCitationMarker {
                 final boolean citationKeysDiffer = !ce2.getCitationKey().equals(ce1.getCitationKey());
                 final boolean normalizedMarkersDiffer = !nm2.equals(nm1);
 
-                Optional<OOText> pageInfo2 = Citation.normalizePageInfo(ce2.getPageInfo());
-                Optional<OOText> pageInfo1 = Citation.normalizePageInfo(ce1.getPageInfo());
+                Optional<OOText> pageInfo2 = PageInfo.normalizePageInfo(ce2.getPageInfo());
+                Optional<OOText> pageInfo1 = PageInfo.normalizePageInfo(ce1.getPageInfo());
                 final boolean bothPageInfosAreEmpty = pageInfo2.isEmpty() && pageInfo1.isEmpty();
                 final boolean pageInfosDiffer = !pageInfo2.equals(pageInfo1);
 

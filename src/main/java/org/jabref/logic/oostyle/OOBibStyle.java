@@ -30,7 +30,6 @@ import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.EntryTypeFactory;
-import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationMarkerEntry;
 import org.jabref.model.oostyle.CitationMarkerNormEntry;
 import org.jabref.model.oostyle.CitationMarkerNumericBibEntry;
@@ -38,6 +37,7 @@ import org.jabref.model.oostyle.CitationMarkerNumericEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
+import org.jabref.model.oostyle.PageInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -976,7 +976,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         }
 
         // not null, normalize elementwise
-        return OOListUtil.map(pageInfos, Citation::normalizePageInfo);
+        return OOListUtil.map(pageInfos, PageInfo::normalizePageInfo);
     }
 
     public OOText getNormalizedCitationMarker(CitationMarkerNormEntry ce) {

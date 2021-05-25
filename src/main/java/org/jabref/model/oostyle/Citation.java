@@ -109,7 +109,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry, Citati
     }
 
     public void setPageInfo(Optional<OOText> v) {
-        Optional<OOText> vv = normalizePageInfo(v);
+        Optional<OOText> vv = PageInfo.normalizePageInfo(v);
         if (!vv.equals(v)) {
             throw new RuntimeException("setPageInfo argument is not normalized");
         }
@@ -138,17 +138,4 @@ public class Citation implements ComparableCitation, CitationMarkerEntry, Citati
         cit.uniqueLetter = x.b;
     }
 
-    /*
-     * pageInfo normalization
-     */
-    public static Optional<OOText> normalizePageInfo(Optional<OOText> o) {
-        if (o == null || o.isEmpty() || "".equals(OOText.toString(o.get()))) {
-            return Optional.empty();
-        }
-        String s = OOText.toString(o.get());
-        if (s.trim().equals("")) {
-            return Optional.empty();
-        }
-        return Optional.of(OOText.fromString(s.trim()));
-    }
 }

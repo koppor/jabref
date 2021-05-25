@@ -6,9 +6,9 @@ import java.util.Optional;
 
 import org.jabref.model.oostyle.CitationMarkerNumericBibEntry;
 import org.jabref.model.oostyle.CitationMarkerNumericEntry;
-import org.jabref.model.oostyle.CompareCitation;
 import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
+import org.jabref.model.oostyle.PageInfo;
 
 class OOBibStyleGetNumCitationMarker {
 
@@ -26,7 +26,7 @@ class OOBibStyleGetNumCitationMarker {
         int nb = b.getNumber().orElse(UNRESOLVED_ENTRY_NUMBER);
         int res = Integer.compare(na, nb);
         if (res == 0) {
-            res = CompareCitation.comparePageInfo(a.getPageInfo(), b.getPageInfo());
+            res = PageInfo.comparePageInfo(a.getPageInfo(), b.getPageInfo());
         }
         return res;
     }

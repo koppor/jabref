@@ -17,6 +17,7 @@ import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OODataModel;
 import org.jabref.model.oostyle.OOText;
+import org.jabref.model.oostyle.PageInfo;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NamedRange;
@@ -154,7 +155,7 @@ public class Backend52 {
         Optional<OOText> pageInfo =
             (UnoUserDefinedProperty.getStringValue(doc, refMarkName)
              .map(OOText::fromString));
-        pageInfo = Citation.normalizePageInfo(pageInfo);
+        pageInfo = PageInfo.normalizePageInfo(pageInfo);
 
         setPageInfoInDataInitial(citations, pageInfo);
 
@@ -223,7 +224,7 @@ public class Backend52 {
             Citation cit = new Citation(citationKeys.get(i));
             citations.add(cit);
 
-            Optional<OOText> pageInfo = Citation.normalizePageInfo(pageInfos.get(i));
+            Optional<OOText> pageInfo = PageInfo.normalizePageInfo(pageInfos.get(i));
             switch (dataModel) {
             case JabRef52:
                 if (i == last) {
@@ -252,7 +253,7 @@ public class Backend52 {
         switch (dataModel) {
         case JabRef52:
             Optional<OOText> pageInfo =
-                Citation.normalizePageInfo(pageInfos.get(last));
+                PageInfo.normalizePageInfo(pageInfos.get(last));
 
             if (pageInfo.isPresent()) {
                 String pageInfoString = OOText.toString(pageInfo.get());
@@ -447,7 +448,7 @@ public class Backend52 {
         case JabRef52:
             for (CitationEntry entry : citationEntries) {
                 Optional<OOText> pageInfo = entry.getPageInfo().map(OOText::fromString);
-                pageInfo = Citation.normalizePageInfo(pageInfo);
+                pageInfo = PageInfo.normalizePageInfo(pageInfo);
                 if (pageInfo.isPresent()) {
                     String name = entry.getRefMarkName();
                     UnoUserDefinedProperty.createStringProperty(doc, name, pageInfo.get().asString());

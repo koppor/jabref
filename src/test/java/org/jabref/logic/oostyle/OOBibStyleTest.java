@@ -32,6 +32,7 @@ import org.jabref.model.oostyle.CitationMarkerNumericBibEntry;
 import org.jabref.model.oostyle.CitationMarkerNumericEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOText;
+import org.jabref.model.oostyle.PageInfo;
 import org.jabref.model.openoffice.Tuple3;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -116,7 +117,7 @@ class OOBibStyleTest {
             this.num = (num == UNRESOLVED_ENTRY_NUMBER
                         ? Optional.empty()
                         : Optional.of(num));
-            this.pageInfo = Citation.normalizePageInfo(pageInfo);
+            this.pageInfo = PageInfo.normalizePageInfo(pageInfo);
         }
 
         @Override
@@ -422,7 +423,7 @@ class OOBibStyleTest {
         result.setLookupResult(Optional.of(new CitationLookupResult(entry, database)));
         result.setUniqueLetter(Optional.ofNullable(uniqueLetterQ));
         Optional<OOText> pageInfo = Optional.ofNullable(OOText.fromString(pageInfoQ));
-        result.setPageInfo(Citation.normalizePageInfo(pageInfo));
+        result.setPageInfo(PageInfo.normalizePageInfo(pageInfo));
         result.setIsFirstAppearanceOfSource(isFirstAppearanceOfSource);
         return result;
     }
