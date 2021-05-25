@@ -135,6 +135,7 @@ public class UpdateBibliography {
         cursor.collapseToEnd();
 
         // remove the inital empty paragraph from the section.
+        sectionRange = getBibliographyRange(doc).orElseThrow(RuntimeException::new);
         XTextCursor initialParagraph = doc.getText().createTextCursorByRange(sectionRange);
         initialParagraph.collapseToStart();
         initialParagraph.goRight((short) 1, true);
