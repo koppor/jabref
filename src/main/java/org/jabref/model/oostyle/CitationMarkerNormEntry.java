@@ -12,12 +12,13 @@ public interface CitationMarkerNormEntry {
      *
      *  Used if getBibEntry() and/or getDatabase() returns
      *  empty, which indicates failure to lookup in the databases.
-     *  The marker created is "Unresolved({citationKey})".
      *
      */
     String getCitationKey();
 
     /** Result of looking up citation key in databases.
+     *
+     * Optional.empty() indicates unresolved citation.
      */
     Optional<CitationLookupResult> getLookupResult();
 }

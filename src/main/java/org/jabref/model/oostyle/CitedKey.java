@@ -115,6 +115,9 @@ public class CitedKey implements
         }
     }
 
+    /*
+     * Lookup
+     */
     void lookupInDatabases(List<BibDatabase> databases) {
         this.db = Citation.lookup(databases, this.citationKey);
     }
@@ -122,6 +125,10 @@ public class CitedKey implements
     void distributeLookupResult(CitationGroups cgs) {
         cgs.distributeToCitations(where, Citation::setLookupResult, db);
     }
+
+    /*
+     * Make unique using a letter or by numbering
+     */
 
     void distributeNumber(CitationGroups cgs) {
         cgs.distributeToCitations(where, Citation::setNumber, number);

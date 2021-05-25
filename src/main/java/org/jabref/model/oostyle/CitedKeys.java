@@ -44,9 +44,6 @@ public class CitedKeys {
         data = newData;
     }
 
-    /**
-     * Unresolved citations do not get a number.
-     */
     void numberCitedKeysInCurrentOrder() {
         int i = 1;
         for (CitedKey ck : data.values()) {
@@ -54,6 +51,7 @@ public class CitedKeys {
                 ck.setNumber(Optional.of(i));
                 i++;
             } else {
+                // Unresolved citations do not get a number.
                 ck.setNumber(Optional.empty());
             }
         }
@@ -83,4 +81,4 @@ public class CitedKeys {
         }
     }
 
-} // class CitedKeys
+}
