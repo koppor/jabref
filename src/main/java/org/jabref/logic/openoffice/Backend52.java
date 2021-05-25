@@ -169,7 +169,6 @@ public class Backend52 {
 
         CitationGroup cg = new CitationGroup(OODataModel.JabRef52,
                                              cgid,
-                                             // namedRange.get(),
                                              ov.citationType,
                                              citations,
                                              Optional.of(refMarkName));
@@ -461,5 +460,5 @@ public class Backend52 {
         }
     }
 
-} // end Backend52
+}
 
