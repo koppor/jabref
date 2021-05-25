@@ -55,7 +55,7 @@ public class CitationGroups {
      * For each citation in {@code where}
      * call {@code fun.accept(new Pair(citation, value));}
      */
-    public <T> void distributeToCitations(Set<CitationPath> where,
+    public <T> void distributeToCitations(List<CitationPath> where,
                                           Consumer<Pair<Citation, T>> fun,
                                           T value) {
 

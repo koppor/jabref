@@ -1,7 +1,6 @@
 package org.jabref.model.oostyle;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,7 @@ public class CitedKey implements
                       CitationMarkerNumericBibEntry {
 
     public final String citationKey;
-    private final LinkedHashSet<CitationPath> where;
+    private final List<CitationPath> where;
 
     private Optional<CitationLookupResult> db;
     private Optional<Integer> number; // For Numbered citation styles.
@@ -31,7 +30,7 @@ public class CitedKey implements
     CitedKey(String citationKey, CitationPath p, Citation cit) {
 
         this.citationKey = citationKey;
-        this.where = new LinkedHashSet<>(); // remember order
+        this.where = new ArrayList<>(); // remember order
         this.where.add(p);
 
         // sync with citations
