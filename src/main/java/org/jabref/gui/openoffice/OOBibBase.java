@@ -568,62 +568,35 @@ class OOBibBase {
 
     /**
      *
-     * Creates a citation group from {@code entries} at the cursor,
-     * and (if sync is true) refreshes the citation markers and the
-     * bibliography.
-     *
-     *
-     * Called from: OpenOfficePanel.pushEntries, a GUI action for
-     * "Cite", "Cite in-text", "Cite special" and "Insert empty
-     * citation".
+     * Creates a citation group from {@code entries} at the cursor.
      *
      * Uses LO undo context "Insert citation".
      *
-     * Note: Undo does not remove custom properties. Presumably
-     * neither does it reestablish them.
+     * Note: Undo does not remove or reestablish custom properties.
      *
      * @param entries       The entries to cite.
      *
      * @param database      The database the entries belong to (all of them).
      *                      Used when creating the citation mark.
      *
-     *                      Consistency: for each entry in {@entries} looking it up in
-     *                      {@code syncOptions.get().databases} should yield {@code database}.
-     *                      Otherwise we may get a different entry
-     *                      with and without synchronization.
+     *                      Consistency: for each entry in {@entries}: looking it up in
+     *                      {@code syncOptions.get().databases} (if present)
+     *                      should yield {@code database}.
      *
      * @param style         The bibliography style we are using.
      *
      * @param citationType Indicates whether it is an in-text
      *                     citation, a citation in parenthesis or
      *                     an invisible citation.
-     *                     The in-text/in-parenthesis distionction is not relevant if
-     *                     numbered citations are used.
      *
-     * @param pageInfo      A single page-info for these entries. Stored in custom property
-     *                      with the same name as the reference mark.
-     *
-     *                      This is a GUI call, and we are not ready
-     *                      to get multiple pageInfo values there.
-     *
-     *                      In case of multiple entries, pageInfo goes
-     *                      to the last citation (as apparently did in JabRef52).
-     *
-     *                      Related https://latex.org/forum/viewtopic.php?t=14331
-     *                      """
-     *                      Q: What I would like is something like this:
-     *                      (Jones, 2010, p. 12; Smith, 2003, pp. 21 - 23)
-     *                      A: Not in a single \citep, no.
-     *                         Use \citetext{\citealp[p.~12]{jones2010};
-     *                                       \citealp[pp.~21--23]{smith2003}}
-     *                      """
+     * @param pageInfo      A single page-info for these entries.
+     *                      Attributed to the last entry.
      *
      * @param syncOptions   Indicates whether in-text citations
      *                      should be refreshed in the document.
      *                      Optional.empty() indicates no refresh.
-     *                      Otherwise provides options for refreshing the reference list.
-     *
-     *
+     *                      Otherwise provides options for refreshing
+     *                      the reference list.
      */
     public void guiActionInsertEntry(List<BibEntry> entries,
                                      BibDatabase database,
@@ -742,7 +715,6 @@ class OOBibBase {
                        databaseIsRequired(databases, OOError::noDataBaseIsOpen))) {
             return;
         }
-
         XTextDocument doc = odoc.get();
 
         Result<FunctionalTextViewCursor, OOError> fcursor = getFunctionalTextViewCursor(doc, title);
@@ -872,7 +844,6 @@ class OOBibBase {
                        databaseIsRequired(databases, OOError::noDataBaseIsOpenForExport))) {
             return FAIL;
         }
-
         XTextDocument doc = odoc.get();
 
         try {

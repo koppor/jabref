@@ -8,14 +8,12 @@ import java.util.Optional;
 public enum OODataModel {
 
     /**
-     * JabRef52:
-     *    pageInfo belongs to CitationGroup, not Citation.
+     * JabRef52: pageInfo belongs to CitationGroup, not Citation.
      */
     JabRef52,
 
     /**
-     * JabRef53:
-     *    pageInfo belongs to Citation.
+     * JabRef53: pageInfo belongs to Citation.
      */
     JabRef53;
 

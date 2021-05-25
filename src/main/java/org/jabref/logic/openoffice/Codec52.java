@@ -48,7 +48,7 @@ class Codec52 {
 
     /*
      * Integer representation was written into the document in
-     * JabRef52, must keep it for compatibility.
+     * JabRef52, keep it for compatibility.
      */
     public static InTextCitationType InTextCitationTypeFromInt(int i) {
         switch (i) {

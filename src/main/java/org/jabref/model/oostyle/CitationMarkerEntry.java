@@ -5,14 +5,6 @@ import java.util.Optional;
 /**
  * This is what we need for getCitationMarker2 to produce author-year
  * citation markers.
- *
- * Citation misses two things
- *   - isFirstAppearanceOfSource : could be extended to provide this.
- *   - pageInfo under DataModel JabRef52 needs CitationGroup
- *
- * CitedKey is used for creating normalizedCitationMarker, so we do
- * not need pageInfo, uniqueLetter and isFirstAppearanceOfSource.
- *
  */
 public interface CitationMarkerEntry extends CitationMarkerNormEntry {
 

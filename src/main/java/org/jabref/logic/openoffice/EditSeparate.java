@@ -47,7 +47,7 @@ public class EditSeparate {
         boolean madeModifications = false;
 
         // To reduce surprises in JabRef52 mode, impose localOrder to
-        // decide the visually last Citation i the group. Unless the
+        // decide the visually last Citation in the group. Unless the
         // style changed since refresh this is the last on the screen
         // as well.
         fr.citationGroups.lookupCitations(databases);
