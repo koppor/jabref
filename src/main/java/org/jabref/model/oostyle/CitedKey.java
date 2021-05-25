@@ -33,11 +33,12 @@ public class CitedKey implements
         this.where = new ArrayList<>(); // remember order
         this.where.add(p);
 
-        // sync with citations
+        // synchronized with Citation
         this.db = cit.getLookupResult();
         this.number = cit.getNumber();
         this.uniqueLetter = cit.getUniqueLetter();
 
+        // CitedKey only
         this.normCitMarker = Optional.empty();
     }
 
