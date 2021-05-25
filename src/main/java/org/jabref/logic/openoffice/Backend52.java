@@ -16,6 +16,7 @@ import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.OODataModel;
+import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
 import org.jabref.model.oostyle.PageInfo;
 import org.jabref.model.openoffice.CitationEntry;
@@ -252,8 +253,7 @@ public class Backend52 {
 
         switch (dataModel) {
         case JabRef52:
-            Optional<OOText> pageInfo =
-                PageInfo.normalizePageInfo(pageInfos.get(last));
+            Optional<OOText> pageInfo = PageInfo.normalizePageInfo(pageInfos.get(last));
 
             if (pageInfo.isPresent()) {
                 String pageInfoString = OOText.toString(pageInfo.get());
@@ -286,9 +286,7 @@ public class Backend52 {
         case JabRef52:
             // collect to cgPageInfos
             List<Optional<OOText>> cgPageInfos =
-                (joinableGroup.stream()
-                 .map(cg -> getPageInfoFromData(cg))
-                 .collect(Collectors.toList()));
+                OOListUtil.map(joinableGroup, Backend52::getPageInfoFromData);
 
             // Try to do something of the cgPageInfos.
             String cgPageInfo = (cgPageInfos.stream()
