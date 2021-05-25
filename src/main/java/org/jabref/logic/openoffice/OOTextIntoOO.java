@@ -520,6 +520,10 @@ public class OOTextIntoOO {
 
         final boolean debugThisFun = false;
 
+        Objects.requireNonNull(doc);
+        Objects.requireNonNull(ootext);
+        Objects.requireNonNull(position);
+
         String lText = OOText.toString(ootext);
 
         if (debugThisFun) {
