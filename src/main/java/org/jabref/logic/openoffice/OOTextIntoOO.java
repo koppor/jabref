@@ -790,14 +790,14 @@ public class OOTextIntoOO {
     /*
      * @return true on failure
      */
-    public static boolean setParagraphStyle(XTextCursor cursor, String parStyle) {
+    public static boolean setParagraphStyle(XTextCursor cursor, String paragraphStyle) {
         final boolean FAIL = true;
         final boolean PASS = false;
 
-        XParagraphCursor parCursor = UnoCast.unoQI(XParagraphCursor.class, cursor);
-        XPropertySet props = UnoCast.unoQI(XPropertySet.class, parCursor);
+        XParagraphCursor paragraphCursor = UnoCast.unoQI(XParagraphCursor.class, cursor);
+        XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, paragraphCursor);
         try {
-            props.setPropertyValue(PARA_STYLE_NAME, parStyle);
+            propertySet.setPropertyValue(PARA_STYLE_NAME, paragraphStyle);
             return PASS;
         } catch (UnknownPropertyException
                  | PropertyVetoException
