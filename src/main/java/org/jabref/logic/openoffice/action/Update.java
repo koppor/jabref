@@ -1,8 +1,10 @@
-package org.jabref.logic.openoffice;
+package org.jabref.logic.openoffice.action;
 
 import java.util.List;
 
 import org.jabref.logic.JabRefException;
+import org.jabref.logic.openoffice.FunctionalTextViewCursor;
+import org.jabref.logic.openoffice.OOFrontend;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.style.OOProcess;
 import org.jabref.logic.openoffice.uno.UnoScreenRefresh;

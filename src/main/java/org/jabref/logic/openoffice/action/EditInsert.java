@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice;
+package org.jabref.logic.openoffice.action;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jabref.logic.JabRefException;
+import org.jabref.logic.openoffice.OOFrontend;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;

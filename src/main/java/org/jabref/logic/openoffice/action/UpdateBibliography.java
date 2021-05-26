@@ -1,7 +1,9 @@
-package org.jabref.logic.openoffice;
+package org.jabref.logic.openoffice.action;
 
 import java.util.Optional;
 
+import org.jabref.logic.openoffice.OOFrontend;
+import org.jabref.logic.openoffice.OOTextIntoOO;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.style.OOFormatBibliography;
 import org.jabref.logic.openoffice.uno.UnoBookmark;
@@ -27,7 +29,7 @@ public class UpdateBibliography {
     private static final String BIB_SECTION_NAME = "JR_bib";
     private static final String BIB_SECTION_END_NAME = "JR_bib_end";
 
-    static Optional<XTextRange> getBibliographyRange(XTextDocument doc)
+    public static Optional<XTextRange> getBibliographyRange(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {

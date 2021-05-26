@@ -1,10 +1,11 @@
-package org.jabref.logic.openoffice;
+package org.jabref.logic.openoffice.action;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jabref.logic.openoffice.OOFrontend;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
