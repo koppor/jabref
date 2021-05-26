@@ -29,7 +29,7 @@ import org.jabref.logic.openoffice.UnoUndo;
 import org.jabref.logic.openoffice.Update;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.oostyle.CitationGroupID;
+import org.jabref.model.oostyle.CitationGroupId;
 import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
@@ -266,7 +266,7 @@ class OOBibBase {
             return precheck;
         }
 
-        List<RangeForOverlapCheck<CitationGroupID>> userRanges;
+        List<RangeForOverlapCheck<CitationGroupId>> userRanges;
         try {
             userRanges = fr.viewCursorRanges(doc);
         } catch (NoDocumentException ex) {

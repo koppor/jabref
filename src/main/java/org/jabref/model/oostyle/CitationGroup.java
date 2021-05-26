@@ -17,7 +17,7 @@ public class CitationGroup {
     /*
      * Identifies this citation group.
      */
-    public final CitationGroupID cgid;
+    public final CitationGroupId cgid;
 
     /*
      * The core data, stored in the document:
@@ -59,7 +59,7 @@ public class CitationGroup {
     private Optional<OOText> citationMarker;
 
     public CitationGroup(OODataModel dataModel,
-                         CitationGroupID cgid,
+                         CitationGroupId cgid,
                          CitationType citationType,
                          List<Citation> citationsInStorageOrder,
                          Optional<String> referenceMarkNameForLinking) {

@@ -6,11 +6,11 @@ package org.jabref.model.oostyle;
  */
 public class CitationPath {
 
-    public final CitationGroupID group;
+    public final CitationGroupId group;
 
     public final int storageIndexInGroup;
 
-    CitationPath(CitationGroupID group, int storageIndexInGroup) {
+    CitationPath(CitationGroupId group, int storageIndexInGroup) {
         this.group = group;
         this.storageIndexInGroup = storageIndexInGroup;
     }

@@ -23,12 +23,12 @@ public class CitationGroups {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CitationGroups.class);
 
-    private Map<CitationGroupID, CitationGroup> citationGroupsUnordered;
+    private Map<CitationGroupId, CitationGroup> citationGroupsUnordered;
 
     /**
      * Provides order of appearance for the citation groups.
      */
-    private Optional<List<CitationGroupID>> globalOrder;
+    private Optional<List<CitationGroupId>> globalOrder;
 
     /**
      *  This is going to be the bibliography
@@ -38,7 +38,7 @@ public class CitationGroups {
     /**
      * Constructor
      */
-    public CitationGroups(Map<CitationGroupID, CitationGroup> citationGroups) {
+    public CitationGroups(Map<CitationGroupId, CitationGroup> citationGroups) {
 
         this.citationGroupsUnordered = citationGroups;
 
@@ -124,7 +124,7 @@ public class CitationGroups {
      *
      * Also set indexInGlobalOrder for each citation group.
      */
-    public void setGlobalOrder(List<CitationGroupID> globalOrder) {
+    public void setGlobalOrder(List<CitationGroupId> globalOrder) {
         Objects.requireNonNull(globalOrder);
         if (globalOrder.size() != numberOfCitationGroups()) {
             throw new RuntimeException("setGlobalOrder:"
@@ -134,7 +134,7 @@ public class CitationGroups {
 
         // Propagate to each CitationGroup
         int i = 0;
-        for (CitationGroupID cgid : globalOrder) {
+        for (CitationGroupId cgid : globalOrder) {
             citationGroupsUnordered.get(cgid).setIndexInGlobalOrder(Optional.of(i));
             i++;
         }
@@ -261,10 +261,10 @@ public class CitationGroups {
     }
 
     /*
-     * Query by CitationGroupID
+     * Query by CitationGroupId
      */
 
-    public Optional<CitationGroup> getCitationGroup(CitationGroupID cgid) {
+    public Optional<CitationGroup> getCitationGroup(CitationGroupId cgid) {
         CitationGroup cg = citationGroupsUnordered.get(cgid);
         return Optional.ofNullable(cg);
     }
@@ -272,7 +272,7 @@ public class CitationGroups {
     /**
      * Call this when the citation group is unquestionably there.
      */
-    public CitationGroup getCitationGroupOrThrow(CitationGroupID cgid) {
+    public CitationGroup getCitationGroupOrThrow(CitationGroupId cgid) {
         CitationGroup cg = citationGroupsUnordered.get(cgid);
         if (cg == null) {
             throw new RuntimeException("getCitationGroupOrThrow:"

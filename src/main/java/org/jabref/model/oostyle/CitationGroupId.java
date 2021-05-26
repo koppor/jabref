@@ -3,9 +3,9 @@ package org.jabref.model.oostyle;
 /**
  * Identifies a citation group in a document.
  */
-public class CitationGroupID {
+public class CitationGroupId {
     String id;
-    public CitationGroupID(String id) {
+    public CitationGroupId(String id) {
         this.id = id;
     }
 

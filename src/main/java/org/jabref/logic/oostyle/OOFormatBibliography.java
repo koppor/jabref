@@ -11,7 +11,7 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.CitationGroupID;
+import org.jabref.model.oostyle.CitationGroupId;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.CitationPath;
 import org.jabref.model.oostyle.CitedKey;
@@ -167,7 +167,7 @@ public class OOFormatBibliography {
 
         List<CitationGroup> citationGroups = new ArrayList();
         for (CitationPath p : ck.getCitationPaths()) {
-            CitationGroupID cgid = p.group;
+            CitationGroupId cgid = p.group;
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
             citationGroups.add(cg);
         }

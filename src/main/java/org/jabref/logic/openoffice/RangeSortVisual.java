@@ -173,7 +173,7 @@ public class RangeSortVisual {
             throw new RuntimeException("visualSort: set.size() != inputSize");
         }
 
-        // collect CitationGroupIDs in order
+        // collect ordered result
         List<RangeSortable<T>> result = new ArrayList<>(set.size());
         for (ComparableMark<RangeSortable<T>> mark : set) {
             result.add(mark.getContent());

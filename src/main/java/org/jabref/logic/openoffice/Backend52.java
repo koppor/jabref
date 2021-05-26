@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.CitationGroupID;
+import org.jabref.model.oostyle.CitationGroupId;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.oostyle.OODataModel;
@@ -42,7 +42,7 @@ public class Backend52 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Backend52.class);
     public final OODataModel dataModel;
     private final NamedRangeManager citationStorageManager;
-    private final Map<CitationGroupID, NamedRange> cgidToNamedRange;
+    private final Map<CitationGroupId, NamedRange> cgidToNamedRange;
 
     // uses: Codec52
     public Backend52() {
@@ -148,7 +148,7 @@ public class Backend52 {
                                                + " found unparsable referenceMarkName");
         }
         Codec52.ParsedMarkName ov = op.get();
-        CitationGroupID cgid = new CitationGroupID(refMarkName);
+        CitationGroupId cgid = new CitationGroupId(refMarkName);
         List<Citation> citations = (ov.citationKeys.stream()
                                     .map(Citation::new)
                                     .collect(Collectors.toList()));
@@ -213,7 +213,7 @@ public class Backend52 {
         String xkey = (citationKeys.stream().collect(Collectors.joining(",")));
         String refMarkName = Codec52.getUniqueMarkName(usedNames, xkey, citationType);
 
-        CitationGroupID cgid = new CitationGroupID(refMarkName);
+        CitationGroupId cgid = new CitationGroupId(refMarkName);
 
         final int nCitations = citationKeys.size();
         final int last = nCitations - 1;
