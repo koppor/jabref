@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.style.OOFormatBibliography;
+import org.jabref.logic.openoffice.uno.UnoBookmark;
+import org.jabref.logic.openoffice.uno.UnoTextSection;
 import org.jabref.model.openoffice.style.CitedKeys;
 import org.jabref.model.openoffice.style.OOText;
 import org.jabref.model.openoffice.uno.CreationException;

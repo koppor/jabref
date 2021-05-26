@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice;
+package org.jabref.logic.openoffice.uno;
 
 import org.jabref.model.openoffice.uno.CreationException;
 

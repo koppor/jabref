@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.jabref.logic.openoffice.uno.UnoScreenRefresh;
 import org.jabref.model.openoffice.rangesort.RangeSortable;
 import org.jabref.model.openoffice.uno.NoDocumentException;
 

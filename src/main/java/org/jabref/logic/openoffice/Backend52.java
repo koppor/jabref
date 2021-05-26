@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jabref.logic.openoffice.uno.UnoUserDefinedProperty;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.backend.NamedRange;
 import org.jabref.model.openoffice.backend.NamedRangeManager;

@@ -5,6 +5,7 @@ import java.util.List;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.style.OOProcess;
+import org.jabref.logic.openoffice.uno.UnoScreenRefresh;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.openoffice.style.Citation;
 import org.jabref.model.openoffice.style.CitationGroup;

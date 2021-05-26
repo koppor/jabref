@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice;
+package org.jabref.logic.openoffice.uno;
 
 import com.sun.star.text.XTextDocument;
 

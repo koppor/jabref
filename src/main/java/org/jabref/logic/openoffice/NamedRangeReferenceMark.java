@@ -2,6 +2,8 @@ package org.jabref.logic.openoffice;
 
 import java.util.Optional;
 
+import org.jabref.logic.openoffice.uno.UnoCursor;
+import org.jabref.logic.openoffice.uno.UnoReferenceMark;
 import org.jabref.model.openoffice.backend.NamedRange;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
