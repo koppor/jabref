@@ -28,18 +28,6 @@ public class OOUtil {
         text.insertControlCharacter(cursor, ControlCharacter.PARAGRAPH_BREAK, true);
     }
 
-    public static void insertTextAtCurrentLocation(XTextCursor cursor, String string)
-        throws
-        UnknownPropertyException,
-        PropertyVetoException,
-        WrappedTargetException,
-        IllegalArgumentException,
-        NoSuchElementException {
-        XText text = cursor.getText();
-        text.insertString(cursor, string, true);
-        cursor.collapseToEnd();
-    }
-
     /**
      *  Get the text belonging to cursor with up to
      *  charBefore and charAfter characters of context.
