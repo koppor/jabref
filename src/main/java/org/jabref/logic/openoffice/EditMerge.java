@@ -67,7 +67,10 @@ public class EditMerge {
 
                 List<CitationGroup> cgs = joinableGroupData.group;
 
-                List<Citation> newCitations = OOListUtil.flatMap(cgs, cg -> cg.citationsInStorageOrder);
+                List<Citation> newCitations = (cgs.stream()
+                                               .flatMap(cg -> cg.citationsInStorageOrder.stream())
+                                               .collect(Collectors.toList()));
+
                 CitationType citationType = cgs.get(0).citationType;
                 List<Optional<OOText>> pageInfos = fr.backend.combinePageInfos(cgs);
 

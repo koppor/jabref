@@ -303,9 +303,10 @@ public class Backend52 {
             return OODataModel.fakePageInfos(cgPageInfo, nCitations);
 
         case JabRef53:
-            return OOListUtil.flatMap(joinableGroup,
-                                      cg -> OOListUtil.map(cg.citationsInStorageOrder,
-                                                           cit -> cit.getPageInfo()));
+            return (joinableGroup.stream()
+                    .flatMap(cg -> (cg.citationsInStorageOrder.stream()
+                                    .map(Citation::getPageInfo)))
+                    .collect(Collectors.toList()));
         default:
             throw new RuntimeException("unhandled dataModel here");
         }

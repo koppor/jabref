@@ -13,10 +13,6 @@ public class OOListUtil {
         return list.stream().map(e -> fun.apply(e)).collect(Collectors.toList());
     }
 
-    public static <T, U> List<U> flatMap(List<T> list, Function<T, List<U>> fun) {
-        return list.stream().flatMap(e -> fun.apply(e).stream()).collect(Collectors.toList());
-    }
-
     /** Integers 0..(n-1) */
     public static List<Integer> makeIndices(int n) {
         return Stream.iterate(0, i -> i + 1).limit(n).collect(Collectors.toList());
