@@ -1,9 +1,10 @@
 package org.jabref.model.oostyle;
 
 /*
- * Types of in-text citation. (citationType)
+ * Presentation types of citation groups.
  */
-public enum InTextCitationType {
+public enum CitationType {
+
     AUTHORYEAR_PAR,
     AUTHORYEAR_INTEXT,
     INVISIBLE_CIT;

@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.openoffice.NoDocumentException;
 
 /**
@@ -33,11 +33,11 @@ class Codec52 {
         /**  "", "0", "1" ... */
         public final String i;
         /** in-text-citation type */
-        public final InTextCitationType citationType;
+        public final CitationType citationType;
         /** Citation keys embedded in the reference mark. */
         public final List<String> citationKeys;
 
-        ParsedMarkName(String i, InTextCitationType citationType, List<String> citationKeys) {
+        ParsedMarkName(String i, CitationType citationType, List<String> citationKeys) {
             Objects.requireNonNull(i);
             Objects.requireNonNull(citationKeys);
             this.i = i;
@@ -50,20 +50,20 @@ class Codec52 {
      * Integer representation was written into the document in
      * JabRef52, keep it for compatibility.
      */
-    public static InTextCitationType InTextCitationTypeFromInt(int i) {
+    public static CitationType CitationTypeFromInt(int i) {
         switch (i) {
         case 1:
-            return InTextCitationType.AUTHORYEAR_PAR;
+            return CitationType.AUTHORYEAR_PAR;
         case 2:
-            return InTextCitationType.AUTHORYEAR_INTEXT;
+            return CitationType.AUTHORYEAR_INTEXT;
         case 3:
-            return InTextCitationType.INVISIBLE_CIT;
+            return CitationType.INVISIBLE_CIT;
         default:
-            throw new RuntimeException("Invalid InTextCitationType code");
+            throw new RuntimeException("Invalid CitationType code");
         }
     }
 
-    public static int InTextCitationTypeToInt(InTextCitationType i) {
+    public static int CitationTypeToInt(CitationType i) {
         switch (i) {
         case AUTHORYEAR_PAR:
             return 1;
@@ -72,7 +72,7 @@ class Codec52 {
         case INVISIBLE_CIT:
             return 3;
         default:
-            throw new RuntimeException("Invalid InTextCitationType");
+            throw new RuntimeException("Invalid CitationType");
         }
     }
 
@@ -92,12 +92,12 @@ class Codec52 {
      */
     public static String getUniqueMarkName(Set<String> usedNames,
                                            String bibtexKey,
-                                           InTextCitationType citationType)
+                                           CitationType citationType)
         throws
         NoDocumentException {
 
         int i = 0;
-        int j = InTextCitationTypeToInt(citationType);
+        int j = CitationTypeToInt(citationType);
         String name = BIB_CITATION + '_' + j + '_' + bibtexKey;
         while (usedNames.contains(name)) {
             name = BIB_CITATION + i + '_' + j + '_' + bibtexKey;
@@ -122,7 +122,7 @@ class Codec52 {
         List<String> keys = Arrays.asList(citeMatcher.group(3).split(","));
         String i = citeMatcher.group(1);
         int j = Integer.parseInt(citeMatcher.group(2));
-        InTextCitationType citationType = InTextCitationTypeFromInt(j);
+        CitationType citationType = CitationTypeFromInt(j);
         return (Optional.of(new Codec52.ParsedMarkName(i, citationType, keys)));
     }
 

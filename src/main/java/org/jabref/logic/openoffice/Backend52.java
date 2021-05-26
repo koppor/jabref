@@ -14,7 +14,7 @@ import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
-import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.oostyle.OODataModel;
 import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
@@ -191,7 +191,7 @@ public class Backend52 {
     public CitationGroup createCitationGroup(XTextDocument doc,
                                              List<String> citationKeys,
                                              List<Optional<OOText>> pageInfos,
-                                             InTextCitationType citationType,
+                                             CitationType citationType,
                                              XTextCursor position,
                                              boolean insertSpaceAfter)
         throws
@@ -245,7 +245,7 @@ public class Backend52 {
         /*
          * Apply to document
          */
-        boolean withoutBrackets = (citationType == InTextCitationType.INVISIBLE_CIT);
+        boolean withoutBrackets = (citationType == CitationType.INVISIBLE_CIT);
         NamedRange namedRange =
             this.citationStorageManager.nrmCreate(doc, refMarkName, position, insertSpaceAfter,
                                                   withoutBrackets);

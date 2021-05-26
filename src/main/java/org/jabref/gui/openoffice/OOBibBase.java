@@ -30,7 +30,7 @@ import org.jabref.logic.openoffice.Update;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.CitationGroupID;
-import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
@@ -601,7 +601,7 @@ class OOBibBase {
     public void guiActionInsertEntry(List<BibEntry> entries,
                                      BibDatabase database,
                                      OOBibStyle style,
-                                     InTextCitationType citationType,
+                                     CitationType citationType,
                                      String pageInfo,
                                      Optional<Update.SyncOptions> syncOptions) {
 

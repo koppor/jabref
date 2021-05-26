@@ -8,7 +8,7 @@ import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroups;
-import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
@@ -60,7 +60,7 @@ public class UpdateCitationMarkers {
 
         for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
 
-            boolean withText = (cg.citationType != InTextCitationType.INVISIBLE_CIT);
+            boolean withText = (cg.citationType != CitationType.INVISIBLE_CIT);
             Optional<OOText> marker = cg.getCitationMarker();
 
             if (!marker.isPresent()) {
@@ -131,7 +131,7 @@ public class UpdateCitationMarkers {
                                                   XTextDocument doc,
                                                   List<String> citationKeys,
                                                   List<Optional<OOText>> pageInfos,
-                                                  InTextCitationType citationType,
+                                                  CitationType citationType,
                                                   OOText citationText,
                                                   XTextCursor position,
                                                   OOBibStyle style,

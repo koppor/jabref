@@ -14,7 +14,7 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroupID;
 import org.jabref.model.oostyle.CitationGroups;
-import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.oostyle.OODataModel;
 import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
@@ -254,7 +254,7 @@ public class OOFrontend {
     public CitationGroup createCitationGroup(XTextDocument doc,
                                              List<String> citationKeys,
                                              List<Optional<OOText>> pageInfos,
-                                             InTextCitationType citationType,
+                                             CitationType citationType,
                                              XTextCursor position,
                                              boolean insertSpaceAfter)
         throws

@@ -23,7 +23,7 @@ public class CitationGroup {
      * The core data, stored in the document:
      * The type of citation and citations in storage order.
      */
-    public final InTextCitationType citationType;
+    public final CitationType citationType;
     public final List<Citation> citationsInStorageOrder;
 
     /*
@@ -60,7 +60,7 @@ public class CitationGroup {
 
     public CitationGroup(OODataModel dataModel,
                          CitationGroupID cgid,
-                         InTextCitationType citationType,
+                         CitationType citationType,
                          List<Citation> citationsInStorageOrder,
                          Optional<String> referenceMarkNameForLinking) {
         this.dataModel = dataModel;

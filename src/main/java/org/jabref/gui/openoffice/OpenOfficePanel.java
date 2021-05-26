@@ -51,7 +51,7 @@ import org.jabref.logic.openoffice.Update;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.preferences.PreferencesService;
 
@@ -185,16 +185,16 @@ public class OpenOfficePanel {
         });
 
         pushEntries.setTooltip(new Tooltip(Localization.lang("Cite selected entries between parenthesis")));
-        pushEntries.setOnAction(e -> pushEntries(InTextCitationType.AUTHORYEAR_PAR, false));
+        pushEntries.setOnAction(e -> pushEntries(CitationType.AUTHORYEAR_PAR, false));
         pushEntries.setMaxWidth(Double.MAX_VALUE);
         pushEntriesInt.setTooltip(new Tooltip(Localization.lang("Cite selected entries with in-text citation")));
-        pushEntriesInt.setOnAction(e -> pushEntries(InTextCitationType.AUTHORYEAR_INTEXT, false));
+        pushEntriesInt.setOnAction(e -> pushEntries(CitationType.AUTHORYEAR_INTEXT, false));
         pushEntriesInt.setMaxWidth(Double.MAX_VALUE);
         pushEntriesEmpty.setTooltip(new Tooltip(Localization.lang("Insert a citation without text (the entry will appear in the reference list)")));
-        pushEntriesEmpty.setOnAction(e -> pushEntries(InTextCitationType.INVISIBLE_CIT, false));
+        pushEntriesEmpty.setOnAction(e -> pushEntries(CitationType.INVISIBLE_CIT, false));
         pushEntriesEmpty.setMaxWidth(Double.MAX_VALUE);
         pushEntriesAdvanced.setTooltip(new Tooltip(Localization.lang("Cite selected entries with extra information")));
-        pushEntriesAdvanced.setOnAction(e -> pushEntries(InTextCitationType.AUTHORYEAR_INTEXT, true));
+        pushEntriesAdvanced.setOnAction(e -> pushEntries(CitationType.AUTHORYEAR_INTEXT, true));
         pushEntriesAdvanced.setMaxWidth(Double.MAX_VALUE);
 
         update.setTooltip(new Tooltip(Localization.lang("Ensure that the bibliography is up-to-date")));
@@ -429,16 +429,16 @@ public class OpenOfficePanel {
      * @param inParenthesis True means "(Au and Thor 2000)".
      *                      False means "Au and Thor (2000)".
      */
-    private static InTextCitationType citationTypeFromOptions(boolean withText, boolean inParenthesis) {
+    private static CitationType citationTypeFromOptions(boolean withText, boolean inParenthesis) {
         if (!withText) {
-            return InTextCitationType.INVISIBLE_CIT;
+            return CitationType.INVISIBLE_CIT;
         }
         return (inParenthesis
-                ? InTextCitationType.AUTHORYEAR_PAR
-                : InTextCitationType.AUTHORYEAR_INTEXT);
+                ? CitationType.AUTHORYEAR_PAR
+                : CitationType.AUTHORYEAR_INTEXT);
     }
 
-    private void pushEntries(InTextCitationType citationType, boolean addPageInfo) {
+    private void pushEntries(CitationType citationType, boolean addPageInfo) {
         final String title = Localization.lang("Error pushing entries");
 
         LibraryTab libraryTab = frame.getCurrentLibraryTab();

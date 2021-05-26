@@ -10,7 +10,7 @@ import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
@@ -107,7 +107,7 @@ public class EditMerge {
         Objects.requireNonNull(state.prevRange);
 
         // Only combine (Author 2000) type citations
-        if (cg.citationType != InTextCitationType.AUTHORYEAR_PAR) {
+        if (cg.citationType != CitationType.AUTHORYEAR_PAR) {
             return false;
         }
 
@@ -269,7 +269,7 @@ public class EditMerge {
              *
              * Can it start a new group?
              */
-            boolean canStartGroup = (cg.citationType == InTextCitationType.AUTHORYEAR_PAR);
+            boolean canStartGroup = (cg.citationType == CitationType.AUTHORYEAR_PAR);
 
             if (!addToGroup) {
                 // close currentGroup
@@ -328,7 +328,7 @@ public class EditMerge {
                     newGroupCitations.addAll(cg.citationsInStorageOrder);
                 }
 
-                InTextCitationType citationType = cgs.get(0).citationType;
+                CitationType citationType = cgs.get(0).citationType;
                 List<Optional<OOText>> pageInfos = fr.backend.combinePageInfos(cgs);
 
                 fr.removeCitationGroups(cgs, doc);

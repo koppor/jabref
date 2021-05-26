@@ -12,9 +12,9 @@ import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationGroups;
 import org.jabref.model.oostyle.CitationMarkerEntry;
+import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.oostyle.CitedKey;
 import org.jabref.model.oostyle.CitedKeys;
-import org.jabref.model.oostyle.InTextCitationType;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
@@ -148,7 +148,7 @@ class OOProcessAuthorYearMarkers {
 
         for (CitationGroup cg : cgs.getCitationGroupsInGlobalOrder()) {
 
-            final boolean inParenthesis = (cg.citationType == InTextCitationType.AUTHORYEAR_PAR);
+            final boolean inParenthesis = (cg.citationType == CitationType.AUTHORYEAR_PAR);
             final NonUniqueCitationMarker strictlyUnique = NonUniqueCitationMarker.THROWS;
 
             List<Citation> cits = cg.getCitationsInLocalOrder();

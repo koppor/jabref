@@ -11,7 +11,7 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationMarkerEntry;
-import org.jabref.model.oostyle.InTextCitationType;
+import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OODataModel;
 import org.jabref.model.oostyle.OOListUtil;
@@ -69,7 +69,7 @@ public class EditInsert {
                                            List<BibEntry> entries,
                                            BibDatabase database,
                                            OOBibStyle style,
-                                           InTextCitationType citationType,
+                                           CitationType citationType,
                                            String pageInfo)
         throws
         UnknownPropertyException,
