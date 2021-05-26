@@ -45,20 +45,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Interpret OOText into an OpenOffice or LibreOffice writer
  * document.
- *
- * On the question of what should it understand: apart from what
- * it can do now, probably whatever a CSL style with HTML output
- * emits.
- *
- * Seems slow with approx 40 citations.
- *
- * Idea:
- *
- *   - Use setString, not insertString. This removes character formats,
- *     probably no need for workaround about setPropertyToDefault.
- *   - Calculate current set of character properties in java.
- *   - Use interface allowing to set multiple properties in a single call.
- *
  */
 @AllowedToUseAwt("Requires AWT for changing document properties")
 public class OOTextIntoOO {
@@ -91,373 +77,24 @@ public class OOTextIntoOO {
 
     private static final String TAG_NAME_REGEXP =
         "(?:b|i|em|tt|smallcaps|sup|sub|u|s|p|span|oo:referenceToPageNumberOfReferenceMark)";
+
     private static final String ATTRIBUTE_NAME_REGEXP =
         "(?:oo:ParaStyleName|oo:CharStyleName|lang|style|target)";
+
     private static final String ATTRIBUTE_VALUE_REGEXP = "\"([^\"]*)\"";
+
     private static final Pattern HTML_TAG =
         Pattern.compile("<(/" + TAG_NAME_REGEXP + ")>"
                         + "|"
                         + "<(" + TAG_NAME_REGEXP + ")"
                         + "((?:\\s+(" + ATTRIBUTE_NAME_REGEXP + ")=" + ATTRIBUTE_VALUE_REGEXP + ")*)"
                         + ">");
+
     private static final Pattern ATTRIBUTE_PATTERN =
         Pattern.compile("\\s+(" + ATTRIBUTE_NAME_REGEXP + ")=" + ATTRIBUTE_VALUE_REGEXP);
 
     private OOTextIntoOO() {
-        // Just to hide the public constructor
-    }
-
-    static class MyPropertyStack {
-
-        // Only try to control these. In particular, leave paragraph
-        // properties alone.
-        static final Set<String> CONTROLLED_PROPERTIES = Set.of(
-
-            /* Used for SuperScript, SubScript.
-             *
-             * These three are interdependent: changing one may change others.
-             */
-            "CharEscapement", "CharEscapementHeight", "CharAutoEscapement",
-
-            /* used for Bold */
-            "CharWeight",
-
-            /* Used for Italic */
-            "CharPosture",
-
-            /* CharWordMode : If this property is TRUE, the underline
-             * and strike-through properties are not applied to white
-             * spaces.
-             */
-            // "CharWordMode",
-
-            /* Used for strikeout. These two are interdependent. */
-            "CharStrikeout", "CharCrossedOut",
-
-            /* Used for underline */
-            "CharUnderline", // "CharUnderlineColor", "CharUnderlineHasColor",
-
-            // "CharOverline", "CharOverlineColor", "CharOverlineHasColor",
-
-            /* Used for lang="zxx" to shut spellchecker. */
-            "CharLocale",
-
-            /* Used for CitationCharacterFormat */
-            "CharStyleName", //  "CharStyleNames", "CharAutoStyleName",
-
-            /* Used for <smallcaps> and <span style="font-variant: small-caps"> */
-            "CharCaseMap"
-
-            /* HyperLink */
-            // "HyperLinkName", /* ??? */
-            // "HyperLinkURL",  /* empty for thisDocument */
-            // "HyperLinkTarget",
-            /* HyperLinkTarget : What comes after '#' (location in doc).
-             * Can be a bookmark name.
-             */
-            /* character style names for unvisited  and visited links */
-            // "UnvisitedCharStyleName", "VisitedCharStyleName",
-            // "HyperLinkEvents",
-
-            // "CharColor",
-            // "CharHighlight",
-            // "CharBackColor",  "CharBackTransparent",
-
-            // "CharScaleWidth", /* Allows to reduce font width */
-
-            // "CharKerning", "CharAutoKerning",
-
-            // "CharFontCharSet",
-            // "CharFontFamily",
-            // "CharFontName",
-            // "CharFontPitch",
-            // "CharFontStyleName",
-            // "CharHeight",
-
-            // "CharHidden",
-
-            /*
-             * CharInteropGrabBag : **Since LibreOffice 4.3**
-             *
-             * Grab bag of character properties, used as a string-any
-             * map for interim interop purposes.
-             *
-             * This property is intentionally not handled by the ODF
-             * filter. Any member that should be handled there should
-             * be first moved out from this grab bag to a separate
-             * property.
-             */
-            // "CharInteropGrabBag",
-
-            // "CharNoHyphenation",
-
-            // "CharContoured", "CharFlash", "CharRelief",
-
-            // "CharRotation", "CharRotationIsFitToLine",
-
-            // "CharShadingValue", "CharShadowFormat", "CharShadowed",
-
-            /* CharBorder */
-            // "CharBorderDistance",
-            // "CharBottomBorder",          "CharBottomBorderDistance",
-            // "CharTopBorder",             "CharTopBorderDistance",
-            // "CharRightBorder",           "CharRightBorderDistance",
-            // "CharLeftBorder",            "CharLeftBorderDistance",
-
-            // "IsSkipHiddenText",
-            // "IsSkipProtectedText",
-
-            /* TextUserDefinedAttributes: Saved into doc, but lost on Load.
-             *
-             * They might be usable within a session to invisibly attach info
-             * available elsewhere, but costly to get to.
-             *
-             */
-            // "TextUserDefinedAttributes",
-
-            // "WritingMode"
-
-            // "CharCombineIsOn", "CharCombinePrefix", "CharCombineSuffix",
-
-            /* Ruby */
-            // "RubyAdjust", "RubyCharStyleName", "RubyIsAbove", "RubyPosition", "RubyText",
-
-            // "CharEmphasis", /* emphasis mark in asian texts */
-
-            /* Asian */
-            // "CharWeightAsian",
-            // "CharPostureAsian",
-            // "CharLocaleAsian",
-            // "CharFontCharSetAsian",
-            // "CharFontFamilyAsian",
-            // "CharFontNameAsian",
-            // "CharFontPitchAsian",
-            // "CharFontStyleNameAsian",
-            // "CharHeightAsian",
-
-            /* Complex */
-            // "CharWeightComplex",
-            // "CharPostureComplex",
-            // "CharLocaleComplex",
-            // "CharFontCharSetComplex",
-            // "CharFontFamilyComplex",
-            // "CharFontNameComplex",
-            // "CharFontPitchComplex",
-            // "CharFontStyleNameComplex",
-            // "CharHeightComplex",
-
-            /*
-             * Non-character properties
-             */
-            // "SnapToGrid",
-            // "BreakType"
-            //
-            // "BorderDistance"
-            // "BottomBorder" "BottomBorderDistance"
-            // "LeftBorder"   "LeftBorderDistance"
-            // "RightBorder"  "RightBorderDistance"
-            // "TopBorder"    "TopBorderDistance"
-            //
-            // "ParaBottomMargin"
-            // "ParaLeftMargin"
-            // "ParaTopMargin"
-            // "ParaRightMargin"
-            // "ParaContextMargin"
-            //
-            // "DropCapCharStyleName"
-            // "DropCapFormat"
-            // "DropCapWholeWord"
-            //
-            // "ListAutoFormat" "ListId"
-            //
-            // "NumberingIsNumber"
-            // "NumberingLevel"
-            // "NumberingRules"
-            // "NumberingStartValue"
-            // "NumberingStyleName"
-            // "OutlineLevel"
-            // "ParaChapterNumberingLevel"
-            //
-            // "PageDescName" "PageNumberOffset"
-            //
-            // "Rsid" "ParRsid"
-            //
-            // "ParaAdjust" "ParaAutoStyleName"
-            //
-            // "ParaBackColor"
-            // "ParaBackGraphic"
-            // "ParaBackGraphicFilter"
-            // "ParaBackGraphicLocation"
-            // "ParaBackGraphicURL"
-            // "ParaBackTransparent"
-            //
-            // "ParaExpandSingleWord"
-            // "ParaFirstLineIndent"
-            //
-            // "ParaIsHyphenation"
-            // "ParaHyphenationMaxHyphens"
-            // "ParaHyphenationMaxLeadingChars"
-            // "ParaHyphenationMaxTrailingChars"
-            // "ParaHyphenationNoCaps"
-            //
-            // "ParaInteropGrabBag"
-            // "ParaIsAutoFirstLineIndent"
-            // "ParaIsCharacterDistance"
-            // "ParaIsConnectBorder"
-            // "ParaIsForbiddenRules"
-            // "ParaIsHangingPunctuation"
-            // "ParaIsNumberingRestart"
-            // "ParaKeepTogether"
-            // "ParaLastLineAdjust"
-            // "ParaLineNumberCount" "ParaLineNumberStartValue"
-            // "ParaLineSpacing" "ParaOrphans" "ParaRegisterModeActive"
-            // "ParaShadowFormat" "ParaSplit"
-            // "ParaStyleName" "ParaTabStops"
-            // "ParaUserDefinedAttributes" "ParaVertAlignment"
-            // "ParaWidows"
-
-            /**/);
-        final int goodSize;
-        final Map<String, Integer> goodNameToIndex;
-        final String[] goodNames;
-        final Stack<ArrayList<Optional<Object>>> layers;
-
-        MyPropertyStack(XTextCursor cursor)
-            throws UnknownPropertyException {
-
-            XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
-            XPropertySetInfo psi = propertySet.getPropertySetInfo();
-
-            this.goodNameToIndex = new HashMap<>();
-            int nextIndex = 0;
-            for (Property p : psi.getProperties()) {
-                if ((p.Attributes & PropertyAttribute.READONLY) != 0) {
-                    continue;
-                }
-                if (!CONTROLLED_PROPERTIES.contains(p.Name)) {
-                    continue;
-                }
-                this.goodNameToIndex.put(p.Name, nextIndex);
-                nextIndex++;
-            }
-
-            this.goodSize = nextIndex;
-
-            this.goodNames = new String[goodSize];
-            for (Map.Entry<String, Integer> kv : goodNameToIndex.entrySet()) {
-                goodNames[ kv.getValue() ] = kv.getKey();
-            }
-
-            // XMultiPropertySet.setPropertyValues()
-            // requires alphabetically sorted property names.
-            Arrays.sort(goodNames);
-            for (int i = 0; i < goodSize; i++) {
-                this.goodNameToIndex.put(goodNames[i], i);
-            }
-
-            /*
-            for (int i = 0; i < goodSize; i++) {
-                System.out.printf(" '%s'", goodNames[i]);
-            }
-            System.out.printf("%n");
-            */
-
-            // This throws:
-            // XPropertyAccess xPropertyAccess = UnoCast.unoQI(XPropertyAccess.class, cursor);
-            // if (xPropertyAccess == null) {
-            //     throw new RuntimeException("MyPropertyStack: xPropertyAccess is null");
-            // }
-
-            // we could use:
-            // import com.sun.star.beans.XMultiPropertyStates;
-            XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
-            PropertyState[] propertyStates = mpss.getPropertyStates(goodNames);
-
-            XMultiPropertySet mps = UnoCast.unoQI(XMultiPropertySet.class, cursor);
-            Object[] initialValues = mps.getPropertyValues(goodNames);
-
-            ArrayList<Optional<Object>> initialValuesOpt = new ArrayList<>(goodSize);
-
-            for (int i = 0; i < goodSize; i++) {
-                if (propertyStates[i] == PropertyState.DIRECT_VALUE) {
-                    initialValuesOpt.add(Optional.of(initialValues[i]));
-                } else {
-                    initialValuesOpt.add(Optional.empty());
-                }
-            }
-
-            this.layers = new Stack<>();
-            this.layers.push(initialValuesOpt);
-        }
-
-        void pushLayer(List<Pair<String, Object>> settings) {
-            ArrayList<Optional<Object>> oldLayer = layers.peek();
-            ArrayList<Optional<Object>> newLayer = new ArrayList<>(oldLayer);
-            for (Pair<String, Object> kv : settings) {
-                String name = kv.a;
-                Integer i = goodNameToIndex.get(name);
-                if (i == null) {
-                    LOGGER.warn(String.format("pushLayer: '%s' is not in goodNameToIndex", name));
-                    continue;
-                }
-                Object newValue = kv.b;
-                newLayer.set(i, Optional.ofNullable(newValue));
-            }
-            layers.push(newLayer);
-        }
-
-        void popLayer() {
-            if (layers.size() <= 1) {
-                LOGGER.warn("popLayer: underflow");
-                return;
-            }
-            layers.pop();
-        }
-
-        void apply(XTextCursor cursor) {
-            // removeDirectFormatting(cursor);
-            XMultiPropertySet mps = UnoCast.unoQI(XMultiPropertySet.class, cursor);
-            XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
-            ArrayList<Optional<Object>> topLayer = layers.peek();
-            try {
-                // select values to be set
-                ArrayList<String> names = new ArrayList<>(goodSize);
-                ArrayList<Object> values = new ArrayList<>(goodSize);
-                ArrayList<String> delNames = new ArrayList<>(goodSize);
-                for (int i = 0; i < goodSize; i++) {
-                    if (topLayer.get(i).isPresent()) {
-                        names.add(goodNames[i]);
-                        values.add(topLayer.get(i).get());
-                    } else {
-                        delNames.add(goodNames[i]);
-                    }
-                }
-                // namesArray must be alphabetically sorted.
-                String[] namesArray = names.toArray(new String[names.size()]);
-                String[] delNamesArray = delNames.toArray(new String[names.size()]);
-                mpss.setPropertiesToDefault(delNamesArray);
-                mps.setPropertyValues(namesArray, values.toArray());
-            } catch (UnknownPropertyException ex) {
-                LOGGER.warn("UnknownPropertyException in MyPropertyStack.apply");
-            } catch (PropertyVetoException ex) {
-                LOGGER.warn("PropertyVetoException in MyPropertyStack.apply");
-            } catch (IllegalArgumentException ex) {
-                LOGGER.warn("IllegalArgumentException in MyPropertyStack.apply");
-            } catch (WrappedTargetException ex) {
-                LOGGER.warn("WrappedTargetException in MyPropertyStack.apply");
-            }
-        }
-
-        // Relative CharEscapement needs to know current values.
-        Optional<Object> getPropertyValue(String name) {
-            if (goodNameToIndex.containsKey(name)) {
-                int i = goodNameToIndex.get(name);
-                ArrayList<Optional<Object>> topLayer = layers.peek();
-                Optional<Object> value = topLayer.get(i);
-                return value;
-            }
-            return Optional.empty();
-        }
+        // Hide the public constructor
     }
 
     /**
@@ -468,7 +105,7 @@ public class OOTextIntoOO {
      * the user provides it.
      *
      * To limit the damage {@code TAG_NAME_REGEXP} and {@code ATTRIBUTE_NAME_REGEXP}
-     * explicitly lists the values we care about.
+     * explicitly lists the names we care about.
      *
      * Notable changes w.r.t insertOOFormattedTextAtCurrentLocation:
      *
@@ -491,25 +128,23 @@ public class OOTextIntoOO {
      *     - now: equivalent to &lt;span oo:CharStyleName="Example"&gt;
      *   - &lt;oo:referenceToPageNumberOfReferenceMark&gt; (self-closing)
      *
-     * - closing tags try to properly restore state instead of dictating
-     *   an "off" state.
+     * - closing tags try to properly restore state (in particular, the "not directly set" state)
+     *   instead of dictating an "off" state. This makes a difference when the value inherited from
+     *   another level (for example the paragraph) is not the "off" state.
      *
-     * - The practical consequence: the user can format
-     *   citation marks (it is enough to format its start) and the
-     *   properties not dictated by the style are preserved.
+     *   An example: a style with
+     *   ReferenceParagraphFormat="JR_bibentry"
+     *   Assume JR_bibentry in LibreOffice is a paragraph style that prescribes "bold" font.
+     *   LAYOUT only prescribes bold around year.
+     *   Which parts of the bibliography entries should come out as bold?
      *
-     *    A comparable example: a style with
-     *    ReferenceParagraphFormat="JR_bibentry"
-     *    JR_bibentry in LibreOffice, paragraph style prescribes "bold" font.
-     *    LAYOUT only mentions bold around year.
-     *    Which parts of the bibliography entries should come out as bold?
+     * - The user can format citation marks (it is enough to format their start) and the
+     *   properties not (everywhere) dictated by the style are preserved (where they are not).
      *
      * @param position   The cursor giving the insert location. Not modified.
      * @param ootext     The marked-up text to insert.
      */
-    public static void write(XTextDocument doc,
-                             XTextCursor position,
-                             OOText ootext)
+    public static void write(XTextDocument doc, XTextCursor position, OOText ootext)
         throws
         UnknownPropertyException,
         PropertyVetoException,
@@ -557,6 +192,7 @@ public class OOTextIntoOO {
             String tagName = isStartTag ? startTagName : endTagName;
             Objects.requireNonNull(tagName);
 
+            // Attibutes parsed into (name,value) pairs.
             List<Pair<String, String>> attributes = parseAttributes(attributeListPart);
 
             // Handle tags:
@@ -575,11 +211,11 @@ public class OOTextIntoOO {
                 expectEnd.push("/" + tagName);
                 break;
             case "sup":
-                formatStack.pushLayer(SuperScript(formatStack));
+                formatStack.pushLayer(setSuperScript(formatStack));
                 expectEnd.push("/" + tagName);
                 break;
             case "sub":
-                formatStack.pushLayer(SubScript(formatStack));
+                formatStack.pushLayer(setSubScript(formatStack));
                 expectEnd.push("/" + tagName);
                 break;
             case "u":
@@ -603,7 +239,6 @@ public class OOTextIntoOO {
                     case "oo:ParaStyleName":
                         // <p oo:ParaStyleName="Standard">
                         if (value != null && !value.equals("")) {
-                            // LOGGER.warn(String.format("oo:ParaStyleName=\"%s\" found", value));
                             if (setParagraphStyle(cursor, value)) {
                                 if (debugThisFun) {
                                     // Presumably tested already:
@@ -657,7 +292,7 @@ public class OOTextIntoOO {
                         settings.addAll(setCharLocale(value));
                         break;
                     case "style":
-                        // In general we may need to parse value
+                        // HTML-style small-caps
                         if (value.equals("font-variant: small-caps")) {
                             settings.addAll(setCharCaseMap(CaseMap.SMALLCAPS));
                             break;
@@ -737,7 +372,6 @@ public class OOTextIntoOO {
         try {
             // Special handling
             propertySet.setPropertyValue(CHAR_STYLE_NAME, "Standard");
-            // propertySet.setPropertyValue("CharCaseMap", CaseMap.NONE);
             propertyState.setPropertyToDefault("CharCaseMap");
         } catch (UnknownPropertyException |
                  PropertyVetoException |
@@ -778,11 +412,225 @@ public class OOTextIntoOO {
             if (knownToFail.contains(p.Name)) {
                 continue;
             }
-            LOGGER.warn(String.format("OOTextIntoOO.removeDirectFormatting failed on '%s'",
-                                      p.Name));
+            LOGGER.warn(String.format("OOTextIntoOO.removeDirectFormatting failed on '%s'", p.Name));
         }
     }
 
+    static class MyPropertyStack {
+
+        /*
+         * We only try to control these. Should include all character
+         * properties we set, and maybe their interdependencies.
+         *
+         * For a list of properties see:
+         * https://www.openoffice.org/api/docs/common/ref/com/sun/star/style/CharacterProperties.html
+         *
+         * For interdependencies between properties:
+         * https://wiki.openoffice.org/wiki/Documentation/DevGuide/Text/Formatting
+         * (at the end, under "Interdependencies between Properties")
+         *
+         */
+        static final Set<String> CONTROLLED_PROPERTIES = Set.of(
+
+            /* Used for SuperScript, SubScript.
+             *
+             * These three are interdependent: changing one may change others.
+             */
+            "CharEscapement", "CharEscapementHeight", "CharAutoEscapement",
+
+            /* used for Bold */
+            "CharWeight",
+
+            /* Used for Italic */
+            "CharPosture",
+
+            /* Used for strikeout. These two are interdependent. */
+            "CharStrikeout", "CharCrossedOut",
+
+            /* Used for underline. These three are interdependent, but apparently
+             * we can leave out the last two.
+             */
+            "CharUnderline", // "CharUnderlineColor", "CharUnderlineHasColor",
+
+            /* Used for lang="zxx", to silence spellchecker. */
+            "CharLocale",
+
+            /* Used for CitationCharacterFormat.  */
+            "CharStyleName",
+
+            /* Used for <smallcaps> and <span style="font-variant: small-caps"> */
+            "CharCaseMap");
+
+        /**
+         * The number of properties actually controlled.
+         */
+        final int goodSize;
+
+        /**
+         * From property name to index in goodNames.
+         */
+        final Map<String, Integer> goodNameToIndex;
+
+        /**
+         * From index to property name.
+         */
+        final String[] goodNames;
+
+        /**
+         * Maintain a stack of layers, each containing a description
+         * of the desired state of properties. Each description is an
+         * ArrayList of property values, Optional.empty() encoding
+         * "not directly set".
+         */
+        final Stack<ArrayList<Optional<Object>>> layers;
+
+        MyPropertyStack(XTextCursor cursor)
+            throws UnknownPropertyException {
+
+            XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
+            XPropertySetInfo psi = propertySet.getPropertySetInfo();
+
+            /*
+             * On creation, initialize the property name -- index mapping.
+             */
+            this.goodNameToIndex = new HashMap<>();
+            int nextIndex = 0;
+            for (Property p : psi.getProperties()) {
+                if ((p.Attributes & PropertyAttribute.READONLY) != 0) {
+                    continue;
+                }
+                if (!CONTROLLED_PROPERTIES.contains(p.Name)) {
+                    continue;
+                }
+                this.goodNameToIndex.put(p.Name, nextIndex);
+                nextIndex++;
+            }
+
+            this.goodSize = nextIndex;
+
+            this.goodNames = new String[goodSize];
+            for (Map.Entry<String, Integer> kv : goodNameToIndex.entrySet()) {
+                goodNames[ kv.getValue() ] = kv.getKey();
+            }
+
+            // XMultiPropertySet.setPropertyValues()
+            // requires alphabetically sorted property names.
+            // We adjust here:
+            Arrays.sort(goodNames);
+            for (int i = 0; i < goodSize; i++) {
+                this.goodNameToIndex.put(goodNames[i], i);
+            }
+
+            /*
+             * Get the initial state of the properties and add add the first layer.
+             */
+            XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
+            PropertyState[] propertyStates = mpss.getPropertyStates(goodNames);
+
+            XMultiPropertySet mps = UnoCast.unoQI(XMultiPropertySet.class, cursor);
+            Object[] initialValues = mps.getPropertyValues(goodNames);
+
+            ArrayList<Optional<Object>> initialValuesOpt = new ArrayList<>(goodSize);
+
+            for (int i = 0; i < goodSize; i++) {
+                if (propertyStates[i] == PropertyState.DIRECT_VALUE) {
+                    initialValuesOpt.add(Optional.of(initialValues[i]));
+                } else {
+                    initialValuesOpt.add(Optional.empty());
+                }
+            }
+
+            this.layers = new Stack<>();
+            this.layers.push(initialValuesOpt);
+        }
+
+        /**
+         * Given a list of property name, property value pairs,
+         * construct and push a new layer describing the intended
+         * state after these have been applied.
+         *
+         * Opening tags usually call this.
+         */
+        void pushLayer(List<Pair<String, Object>> settings) {
+            ArrayList<Optional<Object>> oldLayer = layers.peek();
+            ArrayList<Optional<Object>> newLayer = new ArrayList<>(oldLayer);
+            for (Pair<String, Object> kv : settings) {
+                String name = kv.a;
+                Integer i = goodNameToIndex.get(name);
+                if (i == null) {
+                    LOGGER.warn(String.format("pushLayer: '%s' is not in goodNameToIndex", name));
+                    continue;
+                }
+                Object newValue = kv.b;
+                newLayer.set(i, Optional.ofNullable(newValue));
+            }
+            layers.push(newLayer);
+        }
+
+        /**
+         * Closing tags just pop a layer.
+         */
+        void popLayer() {
+            if (layers.size() <= 1) {
+                LOGGER.warn("popLayer: underflow");
+                return;
+            }
+            layers.pop();
+        }
+
+        /**
+         * Apply the current desired formatting state to a cursor.
+         * The idea is to minimize the number of calls to OpenOffice.
+         */
+        void apply(XTextCursor cursor) {
+            XMultiPropertySet mps = UnoCast.unoQI(XMultiPropertySet.class, cursor);
+            XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
+            ArrayList<Optional<Object>> topLayer = layers.peek();
+            try {
+                // select values to be set
+                ArrayList<String> names = new ArrayList<>(goodSize);
+                ArrayList<Object> values = new ArrayList<>(goodSize);
+                // and those to be cleared
+                ArrayList<String> delNames = new ArrayList<>(goodSize);
+                for (int i = 0; i < goodSize; i++) {
+                    if (topLayer.get(i).isPresent()) {
+                        names.add(goodNames[i]);
+                        values.add(topLayer.get(i).get());
+                    } else {
+                        delNames.add(goodNames[i]);
+                    }
+                }
+                // namesArray must be alphabetically sorted.
+                String[] namesArray = names.toArray(new String[names.size()]);
+                String[] delNamesArray = delNames.toArray(new String[names.size()]);
+                mpss.setPropertiesToDefault(delNamesArray);
+                mps.setPropertyValues(namesArray, values.toArray());
+            } catch (UnknownPropertyException ex) {
+                LOGGER.warn("UnknownPropertyException in MyPropertyStack.apply");
+            } catch (PropertyVetoException ex) {
+                LOGGER.warn("PropertyVetoException in MyPropertyStack.apply");
+            } catch (IllegalArgumentException ex) {
+                LOGGER.warn("IllegalArgumentException in MyPropertyStack.apply");
+            } catch (WrappedTargetException ex) {
+                LOGGER.warn("WrappedTargetException in MyPropertyStack.apply");
+            }
+        }
+
+        // Relative CharEscapement needs to know current values.
+        Optional<Object> getPropertyValue(String name) {
+            if (goodNameToIndex.containsKey(name)) {
+                int i = goodNameToIndex.get(name);
+                ArrayList<Optional<Object>> topLayer = layers.peek();
+                Optional<Object> value = topLayer.get(i);
+                return value;
+            }
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Parse HTML-like attributes to a list of (name,value) pairs.
+     */
     private static List<Pair<String, String>> parseAttributes(String s) {
         List<Pair<String, String>> res = new ArrayList<>();
         if (s == null) {
@@ -813,6 +661,10 @@ public class OOTextIntoOO {
         }
         return pst == PropertyState.DEFAULT_VALUE;
     }
+
+    /*
+     * Various property change requests. Their results are passed to MyPropertyStack.pushLayer()
+     */
 
     private static List<Pair<String, Object>> setCharWeight(float value) {
         List<Pair<String, Object>> settings = new ArrayList<>();
@@ -880,12 +732,15 @@ public class OOTextIntoOO {
     }
 
     /*
-     * SuperScript and SubScript
+     * SuperScript and SubScript.
+     *
+     * @param relative If true, calculate the new values relative to
+     *                 the current values. This allows subscript-in-superscript.
      */
-    private static List<Pair<String, Object>> CharEscapement(Optional<Short> value,
-                                                             Optional<Byte> height,
-                                                             boolean relative,
-                                                             MyPropertyStack formatStack) {
+    private static List<Pair<String, Object>> setCharEscapement(Optional<Short> value,
+                                                                Optional<Byte> height,
+                                                                boolean relative,
+                                                                MyPropertyStack formatStack) {
         List<Pair<String, Object>> settings = new ArrayList<>();
         Optional<Short> oldValue = (formatStack
                                     .getPropertyValue(CHAR_ESCAPEMENT)
@@ -919,18 +774,18 @@ public class OOTextIntoOO {
         return settings;
     }
 
-    private static List<Pair<String, Object>> SubScript(MyPropertyStack formatStack) {
-        return CharEscapement(Optional.of(SUBSCRIPT_VALUE),
-                              Optional.of(SUBSCRIPT_HEIGHT),
-                              true,
-                              formatStack);
+    private static List<Pair<String, Object>> setSubScript(MyPropertyStack formatStack) {
+        return setCharEscapement(Optional.of(SUBSCRIPT_VALUE),
+                                 Optional.of(SUBSCRIPT_HEIGHT),
+                                 true,
+                                 formatStack);
     }
 
-    private static List<Pair<String, Object>> SuperScript(MyPropertyStack formatStack) {
-        return CharEscapement(Optional.of(SUPERSCRIPT_VALUE),
-                              Optional.of(SUPERSCRIPT_HEIGHT),
-                              true,
-                              formatStack);
+    private static List<Pair<String, Object>> setSuperScript(MyPropertyStack formatStack) {
+        return setCharEscapement(Optional.of(SUPERSCRIPT_VALUE),
+                                 Optional.of(SUPERSCRIPT_HEIGHT),
+                                 true,
+                                 formatStack);
     }
 
     /*
