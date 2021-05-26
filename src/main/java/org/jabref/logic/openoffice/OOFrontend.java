@@ -167,13 +167,13 @@ public class OOFrontend {
                 XTextRange aRange = orderedRanges.get(i);
                 List<RangeSortEntry<CitationGroup>> sortablesAtARange = partition.get(aRange);
                 for (RangeSortEntry<CitationGroup> sortable : sortablesAtARange) {
-                    sortable.indexInPosition = indexInPartition++;
+                    sortable.setIndexInPosition(indexInPartition++);
                     if (mapFootnotesToFootnoteMarks) {
                         Optional<XTextRange> footnoteMarkRange =
                             UnoTextRange.getFootnoteMarkRange(sortable.getRange());
                         // Adjust range if we are inside a footnote:
                         if (footnoteMarkRange.isPresent()) {
-                            sortable.range = footnoteMarkRange.get();
+                            sortable.setRange(footnoteMarkRange.get());
                         }
                     }
                     result.add(sortable);

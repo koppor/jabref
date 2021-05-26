@@ -6,13 +6,12 @@ import com.sun.star.text.XTextRange;
  * A simple implementation of {@code RangeSortable}
  */
 public class RangeSortEntry<T> implements RangeSortable<T> {
-    public XTextRange range;
-    public int indexInPosition;
-    public T content;
 
-    public RangeSortEntry(XTextRange range,
-                          int indexInPosition,
-                          T content) {
+    private XTextRange range;
+    private int indexInPosition;
+    private T content;
+
+    public RangeSortEntry(XTextRange range, int indexInPosition, T content) {
         this.range = range;
         this.indexInPosition = indexInPosition;
         this.content = content;
@@ -31,5 +30,13 @@ public class RangeSortEntry<T> implements RangeSortable<T> {
     @Override
     public T getContent() {
         return content;
+    }
+
+    public void setRange(XTextRange r) {
+        range = r;
+    }
+
+    public void setIndexInPosition(int i) {
+        indexInPosition = i;
     }
 }
