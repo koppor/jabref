@@ -5,8 +5,10 @@ package org.jabref.model.oostyle;
  * uniqueLetters provided are not sufficient for unique presentation?
  */
 public enum NonUniqueCitationMarker {
+
     /** Give an insufficient representation anyway.  */
     FORGIVEN,
+
     /** Throw a RuntimeException */
     THROWS
 }
