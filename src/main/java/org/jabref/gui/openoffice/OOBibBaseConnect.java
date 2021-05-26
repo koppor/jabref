@@ -13,7 +13,7 @@ import org.jabref.logic.openoffice.UnoCast;
 import org.jabref.logic.openoffice.UnoTextDocument;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
-import org.jabref.model.openoffice.OOResult;
+import org.jabref.model.openoffice.util.OOResult;
 
 import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.container.NoSuchElementException;

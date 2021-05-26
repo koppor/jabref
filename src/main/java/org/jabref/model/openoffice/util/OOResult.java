@@ -1,4 +1,4 @@
-package org.jabref.model.openoffice;
+package org.jabref.model.openoffice.util;
 
 import java.util.Optional;
 import java.util.function.Consumer;

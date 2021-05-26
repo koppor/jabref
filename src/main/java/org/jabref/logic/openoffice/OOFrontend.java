@@ -14,7 +14,6 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
-import org.jabref.model.openoffice.OOVoidResult;
 import org.jabref.model.openoffice.RangeForOverlapCheck;
 import org.jabref.model.openoffice.RangeKeyedMap;
 import org.jabref.model.openoffice.RangeKeyedMapList;
@@ -28,6 +27,7 @@ import org.jabref.model.openoffice.style.CitationType;
 import org.jabref.model.openoffice.style.OODataModel;
 import org.jabref.model.openoffice.style.OOText;
 import org.jabref.model.openoffice.util.OOListUtil;
+import org.jabref.model.openoffice.util.OOVoidResult;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;

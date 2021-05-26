@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import org.jabref.logic.JabRefException;
-import org.jabref.model.openoffice.OOResult;
+import org.jabref.model.openoffice.util.OOResult;
 
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.text.XTextDocument;
