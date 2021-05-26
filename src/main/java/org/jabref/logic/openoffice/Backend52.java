@@ -11,8 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jabref.model.openoffice.CitationEntry;
-import org.jabref.model.openoffice.NamedRange;
-import org.jabref.model.openoffice.NamedRangeManager;
+import org.jabref.model.openoffice.backend.NamedRange;
+import org.jabref.model.openoffice.backend.NamedRangeManager;
 import org.jabref.model.openoffice.style.Citation;
 import org.jabref.model.openoffice.style.CitationGroup;
 import org.jabref.model.openoffice.style.CitationGroupId;
