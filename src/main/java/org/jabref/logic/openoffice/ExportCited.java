@@ -8,9 +8,9 @@ import java.util.Set;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.openoffice.NoDocumentException;
 import org.jabref.model.openoffice.style.CitedKey;
 import org.jabref.model.openoffice.style.CitedKeys;
+import org.jabref.model.openoffice.uno.NoDocumentException;
 
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.container.NoSuchElementException;

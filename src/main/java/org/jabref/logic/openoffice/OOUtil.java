@@ -1,6 +1,6 @@
 package org.jabref.logic.openoffice;
 
-import org.jabref.model.openoffice.NoDocumentException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
 
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;

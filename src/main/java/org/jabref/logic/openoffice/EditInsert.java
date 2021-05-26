@@ -9,14 +9,14 @@ import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.openoffice.CreationException;
-import org.jabref.model.openoffice.NoDocumentException;
 import org.jabref.model.openoffice.style.Citation;
 import org.jabref.model.openoffice.style.CitationMarkerEntry;
 import org.jabref.model.openoffice.style.CitationType;
 import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
 import org.jabref.model.openoffice.style.OODataModel;
 import org.jabref.model.openoffice.style.OOText;
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.util.OOListUtil;
 
 import com.sun.star.beans.IllegalTypeException;

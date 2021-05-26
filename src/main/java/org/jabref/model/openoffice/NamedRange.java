@@ -2,6 +2,9 @@ package org.jabref.model.openoffice;
 
 import java.util.Optional;
 
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
+
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;

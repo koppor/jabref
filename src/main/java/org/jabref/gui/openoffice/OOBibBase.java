@@ -30,11 +30,11 @@ import org.jabref.logic.openoffice.Update;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.CitationEntry;
-import org.jabref.model.openoffice.CreationException;
-import org.jabref.model.openoffice.NoDocumentException;
-import org.jabref.model.openoffice.RangeForOverlapCheck;
+import org.jabref.model.openoffice.rangeoverlap.RangeForOverlapCheck;
 import org.jabref.model.openoffice.style.CitationGroupId;
 import org.jabref.model.openoffice.style.CitationType;
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.util.OOResult;
 import org.jabref.model.openoffice.util.OOVoidResult;
 

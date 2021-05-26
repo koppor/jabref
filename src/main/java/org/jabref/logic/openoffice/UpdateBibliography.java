@@ -4,10 +4,10 @@ import java.util.Optional;
 
 import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.logic.oostyle.OOFormatBibliography;
-import org.jabref.model.openoffice.CreationException;
-import org.jabref.model.openoffice.NoDocumentException;
 import org.jabref.model.openoffice.style.CitedKeys;
 import org.jabref.model.openoffice.style.OOText;
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
 
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;

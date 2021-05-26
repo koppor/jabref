@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.jabref.model.openoffice.CreationException;
-import org.jabref.model.openoffice.NoDocumentException;
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
 
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;

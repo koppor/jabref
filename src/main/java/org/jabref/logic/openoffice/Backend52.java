@@ -11,10 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jabref.model.openoffice.CitationEntry;
-import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NamedRange;
 import org.jabref.model.openoffice.NamedRangeManager;
-import org.jabref.model.openoffice.NoDocumentException;
 import org.jabref.model.openoffice.style.Citation;
 import org.jabref.model.openoffice.style.CitationGroup;
 import org.jabref.model.openoffice.style.CitationGroupId;
@@ -23,6 +21,8 @@ import org.jabref.model.openoffice.style.CitationType;
 import org.jabref.model.openoffice.style.OODataModel;
 import org.jabref.model.openoffice.style.OOText;
 import org.jabref.model.openoffice.style.PageInfo;
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.util.OOListUtil;
 
 import com.sun.star.beans.IllegalTypeException;

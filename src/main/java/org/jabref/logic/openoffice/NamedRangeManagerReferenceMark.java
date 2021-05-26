@@ -3,10 +3,10 @@ package org.jabref.logic.openoffice;
 import java.util.List;
 import java.util.Optional;
 
-import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NamedRange;
 import org.jabref.model.openoffice.NamedRangeManager;
-import org.jabref.model.openoffice.NoDocumentException;
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
 
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
