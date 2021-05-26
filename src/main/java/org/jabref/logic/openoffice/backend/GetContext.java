@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice;
+package org.jabref.logic.openoffice.backend;
 
 import org.jabref.model.openoffice.uno.NoDocumentException;
 
@@ -10,11 +10,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility methods for processing OO Writer documents.
  */
-public class OOUtil {
+public class GetContext {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OOUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetContext.class);
 
-    private OOUtil() {
+    private GetContext() {
         // Just to hide the public constructor
     }
 

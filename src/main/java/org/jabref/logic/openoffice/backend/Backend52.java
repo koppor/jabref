@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.jabref.logic.openoffice.OOUtil;
 import org.jabref.logic.openoffice.uno.UnoUserDefinedProperty;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.backend.NamedRange;
@@ -412,7 +411,7 @@ public class Backend52 {
                 XTextCursor cursor = (this
                                       .getRawCursorForCitationGroup(cg, doc)
                                       .orElseThrow(RuntimeException::new));
-                String context = OOUtil.getCursorStringWithContext(cursor, 30, 30, true);
+                String context = GetContext.getCursorStringWithContext(cursor, 30, 30, true);
                 Optional<String> pageInfo = (cg.numberOfCitations() > 0
                                              ? (getPageInfoFromData(cg)
                                                 .map(e -> OOText.toString(e)))
