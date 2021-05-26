@@ -24,8 +24,7 @@ class OOProcessAuthorYearMarkers {
     /**
      *  Fills {@code sortedCitedKeys//normCitMarker}
      */
-    private static void createNormalizedCitationMarkersForNormalStyle(CitedKeys sortedCitedKeys,
-                                                                      OOBibStyle style) {
+    private static void createNormalizedCitationMarkers(CitedKeys sortedCitedKeys, OOBibStyle style) {
 
         for (CitedKey ck : sortedCitedKeys.values()) {
             ck.setNormalizedCitationMarker(Optional.of(style.getNormalizedCitationMarker(ck)));
@@ -139,7 +138,7 @@ class OOProcessAuthorYearMarkers {
 
         CitedKeys citedKeys = cgs.getCitedKeysSortedInOrderOfAppearance();
 
-        createNormalizedCitationMarkersForNormalStyle(citedKeys, style);
+        createNormalizedCitationMarkers(citedKeys, style);
         createUniqueLetters(citedKeys, cgs);
         cgs.createPlainBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
 
