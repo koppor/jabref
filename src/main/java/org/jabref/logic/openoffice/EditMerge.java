@@ -78,9 +78,7 @@ public class EditMerge {
                 XTextCursor textCursor = joinableGroupData.groupCursor;
                 textCursor.setString(""); // Also remove the spaces between.
 
-                List<String> citationKeys = (newCitations.stream()
-                                             .map(cit -> cit.citationKey)
-                                             .collect(Collectors.toList()));
+                List<String> citationKeys = OOListUtil.map(newCitations, Citation::getCitationKey);
 
                 /* insertSpaceAfter: no, it is already there (or could be) */
                 boolean insertSpaceAfter = false;
