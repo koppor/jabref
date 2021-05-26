@@ -21,7 +21,7 @@ import com.sun.star.uno.UnoRuntime;
  * range.getText(), we group them by these.
  *
  * Within such groups (partitions) we may define comparison, here
- * based on (range.getStart(),range.getEnd()), thus equality means identical
+ * based on (range.getStart(),range.getEnd()), where equality means identical
  * ranges.
  *
  * For finding overlapping ranges this class proved insufficient,
