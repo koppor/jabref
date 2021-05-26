@@ -11,6 +11,7 @@ import org.jabref.logic.oostyle.OOBibStyle;
 import org.jabref.model.oostyle.Citation;
 import org.jabref.model.oostyle.CitationGroup;
 import org.jabref.model.oostyle.CitationType;
+import org.jabref.model.oostyle.OOListUtil;
 import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
@@ -66,11 +67,7 @@ public class EditMerge {
 
                 List<CitationGroup> cgs = joinableGroupData.group;
 
-                List<Citation> newGroupCitations = new ArrayList<>();
-                for (CitationGroup cg : cgs) {
-                    newGroupCitations.addAll(cg.citationsInStorageOrder);
-                }
-
+                List<Citation> newCitations = OOListUtil.flatMap(cgs, cg -> cg.citationsInStorageOrder);
                 CitationType citationType = cgs.get(0).citationType;
                 List<Optional<OOText>> pageInfos = fr.backend.combinePageInfos(cgs);
 
@@ -78,7 +75,7 @@ public class EditMerge {
                 XTextCursor textCursor = joinableGroupData.groupCursor;
                 textCursor.setString(""); // Also remove the spaces between.
 
-                List<String> citationKeys = (newGroupCitations.stream()
+                List<String> citationKeys = (newCitations.stream()
                                              .map(cit -> cit.citationKey)
                                              .collect(Collectors.toList()));
 
