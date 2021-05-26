@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.jabref.model.openoffice.NoDocumentException;
-import org.jabref.model.openoffice.RangeSortable;
+import org.jabref.model.openoffice.rangesort.RangeSortable;
 
 import com.sun.star.awt.Point;
 import com.sun.star.lang.WrappedTargetException;
