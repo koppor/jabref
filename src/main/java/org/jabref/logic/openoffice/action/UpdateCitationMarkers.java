@@ -5,8 +5,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.jabref.logic.JabRefException;
-import org.jabref.logic.openoffice.OOFrontend;
-import org.jabref.logic.openoffice.OOTextIntoOO;
+import org.jabref.logic.openoffice.frontend.OOFrontend;
+import org.jabref.logic.openoffice.frontend.OOTextIntoOO;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.model.openoffice.style.CitationGroup;
 import org.jabref.model.openoffice.style.CitationGroups;

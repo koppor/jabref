@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice;
+package org.jabref.logic.openoffice.frontend;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  *          of the first column of the first page.
  *
  */
-public class RangeSortVisual {
+class RangeSortVisual {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RangeSortVisual.class);
 

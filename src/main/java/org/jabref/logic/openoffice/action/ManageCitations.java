@@ -2,7 +2,7 @@ package org.jabref.logic.openoffice.action;
 
 import java.util.List;
 
-import org.jabref.logic.openoffice.OOFrontend;
+import org.jabref.logic.openoffice.frontend.OOFrontend;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.uno.NoDocumentException;
 

@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice;
+package org.jabref.logic.openoffice.frontend;
 
 import java.util.ArrayList;
 import java.util.List;

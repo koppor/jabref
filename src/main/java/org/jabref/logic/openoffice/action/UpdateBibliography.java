@@ -2,8 +2,8 @@ package org.jabref.logic.openoffice.action;
 
 import java.util.Optional;
 
-import org.jabref.logic.openoffice.OOFrontend;
-import org.jabref.logic.openoffice.OOTextIntoOO;
+import org.jabref.logic.openoffice.frontend.OOFrontend;
+import org.jabref.logic.openoffice.frontend.OOTextIntoOO;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.style.OOFormatBibliography;
 import org.jabref.logic.openoffice.uno.UnoBookmark;
