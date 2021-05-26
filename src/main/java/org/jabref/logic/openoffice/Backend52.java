@@ -284,8 +284,8 @@ public class Backend52 {
         switch (dataModel) {
         case JabRef52:
             // collect to cgPageInfos
-            List<Optional<OOText>> cgPageInfos =
-                OOListUtil.map(joinableGroup, Backend52::getPageInfoFromData);
+            List<Optional<OOText>> cgPageInfos = OOListUtil.map(joinableGroup,
+                                                                Backend52::getPageInfoFromData);
 
             // Try to do something of the cgPageInfos.
             String cgPageInfo = (cgPageInfos.stream()
@@ -303,10 +303,9 @@ public class Backend52 {
             return OODataModel.fakePageInfos(cgPageInfo, nCitations);
 
         case JabRef53:
-            return (joinableGroup.stream()
-                    .flatMap(cg -> (cg.citationsInStorageOrder.stream()
-                                    .map(cit -> cit.getPageInfo())))
-                    .collect(Collectors.toList()));
+            return OOListUtil.flatMap(joinableGroup,
+                                      cg -> OOListUtil.map(cg.citationsInStorageOrder,
+                                                           cit -> cit.getPageInfo()));
         default:
             throw new RuntimeException("unhandled dataModel here");
         }
