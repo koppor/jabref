@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice;
+package org.jabref.logic.openoffice.backend;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jabref.logic.openoffice.OOUtil;
 import org.jabref.logic.openoffice.uno.UnoUserDefinedProperty;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.backend.NamedRange;
