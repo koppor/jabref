@@ -135,7 +135,7 @@ class OOBibStyleTest {
         }
     }
 
-    public class Tuple3<A, B, C> {
+    public static class Tuple3<A, B, C> {
         public final A a;
         public final B b;
         public final C c;
