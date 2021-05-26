@@ -13,9 +13,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jabref.architecture.AllowedToUseAwt;
+import org.jabref.model.oostyle.OOPair;
 import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
-import org.jabref.model.openoffice.Pair;
 
 import com.sun.star.awt.FontSlant;
 import com.sun.star.awt.FontStrikeout;
@@ -193,7 +193,7 @@ public class OOTextIntoOO {
             Objects.requireNonNull(tagName);
 
             // Attibutes parsed into (name,value) pairs.
-            List<Pair<String, String>> attributes = parseAttributes(attributeListPart);
+            List<OOPair<String, String>> attributes = parseAttributes(attributeListPart);
 
             // Handle tags:
             switch (tagName) {
@@ -232,7 +232,7 @@ public class OOTextIntoOO {
             case "p":
                 OOUtil.insertParagraphBreak(text, cursor);
                 cursor.collapseToEnd();
-                for (Pair<String, String> kv : attributes) {
+                for (OOPair<String, String> kv : attributes) {
                     String key = kv.a;
                     String value = kv.b;
                     switch (key) {
@@ -258,7 +258,7 @@ public class OOTextIntoOO {
                 }
                 break;
             case "oo:referenceToPageNumberOfReferenceMark":
-                for (Pair<String, String> kv : attributes) {
+                for (OOPair<String, String> kv : attributes) {
                     String key = kv.a;
                     String value = kv.b;
                     switch (key) {
@@ -277,8 +277,8 @@ public class OOTextIntoOO {
                 expectEnd.push("/" + tagName);
                 break;
             case "span":
-                List<Pair<String, Object>> settings = new ArrayList<>();
-                for (Pair<String, String> kv : attributes) {
+                List<OOPair<String, Object>> settings = new ArrayList<>();
+                for (OOPair<String, String> kv : attributes) {
                     String key = kv.a;
                     String value = kv.b;
                     switch (key) {
@@ -551,10 +551,10 @@ public class OOTextIntoOO {
          *
          * Opening tags usually call this.
          */
-        void pushLayer(List<Pair<String, Object>> settings) {
+        void pushLayer(List<OOPair<String, Object>> settings) {
             ArrayList<Optional<Object>> oldLayer = layers.peek();
             ArrayList<Optional<Object>> newLayer = new ArrayList<>(oldLayer);
-            for (Pair<String, Object> kv : settings) {
+            for (OOPair<String, Object> kv : settings) {
                 String name = kv.a;
                 Integer i = goodNameToIndex.get(name);
                 if (i == null) {
@@ -631,8 +631,8 @@ public class OOTextIntoOO {
     /**
      * Parse HTML-like attributes to a list of (name,value) pairs.
      */
-    private static List<Pair<String, String>> parseAttributes(String s) {
-        List<Pair<String, String>> res = new ArrayList<>();
+    private static List<OOPair<String, String>> parseAttributes(String s) {
+        List<OOPair<String, String>> res = new ArrayList<>();
         if (s == null) {
             return res;
         }
@@ -640,7 +640,7 @@ public class OOTextIntoOO {
         while (m.find()) {
             String key = m.group(1);
             String value = m.group(2);
-            res.add(new Pair<String, String>(key, value));
+            res.add(new OOPair<String, String>(key, value));
         }
         return res;
     }
@@ -666,43 +666,43 @@ public class OOTextIntoOO {
      * Various property change requests. Their results are passed to MyPropertyStack.pushLayer()
      */
 
-    private static List<Pair<String, Object>> setCharWeight(float value) {
-        List<Pair<String, Object>> settings = new ArrayList<>();
-        settings.add(new Pair("CharWeight", (Float) value));
+    private static List<OOPair<String, Object>> setCharWeight(float value) {
+        List<OOPair<String, Object>> settings = new ArrayList<>();
+        settings.add(new OOPair("CharWeight", (Float) value));
         return settings;
     }
 
-    private static List<Pair<String, Object>> setCharPosture(FontSlant value) {
-        List<Pair<String, Object>> settings = new ArrayList<>();
-        settings.add(new Pair("CharPosture", (Object) value));
+    private static List<OOPair<String, Object>> setCharPosture(FontSlant value) {
+        List<OOPair<String, Object>> settings = new ArrayList<>();
+        settings.add(new OOPair("CharPosture", (Object) value));
         return settings;
     }
 
-    private static List<Pair<String, Object>> setCharCaseMap(short value) {
-        List<Pair<String, Object>> settings = new ArrayList<>();
-        settings.add(new Pair("CharCaseMap", (Short) value));
+    private static List<OOPair<String, Object>> setCharCaseMap(short value) {
+        List<OOPair<String, Object>> settings = new ArrayList<>();
+        settings.add(new OOPair("CharCaseMap", (Short) value));
         return settings;
     }
 
     // com.sun.star.awt.FontUnderline
-    private static List<Pair<String, Object>> setCharUnderline(short value) {
-        List<Pair<String, Object>> settings = new ArrayList<>();
-        settings.add(new Pair(CHAR_UNDERLINE, (Short) value));
+    private static List<OOPair<String, Object>> setCharUnderline(short value) {
+        List<OOPair<String, Object>> settings = new ArrayList<>();
+        settings.add(new OOPair(CHAR_UNDERLINE, (Short) value));
         return settings;
     }
 
     // com.sun.star.awt.FontStrikeout
-    private static List<Pair<String, Object>> setCharStrikeout(short value) {
-        List<Pair<String, Object>> settings = new ArrayList<>();
-        settings.add(new Pair(CHAR_STRIKEOUT, (Short) value));
+    private static List<OOPair<String, Object>> setCharStrikeout(short value) {
+        List<OOPair<String, Object>> settings = new ArrayList<>();
+        settings.add(new OOPair(CHAR_STRIKEOUT, (Short) value));
         return settings;
     }
 
     // CharStyleName
-    private static List<Pair<String, Object>> setCharStyleName(String value) {
-        List<Pair<String, Object>> settings = new ArrayList<>();
+    private static List<OOPair<String, Object>> setCharStyleName(String value) {
+        List<OOPair<String, Object>> settings = new ArrayList<>();
         if (value != null && value != "") {
-            settings.add(new Pair(CHAR_STYLE_NAME, value));
+            settings.add(new OOPair(CHAR_STYLE_NAME, value));
         } else {
             LOGGER.warn("setCharStyleName: received null or empty value");
         }
@@ -710,16 +710,16 @@ public class OOTextIntoOO {
     }
 
     // Locale
-    private static List<Pair<String, Object>> setCharLocale(Locale value) {
-        List<Pair<String, Object>> settings = new ArrayList<>();
-        settings.add(new Pair("CharLocale", (Object) value));
+    private static List<OOPair<String, Object>> setCharLocale(Locale value) {
+        List<OOPair<String, Object>> settings = new ArrayList<>();
+        settings.add(new OOPair("CharLocale", (Object) value));
         return settings;
     }
 
     /**
      * Locale from string encoding: language, language-country or language-country-variant
      */
-    private static List<Pair<String, Object>> setCharLocale(String value) {
+    private static List<OOPair<String, Object>> setCharLocale(String value) {
         if (value == null || "".equals(value)) {
             throw new RuntimeException("setCharLocale \"\" or null");
         }
@@ -737,11 +737,11 @@ public class OOTextIntoOO {
      * @param relative If true, calculate the new values relative to
      *                 the current values. This allows subscript-in-superscript.
      */
-    private static List<Pair<String, Object>> setCharEscapement(Optional<Short> value,
+    private static List<OOPair<String, Object>> setCharEscapement(Optional<Short> value,
                                                                 Optional<Byte> height,
                                                                 boolean relative,
                                                                 MyPropertyStack formatStack) {
-        List<Pair<String, Object>> settings = new ArrayList<>();
+        List<OOPair<String, Object>> settings = new ArrayList<>();
         Optional<Short> oldValue = (formatStack
                                     .getPropertyValue(CHAR_ESCAPEMENT)
                                     .map(e -> (short) e));
@@ -758,30 +758,30 @@ public class OOTextIntoOO {
             short newValue = (short) Math.round(xValue);
             byte newHeight = (byte) Math.round(xHeight);
             if (value.isPresent()) {
-                settings.add(new Pair(CHAR_ESCAPEMENT, (Short) newValue));
+                settings.add(new OOPair(CHAR_ESCAPEMENT, (Short) newValue));
             }
             if (height.isPresent()) {
-                settings.add(new Pair(CHAR_ESCAPEMENT_HEIGHT, (Byte) newHeight));
+                settings.add(new OOPair(CHAR_ESCAPEMENT_HEIGHT, (Byte) newHeight));
             }
         } else {
             if (value.isPresent()) {
-                settings.add(new Pair(CHAR_ESCAPEMENT, (Short) value.get()));
+                settings.add(new OOPair(CHAR_ESCAPEMENT, (Short) value.get()));
             }
             if (height.isPresent()) {
-                settings.add(new Pair(CHAR_ESCAPEMENT_HEIGHT, (Byte) height.get()));
+                settings.add(new OOPair(CHAR_ESCAPEMENT_HEIGHT, (Byte) height.get()));
             }
         }
         return settings;
     }
 
-    private static List<Pair<String, Object>> setSubScript(MyPropertyStack formatStack) {
+    private static List<OOPair<String, Object>> setSubScript(MyPropertyStack formatStack) {
         return setCharEscapement(Optional.of(SUBSCRIPT_VALUE),
                                  Optional.of(SUBSCRIPT_HEIGHT),
                                  true,
                                  formatStack);
     }
 
-    private static List<Pair<String, Object>> setSuperScript(MyPropertyStack formatStack) {
+    private static List<OOPair<String, Object>> setSuperScript(MyPropertyStack formatStack) {
         return setCharEscapement(Optional.of(SUPERSCRIPT_VALUE),
                                  Optional.of(SUPERSCRIPT_HEIGHT),
                                  true,

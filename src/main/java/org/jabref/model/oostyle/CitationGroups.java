@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.openoffice.Pair;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +58,7 @@ public class CitationGroups {
      * call {@code fun.accept(new Pair(citation, value));}
      */
     public <T> void distributeToCitations(List<CitationPath> where,
-                                          Consumer<Pair<Citation, T>> fun,
+                                          Consumer<OOPair<Citation, T>> fun,
                                           T value) {
 
         for (CitationPath p : where) {
@@ -69,7 +68,7 @@ public class CitationGroups {
                 continue;
             }
             Citation cit = cg.citationsInStorageOrder.get(p.storageIndexInGroup);
-            fun.accept(new Pair(cit, value));
+            fun.accept(new OOPair(cit, value));
         }
     }
 

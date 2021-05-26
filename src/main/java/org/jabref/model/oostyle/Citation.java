@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.openoffice.Pair;
 
 public class Citation implements ComparableCitation, CitationMarkerEntry, CitationMarkerNumericEntry {
 
@@ -123,17 +122,17 @@ public class Citation implements ComparableCitation, CitationMarkerEntry, Citati
     /*
      * Setters for CitationGroups.distribute()
      */
-    public static void setLookupResult(Pair<Citation, Optional<CitationLookupResult>> x) {
+    public static void setLookupResult(OOPair<Citation, Optional<CitationLookupResult>> x) {
         Citation cit = x.a;
         cit.db = x.b;
     }
 
-    public static void setNumber(Pair<Citation, Optional<Integer>> x) {
+    public static void setNumber(OOPair<Citation, Optional<Integer>> x) {
         Citation cit = x.a;
         cit.number = x.b;
     }
 
-    public static void setUniqueLetter(Pair<Citation, Optional<String>> x) {
+    public static void setUniqueLetter(OOPair<Citation, Optional<String>> x) {
         Citation cit = x.a;
         cit.uniqueLetter = x.b;
     }

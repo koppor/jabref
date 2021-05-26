@@ -1,9 +1,9 @@
-package org.jabref.model.openoffice;
+package org.jabref.model.oostyle;
 
-public class Pair<A, B> {
+public class OOPair<A, B> {
     public final A a;
     public final B b;
-    public Pair(A a, B b) {
+    public OOPair(A a, B b) {
         this.a = a;
         this.b = b;
     }
