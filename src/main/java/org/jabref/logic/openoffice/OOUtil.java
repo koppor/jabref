@@ -2,12 +2,7 @@ package org.jabref.logic.openoffice;
 
 import org.jabref.model.openoffice.NoDocumentException;
 
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.ControlCharacter;
-import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +16,6 @@ public class OOUtil {
 
     private OOUtil() {
         // Just to hide the public constructor
-    }
-
-    public static void insertParagraphBreak(XText text, XTextCursor cursor)
-        throws IllegalArgumentException {
-        text.insertControlCharacter(cursor, ControlCharacter.PARAGRAPH_BREAK, true);
     }
 
     /**

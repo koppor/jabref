@@ -35,6 +35,7 @@ import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.Locale;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.style.CaseMap;
+import com.sun.star.text.ControlCharacter;
 import com.sun.star.text.XParagraphCursor;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
@@ -230,7 +231,7 @@ public class OOTextIntoOO {
                 // nop
                 break;
             case "p":
-                OOUtil.insertParagraphBreak(text, cursor);
+                insertParagraphBreak(text, cursor);
                 cursor.collapseToEnd();
                 for (OOPair<String, String> pair : attributes) {
                     String key = pair.a;
@@ -805,6 +806,11 @@ public class OOTextIntoOO {
                  | WrappedTargetException ex) {
             return FAIL;
         }
+    }
+
+    private static void insertParagraphBreak(XText text, XTextCursor cursor)
+        throws IllegalArgumentException {
+        text.insertControlCharacter(cursor, ControlCharacter.PARAGRAPH_BREAK, true);
     }
 
 }
