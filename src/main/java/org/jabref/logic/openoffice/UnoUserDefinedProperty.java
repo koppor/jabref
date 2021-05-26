@@ -55,13 +55,13 @@ public class UnoUserDefinedProperty {
     public static Optional<String> getStringValue(XTextDocument doc, String property)
         throws
         WrappedTargetException {
-        Optional<XPropertySet> ps = (UnoUserDefinedProperty.getPropertyContainer(doc)
-                                     .flatMap(UnoProperties::asPropertySet));
-        if (ps.isEmpty()) {
+        Optional<XPropertySet> propertySet = (UnoUserDefinedProperty.getPropertyContainer(doc)
+                                              .flatMap(UnoProperties::asPropertySet));
+        if (propertySet.isEmpty()) {
             throw new RuntimeException("getting UserDefinedProperties as XPropertySet failed");
         }
         try {
-            String v = ps.get().getPropertyValue(property).toString();
+            String v = propertySet.get().getPropertyValue(property).toString();
             return Optional.ofNullable(v);
         } catch (UnknownPropertyException ex) {
             return Optional.empty();
@@ -86,33 +86,31 @@ public class UnoUserDefinedProperty {
         Objects.requireNonNull(property);
         Objects.requireNonNull(value);
 
-        Optional<XPropertyContainer> xPropertyContainer =
-            UnoUserDefinedProperty.getPropertyContainer(doc);
+        Optional<XPropertyContainer> container = UnoUserDefinedProperty.getPropertyContainer(doc);
 
-        if (xPropertyContainer.isEmpty()) {
+        if (container.isEmpty()) {
             throw new RuntimeException("UnoUserDefinedProperty.getPropertyContainer failed");
         }
 
-        Optional<XPropertySet> ps =
-            xPropertyContainer.flatMap(UnoProperties::asPropertySet);
-        if (ps.isEmpty()) {
+        Optional<XPropertySet> propertySet = container.flatMap(UnoProperties::asPropertySet);
+        if (propertySet.isEmpty()) {
             throw new RuntimeException("asPropertySet failed");
         }
 
-        XPropertySetInfo psi = ps.get().getPropertySetInfo();
+        XPropertySetInfo propertySetInfo = propertySet.get().getPropertySetInfo();
 
-        if (psi.hasPropertyByName(property)) {
+        if (propertySetInfo.hasPropertyByName(property)) {
             try {
-                ps.get().setPropertyValue(property, value);
+                propertySet.get().setPropertyValue(property, value);
                 return;
             } catch (UnknownPropertyException ex) {
                 // fall through to addProperty
             }
         }
 
-        xPropertyContainer.get().addProperty(property,
-                                             com.sun.star.beans.PropertyAttribute.REMOVEABLE,
-                                             new Any(Type.STRING, value));
+        container.get().addProperty(property,
+                                    com.sun.star.beans.PropertyAttribute.REMOVEABLE,
+                                    new Any(Type.STRING, value));
     }
 
     /**
@@ -130,14 +128,14 @@ public class UnoUserDefinedProperty {
 
         Objects.requireNonNull(property);
 
-        Optional<XPropertyContainer> xPropertyContainer = UnoUserDefinedProperty.getPropertyContainer(doc);
+        Optional<XPropertyContainer> container = UnoUserDefinedProperty.getPropertyContainer(doc);
 
-        if (xPropertyContainer.isEmpty()) {
+        if (container.isEmpty()) {
             throw new RuntimeException("getUserDefinedPropertiesAsXPropertyContainer failed");
         }
 
         try {
-            xPropertyContainer.get().removeProperty(property);
+            container.get().removeProperty(property);
         } catch (UnknownPropertyException ex) {
             LOGGER.warn(String.format("UnoUserDefinedProperty.remove(%s)"
                                       + " This property was not there to remove",
@@ -160,14 +158,14 @@ public class UnoUserDefinedProperty {
 
         Objects.requireNonNull(property);
 
-        Optional<XPropertyContainer> xPropertyContainer = UnoUserDefinedProperty.getPropertyContainer(doc);
+        Optional<XPropertyContainer> container = UnoUserDefinedProperty.getPropertyContainer(doc);
 
-        if (xPropertyContainer.isEmpty()) {
+        if (container.isEmpty()) {
             throw new RuntimeException("getUserDefinedPropertiesAsXPropertyContainer failed");
         }
 
         try {
-            xPropertyContainer.get().removeProperty(property);
+            container.get().removeProperty(property);
         } catch (UnknownPropertyException ex) {
             // did not exist
         }
