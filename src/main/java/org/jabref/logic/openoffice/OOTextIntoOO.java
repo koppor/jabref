@@ -395,10 +395,10 @@ public class OOTextIntoOO {
 
         // query again, just in case it matters
         propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
-        XPropertySetInfo psi = propertySet.getPropertySetInfo();
+        XPropertySetInfo propertySetInfo = propertySet.getPropertySetInfo();
 
         // check the result
-        for (Property p : psi.getProperties()) {
+        for (Property p : propertySetInfo.getProperties()) {
             if ((p.Attributes & PropertyAttribute.READONLY) != 0) {
                 continue;
             }
@@ -488,14 +488,14 @@ public class OOTextIntoOO {
             throws UnknownPropertyException {
 
             XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
-            XPropertySetInfo psi = propertySet.getPropertySetInfo();
+            XPropertySetInfo propertySetInfo = propertySet.getPropertySetInfo();
 
             /*
              * On creation, initialize the property name -- index mapping.
              */
             this.goodNameToIndex = new HashMap<>();
             int nextIndex = 0;
-            for (Property p : psi.getProperties()) {
+            for (Property p : propertySetInfo.getProperties()) {
                 if ((p.Attributes & PropertyAttribute.READONLY) != 0) {
                     continue;
                 }
