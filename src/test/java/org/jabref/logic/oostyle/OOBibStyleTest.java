@@ -33,7 +33,6 @@ import org.jabref.model.oostyle.CitationMarkerNumericEntry;
 import org.jabref.model.oostyle.NonUniqueCitationMarker;
 import org.jabref.model.oostyle.OOText;
 import org.jabref.model.oostyle.PageInfo;
-import org.jabref.model.openoffice.Tuple3;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -136,6 +135,17 @@ class OOBibStyleTest {
         }
     }
 
+    public class Tuple3<A, B, C> {
+        public final A a;
+        public final B b;
+        public final C c;
+        public Tuple3(A a, B b, C c) {
+            this.a = a;
+            this.b = b;
+            this.c = c;
+        }
+    }
+
     private static CitationMarkerNumericEntry
     CitationMarkerNumericEntryFromTuple(Tuple3<String, Integer, String> x) {
         Optional<OOText> pageInfo = Optional.ofNullable(OOText.fromString(x.c));
@@ -152,7 +162,7 @@ class OOBibStyleTest {
         return OOText.toString(res);
     }
 
-    static Tuple3<String,Integer,String> tup3(String a,Integer b, String c) {
+    static Tuple3<String,Integer,String> tup3(String a, Integer b, String c) {
         return new Tuple3(a,b,c);
     }
 
