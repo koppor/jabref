@@ -5,7 +5,7 @@ import java.util.Optional;
 public class PageInfo {
 
     private PageInfo() {
-        //
+        // hide public constructor
     }
 
     /*
