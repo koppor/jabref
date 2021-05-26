@@ -63,7 +63,7 @@ public class CitationGroups {
                                           T value) {
 
         for (CitationPath p : where) {
-            CitationGroup cg = this.citationGroupsUnordered.get(p.group);
+            CitationGroup cg = citationGroupsUnordered.get(p.group);
             if (cg == null) {
                 LOGGER.warn("CitationGroups.distributeToCitations: group missing");
                 continue;
@@ -77,7 +77,6 @@ public class CitationGroups {
      * Look up each Citation in databases.
      */
     public void lookupCitations(List<BibDatabase> databases) {
-        CitationGroups cgs = this;
         /*
          * It is not clear which of the two solutions below is better.
          */
@@ -86,9 +85,9 @@ public class CitationGroups {
             //
             // CitationDatabaseLookupResult for the same citation key
             // is the same object. Until we insert a new citation from the GUI.
-            CitedKeys cks = cgs.getCitedKeysUnordered();
+            CitedKeys cks = getCitedKeysUnordered();
             cks.lookupInDatabases(databases);
-            cks.distributeLookupResults(cgs);
+            cks.distributeLookupResults(this);
         } else {
             // lookup each citation directly
             //
@@ -223,45 +222,42 @@ public class CitationGroups {
     }
 
     public void createNumberedBibliographySortedInOrderOfAppearance() {
-        CitationGroups cgs = this;
-        if (!cgs.bibliography.isEmpty()) {
+        if (!bibliography.isEmpty()) {
             throw new RuntimeException("createNumberedBibliographySortedInOrderOfAppearance:"
                                        + " already have a bibliography");
         }
-        CitedKeys citedKeys = cgs.getCitedKeysSortedInOrderOfAppearance();
+        CitedKeys citedKeys = getCitedKeysSortedInOrderOfAppearance();
         citedKeys.numberCitedKeysInCurrentOrder();
-        citedKeys.distributeNumbers(cgs);
-        cgs.bibliography = Optional.of(citedKeys);
+        citedKeys.distributeNumbers(this);
+        bibliography = Optional.of(citedKeys);
     }
 
     /**
      * precondition: database lookup already performed (otherwise we just sort citation keys)
      */
     public void createPlainBibliographySortedByComparator(Comparator<BibEntry> entryComparator) {
-        CitationGroups cgs = this;
-        if (!this.bibliography.isEmpty()) {
+        if (!bibliography.isEmpty()) {
             throw new RuntimeException("createPlainBibliographySortedByComparator:"
                                        + " already have a bibliography");
         }
-        CitedKeys citedKeys = cgs.getCitedKeysUnordered();
+        CitedKeys citedKeys = getCitedKeysUnordered();
         citedKeys.sortByComparator(entryComparator);
-        this.bibliography = Optional.of(citedKeys);
+        bibliography = Optional.of(citedKeys);
     }
 
     /**
      * precondition: database lookup already performed (otherwise we just sort citation keys)
      */
     public void createNumberedBibliographySortedByComparator(Comparator<BibEntry> entryComparator) {
-        CitationGroups cgs = this;
-        if (!cgs.bibliography.isEmpty()) {
+        if (!bibliography.isEmpty()) {
             throw new RuntimeException("createNumberedBibliographySortedByComparator:"
                                        + " already have a bibliography");
         }
-        CitedKeys citedKeys = cgs.getCitedKeysUnordered();
+        CitedKeys citedKeys = getCitedKeysUnordered();
         citedKeys.sortByComparator(entryComparator);
         citedKeys.numberCitedKeysInCurrentOrder();
-        citedKeys.distributeNumbers(cgs);
-        this.bibliography = Optional.of(citedKeys);
+        citedKeys.distributeNumbers(this);
+        bibliography = Optional.of(citedKeys);
     }
 
     /*
@@ -302,17 +298,17 @@ public class CitationGroups {
      */
 
     public void afterCreateCitationGroup(CitationGroup cg) {
-        this.citationGroupsUnordered.put(cg.cgid, cg);
+        citationGroupsUnordered.put(cg.cgid, cg);
 
-        this.globalOrder = Optional.empty();
-        this.bibliography = Optional.empty();
+        globalOrder = Optional.empty();
+        bibliography = Optional.empty();
     }
 
     public void afterRemoveCitationGroup(CitationGroup cg) {
-        this.citationGroupsUnordered.remove(cg.cgid);
-        this.globalOrder.map(l -> l.remove(cg.cgid));
+        citationGroupsUnordered.remove(cg.cgid);
+        globalOrder.map(l -> l.remove(cg.cgid));
 
-        this.bibliography = Optional.empty();
+        bibliography = Optional.empty();
     }
 
 }
