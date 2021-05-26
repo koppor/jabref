@@ -1,4 +1,4 @@
-package org.jabref.logic.oostyle;
+package org.jabref.logic.openoffice.style;
 
 import org.junit.jupiter.api.Test;
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.jabref.logic.JabRefException;
-import org.jabref.logic.oostyle.OOBibStyle;
+import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.model.openoffice.style.CitationGroup;
 import org.jabref.model.openoffice.style.CitationGroups;
 import org.jabref.model.openoffice.style.CitationType;

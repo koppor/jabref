@@ -1,4 +1,4 @@
-package org.jabref.logic.oostyle;
+package org.jabref.logic.openoffice.style;
 
 import java.util.ArrayList;
 import java.util.Collections;

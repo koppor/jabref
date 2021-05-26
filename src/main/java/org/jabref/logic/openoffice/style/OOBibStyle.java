@@ -1,4 +1,4 @@
-package org.jabref.logic.oostyle;
+package org.jabref.logic.openoffice.style;
 
 import java.io.File;
 import java.io.FileInputStream;
