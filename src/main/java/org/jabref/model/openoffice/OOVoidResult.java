@@ -7,19 +7,19 @@ import java.util.function.Function;
 /*
  * error cannot be null
  */
-public class VoidResult<E> {
+public class OOVoidResult<E> {
     private final Optional<E> error;
 
-    private VoidResult(Optional<E> error) {
+    private OOVoidResult(Optional<E> error) {
         this.error = error;
     }
 
-    public static <E> VoidResult<E> ok() {
-        return new VoidResult(Optional.empty());
+    public static <E> OOVoidResult<E> ok() {
+        return new OOVoidResult(Optional.empty());
     }
 
-    public static <E> VoidResult<E> error(E error) {
-        return new VoidResult(Optional.of(error));
+    public static <E> OOVoidResult<E> error(E error) {
+        return new OOVoidResult(Optional.of(error));
     }
 
     public boolean isError() {
@@ -34,14 +34,14 @@ public class VoidResult<E> {
         return error.get();
     }
 
-    public VoidResult<E> ifError(Consumer<E> fun) {
+    public OOVoidResult<E> ifError(Consumer<E> fun) {
         if (isError()) {
             fun.accept(getError());
         }
         return this;
     }
 
-    public <F> VoidResult<F> mapError(Function<E, F> fun) {
+    public <F> OOVoidResult<F> mapError(Function<E, F> fun) {
         if (isError()) {
             return error(fun.apply(getError()));
         } else {

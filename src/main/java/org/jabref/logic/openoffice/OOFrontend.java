@@ -21,13 +21,13 @@ import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
+import org.jabref.model.openoffice.OOVoidResult;
 import org.jabref.model.openoffice.RangeForOverlapCheck;
 import org.jabref.model.openoffice.RangeKeyedMap;
 import org.jabref.model.openoffice.RangeKeyedMapList;
 import org.jabref.model.openoffice.RangeOverlap;
 import org.jabref.model.openoffice.RangeSortEntry;
 import org.jabref.model.openoffice.RangeSortable;
-import org.jabref.model.openoffice.VoidResult;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
@@ -456,7 +456,7 @@ public class OOFrontend {
      * @param reportAtMost Limit number of overlaps reported (0 for no limit)
      *
      */
-    public VoidResult<JabRefException>
+    public OOVoidResult<JabRefException>
     checkRangeOverlaps(XTextDocument doc,
                        List<RangeForOverlapCheck<CitationGroupId>> userRanges,
                        boolean requireSeparation,
@@ -496,10 +496,10 @@ public class OOFrontend {
                 msg.append(listOfRanges);
                 msg.append("\n");
             }
-            return VoidResult.error(new JabRefException("Found overlapping or touching ranges",
-                                                        msg.toString()));
+            return OOVoidResult.error(new JabRefException("Found overlapping or touching ranges",
+                                                          msg.toString()));
         } else {
-            return VoidResult.ok();
+            return OOVoidResult.ok();
         }
     }
 

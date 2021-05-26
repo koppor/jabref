@@ -13,7 +13,7 @@ import org.jabref.logic.openoffice.UnoCast;
 import org.jabref.logic.openoffice.UnoTextDocument;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
-import org.jabref.model.openoffice.Result;
+import org.jabref.model.openoffice.OOResult;
 
 import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.container.NoSuchElementException;
@@ -239,11 +239,11 @@ class OOBibBaseConnect {
         return this.xTextDocument;
     }
 
-    public Result<XTextDocument, OOError> getXTextDocument() {
+    public OOResult<XTextDocument, OOError> getXTextDocument() {
         if (isDocumentConnectionMissing()) {
-            return Result.error(OOError.from(new NoDocumentException()));
+            return OOResult.error(OOError.from(new NoDocumentException()));
         }
-        return Result.ok(this.xTextDocument);
+        return OOResult.ok(this.xTextDocument);
     }
 
     /**

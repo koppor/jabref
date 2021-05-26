@@ -8,11 +8,11 @@ import java.util.function.Function;
  * error cannot be null
  * result cannot be null
  *
- * Void is not allowed for R, use VoidResult instead.
+ * Void is not allowed for R, use OOVoidResult instead.
  *
  * Out of `isPresent()` and `isError()` exactly one is true.
  */
-public class Result<R, E> {
+public class OOResult<R, E> {
     private final Optional<R> result;
     private final Optional<E> error;
 
@@ -22,7 +22,7 @@ public class Result<R, E> {
      * @param result
      * @param error
      */
-    private Result(Optional<R> result, Optional<E> error) {
+    private OOResult(Optional<R> result, Optional<E> error) {
         this.result = result;
         this.error = error;
     }
@@ -30,15 +30,15 @@ public class Result<R, E> {
     /**
      * @param result Null is not allowed.
      */
-    public static <R, E> Result<R, E> ok(R result) {
-        return new Result(Optional.of(result), Optional.empty());
+    public static <R, E> OOResult<R, E> ok(R result) {
+        return new OOResult(Optional.of(result), Optional.empty());
     }
 
     /**
      * @param error Null is not allowed.
      */
-    public static <R, E> Result<R, E> error(E error) {
-        return new Result(Optional.empty(), Optional.of(error));
+    public static <R, E> OOResult<R, E> error(E error) {
+        return new OOResult(Optional.empty(), Optional.of(error));
     }
 
     /*
@@ -80,21 +80,21 @@ public class Result<R, E> {
      * Conditionals
      */
 
-    public Result<R, E> ifPresent(Consumer<R> fun) {
+    public OOResult<R, E> ifPresent(Consumer<R> fun) {
         if (isPresent()) {
             fun.accept(get());
         }
         return this;
     }
 
-    public Result<R, E> ifError(Consumer<E> fun) {
+    public OOResult<R, E> ifError(Consumer<E> fun) {
         if (isError()) {
             fun.accept(getError());
         }
         return this;
     }
 
-    public <S> Result<S, E> map(Function<R, S> fun) {
+    public <S> OOResult<S, E> map(Function<R, S> fun) {
         if (isError()) {
             return error(getError());
         } else {
@@ -102,7 +102,7 @@ public class Result<R, E> {
         }
     }
 
-    public <F> Result<R, F> mapError(Function<E, F> fun) {
+    public <F> OOResult<R, F> mapError(Function<E, F> fun) {
         if (isError()) {
             return error(fun.apply(getError()));
         } else {
@@ -116,11 +116,11 @@ public class Result<R, E> {
     }
 
     /** Throw away the result part. */
-    public VoidResult<E> asVoidResult() {
+    public OOVoidResult<E> asVoidResult() {
         if (isError()) {
-            return VoidResult.error(getError());
+            return OOVoidResult.error(getError());
         } else {
-            return VoidResult.ok();
+            return OOVoidResult.ok();
         }
     }
 
