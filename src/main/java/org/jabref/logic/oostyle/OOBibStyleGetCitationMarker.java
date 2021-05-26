@@ -600,10 +600,10 @@ class OOBibStyleGetCitationMarker {
      *
      */
     public static OOText
-    getCitationMarker2(OOBibStyle style,
-                       List<CitationMarkerEntry> citationMarkerEntries,
-                       boolean inParenthesis,
-                       NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
+    createCitationMarker(OOBibStyle style,
+                         List<CitationMarkerEntry> citationMarkerEntries,
+                         boolean inParenthesis,
+                         NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
 
         final int nEntries = citationMarkerEntries.size();
 
@@ -623,8 +623,8 @@ class OOBibStyleGetCitationMarker {
         //
 
         List<OOText> normalizedMarkers = getNormalizedCitationMarkers(style,
-                                                                               citationMarkerEntries,
-                                                                               Optional.empty());
+                                                                      citationMarkerEntries,
+                                                                      Optional.empty());
 
         // How many authors would be emitted without grouping.
         int[] nAuthorsToEmit = new int[nEntries];

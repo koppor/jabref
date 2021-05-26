@@ -3,7 +3,7 @@ package org.jabref.model.oostyle;
 import java.util.Optional;
 
 /**
- * This is what we need for getCitationMarker2 to produce author-year
+ * This is what we need for createCitationMarker to produce author-year
  * citation markers.
  */
 public interface CitationMarkerEntry extends CitationMarkerNormEntry {

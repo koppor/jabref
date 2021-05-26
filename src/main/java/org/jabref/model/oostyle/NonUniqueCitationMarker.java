@@ -1,7 +1,7 @@
 package org.jabref.model.oostyle;
 
 /**
- * What should getCitationMarker do if it discovers that
+ * What should createCitationMarker do if it discovers that
  * uniqueLetters provided are not sufficient for unique presentation?
  */
 public enum NonUniqueCitationMarker {

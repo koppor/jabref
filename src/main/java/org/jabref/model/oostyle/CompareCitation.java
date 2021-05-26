@@ -6,7 +6,7 @@ import org.jabref.model.entry.BibEntry;
 
 /*
  * Given a Comparator<BibEntry> provide a Comparator<ComparableCitation>
- * that can handle unresolved citation keys and take pageInfo into account.
+ * that can handle unresolved citation keys and takes pageInfo into account.
  */
 public class CompareCitation implements Comparator<ComparableCitation> {
 

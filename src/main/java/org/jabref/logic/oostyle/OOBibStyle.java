@@ -1014,13 +1014,13 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      *         OOFormat.setLocaleNone() and OOFormat.setCharStyle().
      *         These are added by decorateCitationMarker()
      */
-    public OOText getCitationMarker2(List<CitationMarkerEntry> citationMarkerEntries,
-                                             boolean inParenthesis,
-                                             NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
-        return OOBibStyleGetCitationMarker.getCitationMarker2(this,
-                                                              citationMarkerEntries,
-                                                              inParenthesis,
-                                                              nonUniqueCitationMarkerHandling);
+    public OOText createCitationMarker(List<CitationMarkerEntry> citationMarkerEntries,
+                                       boolean inParenthesis,
+                                       NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
+        return OOBibStyleGetCitationMarker.createCitationMarker(this,
+                                                                citationMarkerEntries,
+                                                                inParenthesis,
+                                                                nonUniqueCitationMarkerHandling);
     }
 
     /**

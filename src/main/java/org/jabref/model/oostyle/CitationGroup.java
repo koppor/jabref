@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import org.jabref.model.entry.BibEntry;
 
-/*
+/**
  * A CitationGroup describes a group of citations.
  */
 public class CitationGroup {

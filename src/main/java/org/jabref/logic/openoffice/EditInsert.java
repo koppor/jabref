@@ -100,9 +100,9 @@ public class EditInsert {
         OOText citeText =
             (style.isNumberEntries()
              ? OOText.fromString("[-]") // A dash only. Only refresh later.
-             : style.getCitationMarker2(citations,
-                                        citationType.inParenthesis(),
-                                        NonUniqueCitationMarker.FORGIVEN));
+             : style.createCitationMarker(citations,
+                                          citationType.inParenthesis(),
+                                          NonUniqueCitationMarker.FORGIVEN));
 
         if ("".equals(OOText.toString(citeText))) {
             citeText = OOText.fromString("[?]");

@@ -152,9 +152,9 @@ class OOProcessAuthorYearMarkers {
 
             List<Citation> cits = cg.getCitationsInLocalOrder();
             List<CitationMarkerEntry> citationMarkerEntries = OOListUtil.map(cits, e -> e);
-            OOText citMarker = style.getCitationMarker2(citationMarkerEntries,
-                                                        inParenthesis,
-                                                        strictlyUnique);
+            OOText citMarker = style.createCitationMarker(citationMarkerEntries,
+                                                          inParenthesis,
+                                                          strictlyUnique);
             cg.setCitationMarker(Optional.of(citMarker));
         }
     }
