@@ -33,6 +33,77 @@ public class EditMerge {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EditMerge.class);
 
+    private EditMerge() {
+        // hide constructor
+    }
+
+    /*
+     * @return true if modified document
+     */
+    public static boolean mergeCitationGroups(XTextDocument doc, OOFrontend fr, OOBibStyle style)
+        throws
+        CreationException,
+        IllegalArgumentException,
+        IllegalTypeException,
+        InvalidStateException,
+        JabRefException,
+        NoDocumentException,
+        NoSuchElementException,
+        NotRemoveableException,
+        PropertyExistException,
+        PropertyVetoException,
+        UnknownPropertyException,
+        WrappedTargetException {
+
+        boolean madeModifications = false;
+
+        try {
+            UnoScreenRefresh.lockControllers(doc);
+
+            List<JoinableGroupData> joinableGroups = EditMerge.scan(doc, fr);
+
+            for (JoinableGroupData joinableGroupData : joinableGroups) {
+
+                List<CitationGroup> cgs = joinableGroupData.group;
+
+                List<Citation> newGroupCitations = new ArrayList<>();
+                for (CitationGroup cg : cgs) {
+                    newGroupCitations.addAll(cg.citationsInStorageOrder);
+                }
+
+                CitationType citationType = cgs.get(0).citationType;
+                List<Optional<OOText>> pageInfos = fr.backend.combinePageInfos(cgs);
+
+                fr.removeCitationGroups(cgs, doc);
+                XTextCursor textCursor = joinableGroupData.groupCursor;
+                textCursor.setString(""); // Also remove the spaces between.
+
+                List<String> citationKeys = (newGroupCitations.stream()
+                                             .map(cit -> cit.citationKey)
+                                             .collect(Collectors.toList()));
+
+                /* insertSpaceAfter: no, it is already there (or could be) */
+                boolean insertSpaceAfter = false;
+                UpdateCitationMarkers.createAndFillCitationGroup(fr,
+                                                                 doc,
+                                                                 citationKeys,
+                                                                 pageInfos,
+                                                                 citationType,
+                                                                 OOText.fromString("tmp"),
+                                                                 textCursor,
+                                                                 style,
+                                                                 insertSpaceAfter);
+            }
+
+            madeModifications = !joinableGroups.isEmpty();
+
+        } finally {
+            UnoScreenRefresh.unlockControllers(doc);
+        }
+
+        return madeModifications;
+    }
+
     private static class JoinableGroupData {
         /*
          * A list of consecutive citation groups only separated by spaces.
@@ -292,72 +363,4 @@ public class EditMerge {
         return result;
     }
 
-    /*
-     * @return true if modified document
-     */
-    public static boolean mergeCitationGroups(XTextDocument doc,
-                                              OOFrontend fr,
-                                              OOBibStyle style)
-        throws
-        CreationException,
-        IllegalArgumentException,
-        IllegalTypeException,
-        InvalidStateException,
-        JabRefException,
-        NoDocumentException,
-        NoSuchElementException,
-        NotRemoveableException,
-        PropertyExistException,
-        PropertyVetoException,
-        UnknownPropertyException,
-        WrappedTargetException {
-
-        boolean madeModifications = false;
-
-        try {
-            UnoScreenRefresh.lockControllers(doc);
-
-            List<JoinableGroupData> joinableGroups = EditMerge.scan(doc, fr);
-
-            for (JoinableGroupData joinableGroupData : joinableGroups) {
-
-                List<CitationGroup> cgs = joinableGroupData.group;
-
-                List<Citation> newGroupCitations = new ArrayList<>();
-                for (CitationGroup cg : cgs) {
-                    newGroupCitations.addAll(cg.citationsInStorageOrder);
-                }
-
-                CitationType citationType = cgs.get(0).citationType;
-                List<Optional<OOText>> pageInfos = fr.backend.combinePageInfos(cgs);
-
-                fr.removeCitationGroups(cgs, doc);
-                XTextCursor textCursor = joinableGroupData.groupCursor;
-                textCursor.setString(""); // Also remove the spaces between.
-
-                List<String> citationKeys = (newGroupCitations.stream()
-                                             .map(cit -> cit.citationKey)
-                                             .collect(Collectors.toList()));
-
-                /* insertSpaceAfter: no, it is already there (or could be) */
-                boolean insertSpaceAfter = false;
-                UpdateCitationMarkers.createAndFillCitationGroup(fr,
-                                                                 doc,
-                                                                 citationKeys,
-                                                                 pageInfos,
-                                                                 citationType,
-                                                                 OOText.fromString("tmp"),
-                                                                 textCursor,
-                                                                 style,
-                                                                 insertSpaceAfter);
-            }
-
-            madeModifications = !joinableGroups.isEmpty();
-
-        } finally {
-            UnoScreenRefresh.unlockControllers(doc);
-        }
-
-        return madeModifications;
-    }
 }
