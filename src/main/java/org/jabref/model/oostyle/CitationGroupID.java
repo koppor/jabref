@@ -10,9 +10,10 @@ public class CitationGroupID {
     }
 
     /**
-     *  CitationEntry needs refMark or other identifying string
+     * CitationEntry needs some string identifying the group
+     * that it can pass back later.
      */
-    public String asString() {
+    public String citationGroupIdAsString() {
         return id;
     }
 }

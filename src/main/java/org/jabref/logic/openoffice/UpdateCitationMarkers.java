@@ -44,9 +44,7 @@ public class UpdateCitationMarkers {
      * @param style Bibliography style to use.
      *
      */
-    static void applyNewCitationMarkers(XTextDocument doc,
-                                        OOFrontend fr,
-                                        OOBibStyle style)
+    static void applyNewCitationMarkers(XTextDocument doc, OOFrontend fr, OOBibStyle style)
         throws
         NoDocumentException,
         UnknownPropertyException,
@@ -65,7 +63,7 @@ public class UpdateCitationMarkers {
 
             if (!marker.isPresent()) {
                 String msg = String.format("applyNewCitationMarkers: no marker for %s",
-                                           cg.cgid.asString());
+                                           cg.cgid.citationGroupIdAsString());
                 LOGGER.warn(msg);
                 continue;
             }

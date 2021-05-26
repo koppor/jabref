@@ -406,7 +406,7 @@ public class Backend52 {
             int n = cgs.numberOfCitationGroups();
             List<CitationEntry> citations = new ArrayList<>(n);
             for (CitationGroup cg : cgs.getCitationGroupsUnordered()) {
-                String name = cg.cgid.asString();
+                String name = cg.cgid.citationGroupIdAsString();
                 XTextCursor cursor = (this
                                       .getRawCursorForCitationGroup(cg, doc)
                                       .orElseThrow(RuntimeException::new));
