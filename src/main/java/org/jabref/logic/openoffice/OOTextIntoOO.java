@@ -367,12 +367,12 @@ public class OOTextIntoOO {
          */
 
         XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
-        XPropertyState propertyState = UnoCast.unoQI(XPropertyState.class, cursor);
+        XPropertyState xPropertyState = UnoCast.unoQI(XPropertyState.class, cursor);
 
         try {
             // Special handling
             propertySet.setPropertyValue(CHAR_STYLE_NAME, "Standard");
-            propertyState.setPropertyToDefault("CharCaseMap");
+            xPropertyState.setPropertyToDefault("CharCaseMap");
         } catch (UnknownPropertyException |
                  PropertyVetoException |
                  IllegalArgumentException |
@@ -653,13 +653,13 @@ public class OOTextIntoOO {
     private static boolean isPropertyDefault(XTextCursor cursor, String propertyName)
         throws
         UnknownPropertyException {
-        XPropertyState propertyState = UnoCast.unoQI(XPropertyState.class, cursor);
-        PropertyState pst = propertyState.getPropertyState(propertyName);
-        if (pst == PropertyState.AMBIGUOUS_VALUE) {
+        XPropertyState xPropertyState = UnoCast.unoQI(XPropertyState.class, cursor);
+        PropertyState state = xPropertyState.getPropertyState(propertyName);
+        if (state == PropertyState.AMBIGUOUS_VALUE) {
             throw new RuntimeException("PropertyState.AMBIGUOUS_VALUE"
                                        + " (expected properties for a homogeneous cursor)");
         }
-        return pst == PropertyState.DEFAULT_VALUE;
+        return state == PropertyState.DEFAULT_VALUE;
     }
 
     /*

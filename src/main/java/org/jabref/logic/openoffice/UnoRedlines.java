@@ -22,8 +22,10 @@ public class UnoRedlines {
         // https://wiki.openoffice.org/wiki/Documentation/DevGuide/Text/Settings
         // "Properties of com.sun.star.text.TextDocument"
 
-        XPropertySet ps = UnoCast.optUnoQI(XPropertySet.class, doc).orElseThrow(RuntimeException::new);
-        return (boolean) ps.getPropertyValue("RecordChanges");
+        XPropertySet propertySet = (UnoCast.optUnoQI(XPropertySet.class, doc)
+                                    .orElseThrow(RuntimeException::new));
+
+        return (boolean) propertySet.getPropertyValue("RecordChanges");
     }
 
     private static XRedlinesSupplier getRedlinesSupplier(XTextDocument doc) {
@@ -31,16 +33,16 @@ public class UnoRedlines {
     }
 
     public static int countRedlines(XTextDocument doc) {
-        XRedlinesSupplier rs = getRedlinesSupplier(doc);
-        XEnumerationAccess ea = rs.getRedlines();
-        XEnumeration e = ea.createEnumeration();
-        if (e == null) {
+        XRedlinesSupplier supplier = getRedlinesSupplier(doc);
+        XEnumerationAccess enumerationAccess = supplier.getRedlines();
+        XEnumeration enumeration = enumerationAccess.createEnumeration();
+        if (enumeration == null) {
             return 0;
         } else {
             int count = 0;
-            while (e.hasMoreElements()) {
+            while (enumeration.hasMoreElements()) {
                 try {
-                    e.nextElement();
+                    enumeration.nextElement();
                     count++;
                 } catch (NoSuchElementException | WrappedTargetException ex) {
                     break;
