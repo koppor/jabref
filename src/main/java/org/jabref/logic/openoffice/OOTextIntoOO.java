@@ -727,8 +727,7 @@ public class OOTextIntoOO {
         String language = (parts.length > 0) ? parts[0] : "";
         String country = (parts.length > 1) ? parts[1] : "";
         String variant = (parts.length > 2) ? parts[2] : "";
-        Locale l = new Locale(language, country, variant);
-        return setCharLocale(l);
+        return setCharLocale(new Locale(language, country, variant));
     }
 
     /*
