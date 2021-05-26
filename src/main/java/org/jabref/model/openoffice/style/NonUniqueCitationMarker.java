@@ -1,4 +1,4 @@
-package org.jabref.model.oostyle;
+package org.jabref.model.openoffice.style;
 
 /**
  * What should createCitationMarker do if it discovers that

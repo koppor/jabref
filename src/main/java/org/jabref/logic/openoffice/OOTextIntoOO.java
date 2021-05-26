@@ -13,9 +13,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jabref.architecture.AllowedToUseAwt;
-import org.jabref.model.oostyle.OOPair;
-import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
+import org.jabref.model.openoffice.style.OOPair;
+import org.jabref.model.openoffice.style.OOText;
 
 import com.sun.star.awt.FontSlant;
 import com.sun.star.awt.FontStrikeout;

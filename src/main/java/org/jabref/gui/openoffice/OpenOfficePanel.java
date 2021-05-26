@@ -51,8 +51,8 @@ import org.jabref.logic.openoffice.Update;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.openoffice.CreationException;
+import org.jabref.model.openoffice.style.CitationType;
 import org.jabref.preferences.PreferencesService;
 
 import com.sun.star.comp.helper.BootstrapException;

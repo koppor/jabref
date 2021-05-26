@@ -10,13 +10,13 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.UnknownField;
-import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.CitationGroupId;
-import org.jabref.model.oostyle.CitationGroups;
-import org.jabref.model.oostyle.CitationPath;
-import org.jabref.model.oostyle.CitedKey;
-import org.jabref.model.oostyle.CitedKeys;
-import org.jabref.model.oostyle.OOText;
+import org.jabref.model.openoffice.style.CitationGroup;
+import org.jabref.model.openoffice.style.CitationGroupId;
+import org.jabref.model.openoffice.style.CitationGroups;
+import org.jabref.model.openoffice.style.CitationPath;
+import org.jabref.model.openoffice.style.CitedKey;
+import org.jabref.model.openoffice.style.CitedKeys;
+import org.jabref.model.openoffice.style.OOText;
 
 public class OOFormatBibliography {
     private static final OOPreFormatter POSTFORMATTER = new OOPreFormatter();

@@ -9,8 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.openoffice.NoDocumentException;
+import org.jabref.model.openoffice.style.CitationType;
 
 /**
  *  How and what is encoded in a mark names.

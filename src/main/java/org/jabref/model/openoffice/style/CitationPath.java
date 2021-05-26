@@ -1,4 +1,4 @@
-package org.jabref.model.oostyle;
+package org.jabref.model.openoffice.style;
 
 /**
  * Identifies a citation with the citation group containing it and

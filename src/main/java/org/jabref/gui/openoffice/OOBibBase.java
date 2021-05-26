@@ -29,14 +29,14 @@ import org.jabref.logic.openoffice.UnoUndo;
 import org.jabref.logic.openoffice.Update;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.oostyle.CitationGroupId;
-import org.jabref.model.oostyle.CitationType;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
 import org.jabref.model.openoffice.OOResult;
 import org.jabref.model.openoffice.OOVoidResult;
 import org.jabref.model.openoffice.RangeForOverlapCheck;
+import org.jabref.model.openoffice.style.CitationGroupId;
+import org.jabref.model.openoffice.style.CitationType;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;

@@ -8,13 +8,13 @@ import java.util.stream.Collectors;
 
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.oostyle.OOBibStyle;
-import org.jabref.model.oostyle.Citation;
-import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.CitationType;
-import org.jabref.model.oostyle.OOListUtil;
-import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
+import org.jabref.model.openoffice.style.Citation;
+import org.jabref.model.openoffice.style.CitationGroup;
+import org.jabref.model.openoffice.style.CitationType;
+import org.jabref.model.openoffice.style.OOListUtil;
+import org.jabref.model.openoffice.style.OOText;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;

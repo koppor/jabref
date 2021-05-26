@@ -12,12 +12,12 @@ import org.jabref.model.entry.AuthorList;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.OrFields;
-import org.jabref.model.oostyle.CitationLookupResult;
-import org.jabref.model.oostyle.CitationMarkerEntry;
-import org.jabref.model.oostyle.CitationMarkerNormEntry;
-import org.jabref.model.oostyle.NonUniqueCitationMarker;
-import org.jabref.model.oostyle.OOText;
-import org.jabref.model.oostyle.PageInfo;
+import org.jabref.model.openoffice.style.CitationLookupResult;
+import org.jabref.model.openoffice.style.CitationMarkerEntry;
+import org.jabref.model.openoffice.style.CitationMarkerNormEntry;
+import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
+import org.jabref.model.openoffice.style.OOText;
+import org.jabref.model.openoffice.style.PageInfo;
 import org.jabref.model.strings.StringUtil;
 
 class OOBibStyleGetCitationMarker {

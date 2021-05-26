@@ -1,6 +1,6 @@
 package org.jabref.logic.oostyle;
 
-import org.jabref.model.oostyle.OOText;
+import org.jabref.model.openoffice.style.OOText;
 
 public class OOFormat {
 

@@ -1,4 +1,4 @@
-package org.jabref.model.oostyle;
+package org.jabref.model.openoffice.style;
 
 public class OOPair<A, B> {
     public final A a;

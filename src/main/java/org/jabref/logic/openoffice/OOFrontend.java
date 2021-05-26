@@ -11,13 +11,6 @@ import java.util.stream.Collectors;
 
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.CitationGroupId;
-import org.jabref.model.oostyle.CitationGroups;
-import org.jabref.model.oostyle.CitationType;
-import org.jabref.model.oostyle.OODataModel;
-import org.jabref.model.oostyle.OOListUtil;
-import org.jabref.model.oostyle.OOText;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.CreationException;
 import org.jabref.model.openoffice.NoDocumentException;
@@ -28,6 +21,13 @@ import org.jabref.model.openoffice.RangeKeyedMapList;
 import org.jabref.model.openoffice.RangeOverlap;
 import org.jabref.model.openoffice.RangeSortEntry;
 import org.jabref.model.openoffice.RangeSortable;
+import org.jabref.model.openoffice.style.CitationGroup;
+import org.jabref.model.openoffice.style.CitationGroupId;
+import org.jabref.model.openoffice.style.CitationGroups;
+import org.jabref.model.openoffice.style.CitationType;
+import org.jabref.model.openoffice.style.OODataModel;
+import org.jabref.model.openoffice.style.OOListUtil;
+import org.jabref.model.openoffice.style.OOText;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;

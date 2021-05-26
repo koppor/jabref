@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.jabref.model.oostyle.CitationMarkerNumericBibEntry;
-import org.jabref.model.oostyle.CitationMarkerNumericEntry;
-import org.jabref.model.oostyle.OOListUtil;
-import org.jabref.model.oostyle.OOText;
-import org.jabref.model.oostyle.PageInfo;
+import org.jabref.model.openoffice.style.CitationMarkerNumericBibEntry;
+import org.jabref.model.openoffice.style.CitationMarkerNumericEntry;
+import org.jabref.model.openoffice.style.OOListUtil;
+import org.jabref.model.openoffice.style.OOText;
+import org.jabref.model.openoffice.style.PageInfo;
 
 class OOBibStyleGetNumCitationMarker {
 

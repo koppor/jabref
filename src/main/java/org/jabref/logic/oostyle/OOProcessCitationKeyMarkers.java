@@ -2,11 +2,11 @@ package org.jabref.logic.oostyle;
 
 import java.util.Optional;
 
-import org.jabref.model.oostyle.Citation;
-import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.CitationGroups;
-import org.jabref.model.oostyle.OOListUtil;
-import org.jabref.model.oostyle.OOText;
+import org.jabref.model.openoffice.style.Citation;
+import org.jabref.model.openoffice.style.CitationGroup;
+import org.jabref.model.openoffice.style.CitationGroups;
+import org.jabref.model.openoffice.style.OOListUtil;
+import org.jabref.model.openoffice.style.OOText;
 
 class OOProcessCitationKeyMarkers {
     /**

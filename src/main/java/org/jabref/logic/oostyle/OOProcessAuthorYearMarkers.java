@@ -8,16 +8,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.jabref.model.oostyle.Citation;
-import org.jabref.model.oostyle.CitationGroup;
-import org.jabref.model.oostyle.CitationGroups;
-import org.jabref.model.oostyle.CitationMarkerEntry;
-import org.jabref.model.oostyle.CitationType;
-import org.jabref.model.oostyle.CitedKey;
-import org.jabref.model.oostyle.CitedKeys;
-import org.jabref.model.oostyle.NonUniqueCitationMarker;
-import org.jabref.model.oostyle.OOListUtil;
-import org.jabref.model.oostyle.OOText;
+import org.jabref.model.openoffice.style.Citation;
+import org.jabref.model.openoffice.style.CitationGroup;
+import org.jabref.model.openoffice.style.CitationGroups;
+import org.jabref.model.openoffice.style.CitationMarkerEntry;
+import org.jabref.model.openoffice.style.CitationType;
+import org.jabref.model.openoffice.style.CitedKey;
+import org.jabref.model.openoffice.style.CitedKeys;
+import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
+import org.jabref.model.openoffice.style.OOListUtil;
+import org.jabref.model.openoffice.style.OOText;
 
 class OOProcessAuthorYearMarkers {
 
