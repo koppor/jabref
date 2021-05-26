@@ -24,7 +24,7 @@ class RangeOverlapFinder {
                                                                   int atMost,
                                                                   boolean includeTouching) {
         List<RangeOverlap<V>> result = new ArrayList<>();
-        for (TreeMap<XTextRange, List<V>> partition : input.partitions.partitionValues()) {
+        for (TreeMap<XTextRange, List<V>> partition : input.partitionValues()) {
             List<XTextRange> orderedRanges = new ArrayList<>(partition.keySet());
             for (int i = 0; i < orderedRanges.size(); i++) {
                 XTextRange aRange = orderedRanges.get(i);

@@ -7,7 +7,8 @@ import java.util.TreeMap;
 import com.sun.star.text.XTextRange;
 
 public class RangeKeyedMapList<V> {
-    public RangeKeyedMap<List<V>> partitions;
+
+    private RangeKeyedMap<List<V>> partitions;
 
     public RangeKeyedMapList() {
         this.partitions = new RangeKeyedMap<>();
