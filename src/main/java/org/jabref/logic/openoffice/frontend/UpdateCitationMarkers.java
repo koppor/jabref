@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice.action;
+package org.jabref.logic.openoffice.frontend;
 
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +46,7 @@ public class UpdateCitationMarkers {
      * @param style Bibliography style to use.
      *
      */
-    static void applyNewCitationMarkers(XTextDocument doc, OOFrontend fr, OOBibStyle style)
+    public static void applyNewCitationMarkers(XTextDocument doc, OOFrontend fr, OOBibStyle style)
         throws
         NoDocumentException,
         UnknownPropertyException,

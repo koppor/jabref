@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice.action;
+package org.jabref.logic.openoffice.frontend;
 
 import java.util.Optional;
 
@@ -40,11 +40,11 @@ public class UpdateBibliography {
     /**
      * Rebuilds the bibliography.
      */
-    static void rebuildBibTextSection(XTextDocument doc,
-                                      OOFrontend fr,
-                                      CitedKeys bibliography,
-                                      OOBibStyle style,
-                                      boolean alwaysAddCitedOnPages)
+    public static void rebuildBibTextSection(XTextDocument doc,
+                                             OOFrontend fr,
+                                             CitedKeys bibliography,
+                                             OOBibStyle style,
+                                             boolean alwaysAddCitedOnPages)
         throws
         NoSuchElementException,
         WrappedTargetException,

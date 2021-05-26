@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.openoffice.frontend.OOFrontend;
+import org.jabref.logic.openoffice.frontend.UpdateCitationMarkers;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.uno.UnoScreenRefresh;
 import org.jabref.logic.openoffice.uno.UnoTextRange;
