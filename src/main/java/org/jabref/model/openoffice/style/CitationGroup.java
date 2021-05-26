@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.openoffice.util.OOListUtil;
 
 /**
  * A CitationGroup describes a group of citations.

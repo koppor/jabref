@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.openoffice.util.OOListUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

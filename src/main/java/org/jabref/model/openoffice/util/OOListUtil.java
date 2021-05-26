@@ -1,4 +1,4 @@
-package org.jabref.model.openoffice.style;
+package org.jabref.model.openoffice.util;
 
 import java.util.Collections;
 import java.util.Comparator;

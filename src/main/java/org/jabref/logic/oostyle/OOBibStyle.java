@@ -35,9 +35,9 @@ import org.jabref.model.openoffice.style.CitationMarkerNormEntry;
 import org.jabref.model.openoffice.style.CitationMarkerNumericBibEntry;
 import org.jabref.model.openoffice.style.CitationMarkerNumericEntry;
 import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
-import org.jabref.model.openoffice.style.OOListUtil;
 import org.jabref.model.openoffice.style.OOText;
 import org.jabref.model.openoffice.style.PageInfo;
+import org.jabref.model.openoffice.util.OOListUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

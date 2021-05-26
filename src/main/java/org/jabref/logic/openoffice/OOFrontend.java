@@ -26,8 +26,8 @@ import org.jabref.model.openoffice.style.CitationGroupId;
 import org.jabref.model.openoffice.style.CitationGroups;
 import org.jabref.model.openoffice.style.CitationType;
 import org.jabref.model.openoffice.style.OODataModel;
-import org.jabref.model.openoffice.style.OOListUtil;
 import org.jabref.model.openoffice.style.OOText;
+import org.jabref.model.openoffice.util.OOListUtil;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;

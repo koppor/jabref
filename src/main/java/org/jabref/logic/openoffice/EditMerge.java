@@ -13,8 +13,8 @@ import org.jabref.model.openoffice.NoDocumentException;
 import org.jabref.model.openoffice.style.Citation;
 import org.jabref.model.openoffice.style.CitationGroup;
 import org.jabref.model.openoffice.style.CitationType;
-import org.jabref.model.openoffice.style.OOListUtil;
 import org.jabref.model.openoffice.style.OOText;
+import org.jabref.model.openoffice.util.OOListUtil;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
