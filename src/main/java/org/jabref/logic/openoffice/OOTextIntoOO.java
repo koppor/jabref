@@ -360,13 +360,6 @@ public class OOTextIntoOO {
 
         XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
 
-        /*
-         * Now that we have setAllPropertiesToDefault, check which properties
-         * are not set to default and try to correct what we can and seem necessary.
-         *
-         * Note: tested with LibreOffice : 6.4.6.2
-         */
-
         XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
         XPropertyState xPropertyState = UnoCast.unoQI(XPropertyState.class, cursor);
 
@@ -382,6 +375,13 @@ public class OOTextIntoOO {
         }
 
         mpss.setAllPropertiesToDefault();
+
+        /*
+         * Now that we have called setAllPropertiesToDefault, check which properties
+         * are not set to default and try to correct what we can and seem necessary.
+         *
+         * Note: tested with LibreOffice : 6.4.6.2
+         */
 
         // Only report those we do not yet know about
         final Set<String> knownToFail = Set.of("ListAutoFormat",
