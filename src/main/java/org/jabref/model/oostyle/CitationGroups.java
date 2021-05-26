@@ -18,6 +18,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * CitationGroups : the set of citation groups in the document.
+ *
+ * This is the main input (as well as output) for creating citation
+ * markers and bibliography.
+ *
  */
 public class CitationGroups {
 
