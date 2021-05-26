@@ -750,12 +750,12 @@ public class OOTextIntoOO {
                                     .map(e -> (byte) e));
 
         if (relative && (value.isPresent() || height.isPresent())) {
-            double oh = oldHeight.orElse(CHAR_ESCAPEMENT_HEIGHT_DEFAULT) * 0.01;
-            double xHeight = height.orElse(CHAR_ESCAPEMENT_HEIGHT_DEFAULT) * oh;
-            double ov = oldValue.orElse(CHAR_ESCAPEMENT_VALUE_DEFAULT);
-            double xValue = value.orElse(CHAR_ESCAPEMENT_VALUE_DEFAULT) * oh + ov;
-            short newValue = (short) Math.round(xValue);
-            byte newHeight = (byte) Math.round(xHeight);
+            double oldHeightFloat = oldHeight.orElse(CHAR_ESCAPEMENT_HEIGHT_DEFAULT) * 0.01;
+            double oldValueFloat = oldValue.orElse(CHAR_ESCAPEMENT_VALUE_DEFAULT);
+            double heightFloat = height.orElse(CHAR_ESCAPEMENT_HEIGHT_DEFAULT);
+            double valueFloat = value.orElse(CHAR_ESCAPEMENT_VALUE_DEFAULT);
+            byte newHeight = (byte) Math.round(heightFloat * oldHeightFloat);
+            short newValue = (short) Math.round(valueFloat * oldHeightFloat + oldValueFloat);
             if (value.isPresent()) {
                 settings.add(new OOPair(CHAR_ESCAPEMENT, (Short) newValue));
             }
