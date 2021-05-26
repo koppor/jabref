@@ -232,9 +232,9 @@ public class OOTextIntoOO {
             case "p":
                 OOUtil.insertParagraphBreak(text, cursor);
                 cursor.collapseToEnd();
-                for (OOPair<String, String> kv : attributes) {
-                    String key = kv.a;
-                    String value = kv.b;
+                for (OOPair<String, String> pair : attributes) {
+                    String key = pair.a;
+                    String value = pair.b;
                     switch (key) {
                     case "oo:ParaStyleName":
                         // <p oo:ParaStyleName="Standard">
@@ -258,9 +258,9 @@ public class OOTextIntoOO {
                 }
                 break;
             case "oo:referenceToPageNumberOfReferenceMark":
-                for (OOPair<String, String> kv : attributes) {
-                    String key = kv.a;
-                    String value = kv.b;
+                for (OOPair<String, String> pair : attributes) {
+                    String key = pair.a;
+                    String value = pair.b;
                     switch (key) {
                     case "target":
                         UnoCrossRef.insertReferenceToPageNumberOfReferenceMark(doc, value, cursor);
@@ -278,9 +278,9 @@ public class OOTextIntoOO {
                 break;
             case "span":
                 List<OOPair<String, Object>> settings = new ArrayList<>();
-                for (OOPair<String, String> kv : attributes) {
-                    String key = kv.a;
-                    String value = kv.b;
+                for (OOPair<String, String> pair : attributes) {
+                    String key = pair.a;
+                    String value = pair.b;
                     switch (key) {
                     case "oo:CharStyleName":
                         // <span oo:CharStyleName="Standard">
@@ -509,8 +509,8 @@ public class OOTextIntoOO {
             this.goodSize = nextIndex;
 
             this.goodNames = new String[goodSize];
-            for (Map.Entry<String, Integer> kv : goodNameToIndex.entrySet()) {
-                goodNames[ kv.getValue() ] = kv.getKey();
+            for (Map.Entry<String, Integer> entry : goodNameToIndex.entrySet()) {
+                goodNames[ entry.getValue() ] = entry.getKey();
             }
 
             // XMultiPropertySet.setPropertyValues()
@@ -554,14 +554,14 @@ public class OOTextIntoOO {
         void pushLayer(List<OOPair<String, Object>> settings) {
             ArrayList<Optional<Object>> oldLayer = layers.peek();
             ArrayList<Optional<Object>> newLayer = new ArrayList<>(oldLayer);
-            for (OOPair<String, Object> kv : settings) {
-                String name = kv.a;
+            for (OOPair<String, Object> pair : settings) {
+                String name = pair.a;
                 Integer i = goodNameToIndex.get(name);
                 if (i == null) {
                     LOGGER.warn(String.format("pushLayer: '%s' is not in goodNameToIndex", name));
                     continue;
                 }
-                Object newValue = kv.b;
+                Object newValue = pair.b;
                 newLayer.set(i, Optional.ofNullable(newValue));
             }
             layers.push(newLayer);
