@@ -737,9 +737,9 @@ public class OOTextIntoOO {
      *                 the current values. This allows subscript-in-superscript.
      */
     private static List<OOPair<String, Object>> setCharEscapement(Optional<Short> value,
-                                                                Optional<Byte> height,
-                                                                boolean relative,
-                                                                MyPropertyStack formatStack) {
+                                                                  Optional<Byte> height,
+                                                                  boolean relative,
+                                                                  MyPropertyStack formatStack) {
         List<OOPair<String, Object>> settings = new ArrayList<>();
         Optional<Short> oldValue = (formatStack
                                     .getPropertyValue(CHAR_ESCAPEMENT)
