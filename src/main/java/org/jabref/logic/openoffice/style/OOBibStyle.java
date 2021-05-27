@@ -441,6 +441,75 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         }
     }
 
+    /* begin_old */
+    /**
+     * Format a number-based citation marker for the given number.
+     *
+     * @param number The citation numbers.
+     * @return The text for the citation.
+     */
+    public String getNumCitationMarker(List<Integer> number, int minGroupingCount, boolean inList) {
+        String bracketBefore = getStringCitProperty(BRACKET_BEFORE);
+        if (inList && (citProperties.containsKey(BRACKET_BEFORE_IN_LIST))) {
+            bracketBefore = getStringCitProperty(BRACKET_BEFORE_IN_LIST);
+        }
+        String bracketAfter = getStringCitProperty(BRACKET_AFTER);
+        if (inList && (citProperties.containsKey(BRACKET_AFTER_IN_LIST))) {
+            bracketAfter = getStringCitProperty(BRACKET_AFTER_IN_LIST);
+        }
+        // Sort the numbers:
+        List<Integer> lNum = new ArrayList<>(number);
+        Collections.sort(lNum);
+        StringBuilder sb = new StringBuilder(bracketBefore);
+        int combineFrom = -1;
+        int written = 0;
+        for (int i = 0; i < lNum.size(); i++) {
+            int i1 = lNum.get(i);
+            if (combineFrom < 0) {
+                // Check if next entry is the next in the ref list:
+                if ((i < (lNum.size() - 1)) && (lNum.get(i + 1) == (i1 + 1)) && (i1 > 0)) {
+                    combineFrom = i1;
+                } else {
+                    // Add single entry:
+                    if (i > 0) {
+                        sb.append(getStringCitProperty(CITATION_SEPARATOR));
+                    }
+                    sb.append(lNum.get(i) > 0 ? String.valueOf(lNum.get(i)) : OOBibStyle.UNDEFINED_CITATION_MARKER);
+                    written++;
+                }
+            } else {
+                // We are building a list of combined entries.
+                // Check if it ends here:
+                if ((i == (lNum.size() - 1)) || (lNum.get(i + 1) != (i1 + 1))) {
+                    if (written > 0) {
+                        sb.append(getStringCitProperty(CITATION_SEPARATOR));
+                    }
+                    if ((minGroupingCount > 0) && (((i1 + 1) - combineFrom) >= minGroupingCount)) {
+                        sb.append(combineFrom);
+                        sb.append(getStringCitProperty(GROUPED_NUMBERS_SEPARATOR));
+                        sb.append(i1);
+                        written++;
+                    } else {
+                        // Either we should never group, or there aren't enough
+                        // entries in this case to group. Output all:
+                        for (int jj = combineFrom; jj <= i1; jj++) {
+                            sb.append(jj);
+                            if (jj < i1) {
+                                sb.append(getStringCitProperty(CITATION_SEPARATOR));
+                            }
+                            written++;
+                        }
+                    }
+                    combineFrom = -1;
+                }
+                // If it doesn't end here, just keep iterating.
+            }
+        }
+        sb.append(bracketAfter);
+        return sb.toString();
+     }
+    /* end_old */
+
     /**
      * Format a number-based citation marker for the given entries.
      *
@@ -463,7 +532,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
                                                                     minGroupingCount);
     }
 
-    /* moved to OOBibStyleGetCitationMarker
+    /* begin_old */
     public String getCitationMarker(List<BibEntry> entries, Map<BibEntry, BibDatabase> database, boolean inParenthesis,
                                     String[] uniquefiers, int[] unlimAuthors) {
         // Look for groups of uniquefied entries that should be combined in the output.
@@ -527,9 +596,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
             return getAuthorYearInTextMarker(entries, database, uniquefiers, unlimAuthors);
         }
     }
-    */
+    /* end_old */
 
-    /* removed
+    /* begin_old */
     private void group(List<BibEntry> entries, String[] uniquefiers, int from, int to) {
         String separator = getStringCitProperty(UNIQUEFIER_SEPARATOR);
         StringBuilder sb = new StringBuilder(uniquefiers[from]);
@@ -540,9 +609,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         }
         uniquefiers[from] = sb.toString();
     }
-    */
+    /* end_old */
 
-    /* moved to OOBibStyleGetCitationMarker
+    /* begin_old */
     private String getAuthorYearParenthesisMarker(List<BibEntry> entries, Map<BibEntry, BibDatabase> database,
                                                   String[] uniquifiers, int[] unlimAuthors) {
 
@@ -586,9 +655,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         sb.append(endBrace);
         return sb.toString();
     }
-    */
+    /* end_old */
 
-    /* moved to OOBibStyleGetCitationMarker
+    /* begin_old */
     private String getAuthorYearInTextMarker(List<BibEntry> entries, Map<BibEntry, BibDatabase> database,
                                              String[] uniquefiers,
                                              int[] unlimAuthors) {
@@ -638,9 +707,10 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         return sb.toString();
 
     }
-    */
+    /* end_old */
 
-    /* moved to OOBibStyleGetCitationMarker
+    /* begin_old */
+    /* moved to OOBibStyleGetCitationMarker */
     private String getCitationMarkerField(BibEntry entry, BibDatabase database, String fields) {
         Objects.requireNonNull(entry, "Entry cannot be null");
         Objects.requireNonNull(database, "database cannot be null");
@@ -659,9 +729,10 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         // No luck? Return an empty string:
         return "";
     }
-    */
+    /* end_old */
 
-    /* moved to OOBibStyleGetCitationMarker
+    /* begin_old */
+    /* moved to OOBibStyleGetCitationMarker */
     private String getAuthorLastName(AuthorList al, int number) {
         StringBuilder sb = new StringBuilder();
 
@@ -673,9 +744,10 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
 
         return sb.toString();
     }
-    */
+    /* end_old */
 
-    /* removed
+    /* begin_old */
+    /* removed */
     public String insertPageInfo(String citation, String pageInfo) {
         String bracketAfter = getStringCitProperty(BRACKET_AFTER);
         if (citation.endsWith(bracketAfter)) {
@@ -685,7 +757,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
             return citation + getStringCitProperty(PAGE_INFO_SEPARATOR) + pageInfo;
         }
     }
-    */
+    /* end_old */
 
     /**
      * Convenience method for checking the property for whether we use number citations or
@@ -812,7 +884,8 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         return Objects.hash(path, name, citProperties, properties);
     }
 
-    /* moved to OOBibStyleGetCitationMarker as formatAuthorList
+    /* begin_old */
+    /* moved to OOBibStyleGetCitationMarker as formatAuthorList */
     private String createAuthorList(String author, int maxAuthors, String andString,
                                     String yearSep) {
         Objects.requireNonNull(author);
@@ -842,7 +915,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         sb.append(yearSep);
         return sb.toString();
     }
-    */
+    /* end_old */
 
     enum BibStyleMode {
         NONE,
