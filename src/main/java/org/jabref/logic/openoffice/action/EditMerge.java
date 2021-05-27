@@ -10,14 +10,14 @@ import org.jabref.logic.JabRefException;
 import org.jabref.logic.openoffice.frontend.OOFrontend;
 import org.jabref.logic.openoffice.frontend.UpdateCitationMarkers;
 import org.jabref.logic.openoffice.style.OOBibStyle;
-import org.jabref.logic.openoffice.uno.UnoScreenRefresh;
-import org.jabref.logic.openoffice.uno.UnoTextRange;
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.style.Citation;
 import org.jabref.model.openoffice.style.CitationGroup;
 import org.jabref.model.openoffice.style.CitationType;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
+import org.jabref.model.openoffice.uno.UnoScreenRefresh;
+import org.jabref.model.openoffice.uno.UnoTextRange;
 import org.jabref.model.openoffice.util.OOListUtil;
 
 import com.sun.star.beans.IllegalTypeException;

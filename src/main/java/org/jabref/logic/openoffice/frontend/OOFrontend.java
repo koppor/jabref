@@ -12,8 +12,6 @@ import java.util.stream.Collectors;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.openoffice.backend.Backend52;
-import org.jabref.logic.openoffice.uno.UnoCursor;
-import org.jabref.logic.openoffice.uno.UnoTextRange;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.frontend.rangeoverlap.RangeForOverlapCheck;
 import org.jabref.model.openoffice.frontend.rangeoverlap.RangeOverlap;
@@ -29,6 +27,8 @@ import org.jabref.model.openoffice.style.CitationType;
 import org.jabref.model.openoffice.style.OODataModel;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
+import org.jabref.model.openoffice.uno.UnoCursor;
+import org.jabref.model.openoffice.uno.UnoTextRange;
 import org.jabref.model.openoffice.util.OOListUtil;
 import org.jabref.model.openoffice.util.OOVoidResult;
 

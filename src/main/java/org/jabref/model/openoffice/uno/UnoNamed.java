@@ -1,6 +1,4 @@
-package org.jabref.logic.openoffice.uno;
-
-import org.jabref.model.openoffice.uno.CreationException;
+package org.jabref.model.openoffice.uno;
 
 import com.sun.star.container.XNamed;
 import com.sun.star.lang.XMultiServiceFactory;

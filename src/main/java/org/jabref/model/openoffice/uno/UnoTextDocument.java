@@ -1,8 +1,6 @@
-package org.jabref.logic.openoffice.uno;
+package org.jabref.model.openoffice.uno;
 
 import java.util.Optional;
-
-import org.jabref.model.openoffice.uno.NoDocumentException;
 
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.document.XDocumentProperties;

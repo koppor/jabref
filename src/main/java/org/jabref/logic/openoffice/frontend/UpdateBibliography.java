@@ -5,12 +5,12 @@ import java.util.Optional;
 import org.jabref.logic.openoffice.ootext.OOTextIntoOO;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.style.OOFormatBibliography;
-import org.jabref.logic.openoffice.uno.UnoBookmark;
-import org.jabref.logic.openoffice.uno.UnoTextSection;
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.style.CitedKeys;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
+import org.jabref.model.openoffice.uno.UnoBookmark;
+import org.jabref.model.openoffice.uno.UnoTextSection;
 
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;

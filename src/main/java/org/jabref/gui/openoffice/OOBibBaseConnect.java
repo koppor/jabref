@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import org.jabref.gui.DialogService;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.openoffice.NoDocumentFoundException;
-import org.jabref.logic.openoffice.uno.UnoCast;
-import org.jabref.logic.openoffice.uno.UnoTextDocument;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
+import org.jabref.model.openoffice.uno.UnoCast;
+import org.jabref.model.openoffice.uno.UnoTextDocument;
 import org.jabref.model.openoffice.util.OOResult;
 
 import com.sun.star.comp.helper.BootstrapException;

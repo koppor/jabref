@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice.uno;
+package org.jabref.model.openoffice.uno;
 
 import java.util.Objects;
 import java.util.Optional;

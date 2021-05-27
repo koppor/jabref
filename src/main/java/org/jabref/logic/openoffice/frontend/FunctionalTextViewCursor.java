@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import org.jabref.logic.JabRefException;
-import org.jabref.logic.openoffice.uno.UnoCursor;
-import org.jabref.logic.openoffice.uno.UnoSelection;
+import org.jabref.model.openoffice.uno.UnoCursor;
+import org.jabref.model.openoffice.uno.UnoSelection;
 import org.jabref.model.openoffice.util.OOResult;
 
 import com.sun.star.lang.XServiceInfo;
