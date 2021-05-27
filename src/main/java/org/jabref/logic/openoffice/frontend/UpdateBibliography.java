@@ -2,10 +2,10 @@ package org.jabref.logic.openoffice.frontend;
 
 import java.util.Optional;
 
-import org.jabref.logic.openoffice.ootext.OOTextIntoOO;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.style.OOFormatBibliography;
 import org.jabref.model.openoffice.ootext.OOText;
+import org.jabref.model.openoffice.ootext.OOTextIntoOO;
 import org.jabref.model.openoffice.style.CitedKeys;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
