@@ -1,17 +1,14 @@
-package org.jabref.logic.openoffice.frontend;
+package org.jabref.model.openoffice.rangesort;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.jabref.model.openoffice.frontend.rangeoverlap.RangeOverlap;
-import org.jabref.model.openoffice.frontend.rangeoverlap.RangeOverlapKind;
-import org.jabref.model.openoffice.frontend.rangesort.RangeKeyedMapList;
 import org.jabref.model.openoffice.uno.UnoTextRange;
 
 import com.sun.star.text.XTextRange;
 
-class RangeOverlapFinder {
+public class RangeOverlapFinder {
     /**
      * Report identical, overlapping or touching ranges.
      *

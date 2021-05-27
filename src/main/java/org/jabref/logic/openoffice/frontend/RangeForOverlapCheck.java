@@ -1,4 +1,4 @@
-package org.jabref.model.openoffice.frontend.rangeoverlap;
+package org.jabref.logic.openoffice.frontend;
 
 import com.sun.star.text.XTextRange;
 

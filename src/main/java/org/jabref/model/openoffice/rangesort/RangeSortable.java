@@ -1,4 +1,4 @@
-package org.jabref.model.openoffice.frontend.rangesort;
+package org.jabref.model.openoffice.rangesort;
 
 import com.sun.star.text.XTextRange;
 

@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice.frontend;
+package org.jabref.model.openoffice.rangesort;
 
 import java.util.Arrays;
 import java.util.Objects;

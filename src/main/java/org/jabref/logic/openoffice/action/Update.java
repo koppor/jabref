@@ -3,13 +3,13 @@ package org.jabref.logic.openoffice.action;
 import java.util.List;
 
 import org.jabref.logic.JabRefException;
-import org.jabref.logic.openoffice.frontend.FunctionalTextViewCursor;
 import org.jabref.logic.openoffice.frontend.OOFrontend;
 import org.jabref.logic.openoffice.frontend.UpdateBibliography;
 import org.jabref.logic.openoffice.frontend.UpdateCitationMarkers;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.style.OOProcess;
 import org.jabref.model.database.BibDatabase;
+import org.jabref.model.openoffice.rangesort.FunctionalTextViewCursor;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.uno.UnoScreenRefresh;

@@ -1,4 +1,4 @@
-package org.jabref.model.openoffice.frontend.rangeoverlap;
+package org.jabref.model.openoffice.rangesort;
 
 public enum RangeOverlapKind {
     /** They share a boundary */

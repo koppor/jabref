@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice.frontend;
+package org.jabref.model.openoffice.rangesort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jabref.model.openoffice.frontend.rangesort.RangeSortable;
 import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.uno.UnoScreenRefresh;
 
@@ -30,11 +29,73 @@ import org.slf4j.LoggerFactory;
  *          of the first column of the first page.
  *
  */
-class RangeSortVisual {
+public class RangeSortVisual {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RangeSortVisual.class);
 
-    /* first appearance order, based on visual order */
+    /**
+     * Sort the input {@code inputs} visually.
+     *
+     * Requires a functional {@code XTextViewCursor}.
+     *
+     * @return The input, sorted by the elements XTextRange and
+     *          getIndexInPosition.
+     */
+    public static <T> List<RangeSortable<T>> visualSort(List<RangeSortable<T>> inputs,
+                                                        XTextDocument doc,
+                                                        FunctionalTextViewCursor fcursor)
+        throws
+        WrappedTargetException,
+        NoDocumentException {
+
+        final int inputSize = inputs.size();
+
+        if (UnoScreenRefresh.hasControllersLocked(doc)) {
+            LOGGER.warn("visualSort:"
+                        + " with ControllersLocked, viewCursor.gotoRange"
+                        + " is probably useless");
+        }
+
+        XTextViewCursor viewCursor = fcursor.getViewCursor();
+
+        // find coordinates
+        List<Point> positions = new ArrayList<>(inputSize);
+
+        for (RangeSortable<T> v : inputs) {
+            positions.add(findPositionOfTextRange(v.getRange(),
+                                                  viewCursor));
+        }
+
+        fcursor.restore(doc);
+
+        if (positions.size() != inputSize) {
+            throw new RuntimeException("visualSort: positions.size() != inputSize");
+        }
+
+        // order by position
+        Set<ComparableMark<RangeSortable<T>>> set = new TreeSet<>();
+        for (int i = 0; i < inputSize; i++) {
+            set.add(new ComparableMark<>(positions.get(i),
+                                         inputs.get(i).getIndexInPosition(),
+                                         inputs.get(i)));
+        }
+
+        if (set.size() != inputSize) {
+            throw new RuntimeException("visualSort: set.size() != inputSize");
+        }
+
+        // collect ordered result
+        List<RangeSortable<T>> result = new ArrayList<>(set.size());
+        for (ComparableMark<RangeSortable<T>> mark : set) {
+            result.add(mark.getContent());
+        }
+
+        if (result.size() != inputSize) {
+            throw new RuntimeException("visualSort: result.size() != inputSize");
+        }
+
+        return result;
+    }
 
     /**
      *  Given a location, return its position: coordinates relative to
@@ -120,71 +181,6 @@ class RangeSortVisual {
         public int hashCode() {
             return Objects.hash(position, indexInPosition, content);
         }
-    }
-
-    /**
-     * Sort its input {@code vses} visually.
-     *
-     * Requires a functional {@code XTextViewCursor}.
-     *
-     * @return The input, sorted by the elements XTextRange and
-     *          getIndexInPosition.
-     */
-    public static <T> List<RangeSortable<T>>
-    visualSort(List<RangeSortable<T>> vses,
-               XTextDocument doc,
-               FunctionalTextViewCursor fcursor)
-        throws
-        WrappedTargetException,
-        NoDocumentException {
-
-        final int inputSize = vses.size();
-
-        if (UnoScreenRefresh.hasControllersLocked(doc)) {
-            LOGGER.warn("visualSort:"
-                        + " with ControllersLocked, viewCursor.gotoRange"
-                        + " is probably useless");
-        }
-
-        XTextViewCursor viewCursor = fcursor.getViewCursor();
-
-        // find coordinates
-        List<Point> positions = new ArrayList<>(vses.size());
-
-        for (RangeSortable<T> v : vses) {
-            positions.add(findPositionOfTextRange(v.getRange(),
-                                                  viewCursor));
-        }
-
-        fcursor.restore(doc);
-
-        if (positions.size() != inputSize) {
-            throw new RuntimeException("visualSort: positions.size() != inputSize");
-        }
-
-        // order by position
-        Set<ComparableMark<RangeSortable<T>>> set = new TreeSet<>();
-        for (int i = 0; i < vses.size(); i++) {
-            set.add(new ComparableMark<>(positions.get(i),
-                                         vses.get(i).getIndexInPosition(),
-                                         vses.get(i)));
-        }
-
-        if (set.size() != inputSize) {
-            throw new RuntimeException("visualSort: set.size() != inputSize");
-        }
-
-        // collect ordered result
-        List<RangeSortable<T>> result = new ArrayList<>(set.size());
-        for (ComparableMark<RangeSortable<T>> mark : set) {
-            result.add(mark.getContent());
-        }
-
-        if (result.size() != inputSize) {
-            throw new RuntimeException("visualSort: result.size() != inputSize");
-        }
-
-        return result;
     }
 
 }
