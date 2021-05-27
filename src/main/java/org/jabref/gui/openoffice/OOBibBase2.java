@@ -227,20 +227,21 @@ class OOBibBase2 {
      * This may move the view cursor.
      */
     OOResult<FunctionalTextViewCursor, OOError> getFunctionalTextViewCursor(XTextDocument doc,
-                                                                          String title) {
+                                                                            String title) {
         String messageOnFailureToObtain =
             Localization.lang("Please move the cursor into the document text.")
             + "\n"
             + Localization.lang("To get the visual positions of your citations"
                                 + " I need to move the cursor around,"
                                 + " but could not get it.");
-        OOResult<FunctionalTextViewCursor, JabRefException> result =
-            FunctionalTextViewCursor.get(doc, messageOnFailureToObtain);
-        return result.mapError(e -> OOError.from(e).setTitle(title));
+        OOResult<FunctionalTextViewCursor, String> result = FunctionalTextViewCursor.get(doc);
+        if (result.isError()) {
+            LOGGER.warn(result.getError());
+        }
+        return result.mapError(detail -> new OOError(title, messageOnFailureToObtain));
     }
 
-    private static OOVoidResult<OOError>
-    checkRangeOverlaps(XTextDocument doc, OOFrontend fr) {
+    private static OOVoidResult<OOError> checkRangeOverlaps(XTextDocument doc, OOFrontend fr) {
         final String title = "checkRangeOverlaps";
         boolean requireSeparation = false;
         int maxReportedOverlaps = 10;
@@ -257,8 +258,7 @@ class OOBibBase2 {
         }
     }
 
-    private static OOVoidResult<OOError>
-    checkRangeOverlapsWithCursor(XTextDocument doc, OOFrontend fr) {
+    private static OOVoidResult<OOError> checkRangeOverlapsWithCursor(XTextDocument doc, OOFrontend fr) {
         final String title = "checkRangeOverlapsWithCursor";
 
         OOVoidResult<OOError> precheck = checkRangeOverlaps(doc, fr);

@@ -3,7 +3,6 @@ package org.jabref.logic.openoffice.frontend;
 import java.util.Arrays;
 import java.util.Objects;
 
-import org.jabref.logic.JabRefException;
 import org.jabref.model.openoffice.uno.UnoCursor;
 import org.jabref.model.openoffice.uno.UnoSelection;
 import org.jabref.model.openoffice.util.OOResult;
@@ -34,7 +33,7 @@ import com.sun.star.text.XTextViewCursor;
  *
  * Usage:
  *
- *  OOResult<FunctionalTextViewCursor, JabRefException> fcursor = FunctionalTextViewCursor.get(doc, msg);
+ *  OOResult<FunctionalTextViewCursor, String> fcursor = FunctionalTextViewCursor.get(doc, msg);
  *  if (fcursor.isError()) {
  *     ...
  *  } else {
@@ -82,11 +81,9 @@ public class FunctionalTextViewCursor {
      * The cursor position may differ from the location
      * provided by the user.
      */
-    public static OOResult<FunctionalTextViewCursor, JabRefException> get(XTextDocument doc,
-                                                                        String messageOnFailure) {
+    public static OOResult<FunctionalTextViewCursor, String> get(XTextDocument doc) {
 
         Objects.requireNonNull(doc);
-        Objects.requireNonNull(messageOnFailure);
 
         XTextRange initialPosition = null;
         XServiceInfo initialSelection = UnoSelection.getSelectionAsXServiceInfo(doc).orElse(null);
@@ -108,7 +105,7 @@ public class FunctionalTextViewCursor {
         if (initialSelection == null) {
             String errorMessage = ("Selection is not available:"
                                    + " cannot provide a functional view cursor");
-            return OOResult.error(new JabRefException(errorMessage, messageOnFailure));
+            return OOResult.error(errorMessage);
         } else if (!Arrays.stream(initialSelection.getSupportedServiceNames())
                    .anyMatch("com.sun.star.text.TextRanges"::equals)) {
             // initialSelection does not support TextRanges.
@@ -121,7 +118,7 @@ public class FunctionalTextViewCursor {
         if (viewCursor == null) {
             restore(doc, initialPosition, initialSelection);
             String errorMessage = "Could not get the view cursor";
-            return OOResult.error(new JabRefException(errorMessage, messageOnFailure));
+            return OOResult.error(errorMessage);
         }
 
         try {
@@ -129,7 +126,7 @@ public class FunctionalTextViewCursor {
         } catch (com.sun.star.uno.RuntimeException ex) {
             restore(doc, initialPosition, initialSelection);
             String errorMessage = "The view cursor failed the functionality test";
-            return OOResult.error(new JabRefException(errorMessage, messageOnFailure));
+            return OOResult.error(errorMessage);
         }
 
         return OOResult.ok(new FunctionalTextViewCursor(initialPosition, initialSelection, viewCursor));
