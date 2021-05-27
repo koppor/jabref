@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.jabref.logic.openoffice.uno.UnoTextRange;
-import org.jabref.model.openoffice.rangeoverlap.RangeOverlap;
-import org.jabref.model.openoffice.rangeoverlap.RangeOverlapKind;
-import org.jabref.model.openoffice.rangesort.RangeKeyedMapList;
+import org.jabref.model.openoffice.frontend.rangeoverlap.RangeOverlap;
+import org.jabref.model.openoffice.frontend.rangeoverlap.RangeOverlapKind;
+import org.jabref.model.openoffice.frontend.rangesort.RangeKeyedMapList;
 
 import com.sun.star.text.XTextRange;
 

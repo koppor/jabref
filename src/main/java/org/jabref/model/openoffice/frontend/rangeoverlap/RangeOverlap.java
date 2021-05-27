@@ -1,4 +1,4 @@
-package org.jabref.model.openoffice.rangeoverlap;
+package org.jabref.model.openoffice.frontend.rangeoverlap;
 
 import java.util.List;
 

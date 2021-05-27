@@ -1,4 +1,4 @@
-package org.jabref.model.openoffice.rangesort;
+package org.jabref.model.openoffice.frontend.rangesort;
 
 import java.util.ArrayList;
 import java.util.HashMap;

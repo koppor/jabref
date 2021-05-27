@@ -30,7 +30,7 @@ import org.jabref.logic.openoffice.uno.UnoUndo;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.CitationEntry;
-import org.jabref.model.openoffice.rangeoverlap.RangeForOverlapCheck;
+import org.jabref.model.openoffice.frontend.rangeoverlap.RangeForOverlapCheck;
 import org.jabref.model.openoffice.style.CitationGroupId;
 import org.jabref.model.openoffice.style.CitationType;
 import org.jabref.model.openoffice.uno.CreationException;
