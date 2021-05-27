@@ -6,17 +6,18 @@ import java.util.Optional;
 
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.layout.Layout;
+import org.jabref.logic.openoffice.ootext.OOFormat;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.style.CitationGroup;
 import org.jabref.model.openoffice.style.CitationGroupId;
 import org.jabref.model.openoffice.style.CitationGroups;
 import org.jabref.model.openoffice.style.CitationPath;
 import org.jabref.model.openoffice.style.CitedKey;
 import org.jabref.model.openoffice.style.CitedKeys;
-import org.jabref.model.openoffice.style.OOText;
 
 public class OOFormatBibliography {
     private static final OOPreFormatter POSTFORMATTER = new OOPreFormatter();
@@ -115,7 +116,7 @@ public class OOFormatBibliography {
      * @param database   The database the entry belongs to.
      * @param uniquefier Uniqiefier letter, if any, to append to the entry's year.
      *
-     * @return OOText suitable for OOTextIntoOO.write()
+     * @return OOText The reference part of a bibliography entry formatted as OOText
      */
     private static OOText formatFullReferenceOfBibEntry(Layout layout,
                                                         BibEntry entry,

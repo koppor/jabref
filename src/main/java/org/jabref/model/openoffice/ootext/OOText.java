@@ -1,4 +1,4 @@
-package org.jabref.model.openoffice.style;
+package org.jabref.model.openoffice.ootext;
 
 import java.util.Objects;
 

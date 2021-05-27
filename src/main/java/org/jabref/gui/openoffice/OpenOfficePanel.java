@@ -89,7 +89,7 @@ public class OpenOfficePanel {
     private final TaskExecutor taskExecutor;
     private final StyleLoader loader;
     private OpenOfficePreferences ooPrefs;
-    private OOBibBase ooBase;
+    private OOBibBase2 ooBase;
     private OOBibStyle style;
 
     public OpenOfficePanel(JabRefFrame frame, PreferencesService preferencesService, OpenOfficePreferences ooPrefs, KeyBindingRepository keyBindingRepository) {
@@ -371,10 +371,10 @@ public class OpenOfficePanel {
     private void connect() {
         ooPrefs = preferencesService.getOpenOfficePreferences();
 
-        Task<OOBibBase> connectTask = new Task<>() {
+        Task<OOBibBase2> connectTask = new Task<>() {
 
             @Override
-            protected OOBibBase call() throws Exception {
+            protected OOBibBase2 call() throws Exception {
                 updateProgress(ProgressBar.INDETERMINATE_PROGRESS, ProgressBar.INDETERMINATE_PROGRESS);
 
                 var path = Path.of(ooPrefs.getExecutablePath());
@@ -416,9 +416,9 @@ public class OpenOfficePanel {
         taskExecutor.execute(connectTask);
     }
 
-    private OOBibBase createBibBase(Path loPath) throws IOException, InvocationTargetException, IllegalAccessException,
+    private OOBibBase2 createBibBase(Path loPath) throws IOException, InvocationTargetException, IllegalAccessException,
         BootstrapException, CreationException, ClassNotFoundException {
-        return new OOBibBase(loPath, dialogService);
+        return new OOBibBase2(loPath, dialogService);
     }
 
     /**

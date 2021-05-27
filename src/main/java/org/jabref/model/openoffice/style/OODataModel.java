@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.jabref.model.openoffice.ootext.OOText;
+
 /**   What is the data stored?   */
 public enum OODataModel {
 

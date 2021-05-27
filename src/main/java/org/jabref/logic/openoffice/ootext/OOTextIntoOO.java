@@ -1,4 +1,4 @@
-package org.jabref.logic.openoffice.frontend;
+package org.jabref.logic.openoffice.ootext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import org.jabref.architecture.AllowedToUseAwt;
 import org.jabref.logic.openoffice.uno.UnoCast;
 import org.jabref.logic.openoffice.uno.UnoCrossRef;
-import org.jabref.model.openoffice.style.OOText;
+import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.util.OOPair;
 

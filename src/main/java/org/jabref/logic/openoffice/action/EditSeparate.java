@@ -9,9 +9,9 @@ import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.style.OOProcess;
 import org.jabref.logic.openoffice.uno.UnoScreenRefresh;
 import org.jabref.model.database.BibDatabase;
+import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.style.Citation;
 import org.jabref.model.openoffice.style.CitationGroup;
-import org.jabref.model.openoffice.style.OOText;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
 

@@ -15,10 +15,10 @@ public class ManageCitationsDialogViewModel {
 
     public final boolean failedToGetCitationEntries;
     private final ListProperty<CitationEntryViewModel> citations = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final OOBibBase ooBase;
+    private final OOBibBase2 ooBase;
     private final DialogService dialogService;
 
-    public ManageCitationsDialogViewModel(OOBibBase ooBase, DialogService dialogService) {
+    public ManageCitationsDialogViewModel(OOBibBase2 ooBase, DialogService dialogService) {
         this.ooBase = ooBase;
         this.dialogService = dialogService;
 

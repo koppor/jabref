@@ -57,9 +57,9 @@ import org.slf4j.LoggerFactory;
  * Class for manipulating the Bibliography of the currently started
  * document in OpenOffice.
  */
-class OOBibBase {
+class OOBibBase2 {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OOBibBase.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OOBibBase2.class);
 
     /* variables  */
     private final DialogService dialogService;
@@ -80,7 +80,7 @@ class OOBibBase {
     /*
      * Constructor
      */
-    public OOBibBase(Path loPath, DialogService dialogService)
+    public OOBibBase2(Path loPath, DialogService dialogService)
         throws
         BootstrapException,
         CreationException {
@@ -976,4 +976,4 @@ class OOBibBase {
         }
     }
 
-} // end of OOBibBase
+}
