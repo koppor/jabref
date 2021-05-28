@@ -185,13 +185,13 @@ class OOBibStyleTestHelper {
      * Similar to old API. pageInfo is new, and unlimAuthors is
      * replaced with isFirstAppearanceOfSource
      */
-    String getCitationMarker2(OOBibStyle style,
-                              List<BibEntry> entries,
-                              Map<BibEntry, BibDatabase> entryDBMap,
-                              boolean inParenthesis,
-                              String[] uniquefiers,
-                              Boolean[] isFirstAppearanceOfSource,
-                              String[] pageInfo) {
+    static String getCitationMarker2(OOBibStyle style,
+                                     List<BibEntry> entries,
+                                     Map<BibEntry, BibDatabase> entryDBMap,
+                                     boolean inParenthesis,
+                                     String[] uniquefiers,
+                                     Boolean[] isFirstAppearanceOfSource,
+                                     String[] pageInfo) {
         if (uniquefiers == null) {
             uniquefiers = new String[entries.size()];
             Arrays.fill(uniquefiers, null);
