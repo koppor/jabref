@@ -262,11 +262,6 @@ class OOBibBase2 {
     private static OOVoidResult<OOError> checkRangeOverlapsWithCursor(XTextDocument doc, OOFrontend fr) {
         final String title = "checkRangeOverlapsWithCursor";
 
-        OOVoidResult<OOError> precheck = checkRangeOverlaps(doc, fr);
-        if (precheck.isError()) {
-            return precheck;
-        }
-
         List<RangeForOverlapCheck<CitationGroupId>> userRanges;
         try {
             userRanges = fr.viewCursorRanges(doc);
