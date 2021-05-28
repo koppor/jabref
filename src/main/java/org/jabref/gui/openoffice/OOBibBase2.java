@@ -186,7 +186,8 @@ class OOBibBase2 {
         return testDialog(title, collectResults(title, results));
     }
 
-    boolean testDialog(String title, OOVoidResult<OOError>... results) {
+    @SafeVarargs
+    final boolean testDialog(String title, OOVoidResult<OOError>... results) {
         List<OOVoidResult<OOError>> rs = Arrays.asList(results);
         return testDialog(collectResults(title, rs));
     }

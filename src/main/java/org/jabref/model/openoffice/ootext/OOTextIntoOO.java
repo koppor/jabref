@@ -670,33 +670,33 @@ public class OOTextIntoOO {
 
     private static List<OOPair<String, Object>> setCharWeight(float value) {
         List<OOPair<String, Object>> settings = new ArrayList<>();
-        settings.add(new OOPair("CharWeight", (Float) value));
+        settings.add(new OOPair<>("CharWeight", (Float) value));
         return settings;
     }
 
     private static List<OOPair<String, Object>> setCharPosture(FontSlant value) {
         List<OOPair<String, Object>> settings = new ArrayList<>();
-        settings.add(new OOPair("CharPosture", (Object) value));
+        settings.add(new OOPair<>("CharPosture", (Object) value));
         return settings;
     }
 
     private static List<OOPair<String, Object>> setCharCaseMap(short value) {
         List<OOPair<String, Object>> settings = new ArrayList<>();
-        settings.add(new OOPair("CharCaseMap", (Short) value));
+        settings.add(new OOPair<>("CharCaseMap", (Short) value));
         return settings;
     }
 
     // com.sun.star.awt.FontUnderline
     private static List<OOPair<String, Object>> setCharUnderline(short value) {
         List<OOPair<String, Object>> settings = new ArrayList<>();
-        settings.add(new OOPair(CHAR_UNDERLINE, (Short) value));
+        settings.add(new OOPair<>(CHAR_UNDERLINE, (Short) value));
         return settings;
     }
 
     // com.sun.star.awt.FontStrikeout
     private static List<OOPair<String, Object>> setCharStrikeout(short value) {
         List<OOPair<String, Object>> settings = new ArrayList<>();
-        settings.add(new OOPair(CHAR_STRIKEOUT, (Short) value));
+        settings.add(new OOPair<>(CHAR_STRIKEOUT, (Short) value));
         return settings;
     }
 
@@ -704,7 +704,7 @@ public class OOTextIntoOO {
     private static List<OOPair<String, Object>> setCharStyleName(String value) {
         List<OOPair<String, Object>> settings = new ArrayList<>();
         if (value != null && value != "") {
-            settings.add(new OOPair(CHAR_STYLE_NAME, value));
+            settings.add(new OOPair<>(CHAR_STYLE_NAME, value));
         } else {
             LOGGER.warn("setCharStyleName: received null or empty value");
         }
@@ -714,7 +714,7 @@ public class OOTextIntoOO {
     // Locale
     private static List<OOPair<String, Object>> setCharLocale(Locale value) {
         List<OOPair<String, Object>> settings = new ArrayList<>();
-        settings.add(new OOPair("CharLocale", (Object) value));
+        settings.add(new OOPair<>("CharLocale", (Object) value));
         return settings;
     }
 
@@ -759,17 +759,17 @@ public class OOTextIntoOO {
             byte newHeight = (byte) Math.round(heightFloat * oldHeightFloat);
             short newValue = (short) Math.round(valueFloat * oldHeightFloat + oldValueFloat);
             if (value.isPresent()) {
-                settings.add(new OOPair(CHAR_ESCAPEMENT, (Short) newValue));
+                settings.add(new OOPair<>(CHAR_ESCAPEMENT, (Short) newValue));
             }
             if (height.isPresent()) {
-                settings.add(new OOPair(CHAR_ESCAPEMENT_HEIGHT, (Byte) newHeight));
+                settings.add(new OOPair<>(CHAR_ESCAPEMENT_HEIGHT, (Byte) newHeight));
             }
         } else {
             if (value.isPresent()) {
-                settings.add(new OOPair(CHAR_ESCAPEMENT, (Short) value.get()));
+                settings.add(new OOPair<>(CHAR_ESCAPEMENT, (Short) value.get()));
             }
             if (height.isPresent()) {
-                settings.add(new OOPair(CHAR_ESCAPEMENT_HEIGHT, (Byte) height.get()));
+                settings.add(new OOPair<>(CHAR_ESCAPEMENT_HEIGHT, (Byte) height.get()));
             }
         }
         return settings;

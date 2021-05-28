@@ -124,12 +124,12 @@ public class OOFrontend {
         NoDocumentException,
         WrappedTargetException {
 
-        List<RangeSortEntry> sortables = new ArrayList<>();
+        List<RangeSortEntry<CitationGroup>> sortables = new ArrayList<>();
         for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
             XTextRange range = (this
                                 .getMarkRange(doc, cg)
                                 .orElseThrow(RuntimeException::new));
-            sortables.add(new RangeSortEntry(range, 0, cg));
+            sortables.add(new RangeSortEntry<>(range, 0, cg));
         }
 
         /*
@@ -155,7 +155,7 @@ public class OOFrontend {
         // Sort within partitions
         RangeKeyedMapList<RangeSortEntry<CitationGroup>> rangeSorter =
             new RangeKeyedMapList<>();
-        for (RangeSortEntry sortable : sortables) {
+        for (RangeSortEntry<CitationGroup> sortable : sortables) {
             rangeSorter.add(sortable.getRange(), sortable);
         }
 
@@ -365,10 +365,10 @@ public class OOFrontend {
         for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
             XTextRange range = this.getMarkRange(doc, cg).orElseThrow(RuntimeException::new);
             String description = cg.cgid.citationGroupIdAsString(); // cg.cgRangeStorage.nrGetRangeName();
-            result.add(new RangeForOverlapCheck(range,
-                                                cg.cgid,
-                                                RangeForOverlapCheck.REFERENCE_MARK_KIND,
-                                                description));
+            result.add(new RangeForOverlapCheck<>(range,
+                                                  cg.cgid,
+                                                  RangeForOverlapCheck.REFERENCE_MARK_KIND,
+                                                  description));
         }
         return result;
     }
@@ -383,10 +383,10 @@ public class OOFrontend {
         Optional<XTextRange> range = UpdateBibliography.getBibliographyRange(doc);
         if (range.isPresent()) {
             String description = "bibliography";
-            result.add(new RangeForOverlapCheck(range.get(),
-                                                new CitationGroupId("bibliography"),
-                                                RangeForOverlapCheck.BIBLIOGRAPHY_MARK_KIND,
-                                                description));
+            result.add(new RangeForOverlapCheck<>(range.get(),
+                                                  new CitationGroupId("bibliography"),
+                                                  RangeForOverlapCheck.BIBLIOGRAPHY_MARK_KIND,
+                                                  description));
         }
         return result;
     }
@@ -401,10 +401,10 @@ public class OOFrontend {
         Optional<XTextRange> range = UnoCursor.getViewCursor(doc).map(e -> e);
         if (range.isPresent()) {
             String description = "cursor";
-            result.add(new RangeForOverlapCheck(range.get(),
-                                                new CitationGroupId("cursor"),
-                                                RangeForOverlapCheck.CURSOR_MARK_KIND,
-                                                description));
+            result.add(new RangeForOverlapCheck<>(range.get(),
+                                                  new CitationGroupId("cursor"),
+                                                  RangeForOverlapCheck.CURSOR_MARK_KIND,
+                                                  description));
         }
         return result;
     }
@@ -447,10 +447,10 @@ public class OOFrontend {
             boolean seenContains = seen.containsKey(footnoteMarkRange.get());
             if (!seenContains) {
                 seen.put(footnoteMarkRange.get(), true);
-                result.add(new RangeForOverlapCheck(footnoteMarkRange.get(),
-                                                    citationRange.idWithinKind,
-                                                    RangeForOverlapCheck.FOOTNOTE_MARK_KIND,
-                                                    "FootnoteMark for " + citationRange.format()));
+                result.add(new RangeForOverlapCheck<>(footnoteMarkRange.get(),
+                                                      citationRange.idWithinKind,
+                                                      RangeForOverlapCheck.FOOTNOTE_MARK_KIND,
+                                                      "FootnoteMark for " + citationRange.format()));
             }
         }
         return result;

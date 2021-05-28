@@ -70,7 +70,7 @@ public class CitationGroups {
                 continue;
             }
             Citation cit = cg.citationsInStorageOrder.get(p.storageIndexInGroup);
-            fun.accept(new OOPair(cit, value));
+            fun.accept(new OOPair<>(cit, value));
         }
     }
 

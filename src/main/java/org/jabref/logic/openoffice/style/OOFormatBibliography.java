@@ -166,7 +166,7 @@ public class OOFormatBibliography {
         String suffix = ")";
         sb.append(prefix);
 
-        List<CitationGroup> citationGroups = new ArrayList();
+        List<CitationGroup> citationGroups = new ArrayList<>();
         for (CitationPath p : ck.getCitationPaths()) {
             CitationGroupId cgid = p.group;
             CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
