@@ -147,7 +147,7 @@ public class UnoUserDefinedProperty {
      * @param property Name of a custom document property in the
      *        current document.
      *
-     * Keep silent if property dids not exist.
+     * Keep silent if property did not exist.
      */
     public static void removeIfExists(XTextDocument doc, String property)
         throws
