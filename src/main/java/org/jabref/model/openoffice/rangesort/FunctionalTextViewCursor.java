@@ -19,17 +19,17 @@ import com.sun.star.text.XTextViewCursor;
  * instead.
  *
  * Here we manipulate the cursor via XSelectionSupplier.getSelection and
- * XSelectionSupplierselect to move it to the text.
+ * XSelectionSupplier.select to move it to the text.
  *
  * Seems to work when the user selected a frame or image.
  * In these cases restoring the selection works, too.
  *
  * When the cursor is in a comment (referred to as "annotation" in OO
- * API) then initialSelection is null, and select() does not help to
+ * API) then initialSelection is null, and select() fails to
  * get a functional viewCursor.
  *
- * If get() reports error, we have to ask the user to move the cursor
- * into the document text.
+ * If FunctionalTextViewCursor.get() reports error, we have to ask the
+ * user to move the cursor into the text part of the document.
  *
  * Usage:
  *
@@ -60,13 +60,6 @@ public class FunctionalTextViewCursor {
      */
     private XTextViewCursor viewCursor;
 
-    /**
-     * The constructor may change the selection (and cursor position) to provide
-     * a functional XTextViewCursor.
-     *
-     * On failure the constructor restores the selection. On success, the caller must call
-     * instance.restore() after finished using the cursor.
-     */
     private FunctionalTextViewCursor(XTextRange initialPosition,
                                      XServiceInfo initialSelection,
                                      XTextViewCursor viewCursor) {
@@ -80,6 +73,10 @@ public class FunctionalTextViewCursor {
      *
      * The cursor position may differ from the location
      * provided by the user.
+     *
+     * On failure the constructor restores the selection. On success,
+     * the caller may want to call instance.restore() after finished
+     * using the cursor.
      */
     public static OOResult<FunctionalTextViewCursor, String> get(XTextDocument doc) {
 
@@ -153,7 +150,8 @@ public class FunctionalTextViewCursor {
     }
 
     /*
-     * Restore initial state of selection (and thus viewCursor)
+     * Restore initial state of viewCursor (possibly by restoring
+     * selection) if possible.
      */
     public void restore(XTextDocument doc) {
         FunctionalTextViewCursor.restore(doc, initialPosition, initialSelection);

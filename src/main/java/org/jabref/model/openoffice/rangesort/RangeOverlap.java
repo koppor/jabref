@@ -4,9 +4,6 @@ import java.util.List;
 
 /**
  *  Used in reporting range overlaps.
- *
- *  You probably want {@code V} to include information
- *  identifying the ranges.
  */
 public class RangeOverlap<V> {
     public final RangeOverlapKind kind;

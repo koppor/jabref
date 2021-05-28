@@ -22,12 +22,11 @@ import org.slf4j.LoggerFactory;
  *
  * Requires functional XTextViewCursor.
  *
- * Problem: for multicolumn layout and view pages side-by-side mode of
- *          LO, the (top-down,left-to-right) order interpreted
+ * Problem: for multicolumn layout and when viewing pages side-by-side
+ *          in LO, the (top-down,left-to-right) order interpreted
  *          as-on-the-screen: an XTextRange at the top of the second
  *          column or second page is sorted before one at the bottom
  *          of the first column of the first page.
- *
  */
 public class RangeSortVisual {
 
@@ -129,9 +128,6 @@ public class RangeSortVisual {
      * first, horizontal second, indexInPosition third.
      *
      * Used for sorting reference marks by their visual positions.
-     *
-     *
-     *
      */
     private static class ComparableMark<T> implements Comparable<ComparableMark<T>> {
 

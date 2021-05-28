@@ -6,6 +6,12 @@ import java.util.TreeMap;
 
 import com.sun.star.text.XTextRange;
 
+/*
+ * Partition by XTextRange.getText() and sort within the partitions a
+ * set of XTextRange values, while keeping their associated data
+ * recoverable. Allows identical XTextRange values, their data is
+ * collected in a list.
+ */
 public class RangeKeyedMapList<V> {
 
     private RangeKeyedMap<List<V>> partitions;

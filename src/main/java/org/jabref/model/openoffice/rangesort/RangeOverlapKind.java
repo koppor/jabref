@@ -1,7 +1,8 @@
 package org.jabref.model.openoffice.rangesort;
 
 public enum RangeOverlapKind {
-    /** They share a boundary */
+
+    /** The ranges share a boundary */
     TOUCH,
 
     /** They share some characters */

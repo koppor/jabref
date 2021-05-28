@@ -15,8 +15,11 @@ public class RangeOverlapFinder {
      * For overlapping and touching, only report consecutive ranges
      * and only with a single sample of otherwise identical ranges.
      *
-     * @param atMost Limit the number of records returneed to atMost.
+     * @param atMost Limit the number of records returned to atMost.
      *        Zero or negative {@code atMost} means no limit.
+     *
+     * @param includeTouching Should the result contain ranges
+     *                        sharing only a boundary?
      */
     public static <V> List<RangeOverlap<V>> findOverlappingRanges(RangeKeyedMapList<V> input,
                                                                   int atMost,
