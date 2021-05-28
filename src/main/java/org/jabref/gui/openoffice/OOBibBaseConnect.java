@@ -49,8 +49,7 @@ class OOBibBaseConnect {
     /*
      * Constructor
      */
-    public OOBibBaseConnect(Path loPath,
-                            DialogService dialogService)
+    public OOBibBaseConnect(Path loPath, DialogService dialogService)
         throws
         BootstrapException,
         CreationException {
