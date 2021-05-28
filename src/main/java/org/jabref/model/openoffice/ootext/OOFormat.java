@@ -16,9 +16,7 @@ public class OOFormat {
      *
      */
     public static OOText setLocale(OOText s, String locale) {
-        return OOText.fromString(String.format("<span lang=\"%s\">", locale)
-                                          + s.asString()
-                                          + "</span>");
+        return OOText.fromString(String.format("<span lang=\"%s\">", locale) + s.asString() + "</span>");
     }
 
     /**
@@ -52,20 +50,21 @@ public class OOFormat {
         if (paraStyle == null || "".equals(paraStyle)) {
             return paragraph(s);
         }
-        return OOText.fromString(String.format("<p oo:ParaStyleName=\"%s\">", paraStyle)
-                                          + s.asString()
-                                          + "</p>");
+        String startTag = String.format("<p oo:ParaStyleName=\"%s\">", paraStyle);
+        return OOText.fromString(startTag + s.asString() + "</p>");
     }
 
     /**
      * Mark {@code s} as part of a paragraph.
      */
     public static OOText paragraph(OOText s) {
-        return OOText.fromString("<p>"
-                                          + s.asString()
-                                          + "</p>");
+        return OOText.fromString("<p>" + s.asString() + "</p>");
     }
 
+    /**
+     * Format an OO cross-reference showing the target's page number
+     * as label to a reference mark.
+     */
     public static OOText formatReferenceToPageNumberOfReferenceMark(String referencMarkName) {
         String s = String.format("<oo:referenceToPageNumberOfReferenceMark target=\"%s\">",
                                  referencMarkName);
