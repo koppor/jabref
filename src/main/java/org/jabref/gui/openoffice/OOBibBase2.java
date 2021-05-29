@@ -272,13 +272,11 @@ class OOBibBase2 {
         }
 
         boolean requireSeparation = false;
-        int maxReportedOverlaps = 10;
         OOVoidResult<JabRefException> res;
         try {
-            res = fr.checkRangeOverlaps(doc,
-                                        userRanges,
-                                        requireSeparation,
-                                        maxReportedOverlaps);
+            res = fr.checkRangeOverlapsWithCursor(doc,
+                                                  userRanges,
+                                                  requireSeparation);
         } catch (NoDocumentException ex) {
             return OOVoidResult.error(OOError.from(ex).setTitle(title));
         } catch (WrappedTargetException ex) {

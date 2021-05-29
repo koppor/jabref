@@ -29,10 +29,12 @@ import org.jabref.model.openoffice.style.CitationType;
 import org.jabref.model.openoffice.style.OODataModel;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
+import org.jabref.model.openoffice.uno.UnoCast;
 import org.jabref.model.openoffice.uno.UnoCursor;
 import org.jabref.model.openoffice.uno.UnoTextRange;
 import org.jabref.model.openoffice.util.OOListUtil;
 import org.jabref.model.openoffice.util.OOVoidResult;
+import org.jabref.model.openoffice.util.Tuple3;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
@@ -41,9 +43,11 @@ import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.text.XText;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
+import com.sun.star.text.XTextRangeCompare;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -354,7 +358,7 @@ public class OOFrontend {
      *
      *  result.size() == nRefMarks
      */
-    private List<RangeForOverlapCheck<CitationGroupId>> citationRanges(XTextDocument doc)
+    public List<RangeForOverlapCheck<CitationGroupId>> citationRanges(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {
@@ -373,7 +377,7 @@ public class OOFrontend {
         return result;
     }
 
-    private List<RangeForOverlapCheck<CitationGroupId>> bibliographyRanges(XTextDocument doc)
+    public List<RangeForOverlapCheck<CitationGroupId>> bibliographyRanges(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {
@@ -423,7 +427,9 @@ public class OOFrontend {
      *        footnote marks does not depend on how do we mark or
      *        structure those ranges.
      */
-    private List<RangeForOverlapCheck<CitationGroupId>> footnoteMarkRanges(XTextDocument doc)
+    public List<RangeForOverlapCheck<CitationGroupId>>
+    footnoteMarkRanges(XTextDocument doc,
+                       List<RangeForOverlapCheck<CitationGroupId>> citationRanges)
         throws
         NoDocumentException,
         WrappedTargetException {
@@ -434,7 +440,7 @@ public class OOFrontend {
 
         List<RangeForOverlapCheck<CitationGroupId>> result = new ArrayList<>();
 
-        for (RangeForOverlapCheck<CitationGroupId> citationRange : citationRanges(doc)) {
+        for (RangeForOverlapCheck<CitationGroupId> citationRange : citationRanges) {
 
             Optional<XTextRange> footnoteMarkRange =
                 UnoTextRange.getFootnoteMarkRange(citationRange.range);
@@ -457,6 +463,81 @@ public class OOFrontend {
     }
 
     /**
+     * Check for any overlap between userRanges and protected ranges.
+     *
+     * Assume userRanges is small (usually 1 elements for checking the cursor)
+     * Returns on first problem found.
+     */
+    public OOVoidResult<JabRefException>
+    checkRangeOverlapsWithCursor(XTextDocument doc,
+                                 List<RangeForOverlapCheck<CitationGroupId>> userRanges,
+                                 boolean requireSeparation)
+        throws
+        NoDocumentException,
+        WrappedTargetException {
+
+        List<RangeForOverlapCheck<CitationGroupId>> citationRanges = citationRanges(doc);
+        List<RangeForOverlapCheck<CitationGroupId>> ranges = new ArrayList<>();
+
+        // ranges.addAll(userRanges);
+        ranges.addAll(bibliographyRanges(doc));
+        ranges.addAll(citationRanges);
+        ranges.addAll(footnoteMarkRanges(doc, citationRanges));
+
+        if (userRanges.size() == 0) {
+            return OOVoidResult.ok();
+        }
+        List<Tuple3<XText, XTextRangeCompare, RangeForOverlapCheck<CitationGroupId>>> userTuples =
+            new ArrayList<>(userRanges.size());
+        for (RangeForOverlapCheck<CitationGroupId> userRange : userRanges) {
+            XText text = userRange.range.getText();
+            userTuples.add(new Tuple3<>(text,
+                                        UnoCast.unoQI(XTextRangeCompare.class, text),
+                                        userRange));
+        }
+
+        for (RangeForOverlapCheck<CitationGroupId> range : ranges) {
+            XTextRange bRange = range.range;
+            XText bRangeText = bRange.getText();
+            XTextRange bRangeStart = bRange.getStart();
+            XTextRange bRangeEnd = bRange.getEnd();
+            for (Tuple3<XText, XTextRangeCompare, RangeForOverlapCheck<CitationGroupId>> tup : userTuples){
+                if (tup.a != bRangeText) {
+                    continue;
+                }
+                XTextRangeCompare cmp = tup.b;
+                XTextRange aRange = tup.c.range;
+                int abEndToStart = -1 * cmp.compareRegionStarts(aRange.getEnd(), bRangeStart);
+                if (abEndToStart < 0 || (!requireSeparation && (abEndToStart==0))) {
+                    continue;
+                }
+                int baEndToStart = -1 * cmp.compareRegionStarts(bRangeEnd, aRange.getStart());
+                if (baEndToStart < 0 || (!requireSeparation && (baEndToStart==0))) {
+                    continue;
+                }
+
+                StringBuilder msg = new StringBuilder();
+                boolean touching = (abEndToStart == 0 || baEndToStart == 0);
+
+                if (touching) {
+                    msg.append(Localization.lang("Found touching ranges"));
+                } else {
+                    msg.append(Localization.lang("Found overlapping ranges"));
+                }
+                msg.append(": ");
+                msg.append(String.format("'%s'", tup.c.format()));
+                msg.append(", ");
+                msg.append(String.format("'%s'", range.format()));
+                msg.append("\n");
+
+                return OOVoidResult.error(new JabRefException("Found overlapping or touching ranges",
+                                                              msg.toString()));
+            }
+        }
+        return OOVoidResult.ok();
+    }
+
+    /**
      * @param requireSeparation Report range pairs that only share a boundary.
      * @param reportAtMost Limit number of overlaps reported (0 for no limit)
      *
@@ -470,11 +551,12 @@ public class OOFrontend {
         NoDocumentException,
         WrappedTargetException {
 
+        List<RangeForOverlapCheck<CitationGroupId>> citationRanges = citationRanges(doc);
         List<RangeForOverlapCheck<CitationGroupId>> ranges = new ArrayList<>();
         ranges.addAll(userRanges);
         ranges.addAll(bibliographyRanges(doc));
-        ranges.addAll(citationRanges(doc));
-        ranges.addAll(footnoteMarkRanges(doc));
+        ranges.addAll(citationRanges);
+        ranges.addAll(footnoteMarkRanges(doc, citationRanges));
 
         RangeKeyedMapList<RangeForOverlapCheck<CitationGroupId>> sorted = new RangeKeyedMapList<>();
         for (RangeForOverlapCheck<CitationGroupId> aRange : ranges) {
