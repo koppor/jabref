@@ -19,6 +19,7 @@ import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
 import org.jabref.model.openoffice.style.OODataModel;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
+import org.jabref.model.openoffice.uno.UnoScreenRefresh;
 import org.jabref.model.openoffice.util.OOListUtil;
 
 import com.sun.star.beans.IllegalTypeException;
@@ -110,15 +111,20 @@ public class EditInsert {
             citeText = OOText.fromString("[?]");
         }
 
-        UpdateCitationMarkers.createAndFillCitationGroup(fr,
-                                                         doc,
-                                                         citationKeys,
-                                                         pageInfos,
-                                                         citationType,
-                                                         citeText,
-                                                         cursor,
-                                                         style,
-                                                         true /* insertSpaceAfter */);
+        try {
+            UnoScreenRefresh.lockControllers(doc);
+            UpdateCitationMarkers.createAndFillCitationGroup(fr,
+                                                             doc,
+                                                             citationKeys,
+                                                             pageInfos,
+                                                             citationType,
+                                                             citeText,
+                                                             cursor,
+                                                             style,
+                                                             true /* insertSpaceAfter */);
+        } finally {
+            UnoScreenRefresh.unlockControllers(doc);
+        }
 
     }
 }
