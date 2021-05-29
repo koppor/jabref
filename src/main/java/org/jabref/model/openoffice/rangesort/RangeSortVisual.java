@@ -53,6 +53,9 @@ public class RangeSortVisual {
             LOGGER.warn("visualSort:"
                         + " with ControllersLocked, viewCursor.gotoRange"
                         + " is probably useless");
+            throw new RuntimeException("visualSort:"
+                                       + " with ControllersLocked, viewCursor.gotoRange"
+                                       + " is probably useless");
         }
 
         XTextViewCursor viewCursor = fcursor.getViewCursor();
