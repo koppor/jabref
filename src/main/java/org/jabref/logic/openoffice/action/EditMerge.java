@@ -239,17 +239,21 @@ public class EditMerge {
             (currentRange.getText().createTextCursorByRange(state.cursorBetween.getEnd()));
 
         while (couldExpand && (UnoTextRange.compareEnds(state.cursorBetween, rangeStart) < 0)) {
-            couldExpand = state.cursorBetween.goRight((short) 1, true);
-            state.currentGroupCursor.goRight((short) 1, true);
             //
             // Check that we only walk through inline whitespace.
             //
-            thisCharCursor.goRight((short) 1, true);
+            couldExpand = thisCharCursor.goRight((short) 1, true);
             String thisChar = thisCharCursor.getString();
             thisCharCursor.collapseToEnd();
             if (thisChar.isEmpty() || thisChar.equals("\n") || !thisChar.trim().isEmpty()) {
                 couldExpand = false;
+                if (!thisChar.isEmpty()) {
+                    thisCharCursor.goLeft((short) 1, false);
+                }
+                break;
             }
+            state.cursorBetween.goRight((short) 1, true);
+            state.currentGroupCursor.goRight((short) 1, true);
 
             // These two should move in sync:
             if (UnoTextRange.compareEnds(state.cursorBetween, state.currentGroupCursor) != 0) {
