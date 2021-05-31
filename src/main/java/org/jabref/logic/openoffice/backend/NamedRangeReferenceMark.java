@@ -76,7 +76,7 @@ class NamedRangeReferenceMark implements NamedRange {
         cursor.goLeft((short) n, false); // left(n)
         cursor.goLeft((short) 1, true);
         cursor.setString(""); // left-delete
-        cursor.goRight((short) n, true);
+        cursor.goRight((short) n, true); // select the newly inserted spaces
         return cursor;
     }
 
@@ -276,7 +276,7 @@ class NamedRangeReferenceMark implements NamedRange {
                     throw new RuntimeException(msg);
                 }
                 // too short, recreate
-                if (debugThisFun) {
+                if (true || debugThisFun) {
                     System.out.println("nrGetFillCursor: too short, recreate");
                 }
                 full.setString("");
@@ -307,12 +307,6 @@ class NamedRangeReferenceMark implements NamedRange {
         if (fullText.length() < 2) {
             throw new RuntimeException("nrGetFillCursor: fullText.length() < 2 (after loop)'%n");
         }
-        // we have at least two characters inside
-        XTextCursor alpha = full.getText().createTextCursorByRange(full);
-        alpha.collapseToStart();
-        XTextCursor omega = full.getText().createTextCursorByRange(full);
-        omega.collapseToEnd();
-
         XTextCursor beta = full.getText().createTextCursorByRange(full);
         beta.collapseToStart();
         beta.goRight((short) 1, false);
@@ -320,56 +314,73 @@ class NamedRangeReferenceMark implements NamedRange {
         if (debugThisFun) {
             System.out.printf("nrGetFillCursor: beta(1) covers '%s'%n", beta.getString());
         }
-        // beta now covers everything except first and last character
-        // Replace its content with brackets
-        String paddingx = "x";
-        String paddingy = "y";
-        String paddingz = "z";
-        beta.setString(paddingx + left + paddingy + right + paddingz);
-        if (debugThisFun) {
-            System.out.printf("nrGetFillCursor: beta(2) covers '%s'%n", beta.getString());
-        }
-        // move beta to before the right bracket
-        beta.collapseToEnd();
-        beta.goLeft((short) (rightLength + 1), false);
-        // remove middle padding
-        beta.goLeft((short) 1, true);
-        if (debugThisFun) {
-            System.out.printf("nrGetFillCursor: beta(3) covers '%s'%n", beta.getString());
-        }
-        // only drop paddingy later: beta.setString("");
+        if (fullText.startsWith(left) && fullText.endsWith(right)) {
+            beta.setString("");
+        } else {
+            if (debugThisFun) {
+                String msg = String.format("nrGetFillCursor: recreating brackets for '%s'", fullText);
+                // LOGGER.warn(msg);
+                System.out.println(msg);
+            }
 
-        // drop the initial character and paddingx
-        alpha.collapseToStart();
-        alpha.goRight((short) (1 + 1), true);
-        if (debugThisFun) {
-            System.out.printf("nrGetFillCursor: alpha(4) covers '%s'%n", alpha.getString());
-        }
-        alpha.setString("");
-        // drop the last character and paddingz
-        omega.collapseToEnd();
-        omega.goLeft((short) (1 + 1), true);
-        if (debugThisFun) {
-            System.out.printf("nrGetFillCursor: omega(5) covers '%s'%n", omega.getString());
-        }
-        omega.setString("");
+            // we have at least two characters inside
+            XTextCursor alpha = full.getText().createTextCursorByRange(full);
+            alpha.collapseToStart();
 
-        // drop paddingy now
-        if (debugThisFun) {
-            System.out.printf("nrGetFillCursor: beta(6) covers '%s'%n", beta.getString());
-        }
-        beta.setString("");
-        // should be OK now.
-        if (debugThisFun) {
-            alpha.goRight(leftLength, true);
-            System.out.printf("nrGetFillCursor: alpha(7) covers '%s', should be '%s'%n",
-                              alpha.getString(), left);
-            omega.goLeft(rightLength, true);
-            System.out.printf("nrGetFillCursor: omega(8) covers '%s', should be '%s'%n",
-                              omega.getString(), right);
+            XTextCursor omega = full.getText().createTextCursorByRange(full);
+            omega.collapseToEnd();
+
+            // beta now covers everything except first and last character
+            // Replace its content with brackets
+            String paddingx = "x";
+            String paddingy = "y";
+            String paddingz = "z";
+            beta.setString(paddingx + left + paddingy + right + paddingz);
+            if (debugThisFun) {
+                System.out.printf("nrGetFillCursor: beta(2) covers '%s'%n", beta.getString());
+            }
+            // move beta to before the right bracket
+            beta.collapseToEnd();
+            beta.goLeft((short) (rightLength + 1), false);
+            // remove middle padding
+            beta.goLeft((short) 1, true);
+            if (debugThisFun) {
+                System.out.printf("nrGetFillCursor: beta(3) covers '%s'%n", beta.getString());
+            }
+            // only drop paddingy later: beta.setString("");
+
+            // drop the initial character and paddingx
+            alpha.collapseToStart();
+            alpha.goRight((short) (1 + 1), true);
+            if (debugThisFun) {
+                System.out.printf("nrGetFillCursor: alpha(4) covers '%s'%n", alpha.getString());
+            }
+            alpha.setString("");
+            // drop the last character and paddingz
+            omega.collapseToEnd();
+            omega.goLeft((short) (1 + 1), true);
+            if (debugThisFun) {
+                System.out.printf("nrGetFillCursor: omega(5) covers '%s'%n", omega.getString());
+            }
+            omega.setString("");
+
+            // drop paddingy now
+            if (debugThisFun) {
+                System.out.printf("nrGetFillCursor: beta(6) covers '%s'%n", beta.getString());
+            }
+            beta.setString("");
+            // should be OK now.
+            if (debugThisFun) {
+                alpha.goRight(leftLength, true);
+                System.out.printf("nrGetFillCursor: alpha(7) covers '%s', should be '%s'%n",
+                                  alpha.getString(), left);
+                omega.goLeft(rightLength, true);
+                System.out.printf("nrGetFillCursor: omega(8) covers '%s', should be '%s'%n",
+                                  omega.getString(), right);
+            }
         }
 
-        NamedRangeReferenceMark.checkFillCursor(beta);
+        // NamedRangeReferenceMark.checkFillCursor(beta);
         return beta;
     }
 
@@ -427,7 +438,8 @@ class NamedRangeReferenceMark implements NamedRange {
         // alwaysRemoveBrackets : full compatibility with JabRef 5.2:
         // brackets are temporary, only exist between nrGetFillCursor
         // and nrCleanFillCursor.
-        final boolean alwaysRemoveBrackets = true;
+        final boolean alwaysRemoveBrackets = false;
+
         // removeBracketsFromEmpty is intended to force removal if we
         //       are working on an "Empty citation" (INVISIBLE_CIT).
         final boolean removeBracketsFromEmpty = false;
@@ -442,16 +454,6 @@ class NamedRangeReferenceMark implements NamedRange {
         XTextCursor full = this.nrGetRawCursor(doc).orElseThrow(RuntimeException::new);
         final String fullText = full.getString();
         final int fullTextLength = fullText.length();
-
-        XTextCursor alpha = full.getText().createTextCursorByRange(full);
-        alpha.collapseToStart();
-
-        XTextCursor beta = full.getText().createTextCursorByRange(full);
-        beta.collapseToStart();
-        beta.goRight(leftLength, false);
-
-        XTextCursor omega = full.getText().createTextCursorByRange(full);
-        omega.collapseToEnd();
 
         if (!fullText.startsWith(left)) {
             String msg = String.format("nrCleanFillCursor:"
@@ -482,11 +484,15 @@ class NamedRangeReferenceMark implements NamedRange {
                               || alwaysRemoveBrackets);
 
         if (removeRight) {
+            XTextCursor omega = full.getText().createTextCursorByRange(full);
+            omega.collapseToEnd();
             omega.goLeft(rightLength, true);
             omega.setString("");
         }
 
         if (removeLeft) {
+            XTextCursor alpha = full.getText().createTextCursorByRange(full);
+            alpha.collapseToStart();
             alpha.goRight(leftLength, true);
             alpha.setString("");
         }
