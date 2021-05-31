@@ -1,5 +1,7 @@
 package org.jabref.logic.openoffice.frontend;
 
+import org.jabref.model.openoffice.rangesort.RangeHolder;
+
 import com.sun.star.text.XTextRange;
 
 /**
@@ -16,13 +18,15 @@ import com.sun.star.text.XTextRange;
  * tables or other identifier within its kind ({@code idWithinKind})
  *
  */
-public class RangeForOverlapCheck<T> {
+public class RangeForOverlapCheck<T> implements RangeHolder {
+
     public final static int REFERENCE_MARK_KIND = 0;
     public final static int FOOTNOTE_MARK_KIND = 1;
     public final static int CURSOR_MARK_KIND = 2;
     public final static int BIBLIOGRAPHY_MARK_KIND = 3;
 
     public final XTextRange range;
+
     public final int kind;
     public final T idWithinKind;
     private final String description;
@@ -38,4 +42,8 @@ public class RangeForOverlapCheck<T> {
         return description;
     }
 
+    @Override
+    public XTextRange getRange() {
+        return range;
+    }
 }

@@ -15,10 +15,13 @@ import org.jabref.logic.openoffice.backend.Backend52;
 import org.jabref.model.openoffice.CitationEntry;
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.rangesort.FunctionalTextViewCursor;
+import org.jabref.model.openoffice.rangesort.RangeHolder;
 import org.jabref.model.openoffice.rangesort.RangeKeyedMap;
 import org.jabref.model.openoffice.rangesort.RangeKeyedMapList;
 import org.jabref.model.openoffice.rangesort.RangeOverlap;
-import org.jabref.model.openoffice.rangesort.RangeOverlapFinder;
+import org.jabref.model.openoffice.rangesort.RangeOverlapBetween;
+import org.jabref.model.openoffice.rangesort.RangeOverlapKind;
+import org.jabref.model.openoffice.rangesort.RangeOverlapWithin;
 import org.jabref.model.openoffice.rangesort.RangeSortEntry;
 import org.jabref.model.openoffice.rangesort.RangeSortVisual;
 import org.jabref.model.openoffice.rangesort.RangeSortable;
@@ -157,8 +160,7 @@ public class OOFrontend {
          */
 
         // Sort within partitions
-        RangeKeyedMapList<RangeSortEntry<CitationGroup>> rangeSorter =
-            new RangeKeyedMapList<>();
+        RangeKeyedMapList<RangeSortEntry<CitationGroup>> rangeSorter = new RangeKeyedMapList<>();
         for (RangeSortEntry<CitationGroup> sortable : sortables) {
             rangeSorter.add(sortable.getRange(), sortable);
         }
@@ -462,6 +464,31 @@ public class OOFrontend {
         return result;
     }
 
+    static String
+    rangeOverlapsToMessage(List<RangeOverlap<RangeForOverlapCheck<CitationGroupId>>> overlaps) {
+
+        if (overlaps.size() == 0) {
+            return "(*no overlaps*)";
+        }
+
+        StringBuilder msg = new StringBuilder();
+        for (RangeOverlap<RangeForOverlapCheck<CitationGroupId>> overlap : overlaps) {
+            String listOfRanges = (overlap.valuesForOverlappingRanges.stream()
+                                   .map(v -> String.format("'%s'", v.format()))
+                                   .collect(Collectors.joining(", ")));
+            msg.append(
+                switch (overlap.kind) {
+                case EQUAL_RANGE -> Localization.lang("Found identical ranges");
+                case OVERLAP -> Localization.lang("Found overlapping ranges");
+                case TOUCH -> Localization.lang("Found touching ranges");
+                });
+            msg.append(": ");
+            msg.append(listOfRanges);
+            msg.append("\n");
+        }
+        return msg.toString();
+    }
+
     /**
      * Check for any overlap between userRanges and protected ranges.
      *
@@ -484,58 +511,18 @@ public class OOFrontend {
         ranges.addAll(citationRanges);
         ranges.addAll(footnoteMarkRanges(doc, citationRanges));
 
-        if (userRanges.size() == 0) {
+        List<RangeOverlap<RangeForOverlapCheck<CitationGroupId>>> overlaps =
+            RangeOverlapBetween.findFirst(
+                doc,
+                userRanges,
+                ranges,
+                requireSeparation);
+
+        if (overlaps.size() == 0) {
             return OOVoidResult.ok();
         }
-        List<OOTuple3<XText, XTextRangeCompare, RangeForOverlapCheck<CitationGroupId>>> userTuples =
-            new ArrayList<>(userRanges.size());
-        for (RangeForOverlapCheck<CitationGroupId> userRange : userRanges) {
-            XText text = userRange.range.getText();
-            userTuples.add(new OOTuple3<>(text,
-                                          UnoCast.unoQI(XTextRangeCompare.class, text),
-                                          userRange));
-        }
-
-        for (RangeForOverlapCheck<CitationGroupId> range : ranges) {
-            XTextRange bRange = range.range;
-            XText bRangeText = bRange.getText();
-            XTextRange bRangeStart = bRange.getStart();
-            XTextRange bRangeEnd = bRange.getEnd();
-            for (OOTuple3<XText, XTextRangeCompare, RangeForOverlapCheck<CitationGroupId>> tup :
-                     userTuples){
-                if (tup.a != bRangeText) {
-                    continue;
-                }
-                XTextRangeCompare cmp = tup.b;
-                XTextRange aRange = tup.c.range;
-                int abEndToStart = -1 * cmp.compareRegionStarts(aRange.getEnd(), bRangeStart);
-                if (abEndToStart < 0 || (!requireSeparation && (abEndToStart==0))) {
-                    continue;
-                }
-                int baEndToStart = -1 * cmp.compareRegionStarts(bRangeEnd, aRange.getStart());
-                if (baEndToStart < 0 || (!requireSeparation && (baEndToStart==0))) {
-                    continue;
-                }
-
-                StringBuilder msg = new StringBuilder();
-                boolean touching = (abEndToStart == 0 || baEndToStart == 0);
-
-                if (touching) {
-                    msg.append(Localization.lang("Found touching ranges"));
-                } else {
-                    msg.append(Localization.lang("Found overlapping ranges"));
-                }
-                msg.append(": ");
-                msg.append(String.format("'%s'", tup.c.format()));
-                msg.append(", ");
-                msg.append(String.format("'%s'", range.format()));
-                msg.append("\n");
-
-                return OOVoidResult.error(new JabRefException("Found overlapping or touching ranges",
-                                                              msg.toString()));
-            }
-        }
-        return OOVoidResult.ok();
+        return OOVoidResult.error(new JabRefException("Found overlapping or touching ranges",
+                                                      rangeOverlapsToMessage(overlaps)));
     }
 
     /**
@@ -559,36 +546,14 @@ public class OOFrontend {
         ranges.addAll(citationRanges);
         ranges.addAll(footnoteMarkRanges(doc, citationRanges));
 
-        RangeKeyedMapList<RangeForOverlapCheck<CitationGroupId>> sorted = new RangeKeyedMapList<>();
-        for (RangeForOverlapCheck<CitationGroupId> aRange : ranges) {
-            sorted.add(aRange.range, aRange);
-        }
-
         List<RangeOverlap<RangeForOverlapCheck<CitationGroupId>>> overlaps =
-            RangeOverlapFinder.findOverlappingRanges(sorted, reportAtMost, requireSeparation);
+            RangeOverlapWithin.find(doc, ranges, requireSeparation, reportAtMost);
 
-        if (overlaps.size() > 0) {
-            StringBuilder msg = new StringBuilder();
-            for (RangeOverlap<RangeForOverlapCheck<CitationGroupId>> overlap : overlaps) {
-                String listOfRanges = (overlap.valuesForOverlappingRanges.stream()
-                                       .map(v -> String.format("'%s'", v.format()))
-                                       .collect(Collectors.joining(", ")));
-
-                msg.append(
-                    switch (overlap.kind) {
-                    case EQUAL_RANGE -> Localization.lang("Found identical ranges");
-                    case OVERLAP -> Localization.lang("Found overlapping ranges");
-                    case TOUCH -> Localization.lang("Found touching ranges");
-                    });
-                msg.append(": ");
-                msg.append(listOfRanges);
-                msg.append("\n");
-            }
-            return OOVoidResult.error(new JabRefException("Found overlapping or touching ranges",
-                                                          msg.toString()));
-        } else {
+        if (overlaps.size() == 0) {
             return OOVoidResult.ok();
         }
+        return OOVoidResult.error(new JabRefException("Found overlapping or touching ranges",
+                                                      rangeOverlapsToMessage(overlaps)));
     }
 
     /**
