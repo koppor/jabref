@@ -34,7 +34,7 @@ import org.jabref.model.openoffice.uno.UnoCursor;
 import org.jabref.model.openoffice.uno.UnoTextRange;
 import org.jabref.model.openoffice.util.OOListUtil;
 import org.jabref.model.openoffice.util.OOVoidResult;
-import org.jabref.model.openoffice.util.Tuple3;
+import org.jabref.model.openoffice.util.OOTuple3;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
@@ -487,13 +487,13 @@ public class OOFrontend {
         if (userRanges.size() == 0) {
             return OOVoidResult.ok();
         }
-        List<Tuple3<XText, XTextRangeCompare, RangeForOverlapCheck<CitationGroupId>>> userTuples =
+        List<OOTuple3<XText, XTextRangeCompare, RangeForOverlapCheck<CitationGroupId>>> userTuples =
             new ArrayList<>(userRanges.size());
         for (RangeForOverlapCheck<CitationGroupId> userRange : userRanges) {
             XText text = userRange.range.getText();
-            userTuples.add(new Tuple3<>(text,
-                                        UnoCast.unoQI(XTextRangeCompare.class, text),
-                                        userRange));
+            userTuples.add(new OOTuple3<>(text,
+                                          UnoCast.unoQI(XTextRangeCompare.class, text),
+                                          userRange));
         }
 
         for (RangeForOverlapCheck<CitationGroupId> range : ranges) {
@@ -501,7 +501,8 @@ public class OOFrontend {
             XText bRangeText = bRange.getText();
             XTextRange bRangeStart = bRange.getStart();
             XTextRange bRangeEnd = bRange.getEnd();
-            for (Tuple3<XText, XTextRangeCompare, RangeForOverlapCheck<CitationGroupId>> tup : userTuples){
+            for (OOTuple3<XText, XTextRangeCompare, RangeForOverlapCheck<CitationGroupId>> tup :
+                     userTuples){
                 if (tup.a != bRangeText) {
                     continue;
                 }
