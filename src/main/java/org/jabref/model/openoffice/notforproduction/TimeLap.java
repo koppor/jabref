@@ -21,8 +21,8 @@ public class TimeLap {
     // return time (nanoSeconds) for next timing
     public static long now(String label, long startTime) {
         long endTime = System.nanoTime();
-        long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
-        System.out.printf("%-40s: %.3f ms\n", label, duration /1000000.0);
+        long duration = (endTime - startTime);  // divide by 1000000 to get milliseconds.
+        System.out.printf("%-40s: %.3f ms\n", label, duration / 1000000.0);
         return endTime;
     }
 }

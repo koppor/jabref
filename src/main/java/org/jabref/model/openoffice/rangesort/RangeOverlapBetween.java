@@ -2,7 +2,6 @@ package org.jabref.model.openoffice.rangesort;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 import org.jabref.model.openoffice.uno.UnoCast;
 import org.jabref.model.openoffice.uno.UnoTextRange;
@@ -15,7 +14,7 @@ import com.sun.star.text.XTextRangeCompare;
 
 public class RangeOverlapBetween {
 
-    private RangeOverlapBetween() {}
+    private RangeOverlapBetween() { }
 
     /**
      * Check for any overlap between two sets of XTextRange values.
@@ -60,11 +59,11 @@ public class RangeOverlapBetween {
                     continue;
                 }
                 int abEndToStart = -1 * cmp.compareRegionStarts(aRange.getEnd(), bRangeStart);
-                if (abEndToStart < 0 || (!includeTouching && (abEndToStart==0))) {
+                if (abEndToStart < 0 || (!includeTouching && (abEndToStart == 0))) {
                     continue;
                 }
                 int baEndToStart = -1 * cmp.compareRegionStarts(bRangeEnd, aRange.getStart());
-                if (baEndToStart < 0 || (!includeTouching && (baEndToStart==0))) {
+                if (baEndToStart < 0 || (!includeTouching && (baEndToStart == 0))) {
                     continue;
                 }
 

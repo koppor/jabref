@@ -2,20 +2,17 @@ package org.jabref.model.openoffice.rangesort;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 import org.jabref.model.openoffice.uno.UnoCast;
 import org.jabref.model.openoffice.uno.UnoTextRange;
-import org.jabref.model.openoffice.util.OOTuple3;
 
-import com.sun.star.text.XText;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextRangeCompare;
 
 public class RangeOverlapWithin {
 
-    private RangeOverlapWithin() {}
+    private RangeOverlapWithin() { }
 
     /**
      * Report identical, overlapping or touching ranges between
@@ -24,8 +21,8 @@ public class RangeOverlapWithin {
      * For overlapping and touching, only report consecutive ranges
      * and only with a single sample of otherwise identical ranges.
      *
-     * @param atMost Limit the number of records returned to atMost.
-     *        Zero {@code atMost} means no limit.
+     * @param reportAtMost Limit the number of records returned to atMost.
+     *        Zero {@code reportAtMost} means no limit.
      *
      * @param includeTouching Should the result contain ranges
      *                        sharing only a boundary?

@@ -11,8 +11,6 @@ import org.jabref.model.openoffice.uno.UnoTextRange;
 
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextRange;
-import com.sun.star.text.XTextRangeCompare;
-import com.sun.star.uno.UnoRuntime;
 
 /**
  * Purpose: in order to check overlaps of XTextRange values, sort
