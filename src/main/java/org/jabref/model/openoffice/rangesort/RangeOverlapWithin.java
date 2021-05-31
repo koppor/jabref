@@ -28,10 +28,10 @@ public class RangeOverlapWithin {
      *                        sharing only a boundary?
      */
     public static <V extends RangeHolder>
-    List<RangeOverlap<V>> find(XTextDocument doc,
-                               List<V> rangeHolders,
-                               boolean includeTouching,
-                               int reportAtMost) {
+    List<RangeOverlap<V>> findOverlappingRanges(XTextDocument doc,
+                                                List<V> rangeHolders,
+                                                boolean includeTouching,
+                                                int reportAtMost) {
 
         RangeSort.RangePartitions<V> partitions = RangeSort.partitionAndSortRanges(rangeHolders);
 
@@ -52,7 +52,7 @@ public class RangeOverlapWithin {
      * @param includeTouching Should the result contain ranges
      *                        sharing only a boundary?
      */
-    private static <V extends RangeHolder>
+    public static <V extends RangeHolder>
     List<RangeOverlap<V>> findOverlappingRanges(RangeSort.RangePartitions<V> input,
                                                 int atMost,
                                                 boolean includeTouching) {
@@ -60,7 +60,7 @@ public class RangeOverlapWithin {
 
         List<RangeOverlap<V>> result = new ArrayList<>();
 
-        for (List<V> partition : input.partitions.values()) {
+        for (List<V> partition : input.getPartitions()) {
             if (partition.size() == 0) {
                 continue;
             }

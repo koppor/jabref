@@ -49,7 +49,7 @@ public class RangeSort {
      */
 
     public static class RangePartitions<V extends RangeHolder> {
-        public final Map<XText, List<V>> partitions;
+        private final Map<XText, List<V>> partitions;
 
         public RangePartitions() {
             this.partitions = new HashMap<>();
@@ -63,6 +63,10 @@ public class RangeSort {
                 partitions.put(partitionKey, partition);
             }
             partition.add(holder);
+        }
+
+        public List<List<V>> getPartitions() {
+            return new ArrayList<>(partitions.values());
         }
     }
 
@@ -78,7 +82,7 @@ public class RangeSort {
     public static <V extends RangeHolder>
     RangePartitions<V> partitionAndSortRanges(List<V> holders) {
         RangePartitions<V> result = partitionRanges(holders);
-        for (List<V> partition : result.partitions.values()) {
+        for (List<V> partition : result.getPartitions()) {
             sortWithinPartition(partition);
         }
         return result;

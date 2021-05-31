@@ -6,20 +6,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.openoffice.backend.Backend52;
 import org.jabref.model.openoffice.CitationEntry;
+import org.jabref.model.openoffice.notforproduction.TimeLap;
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.rangesort.FunctionalTextViewCursor;
-import org.jabref.model.openoffice.rangesort.RangeKeyedMap;
-import org.jabref.model.openoffice.rangesort.RangeKeyedMapList;
 import org.jabref.model.openoffice.rangesort.RangeOverlap;
 import org.jabref.model.openoffice.rangesort.RangeOverlapBetween;
 import org.jabref.model.openoffice.rangesort.RangeOverlapWithin;
+import org.jabref.model.openoffice.rangesort.RangeSet;
+import org.jabref.model.openoffice.rangesort.RangeSort;
 import org.jabref.model.openoffice.rangesort.RangeSortEntry;
 import org.jabref.model.openoffice.rangesort.RangeSortVisual;
 import org.jabref.model.openoffice.rangesort.RangeSortable;
@@ -154,36 +154,28 @@ public class OOFrontend {
          */
 
         // Sort within partitions
-        RangeKeyedMapList<RangeSortEntry<CitationGroup>> rangeSorter = new RangeKeyedMapList<>();
-        for (RangeSortEntry<CitationGroup> sortable : sortables) {
-            rangeSorter.add(sortable.getRange(), sortable);
-        }
+        RangeSort.RangePartitions<RangeSortEntry<CitationGroup>> partitions =
+            RangeSort.partitionAndSortRanges(sortables);
 
         // build final list
         List<RangeSortEntry<CitationGroup>> result = new ArrayList<>();
-
-        for (TreeMap<XTextRange, List<RangeSortEntry<CitationGroup>>>
-                 partition : rangeSorter.partitionValues()) {
-
-            List<XTextRange> orderedRanges = new ArrayList<>(partition.keySet());
+        for (List<RangeSortEntry<CitationGroup>> partition : partitions.getPartitions()) {
 
             int indexInPartition = 0;
-            for (int i = 0; i < orderedRanges.size(); i++) {
-                XTextRange aRange = orderedRanges.get(i);
-                List<RangeSortEntry<CitationGroup>> sortablesAtARange = partition.get(aRange);
-                for (RangeSortEntry<CitationGroup> sortable : sortablesAtARange) {
-                    sortable.setIndexInPosition(indexInPartition++);
-                    if (mapFootnotesToFootnoteMarks) {
-                        Optional<XTextRange> footnoteMarkRange =
-                            UnoTextRange.getFootnoteMarkRange(sortable.getRange());
-                        // Adjust range if we are inside a footnote:
-                        if (footnoteMarkRange.isPresent()) {
-                            sortable.setRange(footnoteMarkRange.get());
-                        }
+            for (int i = 0; i < partition.size(); i++) {
+                RangeSortEntry<CitationGroup> sortable = partition.get(i);
+                XTextRange aRange = sortable.getRange();
+                sortable.setIndexInPosition(indexInPartition++);
+                if (mapFootnotesToFootnoteMarks) {
+                    Optional<XTextRange> footnoteMarkRange =
+                        UnoTextRange.getFootnoteMarkRange(sortable.getRange());
+                    // Adjust range if we are inside a footnote:
+                    if (footnoteMarkRange.isPresent()) {
+                        sortable.setRange(footnoteMarkRange.get());
                     }
-                    result.add(sortable);
                 }
-            }
+                result.add(sortable);
+                }
         }
         return result.stream().map(e -> e).collect(Collectors.toList());
     }
@@ -209,15 +201,26 @@ public class OOFrontend {
         NoDocumentException,
         JabRefException {
 
+        long startTime = TimeLap.start();
+
         List<RangeSortable<CitationGroup>> sortables =
             createVisualSortInput(doc, mapFootnotesToFootnoteMarks);
+
+        startTime = TimeLap.now("      createVisualSortInput", startTime);
 
         List<RangeSortable<CitationGroup>> sorted =
             RangeSortVisual.visualSort(sortables,
                                        doc,
                                        fcursor);
 
-        return (sorted.stream().map(e -> e.getContent()).collect(Collectors.toList()));
+        startTime = TimeLap.now("      visualSort", startTime);
+
+        List<CitationGroup> result =
+            (sorted.stream().map(e -> e.getContent()).collect(Collectors.toList()));
+
+        startTime = TimeLap.now("      map to CitationGroup", startTime);
+
+        return result;
     }
 
     /**
@@ -432,7 +435,7 @@ public class OOFrontend {
 
         // Avoid inserting the same mark twice.
         // Could use RangeSet if we had that.
-        RangeKeyedMap<Boolean> seen = new RangeKeyedMap<>();
+        RangeSet seen = new RangeSet();
 
         List<RangeForOverlapCheck<CitationGroupId>> result = new ArrayList<>();
 
@@ -446,9 +449,9 @@ public class OOFrontend {
                 continue;
             }
 
-            boolean seenContains = seen.containsKey(footnoteMarkRange.get());
+            boolean seenContains = seen.contains(footnoteMarkRange.get());
             if (!seenContains) {
-                seen.put(footnoteMarkRange.get(), true);
+                seen.add(footnoteMarkRange.get());
                 result.add(new RangeForOverlapCheck<>(footnoteMarkRange.get(),
                                                       citationRange.idWithinKind,
                                                       RangeForOverlapCheck.FOOTNOTE_MARK_KIND,
@@ -541,7 +544,7 @@ public class OOFrontend {
         ranges.addAll(footnoteMarkRanges(doc, citationRanges));
 
         List<RangeOverlap<RangeForOverlapCheck<CitationGroupId>>> overlaps =
-            RangeOverlapWithin.find(doc, ranges, requireSeparation, reportAtMost);
+            RangeOverlapWithin.findOverlappingRanges(doc, ranges, requireSeparation, reportAtMost);
 
         if (overlaps.size() == 0) {
             return OOVoidResult.ok();
