@@ -418,8 +418,8 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
                 value = value.trim().substring(1, value.trim().length() - 1);
             }
             Object toSet = value;
-            if (NUM_PATTERN.matcher(value).matches()) {
-                toSet = Integer.parseInt(value);
+            if (NUM_PATTERN.matcher(value.trim()).matches()) {
+                toSet = Integer.parseInt(value.trim());
             } else if ("true".equalsIgnoreCase(value.trim())) {
                 toSet = Boolean.TRUE;
             } else if ("false".equalsIgnoreCase(value.trim())) {
