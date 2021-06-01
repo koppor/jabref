@@ -604,11 +604,11 @@ public class OOTextIntoOO {
                 }
                 // namesArray must be alphabetically sorted.
                 String[] namesArray = names.toArray(new String[names.size()]);
-                String[] delNamesArray = delNames.toArray(new String[names.size()]);
+                String[] delNamesArray = delNames.toArray(new String[delNames.size()]);
                 mpss.setPropertiesToDefault(delNamesArray);
                 mps.setPropertyValues(namesArray, values.toArray());
             } catch (UnknownPropertyException ex) {
-                LOGGER.warn("UnknownPropertyException in MyPropertyStack.apply");
+                LOGGER.warn("UnknownPropertyException in MyPropertyStack.apply", ex);
             } catch (PropertyVetoException ex) {
                 LOGGER.warn("PropertyVetoException in MyPropertyStack.apply");
             } catch (IllegalArgumentException ex) {
