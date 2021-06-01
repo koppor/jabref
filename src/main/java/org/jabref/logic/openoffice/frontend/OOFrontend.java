@@ -12,7 +12,6 @@ import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.openoffice.backend.Backend52;
 import org.jabref.model.openoffice.CitationEntry;
-import org.jabref.model.openoffice.notforproduction.TimeLap;
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.rangesort.FunctionalTextViewCursor;
 import org.jabref.model.openoffice.rangesort.RangeOverlap;
@@ -201,24 +200,16 @@ public class OOFrontend {
         NoDocumentException,
         JabRefException {
 
-        long startTime = TimeLap.start();
-
         List<RangeSortable<CitationGroup>> sortables =
             createVisualSortInput(doc, mapFootnotesToFootnoteMarks);
-
-        startTime = TimeLap.now("      createVisualSortInput", startTime);
 
         List<RangeSortable<CitationGroup>> sorted =
             RangeSortVisual.visualSort(sortables,
                                        doc,
                                        fcursor);
 
-        startTime = TimeLap.now("      visualSort", startTime);
-
         List<CitationGroup> result =
             (sorted.stream().map(e -> e.getContent()).collect(Collectors.toList()));
-
-        startTime = TimeLap.now("      map to CitationGroup", startTime);
 
         return result;
     }

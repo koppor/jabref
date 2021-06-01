@@ -25,7 +25,6 @@ import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.CitationEntry;
-import org.jabref.model.openoffice.notforproduction.TimeLap;
 import org.jabref.model.openoffice.rangesort.FunctionalTextViewCursor;
 import org.jabref.model.openoffice.style.CitationGroupId;
 import org.jabref.model.openoffice.style.CitationType;
@@ -924,13 +923,10 @@ class OOBibBase2 {
                 return;
             }
 
-            long startTime = TimeLap.start();
             OOFrontend fr = new OOFrontend(doc);
-            startTime = TimeLap.now("getFrontend", startTime);
             if (testDialog(title, checkRangeOverlaps(doc, fr))) {
                 return;
             }
-            startTime = TimeLap.now("checkRangeOverlaps", startTime);
 
             List<String> unresolvedKeys;
             try {
@@ -942,7 +938,6 @@ class OOBibBase2 {
                     .setAlwaysAddCitedOnPages(this.alwaysAddCitedOnPages);
 
                 unresolvedKeys = Update.synchronizeDocument(doc, fr, style, fcursor.get(), syncOptions);
-                startTime = TimeLap.now("Update.synchronizeDocument", startTime);
 
             } finally {
                 UnoUndo.leaveUndoContext(doc);

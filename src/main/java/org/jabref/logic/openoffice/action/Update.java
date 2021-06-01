@@ -9,7 +9,6 @@ import org.jabref.logic.openoffice.frontend.UpdateCitationMarkers;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.style.OOProcess;
 import org.jabref.model.database.BibDatabase;
-import org.jabref.model.openoffice.notforproduction.TimeLap;
 import org.jabref.model.openoffice.rangesort.FunctionalTextViewCursor;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
@@ -48,11 +47,8 @@ public class Update {
 
         final boolean useLockControllers = true;
 
-        long startTime = TimeLap.start();
         fr.imposeGlobalOrder(doc, fcursor);
-        startTime = TimeLap.now("  imposeGlobalOrder", startTime);
         OOProcess.produceCitationMarkers(fr.citationGroups, databases, style);
-        startTime = TimeLap.now("  produceCitationMarkers", startTime);
 
         try {
             if (useLockControllers) {
@@ -60,7 +56,6 @@ public class Update {
             }
 
             UpdateCitationMarkers.applyNewCitationMarkers(doc, fr, style);
-            startTime = TimeLap.now("  applyNewCitationMarkers", startTime);
 
             if (doUpdateBibliography) {
                 UpdateBibliography.rebuildBibTextSection(doc,
@@ -68,10 +63,8 @@ public class Update {
                                                          fr.citationGroups.getBibliography().get(),
                                                          style,
                                                          alwaysAddCitedOnPages);
-                startTime = TimeLap.now("  rebuildBibTextSection", startTime);
             }
             List<String> result = fr.citationGroups.getUnresolvedKeys();
-            startTime = TimeLap.now("  getUnresolvedKeys", startTime);
             return result;
         } finally {
             if (useLockControllers && UnoScreenRefresh.hasControllersLocked(doc)) {
