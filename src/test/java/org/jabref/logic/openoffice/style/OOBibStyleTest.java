@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,13 +24,10 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.entry.types.UnknownEntryType;
 import org.jabref.model.openoffice.ootext.OOText;
-import org.jabref.model.openoffice.style.Citation;
-import org.jabref.model.openoffice.style.CitationLookupResult;
 import org.jabref.model.openoffice.style.CitationMarkerEntry;
 import org.jabref.model.openoffice.style.CitationMarkerNumericBibEntry;
 import org.jabref.model.openoffice.style.CitationMarkerNumericEntry;
 import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
-import org.jabref.model.openoffice.style.PageInfo;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -96,7 +92,7 @@ class OOBibStyleTest {
      * begin helpers
      */
     static String runGetNumCitationMarker2a(OOBibStyle style,
-                                            List<Integer> num, int  minGroupingCount, boolean inList ) {
+                                            List<Integer> num, int minGroupingCount, boolean inList) {
         return OOBibStyleTestHelper.runGetNumCitationMarker2a(style, num, minGroupingCount, inList);
     }
 
@@ -125,7 +121,7 @@ class OOBibStyleTest {
                                                             database,
                                                             uniqueLetterQ,
                                                             pageInfoQ,
-                                                            isFirstAppearanceOfSource );
+                                                            isFirstAppearanceOfSource);
     }
 
     /*
@@ -145,44 +141,46 @@ class OOBibStyleTest {
                                                        inParenthesis,
                                                        uniquefiers,
                                                        isFirstAppearanceOfSource,
-                                                       pageInfo );
-    }
-
-    static String getCitationMarker2b(OOBibStyle style,
-                                      List<BibEntry> entries,
-                                      Map<BibEntry, BibDatabase> entryDBMap,
-                                      boolean inParenthesis,
-                                      String[] uniquefiers,
-                                      Boolean[] isFirstAppearanceOfSource,
-                                      String[] pageInfo) {
-        return OOBibStyleTestHelper.getCitationMarker2b(style,
-                                                        entries,
-                                                        entryDBMap,
-                                                        inParenthesis,
-                                                        uniquefiers,
-                                                        isFirstAppearanceOfSource,
-                                                        pageInfo );
+                                                       pageInfo);
     }
 
     /*
      * end helpers
      */
 
-
     @Test
     void testGetNumCitationMarker() throws IOException {
         OOBibStyle style = new OOBibStyle(StyleLoader.DEFAULT_NUMERICAL_STYLE_PATH,
                 layoutFormatterPreferences);
+        assertEquals("[1] ", style.getNumCitationMarker(Arrays.asList(1), -1, true));
         assertEquals("[1] ", runGetNumCitationMarker2a(style, Arrays.asList(1), -1, true));
 
+        assertEquals("[1]", style.getNumCitationMarker(Arrays.asList(1), -1, false));
         assertEquals("[1]", runGetNumCitationMarker2a(style, Arrays.asList(1), -1, false));
         assertEquals("[1]", runGetNumCitationMarker2b(style, -1, numEntry("key", 1, null)));
 
+        assertEquals("[1] ", style.getNumCitationMarker(Arrays.asList(1), 0, true));
         assertEquals("[1] ", runGetNumCitationMarker2a(style, Arrays.asList(1), 0, true));
+
+        /*
+         * The following tests as for a numeric label for a
+         * bibliography entry containing more than one numbers.
+         * We do not need this, not reproduced.
+         */
+        assertEquals("[1-3] ", style.getNumCitationMarker(Arrays.asList(1, 2, 3), 1, true));
+        assertEquals("[1; 2; 3] ", style.getNumCitationMarker(Arrays.asList(1, 2, 3), 5, true));
+        assertEquals("[1; 2; 3] ", style.getNumCitationMarker(Arrays.asList(1, 2, 3), -1, true));
+        assertEquals("[1; 3; 12] ", style.getNumCitationMarker(Arrays.asList(1, 12, 3), 1, true));
+        assertEquals("[3-5; 7; 10-12] ", style.getNumCitationMarker(Arrays.asList(12, 7, 3, 4, 11, 10, 5), 1, true));
+
+        String citation = style.getNumCitationMarker(Arrays.asList(1), -1, false);
+        assertEquals("[1; pp. 55-56]", style.insertPageInfo(citation, "pp. 55-56"));
 
         CitationMarkerNumericEntry e2 = numEntry("key", 1, "pp. 55-56");
         assertEquals(true, e2.getPageInfo().isPresent());
         assertEquals("pp. 55-56", e2.getPageInfo().get().asString());
+        citation = runGetNumCitationMarker2b(style, -1, e2);
+        assertEquals("[1; pp. 55-56]", citation);
 
         OOBibStyleTestHelper.testGetNumCitationMarkerExtra(style);
     }
@@ -191,31 +189,51 @@ class OOBibStyleTest {
     void testGetNumCitationMarkerUndefined() throws IOException {
         OOBibStyle style = new OOBibStyle(StyleLoader.DEFAULT_NUMERICAL_STYLE_PATH,
                 layoutFormatterPreferences);
+        /*
+         * Testing bibliography labels with multiple numbers again.
+         * Not reproduced.
+         */
+        assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "; 2-4] ",
+                style.getNumCitationMarker(Arrays.asList(4, 2, 3, 0), 1, true));
+
+        assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "] ",
+                style.getNumCitationMarker(Arrays.asList(0), 1, true));
+
+        assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "; 1-3] ",
+                style.getNumCitationMarker(Arrays.asList(1, 2, 3, 0), 1, true));
+
+        assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "; " + OOBibStyle.UNDEFINED_CITATION_MARKER + "; "
+                        + OOBibStyle.UNDEFINED_CITATION_MARKER + "] ",
+                style.getNumCitationMarker(Arrays.asList(0, 0, 0), 1, true));
+
+        /*
+         * We have these instead:
+         */
 
         // unresolved citations look like [??key]
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "key" + "]",
                      runGetNumCitationMarker2b(style, 1,
-                                               numEntry("key",0,null)));
+                                               numEntry("key", 0, null)));
 
         // pageInfo is shown for unresolved citations
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "key" + "; p1]",
                      runGetNumCitationMarker2b(style, 1,
-                                               numEntry("key",0,"p1")));
+                                               numEntry("key", 0, "p1")));
 
         // unresolved citations sorted to the front
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "key" + "; 2-4]",
                      runGetNumCitationMarker2b(style, 1,
-                                               numEntry("x4",4,""),
-                                               numEntry("x2",2,""),
-                                               numEntry("x3",3,""),
-                                               numEntry("key",0,"")));
+                                               numEntry("x4", 4, ""),
+                                               numEntry("x2", 2, ""),
+                                               numEntry("x3", 3, ""),
+                                               numEntry("key", 0, "")));
 
         assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "key" + "; 1-3]",
                      runGetNumCitationMarker2b(style, 1,
-                                               numEntry("x1",1,""),
-                                               numEntry("x2",2,""),
-                                               numEntry("y3",3,""),
-                                               numEntry("key",0,"")));
+                                               numEntry("x1", 1, ""),
+                                               numEntry("x2", 2, ""),
+                                               numEntry("y3", 3, ""),
+                                               numEntry("key", 0, "")));
 
         // multiple unresolved citations are not collapsed
         assertEquals("["
@@ -223,19 +241,16 @@ class OOBibStyleTest {
                      + OOBibStyle.UNDEFINED_CITATION_MARKER + "x2" + "; "
                      + OOBibStyle.UNDEFINED_CITATION_MARKER + "x3" + "]",
                      runGetNumCitationMarker2b(style, 1,
-                                               numEntry("x1",0,""),
-                                               numEntry("x2",0,""),
-                                               numEntry("x3",0,"")));
+                                               numEntry("x1", 0, ""),
+                                               numEntry("x2", 0, ""),
+                                               numEntry("x3", 0, "")));
 
         /*
          * BIBLIOGRAPHY
          */
-        {
-            CitationMarkerNumericBibEntry x = numBibEntry("key", Optional.empty());
-            assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "key" + "] ",
-                         style.getNumCitationMarkerForBibliography(x).asString());
-        }
-
+        CitationMarkerNumericBibEntry x = numBibEntry("key", Optional.empty());
+        assertEquals("[" + OOBibStyle.UNDEFINED_CITATION_MARKER + "key" + "] ",
+                     style.getNumCitationMarkerForBibliography(x).asString());
     }
 
     @Test
@@ -256,7 +271,6 @@ class OOBibStyleTest {
         Set<String> journals = style.getJournals();
         assertTrue(journals.contains("Journal name 1"));
     }
-
 
     @Test
     void testGetCitationMarker() throws IOException {
@@ -279,21 +293,27 @@ class OOBibStyleTest {
         assertEquals(-1, style.getMaxAuthorsFirst());
 
         assertEquals("[Boström et al., 2006]",
+                style.getCitationMarker(Collections.singletonList(entry), entryDBMap, true, null, null));
+        assertEquals("[Boström et al., 2006]",
                      getCitationMarker2(style,
                                         Collections.singletonList(entry), entryDBMap,
                                         true, null, null, null));
 
+        assertEquals("Boström et al. [2006]",
+                style.getCitationMarker(Collections.singletonList(entry), entryDBMap, false, null, new int[]{3}));
         assertEquals("Boström et al. [2006]",
                      getCitationMarker2(style,
                                         Collections.singletonList(entry), entryDBMap,
                                         false, null, new Boolean[]{false}, null));
 
         assertEquals("[Boström, Wäyrynen, Bodén, Beznosov & Kruchten, 2006]",
+                style.getCitationMarker(Collections.singletonList(entry), entryDBMap, true, null, new int[]{5}));
+        assertEquals("[Boström, Wäyrynen, Bodén, Beznosov & Kruchten, 2006]",
                      getCitationMarker2(style,
                                         Collections.singletonList(entry), entryDBMap,
                                         true,
                                         null,
-                                        new Boolean[]{true},
+                                        new Boolean[]{true}  /* corresponds to -1, not 5 */,
                                         null));
     }
 
@@ -379,6 +399,7 @@ class OOBibStyleTest {
         database.insertEntry(entry);
         entries.add(entry);
         entryDBMap.put(entry, database);
+        assertEquals("[JabRef Development Team, 2016]", style.getCitationMarker(entries, entryDBMap, true, null, null));
 
         assertEquals("[JabRef Development Team, 2016]",
                      getCitationMarker2(style,
@@ -399,11 +420,10 @@ class OOBibStyleTest {
         entry.setField(StandardField.AUTHOR, "Alpha von Beta");
         entry.setField(StandardField.TITLE, "JabRef Manual");
         entry.setField(StandardField.YEAR, "2016");
-        entry.setCitationKey("a1");
         database.insertEntry(entry);
         entries.add(entry);
         entryDBMap.put(entry, database);
-        assertEquals("[von Beta, 2016]", getCitationMarker2(style, entries, entryDBMap, true, null, null, null));
+        assertEquals("[von Beta, 2016]", style.getCitationMarker(entries, entryDBMap, true, null, null));
     }
 
     @Test
@@ -418,11 +438,10 @@ class OOBibStyleTest {
         BibEntry entry = new BibEntry();
         entry.setType(StandardEntryType.Article);
         entry.setField(StandardField.YEAR, "2016");
-        entry.setCitationKey("a1");
         database.insertEntry(entry);
         entries.add(entry);
         entryDBMap.put(entry, database);
-        assertEquals("[, 2016]", getCitationMarker2(style, entries, entryDBMap, true, null, null, null));
+        assertEquals("[, 2016]", style.getCitationMarker(entries, entryDBMap, true, null, null));
     }
 
     @Test
@@ -437,11 +456,10 @@ class OOBibStyleTest {
         BibEntry entry = new BibEntry();
         entry.setType(StandardEntryType.Article);
         entry.setField(StandardField.AUTHOR, "Alpha von Beta");
-        entry.setCitationKey("a1");
         database.insertEntry(entry);
         entries.add(entry);
         entryDBMap.put(entry, database);
-        assertEquals("[von Beta, ]", getCitationMarker2(style, entries, entryDBMap, true, null, null, null));
+        assertEquals("[von Beta, ]", style.getCitationMarker(entries, entryDBMap, true, null, null));
     }
 
     @Test
@@ -455,11 +473,10 @@ class OOBibStyleTest {
 
         BibEntry entry = new BibEntry();
         entry.setType(StandardEntryType.Article);
-        entry.setCitationKey("a1");
         database.insertEntry(entry);
         entries.add(entry);
         entryDBMap.put(entry, database);
-        assertEquals("[, ]", getCitationMarker2(style, entries, entryDBMap, true, null, null, null));
+        assertEquals("[, ]", style.getCitationMarker(entries, entryDBMap, true, null, null));
     }
 
     @Test
@@ -475,20 +492,17 @@ class OOBibStyleTest {
         entry1.setField(StandardField.AUTHOR, "Alpha Beta");
         entry1.setField(StandardField.TITLE, "Paper 1");
         entry1.setField(StandardField.YEAR, "2000");
-        entry1.setCitationKey("a1");
         entries.add(entry1);
         database.insertEntry(entry1);
         BibEntry entry3 = new BibEntry();
         entry3.setField(StandardField.AUTHOR, "Alpha Beta");
         entry3.setField(StandardField.TITLE, "Paper 2");
         entry3.setField(StandardField.YEAR, "2000");
-        entry3.setCitationKey("a3");
         entries.add(entry3);
         database.insertEntry(entry3);
         BibEntry entry2 = new BibEntry();
         entry2.setField(StandardField.AUTHOR, "Gamma Epsilon");
         entry2.setField(StandardField.YEAR, "2001");
-        entry2.setCitationKey("a2");
         entries.add(entry2);
         database.insertEntry(entry2);
         for (BibEntry entry : database.getEntries()) {
@@ -496,12 +510,9 @@ class OOBibStyleTest {
         }
 
         assertEquals("[Beta, 2000; Beta, 2000; Epsilon, 2001]",
-                     getCitationMarker2b(style, entries, entryDBMap, true, null, null, null));
+                style.getCitationMarker(entries, entryDBMap, true, null, null));
         assertEquals("[Beta, 2000a,b; Epsilon, 2001]",
-                     getCitationMarker2(style, entries, entryDBMap, true,
-                                        new String[]{"a", "b", ""},
-                                        new Boolean[]{false, false, false},
-                                        null));
+                style.getCitationMarker(entries, entryDBMap, true, new String[]{"a", "b", ""}, new int[]{1, 1, 1}));
     }
 
     @Test
@@ -517,33 +528,27 @@ class OOBibStyleTest {
         entry1.setField(StandardField.AUTHOR, "Alpha Beta");
         entry1.setField(StandardField.TITLE, "Paper 1");
         entry1.setField(StandardField.YEAR, "2000");
-        entry1.setCitationKey("a1");
         entries.add(entry1);
         database.insertEntry(entry1);
         BibEntry entry3 = new BibEntry();
         entry3.setField(StandardField.AUTHOR, "Alpha Beta");
         entry3.setField(StandardField.TITLE, "Paper 2");
         entry3.setField(StandardField.YEAR, "2000");
-        entry3.setCitationKey("a3");
         entries.add(entry3);
         database.insertEntry(entry3);
         BibEntry entry2 = new BibEntry();
         entry2.setField(StandardField.AUTHOR, "Gamma Epsilon");
         entry2.setField(StandardField.YEAR, "2001");
         entries.add(entry2);
-        entry2.setCitationKey("a2");
         database.insertEntry(entry2);
         for (BibEntry entry : database.getEntries()) {
             entryDBMap.put(entry, database);
         }
 
         assertEquals("Beta [2000]; Beta [2000]; Epsilon [2001]",
-                     getCitationMarker2b(style, entries, entryDBMap, false, null, null, null));
+                style.getCitationMarker(entries, entryDBMap, false, null, null));
         assertEquals("Beta [2000a,b]; Epsilon [2001]",
-                     getCitationMarker2(style, entries, entryDBMap, false,
-                                        new String[]{"a", "b", ""},
-                                        new Boolean[]{false, false, false},
-                                        null));
+                style.getCitationMarker(entries, entryDBMap, false, new String[]{"a", "b", ""}, new int[]{1, 1, 1}));
     }
 
     @Test
@@ -559,21 +564,18 @@ class OOBibStyleTest {
         entry1.setField(StandardField.AUTHOR, "Alpha Beta");
         entry1.setField(StandardField.TITLE, "Paper 1");
         entry1.setField(StandardField.YEAR, "2000");
-        entry1.setCitationKey("a1");
         entries.add(entry1);
         database.insertEntry(entry1);
         BibEntry entry2 = new BibEntry();
         entry2.setField(StandardField.AUTHOR, "Alpha Beta");
         entry2.setField(StandardField.TITLE, "Paper 2");
         entry2.setField(StandardField.YEAR, "2000");
-        entry2.setCitationKey("a2");
         entries.add(entry2);
         database.insertEntry(entry2);
         BibEntry entry3 = new BibEntry();
         entry3.setField(StandardField.AUTHOR, "Alpha Beta");
         entry3.setField(StandardField.TITLE, "Paper 3");
         entry3.setField(StandardField.YEAR, "2000");
-        entry3.setCitationKey("a3");
         entries.add(entry3);
         database.insertEntry(entry3);
         for (BibEntry entry : database.getEntries()) {
@@ -581,10 +583,7 @@ class OOBibStyleTest {
         }
 
         assertEquals("[Beta, 2000a,b,c]",
-                     getCitationMarker2(style, entries, entryDBMap, true,
-                                        new String[]{"a", "b", "c"},
-                                        new Boolean[]{false, false, false},
-                                        null));
+                style.getCitationMarker(entries, entryDBMap, true, new String[]{"a", "b", "c"}, new int[]{1, 1, 1}));
     }
 
     @Test
@@ -600,21 +599,18 @@ class OOBibStyleTest {
         entry1.setField(StandardField.AUTHOR, "Alpha Beta");
         entry1.setField(StandardField.TITLE, "Paper 1");
         entry1.setField(StandardField.YEAR, "2000");
-        entry1.setCitationKey("a1");
         entries.add(entry1);
         database.insertEntry(entry1);
         BibEntry entry2 = new BibEntry();
         entry2.setField(StandardField.AUTHOR, "Alpha Beta");
         entry2.setField(StandardField.TITLE, "Paper 2");
         entry2.setField(StandardField.YEAR, "2000");
-        entry2.setCitationKey("a2");
         entries.add(entry2);
         database.insertEntry(entry2);
         BibEntry entry3 = new BibEntry();
         entry3.setField(StandardField.AUTHOR, "Alpha Beta");
         entry3.setField(StandardField.TITLE, "Paper 3");
         entry3.setField(StandardField.YEAR, "2000");
-        entry3.setCitationKey("a3");
         entries.add(entry3);
         database.insertEntry(entry3);
         for (BibEntry entry : database.getEntries()) {
@@ -622,10 +618,7 @@ class OOBibStyleTest {
         }
 
         assertEquals("Beta [2000a,b,c]",
-                     getCitationMarker2(style, entries, entryDBMap, false,
-                                        new String[]{"a", "b", "c"},
-                                        new Boolean[]{false, false, false},
-                                        null));
+                style.getCitationMarker(entries, entryDBMap, false, new String[]{"a", "b", "c"}, new int[]{1, 1, 1}));
     }
 
     @Test
@@ -679,12 +672,11 @@ class OOBibStyleTest {
         entry.setField(StandardField.AUTHOR, "Alpha von Beta and Gamma Epsilon and Ypsilon Tau");
         entry.setField(StandardField.TITLE, "JabRef Manual");
         entry.setField(StandardField.YEAR, "2016");
-        entry.setCitationKey("a1");
         database.insertEntry(entry);
         entries.add(entry);
         entryDBMap.put(entry, database);
         assertEquals("von Beta, Epsilon, & Tau, 2016",
-                     getCitationMarker2(style, entries, entryDBMap, true, null, null, null));
+                style.getCitationMarker(entries, entryDBMap, true, null, null));
     }
 
     @Test
@@ -766,7 +758,7 @@ class OOBibStyleTest {
             citationMarkerEntries.add(cm3);
 
             assertEquals("[Boström, Wäyrynen, Bodén, Beznosov & Kruchten, 2006a,b"
-                         +"; Boström, Wäyrynen, Bodén, Beznosov & NotKruchten, 2006c]",
+                         + "; Boström, Wäyrynen, Bodén, Beznosov & NotKruchten, 2006c]",
                          style.createCitationMarker(citationMarkerEntries,
                                                     true,
                                                     NonUniqueCitationMarker.THROWS).asString());
@@ -794,7 +786,7 @@ class OOBibStyleTest {
             citationMarkerEntries.add(cm3);
 
             assertEquals("[Boström, Wäyrynen, Bodén, Beznosov & Kruchten, 2006a,b"
-                         +"; Boström et al., 2006c]",
+                         + "; Boström et al., 2006c]",
                          style.createCitationMarker(citationMarkerEntries,
                                                     true,
                                                     NonUniqueCitationMarker.THROWS).asString());

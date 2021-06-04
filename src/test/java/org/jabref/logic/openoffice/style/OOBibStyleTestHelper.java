@@ -1,29 +1,16 @@
 package org.jabref.logic.openoffice.style;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jabref.logic.layout.Layout;
-import org.jabref.logic.layout.LayoutFormatterPreferences;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.types.StandardEntryType;
-import org.jabref.model.entry.types.UnknownEntryType;
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.style.Citation;
 import org.jabref.model.openoffice.style.CitationLookupResult;
@@ -33,15 +20,7 @@ import org.jabref.model.openoffice.style.CitationMarkerNumericEntry;
 import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
 import org.jabref.model.openoffice.style.PageInfo;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Answers;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
 class OOBibStyleTestHelper {
     /*
@@ -116,7 +95,7 @@ class OOBibStyleTestHelper {
      * @param inList true means label for the bibliography
      */
     static String runGetNumCitationMarker2a(OOBibStyle style,
-                                            List<Integer> num, int  minGroupingCount, boolean inList ) {
+                                            List<Integer> num, int minGroupingCount, boolean inList) {
         if (inList) {
             if (num.size() != 1) {
                 throw new RuntimeException("Numeric label for the bibliography with "
@@ -159,7 +138,6 @@ class OOBibStyleTestHelper {
      * end Helpers for testing style.getNumCitationMarker2
      */
 
-
     /*
      * begin helper
      */
@@ -185,14 +163,13 @@ class OOBibStyleTestHelper {
      * Similar to old API. pageInfo is new, and unlimAuthors is
      * replaced with isFirstAppearanceOfSource
      */
-    static String getCitationMarker2ab(OOBibStyle style,
-                                       List<BibEntry> entries,
-                                       Map<BibEntry, BibDatabase> entryDBMap,
-                                       boolean inParenthesis,
-                                       String[] uniquefiers,
-                                       Boolean[] isFirstAppearanceOfSource,
-                                       String[] pageInfo,
-                                       NonUniqueCitationMarker nonunique) {
+    static String getCitationMarker2(OOBibStyle style,
+                                     List<BibEntry> entries,
+                                     Map<BibEntry, BibDatabase> entryDBMap,
+                                     boolean inParenthesis,
+                                     String[] uniquefiers,
+                                     Boolean[] isFirstAppearanceOfSource,
+                                     String[] pageInfo) {
         if (uniquefiers == null) {
             uniquefiers = new String[entries.size()];
             Arrays.fill(uniquefiers, null);
@@ -217,62 +194,27 @@ class OOBibStyleTestHelper {
         }
         return style.createCitationMarker(citationMarkerEntries,
                                           inParenthesis,
-                                          nonunique).asString();
-    }
-
-    static String getCitationMarker2(OOBibStyle style,
-                                     List<BibEntry> entries,
-                                     Map<BibEntry, BibDatabase> entryDBMap,
-                                     boolean inParenthesis,
-                                     String[] uniquefiers,
-                                     Boolean[] isFirstAppearanceOfSource,
-                                     String[] pageInfo) {
-        return getCitationMarker2ab(style,
-                                    entries,
-                                    entryDBMap,
-                                    inParenthesis,
-                                    uniquefiers,
-                                    isFirstAppearanceOfSource,
-                                    pageInfo,
-                                    NonUniqueCitationMarker.THROWS);
-    }
-
-    static String getCitationMarker2b(OOBibStyle style,
-                                      List<BibEntry> entries,
-                                      Map<BibEntry, BibDatabase> entryDBMap,
-                                      boolean inParenthesis,
-                                      String[] uniquefiers,
-                                      Boolean[] isFirstAppearanceOfSource,
-                                      String[] pageInfo) {
-        return getCitationMarker2ab(style,
-                                    entries,
-                                    entryDBMap,
-                                    inParenthesis,
-                                    uniquefiers,
-                                    isFirstAppearanceOfSource,
-                                    pageInfo,
-                                    NonUniqueCitationMarker.FORGIVEN);
+                                          NonUniqueCitationMarker.THROWS).asString();
     }
 
     /*
      * end helper
      */
 
-
     static void testGetNumCitationMarkerExtra(OOBibStyle style) throws IOException {
         // Identical numeric entries are joined.
         assertEquals("[1; 2]", runGetNumCitationMarker2b(style, 3,
-                                     numEntry("x1",1,null),
-                                     numEntry("x2",2,null),
-                                     numEntry("x1",2,null),
-                                     numEntry("x2",1,null)));
+                                     numEntry("x1", 1, null),
+                                     numEntry("x2", 2, null),
+                                     numEntry("x1", 2, null),
+                                     numEntry("x2", 1, null)));
 
         // ... unless minGroupingCount <= 0
         assertEquals("[1; 1; 2; 2]", runGetNumCitationMarker2b(style, 0,
-                                     numEntry("x1",1,null),
-                                     numEntry("x2",2,null),
-                                     numEntry("x1",2,null),
-                                     numEntry("x2",1,null)));
+                                     numEntry("x1", 1, null),
+                                     numEntry("x2", 2, null),
+                                     numEntry("x1", 2, null),
+                                     numEntry("x2", 1, null)));
 
         // ... or have different pageInfos
         assertEquals("[1; p1a; 1; p1b; 2; p2; 3]", runGetNumCitationMarker2b(style, 1,
