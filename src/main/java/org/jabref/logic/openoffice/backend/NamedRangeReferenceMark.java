@@ -230,11 +230,11 @@ class NamedRangeReferenceMark implements NamedRange {
 
         String name = this.nrGetRangeName();
 
-        final boolean debugThisFun = false;
         final String left = NamedRangeReferenceMark.REFERENCE_MARK_LEFT_BRACKET;
         final String right = NamedRangeReferenceMark.REFERENCE_MARK_RIGHT_BRACKET;
         final short leftLength = (short) left.length();
         final short rightLength = (short) right.length();
+        final boolean debugThisFun = false;
 
         XTextCursor full = null;
         String fullText = null;
@@ -257,15 +257,11 @@ class NamedRangeReferenceMark implements NamedRange {
 
             fullText = full.getString();
 
-            if (debugThisFun) {
-                System.out.printf("nrGetFillCursor: fulltext = '%s'%n", fullText);
-            }
+            LOGGER.debug("nrGetFillCursor: fulltext = '{}'", fullText);
 
             if (fullText.length() >= 2) {
-                if (debugThisFun) {
-                    System.out.printf("nrGetFillCursor: (attempt: %d) fulltext.length() >= 2,"
-                                      + " break loop%n", i);
-                }
+                LOGGER.debug("nrGetFillCursor: (attempt: {}) fulltext.length() >= 2,"
+                             + " break loop%n", i);
                 break;
             } else {
                 // (fullText.length() < 2)
@@ -276,9 +272,8 @@ class NamedRangeReferenceMark implements NamedRange {
                     throw new RuntimeException(msg);
                 }
                 // too short, recreate
-                if (true || debugThisFun) {
-                    System.out.println("nrGetFillCursor: too short, recreate");
-                }
+                LOGGER.warn("nrGetFillCursor: too short, recreate");
+
                 full.setString("");
                 try {
                     UnoReferenceMark.remove(doc, name);
@@ -311,17 +306,12 @@ class NamedRangeReferenceMark implements NamedRange {
         beta.collapseToStart();
         beta.goRight((short) 1, false);
         beta.goRight((short) (fullText.length() - 2), true);
-        if (debugThisFun) {
-            System.out.printf("nrGetFillCursor: beta(1) covers '%s'%n", beta.getString());
-        }
+        LOGGER.debug("nrGetFillCursor: beta(1) covers '{}'", beta.getString());
+
         if (fullText.startsWith(left) && fullText.endsWith(right)) {
             beta.setString("");
         } else {
-            if (debugThisFun) {
-                String msg = String.format("nrGetFillCursor: recreating brackets for '%s'", fullText);
-                // LOGGER.warn(msg);
-                System.out.println(msg);
-            }
+            LOGGER.debug("nrGetFillCursor: recreating brackets for '{}'", fullText);
 
             // we have at least two characters inside
             XTextCursor alpha = full.getText().createTextCursorByRange(full);
@@ -336,47 +326,42 @@ class NamedRangeReferenceMark implements NamedRange {
             String paddingy = "y";
             String paddingz = "z";
             beta.setString(paddingx + left + paddingy + right + paddingz);
-            if (debugThisFun) {
-                System.out.printf("nrGetFillCursor: beta(2) covers '%s'%n", beta.getString());
-            }
+            LOGGER.debug("nrGetFillCursor: beta(2) covers '{}'", beta.getString());
+
             // move beta to before the right bracket
             beta.collapseToEnd();
             beta.goLeft((short) (rightLength + 1), false);
             // remove middle padding
             beta.goLeft((short) 1, true);
-            if (debugThisFun) {
-                System.out.printf("nrGetFillCursor: beta(3) covers '%s'%n", beta.getString());
-            }
+            LOGGER.debug("nrGetFillCursor: beta(3) covers '{}'", beta.getString());
+
             // only drop paddingy later: beta.setString("");
 
             // drop the initial character and paddingx
             alpha.collapseToStart();
             alpha.goRight((short) (1 + 1), true);
-            if (debugThisFun) {
-                System.out.printf("nrGetFillCursor: alpha(4) covers '%s'%n", alpha.getString());
-            }
+            LOGGER.debug("nrGetFillCursor: alpha(4) covers '{}'", alpha.getString());
+
             alpha.setString("");
             // drop the last character and paddingz
             omega.collapseToEnd();
             omega.goLeft((short) (1 + 1), true);
-            if (debugThisFun) {
-                System.out.printf("nrGetFillCursor: omega(5) covers '%s'%n", omega.getString());
-            }
+            LOGGER.debug("nrGetFillCursor: omega(5) covers '{}'", omega.getString());
+
             omega.setString("");
 
             // drop paddingy now
-            if (debugThisFun) {
-                System.out.printf("nrGetFillCursor: beta(6) covers '%s'%n", beta.getString());
-            }
+            LOGGER.debug("nrGetFillCursor: beta(6) covers '{}'", beta.getString());
+
             beta.setString("");
             // should be OK now.
             if (debugThisFun) {
                 alpha.goRight(leftLength, true);
-                System.out.printf("nrGetFillCursor: alpha(7) covers '%s', should be '%s'%n",
-                                  alpha.getString(), left);
+                LOGGER.debug("nrGetFillCursor: alpha(7) covers '{}', should be '{}'",
+                             alpha.getString(), left);
                 omega.goLeft(rightLength, true);
-                System.out.printf("nrGetFillCursor: omega(8) covers '%s', should be '%s'%n",
-                                  omega.getString(), right);
+                LOGGER.debug("nrGetFillCursor: omega(8) covers '%s', should be '%s'%n",
+                             omega.getString(), right);
             }
         }
 
