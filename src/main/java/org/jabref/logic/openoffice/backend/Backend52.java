@@ -237,7 +237,7 @@ public class Backend52 {
                     }
                 }
                 break;
-            case JabRef53:
+            case JabRef60:
                 cit.setPageInfo(pageInfo);
                 break;
             }
@@ -303,7 +303,7 @@ public class Backend52 {
             }
             return OODataModel.fakePageInfos(cgPageInfo, nCitations);
 
-        case JabRef53:
+        case JabRef60:
             return (joinableGroup.stream()
                     .flatMap(cg -> (cg.citationsInStorageOrder.stream()
                                     .map(Citation::getPageInfo)))
@@ -403,7 +403,7 @@ public class Backend52 {
         switch (dataModel) {
         case JabRef52:
             // One context per CitationGroup: Backend52 (DataModel.JabRef52)
-            // For DataModel.JabRef53 (Backend53) we need one context per Citation
+            // For DataModel.JabRef60 (Backend60) we need one context per Citation
             int n = cgs.numberOfCitationGroups();
             List<CitationEntry> citations = new ArrayList<>(n);
             for (CitationGroup cg : cgs.getCitationGroupsUnordered()) {
@@ -420,9 +420,9 @@ public class Backend52 {
                 citations.add(entry);
             }
             return citations;
-        case JabRef53:
-            //xx
-            throw new RuntimeException("getCitationEntries for JabRef53 is not implemented yet");
+        case JabRef60:
+            // xx
+            throw new RuntimeException("getCitationEntries for JabRef60 is not implemented yet");
         default:
             throw new RuntimeException("getCitationEntries: unhandled dataModel ");
         }
@@ -453,9 +453,9 @@ public class Backend52 {
                 }
             }
             break;
-        case JabRef53:
-            //xx
-            throw new RuntimeException("applyCitationEntries for JabRef53 is not implemented yet");
+        case JabRef60:
+            // xx
+            throw new RuntimeException("applyCitationEntries for JabRef60 is not implemented yet");
         default:
             throw new RuntimeException("applyCitationEntries: unhandled dataModel ");
         }
