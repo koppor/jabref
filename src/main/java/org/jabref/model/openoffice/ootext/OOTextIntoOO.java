@@ -155,17 +155,13 @@ public class OOTextIntoOO {
         NoSuchElementException,
         CreationException {
 
-        final boolean debugThisFun = false;
-
         Objects.requireNonNull(doc);
         Objects.requireNonNull(ootext);
         Objects.requireNonNull(position);
 
         String lText = OOText.toString(ootext);
 
-        if (debugThisFun) {
-            System.out.println(lText);
-        }
+        LOGGER.debug(lText);
 
         XText text = position.getText();
         XTextCursor cursor = text.createTextCursorByRange(position);
@@ -242,15 +238,11 @@ public class OOTextIntoOO {
                         // <p oo:ParaStyleName="Standard">
                         if (value != null && !value.equals("")) {
                             if (setParagraphStyle(cursor, value)) {
-                                if (debugThisFun) {
-                                    // Presumably tested already:
-                                    LOGGER.warn(String.format("oo:ParaStyleName=\"%s\" failed", value));
-                                }
+                                // Presumably tested already:
+                                LOGGER.debug(String.format("oo:ParaStyleName=\"%s\" failed", value));
                             }
                         } else {
-                            if (debugThisFun) {
-                                LOGGER.warn(String.format("oo:ParaStyleName inherited"));
-                            }
+                            LOGGER.debug(String.format("oo:ParaStyleName inherited"));
                         }
                         break;
                     default:
