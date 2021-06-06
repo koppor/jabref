@@ -19,4 +19,4 @@
 * [Readings on Coding](readings-on-coding/README.md)
   * [Readings on JavaFX](readings-on-coding/javafx.md)
   * [Useful development tooling](readings-on-coding/tools.md)
-
+* [The OpenOffice/LibreOffice panel](openoffice/README.md)
