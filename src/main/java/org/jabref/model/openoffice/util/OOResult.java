@@ -1,42 +1,36 @@
 package org.jabref.model.openoffice.util;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /*
- * error cannot be null
- * result cannot be null
+ * An instance of this class represents either the result
+ * of a computation, or an error value. Neither of these is allowed
+ * to be null.
  *
  * Void is not allowed for R, use OOVoidResult instead.
  *
  * Out of `isPresent()` and `isError()` exactly one is true.
  */
 public class OOResult<R, E> {
+
     private final Optional<R> result;
     private final Optional<E> error;
 
     /**
      * Exactly one of the arguments should be Optional.empty()
-     *
-     * @param result
-     * @param error
      */
     private OOResult(Optional<R> result, Optional<E> error) {
         this.result = result;
         this.error = error;
     }
 
-    /**
-     * @param result Null is not allowed.
-     */
     public static <R, E> OOResult<R, E> ok(R result) {
         return new OOResult<>(Optional.of(result), Optional.empty());
     }
 
-    /**
-     * @param error Null is not allowed.
-     */
     public static <R, E> OOResult<R, E> error(E error) {
         return new OOResult<>(Optional.empty(), Optional.of(error));
     }
@@ -67,7 +61,7 @@ public class OOResult<R, E> {
 
     public R get() {
         if (isError()) {
-            throw new RuntimeException("Cannot get from error");
+            throw new NoSuchElementException("Cannot get from error");
         }
         return result.get();
     }
