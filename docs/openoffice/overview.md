@@ -244,13 +244,13 @@ citations (for author-year styles literally, for numbered styles less so).
 
 ### How does it work?
 
-- An important limitation we have to deal with is that we (I mean the
-jabref program) are only loosely coupled to the document. Between two
-GUI actions we do not receive any information from LibreOffice. We do
-not distinguish between the user changing a single character in the
-document or rewriting everything. Getting all the information we need
-from the document, including consistency checking has to fit in a
-limited time frame.
+- An important limitation is that we (I mean the jabref program) are
+only loosely coupled to the document. Between two GUI actions we do
+not receive any information from LibreOffice. We do not distinguish
+between the user changing a single character in the document or
+rewriting everything. Getting all the information we need from the
+document, including consistency checking has to fit in a limited time
+frame.
 
 
 
