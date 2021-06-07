@@ -56,7 +56,7 @@ class OOProcessAuthorYearMarkers {
         //
         Map<String, List<String>> normCitMarkerToClachingKeys = new HashMap<>();
         for (CitedKey citedKey : sortedCitedKeys.values()) {
-            String normCitMarker = OOText.toString(citedKey.getNormalizedCitationMarker().get());
+            String normCitMarker = OOText.asString(citedKey.getNormalizedCitationMarker().get());
             String citationKey = citedKey.citationKey;
 
             if (!normCitMarkerToClachingKeys.containsKey(normCitMarker)) {

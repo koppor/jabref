@@ -19,19 +19,19 @@ public class OOText {
     }
 
     /* null input is passed through */
-    public static OOText fromString(String s) {
-        if (s == null) {
+    public static OOText fromString(String string) {
+        if (string == null) {
             return null;
         }
-        return new OOText(s);
+        return new OOText(string);
     }
 
     /* null input is passed through */
-    public static String toString(OOText s) {
-        if (s == null) {
+    public static String asString(OOText ootext) {
+        if (ootext == null) {
             return null;
         }
-        return s.data;
+        return ootext.data;
     }
 
     public String asString() {
@@ -40,17 +40,17 @@ public class OOText {
 
     /* Object.equals */
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object object) {
 
-        if (o == this) {
+        if (object == this) {
             return true;
         }
 
-        if (!(o instanceof OOText)) {
+        if (!(object instanceof OOText)) {
             return false;
         }
 
-        OOText c = (OOText) o;
+        OOText c = (OOText) object;
 
         return data.equals(c.data);
     }

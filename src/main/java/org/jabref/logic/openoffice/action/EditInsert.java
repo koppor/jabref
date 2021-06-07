@@ -107,7 +107,7 @@ public class EditInsert {
                                           citationType.inParenthesis(),
                                           NonUniqueCitationMarker.FORGIVEN));
 
-        if ("".equals(OOText.toString(citeText))) {
+        if ("".equals(OOText.asString(citeText))) {
             citeText = OOText.fromString("[?]");
         }
 

@@ -256,7 +256,7 @@ public class Backend52 {
             Optional<OOText> pageInfo = PageInfo.normalizePageInfo(pageInfos.get(last));
 
             if (pageInfo.isPresent()) {
-                String pageInfoString = OOText.toString(pageInfo.get());
+                String pageInfoString = OOText.asString(pageInfo.get());
                 UnoUserDefinedProperty.createStringProperty(doc, refMarkName, pageInfoString);
             } else {
                 // do not inherit from trash
@@ -291,12 +291,12 @@ public class Backend52 {
             // Try to do something of the cgPageInfos.
             String cgPageInfo = (cgPageInfos.stream()
                                  .filter(pi -> pi.isPresent())
-                                 .map(pi -> OOText.toString(pi.get()))
+                                 .map(pi -> OOText.asString(pi.get()))
                                  .distinct()
                                  .collect(Collectors.joining("; ")));
 
             int nCitations = (joinableGroup.stream()
-                              .map(cg -> cg.numberOfCitations())
+                              .map(CitationGroup::numberOfCitations)
                               .mapToInt(Integer::intValue).sum());
             if ("".equals(cgPageInfo)) {
                 cgPageInfo = null;
@@ -414,7 +414,7 @@ public class Backend52 {
                 String context = GetContext.getCursorStringWithContext(cursor, 30, 30, true);
                 Optional<String> pageInfo = (cg.numberOfCitations() > 0
                                              ? (getPageInfoFromData(cg)
-                                                .map(e -> OOText.toString(e)))
+                                                .map(e -> OOText.asString(e)))
                                              : Optional.empty());
                 CitationEntry entry = new CitationEntry(name, context, pageInfo);
                 citations.add(entry);

@@ -209,7 +209,7 @@ public class OOFrontend {
                                        fcursor);
 
         List<CitationGroup> result =
-            (sorted.stream().map(e -> e.getContent()).collect(Collectors.toList()));
+            (sorted.stream().map(RangeSortable<CitationGroup>::getContent).collect(Collectors.toList()));
 
         return result;
     }

@@ -159,7 +159,7 @@ public class OOTextIntoOO {
         Objects.requireNonNull(ootext);
         Objects.requireNonNull(position);
 
-        String lText = OOText.toString(ootext);
+        String lText = OOText.asString(ootext);
 
         LOGGER.debug(lText);
 
