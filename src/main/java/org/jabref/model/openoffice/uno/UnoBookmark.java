@@ -45,7 +45,7 @@ public class UnoBookmark {
 
         XNameAccess nameAccess = getNameAccess(doc);
         return (UnoNameAccess.getTextContentByName(nameAccess, name)
-                .map(e -> e.getAnchor()));
+                .map(XTextContent::getAnchor));
     }
 
     /**

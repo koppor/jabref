@@ -8,6 +8,7 @@ import com.sun.star.container.XNamed;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextSection;
@@ -61,7 +62,7 @@ public class UnoTextSection {
 
         XNameAccess nameAccess = getNameAccess(doc);
         return (UnoNameAccess.getTextContentByName(nameAccess, name)
-                .map(e -> e.getAnchor()));
+                .map(XTextContent::getAnchor));
     }
 
     /**

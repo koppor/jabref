@@ -62,7 +62,7 @@ public class UnoStyle {
         throws
         WrappedTargetException {
         return (getStyleFromFamily(doc, familyName, name)
-                .map(e -> e.getName()));
+                .map(XStyle::getName));
     }
 
     public static Optional<String> getInternalNameOfParagraphStyle(XTextDocument doc, String name)

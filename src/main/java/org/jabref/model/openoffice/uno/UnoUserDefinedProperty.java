@@ -13,6 +13,7 @@ import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertyContainer;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertySetInfo;
+import com.sun.star.document.XDocumentProperties;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextDocument;
@@ -33,7 +34,7 @@ public class UnoUserDefinedProperty {
     private UnoUserDefinedProperty() { }
 
     public static Optional<XPropertyContainer> getPropertyContainer(XTextDocument doc) {
-        return UnoTextDocument.getDocumentProperties(doc).map(e -> e.getUserDefinedProperties());
+        return UnoTextDocument.getDocumentProperties(doc).map(XDocumentProperties::getUserDefinedProperties);
     }
 
     public static List<String> getListOfNames(XTextDocument doc) {

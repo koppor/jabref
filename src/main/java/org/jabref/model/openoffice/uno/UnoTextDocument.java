@@ -59,7 +59,7 @@ public class UnoTextDocument {
      */
     public static Optional<String> getFrameTitle(XTextDocument doc) {
 
-        Optional<XFrame> frame = getCurrentController(doc).map(e -> e.getFrame());
+        Optional<XFrame> frame = getCurrentController(doc).map(XController::getFrame);
         if (frame.isEmpty()) {
             return Optional.empty();
         }
@@ -86,7 +86,7 @@ public class UnoTextDocument {
     static Optional<XDocumentProperties> getDocumentProperties(XTextDocument doc) {
         return (Optional.ofNullable(doc)
                 .map(e -> UnoCast.unoQI(XDocumentPropertiesSupplier.class, e))
-                .map(e -> e.getDocumentProperties()));
+                .map(XDocumentPropertiesSupplier::getDocumentProperties));
     }
 }
 
