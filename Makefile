@@ -1,5 +1,7 @@
 # -*- makefile -*-
 
+.PHONY: all assemble build build-notest clean check test run tmp-clean checkstyle
+
 all: build
 
 # https://devdocs.jabref.org/getting-into-the-code/guidelines-for-setting-up-a-local-workspace
