@@ -164,7 +164,7 @@ class OOBibBase2 {
 
     OOVoidResult<OOError> collectResults(String title, List<OOVoidResult<OOError>> results) {
         String msg = (results.stream()
-                      .filter(e -> e.isError())
+                      .filter(OOVoidResult<OOError>::isError)
                       .map(e -> e.getError().getLocalizedMessage())
                       .collect(Collectors.joining("\n\n")));
         if (msg.isEmpty()) {
