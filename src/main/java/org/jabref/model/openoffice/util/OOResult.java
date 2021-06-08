@@ -34,10 +34,6 @@ public class OOResult<R, E> {
         return new OOResult<>(Optional.empty(), Optional.of(error));
     }
 
-    /*
-     * Test state
-     */
-
     public boolean isPresent() {
         return result.isPresent();
     }
@@ -54,10 +50,6 @@ public class OOResult<R, E> {
         return !isError();
     }
 
-    /*
-     * getters
-     */
-
     public R get() {
         if (isError()) {
             throw new NoSuchElementException("Cannot get from error");
@@ -68,10 +60,6 @@ public class OOResult<R, E> {
     public E getError() {
         return error.get();
     }
-
-    /*
-     * Conditionals
-     */
 
     public OOResult<R, E> ifPresent(Consumer<R> fun) {
         if (isPresent()) {
