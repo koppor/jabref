@@ -513,30 +513,8 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         }
         sb.append(bracketAfter);
         return sb.toString();
-     }
+    }
     /* end_old */
-
-    /**
-     * Format a number-based citation marker for the given entries.
-     *
-     * @return The text for the citation.
-     */
-    public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries) {
-        final int minGroupingCount = this.getMinimumGroupingCount();
-        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
-                                                                    entries,
-                                                                    minGroupingCount);
-    }
-
-    /**
-     * For some tests we need to override minGroupingCount.
-     */
-    public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries,
-                                        int minGroupingCount) {
-        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
-                                                                    entries,
-                                                                    minGroupingCount);
-    }
 
     /* begin_old */
     public String getCitationMarker(List<BibEntry> entries, Map<BibEntry, BibDatabase> database, boolean inParenthesis,
@@ -605,6 +583,14 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     /* end_old */
 
     /* begin_old */
+    /**
+     * Modify entry and uniquefier arrays to facilitate a grouped presentation of uniquefied entries.
+     *
+     * @param entries     The entry array.
+     * @param uniquefiers The uniquefier array.
+     * @param from        The first index to group (inclusive)
+     * @param to          The last index to group (inclusive)
+     */
     private void group(List<BibEntry> entries, String[] uniquefiers, int from, int to) {
         String separator = getStringCitProperty(UNIQUEFIER_SEPARATOR);
         StringBuilder sb = new StringBuilder(uniquefiers[from]);
@@ -618,6 +604,14 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     /* end_old */
 
     /* begin_old */
+    /**
+     * This method produces (Author, year) style citation strings in many different forms.
+     *
+     * @param entries           The list of BibEntry to get fields from.
+     * @param database          A map of BibEntry-BibDatabase pairs.
+     * @param uniquifiers       Optional parameter to separate similar citations. Elements can be null if not needed.
+     * @return The formatted citation.
+     */
     private String getAuthorYearParenthesisMarker(List<BibEntry> entries, Map<BibEntry, BibDatabase> database,
                                                   String[] uniquifiers, int[] unlimAuthors) {
 
@@ -664,6 +658,14 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     /* end_old */
 
     /* begin_old */
+    /**
+     * This method produces "Author (year)" style citation strings in many different forms.
+     *
+     * @param entries     The list of BibEntry to get fields from.
+     * @param database    A map of BibEntry-BibDatabase pairs.
+     * @param uniquefiers Optional parameters to separate similar citations. Can be null if not needed.
+     * @return The formatted citation.
+     */
     private String getAuthorYearInTextMarker(List<BibEntry> entries, Map<BibEntry, BibDatabase> database,
                                              String[] uniquefiers,
                                              int[] unlimAuthors) {
@@ -717,6 +719,16 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
 
     /* begin_old */
     /* moved to OOBibStyleGetCitationMarker */
+    /**
+     * This method looks up a field for an entry in a database. Any number of backup fields can be used
+     * if the primary field is empty.
+     *
+     * @param entry    The entry.
+     * @param database The database the entry belongs to.
+     * @param fields   The field, or succession of fields, to look up. If backup fields are needed, separate
+     *                 field names by /. E.g. to use "author" with "editor" as backup, specify StandardField.orFields(StandardField.AUTHOR, StandardField.EDITOR).
+     * @return The resolved field content, or an empty string if the field(s) were empty.
+     */
     private String getCitationMarkerField(BibEntry entry, BibDatabase database, String fields) {
         Objects.requireNonNull(entry, "Entry cannot be null");
         Objects.requireNonNull(database, "database cannot be null");
@@ -739,6 +751,13 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
 
     /* begin_old */
     /* moved to OOBibStyleGetCitationMarker */
+    /**
+     * Look up the nth author and return the proper last name for citation markers.
+     *
+     * @param al     The author list.
+     * @param number The number of the author to return.
+     * @return The author name, or an empty String if inapplicable.
+     */
     private String getAuthorLastName(AuthorList al, int number) {
         StringBuilder sb = new StringBuilder();
 
@@ -753,7 +772,15 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     /* end_old */
 
     /* begin_old */
-    /* removed */
+    /* to be removed */
+    /**
+     * Take a finished citation and insert a string at the end (but inside the end bracket)
+     * separated by "PageInfoSeparator"
+     *
+     * @param citation
+     * @param pageInfo
+     * @return
+     */
     public String insertPageInfo(String citation, String pageInfo) {
         String bracketAfter = getStringCitProperty(BRACKET_AFTER);
         if (citation.endsWith(bracketAfter)) {
@@ -1022,6 +1049,28 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
 
     protected void setDefaultBibLayout(Layout l) {
         defaultBibLayout = l;
+    }
+
+    /**
+     * Format a number-based citation marker for the given entries.
+     *
+     * @return The text for the citation.
+     */
+    public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries) {
+        final int minGroupingCount = this.getMinimumGroupingCount();
+        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
+                                                                    entries,
+                                                                    minGroupingCount);
+    }
+
+    /**
+     * For some tests we need to override minGroupingCount.
+     */
+    public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries,
+                                        int minGroupingCount) {
+        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
+                                                                    entries,
+                                                                    minGroupingCount);
     }
 
     /**

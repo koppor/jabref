@@ -9,26 +9,40 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 
 import org.jabref.gui.DialogService;
+import org.jabref.logic.l10n.Localization;
 import org.jabref.model.openoffice.CitationEntry;
+
+import com.sun.star.beans.IllegalTypeException;
+import com.sun.star.beans.NotRemoveableException;
+import com.sun.star.beans.PropertyExistException;
+import com.sun.star.beans.UnknownPropertyException;
+import com.sun.star.container.NoSuchElementException;
+import com.sun.star.container.XNameAccess;
+import com.sun.star.lang.IllegalArgumentException;
+import com.sun.star.lang.WrappedTargetException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManageCitationsDialogViewModel {
 
-    public final boolean failedToGetCitationEntries;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ManageCitationsDialogViewModel.class);
+
     private final ListProperty<CitationEntryViewModel> citations = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final OOBibBase2 ooBase;
+    private final OOBibBase ooBase;
     private final DialogService dialogService;
 
-    public ManageCitationsDialogViewModel(OOBibBase2 ooBase, DialogService dialogService) {
+    public ManageCitationsDialogViewModel(OOBibBase ooBase, DialogService dialogService) throws NoSuchElementException, WrappedTargetException, UnknownPropertyException {
         this.ooBase = ooBase;
         this.dialogService = dialogService;
 
-        Optional<List<CitationEntry>> citationEntries = ooBase.guiActionGetCitationEntries();
-        this.failedToGetCitationEntries = citationEntries.isEmpty();
-        if (citationEntries.isEmpty()) {
-            return;
-        }
+        XNameAccess nameAccess = ooBase.getReferenceMarks();
+        List<String> names = ooBase.getJabRefReferenceMarks(nameAccess);
+        for (String name : names) {
 
-        for (CitationEntry entry : citationEntries.get()) {
+            CitationEntry entry = new CitationEntry(name,
+                    ooBase.getCitationContext(nameAccess, name, 30, 30, true),
+                    ooBase.getCustomProperty(name));
+
             CitationEntryViewModel itemViewModelEntry = new CitationEntryViewModel(entry);
             citations.add(itemViewModelEntry);
         }
@@ -36,7 +50,18 @@ public class ManageCitationsDialogViewModel {
 
     public void storeSettings() {
         List<CitationEntry> ciationEntries = citations.stream().map(CitationEntryViewModel::toCitationEntry).collect(Collectors.toList());
-        ooBase.guiActionApplyCitationEntries(ciationEntries);
+        try {
+            for (CitationEntry entry : ciationEntries) {
+                Optional<String> pageInfo = entry.getPageInfo();
+                if (pageInfo.isPresent()) {
+                    ooBase.setCustomProperty(entry.getRefMarkName(), pageInfo.get());
+                }
+            }
+        } catch (UnknownPropertyException | NotRemoveableException | PropertyExistException | IllegalTypeException |
+                IllegalArgumentException ex) {
+            LOGGER.warn("Problem modifying citation", ex);
+            dialogService.showErrorDialogAndWait(Localization.lang("Problem modifying citation"), ex);
+        }
     }
 
     public ListProperty<CitationEntryViewModel> citationsProperty() {
