@@ -48,7 +48,7 @@ public class UnoCrossRef {
         try {
             String name = "com.sun.star.text.textfield.GetReference";
             xFieldProps = (XPropertySet) UnoCast.unoQI(XPropertySet.class, msf.createInstance(name));
-        } catch (Exception e) {
+        } catch (com.sun.star.uno.Exception e) {
             throw new CreationException(e.getMessage());
         }
 
