@@ -49,10 +49,6 @@ public class EditSeparate {
 
         boolean madeModifications = false;
 
-        // To reduce surprises in JabRef52 mode, impose localOrder to
-        // decide the visually last Citation in the group. Unless the
-        // style changed since refresh this is the last on the screen
-        // as well.
         fr.citationGroups.lookupCitations(databases);
         fr.citationGroups.imposeLocalOrder(OOProcess.comparatorForMulticite(style));
 
@@ -82,16 +78,15 @@ public class EditSeparate {
                     boolean insertSpaceAfter = (i != last);
                     Citation cit = cits.get(i);
 
-                    UpdateCitationMarkers.createAndFillCitationGroup(
-                        fr,
-                        doc,
-                        List.of(cit.citationKey),
-                        List.of(cit.getPageInfo()),
-                        cg.citationType,
-                        OOText.fromString(cit.citationKey),
-                        textCursor,
-                        style,
-                        insertSpaceAfter);
+                    UpdateCitationMarkers.createAndFillCitationGroup(fr,
+                                                                     doc,
+                                                                     List.of(cit.citationKey),
+                                                                     List.of(cit.getPageInfo()),
+                                                                     cg.citationType,
+                                                                     OOText.fromString(cit.citationKey),
+                                                                     textCursor,
+                                                                     style,
+                                                                     insertSpaceAfter);
 
                     textCursor.collapseToEnd();
                 }

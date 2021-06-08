@@ -21,9 +21,8 @@ public class UnoUndo {
     }
 
     /**
-     * Each call to enterUndoContext must be paired by a call to
-     * leaveUndoContext, otherwise, the document's undo stack is
-     * left in an inconsistent state.
+     * Each call to enterUndoContext must be paired by a call to leaveUndoContext, otherwise, the
+     * document's undo stack is left in an inconsistent state.
      */
     public static void enterUndoContext(XTextDocument doc, String title) {
         Optional<XUndoManager> um = getXUndoManager(doc);

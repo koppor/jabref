@@ -41,9 +41,7 @@ public class UnoTextSection {
         NoDocumentException {
         XNameAccess nameAccess = getNameAccess(doc);
         try {
-            return Optional.ofNullable((XTextSection)
-                                       ((Any) nameAccess.getByName(name))
-                                       .getObject());
+            return Optional.ofNullable((XTextSection) ((Any) nameAccess.getByName(name)).getObject());
         } catch (NoSuchElementException ex) {
             return Optional.empty();
         }
@@ -61,31 +59,24 @@ public class UnoTextSection {
         NoDocumentException {
 
         XNameAccess nameAccess = getNameAccess(doc);
-        return (UnoNameAccess.getTextContentByName(nameAccess, name)
-                .map(XTextContent::getAnchor));
+        return (UnoNameAccess.getTextContentByName(nameAccess, name).map(XTextContent::getAnchor));
     }
 
     /**
-     *  Create a text section with the provided name and insert it at
-     *  the provided cursor.
+     *  Create a text section with the provided name and insert it at the provided cursor.
      *
      *  @param name  The desired name for the section.
      *  @param range The location to insert at.
      *
-     *  If an XTextSection by that name already exists,
-     *  LibreOffice (6.4.6.2) creates a section with a name different from
-     *  what we requested, in "Section {number}" format.
+     *  If an XTextSection by that name already exists, LibreOffice (6.4.6.2) creates a section with
+     *  a name different from what we requested, in "Section {number}" format.
      */
     public static XNamed create(XTextDocument doc, String name, XTextRange range, boolean absorb)
         throws
         IllegalArgumentException,
         CreationException {
 
-        return UnoNamed.insertNamedTextContent(doc,
-                                               "com.sun.star.text.TextSection",
-                                               name,
-                                               range,
-                                               absorb);
+        return UnoNamed.insertNamedTextContent(doc, "com.sun.star.text.TextSection", name, range, absorb);
     }
 }
 

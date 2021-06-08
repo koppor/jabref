@@ -11,9 +11,8 @@ import org.jabref.model.openoffice.ootext.OOText;
 /**
  * Cited keys are collected from the citations in citation groups.
  *
- * They contain backreferences to the corresponding citations in
- * {@code where}. This allows the extra information generated using
- * CitedKeys to be distributed back to the in-text citations.
+ * They contain backreferences to the corresponding citations in {@code where}. This allows the
+ * extra information generated using CitedKeys to be distributed back to the in-text citations.
  */
 public class CitedKey implements
                       ComparableCitedKey,

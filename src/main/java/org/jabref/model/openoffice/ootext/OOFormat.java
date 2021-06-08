@@ -11,8 +11,8 @@ public class OOFormat {
      *
      * The country part is optional.
      *
-     * The territory part is not only optional, the allowed "codes are
-     * vendor and browser-specific", so probably best to avoid them if possible.
+     * The territory part is not only optional, the allowed "codes are vendor and browser-specific",
+     * so probably best to avoid them if possible.
      *
      */
     public static OOText setLocale(OOText ootext, String locale) {
@@ -20,8 +20,8 @@ public class OOFormat {
     }
 
     /**
-     * Mark {@code ootext} as using the character locale "zxx", which means
-     * "no language", "no linguistic content".
+     * Mark {@code ootext} as using the character locale "zxx", which means "no language", "no
+     * linguistic content".
      *
      * Used around citation marks, probably to turn off spellchecking.
      *
@@ -33,14 +33,14 @@ public class OOFormat {
     /**
      * Mark {@code ootext} using a character style {@code charStyle}
      *
-     * @param charStyle Name of a character style known to OO. May be
-     * empty for "Standard", which in turn means do not override any properties.
+     * @param charStyle Name of a character style known to OO. May be empty for "Standard", which in
+     *                  turn means do not override any properties.
      *
      */
     public static OOText setCharStyle(OOText ootext, String charStyle) {
         return OOText.fromString(String.format("<span oo:CharStyleName=\"%s\">", charStyle)
-                                          + ootext.asString()
-                                          + "</span>");
+                                 + ootext.asString()
+                                 + "</span>");
     }
 
     /**
@@ -62,12 +62,10 @@ public class OOFormat {
     }
 
     /**
-     * Format an OO cross-reference showing the target's page number
-     * as label to a reference mark.
+     * Format an OO cross-reference showing the target's page number as label to a reference mark.
      */
     public static OOText formatReferenceToPageNumberOfReferenceMark(String referencMarkName) {
-        String string = String.format("<oo:referenceToPageNumberOfReferenceMark target=\"%s\">",
-                                      referencMarkName);
+        String string = String.format("<oo:referenceToPageNumberOfReferenceMark target=\"%s\">", referencMarkName);
         return OOText.fromString(string);
     }
  }

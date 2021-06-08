@@ -19,7 +19,8 @@ public class RangeOverlapBetween {
     /**
      * Check for any overlap between two sets of XTextRange values.
      *
-     * Assume fewHolders is small (usually 1 elements for checking the cursor)
+     * Assume fewHolders is small (usually a single element, for checking the cursor)
+     *
      * Returns on first problem found.
      */
     public static <V extends RangeHolder>
@@ -70,13 +71,13 @@ public class RangeOverlapBetween {
                 boolean equal = UnoTextRange.compareStartsThenEnds(aRange, bRange) == 0;
                 boolean touching = (abEndToStart == 0 || baEndToStart == 0);
 
-                // In case of two equal collapsed ranges there is an
-                // ambiguity : TOUCH or EQUAL_RANGE ?
+                // In case of two equal collapsed ranges there is an ambiguity : TOUCH or
+                // EQUAL_RANGE ?
+                //
                 // We return EQUAL_RANGE
-                RangeOverlapKind kind =
-                    (equal ? RangeOverlapKind.EQUAL_RANGE
-                     : (touching ? RangeOverlapKind.TOUCH
-                        : RangeOverlapKind.OVERLAP));
+                RangeOverlapKind kind = (equal ? RangeOverlapKind.EQUAL_RANGE
+                                         : (touching ? RangeOverlapKind.TOUCH
+                                            : RangeOverlapKind.OVERLAP));
 
                 List<V> valuesForOverlappingRanges = new ArrayList<>();
                 valuesForOverlappingRanges.add(aHolder);

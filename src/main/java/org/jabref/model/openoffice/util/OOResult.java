@@ -6,9 +6,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /*
- * An instance of this class represents either the result
- * of a computation, or an error value. Neither of these is allowed
- * to be null.
+ * An instance of this class represents either the result of a computation, or an error
+ * value. Neither of these is allowed to be null.
  *
  * Void is not allowed for R, use OOVoidResult instead.
  *

@@ -26,11 +26,10 @@ public class UnoCrossRef {
     }
 
     /**
-     * Insert a clickable cross-reference to a reference mark,
-     * with a label containing the target's page number.
+     * Insert a clickable cross-reference to a reference mark, with a label containing the target's
+     * page number.
      *
-     * May need a documentConnection.refresh() after, to update
-     * the text shown.
+     * May need a documentConnection.refresh() after, to update the text shown.
      */
     public static void insertReferenceToPageNumberOfReferenceMark(XTextDocument doc,
                                                                   String referenceMarkName,
@@ -48,8 +47,7 @@ public class UnoCrossRef {
         XPropertySet xFieldProps;
         try {
             String name = "com.sun.star.text.textfield.GetReference";
-            xFieldProps = (XPropertySet) UnoCast.unoQI(XPropertySet.class,
-                                                       msf.createInstance(name));
+            xFieldProps = (XPropertySet) UnoCast.unoQI(XPropertySet.class, msf.createInstance(name));
         } catch (Exception e) {
             throw new CreationException(e.getMessage());
         }
@@ -59,12 +57,10 @@ public class UnoCrossRef {
 
         // specify that the source is a reference mark (could also be a footnote,
         // bookmark or sequence field)
-        xFieldProps.setPropertyValue("ReferenceFieldSource",
-                                     new Short(ReferenceFieldSource.REFERENCE_MARK));
+        xFieldProps.setPropertyValue("ReferenceFieldSource", new Short(ReferenceFieldSource.REFERENCE_MARK));
 
         // We want the reference displayed as page number
-        xFieldProps.setPropertyValue("ReferenceFieldPart",
-                                     new Short(ReferenceFieldPart.PAGE));
+        xFieldProps.setPropertyValue("ReferenceFieldPart", new Short(ReferenceFieldPart.PAGE));
 
         // Get the XTextContent interface of the GetReference text field
         XTextContent xRefContent = (XTextContent) UnoCast.unoQI(XTextContent.class, xFieldProps);

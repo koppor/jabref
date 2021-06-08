@@ -67,8 +67,8 @@ public class Backend52 {
     }
 
     /**
-     * Names of custom properties belonging to us, but without a
-     * corresponding reference mark.  These can be deleted.
+     * Names of custom properties belonging to us, but without a corresponding reference mark.
+     * These can be deleted.
      *
      * @param citationGroupNames These are the names that are used.
      *
@@ -178,16 +178,14 @@ public class Backend52 {
     }
 
     /**
-     *  Create a reference mark with the given name, at the
-     *  end of position.
+     *  Create a reference mark with the given name, at the end of position.
      *
-     *  On return {@code position} is collapsed, and is after the
-     *  inserted space, or at the end of the reference mark.
+     *  On return {@code position} is collapsed, and is after the inserted space, or at the end of
+     *  the reference mark.
      *
      *  @param position Collapsed to its end.
-     *  @param insertSpaceAfter We insert a space after the mark, that
-     *                          carries on format of characters from
-     *                          the original position.
+     *  @param insertSpaceAfter We insert a space after the mark, that carries on format of
+     *                          characters from the original position.
      */
     public CitationGroup createCitationGroup(XTextDocument doc,
                                              List<String> citationKeys,
@@ -274,11 +272,10 @@ public class Backend52 {
     }
 
     /**
-     * @return A list with a nullable pageInfo entry for each citation in
-     *         joinableGroups.
+     * @return A list with a nullable pageInfo entry for each citation in joinableGroups.
      *
-     *  TODO: JabRef52 combinePageInfos is not reversible. Should warn
-     *        user to check the result. Or ask what to do.
+     *  TODO: JabRef52 combinePageInfos is not reversible. Should warn user to check the result. Or
+     *        ask what to do.
      */
     public static List<Optional<OOText>>
     combinePageInfosCommon(OODataModel dataModel, List<CitationGroup> joinableGroup) {
@@ -346,9 +343,7 @@ public class Backend52 {
     }
 
     /**
-     *
      * @return Optional.empty if the reference mark is missing.
-     *
      */
     public Optional<XTextRange> getMarkRange(CitationGroup cg, XTextDocument doc)
         throws
@@ -360,8 +355,8 @@ public class Backend52 {
     }
 
     /**
-     * Cursor for the reference marks as is, not prepared for filling,
-     * but does not need cleanFillCursorForCitationGroup either.
+     * Cursor for the reference marks as is: not prepared for filling, but does not need
+     * cleanFillCursorForCitationGroup either.
      */
     public Optional<XTextCursor> getRawCursorForCitationGroup(CitationGroup cg, XTextDocument doc)
         throws

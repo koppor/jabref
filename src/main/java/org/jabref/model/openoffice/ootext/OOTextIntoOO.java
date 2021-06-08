@@ -471,10 +471,9 @@ public class OOTextIntoOO {
         final String[] goodNames;
 
         /**
-         * Maintain a stack of layers, each containing a description
-         * of the desired state of properties. Each description is an
-         * ArrayList of property values, Optional.empty() encoding
-         * "not directly set".
+         * Maintain a stack of layers, each containing a description of the desired state of
+         * properties. Each description is an ArrayList of property values, Optional.empty()
+         * encoding "not directly set".
          */
         final Stack<ArrayList<Optional<Object>>> layers;
 
@@ -507,8 +506,7 @@ public class OOTextIntoOO {
                 goodNames[ entry.getValue() ] = entry.getKey();
             }
 
-            // XMultiPropertySet.setPropertyValues()
-            // requires alphabetically sorted property names.
+            // XMultiPropertySet.setPropertyValues() requires alphabetically sorted property names.
             // We adjust here:
             Arrays.sort(goodNames);
             for (int i = 0; i < goodSize; i++) {
@@ -539,9 +537,8 @@ public class OOTextIntoOO {
         }
 
         /**
-         * Given a list of property name, property value pairs,
-         * construct and push a new layer describing the intended
-         * state after these have been applied.
+         * Given a list of property name, property value pairs, construct and push a new layer
+         * describing the intended state after these have been applied.
          *
          * Opening tags usually call this.
          */
@@ -574,6 +571,7 @@ public class OOTextIntoOO {
 
         /**
          * Apply the current desired formatting state to a cursor.
+         *
          * The idea is to minimize the number of calls to OpenOffice.
          */
         void apply(XTextCursor cursor) {
@@ -640,9 +638,9 @@ public class OOTextIntoOO {
     }
 
     /*
-     * We rely on property values being either DIRECT_VALUE or
-     * DEFAULT_VALUE (not AMBIGUOUS_VALUE). If the cursor covers a homogeneous region,
-     * or is collapsed, then this is true.
+     * We rely on property values being either DIRECT_VALUE or DEFAULT_VALUE (not
+     * AMBIGUOUS_VALUE). If the cursor covers a homogeneous region, or is collapsed, then this is
+     * true.
      */
     private static boolean isPropertyDefault(XTextCursor cursor, String propertyName)
         throws
@@ -650,8 +648,7 @@ public class OOTextIntoOO {
         XPropertyState xPropertyState = UnoCast.unoQI(XPropertyState.class, cursor);
         PropertyState state = xPropertyState.getPropertyState(propertyName);
         if (state == PropertyState.AMBIGUOUS_VALUE) {
-            throw new RuntimeException("PropertyState.AMBIGUOUS_VALUE"
-                                       + " (expected properties for a homogeneous cursor)");
+            throw new RuntimeException("PropertyState.AMBIGUOUS_VALUE (expected properties for a homogeneous cursor)");
         }
         return state == PropertyState.DEFAULT_VALUE;
     }
@@ -727,8 +724,8 @@ public class OOTextIntoOO {
     /*
      * SuperScript and SubScript.
      *
-     * @param relative If true, calculate the new values relative to
-     *                 the current values. This allows subscript-in-superscript.
+     * @param relative If true, calculate the new values relative to the current values. This allows
+     *                 subscript-in-superscript.
      */
     private static List<OOPair<String, Object>> setCharEscapement(Optional<Short> value,
                                                                   Optional<Byte> height,
