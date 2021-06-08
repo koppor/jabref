@@ -105,7 +105,7 @@ class OOBibStyleTestHelper {
             CitationMarkerNumericBibEntryImpl x =
                 new CitationMarkerNumericBibEntryImpl("key",
                                                       (n == 0) ? Optional.empty() : Optional.of(n));
-            return style.getNumCitationMarkerForBibliography(x).asString();
+            return style.getNumCitationMarkerForBibliography(x).toString();
         } else {
             List<CitationMarkerNumericEntry> input =
                 num.stream()
@@ -114,7 +114,7 @@ class OOBibStyleTestHelper {
                                                         n,
                                                         Optional.empty()))
                 .collect(Collectors.toList());
-            return style.getNumCitationMarker2(input, minGroupingCount).asString();
+            return style.getNumCitationMarker2(input, minGroupingCount).toString();
         }
     }
 
@@ -131,7 +131,7 @@ class OOBibStyleTestHelper {
                                             CitationMarkerNumericEntry... s) {
         List<CitationMarkerNumericEntry> input = Stream.of(s).collect(Collectors.toList());
         OOText res = style.getNumCitationMarker2(input, minGroupingCount);
-        return res.asString();
+        return res.toString();
     }
 
     /*
@@ -194,7 +194,7 @@ class OOBibStyleTestHelper {
         }
         return style.createCitationMarker(citationMarkerEntries,
                                           inParenthesis,
-                                          NonUniqueCitationMarker.THROWS).asString();
+                                          NonUniqueCitationMarker.THROWS).toString();
     }
 
     /*

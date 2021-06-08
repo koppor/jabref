@@ -26,14 +26,15 @@ public class OOText {
     }
 
     /* null input is passed through */
-    public static String asString(OOText ootext) {
+    public static String toString(OOText ootext) {
         if (ootext == null) {
             return null;
         }
         return ootext.data;
     }
 
-    public String asString() {
+    @Override
+    public String toString() {
         return data;
     }
 

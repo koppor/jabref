@@ -36,7 +36,7 @@ public class OOFormatBibliography {
 
         OOText title = style.getFormattedBibliographyTitle();
         OOText body = formatBibliographyBody(cgs, bibliography, style, alwaysAddCitedOnPages);
-        return OOText.fromString(title.asString() + body.asString());
+        return OOText.fromString(title.toString() + body.toString());
     }
 
     /**
@@ -51,7 +51,7 @@ public class OOFormatBibliography {
 
         for (CitedKey ck : bibliography.values()) {
             OOText entryText = formatBibliographyEntry(cgs, ck, style, alwaysAddCitedOnPages);
-            stringBuilder.append(entryText.asString());
+            stringBuilder.append(entryText.toString());
         }
 
         return OOText.fromString(stringBuilder.toString());
@@ -68,18 +68,18 @@ public class OOFormatBibliography {
 
         // insert marker "[1]"
         if (style.isNumberEntries()) {
-            sb.append(style.getNumCitationMarkerForBibliography(ck).asString());
+            sb.append(style.getNumCitationMarkerForBibliography(ck).toString());
         } else {
             // !style.isNumberEntries() : emit no prefix
             // Note: We might want [citationKey] prefix for style.isCitationKeyCiteMarkers();
         }
 
         // Add entry body
-        sb.append(formatBibliographyEntryBody(ck, style).asString());
+        sb.append(formatBibliographyEntryBody(ck, style).toString());
 
         // Add "Cited on pages"
         if (ck.getLookupResult().isEmpty() || alwaysAddCitedOnPages) {
-            sb.append(formatCitedOnPages(cgs, ck).asString());
+            sb.append(formatCitedOnPages(cgs, ck).toString());
         }
 
         // Add paragraph
@@ -187,7 +187,7 @@ public class OOFormatBibliography {
             }
             String markName = cg.getReferenceMarkNameForLinking().orElseThrow(RuntimeException::new);
             OOText xref = OOFormat.formatReferenceToPageNumberOfReferenceMark(markName);
-            sb.append(xref.asString());
+            sb.append(xref.toString());
             i++;
         }
         sb.append(suffix);

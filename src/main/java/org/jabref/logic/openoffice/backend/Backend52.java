@@ -254,7 +254,7 @@ public class Backend52 {
             Optional<OOText> pageInfo = PageInfo.normalizePageInfo(pageInfos.get(last));
 
             if (pageInfo.isPresent()) {
-                String pageInfoString = OOText.asString(pageInfo.get());
+                String pageInfoString = OOText.toString(pageInfo.get());
                 UnoUserDefinedProperty.createStringProperty(doc, refMarkName, pageInfoString);
             } else {
                 // do not inherit from trash
@@ -288,7 +288,7 @@ public class Backend52 {
             // Try to do something of the cgPageInfos.
             String cgPageInfo = (cgPageInfos.stream()
                                  .filter(pi -> pi.isPresent())
-                                 .map(pi -> OOText.asString(pi.get()))
+                                 .map(pi -> OOText.toString(pi.get()))
                                  .distinct()
                                  .collect(Collectors.joining("; ")));
 
@@ -409,7 +409,7 @@ public class Backend52 {
                 String context = GetContext.getCursorStringWithContext(cursor, 30, 30, true);
                 Optional<String> pageInfo = (cg.numberOfCitations() > 0
                                              ? (getPageInfoFromData(cg)
-                                                .map(e -> OOText.asString(e)))
+                                                .map(e -> OOText.toString(e)))
                                              : Optional.empty());
                 CitationEntry entry = new CitationEntry(name, context, pageInfo);
                 citations.add(entry);
@@ -444,7 +444,7 @@ public class Backend52 {
                 pageInfo = PageInfo.normalizePageInfo(pageInfo);
                 if (pageInfo.isPresent()) {
                     String name = entry.getRefMarkName();
-                    UnoUserDefinedProperty.createStringProperty(doc, name, pageInfo.get().asString());
+                    UnoUserDefinedProperty.createStringProperty(doc, name, pageInfo.get().toString());
                 }
             }
             break;

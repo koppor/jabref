@@ -105,7 +105,7 @@ class OOBibStyleGetNumCitationMarker {
             Optional<OOText> pageInfo = entry.getPageInfo();
             if (pageInfo.isPresent()) {
                 sb.append(style.getPageInfoSeparator());
-                sb.append(OOText.asString(pageInfo.get()));
+                sb.append(OOText.toString(pageInfo.get()));
             }
             return;
         }

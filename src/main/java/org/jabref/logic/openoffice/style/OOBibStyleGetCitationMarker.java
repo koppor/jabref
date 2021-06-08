@@ -439,7 +439,7 @@ class OOBibStyleGetCitationMarker {
                     PageInfo.normalizePageInfo(ce.getPageInfo());
                 if (pageInfo.isPresent()) {
                     pageInfoPart.append(pageInfoSeparator);
-                    pageInfoPart.append(OOText.asString(pageInfo.get()));
+                    pageInfoPart.append(OOText.toString(pageInfo.get()));
                 }
             }
 
@@ -650,8 +650,8 @@ class OOBibStyleGetCitationMarker {
             final CitationMarkerEntry ce1 = citationMarkerEntries.get(i - 1);
             final CitationMarkerEntry ce2 = citationMarkerEntries.get(i);
 
-            final String nm1 = OOText.asString(normalizedMarkers.get(i - 1));
-            final String nm2 = OOText.asString(normalizedMarkers.get(i));
+            final String nm1 = OOText.toString(normalizedMarkers.get(i - 1));
+            final String nm2 = OOText.toString(normalizedMarkers.get(i));
 
             final boolean isUnresolved1 = ce1.getLookupResult().isEmpty();
             final boolean isUnresolved2 = ce2.getLookupResult().isEmpty();

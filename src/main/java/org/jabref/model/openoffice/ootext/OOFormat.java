@@ -16,7 +16,7 @@ public class OOFormat {
      *
      */
     public static OOText setLocale(OOText ootext, String locale) {
-        return OOText.fromString(String.format("<span lang=\"%s\">", locale) + ootext.asString() + "</span>");
+        return OOText.fromString(String.format("<span lang=\"%s\">", locale) + ootext.toString() + "</span>");
     }
 
     /**
@@ -39,7 +39,7 @@ public class OOFormat {
      */
     public static OOText setCharStyle(OOText ootext, String charStyle) {
         return OOText.fromString(String.format("<span oo:CharStyleName=\"%s\">", charStyle)
-                                 + ootext.asString()
+                                 + ootext.toString()
                                  + "</span>");
     }
 
@@ -51,14 +51,14 @@ public class OOFormat {
             return paragraph(ootext);
         }
         String startTag = String.format("<p oo:ParaStyleName=\"%s\">", paraStyle);
-        return OOText.fromString(startTag + ootext.asString() + "</p>");
+        return OOText.fromString(startTag + ootext.toString() + "</p>");
     }
 
     /**
      * Mark {@code ootext} as part of a paragraph.
      */
     public static OOText paragraph(OOText ootext) {
-        return OOText.fromString("<p>" + ootext.asString() + "</p>");
+        return OOText.fromString("<p>" + ootext.toString() + "</p>");
     }
 
     /**

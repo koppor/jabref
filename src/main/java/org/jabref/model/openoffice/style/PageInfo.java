@@ -14,10 +14,10 @@ public class PageInfo {
      * pageInfo normalization
      */
     public static Optional<OOText> normalizePageInfo(Optional<OOText> o) {
-        if (o == null || o.isEmpty() || "".equals(OOText.asString(o.get()))) {
+        if (o == null || o.isEmpty() || "".equals(OOText.toString(o.get()))) {
             return Optional.empty();
         }
-        String s = OOText.asString(o.get());
+        String s = OOText.toString(o.get());
         if (s.trim().equals("")) {
             return Optional.empty();
         }
@@ -42,6 +42,6 @@ public class PageInfo {
         if (bb.isEmpty()) {
             return +1;
         }
-        return aa.get().asString().compareTo(bb.get().asString());
+        return aa.get().toString().compareTo(bb.get().toString());
     }
 }
