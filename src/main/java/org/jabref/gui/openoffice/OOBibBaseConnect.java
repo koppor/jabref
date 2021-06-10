@@ -72,7 +72,7 @@ class OOBibBaseConnect {
         Object desktop;
         try {
             desktop = sem.createInstanceWithContext("com.sun.star.frame.Desktop", context);
-        } catch (Exception e) {
+        } catch (com.sun.star.uno.Exception e) {
             throw new CreationException(e.getMessage());
         }
         return UnoCast.unoQI(XDesktop.class, desktop);
