@@ -71,8 +71,7 @@ modularity.disableEffectiveArgumentsAdjustment()
 
 tasks.withType(JavaCompile) {
     options.compilerArgs += [
-        // "-Xlint:deprecation",
-        // "-Xlint:unchecked"
+        // "-Xlint:deprecation", "-Xlint:unchecked", "-Xlint:removal"
     ]
 }
 
