@@ -57,10 +57,10 @@ public class UnoCrossRef {
 
         // specify that the source is a reference mark (could also be a footnote,
         // bookmark or sequence field)
-        xFieldProps.setPropertyValue("ReferenceFieldSource", new Short(ReferenceFieldSource.REFERENCE_MARK));
+        xFieldProps.setPropertyValue("ReferenceFieldSource", Short.valueOf​(ReferenceFieldSource.REFERENCE_MARK));
 
         // We want the reference displayed as page number
-        xFieldProps.setPropertyValue("ReferenceFieldPart", new Short(ReferenceFieldPart.PAGE));
+        xFieldProps.setPropertyValue("ReferenceFieldPart", Short.valueOf​(ReferenceFieldPart.PAGE));
 
         // Get the XTextContent interface of the GetReference text field
         XTextContent xRefContent = (XTextContent) UnoCast.unoQI(XTextContent.class, xFieldProps);
