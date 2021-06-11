@@ -46,7 +46,7 @@ public class UnoNamed {
         Object xObject;
         try {
             xObject = msf.createInstance(service);
-        } catch (Exception e) {
+        } catch (com.sun.star.uno.Exception e) {
             throw new CreationException(e.getMessage());
         }
 

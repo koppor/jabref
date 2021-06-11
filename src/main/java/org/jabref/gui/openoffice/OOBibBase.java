@@ -245,7 +245,7 @@ class OOBibBase {
         Object desktop;
         try {
             desktop = xServiceManager.createInstanceWithContext("com.sun.star.frame.Desktop", xContext);
-        } catch (Exception e) {
+        } catch (com.sun.star.uno.Exception e) {
             throw new CreationException(e.getMessage());
         }
         XDesktop resultDesktop = UnoRuntime.queryInterface(XDesktop.class, desktop);
@@ -1010,7 +1010,7 @@ class OOBibBase {
         try {
             xChildNamed = UnoRuntime.queryInterface(XNamed.class,
                     mxDocFactory.createInstance("com.sun.star.text.TextSection"));
-        } catch (Exception e) {
+        } catch (com.sun.star.uno.Exception e) {
             throw new CreationException(e.getMessage());
         }
         // Set the new sections name to 'Child_Section'
@@ -1056,7 +1056,7 @@ class OOBibBase {
         Object bookmark;
         try {
             bookmark = mxDocFactory.createInstance("com.sun.star.text.Bookmark");
-        } catch (Exception e) {
+        } catch (com.sun.star.uno.Exception e) {
             throw new CreationException(e.getMessage());
         }
         // name the bookmark
@@ -1089,7 +1089,7 @@ class OOBibBase {
         Object bookmark;
         try {
             bookmark = mxDocFactory.createInstance("com.sun.star.text.ReferenceMark");
-        } catch (Exception e) {
+        } catch (com.sun.star.uno.Exception e) {
             throw new CreationException(e.getMessage());
         }
         // Name the reference
