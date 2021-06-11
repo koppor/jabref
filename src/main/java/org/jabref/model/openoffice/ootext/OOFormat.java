@@ -1,5 +1,12 @@
 package org.jabref.model.openoffice.ootext;
 
+/**
+ * Helper functions to produce some of the markup as understood by OOTextIntoOO.write
+ *
+ * These do not cover all tags, only those needed to embed markup
+ * from Layout and citation marker formatters into citation markers and
+ * bibliography.
+ */
 public class OOFormat {
 
     /**

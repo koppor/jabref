@@ -105,13 +105,13 @@ public class CitedKey implements
 
         // Check consistency
         if (!cit.getLookupResult().equals(this.db)) {
-            throw new RuntimeException("CitedKey.addPath: mismatch on cit.db");
+            throw new IllegalStateException("CitedKey.addPath: mismatch on cit.db");
         }
         if (!cit.getNumber().equals(this.number)) {
-            throw new RuntimeException("CitedKey.addPath: mismatch on cit.number");
+            throw new IllegalStateException("CitedKey.addPath: mismatch on cit.number");
         }
         if (!cit.getUniqueLetter().equals(this.uniqueLetter)) {
-            throw new RuntimeException("CitedKey.addPath: mismatch on cit.uniqueLetter");
+            throw new IllegalStateException("CitedKey.addPath: mismatch on cit.uniqueLetter");
         }
     }
 

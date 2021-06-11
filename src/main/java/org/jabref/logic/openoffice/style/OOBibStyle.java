@@ -1101,7 +1101,7 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
 
         // not null, check size
         if (pageInfos.size() != nCitations) {
-            throw new RuntimeException("normalizePageInfos: pageInfos.size() != nCitations");
+            throw new IllegalArgumentException("normalizePageInfos: pageInfos.size() != nCitations");
         }
 
         // not null, normalize elementwise

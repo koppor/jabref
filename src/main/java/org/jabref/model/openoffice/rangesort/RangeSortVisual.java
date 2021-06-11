@@ -49,7 +49,7 @@ public class RangeSortVisual {
         if (UnoScreenRefresh.hasControllersLocked(doc)) {
             final String msg = "visualSort: with ControllersLocked, viewCursor.gotoRange is probably useless";
             LOGGER.warn(msg);
-            throw new RuntimeException(msg);
+            throw new IllegalStateException(msg);
         }
 
         XTextViewCursor viewCursor = fcursor.getViewCursor();
@@ -62,7 +62,7 @@ public class RangeSortVisual {
         fcursor.restore(doc);
 
         if (positions.size() != inputSize) {
-            throw new RuntimeException("visualSort: positions.size() != inputSize");
+            throw new IllegalStateException("visualSort: positions.size() != inputSize");
         }
 
         // order by position
@@ -76,7 +76,7 @@ public class RangeSortVisual {
         Collections.sort(set);
 
         if (set.size() != inputSize) {
-            throw new RuntimeException("visualSort: set.size() != inputSize");
+            throw new IllegalStateException("visualSort: set.size() != inputSize");
         }
 
         // collect ordered result
@@ -86,7 +86,7 @@ public class RangeSortVisual {
         }
 
         if (result.size() != inputSize) {
-            throw new RuntimeException("visualSort: result.size() != inputSize");
+            throw new IllegalStateException("visualSort: result.size() != inputSize");
         }
 
         return result;

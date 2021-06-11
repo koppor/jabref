@@ -150,7 +150,7 @@ public class UpdateCitationMarkers {
 
         Objects.requireNonNull(pageInfos);
         if (pageInfos.size() != citationKeys.size()) {
-            throw new RuntimeException("pageInfos.size != citationKeys.size");
+            throw new IllegalArgumentException("pageInfos.size != citationKeys.size");
         }
         CitationGroup cg = fr.createCitationGroup(doc,
                                                   citationKeys,

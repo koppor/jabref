@@ -32,7 +32,6 @@ import com.sun.star.beans.XMultiPropertyStates;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertySetInfo;
 import com.sun.star.beans.XPropertyState;
-import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.Locale;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.style.CaseMap;
@@ -148,11 +147,8 @@ public class OOTextIntoOO {
      */
     public static void write(XTextDocument doc, XTextCursor position, OOText ootext)
         throws
-        UnknownPropertyException,
         PropertyVetoException,
         WrappedTargetException,
-        IllegalArgumentException,
-        NoSuchElementException,
         CreationException {
 
         Objects.requireNonNull(doc);
@@ -362,7 +358,6 @@ public class OOTextIntoOO {
             xPropertyState.setPropertyToDefault("CharCaseMap");
         } catch (UnknownPropertyException |
                  PropertyVetoException |
-                 IllegalArgumentException |
                  WrappedTargetException ex) {
             LOGGER.warn("exception caught", ex);
         }
@@ -401,7 +396,7 @@ public class OOTextIntoOO {
                     continue;
                 }
             } catch (UnknownPropertyException ex) {
-                throw new RuntimeException("Unexpected UnknownPropertyException");
+                throw new java.lang.IllegalStateException("Unexpected UnknownPropertyException");
             }
             if (knownToFail.contains(p.Name)) {
                 continue;
@@ -477,8 +472,7 @@ public class OOTextIntoOO {
          */
         final Stack<ArrayList<Optional<Object>>> layers;
 
-        MyPropertyStack(XTextCursor cursor)
-            throws UnknownPropertyException {
+        MyPropertyStack(XTextCursor cursor) {
 
             XPropertySet propertySet = UnoCast.cast(XPropertySet.class, cursor).get();
             XPropertySetInfo propertySetInfo = propertySet.getPropertySetInfo();
@@ -517,7 +511,12 @@ public class OOTextIntoOO {
              * Get the initial state of the properties and add add the first layer.
              */
             XMultiPropertyStates mpss = UnoCast.cast(XMultiPropertyStates.class, cursor).get();
-            PropertyState[] propertyStates = mpss.getPropertyStates(goodNames);
+            PropertyState[] propertyStates = null;
+            try {
+                propertyStates = mpss.getPropertyStates(goodNames);
+            } catch (UnknownPropertyException ex) {
+                throw new java.lang.IllegalStateException("Caught unexpected UnknownPropertyException");
+            }
 
             XMultiPropertySet mps = UnoCast.cast(XMultiPropertySet.class, cursor).get();
             Object[] initialValues = mps.getPropertyValues(goodNames);
@@ -601,8 +600,6 @@ public class OOTextIntoOO {
                 LOGGER.warn("UnknownPropertyException in MyPropertyStack.apply", ex);
             } catch (PropertyVetoException ex) {
                 LOGGER.warn("PropertyVetoException in MyPropertyStack.apply");
-            } catch (IllegalArgumentException ex) {
-                LOGGER.warn("IllegalArgumentException in MyPropertyStack.apply");
             } catch (WrappedTargetException ex) {
                 LOGGER.warn("WrappedTargetException in MyPropertyStack.apply");
             }
@@ -648,7 +645,8 @@ public class OOTextIntoOO {
         XPropertyState xPropertyState = UnoCast.cast(XPropertyState.class, cursor).get();
         PropertyState state = xPropertyState.getPropertyState(propertyName);
         if (state == PropertyState.AMBIGUOUS_VALUE) {
-            throw new RuntimeException("PropertyState.AMBIGUOUS_VALUE (expected properties for a homogeneous cursor)");
+            throw new java.lang.IllegalArgumentException("PropertyState.AMBIGUOUS_VALUE"
+                                                         + " (expected properties for a homogeneous cursor)");
         }
         return state == PropertyState.DEFAULT_VALUE;
     }
@@ -712,7 +710,7 @@ public class OOTextIntoOO {
      */
     private static List<OOPair<String, Object>> setCharLocale(String value) {
         if (value == null || "".equals(value)) {
-            throw new RuntimeException("setCharLocale \"\" or null");
+            throw new java.lang.IllegalArgumentException("setCharLocale \"\" or null");
         }
         String[] parts = value.split("-");
         String language = (parts.length > 0) ? parts[0] : "";
@@ -792,15 +790,21 @@ public class OOTextIntoOO {
             return PASS;
         } catch (UnknownPropertyException
                  | PropertyVetoException
-                 | IllegalArgumentException
+                 | com.sun.star.lang.IllegalArgumentException
                  | WrappedTargetException ex) {
             return FAIL;
         }
     }
 
-    private static void insertParagraphBreak(XText text, XTextCursor cursor)
-        throws IllegalArgumentException {
-        text.insertControlCharacter(cursor, ControlCharacter.PARAGRAPH_BREAK, true);
+    private static void insertParagraphBreak(XText text, XTextCursor cursor) {
+        try {
+            text.insertControlCharacter(cursor, ControlCharacter.PARAGRAPH_BREAK, true);
+        } catch (com.sun.star.lang.IllegalArgumentException ex) {
+            // Assuming it means wrong code for ControlCharacter.
+            // https://api.libreoffice.org/docs/idl/ref/  does not tell.
+            // If my assumption is correct, we never get here.
+            throw new java.lang.IllegalArgumentException("Caught unexpected com.sun.star.lang.IllegalArgumentException", ex);
+        }
     }
 
 }

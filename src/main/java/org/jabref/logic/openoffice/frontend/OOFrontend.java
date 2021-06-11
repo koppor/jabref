@@ -128,7 +128,7 @@ public class OOFrontend {
         for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
             XTextRange range = (this
                                 .getMarkRange(doc, cg)
-                                .orElseThrow(RuntimeException::new));
+                                .orElseThrow(IllegalStateException::new));
             sortables.add(new RangeSortEntry<>(range, 0, cg));
         }
 
@@ -267,7 +267,7 @@ public class OOFrontend {
 
         Objects.requireNonNull(pageInfos);
         if (pageInfos.size() != citationKeys.size()) {
-            throw new RuntimeException("pageInfos.size != citationKeys.size");
+            throw new IllegalArgumentException("pageInfos.size != citationKeys.size");
         }
         CitationGroup cg = backend.createCitationGroup(doc,
                                                        citationKeys,
@@ -357,8 +357,8 @@ public class OOFrontend {
             new ArrayList<>(citationGroups.numberOfCitationGroups());
 
         for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
-            XTextRange range = this.getMarkRange(doc, cg).orElseThrow(RuntimeException::new);
-            String description = cg.cgid.citationGroupIdAsString(); // cg.cgRangeStorage.nrGetRangeName();
+            XTextRange range = this.getMarkRange(doc, cg).orElseThrow(IllegalStateException::new);
+            String description = cg.cgid.citationGroupIdAsString();
             result.add(new RangeForOverlapCheck<>(range,
                                                   cg.cgid,
                                                   RangeForOverlapCheck.REFERENCE_MARK_KIND,

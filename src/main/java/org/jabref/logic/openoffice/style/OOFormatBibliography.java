@@ -169,14 +169,17 @@ public class OOFormatBibliography {
         List<CitationGroup> citationGroups = new ArrayList<>();
         for (CitationPath p : ck.getCitationPaths()) {
             CitationGroupId cgid = p.group;
-            CitationGroup cg = cgs.getCitationGroupOrThrow(cgid);
-            citationGroups.add(cg);
+            Optional<CitationGroup> cg = cgs.getCitationGroup(cgid);
+            if (cg.isEmpty()) {
+                throw new IllegalStateException();
+            }
+            citationGroups.add(cg.get());
         }
 
         // sort the citationGroups according to their indexInGlobalOrder
         citationGroups.sort((a, b) -> {
-                Integer aa = a.getIndexInGlobalOrder().orElseThrow(RuntimeException::new);
-                Integer bb = b.getIndexInGlobalOrder().orElseThrow(RuntimeException::new);
+                Integer aa = a.getIndexInGlobalOrder().orElseThrow(IllegalStateException::new);
+                Integer bb = b.getIndexInGlobalOrder().orElseThrow(IllegalStateException::new);
                 return (aa.compareTo(bb));
             });
 
@@ -185,7 +188,7 @@ public class OOFormatBibliography {
             if (i > 0) {
                 sb.append(", ");
             }
-            String markName = cg.getReferenceMarkNameForLinking().orElseThrow(RuntimeException::new);
+            String markName = cg.getReferenceMarkNameForLinking().orElseThrow(IllegalStateException::new);
             OOText xref = OOFormat.formatReferenceToPageNumberOfReferenceMark(markName);
             sb.append(xref.toString());
             i++;

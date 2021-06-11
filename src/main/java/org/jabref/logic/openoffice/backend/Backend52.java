@@ -204,7 +204,7 @@ public class Backend52 {
 
         Objects.requireNonNull(pageInfos);
         if (pageInfos.size() != citationKeys.size()) {
-            throw new RuntimeException("pageInfos.size != citationKeys.size");
+            throw new IllegalArgumentException("pageInfos.size != citationKeys.size");
         }
 
         // Get a new refMarkName
@@ -255,7 +255,7 @@ public class Backend52 {
 
             if (pageInfo.isPresent()) {
                 String pageInfoString = OOText.toString(pageInfo.get());
-                UnoUserDefinedProperty.createStringProperty(doc, refMarkName, pageInfoString);
+                UnoUserDefinedProperty.setStringProperty(doc, refMarkName, pageInfoString);
             } else {
                 // do not inherit from trash
                 UnoUserDefinedProperty.removeIfExists(doc, refMarkName);
@@ -267,7 +267,7 @@ public class Backend52 {
             this.cgidToNamedRange.put(cgid, namedRange);
             return cg;
         default:
-            throw new RuntimeException("Backend52 requires JabRef52 dataModel");
+            throw new IllegalStateException("Backend52 requires JabRef52 dataModel");
         }
     }
 
@@ -306,7 +306,7 @@ public class Backend52 {
                                     .map(Citation::getPageInfo)))
                     .collect(Collectors.toList()));
         default:
-            throw new RuntimeException("unhandled dataModel here");
+            throw new IllegalArgumentException("unhandled dataModel here");
         }
     }
 
@@ -320,8 +320,8 @@ public class Backend52 {
     private NamedRange getNamedRangeOrThrow(CitationGroup cg) {
         NamedRange namedRange = this.cgidToNamedRange.get(cg.cgid);
         if (namedRange == null) {
-            LOGGER.warn("getNamedRange: could not lookup namedRange");
-            throw new RuntimeException("getNamedRange: could not lookup namedRange");
+            String msg = "getNamedRange: could not lookup namedRange";
+            throw new IllegalStateException("getNamedRange: could not lookup namedRange");
         }
         return namedRange;
     }
@@ -405,7 +405,7 @@ public class Backend52 {
                 String name = cg.cgid.citationGroupIdAsString();
                 XTextCursor cursor = (this
                                       .getRawCursorForCitationGroup(cg, doc)
-                                      .orElseThrow(RuntimeException::new));
+                                      .orElseThrow(IllegalStateException::new));
                 String context = GetContext.getCursorStringWithContext(cursor, 30, 30, true);
                 Optional<String> pageInfo = (cg.numberOfCitations() > 0
                                              ? (getPageInfoFromData(cg)
@@ -417,9 +417,9 @@ public class Backend52 {
             return citations;
         case JabRef60:
             // xx
-            throw new RuntimeException("getCitationEntries for JabRef60 is not implemented yet");
+            throw new IllegalStateException("getCitationEntries for JabRef60 is not implemented yet");
         default:
-            throw new RuntimeException("getCitationEntries: unhandled dataModel ");
+            throw new IllegalStateException("getCitationEntries: unhandled dataModel ");
         }
     }
 
@@ -444,15 +444,15 @@ public class Backend52 {
                 pageInfo = PageInfo.normalizePageInfo(pageInfo);
                 if (pageInfo.isPresent()) {
                     String name = entry.getRefMarkName();
-                    UnoUserDefinedProperty.createStringProperty(doc, name, pageInfo.get().toString());
+                    UnoUserDefinedProperty.setStringProperty(doc, name, pageInfo.get().toString());
                 }
             }
             break;
         case JabRef60:
             // xx
-            throw new RuntimeException("applyCitationEntries for JabRef60 is not implemented yet");
+            throw new IllegalStateException("applyCitationEntries for JabRef60 is not implemented yet");
         default:
-            throw new RuntimeException("applyCitationEntries: unhandled dataModel ");
+            throw new IllegalStateException("applyCitationEntries: unhandled dataModel ");
         }
     }
 

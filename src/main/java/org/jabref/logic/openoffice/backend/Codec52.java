@@ -56,7 +56,7 @@ class Codec52 {
         case 3:
             return CitationType.INVISIBLE_CIT;
         default:
-            throw new RuntimeException("Invalid CitationType code");
+            throw new IllegalArgumentException("Invalid CitationType code");
         }
     }
 
@@ -69,7 +69,7 @@ class Codec52 {
         case INVISIBLE_CIT:
             return 3;
         default:
-            throw new RuntimeException("Invalid CitationType");
+            throw new IllegalArgumentException("Invalid CitationType");
         }
     }
 

@@ -153,7 +153,7 @@ class NamedRangeReferenceMark implements NamedRange {
         WrappedTargetException,
         NoDocumentException,
         NoSuchElementException {
-        UnoReferenceMark.remove(doc, this.nrGetRangeName());
+        UnoReferenceMark.removeIfExists(doc, this.nrGetRangeName());
     }
 
     @Override
@@ -236,13 +236,13 @@ class NamedRangeReferenceMark implements NamedRange {
 
             if (markAsTextContent.isEmpty()) {
                 String msg = String.format("nrGetFillCursor: markAsTextContent(%s).isEmpty (attempt %d)", name, i);
-                throw new RuntimeException(msg);
+                throw new IllegalStateException(msg);
             }
 
             full = UnoCursor.getTextCursorOfTextContentAnchor(markAsTextContent.get()).orElse(null);
             if (full == null) {
                 String msg = String.format("nrGetFillCursor: full == null (attempt %d)", i);
-                throw new RuntimeException(msg);
+                throw new IllegalStateException(msg);
             }
 
             fullText = full.getString();
@@ -256,18 +256,13 @@ class NamedRangeReferenceMark implements NamedRange {
                 // (fullText.length() < 2)
                 if (i == 2) {
                     String msg = String.format("nrGetFillCursor: (fullText.length() < 2) (attempt %d)", i);
-                    throw new RuntimeException(msg);
+                    throw new IllegalStateException(msg);
                 }
                 // too short, recreate
                 LOGGER.warn("nrGetFillCursor: too short, recreate");
 
                 full.setString("");
-                try {
-                    UnoReferenceMark.remove(doc, name);
-                } catch (NoSuchElementException ex) {
-                    String msg = String.format("nrGetFillCursor got NoSuchElementException for '%s'", name);
-                    LOGGER.warn(msg);
-                }
+                UnoReferenceMark.removeIfExists(doc, name);
 
                 final boolean insertSpaceAfter = false;
                 final boolean withoutBrackets = false;
@@ -276,15 +271,15 @@ class NamedRangeReferenceMark implements NamedRange {
         }
 
         if (full == null) {
-            throw new RuntimeException("nrGetFillCursorFor: full == null (after loop)");
+            throw new IllegalStateException("nrGetFillCursorFor: full == null (after loop)");
         }
         if (fullText == null) {
-            throw new RuntimeException("nrGetFillCursor: fullText == null (after loop)");
+            throw new IllegalStateException("nrGetFillCursor: fullText == null (after loop)");
         }
 
         fullText = full.getString();
         if (fullText.length() < 2) {
-            throw new RuntimeException("nrGetFillCursor: fullText.length() < 2 (after loop)'%n");
+            throw new IllegalStateException("nrGetFillCursor: fullText.length() < 2 (after loop)'%n");
         }
         XTextCursor beta = full.getText().createTextCursorByRange(full);
         beta.collapseToStart();
@@ -352,7 +347,7 @@ class NamedRangeReferenceMark implements NamedRange {
     }
 
     /*
-     * Throw RuntimeException if the brackets are not there.
+     * Throw IllegalStateException if the brackets are not there.
      */
     public static void checkFillCursor(XTextCursor cursor) {
         final String left = REFERENCE_MARK_LEFT_BRACKET;
@@ -372,7 +367,7 @@ class NamedRangeReferenceMark implements NamedRange {
                 String msg = String.format("checkFillCursor:"
                                            + " ('%s') is not prefixed with REFERENCE_MARK_LEFT_BRACKET, has '%s'",
                                            cursor.getString(), alpha.getString());
-                throw new RuntimeException(msg);
+                throw new IllegalStateException(msg);
             }
         }
 
@@ -382,7 +377,7 @@ class NamedRangeReferenceMark implements NamedRange {
                 String msg = String.format("checkFillCursor:"
                                            + " ('%s') is not followed by REFERENCE_MARK_RIGHT_BRACKET, has '%s'",
                                            cursor.getString(), omega.getString());
-                throw new RuntimeException(msg);
+                throw new IllegalStateException(msg);
             }
         }
     }
@@ -414,24 +409,24 @@ class NamedRangeReferenceMark implements NamedRange {
 
         String name = this.nrGetRangeName();
 
-        XTextCursor full = this.nrGetRawCursor(doc).orElseThrow(RuntimeException::new);
+        XTextCursor full = this.nrGetRawCursor(doc).orElseThrow(IllegalStateException::new);
         final String fullText = full.getString();
         final int fullTextLength = fullText.length();
 
         if (!fullText.startsWith(left)) {
             String msg = String.format("nrCleanFillCursor: (%s) does not start with REFERENCE_MARK_LEFT_BRACKET", name);
-            throw new RuntimeException(msg);
+            throw new IllegalStateException(msg);
         }
 
         if (!fullText.endsWith(right)) {
             String msg = String.format("nrCleanFillCursor: (%s) does not end with REFERENCE_MARK_RIGHT_BRACKET", name);
-            throw new RuntimeException(msg);
+            throw new IllegalStateException(msg);
         }
 
         final int contentLength = (fullTextLength - (leftLength + rightLength));
         if (contentLength < 0) {
             String msg = String.format("nrCleanFillCursor: length(%s) < 0", name);
-            throw new RuntimeException(msg);
+            throw new IllegalStateException(msg);
         }
 
         boolean removeRight = ((contentLength >= 1)

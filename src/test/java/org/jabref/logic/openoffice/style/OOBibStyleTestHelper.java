@@ -98,8 +98,8 @@ class OOBibStyleTestHelper {
                                             List<Integer> num, int minGroupingCount, boolean inList) {
         if (inList) {
             if (num.size() != 1) {
-                throw new RuntimeException("Numeric label for the bibliography with "
-                                           + String.valueOf(num.size()) + " numbers?");
+                throw new IllegalArgumentException("Numeric label for the bibliography with "
+                                                   + String.valueOf(num.size()) + " numbers?");
             }
             int n = num.get(0);
             CitationMarkerNumericBibEntryImpl x =
@@ -146,8 +146,8 @@ class OOBibStyleTestHelper {
                                                        String uniqueLetterQ,
                                                        String pageInfoQ,
                                                        boolean isFirstAppearanceOfSource) {
-        if (!entry.getCitationKey().isPresent()) {
-            throw new RuntimeException("!entry.getCitationKey().isPresent()");
+        if (entry.getCitationKey().isEmpty()) {
+            throw new IllegalArgumentException("entry.getCitationKey() is empty");
         }
         String citationKey = entry.getCitationKey().get();
         Citation result = new Citation(citationKey);

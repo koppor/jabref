@@ -50,7 +50,7 @@ public class EditInsert {
     private static String insertEntryGetCitationKey(BibEntry entry) {
         Optional<String> key = entry.getCitationKey();
         if (key.isEmpty()) {
-            throw new RuntimeException("insertEntryGetCitationKey: cannot cite entries without citation key");
+            throw new IllegalArgumentException("insertEntryGetCitationKey: cannot cite entries without citation key");
         }
         return key.get();
     }

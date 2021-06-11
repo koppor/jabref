@@ -217,7 +217,7 @@ public class EditMerge {
         // assume: currentGroupCursor.getEnd() == cursorBetween.getEnd()
         if (UnoTextRange.compareEnds(state.cursorBetween, state.currentGroupCursor) != 0) {
             String msg = ("MergeCitationGroups: cursorBetween.end != currentGroupCursor.end");
-            throw new RuntimeException(msg);
+            throw new IllegalStateException(msg);
         }
 
         /*
@@ -249,7 +249,7 @@ public class EditMerge {
             // These two should move in sync:
             if (UnoTextRange.compareEnds(state.cursorBetween, state.currentGroupCursor) != 0) {
                 String msg = ("MergeCitationGroups: cursorBetween.end != currentGroupCursor.end (during expand)");
-                throw new RuntimeException(msg);
+                throw new IllegalStateException(msg);
             }
         }
 
@@ -293,7 +293,7 @@ public class EditMerge {
 
         if (UnoTextRange.compareEnds(state.cursorBetween, state.currentGroupCursor) != 0) {
             String msg = ("MergeCitationGroups: cursorBetween.end != currentGroupCursor.end");
-            throw new RuntimeException(msg);
+            throw new IllegalStateException(msg);
         }
 
         /* Store data about last entry in currentGroup */
@@ -320,7 +320,7 @@ public class EditMerge {
         for (CitationGroup cg : cgs) {
 
             XTextRange currentRange = (fr.getMarkRange(doc, cg)
-                                       .orElseThrow(RuntimeException::new));
+                                       .orElseThrow(IllegalStateException::new));
 
             /*
              * Decide if we add cg to the group. False when the group is empty.

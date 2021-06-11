@@ -65,7 +65,7 @@ public class EditSeparate {
 
                 XTextRange range1 = (fr
                                      .getMarkRange(doc, cg)
-                                     .orElseThrow(RuntimeException::new));
+                                     .orElseThrow(IllegalStateException::new));
                 XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
 
                 List<Citation> cits = cg.citationsInStorageOrder;
