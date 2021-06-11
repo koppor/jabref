@@ -1,5 +1,7 @@
 package org.jabref.model.openoffice.uno;
 
+import java.lang.IllegalArgumentException;
+
 import com.sun.star.container.XNamed;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.text.XTextContent;
@@ -41,7 +43,7 @@ public class UnoNamed {
         throws
         CreationException {
 
-        XMultiServiceFactory msf = UnoCast.unoQI(XMultiServiceFactory.class, doc);
+        XMultiServiceFactory msf = UnoCast.cast(XMultiServiceFactory.class, doc).get();
 
         Object xObject;
         try {
@@ -50,11 +52,13 @@ public class UnoNamed {
             throw new CreationException(e.getMessage());
         }
 
-        XNamed xNamed = UnoCast.unoQI(XNamed.class, xObject);
+        XNamed xNamed = (UnoCast.cast(XNamed.class, xObject)
+                         .orElseThrow(() -> new IllegalArgumentException("Service is not an XNamed")));
         xNamed.setName(name);
 
         // get XTextContent interface
-        XTextContent xTextContent = UnoCast.unoQI(XTextContent.class, xObject);
+        XTextContent xTextContent = (UnoCast.cast(XTextContent.class, xObject)
+                                     .orElseThrow(() -> new IllegalArgumentException("Service is not an XTextContent")));
         range.getText().insertTextContent(range, xTextContent, absorb);
         return xNamed;
     }

@@ -41,7 +41,7 @@ public class RangeOverlapBetween {
             for (V aHolder : fewHolders) {
                 XText aText = aHolder.getRange().getText();
                 fewTuples.add(new OOTuple3<>(aText,
-                                             UnoCast.unoQI(XTextRangeCompare.class, aText),
+                                             UnoCast.cast(XTextRangeCompare.class, aText).get(),
                                              aHolder));
         }
 

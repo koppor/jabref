@@ -64,7 +64,7 @@ public class UnoTextDocument {
             return Optional.empty();
         }
 
-        Optional<XPropertySet> propertySet = UnoCast.optUnoQI(XPropertySet.class, frame.get());
+        Optional<XPropertySet> propertySet = UnoCast.cast(XPropertySet.class, frame.get());
         if (propertySet.isEmpty()) {
             return Optional.empty();
         }
@@ -85,7 +85,7 @@ public class UnoTextDocument {
 
     static Optional<XDocumentProperties> getDocumentProperties(XTextDocument doc) {
         return (Optional.ofNullable(doc)
-                .map(e -> UnoCast.unoQI(XDocumentPropertiesSupplier.class, e))
+                .flatMap(e -> UnoCast.cast(XDocumentPropertiesSupplier.class, e))
                 .map(XDocumentPropertiesSupplier::getDocumentProperties));
     }
 }

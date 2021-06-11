@@ -24,7 +24,7 @@ public class UnoTextSection {
         throws
         NoDocumentException {
 
-        XTextSectionsSupplier supplier = UnoCast.unoQI(XTextSectionsSupplier.class, doc);
+        XTextSectionsSupplier supplier = UnoCast.cast(XTextSectionsSupplier.class, doc).get();
         try {
             return supplier.getTextSections();
         } catch (DisposedException ex) {

@@ -23,7 +23,7 @@ public class RangeSort {
         XTextRangeCompare cmp;
 
         HolderComparatorWithinPartition(XText text) {
-            cmp = UnoCast.unoQI(XTextRangeCompare.class, text);
+            cmp = UnoCast.cast(XTextRangeCompare.class, text).get();
         }
 
         /*

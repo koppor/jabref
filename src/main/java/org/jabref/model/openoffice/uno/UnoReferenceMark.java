@@ -29,7 +29,7 @@ public class UnoReferenceMark {
         throws
         NoDocumentException {
 
-        XReferenceMarksSupplier supplier = UnoCast.unoQI(XReferenceMarksSupplier.class, doc);
+        XReferenceMarksSupplier supplier = UnoCast.cast(XReferenceMarksSupplier.class, doc).get();
 
         try {
             return supplier.getReferenceMarks();

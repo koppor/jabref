@@ -24,7 +24,7 @@ public class UnoBookmark {
         throws
         NoDocumentException {
 
-        XBookmarksSupplier supplier = UnoCast.unoQI(XBookmarksSupplier.class, doc);
+        XBookmarksSupplier supplier = UnoCast.cast(XBookmarksSupplier.class, doc).get();
         try {
             return supplier.getBookmarks();
         } catch (DisposedException ex) {

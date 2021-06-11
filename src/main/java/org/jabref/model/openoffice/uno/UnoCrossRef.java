@@ -21,7 +21,7 @@ public class UnoCrossRef {
      */
     public static void refresh(XTextDocument doc) {
         // Refresh the document
-        XRefreshable xRefresh = UnoCast.unoQI(XRefreshable.class, doc);
+        XRefreshable xRefresh = UnoCast.cast(XRefreshable.class, doc).get();
         xRefresh.refresh();
     }
 
@@ -41,13 +41,13 @@ public class UnoCrossRef {
         WrappedTargetException {
 
         // based on: https://wiki.openoffice.org/wiki/Documentation/DevGuide/Text/Reference_Marks
-        XMultiServiceFactory msf = UnoCast.unoQI(XMultiServiceFactory.class, doc);
+        XMultiServiceFactory msf = UnoCast.cast(XMultiServiceFactory.class, doc).get();
         // Create a 'GetReference' text field to refer to the reference mark we just inserted,
         // and get it's XPropertySet interface
         XPropertySet xFieldProps;
         try {
             String name = "com.sun.star.text.textfield.GetReference";
-            xFieldProps = (XPropertySet) UnoCast.unoQI(XPropertySet.class, msf.createInstance(name));
+            xFieldProps = UnoCast.cast(XPropertySet.class, msf.createInstance(name)).get();
         } catch (com.sun.star.uno.Exception e) {
             throw new CreationException(e.getMessage());
         }
@@ -63,7 +63,7 @@ public class UnoCrossRef {
         xFieldProps.setPropertyValue("ReferenceFieldPart", Short.valueOf​(ReferenceFieldPart.PAGE));
 
         // Get the XTextContent interface of the GetReference text field
-        XTextContent xRefContent = (XTextContent) UnoCast.unoQI(XTextContent.class, xFieldProps);
+        XTextContent xRefContent = UnoCast.cast(XTextContent.class, xFieldProps).get();
 
         // Insert the text field
         cursor.getText().insertTextContent(cursor.getEnd(), xRefContent, false);

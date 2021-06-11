@@ -351,10 +351,10 @@ public class OOTextIntoOO {
      */
     public static void removeDirectFormatting(XTextCursor cursor) {
 
-        XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
+        XMultiPropertyStates mpss = UnoCast.cast(XMultiPropertyStates.class, cursor).get();
 
-        XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
-        XPropertyState xPropertyState = UnoCast.unoQI(XPropertyState.class, cursor);
+        XPropertySet propertySet = UnoCast.cast(XPropertySet.class, cursor).get();
+        XPropertyState xPropertyState = UnoCast.cast(XPropertyState.class, cursor).get();
 
         try {
             // Special handling
@@ -388,7 +388,7 @@ public class OOTextIntoOO {
                                                "ParaStyleName");
 
         // query again, just in case it matters
-        propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
+        propertySet = UnoCast.cast(XPropertySet.class, cursor).get();
         XPropertySetInfo propertySetInfo = propertySet.getPropertySetInfo();
 
         // check the result
@@ -480,7 +480,7 @@ public class OOTextIntoOO {
         MyPropertyStack(XTextCursor cursor)
             throws UnknownPropertyException {
 
-            XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, cursor);
+            XPropertySet propertySet = UnoCast.cast(XPropertySet.class, cursor).get();
             XPropertySetInfo propertySetInfo = propertySet.getPropertySetInfo();
 
             /*
@@ -516,10 +516,10 @@ public class OOTextIntoOO {
             /*
              * Get the initial state of the properties and add add the first layer.
              */
-            XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
+            XMultiPropertyStates mpss = UnoCast.cast(XMultiPropertyStates.class, cursor).get();
             PropertyState[] propertyStates = mpss.getPropertyStates(goodNames);
 
-            XMultiPropertySet mps = UnoCast.unoQI(XMultiPropertySet.class, cursor);
+            XMultiPropertySet mps = UnoCast.cast(XMultiPropertySet.class, cursor).get();
             Object[] initialValues = mps.getPropertyValues(goodNames);
 
             ArrayList<Optional<Object>> initialValuesOpt = new ArrayList<>(goodSize);
@@ -575,8 +575,8 @@ public class OOTextIntoOO {
          * The idea is to minimize the number of calls to OpenOffice.
          */
         void apply(XTextCursor cursor) {
-            XMultiPropertySet mps = UnoCast.unoQI(XMultiPropertySet.class, cursor);
-            XMultiPropertyStates mpss = UnoCast.unoQI(XMultiPropertyStates.class, cursor);
+            XMultiPropertySet mps = UnoCast.cast(XMultiPropertySet.class, cursor).get();
+            XMultiPropertyStates mpss = UnoCast.cast(XMultiPropertyStates.class, cursor).get();
             ArrayList<Optional<Object>> topLayer = layers.peek();
             try {
                 // select values to be set
@@ -645,7 +645,7 @@ public class OOTextIntoOO {
     private static boolean isPropertyDefault(XTextCursor cursor, String propertyName)
         throws
         UnknownPropertyException {
-        XPropertyState xPropertyState = UnoCast.unoQI(XPropertyState.class, cursor);
+        XPropertyState xPropertyState = UnoCast.cast(XPropertyState.class, cursor).get();
         PropertyState state = xPropertyState.getPropertyState(propertyName);
         if (state == PropertyState.AMBIGUOUS_VALUE) {
             throw new RuntimeException("PropertyState.AMBIGUOUS_VALUE (expected properties for a homogeneous cursor)");
@@ -785,8 +785,8 @@ public class OOTextIntoOO {
         final boolean FAIL = true;
         final boolean PASS = false;
 
-        XParagraphCursor paragraphCursor = UnoCast.unoQI(XParagraphCursor.class, cursor);
-        XPropertySet propertySet = UnoCast.unoQI(XPropertySet.class, paragraphCursor);
+        XParagraphCursor paragraphCursor = UnoCast.cast(XParagraphCursor.class, cursor).get();
+        XPropertySet propertySet = UnoCast.cast(XPropertySet.class, paragraphCursor).get();
         try {
             propertySet.setPropertyValue(PARA_STYLE_NAME, paragraphStyle);
             return PASS;
