@@ -20,3 +20,7 @@
   * [Readings on JavaFX](readings-on-coding/javafx.md)
   * [Useful development tooling](readings-on-coding/tools.md)
 * [The OpenOffice/LibreOffice panel](openoffice/README.md)
+  * [Overview](openoffice/overview.md)
+  * [Order of appearance of citation groups](openoffice/order-of-appearance.md)
+  * [Problems](openoffice/problems.md)
+  * [Code reorganization](openoffice/code-reorganization.md)
