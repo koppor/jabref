@@ -69,7 +69,8 @@ At the core,
   - a list of citations (`citationsInStorageOrder`)
   - an identifier `CitationGroupId cgid`
     - this allows to refer to the group
-    - also used to associate the group to its citation markers location (outside the style part)
+    - also used to associate the group to its citation markers location (outside the style part,
+    in [Backend](https://github.com/antalk2/jabref/blob/fed0952cbdaf7a76bcb09b3db5ac48f34f5ca388/src/main/java/org/jabref/logic/openoffice/backend/Backend52.java#L46))
   - `OODataModel dataModel` is here, in order to handle old (Jabref5.2) structure where pageInfo belonged to
   CitationGroup not Citation
   - `referenceMarkNameForLinking` is optional: can be used to crosslink to the citation marker
@@ -95,7 +96,7 @@ Common processing steps:
   Uses a temporary `CitedKeys` instance, based on unsorted citations and citation groups.
 - `CitationGroups.imposeLocalOrder` fills `localOrder` in each `CitationGroup`
 
-- Now we have order of appearance for the citations (`globalOrder` and `localOrder`).
+- Now we have order of appearance for the citations (`globalOrder` and `localOrder`).<br>
   We can create a `CitedKeys` instance (`bibliography`) according to this order.
 
 - For citations numbered in order of first appearance we number the sources and distribute the numbers
@@ -105,9 +106,10 @@ to the corresponding citations.
 - For author-year citations we have to decide on the letters `uniqueLetter` used to distinguish
 sources. This needs order of first appearance of the sources and recognizing clashing citation markers.
 This is done in logic, in [`OOProcessAuthorYearMarkers.createUniqueLetters()`](https://github.com/antalk2/jabref/blob/122d5133fa6c7b44245c5ba5600d398775718664/src/main/java/org/jabref/logic/openoffice/style/OOProcessAuthorYearMarkers.java#L49)
+- We also mark first appearance of each source ([`setIsFirstAppearanceOfSourceInCitations`](https://github.com/antalk2/jabref/blob/fed0952cbdaf7a76bcb09b3db5ac48f34f5ca388/src/main/java/org/jabref/logic/openoffice/style/OOProcessAuthorYearMarkers.java#L146))
 
-
-The entry point for this processing is: `OOProcess.produceCitationMarkers` It fills 
+The entry point for this processing is: [`OOProcess.produceCitationMarkers`](https://github.com/antalk2/jabref/blob/fed0952cbdaf7a76bcb09b3db5ac48f34f5ca388/src/main/java/org/jabref/logic/openoffice/style/OOProcess.java#L69).<br>
+It fills 
 - each `CitationGroup.citationMarker`
 - `CitationGroups.bibliography`
   - From bibliography `OOFormatBibliography.formatBibliography()` creates an `OOText`
@@ -116,9 +118,9 @@ The entry point for this processing is: `OOProcess.produceCitationMarkers` It fi
 
 ## logic/style
 
-- StyleLoader : not changed (knows about default styles) Used by GUI
-- OOPreFormatter : LaTeX code to unicode and OOText tags. (not changed)
-- OOBibStyle : is mostly concerned by loading/parsing jstyle files and presenting its pieces
+- `StyleLoader` : not changed (knows about default styles) Used by GUI
+- `OOPreFormatter` : LaTeX code to unicode and OOText tags. (not changed)
+- `OOBibStyle` : is mostly concerned by loading/parsing jstyle files and presenting its pieces
 to the rest. Originally it also contains code to format numeric and author-year citation markers.
   - Details of their new implementations are in 
   [`OOBibStyleGetNumCitationMarker`](https://github.com/antalk2/jabref/blob/improve-reversibility-rebased-03/src/main/java/org/jabref/logic/openoffice/style/OOBibStyleGetNumCitationMarker.java) and
@@ -130,13 +132,14 @@ to the rest. Originally it also contains code to format numeric and author-year 
     more self-contained entries `List<CitationMarkerNumericEntry>`, `List<CitationMarkerEntry>`.
     - We have distinct methods for `getNormalizedCitationMarker(CitationMarkerNormEntry)` and
     `getNumCitationMarkerForBibliography(CitationMarkerNumericBibEntry)`.
-    - The corresponding interfaces in model:
+    - The corresponding interfaces in model/style:
       - `CitationMarkerNumericEntry`
       - `CitationMarkerEntry`
       - `CitationMarkerNumericBibEntry`
       - `CitationMarkerNormEntry` <br>
-      describe their expected input entries
-- `OOProcess` : the main entry point for style application. Calls to specific implementations
+      describe their expected input entries.
+- [`OOProcess.produceCitationMarkers`](https://github.com/antalk2/jabref/blob/fed0952cbdaf7a76bcb09b3db5ac48f34f5ca388/src/main/java/org/jabref/logic/openoffice/style/OOProcess.java#L69) 
+is the main entry point for style application. Calls to specific implementations
 in `OOProcessCitationKeyMarkers`,  `OOProcessNumericMarkers` and `OOProcessAuthorYearMarkers`
 according to jstyle flags.
 
@@ -178,5 +181,6 @@ GUI-independent part of implementations of GUI actions.
      - does argument and precondition checking
      - catches all exceptions
      - shows error and warning dialogs
+     - adds `enterUndoContext`, `leaveUndoContext` around action code
 
 

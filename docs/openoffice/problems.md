@@ -24,7 +24,7 @@
           So it would be change to code accessing them.
         - The proposed representation does collect, to allow separation of getting from the document
           and processing
-      - insertion of pageInfo into citation markers: JabRef 5.2 injects a single before the closing parenthesis,
+      - insertion of pageInfo into citation markers: JabRef 5.2 injects a single pageInfo before the closing parenthesis,
         now we need to handle several values
       - `[click:Manage citations]` should work on citations, not citation groups.
 
