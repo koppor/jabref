@@ -11,18 +11,23 @@ Why
   do not stop processing. Although we cannot sort them by author and year, we can still emit a marker
   that acts as a placeholder and shows the user the problematic key.
 
-Result:
+## Result
 
-- model
-  - util : general utilities
-    - (OOPair, OOTuple3) collect two or three objects without creating a new class
-    - OOResult : while an Optional.empty can comunicate failure, it cannot provide details.<br>
-      OOResult allows an arbitrary error object to be provided in case of failure.<br>
-    - OOVoidResult : for functions returning no result on success, only diagnostics on failure.
-    - OOListUtil: some utilities working on List
-  - uno : helpers for various tasks via UNO.<br>
+### Layers
+<img title="Layers" src="layers-v1.svg">
+
+### By directories
+
+- `model`
+  - `util` : general utilities
+    - (`OOPair`, `OOTuple3`) collect two or three objects without creating a new class
+    - `OOResult` : while an Optional.empty can comunicate failure, it cannot provide details.<br>
+      `OOResult` allows an arbitrary error object to be provided in case of failure.<br>
+    - `OOVoidResult` : for functions returning no result on success, only diagnostics on failure.
+    - `OOListUtil`: some utilities working on List
+  - `uno` : helpers for various tasks via UNO.<br>
     These are conceptually independent of JabRef code and logic.
-  - ootext : to separate decisions on the format of references and citation marks from
+  - `ootext` : to separate decisions on the format of references and citation marks from
     the actual insertion into the document, the earlier method
     [OOUtil.insertOOFormattedTextAtCurrentLocation](https://github.com/JabRef/jabref/blob/475b2989ffa8ec61c3327c62ed8f694149f83220/src/main/java/org/jabref/logic/openoffice/OOUtil.java#L112)
     was extended to handle new tags that describe actions earlier done in code.
@@ -35,23 +40,23 @@ Result:
       contains helpers to create the appropriate tags
     - [OOText](https://github.com/antalk2/jabref/blob/improve-reversibility-rebased-03/src/main/java/org/jabref/model/openoffice/ootext/OOText.java) formalizes
       the distinction from `String`. I did not change `String` to `OOText` in old code, (in particular in OOStyle).
-  - rangesort : ordering objects that have an XTextRange, optionally with an extra integer to break ties.
-    - RangeSort.partitionAndSortRanges : since XTextRangeCompare can only compare XTextRange values in
-      the same XText, we partition them accordingly and only sort within each partiion.
-    - RangeSortable (interface), RangeSortEntry (implements) : <br>
-      When we replace XTextRange of citation marks in footnotes with the range of the footnote mark,
+  - `rangesort` : ordering objects that have an `XTextRange`, optionally with an extra integer to break ties.
+    - `RangeSort.partitionAndSortRanges` : since `XTextRangeCompare` can only compare `XTextRange` values in
+      the same `XText`, we partition them accordingly and only sort within each partiion.
+    - `RangeSortable` (interface), `RangeSortEntry` (implements) : <br>
+      When we replace `XTextRange` of citation marks in footnotes with the range of the footnote mark,
       multiple citation marks may be mapped to the same location. To preserve the order between these,
-      RangeSortable allows this order to be indicated by returning appropriate indices from `getIndexInPosition`
-    - RangeSortVisual : sort in top-to-bottom left-to-right order.<br>
-    Needs a functional XTextViewCursor.<br>
-    Works on RangeSortable values.
-    - FunctionalTextViewCursor : helper to get a functional XTextViewCursor (cannot always)
-    - RangeOverlapWithin : check for overlaps within a set of XTextRange values. Probably O(n*log(n)). Used for all-to-all check of protected ranges.
-    - RangeOverlapBetween : check for overlaps between two sets of XTextRange values. Assumes one set is small. O(n*k).
+      `RangeSortable` allows this order to be indicated by returning appropriate indices from `getIndexInPosition`
+    - `RangeSortVisual` : sort in top-to-bottom left-to-right order.<br>
+    Needs a functional `XTextViewCursor`.<br>
+    Works on `RangeSortable` values.
+    - `FunctionalTextViewCursor` : helper to get a functional `XTextViewCursor` (cannot always)
+    - `RangeOverlapWithin` : check for overlaps within a set of `XTextRange` values. Probably O(n*log(n)). Used for all-to-all check of protected ranges.
+    - `RangeOverlapBetween` : check for overlaps between two sets of `XTextRange` values. Assumes one set is small. O(n*k).
     Used for checking if the cursor is in a protected range.
-  - backend: interfaces to be provided by backends.<br>
+  - `backend` : interfaces to be provided by backends.<br>
     May change as new backends may need different APIs.
-  - style : data structures and interfaces used while going from ordered list of citation groups
+  - `style` : data structures and interfaces used while going from ordered list of citation groups
   to formatted citation markers and bibliography. Does not communicate with the document. Too long to fit here, starting a new section.
   
 ## model/style
@@ -69,15 +74,16 @@ At the core,
   CitationGroup not Citation
   - `referenceMarkNameForLinking` is optional: can be used to crosslink to the citation marker
   from the bibliography.
-- `CitationGroups` represents the collection of citation groups.
-
-Processing starts with creating these.
+- `CitationGroups` represents the collection of citation groups.<br>
+Processing starts with creating a `CitationGroups` instance from the data stored in the document.
 
 - `CitedKey` represents a cited source, with ordered backreferences (using `CitationPath`) to the correponding
 citations.
 
-- `CitedKeys` is just an order-preserving collection of `CitedKeys` that also supports
-lookup by `citationKey`.
+- `CitedKeys` is just an order-preserving collection of `CitedKeys` that also supports lookup by
+`citationKey`. While producing citation markers, we also create a corresponding `CitedKeys`
+instance, and store it in `CitationGroups.bibliography`. This is already sorted, its entries have
+`uniqueLetter` or `number` assigned, but not converted to markup yet.
 
 Common processing steps:
 
