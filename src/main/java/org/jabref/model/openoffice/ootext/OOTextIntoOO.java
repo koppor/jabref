@@ -44,8 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interpret OOText into an OpenOffice or LibreOffice writer
- * document.
+ * Interpret OOText into an OpenOffice or LibreOffice writer document.
  */
 @AllowedToUseAwt("Requires AWT for changing document properties")
 public class OOTextIntoOO {
@@ -365,8 +364,8 @@ public class OOTextIntoOO {
         mpss.setAllPropertiesToDefault();
 
         /*
-         * Now that we have called setAllPropertiesToDefault, check which properties
-         * are not set to default and try to correct what we can and seem necessary.
+         * Now that we have called setAllPropertiesToDefault, check which properties are not set to
+         * default and try to correct what we can and seem necessary.
          *
          * Note: tested with LibreOffice : 6.4.6.2
          */
@@ -408,8 +407,8 @@ public class OOTextIntoOO {
     static class MyPropertyStack {
 
         /*
-         * We only try to control these. Should include all character
-         * properties we set, and maybe their interdependencies.
+         * We only try to control these. Should include all character properties we set, and maybe
+         * their interdependencies.
          *
          * For a list of properties see:
          * https://www.openoffice.org/api/docs/common/ref/com/sun/star/style/CharacterProperties.html
