@@ -508,7 +508,7 @@ public class OOTextIntoOO {
             }
 
             /*
-             * Get the initial state of the properties and add add the first layer.
+             * Get the initial state of the properties and add the first layer.
              */
             XMultiPropertyStates mpss = UnoCast.cast(XMultiPropertyStates.class, cursor).get();
             PropertyState[] propertyStates = null;
