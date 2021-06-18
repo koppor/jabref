@@ -59,16 +59,16 @@ public class RangeOverlapBetween {
                 if (aText != bText) {
                     continue;
                 }
-                int abEndToStart = -1 * cmp.compareRegionStarts(aRange.getEnd(), bRangeStart);
+                int abEndToStart = UnoTextRange.compareStartsUnsafe(cmp, aRange.getEnd(), bRangeStart);
                 if (abEndToStart < 0 || (!includeTouching && (abEndToStart == 0))) {
                     continue;
                 }
-                int baEndToStart = -1 * cmp.compareRegionStarts(bRangeEnd, aRange.getStart());
+                int baEndToStart = UnoTextRange.compareStartsUnsafe(cmp, bRangeEnd, aRange.getStart());
                 if (baEndToStart < 0 || (!includeTouching && (baEndToStart == 0))) {
                     continue;
                 }
 
-                boolean equal = UnoTextRange.compareStartsThenEnds(aRange, bRange) == 0;
+                boolean equal = UnoTextRange.compareStartsThenEndsUnsafe(cmp, aRange, bRange) == 0;
                 boolean touching = (abEndToStart == 0 || baEndToStart == 0);
 
                 // In case of two equal collapsed ranges there is an ambiguity : TOUCH or
