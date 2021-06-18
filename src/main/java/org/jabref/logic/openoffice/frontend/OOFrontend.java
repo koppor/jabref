@@ -174,7 +174,7 @@ public class OOFrontend {
                     }
                 }
                 result.add(sortable);
-                }
+            }
         }
         return result.stream().map(e -> e).collect(Collectors.toList());
     }
