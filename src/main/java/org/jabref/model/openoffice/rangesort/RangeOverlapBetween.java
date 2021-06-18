@@ -35,16 +35,22 @@ public class RangeOverlapBetween {
             return result;
         }
 
-        List<OOTuple3<XText, XTextRangeCompare, V>> fewTuples =
-            new ArrayList<>(fewHolders.size());
+        /*
+         * Cache all we need to know about fewHolders. We are trying to minimize the number of calls
+         * to LO.
+         */
+        List<OOTuple3<XText, XTextRangeCompare, V>> fewTuples = new ArrayList<>(fewHolders.size());
 
-            for (V aHolder : fewHolders) {
-                XText aText = aHolder.getRange().getText();
-                fewTuples.add(new OOTuple3<>(aText,
-                                             UnoCast.cast(XTextRangeCompare.class, aText).get(),
-                                             aHolder));
+        for (V aHolder : fewHolders) {
+            XText aText = aHolder.getRange().getText();
+            fewTuples.add(new OOTuple3<>(aText,
+                                         UnoCast.cast(XTextRangeCompare.class, aText).get(),
+                                         aHolder));
         }
 
+        /*
+         * We only go through manyHolders once: fewTuples is in the inner loop.
+         */
         for (V bHolder : manyHolders) {
             XTextRange bRange = bHolder.getRange();
             XText bText = bRange.getText();
@@ -71,8 +77,7 @@ public class RangeOverlapBetween {
                 boolean equal = UnoTextRange.compareStartsThenEndsUnsafe(cmp, aRange, bRange) == 0;
                 boolean touching = (abEndToStart == 0 || baEndToStart == 0);
 
-                // In case of two equal collapsed ranges there is an ambiguity : TOUCH or
-                // EQUAL_RANGE ?
+                // In case of two equal collapsed ranges there is an ambiguity : TOUCH or EQUAL_RANGE ?
                 //
                 // We return EQUAL_RANGE
                 RangeOverlapKind kind = (equal ? RangeOverlapKind.EQUAL_RANGE
