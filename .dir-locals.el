@@ -1,7 +1,0 @@
-((nil . ((fill-column . 100)
-         ))
-;; (c-mode . ((fill-column . 50)))
- (java-mode . ((fill-column . 100)
-               (add-hook 'java-mode-hook (lambda () (set-fill-column 100)))
-               ))
- )
