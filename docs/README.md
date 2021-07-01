@@ -51,7 +51,3 @@ For new ADRs, please use [template.md](https://github.com/JabRef/jabref/tree/3b3
 
   Also filed as IntelliJ issue [IDEA-240250](https://youtrack.jetbrains.com/issue/IDEA-240250).
 
-## About OpenOffice/LibreOffice
-
-[here](openoffice/README.md)
-
