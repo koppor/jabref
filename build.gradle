@@ -3,7 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 import org.jabref.build.JournalAbbreviationConverter
 import org.jabref.build.xjc.XjcPlugin
 import org.jabref.build.xjc.XjcTask
-
+import com.apollographql.apollo.gradle.internal.DefaultCompilationUnit
 // to update the gradle wrapper, execute
 // ./gradlew wrapper --gradle-version=6.0 --distribution-type=bin
 
@@ -33,6 +33,8 @@ plugins {
     id 'project-report'
 
     id 'idea'
+
+    id "com.apollographql.apollo" version '2.5.8'
 }
 
 // Enable following for debugging
@@ -74,6 +76,7 @@ sourceSets {
         java {
             // src-gen reasoning: https://stackoverflow.com/a/64612308/873282
             srcDirs = ["src/main/java", "src-gen/main/java"]
+           // exclude 'lib/apollo-api-jvm-2.5.8.jar'
         }
         resources {
             srcDirs = ["src/main/java", "src/main/resources"]
@@ -383,6 +386,26 @@ task generateJournalAbbreviationList(type: JournalAbbreviationConverter) {
     inputDir = file("build/journals")
 
     outputDir = file("src/main/resources/journals")
+}
+
+apollo {
+
+  schemaFile.set(file("src/main/java/org/jabref/jabrefonline/graphql/schema.json"))
+  graphqlSourceDirectorySet.srcDir("src/main/java/org/jabref/jabrefonline/graphql/")
+  graphqlSourceDirectorySet.exclude("schema.json")
+  customTypeMapping = [
+    "DateTime" : "java.time.LocalDateTime"
+  ]
+  generateKotlinModels.set(false)
+  nullableValueType.set("javaOptional")
+  useJavaBeansSemanticNaming.set(true)
+  rootPackageName.set("org.jabref.jabrefonline")
+
+  onCompilationUnit {
+      outputDir.set(file("src-gen/main/java/")) // TODO not working yet
+    // Overwrite some options here for single CompilationUnit if needed
+  }
+
 }
 
 tasks.withType(JavaCompile) {
