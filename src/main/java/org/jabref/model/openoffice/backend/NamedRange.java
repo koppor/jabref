@@ -13,12 +13,12 @@ import com.sun.star.text.XTextRange;
 
 public interface NamedRange {
 
-    public String nrGetRangeName();
+    String nrGetRangeName();
 
     /**
      * @return Optional.empty if the mark is missing from the document.
      */
-    public Optional<XTextRange> nrGetMarkRange(XTextDocument doc)
+    Optional<XTextRange> nrGetMarkRange(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException;
@@ -27,7 +27,7 @@ public interface NamedRange {
      * Cursor for the reference marks as is, not prepared for filling, but does not need
      * nrCleanFillCursor either.
      */
-    public Optional<XTextCursor> nrGetRawCursor(XTextDocument doc)
+    Optional<XTextCursor> nrGetRawCursor(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException;
@@ -37,7 +37,7 @@ public interface NamedRange {
      *
      * Must be followed by nrCleanFillCursor()
      */
-    public XTextCursor nrGetFillCursor(XTextDocument doc)
+    XTextCursor nrGetFillCursor(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException,
@@ -48,7 +48,7 @@ public interface NamedRange {
      * single characer, leave the left bracket.
      *
      */
-    public void nrCleanFillCursor(XTextDocument doc)
+    void nrCleanFillCursor(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException,
@@ -57,7 +57,7 @@ public interface NamedRange {
     /**
      *  Note: create is in NamedRangeManager
      */
-    public void nrRemoveFromDocument(XTextDocument doc)
+    void nrRemoveFromDocument(XTextDocument doc)
         throws
         WrappedTargetException,
         NoDocumentException,
