@@ -86,7 +86,10 @@ checkstyle:
 	./gradlew checkstyletest 2>&1 | sed -e 's|[[]ant[:]checkstyle] [[]ERROR] ||g'
 #
 
+
+PMD = pmd -f text -R ../tools/pmd/pmd-java-rules.xml -cache /tmp/pmd-jabref-cache
+
 pmd:
-	pmd -d src/main/java/org/jabref/model/openoffice
-	pmd -d src/main/java/org/jabref/logic/openoffice
-	pmd -d src/main/java/org/jabref/gui/openoffice
+#	$(PMD) -d src/main/java/org/jabref/model/openoffice
+#	$(PMD) -d src/main/java/org/jabref/logic/openoffice
+	$(PMD) -d src/main/java/org/jabref/gui/openoffice
