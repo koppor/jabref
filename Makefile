@@ -85,3 +85,8 @@ checkstyle:
 	./gradlew checkstyleMain 2>&1 | sed -e 's|[[]ant[:]checkstyle] [[]ERROR] ||g'
 	./gradlew checkstyletest 2>&1 | sed -e 's|[[]ant[:]checkstyle] [[]ERROR] ||g'
 #
+
+pmd:
+	pmd -d src/main/java/org/jabref/model/openoffice
+	pmd -d src/main/java/org/jabref/logic/openoffice
+	pmd -d src/main/java/org/jabref/gui/openoffice
