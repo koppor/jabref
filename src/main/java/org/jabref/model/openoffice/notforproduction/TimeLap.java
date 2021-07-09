@@ -3,7 +3,11 @@ package org.jabref.model.openoffice.notforproduction;
 /*
  * Measure execution time.
  */
-public class TimeLap {
+public final class TimeLap {
+
+    private TimeLap() {
+        /**/
+    }
 
     /*
      * Usage:
@@ -19,10 +23,11 @@ public class TimeLap {
     }
 
     // return time (nanoSeconds) for next timing
+    @SuppressWarnings("PMD.SystemPrintln")
     public static long now(String label, long startTime) {
         long endTime = System.nanoTime();
         long duration = (endTime - startTime);  // divide by 1000000 to get milliseconds.
-        System.out.printf("%-40s: %10.3f ms\n", label, duration / 1000000.0);
+        System.out.printf("%-40s: %10.3f ms\n", label, duration / 1_000_000.0);
         return endTime;
     }
 }
