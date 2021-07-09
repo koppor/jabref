@@ -24,6 +24,10 @@ class Codec52 {
         // citationType is always "1" "2" or "3"
         Pattern.compile(BIB_CITATION + "(\\d*)_([123])_(.*)");
 
+    private Codec52() {
+        /**/
+    }
+
     /**
      * This is what we get back from parsing a refMarkName.
      */
@@ -47,7 +51,7 @@ class Codec52 {
     /**
      * Integer representation was written into the document in JabRef52, keep it for compatibility.
      */
-    public static CitationType CitationTypeFromInt(int i) {
+    private static CitationType citationTypeFromInt(int i) {
         switch (i) {
         case 1:
             return CitationType.AUTHORYEAR_PAR;
@@ -60,7 +64,7 @@ class Codec52 {
         }
     }
 
-    public static int CitationTypeToInt(CitationType i) {
+    private static int citationTypeToInt(CitationType i) {
         switch (i) {
         case AUTHORYEAR_PAR:
             return 1;
@@ -91,7 +95,7 @@ class Codec52 {
         NoDocumentException {
 
         int i = 0;
-        int citTypeCode = CitationTypeToInt(citationType);
+        int citTypeCode = citationTypeToInt(citationType);
         String name = BIB_CITATION + '_' + citTypeCode + '_' + bibtexKey;
         while (usedNames.contains(name)) {
             name = BIB_CITATION + i + '_' + citTypeCode + '_' + bibtexKey;
@@ -116,7 +120,7 @@ class Codec52 {
         List<String> keys = Arrays.asList(citeMatcher.group(3).split(","));
         String i = citeMatcher.group(1);
         int citTypeCode = Integer.parseInt(citeMatcher.group(2));
-        CitationType citationType = CitationTypeFromInt(citTypeCode);
+        CitationType citationType = citationTypeFromInt(citTypeCode);
         return (Optional.of(new Codec52.ParsedMarkName(i, citationType, keys)));
     }
 
