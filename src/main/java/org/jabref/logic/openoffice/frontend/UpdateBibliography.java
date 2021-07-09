@@ -12,9 +12,6 @@ import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.uno.UnoBookmark;
 import org.jabref.model.openoffice.uno.UnoTextSection;
 
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
@@ -48,11 +45,8 @@ public class UpdateBibliography {
                                              OOBibStyle style,
                                              boolean alwaysAddCitedOnPages)
         throws
-        NoSuchElementException,
         WrappedTargetException,
         CreationException,
-        PropertyVetoException,
-        UnknownPropertyException,
         NoDocumentException {
 
         clearBibTextSectionContent2(doc);
@@ -119,9 +113,6 @@ public class UpdateBibliography {
         CreationException,
         IllegalArgumentException,
         NoDocumentException,
-        NoSuchElementException,
-        PropertyVetoException,
-        UnknownPropertyException,
         WrappedTargetException {
 
         XTextRange sectionRange = getBibliographyRange(doc).orElseThrow(IllegalStateException::new);
@@ -137,7 +128,7 @@ public class UpdateBibliography {
         OOTextIntoOO.write(doc, cursor, bibliographyText);
         cursor.collapseToEnd();
 
-        // remove the inital empty paragraph from the section.
+        // remove the initial empty paragraph from the section.
         sectionRange = getBibliographyRange(doc).orElseThrow(IllegalStateException::new);
         XTextCursor initialParagraph = doc.getText().createTextCursorByRange(sectionRange);
         initialParagraph.collapseToStart();

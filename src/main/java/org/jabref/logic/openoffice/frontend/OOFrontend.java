@@ -35,10 +35,7 @@ import org.jabref.model.openoffice.util.OOVoidResult;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
-import com.sun.star.beans.PropertyExistException;
 import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
@@ -178,8 +175,7 @@ public class OOFrontend {
                                                                 FunctionalTextViewCursor fcursor)
         throws
         WrappedTargetException,
-        NoDocumentException,
-        JabRefException {
+        NoDocumentException {
 
         List<RangeSortable<CitationGroup>> sortables = createVisualSortInput(doc, mapFootnotesToFootnoteMarks);
 
@@ -233,7 +229,6 @@ public class OOFrontend {
         NoDocumentException,
         WrappedTargetException,
         NotRemoveableException,
-        PropertyExistException,
         PropertyVetoException,
         IllegalTypeException {
 
@@ -259,10 +254,7 @@ public class OOFrontend {
         throws
         WrappedTargetException,
         NoDocumentException,
-        NoSuchElementException,
-        NotRemoveableException,
-        PropertyExistException,
-        IllegalTypeException {
+        NotRemoveableException {
 
         backend.removeCitationGroup(cg, doc);
         this.citationGroups.afterRemoveCitationGroup(cg);
@@ -272,10 +264,7 @@ public class OOFrontend {
         throws
         WrappedTargetException,
         NoDocumentException,
-        NoSuchElementException,
-        NotRemoveableException,
-        PropertyExistException,
-        IllegalTypeException {
+        NotRemoveableException {
 
         for (CitationGroup cg : cgs) {
             removeCitationGroup(cg, doc);
@@ -309,8 +298,7 @@ public class OOFrontend {
     public void cleanFillCursorForCitationGroup(XTextDocument doc, CitationGroup cg)
         throws
         NoDocumentException,
-        WrappedTargetException,
-        CreationException {
+        WrappedTargetException {
 
         backend.cleanFillCursorForCitationGroup(cg, doc);
     }
@@ -357,10 +345,7 @@ public class OOFrontend {
         return result;
     }
 
-    public List<RangeForOverlapCheck<CitationGroupId>> viewCursorRanges(XTextDocument doc)
-        throws
-        NoDocumentException,
-        WrappedTargetException {
+    public List<RangeForOverlapCheck<CitationGroupId>> viewCursorRanges(XTextDocument doc) {
 
         List<RangeForOverlapCheck<CitationGroupId>> result = new ArrayList<>();
 
@@ -387,10 +372,7 @@ public class OOFrontend {
      *        ranges.
      */
     public List<RangeForOverlapCheck<CitationGroupId>>
-    footnoteMarkRanges(XTextDocument doc, List<RangeForOverlapCheck<CitationGroupId>> citationRanges)
-        throws
-        NoDocumentException,
-        WrappedTargetException {
+    footnoteMarkRanges(XTextDocument doc, List<RangeForOverlapCheck<CitationGroupId>> citationRanges) {
 
         // We partition by XText and use a single range from
         // each partition to get at the corresponding footnotemark range.
@@ -545,7 +527,6 @@ public class OOFrontend {
      */
     public List<CitationEntry> getCitationEntries(XTextDocument doc)
         throws
-        UnknownPropertyException,
         WrappedTargetException,
         NoDocumentException {
         return this.backend.getCitationEntries(doc, citationGroups);
@@ -553,13 +534,9 @@ public class OOFrontend {
 
     public void applyCitationEntries(XTextDocument doc, List<CitationEntry> citationEntries)
         throws
-        UnknownPropertyException,
-        NotRemoveableException,
-        PropertyExistException,
         PropertyVetoException,
         IllegalTypeException,
         IllegalArgumentException,
-        NoDocumentException,
         WrappedTargetException {
         this.backend.applyCitationEntries(doc, citationEntries);
     }
@@ -567,8 +544,7 @@ public class OOFrontend {
     public void imposeGlobalOrder(XTextDocument doc, FunctionalTextViewCursor fcursor)
         throws
         WrappedTargetException,
-        NoDocumentException,
-        JabRefException {
+        NoDocumentException {
 
         boolean mapFootnotesToFootnoteMarks = true;
         List<CitationGroup> sortedCitationGroups =

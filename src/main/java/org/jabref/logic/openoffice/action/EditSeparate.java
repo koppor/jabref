@@ -2,7 +2,6 @@ package org.jabref.logic.openoffice.action;
 
 import java.util.List;
 
-import org.jabref.logic.JabRefException;
 import org.jabref.logic.openoffice.frontend.OOFrontend;
 import org.jabref.logic.openoffice.frontend.UpdateCitationMarkers;
 import org.jabref.logic.openoffice.style.OOBibStyle;
@@ -17,15 +16,11 @@ import org.jabref.model.openoffice.uno.UnoScreenRefresh;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
-import com.sun.star.beans.PropertyExistException;
 import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
-import com.sun.star.util.InvalidStateException;
 
 public class EditSeparate {
 
@@ -40,14 +35,9 @@ public class EditSeparate {
         throws
         CreationException,
         IllegalTypeException,
-        InvalidStateException,
-        JabRefException,
         NoDocumentException,
-        NoSuchElementException,
         NotRemoveableException,
-        PropertyExistException,
         PropertyVetoException,
-        UnknownPropertyException,
         WrappedTargetException,
         com.sun.star.lang.IllegalArgumentException {
 

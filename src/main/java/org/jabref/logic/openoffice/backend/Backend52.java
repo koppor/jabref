@@ -28,10 +28,7 @@ import org.jabref.model.openoffice.util.OOListUtil;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
-import com.sun.star.beans.PropertyExistException;
 import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
@@ -189,7 +186,6 @@ public class Backend52 {
         NoDocumentException,
         WrappedTargetException,
         NotRemoveableException,
-        PropertyExistException,
         PropertyVetoException,
         IllegalTypeException {
 
@@ -322,11 +318,7 @@ public class Backend52 {
         throws
         WrappedTargetException,
         NoDocumentException,
-        NoSuchElementException,
-        NotRemoveableException,
-        IllegalTypeException,
-        PropertyExistException {
-
+        NotRemoveableException {
         NamedRange namedRange = getNamedRangeOrThrow(cg);
         String refMarkName = namedRange.nrGetRangeName();
         namedRange.nrRemoveFromDocument(doc);
@@ -375,15 +367,13 @@ public class Backend52 {
     public void cleanFillCursorForCitationGroup(CitationGroup cg, XTextDocument doc)
         throws
         NoDocumentException,
-        WrappedTargetException,
-        CreationException {
+        WrappedTargetException {
         NamedRange namedRange = getNamedRangeOrThrow(cg);
         namedRange.nrCleanFillCursor(doc);
     }
 
     public List<CitationEntry> getCitationEntries(XTextDocument doc, CitationGroups cgs)
         throws
-        UnknownPropertyException,
         WrappedTargetException,
         NoDocumentException {
 
@@ -419,13 +409,9 @@ public class Backend52 {
      */
     public void applyCitationEntries(XTextDocument doc, List<CitationEntry> citationEntries)
         throws
-        UnknownPropertyException,
-        NotRemoveableException,
-        PropertyExistException,
         PropertyVetoException,
         IllegalTypeException,
         IllegalArgumentException,
-        NoDocumentException,
         WrappedTargetException {
 
         switch (dataModel) {

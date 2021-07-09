@@ -40,16 +40,13 @@ import org.jabref.model.openoffice.util.OOVoidResult;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
-import com.sun.star.beans.PropertyExistException;
 import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.comp.helper.BootstrapException;
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
-import com.sun.star.util.InvalidStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -263,13 +260,7 @@ class OOBibBase2 {
         final String title = "checkRangeOverlapsWithCursor";
 
         List<RangeForOverlapCheck<CitationGroupId>> userRanges;
-        try {
-            userRanges = fr.viewCursorRanges(doc);
-        } catch (NoDocumentException ex) {
-            return OOVoidResult.error(OOError.from(ex).setTitle(title));
-        } catch (WrappedTargetException ex) {
-            return OOVoidResult.error(OOError.fromMisc(ex).setTitle(title));
-        }
+        userRanges = fr.viewCursorRanges(doc);
 
         boolean requireSeparation = false;
         OOVoidResult<JabRefException> res;
@@ -377,7 +368,6 @@ class OOBibBase2 {
                                                                 String labelInJstyleFile,
                                                                 String pathToStyleFile)
         throws
-        NoSuchElementException,
         WrappedTargetException {
 
         Optional<String> internalName = UnoStyle.getInternalNameOfStyle(doc, familyName, styleName);
@@ -456,8 +446,7 @@ class OOBibBase2 {
                                                           "CitationCharacterFormat",
                                                           pathToStyleFile));
             }
-        } catch (NoSuchElementException
-                 | WrappedTargetException ex) {
+        } catch (WrappedTargetException ex) {
             results.add(OOVoidResult.error(new OOError("Other error in checkStyleExistsInTheDocument",
                                                        ex.getMessage(),
                                                        ex)));
@@ -497,8 +486,7 @@ class OOBibBase2 {
         } catch (DisposedException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
             return FAIL;
-        } catch (UnknownPropertyException
-                 | WrappedTargetException ex) {
+        } catch (WrappedTargetException ex) {
             LOGGER.warn(title, ex);
             OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
             return FAIL;
@@ -548,10 +536,7 @@ class OOBibBase2 {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (DisposedException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
-        } catch (UnknownPropertyException
-                 | NotRemoveableException
-                 | PropertyExistException
-                 | PropertyVetoException
+        } catch (PropertyVetoException
                  | IllegalTypeException
                  | WrappedTargetException
                  | com.sun.star.lang.IllegalArgumentException ex) {
@@ -675,16 +660,10 @@ class OOBibBase2 {
         } catch (DisposedException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
             return;
-        } catch (JabRefException ex) {
-            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
-            return;
         } catch (CreationException
                  | IllegalTypeException
-                 | NoSuchElementException
                  | NotRemoveableException
-                 | PropertyExistException
                  | PropertyVetoException
-                 | UnknownPropertyException
                  | WrappedTargetException ex) {
             LOGGER.warn("Could not insert entry", ex);
             OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
@@ -735,16 +714,10 @@ class OOBibBase2 {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (DisposedException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
-        } catch (JabRefException ex) {
-            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (CreationException
                  | IllegalTypeException
-                 | InvalidStateException
-                 | NoSuchElementException
                  | NotRemoveableException
-                 | PropertyExistException
                  | PropertyVetoException
-                 | UnknownPropertyException
                  | WrappedTargetException
                  | com.sun.star.lang.IllegalArgumentException ex) {
             LOGGER.warn("Problem combining cite markers", ex);
@@ -798,16 +771,10 @@ class OOBibBase2 {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (DisposedException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
-        } catch (JabRefException ex) {
-            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (CreationException
                  | IllegalTypeException
-                 | InvalidStateException
-                 | NoSuchElementException
                  | NotRemoveableException
-                 | PropertyExistException
                  | PropertyVetoException
-                 | UnknownPropertyException
                  | WrappedTargetException
                  | com.sun.star.lang.IllegalArgumentException ex) {
             LOGGER.warn("Problem during separating cite markers", ex);
@@ -882,9 +849,7 @@ class OOBibBase2 {
             OOError.from(ex).showErrorDialog(dialogService);
         } catch (DisposedException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
-        } catch (NoSuchElementException
-                 | UnknownPropertyException
-                 | WrappedTargetException
+        } catch (WrappedTargetException
                  | com.sun.star.lang.IllegalArgumentException ex) {
             LOGGER.warn("Problem generating new database.", ex);
             OOError.fromMisc(ex).setTitle(title).showErrorDialog(dialogService);
@@ -953,16 +918,11 @@ class OOBibBase2 {
                 return;
             }
 
-        } catch (JabRefException ex) {
-            OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (NoDocumentException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (DisposedException ex) {
             OOError.from(ex).setTitle(title).showErrorDialog(dialogService);
         } catch (CreationException
-                 | NoSuchElementException
-                 | PropertyVetoException
-                 | UnknownPropertyException
                  | WrappedTargetException
                  | com.sun.star.lang.IllegalArgumentException ex) {
             LOGGER.warn("Could not update bibliography", ex);

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.jabref.logic.JabRefException;
 import org.jabref.logic.openoffice.frontend.OOFrontend;
 import org.jabref.logic.openoffice.frontend.UpdateCitationMarkers;
 import org.jabref.logic.openoffice.style.OOBibStyle;
@@ -24,10 +23,7 @@ import org.jabref.model.openoffice.util.OOListUtil;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
-import com.sun.star.beans.PropertyExistException;
 import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
@@ -68,16 +64,12 @@ public class EditInsert {
                                            CitationType citationType,
                                            String pageInfo)
         throws
-        UnknownPropertyException,
         NoDocumentException,
         NotRemoveableException,
         WrappedTargetException,
         PropertyVetoException,
-        PropertyExistException,
-        NoSuchElementException,
         CreationException,
-        IllegalTypeException,
-        JabRefException {
+        IllegalTypeException {
 
         List<String> citationKeys = OOListUtil.map(entries, EditInsert::insertEntryGetCitationKey);
 

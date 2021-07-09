@@ -8,7 +8,6 @@ import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.uno.UnoCursor;
 import org.jabref.model.openoffice.uno.UnoReferenceMark;
 
-import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextContent;
@@ -151,8 +150,7 @@ class NamedRangeReferenceMark implements NamedRange {
     public void nrRemoveFromDocument(XTextDocument doc)
         throws
         WrappedTargetException,
-        NoDocumentException,
-        NoSuchElementException {
+        NoDocumentException {
         UnoReferenceMark.removeIfExists(doc, this.nrGetRangeName());
     }
 
@@ -390,8 +388,7 @@ class NamedRangeReferenceMark implements NamedRange {
     public void nrCleanFillCursor(XTextDocument doc)
         throws
         NoDocumentException,
-        WrappedTargetException,
-        CreationException {
+        WrappedTargetException {
 
         // alwaysRemoveBrackets : full compatibility with JabRef 5.2: brackets are temporary, only
         // exist between nrGetFillCursor and nrCleanFillCursor.

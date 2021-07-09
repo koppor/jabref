@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
 
-import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
@@ -45,14 +44,13 @@ public interface NamedRange {
 
     /**
      * Remove brackets, but if the result would become empty, leave them; if the result would be a
-     * single characer, leave the left bracket.
+     * single character, leave the left bracket.
      *
      */
     void nrCleanFillCursor(XTextDocument doc)
         throws
         NoDocumentException,
-        WrappedTargetException,
-        CreationException;
+        WrappedTargetException;
 
     /**
      *  Note: create is in NamedRangeManager
@@ -60,6 +58,5 @@ public interface NamedRange {
     void nrRemoveFromDocument(XTextDocument doc)
         throws
         WrappedTargetException,
-        NoDocumentException,
-        NoSuchElementException;
+        NoDocumentException;
 }

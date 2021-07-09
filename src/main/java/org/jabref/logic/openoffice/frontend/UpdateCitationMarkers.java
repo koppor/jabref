@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.jabref.logic.JabRefException;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.ootext.OOTextIntoOO;
@@ -16,10 +15,7 @@ import org.jabref.model.openoffice.uno.NoDocumentException;
 
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
-import com.sun.star.beans.PropertyExistException;
 import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
@@ -52,12 +48,8 @@ public class UpdateCitationMarkers {
     public static void applyNewCitationMarkers(XTextDocument doc, OOFrontend fr, OOBibStyle style)
         throws
         NoDocumentException,
-        UnknownPropertyException,
         CreationException,
-        WrappedTargetException,
-        PropertyVetoException,
-        NoSuchElementException,
-        JabRefException {
+        WrappedTargetException {
 
         CitationGroups citationGroups = fr.citationGroups;
 
@@ -90,11 +82,8 @@ public class UpdateCitationMarkers {
                                                 OOText citationText,
                                                 boolean withText,
                                                 OOBibStyle style)
-    throws
-        UnknownPropertyException,
-        PropertyVetoException,
+        throws
         WrappedTargetException,
-        NoSuchElementException,
         CreationException,
         IllegalArgumentException {
 
@@ -140,17 +129,13 @@ public class UpdateCitationMarkers {
                                                   OOBibStyle style,
                                                   boolean insertSpaceAfter)
         throws
-        UnknownPropertyException,
         NotRemoveableException,
-        PropertyExistException,
-        PropertyVetoException,
         WrappedTargetException,
         PropertyVetoException,
         IllegalArgumentException,
         CreationException,
         NoDocumentException,
-        IllegalTypeException,
-        NoSuchElementException {
+        IllegalTypeException {
 
         Objects.requireNonNull(pageInfos);
         if (pageInfos.size() != citationKeys.size()) {

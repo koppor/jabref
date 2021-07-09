@@ -147,7 +147,6 @@ public class OOTextIntoOO {
      */
     public static void write(XTextDocument doc, XTextCursor position, OOText ootext)
         throws
-        PropertyVetoException,
         WrappedTargetException,
         CreationException {
 
