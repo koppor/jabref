@@ -100,7 +100,7 @@ public class RangeSortVisual {
         return cursor.getPosition();
     }
 
-    private static int compareTopToBottomLeftToRight(ComparableMark a, ComparableMark b) {
+    private static <T> int compareTopToBottomLeftToRight(ComparableMark<T> a, ComparableMark<T> b) {
 
         if (a.position.Y != b.position.Y) {
             return a.position.Y - b.position.Y;
