@@ -33,6 +33,10 @@ public class UpdateCitationMarkers {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateCitationMarkers.class);
 
+    private UpdateCitationMarkers() {
+        /**/
+    }
+
     /**
      * Visit each reference mark in referenceMarkNames, overwrite its
      * text content.
@@ -162,9 +166,9 @@ public class UpdateCitationMarkers {
         final boolean withText = citationType.withText();
 
         if (withText) {
-            XTextCursor c2 = fr.getFillCursorForCitationGroup(doc, cg);
+            XTextCursor fillCursor = fr.getFillCursorForCitationGroup(doc, cg);
 
-            UpdateCitationMarkers.fillCitationMarkInCursor(doc, c2, citationText, withText, style);
+            UpdateCitationMarkers.fillCitationMarkInCursor(doc, fillCursor, citationText, withText, style);
 
             fr.cleanFillCursorForCitationGroup(doc, cg);
         }

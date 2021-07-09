@@ -28,12 +28,15 @@ public class UpdateBibliography {
     private static final String BIB_SECTION_NAME = "JR_bib";
     private static final String BIB_SECTION_END_NAME = "JR_bib_end";
 
+    private UpdateBibliography() {
+        /**/
+    }
+
     public static Optional<XTextRange> getBibliographyRange(XTextDocument doc)
         throws
         NoDocumentException,
         WrappedTargetException {
-        Optional<XTextRange> sectionRange = UnoTextSection.getAnchor(doc, BIB_SECTION_NAME);
-        return sectionRange;
+        return UnoTextSection.getAnchor(doc, BIB_SECTION_NAME);
     }
 
     /**

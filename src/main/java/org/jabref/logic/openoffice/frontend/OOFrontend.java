@@ -43,11 +43,9 @@ import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OOFrontend {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OOFrontend.class);
+
     public final Backend52 backend;
     public final CitationGroups citationGroups;
 
@@ -86,8 +84,7 @@ public class OOFrontend {
         NoDocumentException {
 
         Map<CitationGroupId, CitationGroup> citationGroups = new HashMap<>();
-        for (int i = 0; i < citationGroupNames.size(); i++) {
-            final String name = citationGroupNames.get(i);
+        for (String name : citationGroupNames) {
             CitationGroup cg = backend.readCitationGroupFromDocumentOrThrow(doc, name);
             citationGroups.put(cg.cgid, cg);
         }
@@ -150,9 +147,7 @@ public class OOFrontend {
         for (List<RangeSortEntry<CitationGroup>> partition : partitions.getPartitions()) {
 
             int indexInPartition = 0;
-            for (int i = 0; i < partition.size(); i++) {
-                RangeSortEntry<CitationGroup> sortable = partition.get(i);
-                XTextRange aRange = sortable.getRange();
+            for (RangeSortEntry<CitationGroup> sortable : partition) {
                 sortable.setIndexInPosition(indexInPartition++);
                 if (mapFootnotesToFootnoteMarks) {
                     Optional<XTextRange> footnoteMarkRange =
@@ -190,11 +185,9 @@ public class OOFrontend {
 
         List<RangeSortable<CitationGroup>> sorted = RangeSortVisual.visualSort(sortables, doc, fcursor);
 
-        List<CitationGroup> result = (sorted.stream()
-                                      .map(RangeSortable<CitationGroup>::getContent)
-                                      .collect(Collectors.toList()));
-
-        return result;
+        return (sorted.stream()
+                .map(RangeSortable<CitationGroup>::getContent)
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -432,7 +425,7 @@ public class OOFrontend {
 
     static String rangeOverlapsToMessage(List<RangeOverlap<RangeForOverlapCheck<CitationGroupId>>> overlaps) {
 
-        if (overlaps.size() == 0) {
+        if (overlaps.isEmpty()) {
             return "(*no overlaps*)";
         }
 
@@ -483,7 +476,7 @@ public class OOFrontend {
                                           ranges,
                                           requireSeparation);
 
-        if (overlaps.size() == 0) {
+        if (overlaps.isEmpty()) {
             return OOVoidResult.ok();
         }
         return OOVoidResult.error(new JabRefException("Found overlapping or touching ranges",
@@ -513,7 +506,7 @@ public class OOFrontend {
         List<RangeOverlap<RangeForOverlapCheck<CitationGroupId>>> overlaps =
             RangeOverlapWithin.findOverlappingRanges(doc, ranges, requireSeparation, reportAtMost);
 
-        if (overlaps.size() == 0) {
+        if (overlaps.isEmpty()) {
             return OOVoidResult.ok();
         }
         return OOVoidResult.error(new JabRefException("Found overlapping or touching ranges",
