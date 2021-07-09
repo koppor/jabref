@@ -26,7 +26,7 @@ public class RangeSort {
      * {@code TreeMap<RangeHolder>} or {@code Set<RangeHolder>}
      *
      */
-    public static class HolderComparatorWithinPartition implements Comparator<RangeHolder> {
+    private static class HolderComparatorWithinPartition implements Comparator<RangeHolder> {
 
         private final XTextRangeCompare cmp;
 
