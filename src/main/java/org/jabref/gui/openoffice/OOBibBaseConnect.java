@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 class OOBibBaseConnect {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OOBibBaseConnect.class);
-
     /* variables  */
     private final DialogService dialogService;
     private final XDesktop xDesktop;
