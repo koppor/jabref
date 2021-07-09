@@ -31,12 +31,12 @@ import com.sun.star.container.NoSuchElementException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EditInsert {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EditInsert.class);
+    private EditInsert() {
+        /**/
+    }
 
     /**
      * In insertEntry we receive BibEntry values from the GUI.

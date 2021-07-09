@@ -253,11 +253,7 @@ public class EditMerge {
             }
         }
 
-        if (!couldExpand) {
-            return false;
-        }
-
-        return true;
+        return couldExpand;
     }
 
     /**

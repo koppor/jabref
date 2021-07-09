@@ -20,6 +20,10 @@ import com.sun.star.text.XTextDocument;
 
 public class ExportCited {
 
+    private ExportCited() {
+        /**/
+    }
+
     public static class GenerateDatabaseResult {
         /**
          * null: not done; isEmpty: no unresolved

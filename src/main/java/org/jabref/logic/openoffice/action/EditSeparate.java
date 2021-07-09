@@ -29,6 +29,10 @@ import com.sun.star.util.InvalidStateException;
 
 public class EditSeparate {
 
+    private EditSeparate() {
+        /**/
+    }
+
     public static boolean separateCitations(XTextDocument doc,
                                             OOFrontend fr,
                                             List<BibDatabase> databases,

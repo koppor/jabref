@@ -16,6 +16,10 @@ import com.sun.star.text.XTextDocument;
 
 public class ManageCitations {
 
+    private ManageCitations() {
+        /**/
+    }
+
     public static List<CitationEntry> getCitationEntries(XTextDocument doc)
         throws
         NoDocumentException,

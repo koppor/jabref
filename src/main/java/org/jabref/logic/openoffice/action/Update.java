@@ -25,6 +25,10 @@ import com.sun.star.text.XTextDocument;
  */
 public class Update {
 
+    private Update() {
+        /**/
+    }
+
     /**
      * @return the list of unresolved citation keys
      */
@@ -64,8 +68,8 @@ public class Update {
                                                          style,
                                                          alwaysAddCitedOnPages);
             }
-            List<String> result = fr.citationGroups.getUnresolvedKeys();
-            return result;
+
+            return fr.citationGroups.getUnresolvedKeys();
         } finally {
             if (useLockControllers && UnoScreenRefresh.hasControllersLocked(doc)) {
                 UnoScreenRefresh.unlockControllers(doc);
