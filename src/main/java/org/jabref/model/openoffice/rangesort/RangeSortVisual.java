@@ -1,7 +1,6 @@
 package org.jabref.model.openoffice.rangesort;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.jabref.model.openoffice.uno.UnoScreenRefresh;
@@ -63,7 +62,7 @@ public class RangeSortVisual {
                                          input.getIndexInPosition(),
                                          input));
         }
-        Collections.sort(comparableMarks, RangeSortVisual::compareTopToBottomLeftToRight);
+        comparableMarks.sort(RangeSortVisual::compareTopToBottomLeftToRight);
 
         // collect ordered result
         List<RangeSortable<T>> result = new ArrayList<>(comparableMarks.size());
