@@ -110,7 +110,7 @@ public class RangeSortVisual {
         }
         return a.indexInPosition - b.indexInPosition;
     }
-    
+
     /**
      * A reference mark name paired with its visual position.
      *

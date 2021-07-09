@@ -65,7 +65,7 @@ public class UnoTextRange {
         return (-1) * compare.compareRegionEnds(a, b);
     }
 
-    /*
+    /**
      * Assumes a and b belong to the same XText as compare.
      */
     public static int compareStartsThenEndsUnsafe(XTextRangeCompare compare, XTextRange a, XTextRange b) {
