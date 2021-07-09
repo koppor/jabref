@@ -26,6 +26,10 @@ public class RangeSortVisual {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RangeSortVisual.class);
 
+    private RangeSortVisual() {
+        /**/
+    }
+
     /**
      * Sort the input {@code inputs} visually.
      *
@@ -37,8 +41,6 @@ public class RangeSortVisual {
                                                         XTextDocument doc,
                                                         FunctionalTextViewCursor fcursor) {
 
-        final int inputSize = inputs.size();
-
         if (UnoScreenRefresh.hasControllersLocked(doc)) {
             final String msg = "visualSort: with ControllersLocked, viewCursor.gotoRange is probably useless";
             LOGGER.warn(msg);
@@ -46,6 +48,8 @@ public class RangeSortVisual {
         }
 
         XTextViewCursor viewCursor = fcursor.getViewCursor();
+
+        final int inputSize = inputs.size();
 
         // find coordinates
         List<Point> positions = new ArrayList<>(inputSize);

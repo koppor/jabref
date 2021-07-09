@@ -18,6 +18,10 @@ import com.sun.star.text.XTextRangeCompare;
  */
 public class RangeSort {
 
+    private RangeSort() {
+        /**/
+    }
+
     /**
      * Compare two RangeHolders (using RangeHolder.getRange()) within an XText.
      *
@@ -69,7 +73,7 @@ public class RangeSort {
 
         public void add(V holder) {
             XText partitionKey = holder.getRange().getText();
-            List<V> partition = partitions.computeIfAbsent(partitionKey, _key -> new ArrayList<>());
+            List<V> partition = partitions.computeIfAbsent(partitionKey, unused -> new ArrayList<>());
             partition.add(holder);
         }
 
