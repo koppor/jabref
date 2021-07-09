@@ -112,29 +112,29 @@ public class OOTextIntoOO {
      *
      * - new tags:
      *
-     *   - &lt;span lang="zxx"&gt;
+     *   - {@code <span lang="zxx">}
      *     - earlier was applied from code
      *
-     *   - &lt;span oo:CharStyleName="CharStylename"&gt;
+     *   - {@code <span oo:CharStyleName="CharStylename">}
      *     - earlier was applied from code, for "CitationCharacterFormat"
      *
-     *   - &lt;p&gt; start new paragraph
+     *   - {@code <p>} start new paragraph
      *     - earlier was applied from code
      *
-     *   - &lt;p oo:ParaStyleName="ParStyleName"&gt; : start new paragraph and apply ParStyleName
+     *   - {@code <p oo:ParaStyleName="ParStyleName">} : start new paragraph and apply ParStyleName
      *     - earlier was applied from code
      *
-     *   - &lt;tt&gt;
+     *   - {@code <tt>}
      *     - earlier: known, but ignored
-     *     - now: equivalent to &lt;span oo:CharStyleName="Example"&gt;
-     *   - &lt;oo:referenceToPageNumberOfReferenceMark&gt; (self-closing)
+     *     - now: equivalent to {@code <span oo:CharStyleName="Example">}
+     *   - {@code <oo:referenceToPageNumberOfReferenceMark>} (self-closing)
      *
      * - closing tags try to properly restore state (in particular, the "not directly set" state)
      *   instead of dictating an "off" state. This makes a difference when the value inherited from
      *   another level (for example the paragraph) is not the "off" state.
      *
      *   An example: a style with
-     *   ReferenceParagraphFormat="JR_bibentry"
+     *   {@code ReferenceParagraphFormat="JR_bibentry"}
      *   Assume JR_bibentry in LibreOffice is a paragraph style that prescribes "bold" font.
      *   LAYOUT only prescribes bold around year.
      *   Which parts of the bibliography entries should come out as bold?

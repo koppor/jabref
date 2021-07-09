@@ -38,7 +38,7 @@ public class UnoTextRange {
     /**
      * @return follows java conventions
      *
-     * 1 if  (a &gt; b); (-1) if (a &lt; b)
+     * 1 if  {@code (a > b)}; (-1) if {@code (a < b)}
      */
     public static int compareStartsUnsafe(XTextRangeCompare compare, XTextRange a, XTextRange b) {
         return (-1) * compare.compareRegionStarts(a, b);
@@ -55,7 +55,7 @@ public class UnoTextRange {
     /**
      * @return follows java conventions
      *
-     * 1 if  (a &gt; b); (-1) if (a &lt; b)
+     * 1 if  {@code (a > b)}; (-1) if {@code (a < b)}
      */
     public static int compareEnds(XTextRange a, XTextRange b) {
         if (!comparables(a, b)) {

@@ -23,7 +23,7 @@ public class RangeSort {
      *
      * Note: since we only look at the ranges, this comparison is generally not consistent with
      * `equals` on the RangeHolders. Probably should not be used for key comparison in
-     * TreeMap&lt;RangeHolder&gt; or Set&lt;RangeHolder&gt;
+     * {@code TreeMap<RangeHolder>} or {@code Set<RangeHolder>}
      *
      */
     public static class HolderComparatorWithinPartition implements Comparator<RangeHolder> {
