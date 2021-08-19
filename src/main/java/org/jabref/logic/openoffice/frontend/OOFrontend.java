@@ -418,9 +418,9 @@ public class OOFrontend {
                                    .collect(Collectors.joining(", ")));
             msg.append(
                 switch (overlap.kind) {
-                case EQUAL_RANGE -> Localization.lang("Found identical ranges");
-                case OVERLAP -> Localization.lang("Found overlapping ranges");
-                case TOUCH -> Localization.lang("Found touching ranges");
+                    case EQUAL_RANGE -> Localization.lang("Found identical ranges");
+                    case OVERLAP -> Localization.lang("Found overlapping ranges");
+                    case TOUCH -> Localization.lang("Found touching ranges");
                 });
             msg.append(": ");
             msg.append(listOfRanges);
