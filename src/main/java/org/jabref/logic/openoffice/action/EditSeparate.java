@@ -55,19 +55,19 @@ public class EditSeparate {
         try {
             UnoScreenRefresh.lockControllers(doc);
 
-            for (CitationGroup cg : cgs) {
+            for (CitationGroup group : cgs) {
 
                 XTextRange range1 = (fr
-                                     .getMarkRange(doc, cg)
+                                     .getMarkRange(doc, group)
                                      .orElseThrow(IllegalStateException::new));
                 XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
 
-                List<Citation> cits = cg.citationsInStorageOrder;
+                List<Citation> cits = group.citationsInStorageOrder;
                 if (cits.size() <= 1) {
                     continue;
                 }
 
-                fr.removeCitationGroup(cg, doc);
+                fr.removeCitationGroup(group, doc);
                 // Now we own the content of cits
 
                 // Create a citation group for each citation.
@@ -80,7 +80,7 @@ public class EditSeparate {
                                                                      doc,
                                                                      List.of(cit.citationKey),
                                                                      List.of(cit.getPageInfo()),
-                                                                     cg.citationType,
+                                                                     group.citationType,
                                                                      OOText.fromString(cit.citationKey),
                                                                      textCursor,
                                                                      style,

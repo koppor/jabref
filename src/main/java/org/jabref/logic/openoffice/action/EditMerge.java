@@ -62,7 +62,7 @@ public class EditMerge {
                 List<CitationGroup> cgs = joinableGroupData.group;
 
                 List<Citation> newCitations = (cgs.stream()
-                                               .flatMap(cg -> cg.citationsInStorageOrder.stream())
+                                               .flatMap(group -> group.citationsInStorageOrder.stream())
                                                .collect(Collectors.toList()));
 
                 CitationType citationType = cgs.get(0).citationType;
@@ -145,15 +145,15 @@ public class EditMerge {
     }
 
     /**
-     * Decide if cg could be added to state.currentGroup
+     * Decide if group could be added to state.currentGroup
      *
-     * @param cg The CitationGroup to test
-     * @param currentRange The XTextRange corresponding to cg.
+     * @param group The CitationGroup to test
+     * @param currentRange The XTextRange corresponding to group.
      *
      * @return false if cannot add, true if can.  If returned true, then state.cursorBetween and
      *  state.currentGroupCursor are expanded to end at the start of currentRange.
      */
-    private static boolean checkAddToGroup(ScanState state, CitationGroup cg, XTextRange currentRange) {
+    private static boolean checkAddToGroup(ScanState state, CitationGroup group, XTextRange currentRange) {
 
         if (state.currentGroup.isEmpty()) {
             return false;
@@ -165,14 +165,14 @@ public class EditMerge {
         Objects.requireNonNull(state.prevRange);
 
         // Only combine (Author 2000) type citations
-        if (cg.citationType != CitationType.AUTHORYEAR_PAR) {
+        if (group.citationType != CitationType.AUTHORYEAR_PAR) {
             return false;
         }
 
         if (state.prev != null) {
 
             // Even if we combine AUTHORYEAR_INTEXT citations, we would not mix them with AUTHORYEAR_PAR
-            if (cg.citationType != state.prev.citationType) {
+            if (group.citationType != state.prev.citationType) {
                 return false;
             }
 
@@ -247,12 +247,12 @@ public class EditMerge {
     }
 
     /**
-     * Add cg to state.currentGroup
+     * Add group to state.currentGroup
      * Set state.cursorBetween to start at currentRange.getEnd()
      * Expand state.currentGroupCursor to also cover currentRange
-     * Set state.prev to cg, state.prevRange to currentRange
+     * Set state.prev to group, state.prevRange to currentRange
      */
-    private static void addToCurrentGroup(ScanState state, CitationGroup cg, XTextRange currentRange) {
+    private static void addToCurrentGroup(ScanState state, CitationGroup group, XTextRange currentRange) {
         final boolean isNewGroup = state.currentGroup.isEmpty();
         if (!isNewGroup) {
             Objects.requireNonNull(state.currentGroupCursor);
@@ -262,7 +262,7 @@ public class EditMerge {
         }
 
         // Add the current entry to a group.
-        state.currentGroup.add(cg);
+        state.currentGroup.add(group);
 
         // Set up cursorBetween to start at currentRange.getEnd()
         XTextRange rangeEnd = currentRange.getEnd();
@@ -283,7 +283,7 @@ public class EditMerge {
         }
 
         /* Store data about last entry in currentGroup */
-        state.prev = cg;
+        state.prev = group;
         state.prevRange = currentRange;
     }
 
@@ -303,22 +303,22 @@ public class EditMerge {
 
         ScanState state = new ScanState();
 
-        for (CitationGroup cg : cgs) {
+        for (CitationGroup group : cgs) {
 
-            XTextRange currentRange = (fr.getMarkRange(doc, cg)
+            XTextRange currentRange = (fr.getMarkRange(doc, group)
                                        .orElseThrow(IllegalStateException::new));
 
             /*
-             * Decide if we add cg to the group. False when the group is empty.
+             * Decide if we add group to the group. False when the group is empty.
              */
-            boolean addToGroup = checkAddToGroup(state, cg, currentRange);
+            boolean addToGroup = checkAddToGroup(state, group, currentRange);
 
             /*
              * Even if we do not add it to an existing group, we might use it to start a new group.
              *
              * Can it start a new group?
              */
-            boolean canStartGroup = (cg.citationType == CitationType.AUTHORYEAR_PAR);
+            boolean canStartGroup = (group.citationType == CitationType.AUTHORYEAR_PAR);
 
             if (!addToGroup) {
                 // close currentGroup
@@ -330,7 +330,7 @@ public class EditMerge {
             }
 
             if (addToGroup || canStartGroup) {
-                addToCurrentGroup(state, cg, currentRange);
+                addToCurrentGroup(state, group, currentRange);
             }
         }
 

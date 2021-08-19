@@ -53,24 +53,24 @@ public class UpdateCitationMarkers {
 
         CitationGroups citationGroups = fr.citationGroups;
 
-        for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
+        for (CitationGroup group : citationGroups.getCitationGroupsUnordered()) {
 
-            boolean withText = (cg.citationType != CitationType.INVISIBLE_CIT);
-            Optional<OOText> marker = cg.getCitationMarker();
+            boolean withText = (group.citationType != CitationType.INVISIBLE_CIT);
+            Optional<OOText> marker = group.getCitationMarker();
 
             if (!marker.isPresent()) {
                 LOGGER.warn("applyNewCitationMarkers: no marker for {}",
-                            cg.groupId.citationGroupIdAsString());
+                            group.groupId.citationGroupIdAsString());
                 continue;
             }
 
             if (withText && marker.isPresent()) {
 
-                XTextCursor cursor = fr.getFillCursorForCitationGroup(doc, cg);
+                XTextCursor cursor = fr.getFillCursorForCitationGroup(doc, group);
 
                 fillCitationMarkInCursor(doc, cursor, marker.get(), withText, style);
 
-                fr.cleanFillCursorForCitationGroup(doc, cg);
+                fr.cleanFillCursorForCitationGroup(doc, group);
             }
 
         }
@@ -140,21 +140,21 @@ public class UpdateCitationMarkers {
         if (pageInfos.size() != citationKeys.size()) {
             throw new IllegalArgumentException("pageInfos.size != citationKeys.size");
         }
-        CitationGroup cg = fr.createCitationGroup(doc,
-                                                  citationKeys,
-                                                  pageInfos,
-                                                  citationType,
-                                                  position,
-                                                  insertSpaceAfter);
+        CitationGroup group = fr.createCitationGroup(doc,
+                                                     citationKeys,
+                                                     pageInfos,
+                                                     citationType,
+                                                     position,
+                                                     insertSpaceAfter);
 
         final boolean withText = citationType.withText();
 
         if (withText) {
-            XTextCursor fillCursor = fr.getFillCursorForCitationGroup(doc, cg);
+            XTextCursor fillCursor = fr.getFillCursorForCitationGroup(doc, group);
 
             UpdateCitationMarkers.fillCitationMarkInCursor(doc, fillCursor, citationText, withText, style);
 
-            fr.cleanFillCursorForCitationGroup(doc, cg);
+            fr.cleanFillCursorForCitationGroup(doc, group);
         }
         position.collapseToEnd();
     }
