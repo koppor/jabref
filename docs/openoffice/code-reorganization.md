@@ -69,7 +69,7 @@ At the core,
   - each may have a `pageInfo`
 - A citation group (`CitationGroup`) has
   - a list of citations (`citationsInStorageOrder`)
-  - an identifier `CitationGroupId cgid`
+  - an identifier `CitationGroupId groupId`
     - this allows to refer to the group
     - also used to associate the group to its citation markers location (outside the style part,
     in [Backend](https://github.com/antalk2/jabref/blob/fed0952cbdaf7a76bcb09b3db5ac48f34f5ca388/src/main/java/org/jabref/logic/openoffice/backend/Backend52.java#L46))

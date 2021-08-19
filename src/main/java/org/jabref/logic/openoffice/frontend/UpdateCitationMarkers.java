@@ -60,7 +60,7 @@ public class UpdateCitationMarkers {
 
             if (!marker.isPresent()) {
                 LOGGER.warn("applyNewCitationMarkers: no marker for {}",
-                            cg.cgid.citationGroupIdAsString());
+                            cg.groupId.citationGroupIdAsString());
                 continue;
             }
 

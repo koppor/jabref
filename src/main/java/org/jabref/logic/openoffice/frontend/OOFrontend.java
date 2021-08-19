@@ -83,7 +83,7 @@ public class OOFrontend {
         Map<CitationGroupId, CitationGroup> citationGroups = new HashMap<>();
         for (String name : citationGroupNames) {
             CitationGroup cg = backend.readCitationGroupFromDocumentOrThrow(doc, name);
-            citationGroups.put(cg.cgid, cg);
+            citationGroups.put(cg.groupId, cg);
         }
         return citationGroups;
     }
@@ -318,9 +318,9 @@ public class OOFrontend {
 
         for (CitationGroup cg : citationGroups.getCitationGroupsUnordered()) {
             XTextRange range = this.getMarkRange(doc, cg).orElseThrow(IllegalStateException::new);
-            String description = cg.cgid.citationGroupIdAsString();
+            String description = cg.groupId.citationGroupIdAsString();
             result.add(new RangeForOverlapCheck<>(range,
-                                                  cg.cgid,
+                                                  cg.groupId,
                                                   RangeForOverlapCheck.REFERENCE_MARK_KIND,
                                                   description));
         }
@@ -549,7 +549,7 @@ public class OOFrontend {
         boolean mapFootnotesToFootnoteMarks = true;
         List<CitationGroup> sortedCitationGroups =
             getVisuallySortedCitationGroups(doc, mapFootnotesToFootnoteMarks, fcursor);
-        List<CitationGroupId> sortedCitationGroupIds = OOListUtil.map(sortedCitationGroups, cg -> cg.cgid);
+        List<CitationGroupId> sortedCitationGroupIds = OOListUtil.map(sortedCitationGroups, cg -> cg.groupId);
         citationGroups.setGlobalOrder(sortedCitationGroupIds);
     }
 }
