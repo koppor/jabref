@@ -368,18 +368,18 @@ class OOBibBase2 {
         if (internalName.isEmpty()) {
             String msg =
                 switch (familyName) {
-                case UnoStyle.PARAGRAPH_STYLES ->
-                Localization.lang("The %0 paragraph style '%1' is missing from the document",
-                                  labelInJstyleFile,
-                                  styleName);
-                case UnoStyle.CHARACTER_STYLES ->
-                Localization.lang("The %0 character style '%1' is missing from the document",
-                                  labelInJstyleFile,
-                                  styleName);
-                default ->
-                throw new IllegalArgumentException("Expected " + UnoStyle.CHARACTER_STYLES
-                                                   + " or " + UnoStyle.PARAGRAPH_STYLES
-                                                   + " for familyName");
+                    case UnoStyle.PARAGRAPH_STYLES ->
+                        Localization.lang("The %0 paragraph style '%1' is missing from the document",
+                                          labelInJstyleFile,
+                                          styleName);
+                    case UnoStyle.CHARACTER_STYLES ->
+                        Localization.lang("The %0 character style '%1' is missing from the document",
+                                          labelInJstyleFile,
+                                          styleName);
+                    default ->
+                        throw new IllegalArgumentException("Expected " + UnoStyle.CHARACTER_STYLES
+                                                           + " or " + UnoStyle.PARAGRAPH_STYLES
+                                                           + " for familyName");
                 }
                 + "\n"
                 + Localization.lang("Please create it in the document or change in the file:")
@@ -391,20 +391,20 @@ class OOBibBase2 {
         if (!internalName.get().equals(styleName)) {
             String msg =
                 switch (familyName) {
-                case UnoStyle.PARAGRAPH_STYLES ->
-                Localization.lang("The %0 paragraph style '%1' is a display name for '%2'.",
-                                  labelInJstyleFile,
-                                  styleName,
-                                  internalName.get());
-                case UnoStyle.CHARACTER_STYLES ->
-                Localization.lang("The %0 character style '%1' is a display name for '%2'.",
-                                  labelInJstyleFile,
-                                  styleName,
-                                  internalName.get());
-                default ->
-                throw new IllegalArgumentException("Expected " + UnoStyle.CHARACTER_STYLES
-                                                   + " or " + UnoStyle.PARAGRAPH_STYLES
-                                                   + " for familyName");
+                    case UnoStyle.PARAGRAPH_STYLES ->
+                        Localization.lang("The %0 paragraph style '%1' is a display name for '%2'.",
+                                          labelInJstyleFile,
+                                          styleName,
+                                          internalName.get());
+                    case UnoStyle.CHARACTER_STYLES ->
+                        Localization.lang("The %0 character style '%1' is a display name for '%2'.",
+                                          labelInJstyleFile,
+                                          styleName,
+                                          internalName.get());
+                    default ->
+                        throw new IllegalArgumentException("Expected " + UnoStyle.CHARACTER_STYLES
+                                                           + " or " + UnoStyle.PARAGRAPH_STYLES
+                                                           + " for familyName");
                 }
                 + "\n"
                 + Localization.lang("Please use the latter in the style file below"
