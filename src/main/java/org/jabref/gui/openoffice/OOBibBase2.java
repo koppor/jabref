@@ -588,8 +588,8 @@ class OOBibBase2 {
         }
         XTextDocument doc = odoc.get();
 
-        OOResult<OOFrontend, OOError> ofr = getFrontend(doc);
-        if (testDialog(title, ofr.asVoidResult())) {
+        OOResult<OOFrontend, OOError> frontend = getFrontend(doc);
+        if (testDialog(title, frontend.asVoidResult())) {
             return;
         }
 
@@ -598,7 +598,7 @@ class OOBibBase2 {
             return;
         }
 
-        if (testDialog(title, checkRangeOverlapsWithCursor(doc, ofr.get()))) {
+        if (testDialog(title, checkRangeOverlapsWithCursor(doc, frontend.get()))) {
             return;
         }
 
@@ -634,7 +634,7 @@ class OOBibBase2 {
             UnoUndo.enterUndoContext(doc, "Insert citation");
 
             EditInsert.insertCitationGroup(doc,
-                                           frontend,
+                                           frontend.get(),
                                            cursor.get(),
                                            entries,
                                            database,
