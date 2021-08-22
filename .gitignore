@@ -70,6 +70,10 @@ local.properties
 .loadpath
 .recommenders
 
+# config/emacs/lsp-java/Makefile will create a symlink named .settings
+# Also exclude that, for consistency.
+.settings
+
 # External tool builders
 .externalToolBuilders/
 
