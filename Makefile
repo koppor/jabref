@@ -92,4 +92,22 @@ PMD = pmd -f text -R ../tools/pmd/pmd-java-rules.xml -cache /tmp/pmd-jabref-cach
 pmd:
 #	$(PMD) -d src/main/java/org/jabref/model/openoffice
 #	$(PMD) -d src/main/java/org/jabref/logic/openoffice
-	$(PMD) -d src/main/java/org/jabref/gui/openoffice
+#
+#
+# - Ignore problems in old files (OOBibBase, Bootstrap, DetectOpenOfficeInstallation).
+# - Ignore @FXML initalize UnusedPrivateMethod
+#
+# - Ignore IdenticalCatchBranches : PMD seems to ignore that textually
+#   identical branches can lead to different code based on type of the
+#   exception.
+#
+#
+	$(PMD) -d src/main/java/org/jabref/gui/openoffice \
+	| egrep -v 'src/main/java/org/jabref/gui/openoffice/OOBibBase.java' \
+	| egrep -v 'src/main/java/org/jabref/gui/openoffice/Bootstrap.java' \
+	| egrep -v 'src/main/java/org/jabref/gui/openoffice/DetectOpenOfficeInstallation.java' \
+	| egrep -v 'src/main/java/org/jabref/gui/openoffice/ManageCitationsDialogView.java' \
+	| egrep -v "UnusedPrivateMethod.*initialize" \
+	| egrep -v '\sIdenticalCatchBranches:\s' \
+
+
