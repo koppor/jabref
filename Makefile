@@ -95,19 +95,37 @@ pmd:
 #
 #
 # - Ignore problems in old files (OOBibBase, Bootstrap, DetectOpenOfficeInstallation).
-# - Ignore @FXML initalize UnusedPrivateMethod
+# - Ignore UnusedPrivateMethod for @FXML initalize / addStyleFile
 #
 # - Ignore IdenticalCatchBranches : PMD seems to ignore that textually
 #   identical branches can lead to different code based on type of the
 #   exception.
 #
+# - Ignore some warnings in OOBibStyle.java for old stuff to be removed
 #
-	$(PMD) -d src/main/java/org/jabref/gui/openoffice \
+	$(PMD) -d src/main/java/org/jabref/logic/openoffice \
 	| egrep -v 'src/main/java/org/jabref/gui/openoffice/OOBibBase.java' \
 	| egrep -v 'src/main/java/org/jabref/gui/openoffice/Bootstrap.java' \
 	| egrep -v 'src/main/java/org/jabref/gui/openoffice/DetectOpenOfficeInstallation.java' \
 	| egrep -v 'src/main/java/org/jabref/gui/openoffice/ManageCitationsDialogView.java' \
+	| egrep -v 'src/main/java/org/jabref/gui/openoffice/OpenOfficePanel.java' \
+	| egrep -v 'src/main/java/org/jabref/logic/openoffice/OpenOfficePreferences.java' \
+	| egrep -v 'src/main/java/org/jabref/logic/openoffice/style/OOPreFormatter.java' \
 	| egrep -v "UnusedPrivateMethod.*initialize" \
+	| egrep -v 'UnusedPrivateMethod:.*addStyleFile' \
 	| egrep -v '\sIdenticalCatchBranches:\s' \
+	| egrep -v '\sPreserveStackTrace:\s' \
+	| egrep -v '\sUseUtilityClass:\s' \
+	| egrep -v 'ShortVariable:	Avoid variables with short names like (a|b|db|aa|bb)$$' \
+	| egrep -v 'model/openoffice/style/CitedKeys.java:.*LooseCoupling:.*Avoid.*LinkedHashMap' \
+	| egrep -v 'OOBibStyle.java.*names like (i1|al|to|j)$$' \
+	| egrep -v 'OOBibStyle.java.*UseVarargs:' \
+	| egrep -v 'OOBibStyleGetCitationMarker.java.*PrematureDeclaration:' \
+	| egrep -v 'OOBibStyleGetCitationMarker.java.*SimplifiedTernary:' \
+	| egrep -v 'OOBibStyleGetCitationMarker.java.*ShortVariable:.*like (j)$$' \
+	| egrep -v 'OOBibStyleGetNumCitationMarker.java.*ShortVariable:.*like (na|nb)$$' \
+	| egrep -v 'OOBibStyleGetNumCitationMarker.java.*(PrematureDeclaration|EmptyIfStmt):' \
+	| egrep -v 'NamedRangeReferenceMark.java.*PrematureDeclaration:' \
+	| egrep -v 'OOFormatBibliography.java.*(EmptyIfStmt|PrematureDeclaration):'
 
 
