@@ -63,6 +63,7 @@ open module org.jabref {
     requires commons.logging;
     requires com.google.common;
     requires javax.inject;
+    requires dagger;
     requires org.apache.pdfbox;
     requires reactfx;
     requires commons.cli;
