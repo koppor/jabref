@@ -307,3 +307,11 @@ As a workaround, you can remove all local openjfx artifacts by deleting the whol
 In case of a NPE at `Files.copy` at `org.jabref.logic.journals.JournalAbbreviationLoader.loadRepository(JournalAbbreviationLoader.java:30) ~[classes/:?]`,
 invalidate caches and restart IntelliJ.
 Then, Build -> Rebuild Project.
+
+If that does not help:
+
+1. Save/Commit all your work
+2. Close IntelliJ
+3. Delete all non-versioned items: `git clean -xdf`. This really destroys data
+4. Execute `./gradlew run`
+5. Start IntelliJ and try again.
