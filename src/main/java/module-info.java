@@ -62,7 +62,7 @@ open module org.jabref {
     // Other modules
     requires commons.logging;
     requires com.google.common;
-    requires jakarta.inject;
+    requires javax.inject;
     requires org.apache.pdfbox;
     requires reactfx;
     requires commons.cli;
