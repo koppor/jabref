@@ -64,6 +64,13 @@ License: Apache-2.0
 ```
 
 ```yaml
+Id:      com.google.dagger:dagger
+Project: Dagger
+URL:     https://dagger.dev/
+License: Apache-2.0
+```
+
+```yaml
 Id:      com.google.guava:failureaccess
 Project: Google Guava
 URL:     https://github.com/google/guava
