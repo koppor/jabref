@@ -119,6 +119,8 @@ To prepare IntelliJ's build system two additional steps are required:
    --add-exports=org.controlsfx.controls/impl.org.controlsfx.skin=org.jabref
   ```
 
+  Note that you need to focus another UI element before pressing OK. Otherwise, the setting will be empty.
+
 * Enable annotation processors by navigating to **File \| Settings \| Build, Execution, Deployment \| Compiler \| Annotation processors** and check "Enable annotation processing"
 
   ![Enable annotation processing](../.gitbook/assets/intellij-enable-annotation-processing.png)
