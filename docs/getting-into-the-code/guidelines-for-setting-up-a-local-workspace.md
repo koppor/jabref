@@ -302,3 +302,8 @@ There might be problems with building if you have openjfx libraries in local mav
 
 As a workaround, you can remove all local openjfx artifacts by deleting the whole openjfx folder from specified location.
 
+### Issues with `JournalAbbreviationLoader`
+
+In case of a NPE at `Files.copy` at `org.jabref.logic.journals.JournalAbbreviationLoader.loadRepository(JournalAbbreviationLoader.java:30) ~[classes/:?]`,
+invalidate caches and restart IntelliJ.
+Then, Build -> Rebuild Project.
