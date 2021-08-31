@@ -18,7 +18,6 @@ public final class BuildInfo {
     public static final String JAVA_VERSION = System.getProperty("java.version", UNKNOWN_VERSION).toLowerCase(Locale.ROOT);
     public static final String JAVAFX_VERSION = System.getProperty("javafx.runtime.version", UNKNOWN_VERSION).toLowerCase(Locale.ROOT);
 
-
     public final Version version;
     public final String maintainers;
     public final String year;
