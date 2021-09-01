@@ -3,11 +3,15 @@ package org.jabref.logic.importer;
 import java.nio.charset.Charset;
 import java.util.Set;
 
+import dagger.Module;
+import dagger.Provides;
+import org.jabref.gui.Globals;
 import org.jabref.logic.bibtex.FieldContentFormatterPreferences;
 import org.jabref.logic.citationkeypattern.CitationKeyPatternPreferences;
 import org.jabref.logic.importer.fileformat.CustomImporter;
 import org.jabref.logic.xmp.XmpPreferences;
 
+@Module
 public class ImportFormatPreferences {
 
     private final Set<CustomImporter> customImportList;
@@ -28,6 +32,11 @@ public class ImportFormatPreferences {
         this.fieldContentFormatterPreferences = fieldContentFormatterPreferences;
         this.xmpPreferences = xmpPreferences;
         this.keywordSyncEnabled = keywordSyncEnabled;
+    }
+
+    @Provides
+    public static ImportFormatPreferences provideImportFormatPreferences() {
+        return Globals.prefs.getImportFormatPreferences();
     }
 
     /**

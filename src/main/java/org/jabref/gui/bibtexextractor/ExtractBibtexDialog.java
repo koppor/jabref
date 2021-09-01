@@ -29,12 +29,12 @@ public class ExtractBibtexDialog extends BaseDialog<Void> {
     @FXML private TextArea input;
     @FXML private ButtonType parseButtonType;
     private BibtexExtractorViewModel viewModel;
-    @Inject private StateManager stateManager;
-    @Inject private DialogService dialogService;
-    @Inject private FileUpdateMonitor fileUpdateMonitor;
-    @Inject private TaskExecutor taskExecutor;
-    @Inject private UndoManager undoManager;
-    @Inject private PreferencesService preferencesService;
+    @Inject StateManager stateManager;
+    @Inject DialogService dialogService;
+    @Inject FileUpdateMonitor fileUpdateMonitor;
+    @Inject TaskExecutor taskExecutor;
+    @Inject UndoManager undoManager;
+    @Inject PreferencesService preferencesService;
 
     public ExtractBibtexDialog() {
         ViewLoader.view(this)

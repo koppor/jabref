@@ -29,7 +29,7 @@ public class CitationKeyPatternPanel extends TableView<CitationKeyPatternPanelIt
     @FXML public TableColumn<CitationKeyPatternPanelItemModel, String> patternColumn;
     @FXML public TableColumn<CitationKeyPatternPanelItemModel, EntryType> actionsColumn;
 
-    @Inject private PreferencesService preferences;
+    @Inject PreferencesService preferences;
 
     private CitationKeyPatternPanelViewModel viewModel;
 

@@ -24,7 +24,7 @@ public class ImportCustomEntryTypesDialog extends BaseDialog<Void> {
     private final List<BibEntryType> customEntryTypes;
     @FXML private VBox boxDifferentCustomization;
     @FXML private CheckListView<BibEntryType> unknownEntryTypesCheckList;
-    @Inject private PreferencesService preferencesService;
+    @Inject PreferencesService preferencesService;
     @FXML private CheckListView<BibEntryType> differentCustomizationCheckList;
 
     private final BibDatabaseMode mode;

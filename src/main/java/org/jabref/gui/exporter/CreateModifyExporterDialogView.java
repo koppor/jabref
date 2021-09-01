@@ -17,14 +17,14 @@ import com.airhacks.afterburner.views.ViewLoader;
 
 public class CreateModifyExporterDialogView extends BaseDialog<ExporterViewModel> {
 
-    @Inject private JournalAbbreviationRepository repository;
+    @Inject JournalAbbreviationRepository repository;
     private final ExporterViewModel exporter;
     @FXML private TextField name;
     @FXML private TextField fileName;
     @FXML private TextField extension;
     @FXML private ButtonType saveExporter;
-    @Inject private DialogService dialogService;
-    @Inject private PreferencesService preferences;
+    @Inject DialogService dialogService;
+    @Inject PreferencesService preferences;
     private CreateModifyExporterDialogViewModel viewModel;
 
     public CreateModifyExporterDialogView(ExporterViewModel exporter) {

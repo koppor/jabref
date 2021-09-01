@@ -23,7 +23,7 @@ public class CustomExporterTab extends AbstractPreferenceTabView<CustomExporterT
     @FXML private TableColumn<ExporterViewModel, String> layoutColumn;
     @FXML private TableColumn<ExporterViewModel, String> extensionColumn;
 
-    @Inject private JournalAbbreviationRepository repository;
+    @Inject JournalAbbreviationRepository repository;
 
     public CustomExporterTab() {
         ViewLoader.view(this)

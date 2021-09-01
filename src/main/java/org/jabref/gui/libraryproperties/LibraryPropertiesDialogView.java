@@ -34,8 +34,8 @@ public class LibraryPropertiesDialogView extends BaseDialog<Void> {
     @FXML private SaveOrderConfigPanel saveOrderConfigPanel;
     @FXML private FieldFormatterCleanupsPanel fieldFormatterCleanupsPanel;
 
-    @Inject private PreferencesService preferencesService;
-    @Inject private DialogService dialogService;
+    @Inject PreferencesService preferencesService;
+    @Inject DialogService dialogService;
 
     private final LibraryTab libraryTab;
     private LibraryPropertiesDialogViewModel viewModel;

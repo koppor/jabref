@@ -35,9 +35,9 @@ public class PreferencesDialogView extends BaseDialog<PreferencesDialogViewModel
     @FXML private ScrollPane preferencesContainer;
     @FXML private ButtonType saveButton;
 
-    @Inject private DialogService dialogService;
-    @Inject private PreferencesService preferencesService;
-    @Inject private TaskExecutor taskExecutor;
+    @Inject DialogService dialogService;
+    @Inject PreferencesService preferencesService;
+    @Inject TaskExecutor taskExecutor;
 
     private final JabRefFrame frame;
     private PreferencesDialogViewModel viewModel;

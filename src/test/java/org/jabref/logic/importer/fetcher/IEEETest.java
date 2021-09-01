@@ -47,6 +47,7 @@ class IEEETest implements SearchBasedFetcherCapabilityTest, PagedSearchFetcherTe
     void setUp() {
         ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class);
         when(importFormatPreferences.getKeywordSeparator()).thenReturn(',');
+        Dagger_Fetchers.create();
         fetcher = new IEEE(importFormatPreferences);
         entry = new BibEntry();
     }

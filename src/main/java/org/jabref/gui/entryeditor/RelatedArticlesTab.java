@@ -3,6 +3,7 @@ package org.jabref.gui.entryeditor;
 import java.io.IOException;
 import java.util.List;
 
+import dagger.Lazy;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.scene.control.Button;
@@ -25,6 +26,7 @@ import org.jabref.gui.util.BackgroundTask;
 import org.jabref.logic.importer.ImportCleanup;
 import org.jabref.logic.importer.fetcher.MrDLibFetcher;
 import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.util.BuildInfo;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseModeDetection;
 import org.jabref.model.entry.BibEntry;
@@ -35,6 +37,8 @@ import org.jabref.preferences.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 /**
  * GUI for tab displaying article recommendations based on the currently selected BibEntry
  */
@@ -44,6 +48,9 @@ public class RelatedArticlesTab extends EntryEditorTab {
     private final EntryEditorPreferences preferences;
     private final DialogService dialogService;
     private final PreferencesService preferencesService;
+
+    @Inject
+    BuildInfo buildInfo;
 
     public RelatedArticlesTab(EntryEditor entryEditor, EntryEditorPreferences preferences, PreferencesService preferencesService, DialogService dialogService) {
         setText(Localization.lang("Related articles"));
@@ -66,7 +73,7 @@ public class RelatedArticlesTab extends EntryEditorTab {
         progress.setMaxSize(100, 100);
 
         MrDLibFetcher fetcher = new MrDLibFetcher(preferencesService.getLanguage().name(),
-                Globals.BUILD_INFO.version, preferencesService);
+                buildInfo.version, preferencesService);
         BackgroundTask
                 .wrap(() -> fetcher.performSearch(entry))
                 .onRunning(() -> progress.setVisible(true))

@@ -33,6 +33,11 @@ plugins {
     id 'project-report'
 
     id 'idea'
+
+    // required by dagger
+    // see https://stackoverflow.com/a/67647526/873282
+    id 'org.jetbrains.kotlin.jvm' version '1.5.30'
+    //id 'org.jetbrains.kotlin.multiplatform' version '1.5.30'
 }
 
 // Enable following for debugging
@@ -94,6 +99,7 @@ repositories {
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/groups/public' }
     maven { url 'https://repository.apache.org/snapshots' }
+    google()
 }
 
 configurations {
@@ -143,6 +149,9 @@ dependencies {
     implementation 'org.antlr:antlr4-runtime:4.9.2'
 
     implementation 'com.google.dagger:dagger:2.38.1'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.38.1'
+
+    implementation 'com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.5.30-1.0.0-beta08'
 
     implementation group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.12.0.202106070339-r'
 

@@ -28,6 +28,8 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 /**
  * FulltextFetcher implementation that attempts to find a PDF URL at <a href="https://www.sciencedirect.com/">ScienceDirect</a>.
  * See <a href="https://dev.elsevier.com/">https://dev.elsevier.com/</a>.
@@ -36,7 +38,9 @@ public class ScienceDirect implements FulltextFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScienceDirect.class);
 
     private static final String API_URL = "https://api.elsevier.com/content/article/doi/";
-    private static final String API_KEY = new BuildInfo().scienceDirectApiKey;
+
+    @Inject
+    BuildInfo buildInfo;
 
     @Override
     public Optional<URL> findFullText(BibEntry entry) throws IOException {
@@ -131,7 +135,7 @@ public class ScienceDirect implements FulltextFetcher {
         try {
             String request = API_URL + doi;
             HttpResponse<JsonNode> jsonResponse = Unirest.get(request)
-                                                         .header("X-ELS-APIKey", API_KEY)
+                                                         .header("X-ELS-APIKey", buildInfo.scienceDirectApiKey)
                                                          .queryString("httpAccept", "application/json")
                                                          .asJson();
 

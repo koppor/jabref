@@ -24,10 +24,10 @@ public class LinkedFileEditDialogView extends BaseDialog<LinkedFile> {
     @FXML private TextField description;
     @FXML private ComboBox<ExternalFileType> fileType;
 
-    @Inject private DialogService dialogService;
-    @Inject private StateManager stateManager;
+    @Inject DialogService dialogService;
+    @Inject StateManager stateManager;
 
-    @Inject private PreferencesService preferences;
+    @Inject PreferencesService preferences;
 
     private LinkedFilesEditDialogViewModel viewModel;
 

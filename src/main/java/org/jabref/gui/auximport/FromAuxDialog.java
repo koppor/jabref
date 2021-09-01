@@ -40,8 +40,8 @@ public class FromAuxDialog extends BaseDialog<Void> {
     @FXML private TextArea statusInfos;
     private AuxParserResult auxParserResult;
 
-    @Inject private PreferencesService preferences;
-    @Inject private DialogService dialogService;
+    @Inject PreferencesService preferences;
+    @Inject DialogService dialogService;
 
     public FromAuxDialog(JabRefFrame frame) {
         libraryTab = frame.getCurrentLibraryTab();

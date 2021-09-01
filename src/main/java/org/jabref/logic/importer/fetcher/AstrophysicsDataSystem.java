@@ -44,6 +44,8 @@ import kong.unirest.json.JSONObject;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 
+import javax.inject.Inject;
+
 /**
  * Fetches data from the SAO/NASA Astrophysics Data System (https://ui.adsabs.harvard.edu/)
  */
@@ -52,8 +54,10 @@ public class AstrophysicsDataSystem implements IdBasedParserFetcher, PagedSearch
     private static final String API_SEARCH_URL = "https://api.adsabs.harvard.edu/v1/search/query";
     private static final String API_EXPORT_URL = "https://api.adsabs.harvard.edu/v1/export/bibtexabs";
 
-    private static final String API_KEY = new BuildInfo().astrophysicsDataSystemAPIKey;
     private final ImportFormatPreferences preferences;
+
+    @Inject
+    BuildInfo buildInfo;
 
     public AstrophysicsDataSystem(ImportFormatPreferences preferences) {
         this.preferences = Objects.requireNonNull(preferences);
@@ -244,8 +248,7 @@ public class AstrophysicsDataSystem implements IdBasedParserFetcher, PagedSearch
         }
         try {
             String postData = buildPostData(ids);
-            URLDownload download = new URLDownload(getURLforExport());
-            download.addHeader("Authorization", "Bearer " + API_KEY);
+            URLDownload download = getUrlDownload(getURLforExport());
             download.addHeader("ContentType", "application/json");
             download.setPostData(postData);
             String content = download.asString();
@@ -306,7 +309,7 @@ public class AstrophysicsDataSystem implements IdBasedParserFetcher, PagedSearch
     @Override
     public URLDownload getUrlDownload(URL url) {
         URLDownload urlDownload = new URLDownload(url);
-        urlDownload.addHeader("Authorization", "Bearer " + API_KEY);
+        urlDownload.addHeader("Authorization", "Bearer " + buildInfo.astrophysicsDataSystemAPIKey);
         return urlDownload;
     }
 

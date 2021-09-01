@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
 
+import dagger.Lazy;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
@@ -146,6 +147,8 @@ import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 /**
  * The main window of the application.
  */
@@ -158,7 +161,6 @@ public class JabRefFrame extends BorderPane {
     private final SplitPane splitPane = new SplitPane();
     private final PreferencesService prefs = Globals.prefs;
     private final GlobalSearchBar globalSearchBar;
-
     private final FileHistoryMenu fileHistory;
 
     @SuppressWarnings({"FieldCanBeLocal"}) private EasyObservableList<BibDatabaseContext> openDatabaseList;
@@ -867,7 +869,7 @@ public class JabRefFrame extends BorderPane {
                 new SeparatorMenuItem(),
 
                 factory.createMenuItem(StandardActions.DONATE, new OpenBrowserAction("https://donations.jabref.org")),
-                factory.createMenuItem(StandardActions.SEARCH_FOR_UPDATES, new SearchForUpdateAction(Globals.BUILD_INFO, prefs.getVersionPreferences(), dialogService, Globals.TASK_EXECUTOR)),
+                factory.createMenuItem(StandardActions.SEARCH_FOR_UPDATES, new SearchForUpdateAction(prefs.getVersionPreferences(), dialogService, Globals.TASK_EXECUTOR)),
                 factory.createSubMenu(StandardActions.WEB_MENU,
                         factory.createMenuItem(StandardActions.OPEN_WEBPAGE, new OpenBrowserAction("https://jabref.org/")),
                         factory.createMenuItem(StandardActions.OPEN_BLOG, new OpenBrowserAction("https://blog.jabref.org/")),

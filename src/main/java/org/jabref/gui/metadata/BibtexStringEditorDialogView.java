@@ -34,7 +34,7 @@ public class BibtexStringEditorDialogView extends BaseDialog<Void> {
 
     private final BibtexStringEditorDialogViewModel viewModel;
 
-    @Inject private DialogService dialogService;
+    @Inject DialogService dialogService;
 
     public BibtexStringEditorDialogView(BibDatabase database) {
         this.viewModel = new BibtexStringEditorDialogViewModel(database);

@@ -6,15 +6,18 @@ import org.jabref.gui.util.TaskExecutor;
 import org.jabref.logic.util.BuildInfo;
 import org.jabref.preferences.VersionPreferences;
 
+import javax.inject.Inject;
+
 public class SearchForUpdateAction extends SimpleCommand {
 
-    private final BuildInfo buildInfo;
     private final VersionPreferences versionPreferences;
     private final DialogService dialogService;
     private final TaskExecutor taskExecutor;
 
-    public SearchForUpdateAction(BuildInfo buildInfo, VersionPreferences versionPreferences, DialogService dialogService, TaskExecutor taskExecutor) {
-        this.buildInfo = buildInfo;
+    @Inject
+    BuildInfo buildInfo;
+
+    public SearchForUpdateAction(VersionPreferences versionPreferences, DialogService dialogService, TaskExecutor taskExecutor) {
         this.versionPreferences = versionPreferences;
         this.dialogService = dialogService;
         this.taskExecutor = taskExecutor;

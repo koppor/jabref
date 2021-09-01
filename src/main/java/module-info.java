@@ -62,6 +62,7 @@ open module org.jabref {
     // Other modules
     requires commons.logging;
     requires com.google.common;
+    requires com.google.gson;
     requires javax.inject;
     requires dagger;
     requires org.apache.pdfbox;
@@ -74,7 +75,6 @@ open module org.jabref {
     requires antlr.runtime;
     requires org.apache.xmpbox;
     requires de.saxsys.mvvmfx.validation;
-    requires com.google.gson;
     requires unirest.java;
     requires org.apache.httpcomponents.httpclient;
     requires org.jsoup;

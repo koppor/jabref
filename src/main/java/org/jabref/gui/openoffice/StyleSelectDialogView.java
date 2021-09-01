@@ -42,8 +42,8 @@ public class StyleSelectDialogView extends BaseDialog<OOBibStyle> {
     @FXML private TableColumn<StyleSelectItemViewModel, Boolean> colDeleteIcon;
     @FXML private Button add;
     @FXML private VBox vbox;
-    @Inject private PreferencesService preferencesService;
-    @Inject private DialogService dialogService;
+    @Inject PreferencesService preferencesService;
+    @Inject DialogService dialogService;
     private StyleSelectDialogViewModel viewModel;
     private PreviewViewer previewArticle;
     private PreviewViewer previewBook;

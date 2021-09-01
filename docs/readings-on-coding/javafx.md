@@ -76,7 +76,7 @@ public class AboutDialogView extends BaseDialog<Void>
 * Dependencies can easily be injected into the controller using the `@Inject` annotation.
 
 ```java
-@Inject private DialogService dialogService;
+@Inject DialogService dialogService;
 ```
 
 * It is convenient to load the FXML-view directly from the controller class.

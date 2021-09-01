@@ -4,6 +4,7 @@ import java.awt.GraphicsEnvironment;
 import java.util.Optional;
 import java.util.UUID;
 
+import dagger.Lazy;
 import javafx.stage.Screen;
 
 import org.jabref.architecture.AllowedToUseAwt;
@@ -29,17 +30,14 @@ import com.microsoft.applicationinsights.TelemetryConfiguration;
 import com.microsoft.applicationinsights.telemetry.SessionState;
 import kong.unirest.Unirest;
 
+import javax.inject.Inject;
+
 /**
  * @deprecated try to use {@link StateManager} and {@link org.jabref.preferences.PreferencesService}
  */
 @Deprecated
 @AllowedToUseAwt("Requires AWT for headless check")
 public class Globals {
-
-    /**
-     * JabRef version info
-     */
-    public static final BuildInfo BUILD_INFO = new BuildInfo();
 
     // Remote listener
     public static final RemoteListenerServerLifecycle REMOTE_LISTENER = new RemoteListenerServerLifecycle();
@@ -120,12 +118,14 @@ public class Globals {
 
     private static void startTelemetryClient() {
         TelemetryConfiguration telemetryConfiguration = TelemetryConfiguration.getActive();
-        if (!StringUtil.isNullOrEmpty(Globals.BUILD_INFO.azureInstrumentationKey)) {
-            telemetryConfiguration.setInstrumentationKey(Globals.BUILD_INFO.azureInstrumentationKey);
+        // we need to directly call the constructor, because we are static here (and Dagger cannot inject in static fields)
+        BuildInfo buildInfo = new BuildInfo();
+        if (!StringUtil.isNullOrEmpty(buildInfo.azureInstrumentationKey)) {
+            telemetryConfiguration.setInstrumentationKey(buildInfo.azureInstrumentationKey);
         }
         telemetryConfiguration.setTrackingIsDisabled(!Globals.prefs.getTelemetryPreferences().shouldCollectTelemetry());
         telemetryClient = new TelemetryClient(telemetryConfiguration);
-        telemetryClient.getContext().getProperties().put("JabRef version", Globals.BUILD_INFO.version.toString());
+        telemetryClient.getContext().getProperties().put("JabRef version", buildInfo.version.toString());
         telemetryClient.getContext().getProperties().put("Java version", StandardSystemProperty.JAVA_VERSION.value());
         telemetryClient.getContext().getUser().setId(Globals.prefs.getOrCreateUserId());
         telemetryClient.getContext().getSession().setId(UUID.randomUUID().toString());

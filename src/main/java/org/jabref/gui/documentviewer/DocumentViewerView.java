@@ -35,9 +35,9 @@ public class DocumentViewerView extends BaseDialog<Void> {
     @FXML private TextField currentPage;
     @FXML private Label maxPages;
 
-    @Inject private StateManager stateManager;
-    @Inject private TaskExecutor taskExecutor;
-    @Inject private PreferencesService preferencesService;
+    @Inject StateManager stateManager;
+    @Inject TaskExecutor taskExecutor;
+    @Inject PreferencesService preferencesService;
 
     private DocumentViewerControl viewer;
     private DocumentViewerViewModel viewModel;

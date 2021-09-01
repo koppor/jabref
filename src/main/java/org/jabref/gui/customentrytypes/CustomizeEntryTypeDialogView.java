@@ -64,9 +64,9 @@ public class CustomizeEntryTypeDialogView extends BaseDialog<Void> {
     @FXML private Button addNewFieldButton;
 
 
-    @Inject private PreferencesService preferencesService;
-    @Inject private StateManager stateManager;
-    @Inject private DialogService dialogService;
+    @Inject PreferencesService preferencesService;
+    @Inject StateManager stateManager;
+    @Inject DialogService dialogService;
 
     private CustomEntryTypeDialogViewModel viewModel;
     private final ControlsFxVisualizer visualizer = new ControlsFxVisualizer();

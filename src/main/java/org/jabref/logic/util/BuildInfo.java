@@ -7,7 +7,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
+import dagger.Module;
+import dagger.Provides;
 
+@Module
+// @Singleton
 public final class BuildInfo {
 
     public static final String UNKNOWN_VERSION = "*unknown*";
@@ -29,11 +33,16 @@ public final class BuildInfo {
     public final String minRequiredJavaVersion;
     public final boolean allowJava9;
 
+    /**
+     * Needs to be public for com.airhacks.afterburner.injection.Injector.
+     *
+     * All other classes should use Dapper's @Inject way.
+     */
     public BuildInfo() {
         this("/build.properties");
     }
 
-    public BuildInfo(String path) {
+    BuildInfo(String path) {
         Properties properties = new Properties();
 
         try (InputStream stream = BuildInfo.class.getResourceAsStream(path)) {
@@ -56,6 +65,12 @@ public final class BuildInfo {
         scienceDirectApiKey = BuildInfo.getValue(properties, "scienceDirectApiKey", "fb82f2e692b3c72dafe5f4f1fa0ac00b");
         minRequiredJavaVersion = properties.getProperty("minRequiredJavaVersion", "1.8");
         allowJava9 = "true".equals(properties.getProperty("allowJava9", "true"));
+    }
+
+    @Provides
+    // @Singleton
+    static BuildInfo provideBuildInfo() {
+        return new BuildInfo();
     }
 
     private static String getValue(Properties properties, String key, String defaultValue) {

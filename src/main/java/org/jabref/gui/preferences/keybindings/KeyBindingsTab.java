@@ -32,7 +32,7 @@ public class KeyBindingsTab extends AbstractPreferenceTabView<KeyBindingsTabView
     @FXML private TreeTableColumn<KeyBindingViewModel, KeyBindingViewModel> clearColumn;
     @FXML private MenuButton presetsButton;
 
-    @Inject private KeyBindingRepository keyBindingRepository;
+    @Inject KeyBindingRepository keyBindingRepository;
 
     public KeyBindingsTab() {
         ViewLoader.view(this)

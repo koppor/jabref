@@ -31,6 +31,8 @@ import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 /**
  * Fetches data from the Springer
  *
@@ -41,7 +43,9 @@ public class SpringerFetcher implements PagedSearchBasedParserFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringerFetcher.class);
 
     private static final String API_URL = "http://api.springernature.com/meta/v1/json";
-    private static final String API_KEY = new BuildInfo().springerNatureAPIKey;
+
+    @Inject
+    BuildInfo buildInfo;
 
     /**
      * Convert a JSONObject obtained from http://api.springer.com/metadata/json to a BibEntry
@@ -164,7 +168,7 @@ public class SpringerFetcher implements PagedSearchBasedParserFetcher {
     public URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder(API_URL);
         uriBuilder.addParameter("q", new SpringerQueryTransformer().transformLuceneQuery(luceneQuery).orElse("")); // Search query
-        uriBuilder.addParameter("api_key", API_KEY); // API key
+        uriBuilder.addParameter("api_key", buildInfo.springerNatureAPIKey);
         uriBuilder.addParameter("s", String.valueOf(getPageSize() * pageNumber + 1)); // Start entry, starts indexing at 1
         uriBuilder.addParameter("p", String.valueOf(getPageSize())); // Page size
         return uriBuilder.build().toURL();

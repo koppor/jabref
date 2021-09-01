@@ -37,6 +37,8 @@ import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 /**
  * Class for finding PDF URLs for entries on IEEE
  * Will first look for URLs of the type https://ieeexplore.ieee.org/stamp/stamp.jsp?[tp=&]arnumber=...
@@ -54,12 +56,15 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher {
     private static final Pattern PDF_PATTERN = Pattern.compile("\"(https://ieeexplore.ieee.org/ielx[0-9/]+\\.pdf[^\"]+)\"");
     private static final String IEEE_DOI = "10.1109";
     private static final String BASE_URL = "https://ieeexplore.ieee.org";
-    private static final String API_KEY = new BuildInfo().ieeeAPIKey;
 
     private final ImportFormatPreferences preferences;
 
+    @Inject
+    BuildInfo buildInfo;
+
     private IEEEQueryTransformer transformer;
 
+    @Inject
     public IEEE(ImportFormatPreferences preferences) {
         this.preferences = Objects.requireNonNull(preferences);
     }
@@ -249,7 +254,7 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher {
         transformer = new IEEEQueryTransformer();
         String transformedQuery = transformer.transformLuceneQuery(luceneQuery).orElse("");
         URIBuilder uriBuilder = new URIBuilder("https://ieeexploreapi.ieee.org/api/v1/search/articles");
-        uriBuilder.addParameter("apikey", API_KEY);
+        uriBuilder.addParameter("apikey", buildInfo.ieeeAPIKey);
         if (!transformedQuery.isBlank()) {
             uriBuilder.addParameter("querytext", transformedQuery);
         }

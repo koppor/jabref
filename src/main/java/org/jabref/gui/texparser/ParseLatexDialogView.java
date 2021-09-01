@@ -41,10 +41,10 @@ public class ParseLatexDialogView extends BaseDialog<Void> {
     @FXML private Button selectAllButton;
     @FXML private Button unselectAllButton;
     @FXML private ButtonType parseButtonType;
-    @Inject private DialogService dialogService;
-    @Inject private TaskExecutor taskExecutor;
-    @Inject private PreferencesService preferencesService;
-    @Inject private FileUpdateMonitor fileMonitor;
+    @Inject DialogService dialogService;
+    @Inject TaskExecutor taskExecutor;
+    @Inject PreferencesService preferencesService;
+    @Inject FileUpdateMonitor fileMonitor;
     private ParseLatexDialogViewModel viewModel;
 
     public ParseLatexDialogView(BibDatabaseContext databaseContext) {

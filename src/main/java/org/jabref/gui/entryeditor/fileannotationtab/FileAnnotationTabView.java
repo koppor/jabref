@@ -44,7 +44,7 @@ public class FileAnnotationTabView {
     private FileAnnotationTabViewModel viewModel;
 
     @Inject
-    private FileUpdateMonitor fileMonitor;
+    FileUpdateMonitor fileMonitor;
 
     public FileAnnotationTabView(BibEntry entry, FileAnnotationCache fileAnnotationCache) {
         this.entry = entry;

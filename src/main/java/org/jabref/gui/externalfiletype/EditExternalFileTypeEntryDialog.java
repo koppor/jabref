@@ -30,7 +30,7 @@ public class EditExternalFileTypeEntryDialog extends BaseDialog<Void> {
     @FXML private TextField selectedApplication;
     @FXML private Button btnBrowse;
     @FXML private Label icon;
-    @Inject private DialogService dialogService;
+    @Inject DialogService dialogService;
 
     private final NativeDesktop nativeDesktop = JabRefDesktop.getNativeDesktop();
     private final FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder().withInitialDirectory(nativeDesktop.getApplicationDirectory()).build();

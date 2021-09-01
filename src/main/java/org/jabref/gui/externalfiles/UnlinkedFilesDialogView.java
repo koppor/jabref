@@ -73,12 +73,12 @@ public class UnlinkedFilesDialogView extends BaseDialog<Void> {
     @FXML private TitledPane filePane;
     @FXML private TitledPane resultPane;
 
-    @Inject private PreferencesService preferencesService;
-    @Inject private DialogService dialogService;
-    @Inject private StateManager stateManager;
-    @Inject private UndoManager undoManager;
-    @Inject private TaskExecutor taskExecutor;
-    @Inject private FileUpdateMonitor fileUpdateMonitor;
+    @Inject PreferencesService preferencesService;
+    @Inject DialogService dialogService;
+    @Inject StateManager stateManager;
+    @Inject UndoManager undoManager;
+    @Inject TaskExecutor taskExecutor;
+    @Inject FileUpdateMonitor fileUpdateMonitor;
 
     private final ControlsFxVisualizer validationVisualizer;
     private UnlinkedFilesDialogViewModel viewModel;

@@ -33,6 +33,8 @@ import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import dagger.Module;
+import dagger.Provides;
 import javafx.scene.control.TableColumn.SortType;
 
 import org.jabref.gui.Globals;

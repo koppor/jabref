@@ -104,6 +104,8 @@ To configure IntelliJ IDEA for developing JabRef, you should first ensure that y
 
 After that, you can open `jabref/build.gradle` as a project. It is crucial that Java 16 is used consistently for the JabRef project which includes ensuring the right settings for your project structure, Gradle build, and run configurations.
 
+You will also need the [Dagger Plugin](https://plugins.jetbrains.com/plugin/14211-dagger) installed.
+
 Ensure you have a Java 16 SDK configured by navigating to **File \| Project Structure \| Platform Settings \| SDKs**. If you don't have one, add a new Java JDK and point it to the location of a JDK 16. ![Project Settings](../.gitbook/assets/intellij-choose-jdk-adoptopenjdk-on-windows-project-settings.png)
 
 Navigate to **File \| Project Structure \| Project** and ensure that the projects' SDK is Java 16 ![Use JDK 16 as project SDK](../.gitbook/assets/intellij-choose-jdk15-project-default.png)

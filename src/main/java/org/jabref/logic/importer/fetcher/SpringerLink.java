@@ -19,6 +19,8 @@ import kong.unirest.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 /**
  * FulltextFetcher implementation that attempts to find a PDF URL at SpringerLink.
  * <p>
@@ -28,8 +30,10 @@ public class SpringerLink implements FulltextFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringerLink.class);
 
     private static final String API_URL = "https://api.springer.com/meta/v1/json";
-    private static final String API_KEY = new BuildInfo().springerNatureAPIKey;
     private static final String CONTENT_HOST = "link.springer.com";
+
+    @Inject
+    BuildInfo buildInfo;
 
     @Override
     public Optional<URL> findFullText(BibEntry entry) throws IOException {
@@ -44,7 +48,7 @@ public class SpringerLink implements FulltextFetcher {
         // Available in catalog?
         try {
             HttpResponse<JsonNode> jsonResponse = Unirest.get(API_URL)
-                                                         .queryString("api_key", API_KEY)
+                                                         .queryString("api_key", buildInfo.springerNatureAPIKey)
                                                          .queryString("q", String.format("doi:%s", doi.get().getDOI()))
                                                          .asJson();
             if (jsonResponse.getBody() != null) {

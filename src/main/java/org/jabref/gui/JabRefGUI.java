@@ -28,12 +28,15 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.shared.DatabaseNotSupportedException;
 import org.jabref.logic.shared.exception.InvalidDBMSConnectionPropertiesException;
 import org.jabref.logic.shared.exception.NotASharedDatabaseException;
+import org.jabref.logic.util.BuildInfo;
 import org.jabref.preferences.GuiPreferences;
 import org.jabref.preferences.PreferencesService;
 
 import impl.org.controlsfx.skin.DecorationPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 public class JabRefGUI {
 
@@ -48,6 +51,9 @@ public class JabRefGUI {
     private final List<ParserResult> failed = new ArrayList<>();
     private final List<ParserResult> toOpenTab = new ArrayList<>();
 
+    @Inject
+    BuildInfo buildInfo;
+
     public JabRefGUI(Stage mainStage, List<ParserResult> databases, boolean isBlank, PreferencesService preferencesService) {
         this.bibDatabases = databases;
         this.isBlank = isBlank;
@@ -58,7 +64,7 @@ public class JabRefGUI {
 
         openWindow(mainStage);
 
-        new VersionWorker(Globals.BUILD_INFO.version,
+        new VersionWorker(buildInfo.version,
                 preferencesService.getVersionPreferences().getIgnoredVersion(),
                 mainFrame.getDialogService(),
                 Globals.TASK_EXECUTOR)

@@ -41,7 +41,7 @@ public class ContentSelectorDialogView extends BaseDialog<Void> {
     private ButtonType saveButton;
 
     @Inject
-    private DialogService dialogService;
+    DialogService dialogService;
     private final LibraryTab libraryTab;
     private ContentSelectorDialogViewModel viewModel;
 

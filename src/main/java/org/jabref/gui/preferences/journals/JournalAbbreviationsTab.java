@@ -59,8 +59,8 @@ public class JournalAbbreviationsTab extends AbstractPreferenceTabView<JournalAb
 
     @FXML private CustomTextField searchBox;
 
-    @Inject private TaskExecutor taskExecutor;
-    @Inject private JournalAbbreviationRepository abbreviationRepository;
+    @Inject TaskExecutor taskExecutor;
+    @Inject JournalAbbreviationRepository abbreviationRepository;
 
     private Timeline invalidateSearch;
 

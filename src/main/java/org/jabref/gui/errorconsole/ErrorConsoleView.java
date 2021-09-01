@@ -40,10 +40,10 @@ public class ErrorConsoleView extends BaseDialog<Void> {
     @FXML private ListView<LogEventViewModel> messagesListView;
     @FXML private Label descriptionLabel;
 
-    @Inject private DialogService dialogService;
-    @Inject private ClipBoardManager clipBoardManager;
-    @Inject private BuildInfo buildInfo;
-    @Inject private KeyBindingRepository keyBindingRepository;
+    @Inject DialogService dialogService;
+    @Inject ClipBoardManager clipBoardManager;
+    @Inject BuildInfo buildInfo;
+    @Inject KeyBindingRepository keyBindingRepository;
 
     public ErrorConsoleView() {
         this.setTitle(Localization.lang("Event log"));

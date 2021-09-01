@@ -56,7 +56,7 @@ public class PreviewTab extends AbstractPreferenceTabView<PreviewTabViewModel> i
     @FXML private Tab previewTab;
     @FXML private CodeArea editArea;
 
-    @Inject private StateManager stateManager;
+    @Inject StateManager stateManager;
 
     private final ContextMenu contextMenu = new ContextMenu();
 

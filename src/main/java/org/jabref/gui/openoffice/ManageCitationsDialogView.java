@@ -34,7 +34,7 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
     @FXML private TableColumn<CitationEntryViewModel, String> citation;
     @FXML private TableColumn<CitationEntryViewModel, String> extraInfo;
 
-    @Inject private DialogService dialogService;
+    @Inject DialogService dialogService;
 
     private ManageCitationsDialogViewModel viewModel;
 

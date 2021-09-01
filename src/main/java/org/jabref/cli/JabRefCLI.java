@@ -2,6 +2,7 @@ package org.jabref.cli;
 
 import java.util.List;
 
+import dagger.Lazy;
 import org.jabref.gui.Globals;
 import org.jabref.logic.l10n.Localization;
 
@@ -11,8 +12,11 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.jabref.logic.util.BuildInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 public class JabRefCLI {
 
@@ -20,6 +24,9 @@ public class JabRefCLI {
     private static final Logger LOGGER = LoggerFactory.getLogger(JabRefCLI.class);
     private final CommandLine cl;
     private List<String> leftOver;
+
+    @Inject
+    Lazy<BuildInfo> buildInfo;
 
     public JabRefCLI(String[] args) throws ParseException {
         Options options = getOptions();
@@ -307,7 +314,7 @@ public class JabRefCLI {
     }
 
     private String getVersionInfo() {
-        return String.format("JabRef %s", Globals.BUILD_INFO.version);
+        return String.format("JabRef %s", buildInfo.get().version);
     }
 
     public List<String> getLeftOver() {

@@ -32,7 +32,7 @@ public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsT
     @FXML private TableColumn<ProtectedTermsList, Boolean> filesTableEditColumn;
     @FXML private TableColumn<ProtectedTermsList, Boolean> filesTableDeleteColumn;
 
-    @Inject private ProtectedTermsLoader termsLoader;
+    @Inject ProtectedTermsLoader termsLoader;
 
     public ProtectedTermsTab() {
         ViewLoader.view(this)

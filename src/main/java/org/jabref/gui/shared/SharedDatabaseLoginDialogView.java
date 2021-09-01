@@ -45,7 +45,7 @@ public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
     @FXML private Button browseKeystore;
     @FXML private TextField serverTimezone;
 
-    @Inject private DialogService dialogService;
+    @Inject DialogService dialogService;
 
     private SharedDatabaseLoginDialogViewModel viewModel;
     private final ControlsFxVisualizer visualizer = new ControlsFxVisualizer();

@@ -29,7 +29,7 @@ public class ManageKeywordsDialog extends BaseDialog<Void> {
     @FXML private TableColumn<String, Boolean> keywordsTableDeleteColumn;
     @FXML private TableView<String> keywordsTable;
     @FXML private ToggleGroup displayType;
-    @Inject private PreferencesService preferences;
+    @Inject PreferencesService preferences;
     private ManageKeywordsViewModel viewModel;
 
     public ManageKeywordsDialog(List<BibEntry> entries) {

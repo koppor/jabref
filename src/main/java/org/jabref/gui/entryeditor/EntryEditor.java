@@ -96,12 +96,12 @@ public class EntryEditor extends BorderPane {
     @FXML private Button typeChangeButton;
     @FXML private Button fetcherButton;
     @FXML private Label typeLabel;
-    @Inject private DialogService dialogService;
-    @Inject private TaskExecutor taskExecutor;
-    @Inject private PreferencesService preferencesService;
-    @Inject private StateManager stateManager;
-    @Inject private FileUpdateMonitor fileMonitor;
-    @Inject private CountingUndoManager undoManager;
+    @Inject DialogService dialogService;
+    @Inject TaskExecutor taskExecutor;
+    @Inject PreferencesService preferencesService;
+    @Inject StateManager stateManager;
+    @Inject FileUpdateMonitor fileMonitor;
+    @Inject CountingUndoManager undoManager;
     private final List<EntryEditorTab> entryEditorTabs = new LinkedList<>();
 
     public EntryEditor(LibraryTab libraryTab, ExternalFileTypes externalFileTypes) {

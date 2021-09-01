@@ -20,9 +20,9 @@ public class AboutDialogView extends BaseDialog<Void> {
     @FXML private ButtonType copyVersionButton;
     @FXML private TextArea textAreaVersions;
 
-    @Inject private DialogService dialogService;
-    @Inject private ClipBoardManager clipBoardManager;
-    @Inject private BuildInfo buildInfo;
+    @Inject DialogService dialogService;
+    @Inject ClipBoardManager clipBoardManager;
+    @Inject BuildInfo buildInfo;
 
     private AboutDialogViewModel viewModel;
 

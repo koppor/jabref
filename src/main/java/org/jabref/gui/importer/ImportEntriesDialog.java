@@ -55,13 +55,13 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
     public CheckBox downloadLinkedOnlineFiles;
     private final BackgroundTask<ParserResult> task;
     private ImportEntriesViewModel viewModel;
-    @Inject private TaskExecutor taskExecutor;
-    @Inject private DialogService dialogService;
-    @Inject private UndoManager undoManager;
-    @Inject private PreferencesService preferences;
-    @Inject private StateManager stateManager;
-    @Inject private BibEntryTypesManager entryTypesManager;
-    @Inject private FileUpdateMonitor fileUpdateMonitor;
+    @Inject TaskExecutor taskExecutor;
+    @Inject DialogService dialogService;
+    @Inject UndoManager undoManager;
+    @Inject PreferencesService preferences;
+    @Inject StateManager stateManager;
+    @Inject BibEntryTypesManager entryTypesManager;
+    @Inject FileUpdateMonitor fileUpdateMonitor;
     private final BibDatabaseContext database;
 
     /**
