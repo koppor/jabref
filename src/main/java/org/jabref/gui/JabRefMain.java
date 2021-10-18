@@ -21,6 +21,7 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.net.ProxyAuthenticator;
 import org.jabref.logic.net.ProxyPreferences;
 import org.jabref.logic.net.ProxyRegisterer;
+import org.jabref.logic.net.URLDownload;
 import org.jabref.logic.protectedterms.ProtectedTermsLoader;
 import org.jabref.logic.remote.RemotePreferences;
 import org.jabref.logic.remote.client.RemoteClient;
@@ -51,6 +52,7 @@ public class JabRefMain extends Application {
 
     @Override
     public void start(Stage mainStage) {
+        URLDownload.bypassSSLVerification();
         try {
             FallbackExceptionHandler.installExceptionHandler();
 
@@ -139,8 +141,8 @@ public class JabRefMain extends Application {
         // Initialize protected terms loader
         Globals.protectedTermsLoader = new ProtectedTermsLoader(preferences.getProtectedTermsPreferences());
 
-        // Override used newline character with the one stored in the preferences
-        // The preferences return the system newline character sequence as default
+        // Override used newline character with the one stored in the preferences.
+        // The preferences return the system newline character sequence as default.
         OS.NEWLINE = preferences.getNewLineSeparator().toString();
     }
 

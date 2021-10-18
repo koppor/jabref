@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +38,6 @@ import javafx.beans.InvalidationListener;
 import javafx.scene.control.TableColumn.SortType;
 
 import org.jabref.gui.Globals;
-import org.jabref.gui.SidePaneType;
 import org.jabref.gui.autocompleter.AutoCompleteFirstNameMode;
 import org.jabref.gui.autocompleter.AutoCompletePreferences;
 import org.jabref.gui.desktop.JabRefDesktop;
@@ -52,6 +52,7 @@ import org.jabref.gui.maintable.MainTableNameFormatPreferences.AbbreviationStyle
 import org.jabref.gui.maintable.MainTableNameFormatPreferences.DisplayStyle;
 import org.jabref.gui.mergeentries.MergeEntries;
 import org.jabref.gui.search.SearchDisplayMode;
+import org.jabref.gui.sidepane.SidePaneType;
 import org.jabref.gui.specialfields.SpecialFieldsPreferences;
 import org.jabref.gui.util.Theme;
 import org.jabref.logic.JabRefException;
@@ -261,7 +262,6 @@ public class JabRefPreferences implements PreferencesService {
     public static final String KEY_GEN_FIRST_LETTER_A = "keyGenFirstLetterA";
     public static final String ALLOW_INTEGER_EDITION_BIBTEX = "allowIntegerEditionBibtex";
     public static final String LOCAL_AUTO_SAVE = "localAutoSave";
-    public static final String RUN_AUTOMATIC_FILE_SEARCH = "runAutomaticFileSearch";
     public static final String AUTOLINK_REG_EXP_SEARCH_EXPRESSION_KEY = "regExpSearchExpression";
     public static final String AUTOLINK_USE_REG_EXP_SEARCH_KEY = "useRegExpSearch";
     // bibLocAsPrimaryDir is a misleading antique variable name, we keep it for reason of compatibility
@@ -269,7 +269,6 @@ public class JabRefPreferences implements PreferencesService {
     public static final String SELECTED_FETCHER_INDEX = "selectedFetcherIndex";
     public static final String WEB_SEARCH_VISIBLE = "webSearchVisible";
     public static final String GROUP_SIDEPANE_VISIBLE = "groupSidepaneVisible";
-    public static final String ALLOW_FILE_AUTO_OPEN_BROWSE = "allowFileAutoOpenBrowse";
     public static final String CUSTOM_TAB_NAME = "customTabName_";
     public static final String CUSTOM_TAB_FIELDS = "customTabFields_";
     public static final String ASK_AUTO_NAMING_PDFS_AGAIN = "AskAutoNamingPDFsAgain";
@@ -642,7 +641,6 @@ public class JabRefPreferences implements PreferencesService {
         defaults.put(OVERRIDE_DEFAULT_FONT_SIZE, false);
 
         defaults.put(AUTOLINK_EXACT_KEY_ONLY, Boolean.FALSE);
-        defaults.put(RUN_AUTOMATIC_FILE_SEARCH, Boolean.FALSE);
         defaults.put(LOCAL_AUTO_SAVE, Boolean.FALSE);
         defaults.put(ALLOW_INTEGER_EDITION_BIBTEX, Boolean.FALSE);
         // Curly brackets ({}) are the default delimiters, not quotes (") as these cause trouble when they appear within the field value:
@@ -651,7 +649,6 @@ public class JabRefPreferences implements PreferencesService {
         defaults.put(KEY_GEN_ALWAYS_ADD_LETTER, Boolean.FALSE);
         defaults.put(EMAIL_SUBJECT, Localization.lang("References"));
         defaults.put(OPEN_FOLDERS_OF_ATTACHED_FILES, Boolean.FALSE);
-        defaults.put(ALLOW_FILE_AUTO_OPEN_BROWSE, Boolean.TRUE);
         defaults.put(WEB_SEARCH_VISIBLE, Boolean.TRUE);
         defaults.put(GROUP_SIDEPANE_VISIBLE, Boolean.TRUE);
         defaults.put(SELECTED_FETCHER_INDEX, 0);
@@ -1106,7 +1103,6 @@ public class JabRefPreferences implements PreferencesService {
                 get(OO_PATH),
                 getBoolean(OO_USE_ALL_OPEN_BASES),
                 getBoolean(OO_SYNC_WHEN_CITING),
-                getBoolean(OO_SHOW_PANEL),
                 getStringList(OO_EXTERNAL_STYLE_FILES),
                 get(OO_BIBLIOGRAPHY_STYLE_FILE));
     }
@@ -1117,7 +1113,6 @@ public class JabRefPreferences implements PreferencesService {
         put(OO_PATH, openOfficePreferences.getInstallationPath());
         putBoolean(OO_USE_ALL_OPEN_BASES, openOfficePreferences.getUseAllDatabases());
         putBoolean(OO_SYNC_WHEN_CITING, openOfficePreferences.getSyncWhenCiting());
-        putBoolean(OO_SHOW_PANEL, openOfficePreferences.getShowPanel());
         putStringList(OO_EXTERNAL_STYLE_FILES, openOfficePreferences.getExternalStyles());
         put(OO_BIBLIOGRAPHY_STYLE_FILE, openOfficePreferences.getCurrentStyle());
     }
@@ -2181,9 +2176,7 @@ public class JabRefPreferences implements PreferencesService {
                 getBoolean(STORE_RELATIVE_TO_BIB),
                 get(IMPORT_FILENAMEPATTERN),
                 get(IMPORT_FILEDIRPATTERN),
-                getBoolean(DOWNLOAD_LINKED_FILES),
-                getBoolean(RUN_AUTOMATIC_FILE_SEARCH),
-                getBoolean(ALLOW_FILE_AUTO_OPEN_BROWSE));
+                getBoolean(DOWNLOAD_LINKED_FILES));
     }
 
     @Override
@@ -2193,8 +2186,6 @@ public class JabRefPreferences implements PreferencesService {
         put(IMPORT_FILENAMEPATTERN, preferences.getFileNamePattern());
         put(IMPORT_FILEDIRPATTERN, preferences.getFileDirectoryPattern());
         putBoolean(DOWNLOAD_LINKED_FILES, preferences.shouldDownloadLinkedFiles());
-        putBoolean(RUN_AUTOMATIC_FILE_SEARCH, preferences.shouldSearchFilesOnOpen());
-        putBoolean(ALLOW_FILE_AUTO_OPEN_BROWSE, preferences.shouldOpenBrowseOnCreate());
     }
 
     @Override
@@ -2445,28 +2436,42 @@ public class JabRefPreferences implements PreferencesService {
 
     @Override
     public SidePanePreferences getSidePanePreferences() {
-        if (this.sidePanePreferences == null) {
-            updateSidePanePreferences();
+        if (Objects.nonNull(sidePanePreferences)) {
+            return sidePanePreferences;
         }
-        return this.sidePanePreferences;
-    }
 
-    void updateSidePanePreferences() {
-        this.sidePanePreferences = new SidePanePreferences(
-                getBoolean(WEB_SEARCH_VISIBLE),
-                getBoolean(GROUP_SIDEPANE_VISIBLE),
+        sidePanePreferences = new SidePanePreferences(
+                getVisiblePanes(),
                 getSidePanePreferredPositions(),
                 getInt(SELECTED_FETCHER_INDEX));
+
+        sidePanePreferences.visiblePanes().addListener((InvalidationListener) listener ->
+                storeVisiblePanes(sidePanePreferences.visiblePanes()));
+        sidePanePreferences.getPreferredPositions().addListener((InvalidationListener) listener ->
+                storeSidePanePreferredPositions(sidePanePreferences.getPreferredPositions()));
+        EasyBind.subscribe(sidePanePreferences.webSearchFetcherSelectedProperty(), newValue -> putInt(SELECTED_FETCHER_INDEX, newValue));
+
+        return sidePanePreferences;
     }
 
-    @Override
-    public void storeSidePanePreferences(SidePanePreferences preferences) {
-        putBoolean(WEB_SEARCH_VISIBLE, preferences.isWebSearchPaneVisible());
-        putBoolean(GROUP_SIDEPANE_VISIBLE, preferences.isGroupsPaneVisible());
-        storeSidePanePreferredPositions(preferences.getPreferredPositions());
-        putInt(SELECTED_FETCHER_INDEX, preferences.getWebSearchFetcherSelected());
+    private Set<SidePaneType> getVisiblePanes() {
+        HashSet<SidePaneType> visiblePanes = new HashSet<>();
+        if (getBoolean(WEB_SEARCH_VISIBLE)) {
+            visiblePanes.add(SidePaneType.WEB_SEARCH);
+        }
+        if (getBoolean(GROUP_SIDEPANE_VISIBLE)) {
+            visiblePanes.add(SidePaneType.GROUPS);
+        }
+        if (getBoolean(OO_SHOW_PANEL)) {
+            visiblePanes.add(SidePaneType.OPEN_OFFICE);
+        }
+        return visiblePanes;
+    }
 
-        this.sidePanePreferences = preferences;
+    private void storeVisiblePanes(Set<SidePaneType> visiblePanes) {
+        putBoolean(WEB_SEARCH_VISIBLE, visiblePanes.contains(SidePaneType.WEB_SEARCH));
+        putBoolean(GROUP_SIDEPANE_VISIBLE, visiblePanes.contains(SidePaneType.GROUPS));
+        putBoolean(OO_SHOW_PANEL, visiblePanes.contains(SidePaneType.OPEN_OFFICE));
     }
 
     private Map<SidePaneType, Integer> getSidePanePreferredPositions() {

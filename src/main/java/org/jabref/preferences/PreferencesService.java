@@ -294,8 +294,6 @@ public interface PreferencesService {
 
     SidePanePreferences getSidePanePreferences();
 
-    void storeSidePanePreferences(SidePanePreferences sidePanePreferences);
-
     //*************************************************************************************************************
     // GuiPreferences
     //*************************************************************************************************************
