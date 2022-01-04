@@ -8,8 +8,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -488,8 +486,6 @@ public class JabRefPreferences implements PreferencesService {
         defaults.put(PUSH_VIM_SERVER, "vim");
         defaults.put(PUSH_EMACS_ADDITIONAL_PARAMETERS, "-n -e");
 
-        defaults.put(BIBLATEX_DEFAULT_MODE, Boolean.FALSE);
-
         // Set DOI to be the default ID entry generator
         defaults.put(ID_ENTRY_GENERATOR, DoiFetcher.NAME);
 
@@ -590,10 +586,7 @@ public class JabRefPreferences implements PreferencesService {
         defaults.put(DISPLAY_GROUP_COUNT, Boolean.TRUE);
         defaults.put(GROUP_INTERSECT_UNION_VIEW_MODE, GroupViewMode.INTERSECTION.name());
         defaults.put(KEYWORD_SEPARATOR, ", ");
-        defaults.put(DEFAULT_ENCODING, StandardCharsets.UTF_8.name());
         defaults.put(DEFAULT_OWNER, System.getProperty("user.name"));
-        defaults.put(MEMORY_STICK_MODE, Boolean.FALSE);
-        defaults.put(SHOW_ADVANCED_HINTS, Boolean.TRUE);
 
         defaults.put(EXTRA_FILE_COLUMNS, Boolean.FALSE);
 
@@ -626,13 +619,11 @@ public class JabRefPreferences implements PreferencesService {
         defaults.put(OVERWRITE_OWNER, Boolean.FALSE);
         defaults.put(AVOID_OVERWRITING_KEY, Boolean.FALSE);
         defaults.put(WARN_BEFORE_OVERWRITING_KEY, Boolean.TRUE);
-        defaults.put(CONFIRM_DELETE, Boolean.TRUE);
         defaults.put(DEFAULT_CITATION_KEY_PATTERN, "[auth][year]");
         defaults.put(UNWANTED_CITATION_KEY_CHARACTERS, "-`ʹ:!;?^+");
         defaults.put(DO_NOT_RESOLVE_STRINGS_FOR, StandardField.URL.getName());
         defaults.put(RESOLVE_STRINGS_ALL_FIELDS, Boolean.FALSE);
         defaults.put(NON_WRAPPABLE_FIELDS, "pdf;ps;url;doi;file;isbn;issn");
-        defaults.put(WARN_ABOUT_DUPLICATES_IN_INSPECTION, Boolean.TRUE);
         defaults.put(ADD_CREATION_DATE, Boolean.FALSE);
         defaults.put(ADD_MODIFICATION_DATE, Boolean.FALSE);
 
@@ -945,6 +936,9 @@ public class JabRefPreferences implements PreferencesService {
         clearAllBibEntryTypes();
         clearCitationKeyPatterns();
         prefs.clear();
+
+        generalPreferences.setDefaults();
+
         new SharedDatabasePreferences().clear();
     }
 
@@ -1300,17 +1294,18 @@ public class JabRefPreferences implements PreferencesService {
             return generalPreferences;
         }
 
-        generalPreferences = new GeneralPreferences(
-                Charset.forName(get(DEFAULT_ENCODING)),
-                getBoolean(BIBLATEX_DEFAULT_MODE) ? BibDatabaseMode.BIBLATEX : BibDatabaseMode.BIBTEX,
-                getBoolean(WARN_ABOUT_DUPLICATES_IN_INSPECTION),
-                getBoolean(CONFIRM_DELETE),
-                getBoolean(MEMORY_STICK_MODE),
-                getBoolean(SHOW_ADVANCED_HINTS));
+        generalPreferences = new GeneralPreferences.Builder()
+                .withDefaultEncoding(get(DEFAULT_ENCODING))
+                .withDefaultBibDatabaseMode(getBoolean(BIBLATEX_DEFAULT_MODE) ? BibDatabaseMode.BIBLATEX : BibDatabaseMode.BIBTEX)
+                .withWarnAboutDuplicatesInInspection(getBoolean(WARN_ABOUT_DUPLICATES_IN_INSPECTION))
+                .withConfirmDelete(getBoolean(CONFIRM_DELETE))
+                .withMemoryStickMode(getBoolean(MEMORY_STICK_MODE))
+                .withShowAdvancedHints(getBoolean(SHOW_ADVANCED_HINTS))
+                .build();
 
         EasyBind.listen(generalPreferences.defaultEncodingProperty(), (obs, oldValue, newValue) -> put(DEFAULT_ENCODING, newValue.name()));
         EasyBind.listen(generalPreferences.defaultBibDatabaseModeProperty(), (obs, oldValue, newValue) -> putBoolean(BIBLATEX_DEFAULT_MODE, (newValue == BibDatabaseMode.BIBLATEX)));
-        EasyBind.listen(generalPreferences.isWarnAboutDuplicatesInInspectionProperty(), (obs, oldValue, newValue) -> putBoolean(WARN_ABOUT_DUPLICATES_IN_INSPECTION, newValue));
+        EasyBind.listen(generalPreferences.warnAboutDuplicatesInInspectionProperty(), (obs, oldValue, newValue) -> putBoolean(WARN_ABOUT_DUPLICATES_IN_INSPECTION, newValue));
         EasyBind.listen(generalPreferences.confirmDeleteProperty(), (obs, oldValue, newValue) -> putBoolean(CONFIRM_DELETE, newValue));
         EasyBind.listen(generalPreferences.memoryStickModeProperty(), (obs, oldValue, newValue) -> putBoolean(MEMORY_STICK_MODE, newValue));
         EasyBind.listen(generalPreferences.showAdvancedHintsProperty(), (obs, oldValue, newValue) -> putBoolean(SHOW_ADVANCED_HINTS, newValue));
