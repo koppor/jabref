@@ -104,9 +104,9 @@ public class ZbMATH implements SearchBasedParserFetcher, IdBasedParserFetcher, E
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(String query) throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder("https://zbmath.org/bibtexoutput/");
-        uriBuilder.addParameter("q", new ZbMathQueryTransformer().transformLuceneQuery(luceneQuery).orElse("")); // search all fields
+        uriBuilder.addParameter("q", query); // search all fields
         uriBuilder.addParameter("start", "0"); // start index
         uriBuilder.addParameter("count", "200"); // should return up to 200 items (instead of default 100)
         return uriBuilder.build().toURL();

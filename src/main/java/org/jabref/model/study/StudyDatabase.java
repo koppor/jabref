@@ -5,7 +5,7 @@ public class StudyDatabase {
     private boolean enabled;
 
     public StudyDatabase(String name, boolean enabled) {
-        this.name = name;
+        this.name = name.toLowerCase();
         this.enabled = enabled;
     }
 
@@ -22,7 +22,7 @@ public class StudyDatabase {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     public boolean isEnabled() {

@@ -253,17 +253,16 @@ public class ArXiv implements FulltextFetcher, PagedSearchBasedFetcher, IdBasedF
     /**
      * Constructs a complex query string using the field prefixes specified at https://arxiv.org/help/api/user-manual
      *
-     * @param luceneQuery the root node of the lucene query
+     * @param query the query string used to identify relevant documents
      * @return A list of entries matching the complex query
      */
     @Override
-    public Page<BibEntry> performSearchPaged(QueryNode luceneQuery, int pageNumber) throws FetcherException {
+    public Page<BibEntry> performSearchPaged(String query, int pageNumber) throws FetcherException {
         ArXivQueryTransformer transformer = new ArXivQueryTransformer();
-        String transformedQuery = transformer.transformLuceneQuery(luceneQuery).orElse("");
-        List<BibEntry> searchResult = searchForEntries(transformedQuery, pageNumber).stream()
+        List<BibEntry> searchResult = searchForEntries(query, pageNumber).stream()
                                                                                     .map((arXivEntry) -> arXivEntry.toBibEntry(importFormatPreferences.getKeywordSeparator()))
                                                                                     .collect(Collectors.toList());
-        return new Page<>(transformedQuery, pageNumber, filterYears(searchResult, transformer));
+        return new Page<>(query, pageNumber, filterYears(searchResult, transformer));
     }
 
     private List<BibEntry> filterYears(List<BibEntry> searchResult, ArXivQueryTransformer transformer) {

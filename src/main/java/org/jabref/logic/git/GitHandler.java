@@ -136,6 +136,8 @@ public class GitHandler {
                    .setMessage(commitMessage)
                    .call();
             }
+        } catch (GitAPIException e) {
+            LOGGER.error("Could not create commit on branch", e);
         }
         return commitCreated;
     }

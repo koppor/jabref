@@ -177,18 +177,18 @@ public class GoogleScholar implements FulltextFetcher, PagedSearchBasedFetcher {
     }
 
     @Override
-    public Page<BibEntry> performSearchPaged(QueryNode luceneQuery, int pageNumber) throws FetcherException {
-        ScholarQueryTransformer queryTransformer = new ScholarQueryTransformer();
-        String transformedQuery = queryTransformer.transformLuceneQuery(luceneQuery).orElse("");
+    public Page<BibEntry> performSearchPaged(String query, int pageNumber) throws FetcherException {
         try {
             obtainAndModifyCookie();
             List<BibEntry> foundEntries = new ArrayList<>(10);
             URIBuilder uriBuilder = new URIBuilder(BASIC_SEARCH_URL);
             uriBuilder.addParameter("hl", "en");
             uriBuilder.addParameter("btnG", "Search");
-            uriBuilder.addParameter("q", transformedQuery);
+            uriBuilder.addParameter("q", query);
             uriBuilder.addParameter("start", String.valueOf(pageNumber * getPageSize()));
             uriBuilder.addParameter("num", String.valueOf(getPageSize()));
+            // TODO: How do we handle this now? -> Check whether you can add it to the query string! and implement it that way, otherwise maybe just add the transformers to the ones that do not support it
+            //  -> We can add it to the string just as a year and/or do post processing....
             uriBuilder.addParameter("as_ylo", String.valueOf(queryTransformer.getStartYear()));
             uriBuilder.addParameter("as_yhi", String.valueOf(queryTransformer.getEndYear()));
 
@@ -211,7 +211,7 @@ public class GoogleScholar implements FulltextFetcher, PagedSearchBasedFetcher {
                     throw new FetcherException("Error while fetching from " + getName(), e);
                 }
             }
-            return new Page<>(transformedQuery, pageNumber, foundEntries);
+            return new Page<>(query, pageNumber, foundEntries);
         } catch (URISyntaxException e) {
             throw new FetcherException("Error while fetching from " + getName(), e);
         }

@@ -58,8 +58,6 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher {
 
     private final ImportFormatPreferences preferences;
 
-    private IEEEQueryTransformer transformer;
-
     public IEEE(ImportFormatPreferences preferences) {
         this.preferences = Objects.requireNonNull(preferences);
     }
@@ -243,18 +241,16 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher {
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(String query, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException {
         // transformer is stored globally, because we need to filter out the bib entries by the year manually
         // the transformer stores the min and max year
-        transformer = new IEEEQueryTransformer();
-        String transformedQuery = transformer.transformLuceneQuery(luceneQuery).orElse("");
         URIBuilder uriBuilder = new URIBuilder("https://ieeexploreapi.ieee.org/api/v1/search/articles");
         uriBuilder.addParameter("apikey", API_KEY);
-        if (!transformedQuery.isBlank()) {
-            uriBuilder.addParameter("querytext", transformedQuery);
+        if (!query.isBlank()) {
+            uriBuilder.addParameter("querytext", query);
         }
         uriBuilder.addParameter("max_records", String.valueOf(getPageSize()));
-        // Currently not working as part of the query string
+        // Currently not working as part of the query string TODO: This should work now, add it to the transformer
         if (transformer.getJournal().isPresent()) {
             uriBuilder.addParameter("publication_title", transformer.getJournal().get());
         }

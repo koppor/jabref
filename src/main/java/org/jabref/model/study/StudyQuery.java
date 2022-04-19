@@ -1,7 +1,16 @@
 package org.jabref.model.study;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
+@JsonPropertyOrder({"query", "refinements"})
 public class StudyQuery {
     private String query;
+    private Map<String, String> queryRefinements = new HashMap<>();
 
     public StudyQuery(String query) {
         this.query = query;
@@ -14,12 +23,30 @@ public class StudyQuery {
 
     }
 
-    public String getQuery() {
+    // Serialization as query
+    @JsonGetter("query")
+    public String getBaseQuery() {
         return query;
     }
 
-    public void setQuery(String query) {
+    @JsonGetter("refinements")
+    public Map<String, String> getQueryRefinements() {
+        return queryRefinements;
+    }
+
+    public String getLibrarySpecificQueryOrDefault(String libraryName) {
+        return queryRefinements.getOrDefault(libraryName, query);
+    }
+
+    // Deserialization from query
+    @JsonSetter("query")
+    public void setBaseQuery(String query) {
         this.query = query;
+    }
+
+    @JsonSetter("refinements")
+    public void setQueryRefinements(Map<String, String> queryRefinements) {
+        this.queryRefinements = queryRefinements;
     }
 
     @Override
@@ -33,18 +60,23 @@ public class StudyQuery {
 
         StudyQuery that = (StudyQuery) o;
 
-        return getQuery() != null ? getQuery().equals(that.getQuery()) : that.getQuery() == null;
+        if (!queryRefinements.equals(that.getQueryRefinements())) {
+            return false;
+        }
+
+        return getBaseQuery() != null ? getBaseQuery().equals(that.getBaseQuery()) : that.getBaseQuery() == null;
     }
 
     @Override
     public int hashCode() {
-        return getQuery() != null ? getQuery().hashCode() : 0;
+        return getBaseQuery() != null ? getBaseQuery().hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "QueryEntry{" +
-                "query='" + query + '\'' +
+                "query='" + query + '\'' + ", " +
+                queryRefinements +
                 '}';
     }
 }

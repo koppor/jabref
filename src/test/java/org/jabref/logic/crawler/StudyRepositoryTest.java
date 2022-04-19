@@ -103,7 +103,6 @@ class StudyRepositoryTest {
      */
     @Test
     void repositoryStructureCorrectlyCreated() throws Exception {
-
         // When repository is instantiated the directory structure is created
         assertTrue(Files.exists(Path.of(tempRepositoryDirectory.toString(), hashCodeQuantum + " - Quantum")));
         assertTrue(Files.exists(Path.of(tempRepositoryDirectory.toString(), hashCodeCloudComputing + " - Cloud Computing")));
@@ -153,15 +152,6 @@ class StudyRepositoryTest {
         // All Springer results are duplicates for "Quantum"
         assertEquals(expected, getTestStudyRepository().getQueryResultEntries("Quantum").getEntries());
         assertEquals(getSpringerCloudComputingMockResults(), getTestStudyRepository().getQueryResultEntries("Cloud Computing").getEntries());
-    }
-
-    @Test
-    void setsLastSearchDatePersistedCorrectly() throws Exception {
-        List<QueryResult> mockResults = getMockResults();
-
-        studyRepository.persist(mockResults);
-
-        assertEquals(LocalDate.now(), getTestStudyRepository().getStudy().getLastSearchDate());
     }
 
     @Test

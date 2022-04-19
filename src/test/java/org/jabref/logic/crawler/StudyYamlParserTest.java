@@ -2,8 +2,9 @@ package org.jabref.logic.crawler;
 
 import java.net.URL;
 import java.nio.file.Path;
-import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.study.Study;
@@ -31,10 +32,12 @@ class StudyYamlParserTest {
         String studyName = "TestStudyName";
         List<String> researchQuestions = List.of("Question1", "Question2");
         List<StudyQuery> queryEntries = List.of(new StudyQuery("Quantum"), new StudyQuery("Cloud Computing"), new StudyQuery("\"Software Engineering\""));
+        Map<String, String> librarySpecificQuery = new HashMap<>();
+        librarySpecificQuery.put("ArXiv", "quantum arxiv query");
+        queryEntries.get(0).setQueryRefinements(librarySpecificQuery);
         List<StudyDatabase> libraryEntries = List.of(new StudyDatabase("Springer", true), new StudyDatabase("ArXiv", true), new StudyDatabase("IEEEXplore", false));
 
         expectedStudy = new Study(authors, studyName, researchQuestions, queryEntries, libraryEntries);
-        expectedStudy.setLastSearchDate(LocalDate.parse("2020-11-26"));
     }
 
     @Test

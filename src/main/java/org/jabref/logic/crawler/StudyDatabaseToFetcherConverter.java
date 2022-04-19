@@ -56,7 +56,7 @@ class StudyDatabaseToFetcherConverter {
         Set<SearchBasedFetcher> searchBasedFetchers = WebFetchers.getSearchBasedFetchers(importFormatPreferences);
         String libraryNameFromFetcher = studyDatabase.getName();
         return searchBasedFetchers.stream()
-                                  .filter(searchBasedFetcher -> searchBasedFetcher.getName().toLowerCase().equals(libraryNameFromFetcher.toLowerCase()))
+                                  .filter(searchBasedFetcher -> searchBasedFetcher.getName().equalsIgnoreCase(libraryNameFromFetcher))
                                   .findAny()
                                   .orElse(null);
     }

@@ -198,16 +198,15 @@ public class MedlineFetcher implements IdBasedParserFetcher, SearchBasedFetcher 
     }
 
     @Override
-    public List<BibEntry> performSearch(QueryNode luceneQuery) throws FetcherException {
+    public List<BibEntry> performSearch(String query) throws FetcherException {
         List<BibEntry> entryList;
         DefaultQueryTransformer transformer = new DefaultQueryTransformer();
-        Optional<String> transformedQuery = transformer.transformLuceneQuery(luceneQuery);
 
-        if (transformedQuery.isEmpty() || transformedQuery.get().isBlank()) {
+        if (query.isBlank()) {
             return Collections.emptyList();
         } else {
             // searching for pubmed ids matching the query
-            List<String> idList = getPubMedIdsFromQuery(transformedQuery.get());
+            List<String> idList = getPubMedIdsFromQuery(query);
 
             if (idList.isEmpty()) {
                 LOGGER.info("No results found.");

@@ -48,12 +48,12 @@ public class IEEEQueryTransformer extends YearRangeByFilteringQueryTransformer {
 
     @Override
     protected String handleJournal(String journal) {
-        this.journal = journal;
         return StringUtil.quoteStringIfSpaceIsContained(journal);
     }
 
     @Override
     protected String handleYear(String year) {
+        // TODO: This is possible in the query string, implement here!
         startYear = Math.min(startYear, Integer.parseInt(year));
         endYear = Math.max(endYear, Integer.parseInt(year));
         return "";
@@ -62,6 +62,7 @@ public class IEEEQueryTransformer extends YearRangeByFilteringQueryTransformer {
     @Override
     protected Optional<String> handleOtherField(String fieldAsString, String term) {
         return switch (fieldAsString) {
+            // TODO: Add here article field handling
             case "article_number" -> handleArticleNumber(term);
             default -> super.handleOtherField(fieldAsString, term);
         };
@@ -78,10 +79,6 @@ public class IEEEQueryTransformer extends YearRangeByFilteringQueryTransformer {
     private Optional<String> handleArticleNumber(String term) {
         articleNumber = term;
         return Optional.empty();
-    }
-
-    public Optional<String> getJournal() {
-        return Objects.isNull(journal) ? Optional.empty() : Optional.of(journal);
     }
 
     public Optional<String> getArticleNumber() {

@@ -1,12 +1,13 @@
 authors:
   - Jab Ref
 title: TestStudyName
-last-search-date: 2020-11-26
 research-questions:
   - Question1
   - Question2
 queries:
   - query: Quantum
+    refinements:
+      ArXiv: "quantum arxiv query"
   - query: Cloud Computing
   - query: '"Software Engineering"'
 databases:

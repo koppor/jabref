@@ -46,10 +46,10 @@ public class CiteSeer implements SearchBasedParserFetcher {
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(String query) throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder("https://citeseer.ist.psu.edu/search");
         uriBuilder.addParameter("sort", "rlv"); // Sort by relevance
-        uriBuilder.addParameter("q", new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse("")); // Query
+        uriBuilder.addParameter("q", query); // Query
         uriBuilder.addParameter("t", "doc"); // Type: documents
         // uriBuilder.addParameter("start", "0"); // Start index (not supported at the moment)
         return uriBuilder.build().toURL();

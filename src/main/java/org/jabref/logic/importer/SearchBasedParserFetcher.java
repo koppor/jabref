@@ -27,14 +27,14 @@ public interface SearchBasedParserFetcher extends SearchBasedFetcher {
      * This method is necessary as the performSearch method does not support certain URL parameters that are used for
      * fielded search, such as a title, author, or year parameter.
      *
-     * @param luceneQuery the root node of the lucene query
+     * @param query the query string used to identify relevant documents
      */
     @Override
-    default List<BibEntry> performSearch(QueryNode luceneQuery) throws FetcherException {
+    default List<BibEntry> performSearch(String query) throws FetcherException {
         // ADR-0014
         URL urlForQuery;
         try {
-            urlForQuery = getURLForQuery(luceneQuery);
+            urlForQuery = getURLForQuery(query);
         } catch (URISyntaxException | MalformedURLException | FetcherException e) {
             throw new FetcherException("Search URI crafted from complex search query is malformed", e);
         }
@@ -61,9 +61,9 @@ public interface SearchBasedParserFetcher extends SearchBasedFetcher {
     /**
      * Constructs a URL based on the lucene query.
      *
-     * @param luceneQuery the root node of the lucene query
+     * @param query the query string used to identify relevant documents
      */
-    URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException, FetcherException;
+    URL getURLForQuery(String query) throws URISyntaxException, MalformedURLException, FetcherException;
 
     /**
      * Performs a cleanup of the fetched entry.

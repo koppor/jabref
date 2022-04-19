@@ -15,15 +15,15 @@ import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 public interface PagedSearchBasedParserFetcher extends SearchBasedParserFetcher, PagedSearchBasedFetcher {
 
     @Override
-    default Page<BibEntry> performSearchPaged(QueryNode luceneQuery, int pageNumber) throws FetcherException {
+    default Page<BibEntry> performSearchPaged(String query, int pageNumber) throws FetcherException {
         // ADR-0014
         URL urlForQuery;
         try {
-            urlForQuery = getURLForQuery(luceneQuery, pageNumber);
+            urlForQuery = getURLForQuery(query, pageNumber);
         } catch (URISyntaxException | MalformedURLException e) {
             throw new FetcherException("Search URI crafted from complex search query is malformed", e);
         }
-        return new Page<>(luceneQuery.toString(), pageNumber, getBibEntries(urlForQuery));
+        return new Page<>(query, pageNumber, getBibEntries(urlForQuery));
     }
 
     private List<BibEntry> getBibEntries(URL urlForQuery) throws FetcherException {
@@ -40,18 +40,18 @@ public interface PagedSearchBasedParserFetcher extends SearchBasedParserFetcher,
 
     /**
      * Constructs a URL based on the query, size and page number.
-     *  @param luceneQuery      the search query
+     *  @param query the query string used to identify relevant documents
      * @param pageNumber the number of the page indexed from 0
      */
-    URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException;
+    URL getURLForQuery(String query, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException;
 
     @Override
-    default URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException, FetcherException {
-        return getURLForQuery(luceneQuery, 0);
+    default URL getURLForQuery(String query) throws URISyntaxException, MalformedURLException, FetcherException {
+        getURLForQuery(query, 0);
     }
 
     @Override
-    default List<BibEntry> performSearch(QueryNode luceneQuery) throws FetcherException {
-        return SearchBasedParserFetcher.super.performSearch(luceneQuery);
+    default List<BibEntry> performSearch(String query) throws FetcherException {
+        return SearchBasedParserFetcher.super.performSearch(query);
     }
 }

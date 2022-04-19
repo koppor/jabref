@@ -10,7 +10,7 @@ public class FetchResult {
     private final BibDatabase fetchResult;
 
     public FetchResult(String fetcherName, BibDatabase fetcherResult) {
-        this.fetcherName = fetcherName;
+        this.fetcherName = fetcherName.toLowerCase();
         this.fetchResult = fetcherResult;
     }
 

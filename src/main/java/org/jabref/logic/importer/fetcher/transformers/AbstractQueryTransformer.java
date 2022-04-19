@@ -165,6 +165,8 @@ public abstract class AbstractQueryTransformer {
     /**
      * Return a string representation of the year-range fielded term
      * Should follow the structure yyyy-yyyy
+     * Default implementation emulates year range query using year field and OR concatenation
+     * Should be overwritten if year range is supported natively by the API
      *
      * Example: <code>2015-2021</code>
      */

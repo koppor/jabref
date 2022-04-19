@@ -49,7 +49,7 @@ public class ManageStudyDefinitionViewModel {
         title.setValue(study.getTitle());
         authors.addAll(study.getAuthors());
         researchQuestions.addAll(study.getResearchQuestions());
-        queries.addAll(study.getQueries().stream().map(StudyQuery::getQuery).collect(Collectors.toList()));
+        queries.addAll(study.getQueries().stream().map(StudyQuery::getBaseQuery).collect(Collectors.toList()));
         databases.addAll(study.getDatabases()
                               .stream()
                               .map(studyDatabase -> new StudyDatabaseItem(studyDatabase.getName(), studyDatabase.isEnabled()))

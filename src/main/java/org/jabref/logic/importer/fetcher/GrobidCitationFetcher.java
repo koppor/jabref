@@ -77,11 +77,4 @@ public class GrobidCitationFetcher implements SearchBasedFetcher {
         return collect;
     }
 
-    /**
-     * Not used
-     */
-    @Override
-    public List<BibEntry> performSearch(QueryNode luceneQuery) throws FetcherException {
-        return Collections.emptyList();
-    }
 }

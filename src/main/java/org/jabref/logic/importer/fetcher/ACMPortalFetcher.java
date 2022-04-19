@@ -36,10 +36,6 @@ public class ACMPortalFetcher implements SearchBasedParserFetcher {
         return Optional.of(HelpFile.FETCHER_ACM);
     }
 
-    private static String createQueryString(QueryNode query) {
-        return new DefaultQueryTransformer().transformLuceneQuery(query).orElse("");
-    }
-
     /**
      * Constructing the url for the searchpage.
      *
@@ -47,9 +43,9 @@ public class ACMPortalFetcher implements SearchBasedParserFetcher {
      * @return query URL
      */
     @Override
-    public URL getURLForQuery(QueryNode query) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(String query) throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder(SEARCH_URL);
-        uriBuilder.addParameter("AllField", createQueryString(query));
+        uriBuilder.addParameter("AllField", query);
         return uriBuilder.build().toURL();
     }
 

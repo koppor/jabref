@@ -13,12 +13,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * This class defines all aspects of a scientific study relevant to the application. It is a proxy for the file based study definition.
  */
 
-@JsonPropertyOrder({"authors", "title", "last-search-date", "research-questions", "queries", "databases"})
+@JsonPropertyOrder({"authors", "title", "research-questions", "queries", "databases"})
 public class Study {
     private List<String> authors;
     private String title;
-    @JsonProperty("last-search-date")
-    private LocalDate lastSearchDate;
     @JsonProperty("research-questions")
     private List<String> researchQuestions;
     private List<StudyQuery> queries;
@@ -54,14 +52,6 @@ public class Study {
         this.queries = queries;
     }
 
-    public LocalDate getLastSearchDate() {
-        return lastSearchDate;
-    }
-
-    public void setLastSearchDate(LocalDate date) {
-        lastSearchDate = date;
-    }
-
     public List<StudyDatabase> getDatabases() {
         return databases;
     }
@@ -91,7 +81,6 @@ public class Study {
         return "Study{" +
                 "authors=" + authors +
                 ", studyName='" + title + '\'' +
-                ", lastSearchDate=" + lastSearchDate +
                 ", researchQuestions=" + researchQuestions +
                 ", queries=" + queries +
                 ", libraries=" + databases +
@@ -113,9 +102,6 @@ public class Study {
             return false;
         }
         if (getTitle() != null ? !getTitle().equals(study.getTitle()) : study.getTitle() != null) {
-            return false;
-        }
-        if (getLastSearchDate() != null ? !getLastSearchDate().equals(study.getLastSearchDate()) : study.getLastSearchDate() != null) {
             return false;
         }
         if (getResearchQuestions() != null ? !getResearchQuestions().equals(study.getResearchQuestions()) : study.getResearchQuestions() != null) {

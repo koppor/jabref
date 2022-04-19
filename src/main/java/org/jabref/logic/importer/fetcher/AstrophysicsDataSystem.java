@@ -81,13 +81,13 @@ public class AstrophysicsDataSystem implements IdBasedParserFetcher, PagedSearch
     }
 
     /**
-     * @param luceneQuery query string, matching the apache solr format
+     * @param query the query string used to identify relevant documents
      * @return URL which points to a search request for given query
      */
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(String query, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder builder = new URIBuilder(API_SEARCH_URL);
-        builder.addParameter("q", new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
+        builder.addParameter("q", query);
         builder.addParameter("fl", "bibcode");
         builder.addParameter("rows", String.valueOf(getPageSize()));
         builder.addParameter("start", String.valueOf(getPageSize() * pageNumber));
@@ -273,10 +273,10 @@ public class AstrophysicsDataSystem implements IdBasedParserFetcher, PagedSearch
     }
 
     @Override
-    public List<BibEntry> performSearch(QueryNode luceneQuery) throws FetcherException {
+    public List<BibEntry> performSearch(String query) throws FetcherException {
         URL urlForQuery;
         try {
-            urlForQuery = getURLForQuery(luceneQuery);
+            urlForQuery = getURLForQuery(query);
         } catch (URISyntaxException e) {
             throw new FetcherException("Search URI is malformed", e);
         } catch (IOException e) {
@@ -288,10 +288,10 @@ public class AstrophysicsDataSystem implements IdBasedParserFetcher, PagedSearch
     }
 
     @Override
-    public Page<BibEntry> performSearchPaged(QueryNode luceneQuery, int pageNumber) throws FetcherException {
+    public Page<BibEntry> performSearchPaged(String query, int pageNumber) throws FetcherException {
         URL urlForQuery;
         try {
-            urlForQuery = getURLForQuery(luceneQuery, pageNumber);
+            urlForQuery = getURLForQuery(query, pageNumber);
         } catch (URISyntaxException e) {
             throw new FetcherException("Search URI is malformed", e);
         } catch (IOException e) {
@@ -300,7 +300,7 @@ public class AstrophysicsDataSystem implements IdBasedParserFetcher, PagedSearch
         // This is currently just interpreting the complex query as a default string query
         List<String> bibCodes = fetchBibcodes(urlForQuery);
         Collection<BibEntry> results = performSearchByIds(bibCodes);
-        return new Page<>(luceneQuery.toString(), pageNumber, results);
+        return new Page<>(query, pageNumber, results);
     }
 
     @Override
