@@ -1,8 +1,5 @@
 package org.jabref.preferences;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -10,10 +7,7 @@ import javafx.beans.property.SimpleObjectProperty;
 
 import org.jabref.model.database.BibDatabaseMode;
 
-import com.google.common.base.Strings;
-
 public class GeneralPreferences {
-    private final ObjectProperty<Charset> defaultEncoding;
     private final ObjectProperty<BibDatabaseMode> defaultBibDatabaseMode;
     private final BooleanProperty warnAboutDuplicatesInInspection;
     private final BooleanProperty confirmDelete;
@@ -21,13 +15,11 @@ public class GeneralPreferences {
     private final BooleanProperty memoryStickMode;
     private final BooleanProperty showAdvancedHints;
 
-    public GeneralPreferences(Charset defaultEncoding,
-                              BibDatabaseMode defaultBibDatabaseMode,
+    public GeneralPreferences(BibDatabaseMode defaultBibDatabaseMode,
                               boolean warnAboutDuplicatesInInspection,
                               boolean confirmDelete,
                               boolean memoryStickMode,
                               boolean showAdvancedHints) {
-        this.defaultEncoding = new SimpleObjectProperty<>(defaultEncoding);
         this.defaultBibDatabaseMode = new SimpleObjectProperty<>(defaultBibDatabaseMode);
         this.warnAboutDuplicatesInInspection = new SimpleBooleanProperty(warnAboutDuplicatesInInspection);
         this.confirmDelete = new SimpleBooleanProperty(confirmDelete);
@@ -40,8 +32,7 @@ public class GeneralPreferences {
      * Creates Object with default values
      */
     public GeneralPreferences() {
-        this(StandardCharsets.UTF_8,
-                BibDatabaseMode.BIBTEX,
+        this(BibDatabaseMode.BIBTEX,
                 true,
                 true,
                 false,
@@ -52,23 +43,10 @@ public class GeneralPreferences {
     public void setDefaults() {
         GeneralPreferences defaults = new GeneralPreferences();
         this.defaultBibDatabaseMode.setValue(defaults.getDefaultBibDatabaseMode());
-        this.defaultEncoding.setValue(defaults.getDefaultEncoding());
         this.warnAboutDuplicatesInInspection.setValue(defaults.shouldWarnAboutDuplicatesInInspection());
         this.confirmDelete.setValue(shouldConfirmDelete());
         this.memoryStickMode.setValue(defaults.isMemoryStickMode());
         this.showAdvancedHints.setValue(defaults.shouldShowAdvancedHints());
-    }
-
-    public Charset getDefaultEncoding() {
-        return defaultEncoding.get();
-    }
-
-    public ObjectProperty<Charset> defaultEncodingProperty() {
-        return defaultEncoding;
-    }
-
-    public void setDefaultEncoding(Charset defaultEncoding) {
-        this.defaultEncoding.set(defaultEncoding);
     }
 
     public BibDatabaseMode getDefaultBibDatabaseMode() {
@@ -136,18 +114,6 @@ public class GeneralPreferences {
 
         public Builder() {
             toBuild = new GeneralPreferences();
-        }
-
-        public Builder withDefaultEncoding(Charset defaultEncoding) {
-            toBuild.setDefaultEncoding(defaultEncoding);
-            return this;
-        }
-
-        public Builder withDefaultEncoding(String defaultEncoding) {
-            if (!Strings.isNullOrEmpty(defaultEncoding)) {
-                toBuild.setDefaultEncoding(Charset.forName(defaultEncoding));
-            }
-            return this;
         }
 
         public Builder withDefaultBibDatabaseMode(BibDatabaseMode defaultBibDatabaseMode) {
