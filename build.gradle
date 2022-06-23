@@ -563,7 +563,6 @@ jlink {
         requires 'java.transaction.xa'
         requires 'java.rmi'
         requires 'java.xml'
-        requires 'jdk.jfr'
         requires 'jdk.jsobject'
         requires 'jdk.unsupported'
         requires 'jdk.unsupported.desktop'
@@ -589,7 +588,7 @@ jlink {
                 'org.mariadb.jdbc.internal.com.send.authentication.OldPasswordPlugin',
                 'org.mariadb.jdbc.internal.com.send.authentication.SendGssApiAuthPacket',
                 'org.mariadb.jdbc.internal.com.send.authentication.SendPamAuthPacket',
-                'org.mariadb.jdbc.internal.com.send.authentication.Sha256PasswordPlugin';
+                'org.mariadb.jdbc.internal.com.send.authentication.Sha256PasswordPlugin'
         provides 'org.mariadb.jdbc.credential.CredentialPlugin' with 'org.mariadb.jdbc.credential.aws.AwsIamCredentialPlugin',
                 'org.mariadb.jdbc.credential.env.EnvCredentialPlugin',
                 'org.mariadb.jdbc.credential.system.PropertiesCredentialPlugin'
