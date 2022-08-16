@@ -28,6 +28,7 @@ Note that this project **does not** adhere to [Semantic Versioning](http://semve
 
 - The [HtmlToLaTeXFormatter](https://docs.jabref.org/finding-sorting-and-cleaning-entries/saveactions#html-to-latex) keeps single `<` characters.
 - We fixed a performance regression when opening large libraries [#9041](https://github.com/JabRef/jabref/issues/9041)
+- Saving after adding a subgroup and removing it do not cause a change notification anymore. [#9064](https://github.com/JabRef/jabref/issues/9064)
 - We fixed a bug where spaces are trimmed when highlighting differences in the Entries merge dialog. [koppor#371](https://github.com/koppor/jabref/issues/371)
 
 ### Removed
