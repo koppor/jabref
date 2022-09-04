@@ -19,16 +19,15 @@ class VersionWorkerTest {
     @Test
     void ignoreNewVersionTest() throws IOException {
         InternalPreferences internalPreferences = mock(InternalPreferences.class);
+        List<Version> availVersions = List.of(Version.parse("1.0.0"), Version.parse("2.0.0"));
+        VersionWorker versionWorker = new VersionWorker(Version.parse("1.0.0"),
+                mock(DialogService.class, Answers.RETURNS_DEEP_STUBS),
+                mock(TaskExecutor.class),
+                internalPreferences);
 
         try (MockedStatic<Version> version = Mockito.mockStatic(Version.class)) {
-            VersionWorker versionWorker = new VersionWorker(Version.parse("1.0.0"),
-                    mock(DialogService.class, Answers.RETURNS_DEEP_STUBS),
-                    mock(TaskExecutor.class),
-                    internalPreferences);
-
-            version.when(x -> Version.parse(x)).thenCallRealMethod();
             version.when(Version::getAllAvailableVersions)
-                   .thenReturn(List.of(Version.parse("1.0.0"), Version.parse("2.0.0")));
+                   .thenReturn(availVersions);
 
             System.out.println(versionWorker.getNewVersion().get());
         }
