@@ -52,7 +52,7 @@ public class VersionWorker {
      * Returns a newer version excluding any non-stable versions, except if the installed one is unstable too. If no
      * newer version was found, then an empty optional is returned.
      */
-    private Optional<Version> getNewVersion() throws IOException {
+    protected Optional<Version> getNewVersion() throws IOException {
         List<Version> availableVersions = Version.getAllAvailableVersions();
         return installedVersion.shouldBeUpdatedTo(availableVersions);
     }
