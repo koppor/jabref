@@ -87,7 +87,7 @@ public class VersionWorker {
      * Prints up-to-date to the status bar (and shows a dialog it was executed manually) if there is now new version.
      * Shows a "New Version" Dialog to the user if there is.
      */
-    private void showUpdateInfo(Optional<Version> newerVersion, boolean manualExecution) {
+    protected void showUpdateInfo(Optional<Version> newerVersion, boolean manualExecution) {
         // no new version could be found, only respect the ignored version on automated version checks
         if (newerVersion.isEmpty() || (newerVersion.get().equals(internalPreferences.getIgnoredVersion()) && !manualExecution)) {
             if (manualExecution) {
