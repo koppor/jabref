@@ -181,12 +181,12 @@ dependencies {
     implementation "org.tinylog:tinylog-api:2.5.0"
     implementation "org.tinylog:slf4j-tinylog:2.5.0"
     implementation "org.tinylog:tinylog-impl:2.5.0"
-
     implementation 'de.undercouch:citeproc-java:3.0.0-alpha.6'
 
     // jakarta.activation is already dependency of glassfish
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
     implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '3.0.2'
+    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.0.0'
 
     implementation ('com.github.tomtung:latex2unicode_2.13:0.3.2') {
         exclude module: 'fastparse_2.13'

@@ -116,6 +116,7 @@ open module org.jabref {
     requires net.harawata.appdirs;
 
     requires org.eclipse.jgit;
+    requires jakarta.ws.rs;
     uses org.eclipse.jgit.transport.SshSessionFactory;
     uses org.eclipse.jgit.lib.GpgSigner;
 }
