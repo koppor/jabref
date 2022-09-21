@@ -187,12 +187,9 @@ dependencies {
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
     implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '3.0.2'
     implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.0.0'
-    implementation (group: 'org.glassfish.jersey.containers', name: 'jersey-container-jetty-http', version: '3.0.8') {
-        exclude group: "jakarta.inject", module: 'jakarta.inject'
-    }
-    implementation( group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '11.0.12') {
-         exclude group: "jakarta.inject", module: 'jakarta.inject'
-    }
+    implementation group: 'org.glassfish.jersey.containers', name: 'jersey-container-jetty-http', version: '3.0.8'
+    implementation 'org.glassfish.jersey.inject:jersey-hk2:3.0.8'
+    implementation group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '11.0.12'
 
     implementation ('com.github.tomtung:latex2unicode_2.13:0.3.2') {
         exclude module: 'fastparse_2.13'
