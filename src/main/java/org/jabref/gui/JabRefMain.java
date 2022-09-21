@@ -3,6 +3,7 @@ package org.jabref.gui;
 import java.io.File;
 import java.io.IOException;
 import java.net.Authenticator;
+import java.net.URI;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +29,7 @@ import org.jabref.logic.net.ssl.TrustStoreManager;
 import org.jabref.logic.protectedterms.ProtectedTermsLoader;
 import org.jabref.logic.remote.RemotePreferences;
 import org.jabref.logic.remote.client.RemoteClient;
+import org.jabref.logic.shared.restserver.rest.Root;
 import org.jabref.logic.util.BuildInfo;
 import org.jabref.migrations.PreferencesMigrations;
 import org.jabref.model.database.BibDatabaseContext;
@@ -35,8 +37,12 @@ import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.preferences.JabRefPreferences;
 import org.jabref.preferences.PreferencesService;
 
+import jakarta.ws.rs.core.UriBuilder;
 import net.harawata.appdirs.AppDirsFactory;
 import org.apache.commons.cli.ParseException;
+import org.eclipse.jetty.server.Server;
+import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinylog.configuration.Configuration;
@@ -51,8 +57,15 @@ public class JabRefMain extends Application {
 
     public static void main(String[] args) {
         addLogToDisk();
+        startServer();
         arguments = args;
         launch(arguments);
+    }
+
+    private static void startServer() {
+        URI baseUri = UriBuilder.fromUri("http://localhost/").port(9998).build();
+        ResourceConfig config = new ResourceConfig(Root.class);
+        Server server = JettyHttpContainerFactory.createServer(baseUri, config);
     }
 
     private static void initializeLogger() {
