@@ -186,9 +186,10 @@ dependencies {
     // jakarta.activation is already dependency of glassfish
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
     implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '3.0.2'
-    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.0.0'
-    implementation group: 'org.glassfish.jersey.containers', name: 'jersey-container-jetty-http', version: '3.0.8'
-    implementation 'org.glassfish.jersey.inject:jersey-hk2:3.0.8'
+    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'
+    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    implementation group: 'org.glassfish.jersey.containers', name: 'jersey-container-jetty-http', version: '3.1.0-M8'
+    implementation 'org.glassfish.jersey.inject:jersey-hk2:3.1.0-M8'
     implementation group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '11.0.12'
 
     implementation ('com.github.tomtung:latex2unicode_2.13:0.3.2') {

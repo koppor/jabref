@@ -117,6 +117,7 @@ open module org.jabref {
 
     requires org.eclipse.jgit;
     requires jakarta.ws.rs;
+    requires jakarta.validation;
     requires jersey.server;
 	requires jersey.container.jetty.http;
 	requires org.eclipse.jetty.server;
