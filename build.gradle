@@ -534,7 +534,9 @@ jlink {
     addOptions("--bind-services")
     
     // Use "balanced" policy, which should provide better application performance
-    addOptions('-Xgcpolicy:balanced')
+    // See for details https://www.eclipse.org/openj9/docs/gc/#balanced-policy
+    // Issue as of 2022-09-26: "Error: unknown option: -Xgcpolicy:balanced"
+    // addOptions('-Xgcpolicy:balanced')
 
     // Provide more than 8 MB initial heap size (defaults are listed at https://www.eclipse.org/openj9/docs/openj9_defaults/)
     addOptions('-Xms220M')
