@@ -140,7 +140,7 @@ public class ArgumentProcessor {
         importResult.ifPresent(result -> {
             OutputPrinter printer = new SystemOutputPrinter();
             if (result.hasWarnings()) {
-                printer.showMessage(result.getErrorMessage());
+                printer.showMessage(result.getWarningsAsString());
             }
         });
         return importResult;

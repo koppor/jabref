@@ -206,7 +206,7 @@ public class OpenDatabaseAction extends SimpleCommand {
                     Globals.getFileUpdateMonitor());
             if (result.hasWarnings()) {
                 String content = Localization.lang("Please check your library file for wrong syntax.")
-                        + "\n\n" + result.getErrorMessage();
+                        + "\n\n" + result.getWarningsAsString();
                 DefaultTaskExecutor.runInJavaFXThread(() ->
                         dialogService.showWarningDialogAndWait(Localization.lang("Open library error"), content));
             }

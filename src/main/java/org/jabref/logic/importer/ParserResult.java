@@ -52,7 +52,7 @@ public class ParserResult {
         return parserResult;
     }
 
-    private static String getErrorMessage(Exception exception) {
+    private static String getWarningsAsString(Exception exception) {
         String errorMessage = exception.getLocalizedMessage();
         if (exception.getCause() != null) {
             errorMessage += " Caused by: " + exception.getCause().getLocalizedMessage();
@@ -61,7 +61,7 @@ public class ParserResult {
     }
 
     public static ParserResult fromError(Exception exception) {
-        return fromErrorMessage(getErrorMessage(exception));
+        return fromErrorMessage(getWarningsAsString(exception));
     }
 
     /**
@@ -111,7 +111,7 @@ public class ParserResult {
     }
 
     public void addException(Exception exception) {
-        String errorMessage = getErrorMessage(exception);
+        String errorMessage = getWarningsAsString(exception);
         addWarning(errorMessage);
     }
 
@@ -123,16 +123,16 @@ public class ParserResult {
         return new ArrayList<>(warnings);
     }
 
+    public String getWarningsAsString() {
+        return String.join(" ", warnings());
+    }
+
     public boolean isInvalid() {
         return invalid;
     }
 
     public void setInvalid(boolean invalid) {
         this.invalid = invalid;
-    }
-
-    public String getErrorMessage() {
-        return String.join(" ", warnings());
     }
 
     public BibDatabaseContext getDatabaseContext() {
