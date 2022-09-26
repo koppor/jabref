@@ -646,4 +646,16 @@ public class BibDatabase {
     public String getNewLineSeparator() {
         return newLineSeparator;
     }
+
+    @Override
+    public String toString() {
+        return "BibDatabase{" +
+                "entries.size()=" + entries.size() +
+                ", bibtexStrings.size()=" + bibtexStrings.size() +
+                ", preamble='" + preamble + '\'' +
+                ", epilog='" + epilog + '\'' +
+                ", sharedDatabaseID='" + sharedDatabaseID + '\'' +
+                ", newLineSeparator='" + newLineSeparator + '\'' +
+                '}';
+    }
 }

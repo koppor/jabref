@@ -157,6 +157,20 @@ public class ParserResult {
         return changedOnMigration;
     }
 
+    @Override
+    public String toString() {
+        return "ParserResult{" +
+                "entryTypes=" + entryTypes +
+                ", warnings=" + warnings +
+                ", database=" + database +
+                ", metaData=" + metaData +
+                ", file=" + file +
+                ", invalid=" + invalid +
+                ", toOpenTab=" + toOpenTab +
+                ", changedOnMigration=" + changedOnMigration +
+                '}';
+    }
+
     public void setChangedOnMigration(boolean wasChangedOnMigration) {
         this.changedOnMigration = wasChangedOnMigration;
     }
