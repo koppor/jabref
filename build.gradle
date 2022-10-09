@@ -533,6 +533,15 @@ jlink {
     }
 
     addOptions("--bind-services")
+    
+    // Use "balanced" policy, which should provide better application performance
+    // See for details https://www.eclipse.org/openj9/docs/gc/#balanced-policy
+    // Issue as of 2022-09-26: "Error: unknown option: -Xgcpolicy:balanced"
+    // addOptions('-Xgcpolicy:balanced')
+
+    // Provide more than 8 MB initial heap size (defaults are listed at https://www.eclipse.org/openj9/docs/openj9_defaults/)
+    // Issue as of 2022-09-26: Not recoginzed as option
+    // addOptions('-Xms220M')
 
     // TODO: Remove the following as soon as the dependencies are fixed (upstream)
     // forceMerge is usually needed when some non-modular artifacts in the dependency graph use code that was previously part of the JDK
