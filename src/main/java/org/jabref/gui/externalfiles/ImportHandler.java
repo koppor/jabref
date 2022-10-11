@@ -114,7 +114,7 @@ public class ImportHandler {
                             List<BibEntry> pdfEntriesInFile = pdfImporterResult.getDatabase().getEntries();
 
                             if (pdfImporterResult.hasWarnings()) {
-                                addResultToList(file, false, Localization.lang("Error reading PDF content: %0", pdfImporterResult.getErrorMessage()));
+                                addResultToList(file, false, Localization.lang("Error reading PDF content: %0", pdfImporterResult.getWarningsAsString()));
                             }
 
                             if (!pdfEntriesInFile.isEmpty()) {
@@ -127,7 +127,7 @@ public class ImportHandler {
                         } else if (FileUtil.isBibFile(file)) {
                             var bibtexParserResult = contentImporter.importFromBibFile(file, fileUpdateMonitor);
                             if (bibtexParserResult.hasWarnings()) {
-                                addResultToList(file, false, bibtexParserResult.getErrorMessage());
+                                addResultToList(file, false, bibtexParserResult.getWarningsAsString());
                             }
 
                             entriesToAdd.addAll(bibtexParserResult.getDatabaseContext().getEntries());

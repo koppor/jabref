@@ -193,7 +193,7 @@ public class ImportFormatReader {
                     parserResult.setPath(filePath);
                     return new UnknownFormatImport(ImportFormatReader.BIBTEX_FORMAT, parserResult);
                 } else {
-                    throw new ImportException(parserResult.getErrorMessage());
+                    throw new ImportException(parserResult.getWarningsAsString());
                 }
             } catch (IOException ignore) {
                 // Ignored

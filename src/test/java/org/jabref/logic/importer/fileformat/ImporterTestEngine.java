@@ -50,7 +50,7 @@ public class ImporterTestEngine {
     public static void testImportEntries(Importer importer, String fileName, String fileType) throws IOException, ImportException {
         ParserResult parserResult = importer.importDatabase(getPath(fileName));
         if (parserResult.isInvalid()) {
-            throw new ImportException(parserResult.getErrorMessage());
+            throw new ImportException(parserResult.getWarningsAsString());
         }
         List<BibEntry> entries = parserResult.getDatabase()
                                              .getEntries();

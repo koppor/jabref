@@ -1923,4 +1923,27 @@ class BibtexParserTest {
 
         assertEquals(Optional.of("#apr#"), result.get().getField(StandardField.MONTH));
     }
+
+    @Test
+    void conflictMarkersResultInProperParseError() throws Exception {
+        String input = """
+                @Article{first,
+                    author = {Author},
+                    <<<<<<< HEAD:test.bib
+                    title = {Title},
+                    =======
+                    title = {My title},
+                    >>>>>>> 77976da35a11db4580b80ae27e8d65caf5208086:test.bib
+                }
+
+                @Article{second,
+                  author = {Valid Author},
+                }
+                """;
+        ParserResult parserResult = parser.parse(new StringReader(input));
+
+        ParserResult expected = ParserResult.fromErrorMessage("Found git conflict markers");
+
+        assertEquals(expected, parserResult);
+    }
 }

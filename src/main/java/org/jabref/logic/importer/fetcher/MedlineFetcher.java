@@ -173,7 +173,7 @@ public class MedlineFetcher implements IdBasedParserFetcher, SearchBasedFetcher 
             ParserResult result = new MedlineImporter().importDatabase(
                     new BufferedReader(new InputStreamReader(data.getInputStream(), StandardCharsets.UTF_8)));
             if (result.hasWarnings()) {
-                LOGGER.warn(result.getErrorMessage());
+                LOGGER.warn(result.getWarningsAsString());
             }
             List<BibEntry> resultList = result.getDatabase().getEntries();
             resultList.forEach(this::doPostCleanup);
