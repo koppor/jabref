@@ -54,17 +54,6 @@ public class Launcher {
 
     public static void main(String[] args) {
         addLogToDisk();
-        startServer();
-    }
-
-    private static void startServer() {
-        URI baseUri = UriBuilder.fromUri("http://localhost/").port(9998).build();
-        ResourceConfig config = new ResourceConfig(Root.class);
-        Server server = JettyHttpContainerFactory.createServer(baseUri, config);
-    }
-
-    private static void initializeLogger() {
-         LOGGER = LoggerFactory.getLogger(JabRefMain.class);
         try {
             // Init preferences
             final JabRefPreferences preferences = JabRefPreferences.getInstance();
@@ -99,7 +88,14 @@ public class Launcher {
         } catch (Exception ex) {
             LOGGER.error("Unexpected exception", ex);
         }
->>>>>>> upstream/main:src/main/java/org/jabref/cli/Launcher.java
+
+        startServer();
+    }
+
+    private static void startServer() {
+        URI baseUri = UriBuilder.fromUri("http://localhost/").port(9998).build();
+        ResourceConfig config = new ResourceConfig(Root.class);
+        Server server = JettyHttpContainerFactory.createServer(baseUri, config);
     }
 
     /**
