@@ -139,7 +139,7 @@ public class TrustStoreManager {
     public static void createTruststoreFileIfNotExist(Path storePath) {
         try {
             LOGGER.debug("Trust store path: {}", storePath.toAbsolutePath());
-            Path storeResourcePath = Path.of(TrustStoreManager.class.getResource("/ssl/truststore.jks").toURI());
+            Path storeResourcePath = Path.of(TrustStoreManager.class.getClassLoader().getResource("ssl/truststore.jks").toURI());
             Files.createDirectories(storePath.getParent());
             if (Files.notExists(storePath)) {
                 Files.copy(storeResourcePath, storePath);
