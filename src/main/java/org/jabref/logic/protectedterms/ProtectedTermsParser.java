@@ -33,8 +33,14 @@ public class ProtectedTermsParser {
     private String location;
 
     public void readTermsFromResource(String resourceFileName, String descriptionString) {
-        URL url = Objects
-                .requireNonNull(ProtectedTermsLoader.class.getResource(Objects.requireNonNull(resourceFileName)));
+        URL resource = ProtectedTermsLoader.class.getResource(Objects.requireNonNull(resourceFileName));
+        if (Objects.isNull(resource)) {
+            // Workaround for the case when using IntelliJ
+            // input resourceFileName starts with a "/"
+            // When using "getClassLoader()", the "/" must not be used
+            resource = ProtectedTermsParser.class.getClassLoader().getResource(resourceFileName.substring(1));
+        }
+        URL url = Objects.requireNonNull(resource);
         description = descriptionString;
         location = resourceFileName;
         try {

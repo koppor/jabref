@@ -27,7 +27,7 @@ public class JournalAbbreviationLoader {
         try {
             Path tempDir = Files.createTempDirectory("jabref-journal");
             Path tempJournalList = tempDir.resolve("journalList.mv");
-            Files.copy(JournalAbbreviationRepository.class.getResourceAsStream("/journals/journalList.mv"), tempJournalList);
+            Files.copy(JournalAbbreviationRepository.class.getClassLoader().getResourceAsStream("journals/journalList.mv"), tempJournalList);
             repository = new JournalAbbreviationRepository(tempJournalList);
             tempDir.toFile().deleteOnExit();
             tempJournalList.toFile().deleteOnExit();
