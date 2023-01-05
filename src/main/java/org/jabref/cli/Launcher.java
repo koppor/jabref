@@ -45,13 +45,15 @@ import org.tinylog.configuration.Configuration;
  * - Start the JavaFX application (if not in cli mode)
  */
 public class Launcher {
+    // initialized after reading the preferences (which configure log directory, ...)
     private static Logger LOGGER;
-    private static String[] ARGUMENTS;
 
     public static void main(String[] args) {
-        ARGUMENTS = args;
         addLogToDisk();
         try {
+            // we need a copy of the original arguments
+            String[] arguments = args;
+
             // Init preferences
             final JabRefPreferences preferences = JabRefPreferences.getInstance();
             Globals.prefs = preferences;
@@ -78,8 +80,7 @@ public class Launcher {
                 }
                 startServer();
 
-
-                MainApplication.main(argumentProcessor.getParserResults(), argumentProcessor.isBlank(), preferences, ARGUMENTS);
+                MainApplication.main(argumentProcessor.getParserResults(), argumentProcessor.isBlank(), preferences, arguments);
             } catch (ParseException e) {
                 LOGGER.error("Problem parsing arguments", e);
                 JabRefCLI.printUsage(preferences);
@@ -90,22 +91,18 @@ public class Launcher {
 
     }
 
-    private static void startServer() {
+    static void startServer() {
         SeBootstrap.start(Root.class).thenAccept(instance -> {
             instance.stopOnShutdown(stopResult ->
-                    System.out.printf("Stop result: %s [Native stop result: %s].%n", stopResult,
-                            stopResult.unwrap(Object.class)));
-            final URI uri = instance.configuration().baseUri();
-            System.out.printf("Instance %s running at %s [Native handle: %s].%n", instance, uri,
-                    instance.unwrap(Object.class));
-            System.out.println("Send SIGKILL to shutdown.");
+                    System.out.printf("JabRef REST server stop result: %s [Native stop result: %s].%n", stopResult, stopResult.unwrap(Object.class)));
+            URI uri = instance.configuration().baseUri();
+            System.out.printf("JabRef REST server %s running at %s [Native handle: %s].%n", instance, uri, instance.unwrap(Object.class));
         });
 
         try {
             Thread.currentThread().join();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error("could not join on current thread", e);
         }
     }
 

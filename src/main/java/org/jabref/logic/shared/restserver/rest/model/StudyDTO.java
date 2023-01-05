@@ -6,7 +6,6 @@ public class StudyDTO {
     public Study studyDefinition;
 
     public StudyDTO() {
-
     }
 
     public StudyDTO(Study studyDefinition) {

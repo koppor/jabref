@@ -46,12 +46,16 @@ open module org.jabref {
     with org.jabref.gui.logging.GuiWriter,
          org.jabref.gui.logging.ApplicationInsightsWriter;
 
-    // Preferences and XML
     requires java.prefs;
-    requires jakarta.xml.bind;
-    // needs to be loaded here as it's otherwise not found at runtime
-    requires org.glassfish.jaxb.runtime;
+
+    // XML, YAML, JSON
     requires jdk.xml.dom;
+    requires jakarta.xml.bind;
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.dataformat.xml;
+    requires com.fasterxml.jackson.module.jakarta.xmlbind;
+    requires com.fasterxml.jackson.dataformat.yaml;
+    requires com.fasterxml.jackson.datatype.jsr310;
 
     // Annotations (@PostConstruct)
     requires jakarta.annotation;
@@ -110,9 +114,6 @@ open module org.jabref {
     requires org.apache.lucene.analysis.common;
     requires org.apache.lucene.highlighter;
 
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.dataformat.yaml;
-    requires com.fasterxml.jackson.datatype.jsr310;
     requires net.harawata.appdirs;
     requires com.sun.jna;
     requires com.sun.jna.platform;
