@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.icon.IconTheme;
+import org.jabref.gui.keyboard.KeyBinding;
 import org.jabref.gui.theme.ThemeManager;
 import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.ControlHelper;
@@ -72,6 +73,13 @@ public class PreferencesDialogView extends BaseDialog<PreferencesDialogViewModel
 
         preferenceTabList.itemsProperty().setValue(viewModel.getPreferenceTabs());
 
+        // The list view does not respect the listener for the dialog and needs its own
+        preferenceTabList.setOnKeyReleased(key -> {
+            if (preferencesService.getKeyBindingRepository().checkKeyCombinationEquality(KeyBinding.CLOSE, key)) {
+                this.closeDialog();
+            }
+        });
+
         PreferencesSearchHandler searchHandler = new PreferencesSearchHandler(viewModel.getPreferenceTabs());
         preferenceTabList.itemsProperty().bindBidirectional(searchHandler.filteredPreferenceTabsProperty());
         searchBox.textProperty().addListener((observable, previousText, newText) -> {
@@ -85,7 +93,7 @@ public class PreferencesDialogView extends BaseDialog<PreferencesDialogViewModel
         EasyBind.subscribe(preferenceTabList.getSelectionModel().selectedItemProperty(), tab -> {
             if (tab instanceof AbstractPreferenceTabView<?> preferencesTab) {
                 preferencesContainer.setContent(preferencesTab.getBuilder());
-                preferencesTab.prefWidthProperty().bind(preferencesContainer.widthProperty());
+                preferencesTab.prefWidthProperty().bind(preferencesContainer.widthProperty().subtract(10d));
                 preferencesTab.getStyleClass().add("preferencesTab");
             } else {
                 preferencesContainer.setContent(null);
