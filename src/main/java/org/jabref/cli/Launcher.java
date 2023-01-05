@@ -30,12 +30,9 @@ import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.preferences.JabRefPreferences;
 import org.jabref.preferences.PreferencesService;
 
-import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.SeBootstrap;
 import net.harawata.appdirs.AppDirsFactory;
 import org.apache.commons.cli.ParseException;
-import org.eclipse.jetty.server.Server;
-import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinylog.configuration.Configuration;
@@ -79,6 +76,8 @@ public class Launcher {
                     LOGGER.debug("JabRef shut down after processing command line arguments");
                     return;
                 }
+                startServer();
+
 
                 MainApplication.main(argumentProcessor.getParserResults(), argumentProcessor.isBlank(), preferences, ARGUMENTS);
             } catch (ParseException e) {
@@ -89,13 +88,25 @@ public class Launcher {
             LOGGER.error("Unexpected exception", ex);
         }
 
-        startServer();
     }
 
     private static void startServer() {
-        URI baseUri = UriBuilder.fromUri("http://localhost/").port(9998).build();
-        ResourceConfig config = new ResourceConfig(Root.class);
-        Server server = JettyHttpContainerFactory.createServer(baseUri, config);
+        SeBootstrap.start(Root.class).thenAccept(instance -> {
+            instance.stopOnShutdown(stopResult ->
+                    System.out.printf("Stop result: %s [Native stop result: %s].%n", stopResult,
+                            stopResult.unwrap(Object.class)));
+            final URI uri = instance.configuration().baseUri();
+            System.out.printf("Instance %s running at %s [Native handle: %s].%n", instance, uri,
+                    instance.unwrap(Object.class));
+            System.out.println("Send SIGKILL to shutdown.");
+        });
+
+        try {
+            Thread.currentThread().join();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     /**

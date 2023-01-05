@@ -167,7 +167,7 @@ public class LibraryService {
     public List<BibEntry> getAllEntries() throws IOException {
         List<String> libraryNames = getLibraryNames();
         BibDatabase result = new BibDatabase();
-        DatabaseMerger merger = new DatabaseMerger(JabRefPreferences.getInstance().getImportFormatPreferences().getKeywordSeparator());
+        DatabaseMerger merger = new DatabaseMerger(JabRefPreferences.getInstance().getBibEntryPreferences().getKeywordSeparator());
         FileUpdateMonitor dummy = new DummyFileUpdateMonitor();
         libraryNames.stream()
                     .map(this::getLibraryPath)
