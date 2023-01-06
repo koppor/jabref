@@ -187,7 +187,10 @@ dependencies {
 
     // Data mapping
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
+    // Data mapping provider for JAXB annotated classes (e.g., MedlineImporter)
     implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '3.0.2'
+    // Data mapping provider for POJOs
+    implementation 'org.jboss.resteasy:resteasy-jackson2-provider:6.2.2.Final'
 
     // JSON mapping
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.14.1'

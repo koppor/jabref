@@ -50,8 +50,6 @@ open module org.jabref {
 
     // XML, YAML, JSON
     requires jdk.xml.dom;
-    // Enable JAXB using the standard implementation by Glassfish
-    requires org.glassfish.jaxb.runtime;
     // Enable JAXB annotations
     requires jakarta.xml.bind;
 
@@ -59,6 +57,10 @@ open module org.jabref {
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.dataformat.yaml;
     requires com.fasterxml.jackson.datatype.jsr310;
+    // Enable JSON mapping at the REST server using Jackson2
+    requires resteasy.jackson2.provider;
+    // Enable JAXB using the standard implementation by Glassfish
+    requires org.glassfish.jaxb.runtime;
 
     // Annotations (@PostConstruct)
     requires jakarta.annotation;
