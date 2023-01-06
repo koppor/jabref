@@ -50,10 +50,13 @@ open module org.jabref {
 
     // XML, YAML, JSON
     requires jdk.xml.dom;
+    // Enable JAXB using the standard implementation by Glassfish
+    requires org.glassfish.jaxb.runtime;
+    // Enable JAXB annotations
     requires jakarta.xml.bind;
+
+    // Enable YAML and JSON parsing by Jackson
     requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.dataformat.xml;
-    requires com.fasterxml.jackson.module.jakarta.xmlbind;
     requires com.fasterxml.jackson.dataformat.yaml;
     requires com.fasterxml.jackson.datatype.jsr310;
 

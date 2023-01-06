@@ -181,18 +181,17 @@ dependencies {
     implementation "org.tinylog:tinylog-impl:2.5.0"
     implementation 'de.undercouch:citeproc-java:3.0.0-alpha.6'
 
-    // jakarta.activation is already dependency of glassfish
     implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'
     implementation 'org.jboss.resteasy:resteasy-core:6.2.2.Final'
     implementation 'org.jboss.resteasy:resteasy-undertow-cdi:6.2.2.Final'
 
     // Data mapping
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
-    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-jakarta-xmlbind-annotations', version: '2.14.1'
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.14.1'
-    // XML mapping, e.g.,  org.jabref.logic.importer.fileformat.mods
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.14.1'
+    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '3.0.2'
+
     // JSON mapping
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.14.1'
+    // YML mapping
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.14.1'
 
     implementation ('com.github.tomtung:latex2unicode_2.13:0.3.2') {
