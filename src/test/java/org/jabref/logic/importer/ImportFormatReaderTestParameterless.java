@@ -1,10 +1,9 @@
 package org.jabref.logic.importer;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-import org.jabref.logic.preferences.TimestampPreferences;
-import org.jabref.logic.xmp.XmpPreferences;
+import javafx.collections.FXCollections;
+
 import org.jabref.model.util.DummyFileUpdateMonitor;
 import org.jabref.model.util.FileUpdateMonitor;
 
@@ -20,34 +19,35 @@ class ImportFormatReaderTestParameterless {
 
     private ImportFormatReader reader;
     private final FileUpdateMonitor fileMonitor = new DummyFileUpdateMonitor();
-    private final TimestampPreferences timestampPreferences = mock(TimestampPreferences.class);
 
     @BeforeEach
     void setUp() {
         reader = new ImportFormatReader();
+        ImporterPreferences importerPreferences = mock(ImporterPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        when(importerPreferences.getCustomImportList()).thenReturn(FXCollections.emptyObservableSet());
+
         ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.getEncoding()).thenReturn(StandardCharsets.UTF_8);
-        reader.resetImportFormats(importFormatPreferences, mock(XmpPreferences.class), fileMonitor);
+        reader.resetImportFormats(importerPreferences, importFormatPreferences, fileMonitor);
     }
 
     @Test
     void importUnknownFormatThrowsExceptionIfNoMatchingImporterWasFound() throws Exception {
         Path file = Path.of(ImportFormatReaderTestParameterless.class.getResource("fileformat/emptyFile.xml").toURI());
-        assertThrows(ImportException.class, () -> reader.importUnknownFormat(file, timestampPreferences, fileMonitor));
+        assertThrows(ImportException.class, () -> reader.importUnknownFormat(file, fileMonitor));
     }
 
     @Test
-    void importUnknownFormatThrowsExceptionIfPathIsNull() throws Exception {
-        assertThrows(NullPointerException.class, () -> reader.importUnknownFormat(null, timestampPreferences, fileMonitor));
+    void importUnknownFormatThrowsExceptionIfPathIsNull() {
+        assertThrows(NullPointerException.class, () -> reader.importUnknownFormat(null, fileMonitor));
     }
 
     @Test
-    void importUnknownFormatThrowsExceptionIfDataIsNull() throws Exception {
+    void importUnknownFormatThrowsExceptionIfDataIsNull() {
         assertThrows(NullPointerException.class, () -> reader.importUnknownFormat(null));
     }
 
     @Test
-    void importFromFileWithUnknownFormatThrowsException() throws Exception {
+    void importFromFileWithUnknownFormatThrowsException() {
         assertThrows(ImportException.class, () -> reader.importFromFile("someunknownformat", Path.of("somepath")));
     }
 }

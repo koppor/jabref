@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,7 +27,11 @@ import org.jabref.preferences.FilePreferences;
  */
 public class LinkedFile implements Serializable {
 
+    private static final String REGEX_URL = "^((?:https?\\:\\/\\/|www\\.)(?:[-a-z0-9]+\\.)*[-a-z0-9]+.*)";
+    private static final Pattern URL_PATTERN = Pattern.compile(REGEX_URL);
+
     private static final LinkedFile NULL_OBJECT = new LinkedFile("", Path.of(""), "");
+
     // We have to mark these properties as transient because they can't be serialized directly
     private transient StringProperty description = new SimpleStringProperty();
     private transient StringProperty link = new SimpleStringProperty();
@@ -113,9 +118,6 @@ public class LinkedFile implements Serializable {
 
     /**
      * Writes serialized object to ObjectOutputStream, automatically called
-     *
-     * @param out {@link ObjectOutputStream}
-     * @throws IOException
      */
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeUTF(getFileType());
@@ -126,9 +128,6 @@ public class LinkedFile implements Serializable {
 
     /**
      * Reads serialized object from ObjectInputStreamm, automatically called
-     *
-     * @param in {@link ObjectInputStream}
-     * @throws IOException
      */
     private void readObject(ObjectInputStream in) throws IOException {
         fileType = new SimpleStringProperty(in.readUTF());
@@ -144,7 +143,7 @@ public class LinkedFile implements Serializable {
      */
     public static boolean isOnlineLink(String toCheck) {
         String normalizedFilePath = toCheck.trim().toLowerCase();
-        return normalizedFilePath.startsWith("http://") || normalizedFilePath.startsWith("https://") || normalizedFilePath.contains("www.");
+        return URL_PATTERN.matcher(normalizedFilePath).matches();
     }
 
     @Override

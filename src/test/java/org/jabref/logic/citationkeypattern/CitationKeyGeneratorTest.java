@@ -89,6 +89,7 @@ class CitationKeyGeneratorTest {
                 "",
                 DEFAULT_UNWANTED_CHARACTERS,
                 keyPattern,
+                "",
                 ',');
 
         return new CitationKeyGenerator(keyPattern, database, patternPreferences).generateKey(entry);
@@ -1121,6 +1122,7 @@ class CitationKeyGeneratorTest {
                 "",
                 DEFAULT_UNWANTED_CHARACTERS,
                 keyPattern,
+                "",
                 ',');
 
         BibEntry bibEntry = new BibEntry().withField(StandardField.TITLE, "Wickedness Managing");
@@ -1133,5 +1135,19 @@ class CitationKeyGeneratorTest {
         BibEntry bibEntry = new BibEntry().withField(StandardField.YEAR, "2021");
 
         assertEquals("2021", generateKey(bibEntry, "[title:([EPRINT:([YEAR])])]"));
+    }
+
+    @Test
+    void generateKeyWithLowercaseAuthorLastnameUseVonPart() {
+        BibEntry entry = createABibEntryAuthor("Stéphane d'Ascoli");
+        entry.setField(StandardField.YEAR, "2021");
+        assertEquals("dAscoli2021", generateKey(entry, "[auth][year]"));
+    }
+
+    @Test
+    void generateKeyWithLowercaseAuthorWithVonAndLastname() {
+        BibEntry entry = createABibEntryAuthor("Michiel van den Brekel");
+        entry.setField(StandardField.YEAR, "2021");
+        assertEquals("Brekel2021", generateKey(entry, "[auth][year]"));
     }
 }

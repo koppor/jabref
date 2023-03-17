@@ -7,13 +7,17 @@ import java.util.Optional;
 import org.jabref.gui.DialogService;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.groups.AbstractGroup;
+import org.jabref.model.groups.GroupHierarchyType;
 import org.jabref.model.metadata.MetaData;
+import org.jabref.preferences.BibEntryPreferences;
+import org.jabref.preferences.FilePreferences;
 import org.jabref.preferences.PreferencesService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,19 +30,23 @@ class GroupDialogViewModelTest {
     private Path temporaryFolder;
     private BibDatabaseContext bibDatabaseContext;
     private final MetaData metaData = mock(MetaData.class);
+    private final GroupsPreferences groupsPreferences = mock(GroupsPreferences.class);
+    private final DialogService dialogService = mock(DialogService.class);
+    private final AbstractGroup group = mock(AbstractGroup.class);
+    private final PreferencesService preferencesService = mock(PreferencesService.class);
 
     @BeforeEach
-    void setUp(@TempDir Path temporaryFolder) throws Exception {
+    void setUp(@TempDir Path temporaryFolder) {
         this.temporaryFolder = temporaryFolder;
         bibDatabaseContext = new BibDatabaseContext();
-        DialogService dialogService = mock(DialogService.class);
 
-        AbstractGroup group = mock(AbstractGroup.class);
         when(group.getName()).thenReturn("Group");
 
-        PreferencesService preferencesService = mock(PreferencesService.class);
-        when(preferencesService.getKeywordDelimiter()).thenReturn(',');
-        when(preferencesService.getUser()).thenReturn("MockedUser");
+        when(preferencesService.getBibEntryPreferences()).thenReturn(mock(BibEntryPreferences.class));
+        when(preferencesService.getBibEntryPreferences().getKeywordSeparator()).thenReturn(',');
+        when(preferencesService.getFilePreferences()).thenReturn(mock(FilePreferences.class));
+        when(preferencesService.getFilePreferences().getUser()).thenReturn("MockedUser");
+        when(preferencesService.getGroupsPreferences()).thenReturn(groupsPreferences);
 
         bibDatabaseContext.setMetaData(metaData);
 
@@ -57,7 +65,7 @@ class GroupDialogViewModelTest {
     }
 
     @Test
-    void validateNonExistingAbsolutePath() throws Exception {
+    void validateNonExistingAbsolutePath() {
         var notAnAuxFile = temporaryFolder.resolve("notanauxfile.aux").toAbsolutePath();
         viewModel.texGroupFilePathProperty().setValue(notAnAuxFile.toString());
         assertFalse(viewModel.texGroupFilePathValidatonStatus().isValid());
@@ -73,5 +81,23 @@ class GroupDialogViewModelTest {
 
         viewModel.texGroupFilePathProperty().setValue(anAuxFile.toString());
         assertTrue(viewModel.texGroupFilePathValidatonStatus().isValid());
+    }
+
+    @Test
+    void testHierarchicalContextFromGroup() throws Exception {
+        GroupHierarchyType groupHierarchyType = GroupHierarchyType.INCLUDING;
+        when(group.getHierarchicalContext()).thenReturn(groupHierarchyType);
+        viewModel = new GroupDialogViewModel(dialogService, bibDatabaseContext, preferencesService, group, GroupDialogHeader.SUBGROUP);
+
+        assertEquals(groupHierarchyType, viewModel.groupHierarchySelectedProperty().getValue());
+    }
+
+    @Test
+    void testDefaultHierarchicalContext() throws Exception {
+        GroupHierarchyType defaultHierarchicalContext = GroupHierarchyType.REFINING;
+        when(preferencesService.getGroupsPreferences().getDefaultHierarchicalContext()).thenReturn(defaultHierarchicalContext);
+        viewModel = new GroupDialogViewModel(dialogService, bibDatabaseContext, preferencesService, null, GroupDialogHeader.SUBGROUP);
+
+        assertEquals(defaultHierarchicalContext, viewModel.groupHierarchySelectedProperty().getValue());
     }
 }

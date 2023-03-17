@@ -42,7 +42,7 @@ public class CustomImporterTabViewModel implements PreferenceTabViewModel {
 
     @Override
     public void setValues() {
-        Set<CustomImporter> importersLogic = preferences.getCustomImportFormats();
+        Set<CustomImporter> importersLogic = preferences.getImporterPreferences().getCustomImportList();
         for (CustomImporter importer : importersLogic) {
             importers.add(new ImporterViewModel(importer));
         }
@@ -50,12 +50,13 @@ public class CustomImporterTabViewModel implements PreferenceTabViewModel {
 
     @Override
     public void storeSettings() {
-        preferences.storeCustomImportFormats(importers.stream()
-                                                      .map(ImporterViewModel::getLogic)
-                                                      .collect(Collectors.toSet()));
+        preferences.getImporterPreferences().getCustomImportList().clear();
+        preferences.getImporterPreferences().getCustomImportList().addAll(importers.stream()
+                                                                                   .map(ImporterViewModel::getLogic)
+                                                                                   .collect(Collectors.toSet()));
         Globals.IMPORT_FORMAT_READER.resetImportFormats(
+                preferences.getImporterPreferences(),
                 preferences.getImportFormatPreferences(),
-                preferences.getXmpPreferences(),
                 Globals.getFileUpdateMonitor());
     }
 
@@ -82,7 +83,7 @@ public class CustomImporterTabViewModel implements PreferenceTabViewModel {
         FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
                 .addExtensionFilter(StandardFileType.CLASS, StandardFileType.JAR, StandardFileType.ZIP)
                 .withDefaultExtension(StandardFileType.CLASS)
-                .withInitialDirectory(preferences.getWorkingDir())
+                .withInitialDirectory(preferences.getFilePreferences().getWorkingDirectory())
                 .build();
 
         Optional<Path> selectedFile = dialogService.showFileOpenDialog(fileDialogConfiguration);

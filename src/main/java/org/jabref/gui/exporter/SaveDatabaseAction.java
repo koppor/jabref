@@ -2,6 +2,7 @@ package org.jabref.gui.exporter;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,12 +19,12 @@ import javafx.scene.text.Text;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.LibraryTab;
-import org.jabref.gui.dialogs.AutosaveUiManager;
 import org.jabref.gui.util.BackgroundTask;
 import org.jabref.gui.util.FileDialogConfiguration;
 import org.jabref.logic.autosaveandbackup.AutosaveManager;
 import org.jabref.logic.autosaveandbackup.BackupManager;
 import org.jabref.logic.exporter.AtomicFileWriter;
+import org.jabref.logic.exporter.BibWriter;
 import org.jabref.logic.exporter.BibtexDatabaseWriter;
 import org.jabref.logic.exporter.SaveException;
 import org.jabref.logic.exporter.SavePreferences;
@@ -35,6 +36,7 @@ import org.jabref.logic.util.StandardFileType;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.database.event.ChangePropagation;
 import org.jabref.model.entry.BibEntryTypesManager;
+import org.jabref.preferences.GeneralPreferences;
 import org.jabref.preferences.PreferencesService;
 
 import org.slf4j.Logger;
@@ -90,7 +92,7 @@ public class SaveDatabaseAction {
     public void saveSelectedAsPlain() {
         askForSavePath().ifPresent(path -> {
             try {
-                saveDatabase(path, true, preferences.getDefaultEncoding(), SavePreferences.DatabaseSaveType.PLAIN_BIBTEX);
+                saveDatabase(path, true, StandardCharsets.UTF_8, SavePreferences.DatabaseSaveType.PLAIN_BIBTEX);
                 frame.getFileHistory().newFile(path);
                 dialogService.notify(Localization.lang("Saved selected to '%0'.", path.toString()));
             } catch (SaveException ex) {
@@ -101,7 +103,7 @@ public class SaveDatabaseAction {
     }
 
     /**
-     * @param file the new file name to save the data base to. This is stored in the database context of the panel upon
+     * @param file the new file name to save the database to. This is stored in the database context of the panel upon
      *             successful save.
      * @return true on successful save
      */
@@ -128,19 +130,13 @@ public class SaveDatabaseAction {
 
         if (saveResult) {
             // we managed to successfully save the file
-            // thus, we can store the store the path into the context
+            // thus, we can store the path into the context
             context.setDatabasePath(file);
             libraryTab.updateTabTitle(false);
 
-            // Reinstall AutosaveManager and BackupManager for the new file name
-            libraryTab.resetChangeMonitorAndChangePane();
-            if (readyForAutosave(context)) {
-                AutosaveManager autosaver = AutosaveManager.start(context);
-                autosaver.registerListener(new AutosaveUiManager(libraryTab));
-            }
-            if (readyForBackup(context)) {
-                BackupManager.start(context, entryTypesManager, preferences);
-            }
+            // Reset (here: uninstall and install again) AutosaveManager and BackupManager for the new file name
+            libraryTab.resetChangeMonitor();
+            libraryTab.installAutosaveManagerAndBackupManager();
 
             frame.getFileHistory().newFile(file);
         }
@@ -158,10 +154,10 @@ public class SaveDatabaseAction {
         FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
                 .addExtensionFilter(StandardFileType.BIBTEX_DB)
                 .withDefaultExtension(StandardFileType.BIBTEX_DB)
-                .withInitialDirectory(preferences.getWorkingDir())
+                .withInitialDirectory(preferences.getFilePreferences().getWorkingDirectory())
                 .build();
         Optional<Path> selectedPath = dialogService.showFileSaveDialog(fileDialogConfiguration);
-        selectedPath.ifPresent(path -> preferences.setWorkingDirectory(path.getParent()));
+        selectedPath.ifPresent(path -> preferences.getFilePreferences().setWorkingDirectory(path.getParent()));
         if (selectedPath.isPresent()) {
             Path savePath = selectedPath.get();
             // Workaround for linux systems not adding file extension
@@ -196,13 +192,21 @@ public class SaveDatabaseAction {
             dialogService.notify(String.format("%s...", Localization.lang("Saving library")));
         }
 
-        libraryTab.setSaving(true);
+        synchronized (libraryTab) {
+            if (libraryTab.isSaving()) {
+                // if another thread is saving, we do not need to save
+                return true;
+            }
+            libraryTab.setSaving(true);
+        }
+
         try {
             Charset encoding = libraryTab.getBibDatabaseContext()
                                          .getMetaData()
                                          .getEncoding()
-                                         .orElse(preferences.getDefaultEncoding());
-            // Make sure to remember which encoding we used.
+                                         .orElse(StandardCharsets.UTF_8);
+
+            // Make sure to remember which encoding we used
             libraryTab.getBibDatabaseContext().getMetaData().setEncoding(encoding, ChangePropagation.DO_NOT_POST_EVENT);
 
             // Save the database
@@ -212,6 +216,7 @@ public class SaveDatabaseAction {
                 libraryTab.getUndoManager().markUnchanged();
                 libraryTab.resetChangedProperties();
             }
+            dialogService.notify(Localization.lang("Library saved"));
             return success;
         } catch (SaveException ex) {
             LOGGER.error(String.format("A problem occurred when trying to save the file %s", targetPath), ex);
@@ -224,30 +229,35 @@ public class SaveDatabaseAction {
     }
 
     private boolean saveDatabase(Path file, boolean selectedOnly, Charset encoding, SavePreferences.DatabaseSaveType saveType) throws SaveException {
-        SavePreferences preferences = this.preferences.getSavePreferences()
-                                                      .withEncoding(encoding)
+        // if this code is adapted, please also adapt org.jabref.logic.autosaveandbackup.BackupManager.performBackup
+
+        GeneralPreferences generalPreferences = this.preferences.getGeneralPreferences();
+        SavePreferences savePreferences = this.preferences.getSavePreferences()
                                                       .withSaveType(saveType);
-        try (AtomicFileWriter fileWriter = new AtomicFileWriter(file, preferences.getEncoding(), preferences.shouldMakeBackup())) {
-            BibtexDatabaseWriter databaseWriter = new BibtexDatabaseWriter(fileWriter, preferences, entryTypesManager);
+        BibDatabaseContext bibDatabaseContext = libraryTab.getBibDatabaseContext();
+        synchronized (bibDatabaseContext) {
+            try (AtomicFileWriter fileWriter = new AtomicFileWriter(file, encoding, savePreferences.shouldMakeBackup())) {
+                BibWriter bibWriter = new BibWriter(fileWriter, bibDatabaseContext.getDatabase().getNewLineSeparator());
+                BibtexDatabaseWriter databaseWriter = new BibtexDatabaseWriter(bibWriter, generalPreferences, savePreferences, entryTypesManager);
 
-            if (selectedOnly) {
-                databaseWriter.savePartOfDatabase(libraryTab.getBibDatabaseContext(), libraryTab.getSelectedEntries());
-            } else {
-                databaseWriter.saveDatabase(libraryTab.getBibDatabaseContext());
+                if (selectedOnly) {
+                    databaseWriter.savePartOfDatabase(bibDatabaseContext, libraryTab.getSelectedEntries());
+                } else {
+                    databaseWriter.saveDatabase(bibDatabaseContext);
+                }
+
+                libraryTab.registerUndoableChanges(databaseWriter.getSaveActionsFieldChanges());
+
+                if (fileWriter.hasEncodingProblems()) {
+                    saveWithDifferentEncoding(file, selectedOnly, encoding, fileWriter.getEncodingProblems(), saveType);
+                }
+            } catch (UnsupportedCharsetException ex) {
+                throw new SaveException(Localization.lang("Character encoding '%0' is not supported.", encoding.displayName()), ex);
+            } catch (IOException ex) {
+                throw new SaveException("Problems saving: " + ex, ex);
             }
-
-            libraryTab.registerUndoableChanges(databaseWriter.getSaveActionsFieldChanges());
-
-            if (fileWriter.hasEncodingProblems()) {
-                saveWithDifferentEncoding(file, selectedOnly, preferences.getEncoding(), fileWriter.getEncodingProblems(), saveType);
-            }
-        } catch (UnsupportedCharsetException ex) {
-            throw new SaveException(Localization.lang("Character encoding '%0' is not supported.", encoding.displayName()), ex);
-        } catch (IOException ex) {
-            throw new SaveException("Problems saving: " + ex, ex);
+            return true;
         }
-
-        return true;
     }
 
     private void saveWithDifferentEncoding(Path file, boolean selectedOnly, Charset encoding, Set<Character> encodingProblems, SavePreferences.DatabaseSaveType saveType) throws SaveException {
@@ -275,17 +285,5 @@ public class SaveDatabaseAction {
                 saveDatabase(file, selectedOnly, newEncoding.get(), saveType);
             }
         }
-    }
-
-    private boolean readyForAutosave(BibDatabaseContext context) {
-        return ((context.getLocation() == DatabaseLocation.SHARED) ||
-                ((context.getLocation() == DatabaseLocation.LOCAL)
-                        && preferences.shouldAutosave()))
-                &&
-                context.getDatabasePath().isPresent();
-    }
-
-    private boolean readyForBackup(BibDatabaseContext context) {
-        return (context.getLocation() == DatabaseLocation.LOCAL) && context.getDatabasePath().isPresent();
     }
 }

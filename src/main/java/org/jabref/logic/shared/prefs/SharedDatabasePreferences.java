@@ -24,6 +24,8 @@ public class SharedDatabasePreferences {
     private static final String SHARED_DATABASE_NAME = "sharedDatabaseName";
     private static final String SHARED_DATABASE_USER = "sharedDatabaseUser";
     private static final String SHARED_DATABASE_PASSWORD = "sharedDatabasePassword";
+    private static final String SHARED_DATABASE_FOLDER = "sharedDatabaseFolder";
+    private static final String SHARED_DATABASE_AUTOSAVE = "sharedDatabaseAutosave";
     private static final String SHARED_DATABASE_REMEMBER_PASSWORD = "sharedDatabaseRememberPassword";
     private static final String SHARED_DATABASE_USE_SSL = "sharedDatabaseUseSSL";
     private static final String SHARED_DATABASE_KEYSTORE_FILE = "sharedDatabaseKeyStoreFile";
@@ -76,6 +78,14 @@ public class SharedDatabasePreferences {
         return internalPrefs.getBoolean(SHARED_DATABASE_REMEMBER_PASSWORD, false);
     }
 
+    public Optional<String> getFolder() {
+        return getOptionalValue(SHARED_DATABASE_FOLDER);
+    }
+
+    public boolean getAutosave() {
+        return internalPrefs.getBoolean(SHARED_DATABASE_AUTOSAVE, false);
+    }
+
     public boolean isUseSSL() {
         return internalPrefs.getBoolean(SHARED_DATABASE_USE_SSL, false);
     }
@@ -106,6 +116,14 @@ public class SharedDatabasePreferences {
 
     public void setRememberPassword(boolean rememberPassword) {
         internalPrefs.putBoolean(SHARED_DATABASE_REMEMBER_PASSWORD, rememberPassword);
+    }
+
+    public void setFolder(String folder) {
+        internalPrefs.put(SHARED_DATABASE_FOLDER, folder);
+    }
+
+    public void setAutosave(boolean autosave) {
+        internalPrefs.putBoolean(SHARED_DATABASE_AUTOSAVE, autosave);
     }
 
     public void setUseSSL(boolean useSSL) {

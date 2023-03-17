@@ -66,11 +66,11 @@ public class MSBibExportFormatTestFiles {
         Path expectedFile = resourceDir.resolve(xmlFileName);
         Path importFile = resourceDir.resolve(filename);
 
-        List<BibEntry> entries = testImporter.importDatabase(importFile, StandardCharsets.UTF_8)
-                                             .getDatabase()
-                                             .getEntries();
+        BibDatabaseContext contextFromImport = testImporter.importDatabase(importFile).getDatabaseContext();
+        List<BibEntry> entries = contextFromImport.getEntries();
 
-        exporter.export(databaseContext, exportedFile, charset, entries);
+        contextFromImport.getDatabase().getStringValues().forEach(this.databaseContext.getDatabase()::addString);
+        exporter.export(databaseContext, exportedFile, entries);
 
         String expected = String.join("\n", Files.readAllLines(expectedFile));
         String actual = String.join("\n", Files.readAllLines(exportedFile));
