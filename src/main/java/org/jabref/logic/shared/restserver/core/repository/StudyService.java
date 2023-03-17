@@ -22,11 +22,12 @@ import org.jabref.logic.importer.ParseException;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.study.Study;
 import org.jabref.model.util.DummyFileUpdateMonitor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class StudyService {
-    private static final Map<Path, StudyService> instances = new HashMap<>();
+    private static final Map<Path, StudyService> INSTANCES = new HashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(StudyService.class);
     // Contains all running tasks,
     private final Map<String, CrawlTask> runningCrawls = new HashMap<>();
@@ -60,7 +61,7 @@ public class StudyService {
     }
 
     public static synchronized StudyService getInstance(Path workingDirectory) {
-        return instances.computeIfAbsent(workingDirectory, StudyService::new);
+        return INSTANCES.computeIfAbsent(workingDirectory, StudyService::new);
     }
 
     /**
@@ -114,8 +115,6 @@ public class StudyService {
             return;
         }
         Path studyDirectory = studiesDirectory.resolve(Paths.get(studyName));
-
-
         CrawlTask crawl = new CrawlTask(new Crawler(studyDirectory,
                                                     new SlrGitHandler(studyDirectory),
                                                     Globals.prefs.getGeneralPreferences(),

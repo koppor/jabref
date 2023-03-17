@@ -11,8 +11,6 @@ import org.jabref.model.entry.types.IEEETranEntryType;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.entry.types.UnknownEntryType;
 
-
-
 public class BibEntryMapper {
 
     /**
@@ -53,7 +51,7 @@ public class BibEntryMapper {
      * a BibEntry that was previously mapped using the map method above.
      */
     public static BibEntry map(BibEntryDTO entry) {
-        if((entry.entryType == null) || entry.entryType.isBlank()) {
+        if ((entry.entryType == null) || entry.entryType.isBlank()) {
             throw new IllegalArgumentException("Entry has to have an entry type");
         }
         if ((entry.citationKey == null) || entry.citationKey.isBlank()) {
@@ -132,7 +130,7 @@ public class BibEntryMapper {
         if (standardEntryType.isPresent()) {
             return standardEntryType.get();
         }
-        Optional<IEEETranEntryType> ieeeEntryType = Arrays.stream(IEEETranEntryType.values()).filter(entryType ->entryType.getName().equals(entryTypeAsString)).findFirst();
+        Optional<IEEETranEntryType> ieeeEntryType = Arrays.stream(IEEETranEntryType.values()).filter(entryType -> entryType.getName().equals(entryTypeAsString)).findFirst();
         if (ieeeEntryType.isPresent()) {
             return ieeeEntryType.get();
         }

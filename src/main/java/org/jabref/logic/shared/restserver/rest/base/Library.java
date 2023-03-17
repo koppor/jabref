@@ -12,6 +12,7 @@ import org.jabref.logic.shared.restserver.core.representation.CSLStyleAdapter;
 import org.jabref.logic.shared.restserver.core.serialization.BibEntryMapper;
 import org.jabref.logic.shared.restserver.rest.model.BibEntryDTO;
 import org.jabref.model.entry.BibEntry;
+
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;

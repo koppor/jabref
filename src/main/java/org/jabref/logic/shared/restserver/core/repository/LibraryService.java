@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class LibraryService {
 
-    private static final Map<Path, LibraryService> instances = new HashMap<>();
+    private static final Map<Path, LibraryService> INSTANCES = new HashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(LibraryService.class);
     private final Path workingDirectory;
 
@@ -52,7 +52,7 @@ public class LibraryService {
     }
 
     public static LibraryService getInstance(Path workingDirectory) {
-        return instances.computeIfAbsent(workingDirectory, LibraryService::new);
+        return INSTANCES.computeIfAbsent(workingDirectory, LibraryService::new);
     }
 
     public List<String> getLibraryNames() throws IOException {
@@ -109,7 +109,7 @@ public class LibraryService {
         if (!Files.exists(libraryPath)) {
             throw new FileNotFoundException();
         } else {
-            context = OpenDatabase.loadDatabase(libraryPath,  Globals.prefs.getImportFormatPreferences(), Globals.getFileUpdateMonitor())
+            context = OpenDatabase.loadDatabase(libraryPath, Globals.prefs.getImportFormatPreferences(), Globals.getFileUpdateMonitor())
                                   .getDatabaseContext();
         }
         // Required to get serialized

@@ -88,7 +88,6 @@ public class Launcher {
         } catch (Exception ex) {
             LOGGER.error("Unexpected exception", ex);
         }
-
     }
 
     static void startServer() {

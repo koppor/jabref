@@ -1,6 +1,5 @@
 package org.jabref.logic.shared.restserver.core.serialization;
 
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
