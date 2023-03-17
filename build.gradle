@@ -182,15 +182,16 @@ dependencies {
 
     implementation 'de.undercouch:citeproc-java:3.0.0-alpha.6'
 
+    // JAX-WS
     implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'
-    implementation 'org.jboss.resteasy:resteasy-undertow-cdi:6.2.2.Final'
+
+    // http sever
+    implementation 'org.glassfish.jersey.core:jersey-server:3.1.1'
 
     // Data mapping
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
     // Data mapping provider for JAXB annotated classes (e.g., MedlineImporter)
     implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '3.0.2'
-    // Data mapping provider for POJOs
-    implementation 'org.jboss.resteasy:resteasy-jackson2-provider:6.2.2.Final'
 
     // JSON mapping
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.14.2'

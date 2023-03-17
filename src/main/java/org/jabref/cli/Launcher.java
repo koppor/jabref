@@ -33,6 +33,7 @@ import org.jabref.preferences.PreferencesService;
 import jakarta.ws.rs.SeBootstrap;
 import net.harawata.appdirs.AppDirsFactory;
 import org.apache.commons.cli.ParseException;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinylog.configuration.Configuration;
@@ -91,7 +92,14 @@ public class Launcher {
     }
 
     static void startServer() {
-        SeBootstrap.start(Root.class).thenAccept(instance -> {
+        SeBootstrap.Configuration.Builder configBuilder = SeBootstrap.Configuration.builder();
+        configBuilder.property(SeBootstrap.Configuration.PROTOCOL, "HTTP")
+                     .property(SeBootstrap.Configuration.HOST, "localhost")
+                     .property(SeBootstrap.Configuration.PORT, 2005);
+        ResourceConfig resourceConfig = new ResourceConfig();
+        resourceConfig.packages(Root.class.getPackageName());
+        SeBootstrap.start(resourceConfig, configBuilder.build()).thenAccept(instance -> {
+//        SeBootstrap.start(Root.class, configBuilder.build()).thenAccept(instance -> {
             instance.stopOnShutdown(stopResult ->
                     System.out.printf("JabRef REST server stop result: %s [Native stop result: %s].%n", stopResult, stopResult.unwrap(Object.class)));
             URI uri = instance.configuration().baseUri();

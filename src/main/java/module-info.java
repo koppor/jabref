@@ -58,9 +58,12 @@ open module org.jabref {
     requires com.fasterxml.jackson.dataformat.yaml;
     requires com.fasterxml.jackson.datatype.jsr310;
     // Enable JSON mapping at the REST server using Jackson2
-    requires resteasy.jackson2.provider;
+    // requires resteasy.jackson2.provider;
     // Enable JAXB using the standard implementation by Glassfish
     requires org.glassfish.jaxb.runtime;
+
+    requires jersey.common;
+    requires jersey.server;
 
     // Annotations (@PostConstruct)
     requires jakarta.annotation;
