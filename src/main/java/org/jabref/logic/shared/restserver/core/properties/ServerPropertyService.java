@@ -4,6 +4,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import org.jabref.gui.desktop.JabRefDesktop;
+import org.jabref.model.strings.StringUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +34,14 @@ public class ServerPropertyService {
      */
     private Properties loadProperties() {
         Properties properties = new Properties();
-        if (!((System.getenv("LIBRARY_WORKSPACE") == null) || System.getenv("LIBRARY_WORKSPACE").isBlank())) {
-            LOGGER.info("Environment Variable found, using defined directory: {}", System.getenv("LIBRARY_WORKSPACE"));
-            properties.setProperty("workingDirectory", System.getenv("LIBRARY_WORKSPACE"));
+        String libraryWorkspaceEnvironmentVariable = System.getenv("LIBRARY_WORKSPACE");
+        if (!StringUtil.isNullOrEmpty(libraryWorkspaceEnvironmentVariable)) {
+            LOGGER.info("Environment Variable found, using defined directory: {}", libraryWorkspaceEnvironmentVariable);
+            properties.setProperty("workingDirectory", libraryWorkspaceEnvironmentVariable);
         } else {
-            LOGGER.info("Working directory was not found in either the properties or the environment variables, falling back to default location: {}", System.getProperty("user.home") + "/planqk-library");
-            properties.setProperty("workingDirectory", System.getProperty("user.home") + "/planqk-library");
+            Path fallbackDirectory = JabRefDesktop.getNativeDesktop().getDefaultFileChooserDirectory().resolve("planqk-library");
+            LOGGER.info("Working directory was not found in either the properties or the environment variables, falling back to default location: {}", fallbackDirectory);
+            properties.setProperty("workingDirectory", fallbackDirectory.toString());
         }
         return properties;
     }
