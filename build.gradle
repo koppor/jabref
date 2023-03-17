@@ -159,7 +159,7 @@ dependencies {
 
     implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
     implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
-
+    implementation 'org.glassfish.jersey.inject:jersey-hk2:3.1.1'
 
     implementation 'com.github.JabRef:afterburner.fx:testmoduleinfo-SNAPSHOT'
     implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
@@ -182,12 +182,6 @@ dependencies {
 
     implementation 'de.undercouch:citeproc-java:3.0.0-alpha.6'
 
-    // JAX-WS
-    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'
-
-    // http sever
-    implementation 'org.glassfish.jersey.core:jersey-server:3.1.1'
-
     // Data mapping
     implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
     // Data mapping provider for JAXB annotated classes (e.g., MedlineImporter)
@@ -197,6 +191,16 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.14.2'
     // YML mapping
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.14.2'
+
+    // JAX-WS
+    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'
+
+    // http sever
+    // "Starting a Grizzly server to run a JAX-RS or Jersey application is one of the most lightweight and easy ways how to expose a functional RESTful services application."
+    implementation 'org.glassfish.jersey.containers:jersey-container-grizzly2-http:3.1.1'
+
+    implementation group: 'org.glassfish.jersey.media', name: 'jersey-media-jaxb', version: '3.1.1'
+    implementation group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '3.1.1'
 
     implementation ('com.github.tomtung:latex2unicode_2.13:0.3.2') {
         exclude module: 'fastparse_2.13'

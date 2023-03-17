@@ -64,6 +64,10 @@ open module org.jabref {
 
     requires jersey.common;
     requires jersey.server;
+    requires jersey.media.jaxb;
+    requires jersey.media.json.jackson;
+    requires jersey.container.grizzly2.http;
+    requires jersey.hk2;
 
     // Annotations (@PostConstruct)
     requires jakarta.annotation;

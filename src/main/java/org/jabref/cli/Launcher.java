@@ -33,7 +33,6 @@ import org.jabref.preferences.PreferencesService;
 import jakarta.ws.rs.SeBootstrap;
 import net.harawata.appdirs.AppDirsFactory;
 import org.apache.commons.cli.ParseException;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tinylog.configuration.Configuration;
@@ -47,7 +46,7 @@ import org.tinylog.configuration.Configuration;
  */
 public class Launcher {
     // initialized after reading the preferences (which configure log directory, ...)
-    private static Logger LOGGER;
+    static Logger LOGGER;
 
     public static void main(String[] args) {
         addLogToDisk();
@@ -96,15 +95,15 @@ public class Launcher {
         configBuilder.property(SeBootstrap.Configuration.PROTOCOL, "HTTP")
                      .property(SeBootstrap.Configuration.HOST, "localhost")
                      .property(SeBootstrap.Configuration.PORT, 2005);
-        ResourceConfig resourceConfig = new ResourceConfig();
-        resourceConfig.packages(Root.class.getPackageName());
-        SeBootstrap.start(resourceConfig, configBuilder.build()).thenAccept(instance -> {
-//        SeBootstrap.start(Root.class, configBuilder.build()).thenAccept(instance -> {
+        SeBootstrap.start(new Root(), configBuilder.build()).thenAccept(instance -> {
             instance.stopOnShutdown(stopResult ->
                     System.out.printf("JabRef REST server stop result: %s [Native stop result: %s].%n", stopResult, stopResult.unwrap(Object.class)));
             URI uri = instance.configuration().baseUri();
             System.out.printf("JabRef REST server %s running at %s [Native handle: %s].%n", instance, uri, instance.unwrap(Object.class));
-        });
+        }).exceptionally(ex -> {
+            LOGGER.error("Error starting server", ex);
+            return null;
+       });
 
         try {
             Thread.currentThread().join();
