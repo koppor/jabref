@@ -11,11 +11,51 @@ Note that this project **does not** adhere to [Semantic Versioning](http://semve
 
 ### Added
 
+- We added a field showing the BibTeX/biblatex source for added and deleted entries in the "External Changes Resolver" dialog. [#9509](https://github.com/JabRef/jabref/issues/9509)
+- We added a full text fetcher for IACR eprints. [#9651](https://github.com/JabRef/jabref/pull/9651)
+- We added "Attach file from URL" to right-click context menu to download and store a file with the reference library. [#9646](https://github.com/JabRef/jabref/issues/9646)
+- We enabled updating an existing entry with data from InspireHEP. [#9351](https://github.com/JabRef/jabref/issues/9351)
+- We added a fetcher for the Bibliotheksverbund Bayern (experimental). [#9641](https://github.com/JabRef/jabref/pull/9641)
+
+
+
+
+### Changed
+
+- 'Get full text' now also checks the file url. [#568](https://github.com/koppor/jabref/issues/568)
+- We refined the 'main directory not found' error message. [#9625](https://github.com/JabRef/jabref/pull/9625)
+- We modified the `Add Group` dialog to use the most recently selected group hierarchical context [#9141](https://github.com/JabRef/jabref/issues/9141)
+
+
+
+### Fixed
+
+- We fixed an issue where the browser import would add ' characters before the BibTeX entry on Linux [#9588](https://github.com/JabRef/jabref/issues/9588)
+- We fixed an issue where searching for a specific term with the DOAB fetcher lead to an exception [#9571](https://github.com/JabRef/jabref/issues/9571)
+- We fixed an issue where the "Import" -> "Library to import to" did not show the correct library name if two opened libraries had the same suffix [#9567](https://github.com/JabRef/jabref/issues/9567)
+- We fixed an issue where the rpm-Version of JabRef could not be properly uninstalled and reinstalled [#9558](https://github.com/JabRef/jabref/issues/9558), [#9603](https://github.com/JabRef/jabref/issues/9603)
+- We fixed an issue where the command line export using `--exportMatches` flag does not create an output bib file [#9581](https://github.com/JabRef/jabref/issues/9581)
+- We fixed an issue where custom field in the custom entry types could not be set to mulitline [#9609](https://github.com/JabRef/jabref/issues/9609)
+- We fixed an issue where the Office XML exporter did not resolve BibTeX-Strings when exporting entries [forum#3741](https://discourse.jabref.org/t/exporting-bibtex-constant-strings-to-ms-office-2007-xml/3741)
+
+
+### Removed
+
+- We removed the support of BibTeXML.[#9540](https://github.com/JabRef/jabref/issues/9540)
+
+
+
+
+
+
+## [5.9] - 2023-01-06
+
+### Added
 
 - We added a dropdown menu to let users change the library they want to import into during import. [#6177](https://github.com/JabRef/jabref/issues/6177)
 - We added the possibility to add/remove a preview style from the selected list using a double click. [#9490](https://github.com/JabRef/jabref/issues/9490)
 - We added the option to define fields as "multine" directly in the custom entry types dialog. [#6448](https://github.com/JabRef/jabref/issues/6448)
-
+- We changed the minWidth and the minHeight of the main window, so it won't have a width and/or a height with the value 0. [#9606](https://github.com/JabRef/jabref/issues/9606)
 
 ### Changed
 
@@ -23,9 +63,7 @@ Note that this project **does not** adhere to [Semantic Versioning](http://semve
 - We moved some preferences options to a new tab in the preferences dialog. [#9442](https://github.com/JabRef/jabref/pull/9308)
 - We renamed "Medline abbreviation" to "dotless abbreviation". [#9504](https://github.com/JabRef/jabref/pull/9504)
 - We now have more "dots" in the offered journal abbreviations. [#9504](https://github.com/JabRef/jabref/pull/9504)
-
-
-
+- We now disable the button "Full text search" in the Searchbar by default [#9527](https://github.com/JabRef/jabref/pull/9527)
 
 ### Fixed
 
@@ -39,15 +77,8 @@ Note that this project **does not** adhere to [Semantic Versioning](http://semve
 - For portable versions, the `.deb` file now works on plain debian again. [#9472](https://github.com/JabRef/jabref/issues/9472)
 - We fixed an issue where the download of linked online files failed after an import of entries for certain urls. [#9518](https://github.com/JabRef/jabref/issues/9518)
 - We fixed an issue where an exception occured when manually downloading a file from an URL in the entry editor. [#9521](https://github.com/JabRef/jabref/issues/9521)
-
-### Removed
-
-
-
-
-
-
-
+- We fixed an issue with open office csv file formatting where commas in the abstract field where not escaped. [#9087][https://github.com/JabRef/jabref/issues/9087]
+- We fixed an issue with deleting groups where subgroups different from the selected group were deleted. [#9281][https://github.com/JabRef/jabref/issues/9281]
 
 ## [5.8] - 2022-12-18
 
@@ -135,6 +166,7 @@ Note that this project **does not** adhere to [Semantic Versioning](http://semve
 - We fixed the display of the "Customize Entry Types" dialog title. [#9198](https://github.com/JabRef/jabref/issues/9198)
 - We fixed an issue where the CSS styles are missing in some dialogs. [#9150](https://github.com/JabRef/jabref/pull/9150)
 - We fixed an issue where controls in the preferences dialog could outgrow the window. [#9017](https://github.com/JabRef/jabref/issues/9017)
+- We fixed an issue where highlighted text color for entry merge dialogue was not clearly visible. [#9192](https://github.com/JabRef/jabref/issues/9192)
 
 ### Removed
 
@@ -976,7 +1008,8 @@ The changelog of JabRef 4.x is available at the [v4.3.1 tag](https://github.com/
 The changelog of JabRef 3.x is available at the [v3.8.2 tag](https://github.com/JabRef/jabref/blob/v3.8.2/CHANGELOG.md).
 The changelog of JabRef 2.11 and all previous versions is available as [text file in the v2.11.1 tag](https://github.com/JabRef/jabref/blob/v2.11.1/CHANGELOG).
 
-[Unreleased]: https://github.com/JabRef/jabref/compare/v5.8...HEAD
+[Unreleased]: https://github.com/JabRef/jabref/compare/v5.9...HEAD
+[5.9]: https://github.com/JabRef/jabref/compare/v5.8...v5.9
 [5.8]: https://github.com/JabRef/jabref/compare/v5.7...v5.8
 [5.7]: https://github.com/JabRef/jabref/compare/v5.6...v5.7
 [5.6]: https://github.com/JabRef/jabref/compare/v5.5...v5.6
