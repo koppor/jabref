@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 import org.jabref.gui.Globals;
+import org.jabref.gui.JabRefExecutorService;
 import org.jabref.gui.MainApplication;
 import org.jabref.logic.journals.JournalAbbreviationLoader;
 import org.jabref.logic.l10n.Localization;
@@ -79,7 +80,8 @@ public class Launcher {
                     LOGGER.debug("JabRef shut down after processing command line arguments");
                     return;
                 }
-                startServer();
+
+                JabRefExecutorService.INSTANCE.execute(Launcher::startServer);
 
                 MainApplication.main(argumentProcessor.getParserResults(), argumentProcessor.isBlank(), preferences, arguments);
             } catch (ParseException e) {
