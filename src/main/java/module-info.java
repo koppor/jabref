@@ -71,6 +71,7 @@ open module org.jabref {
 
     // Annotations (@PostConstruct)
     requires jakarta.annotation;
+    requires jakarta.validation;
 
     // Microsoft application insights
     requires applicationinsights.core;
