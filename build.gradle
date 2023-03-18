@@ -183,9 +183,9 @@ dependencies {
     implementation 'de.undercouch:citeproc-java:3.0.0-alpha.6'
 
     // Data mapping
-    implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '3.0.1'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
     // Data mapping provider for JAXB annotated classes (e.g., MedlineImporter)
-    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '3.0.2'
+    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '4.0.2'
 
     // JSON mapping
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.14.2'
@@ -197,7 +197,9 @@ dependencies {
 
     // http sever
     // "Starting a Grizzly server to run a JAX-RS or Jersey application is one of the most lightweight and easy ways how to expose a functional RESTful services application."
-    implementation 'org.glassfish.jersey.containers:jersey-container-grizzly2-http:3.1.1'
+    implementation ('org.glassfish.jersey.containers:jersey-container-grizzly2-http:3.1.1') {
+        exclude module: "jakarta.activation"
+    }
 
     implementation group: 'org.glassfish.jersey.media', name: 'jersey-media-jaxb', version: '3.1.1'
     implementation group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '3.1.1'
