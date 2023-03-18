@@ -1,6 +1,5 @@
 package org.jabref.logic.shared.restserver.rest;
 
-import java.util.Collections;
 import java.util.Set;
 
 import org.jabref.logic.shared.restserver.rest.base.Accumulation;
