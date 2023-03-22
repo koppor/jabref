@@ -118,7 +118,7 @@ public class WebSocketClientWrapper {
 
                 @Override
                 public void onError(Session session, Throwable t) {
-                    LOGGER.error(t);
+                    LOGGER.error("error", t);
                 }
 
                 @Override

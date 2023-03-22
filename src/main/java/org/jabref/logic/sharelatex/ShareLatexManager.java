@@ -14,6 +14,7 @@ import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.sharelatex.ShareLatexProject;
 import org.jabref.model.util.FileUpdateMonitor;
+import org.jabref.preferences.GeneralPreferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class ShareLatexManager {
             try {
                 connector.startWebsocketListener(projectID, database, preferences, fileMonitor);
             } catch (URISyntaxException e) {
-                LOGGER.error(e);
+                LOGGER.error("Exception {}", e);
             }
             registerListener(ShareLatexManager.this);
         });
@@ -59,14 +60,13 @@ public class ShareLatexManager {
      */
     public void sendNewDatabaseContent(BibDatabaseContext bibDatabaseContext) {
         try {
+            GeneralPreferences generalPreferences = Globals.prefs.getGeneralPreferences();
             SavePreferences prefs = Globals.prefs.getSavePreferences();
 
             StringWriter outputWriter = new StringWriter();
-            BibtexDatabaseWriter databaseWriter = new BibtexDatabaseWriter(outputWriter, prefs, Globals.entryTypesManager);
+            BibtexDatabaseWriter databaseWriter = new BibtexDatabaseWriter(outputWriter, "\n", generalPreferences, prefs, Globals.entryTypesManager);
             databaseWriter.savePartOfDatabase(bibDatabaseContext, bibDatabaseContext.getEntries());
-
-            String content = outputWriter.toString().replace("\r\n", "\n");
-
+            String content = outputWriter.toString();
             connector.sendNewDatabaseContent(content);
         } catch (InterruptedException e) {
             LOGGER.error("Could not prepare database for saving ", e);
