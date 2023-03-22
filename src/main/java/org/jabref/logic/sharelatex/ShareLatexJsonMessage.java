@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 public class ShareLatexJsonMessage {
 
     public String createDeleteInsertMessage(String docId, int position, int version, String oldContent, String newContent) {
-
         JsonObject insertContent = new JsonObject();
         insertContent.addProperty("p", position);
         insertContent.addProperty("d", oldContent);
@@ -35,7 +34,6 @@ public class ShareLatexJsonMessage {
         obj.add("args", argsArray);
 
         return obj.toString();
-
     }
 
     public String createUpdateMessageAsInsertOrDelete(String docId, int version, List<SharelatexDoc> docs) {
@@ -62,5 +60,4 @@ public class ShareLatexJsonMessage {
 
         return obj.toString();
     }
-
 }

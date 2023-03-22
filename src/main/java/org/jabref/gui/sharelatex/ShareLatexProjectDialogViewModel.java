@@ -24,12 +24,12 @@ import org.jabref.model.sharelatex.ShareLatexProject;
 import org.jabref.model.util.FileUpdateMonitor;
 
 import com.google.common.eventbus.Subscribe;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ShareLatexProjectDialogViewModel {
 
-    private static final Log LOGGER = LogFactory.getLog(ShareLatexProjectDialogViewModel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShareLatexProjectDialogViewModel.class);
 
     private final StateManager stateManager;
     private final ShareLatexManager manager;
@@ -45,7 +45,6 @@ public class ShareLatexProjectDialogViewModel {
         this.fileMonitor = fileMonitor;
         manager.registerListener(this);
         this.manager = manager;
-
     }
 
     public void addProjects(List<ShareLatexProject> projectsToAdd) {
@@ -59,7 +58,6 @@ public class ShareLatexProjectDialogViewModel {
 
     @Subscribe
     public void listenToSharelatexEntryMessage(ShareLatexEntryMessageEvent event) {
-
         Path actualDbPath = stateManager.getActiveDatabase().get().getDatabasePath().get();
         List<BibEntry> entries = event.getEntries();
 
@@ -79,7 +77,6 @@ public class ShareLatexProjectDialogViewModel {
                     Optional<BibEntry> entryFromLocalDatabase = stateManager.getActiveDatabase().get().getDatabase().getEntryByCitationKey(identifedEntry.getCitationKey().get());
 
                     if (entryFromSharelatex.isPresent() && entryFromLocalDatabase.isPresent()) {
-
                         /* MergeSharedEntryDialog dlg = new MergeSharedEntryDialog(JabRefGUI.getMainFrame(),
                                 entryFromLocalDatabase.get(),
                                 entryFromSharelatex.get(),
@@ -92,19 +89,14 @@ public class ShareLatexProjectDialogViewModel {
                 } else {
                     try (BufferedWriter writer = Files.newBufferedWriter(actualDbPath, StandardCharsets.UTF_8)) {
                         writer.write(event.getNewDatabaseContent());
-                        writer.close();
-
                     } catch (IOException e) {
                         LOGGER.error("Problem writing new database content", e);
                     }
                 }
-                System.out.println("Changed chars: " + event.getChars());
+                LOGGER.debug("Changed chars: {}", event.getChars());
             }
         } catch (IOException e1) {
             LOGGER.error("Problem parsing position new database content", e1);
-
         }
-
     }
-
 }

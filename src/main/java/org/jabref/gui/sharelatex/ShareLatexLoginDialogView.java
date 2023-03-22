@@ -44,7 +44,6 @@ public class ShareLatexLoginDialogView extends BaseDialog<Void> {
 
         ControlHelper.setAction(connectButton, this.getDialogPane(), event -> signIn());
         btnLogin = (Button) this.getDialogPane().lookupButton(connectButton);
-
     }
 
     @FXML
@@ -74,13 +73,10 @@ public class ShareLatexLoginDialogView extends BaseDialog<Void> {
                 ShareLatexProjectDialogView dlgprojects = new ShareLatexProjectDialogView();
                 dlgprojects.show();
                 this.close();
-
             }
         } catch (Exception e) {
             LOGGER.error("Problems connectiong", e);
             dialogService.showErrorDialogAndWait(e);
         }
-
     }
-
 }

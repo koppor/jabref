@@ -13,8 +13,8 @@ import org.jabref.logic.importer.ParseException;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.importer.fileformat.BibtexParser;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.sharelatex.ShareLatexProject;
 import org.jabref.model.sharelatex.ShareLatexOtAppliedMessage;
+import org.jabref.model.sharelatex.ShareLatexProject;
 import org.jabref.model.util.FileUpdateMonitor;
 
 import com.github.difflib.DiffUtils;
@@ -48,7 +48,6 @@ public class ShareLatexParser {
     }
 
     public int getPositionFromBibtexJsonUpdateMessage(String content) {
-
         String strs = content.substring(content.indexOf("{"), content.length());
 
         ShareLatexOtAppliedMessage message = gson.fromJson(strs, ShareLatexOtAppliedMessage.class);
@@ -71,13 +70,11 @@ public class ShareLatexParser {
     }
 
     public String getOtErrorMessageContent(String otUpdateError) {
-
         JsonObject obj = parseFirstPartOfMessageAsObject(otUpdateError);
         return obj.get("args").getAsJsonArray().get(0).getAsString();
     }
 
     public String getFirstBibTexDatabaseId(String json) {
-
         JsonObject obj = parseFirstPartOfMessageAsArray(json).get(1).getAsJsonObject();
         JsonArray arr = obj.get("rootFolder").getAsJsonArray();
 
@@ -90,7 +87,6 @@ public class ShareLatexParser {
                                       .findFirst();
 
         if (docs.isPresent()) {
-
             JsonArray jsonArray = docs.get();
             for (JsonElement doc : jsonArray) {
                 String name = doc.getAsJsonObject().get("name").getAsString();
@@ -161,12 +157,10 @@ public class ShareLatexParser {
     }
 
     public List<ShareLatexProject> getProjectFromJson(JsonObject json) {
-
         List<ShareLatexProject> projects = new ArrayList<>();
         if (json.has("projects")) {
             JsonArray projectArray = json.get("projects").getAsJsonArray();
             for (JsonElement elem : projectArray) {
-
                 String id = elem.getAsJsonObject().get("id").getAsString();
                 String name = elem.getAsJsonObject().get("name").getAsString();
                 String lastUpdated = elem.getAsJsonObject().get("lastUpdated").getAsString();
@@ -185,7 +179,6 @@ public class ShareLatexParser {
 
     private List<BibEntry> parseBibEntryFromJsonArray(JsonArray arr, ImportFormatPreferences prefs, FileUpdateMonitor fileMonitor)
             throws ParseException {
-
         String bibtexString = getBibTexStringFromJsonArray(arr);
         BibtexParser parser = new BibtexParser(prefs, fileMonitor);
         return parser.parseEntries(bibtexString);
@@ -203,7 +196,6 @@ public class ShareLatexParser {
     }
 
     private String getBibTexStringFromJsonArray(JsonArray arr) {
-
         JsonArray stringArr = arr.get(1).getAsJsonArray();
 
         StringJoiner joiner = new StringJoiner("\n");

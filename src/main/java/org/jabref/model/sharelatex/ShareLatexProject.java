@@ -67,5 +67,4 @@ public class ShareLatexProject {
     public int hashCode() {
         return Objects.hash(projectId, projectTitle, lastUpdated, lastName, firstName);
     }
-
 }

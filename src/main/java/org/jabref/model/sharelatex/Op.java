@@ -23,5 +23,4 @@ public class Op {
     public void setOp(String op) {
         this.chars = op;
     }
-
 }

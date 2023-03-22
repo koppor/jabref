@@ -1490,5 +1490,4 @@ public class JabRefFrame extends BorderPane {
             */
         }
     }
-
 }

@@ -15,12 +15,12 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.sharelatex.ShareLatexProject;
 import org.jabref.model.util.FileUpdateMonitor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ShareLatexManager {
 
-    private static final Log LOGGER = LogFactory.getLog(ShareLatexManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShareLatexManager.class);
 
     private final SharelatexConnector connector = new SharelatexConnector();
     private final ShareLatexParser parser = new ShareLatexParser();
@@ -49,7 +49,6 @@ public class ShareLatexManager {
                 LOGGER.error(e);
             }
             registerListener(ShareLatexManager.this);
-
         });
     }
 
@@ -72,8 +71,7 @@ public class ShareLatexManager {
         } catch (InterruptedException e) {
             LOGGER.error("Could not prepare database for saving ", e);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error("General I/O Exception", e);
         }
     }
 

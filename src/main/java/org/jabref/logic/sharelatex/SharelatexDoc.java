@@ -57,5 +57,4 @@ public class SharelatexDoc {
     public int hashCode() {
         return Objects.hash(content, position, operation);
     }
-
 }

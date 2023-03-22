@@ -16,18 +16,18 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.utils.URIBuilder;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SharelatexConnector {
 
-    private static final Log LOGGER = LogFactory.getLog(SharelatexConnector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SharelatexConnector.class);
 
     private final String contentType = "application/json; charset=utf-8";
     private final JsonParser parser = new JsonParser();
@@ -79,21 +79,17 @@ public class SharelatexConnector {
                 .ignoreContentType(true)
                 .userAgent(userAgent)
                 .execute();
-
-        System.out.println(loginResponse.body());
+        LOGGER.debug("Body: {}", loginResponse.body());
         ///Error handling block
         if (contentType.equals(loginResponse.contentType())) {
-
             if (loginResponse.body().contains("message")) {
                 JsonElement jsonTree = parser.parse(loginResponse.body());
                 JsonObject obj = jsonTree.getAsJsonObject();
                 JsonObject message = obj.get("message").getAsJsonObject();
                 String errorMessage = message.get("text").getAsString();
-                System.out.println(errorMessage);
-
+                LOGGER.error("error {}", errorMessage);
                 return errorMessage;
             }
-
         }
 
         loginCookies = loginResponse.cookies();
@@ -116,14 +112,12 @@ public class SharelatexConnector {
                 .ofNullable(projectsResponse.parse().select("script#data").first());
 
         if (scriptContent.isPresent()) {
-
             String data = scriptContent.get().data();
             JsonElement jsonTree = parser.parse(data);
 
             JsonObject obj = jsonTree.getAsJsonObject();
 
             return Optional.of(obj);
-
         }
         return Optional.empty();
     }
@@ -131,7 +125,7 @@ public class SharelatexConnector {
     public void startWebsocketListener(String projectId, BibDatabaseContext database, ImportFormatPreferences prefs, FileUpdateMonitor fileMonitor)
             throws URISyntaxException {
         long millis = System.currentTimeMillis();
-        System.out.println(millis);
+        LOGGER.trace("millis {}", millis);
         String socketioUrl = server + "/socket.io/1";
         String scheme = server.contains("https://") ? "wss" : "ws";
         try {
@@ -139,7 +133,7 @@ public class SharelatexConnector {
                     .cookies(loginCookies)
                     .data("t", String.valueOf(millis)).method(Method.GET).execute();
 
-            System.out.println(webSocketresponse.body());
+            LOGGER.trace("body {}", webSocketresponse.body());
 
             String resp = webSocketresponse.body();
 
@@ -147,14 +141,13 @@ public class SharelatexConnector {
             String channel = resp.substring(0, resp.indexOf(":"));
 
             URI webSocketchannelUri = new URIBuilder(socketioUrl + "/websocket/" + channel).setScheme(scheme).build();
-            System.out.println("WebSocketChannelUrl " + webSocketchannelUri);
+            LOGGER.debug("WebSocketChannelUrl {}", webSocketchannelUri);
             client.setImportFormatPrefs(prefs, fileMonitor);
             client.setServerNameOrigin(server);
             client.setCookies(loginCookies);
             client.createAndConnect(webSocketchannelUri, projectId, database);
 
             setDatabaseName(database);
-
         } catch (IOException e) {
             LOGGER.error("Problem starting websocket", e);
         }
@@ -166,7 +159,6 @@ public class SharelatexConnector {
 
     public void registerListener(Object listener) {
         client.registerListener(listener);
-
     }
 
     public void unregisterListener(Object listener) {
@@ -179,12 +171,10 @@ public class SharelatexConnector {
         } catch (IOException e) {
             LOGGER.error("Problem leaving document and closing websocket", e);
         }
-
     }
 
     private void setDatabaseName(BibDatabaseContext database) {
         String dbName = database.getDatabasePath().map(Path::getFileName).map(Path::toString).orElse("");
         client.setDatabaseName(dbName);
     }
-
 }

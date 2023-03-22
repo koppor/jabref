@@ -20,12 +20,12 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.preferences.PreferencesService;
 
 import com.airhacks.afterburner.views.ViewLoader;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ShareLatexProjectDialogView extends BaseDialog<Void> {
 
-    private static final Log LOGGER = LogFactory.getLog(ShareLatexProjectDialogViewModel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShareLatexProjectDialogViewModel.class);
 
     @FXML private TableColumn<ShareLatexProjectViewModel, Boolean> colActive;
     @FXML private TableColumn<ShareLatexProjectViewModel, String> colTitle;
@@ -45,7 +45,6 @@ public class ShareLatexProjectDialogView extends BaseDialog<Void> {
     @Inject private DefaultFileUpdateMonitor fileMonitor;
 
     public ShareLatexProjectDialogView() {
-
         this.setTitle("Overleaf projects");
 
         ViewLoader.view(this)
@@ -75,7 +74,6 @@ public class ShareLatexProjectDialogView extends BaseDialog<Void> {
         colLastName.setCellValueFactory(cellData -> cellData.getValue().getLastName());
         colLastModified.setCellValueFactory(cellData -> cellData.getValue().getLastUpdated());
         setBindings();
-
     }
 
     private void setBindings() {
@@ -92,11 +90,9 @@ public class ShareLatexProjectDialogView extends BaseDialog<Void> {
             BibDatabaseContext database = stateManager.getActiveDatabase().get();
             manager.startWebSocketHandler(projectID, database, preferences.getImportFormatPreferences(), fileMonitor);
         }
-
     }
 
     @FXML
     private void cancelAndClose() {
     }
-
 }

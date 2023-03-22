@@ -7,11 +7,6 @@ import javafx.beans.property.StringProperty;
 
 import org.jabref.model.sharelatex.ShareLatexProject;
 
-/**
- * Data class
- * @author CS
- *
- */
 public class ShareLatexProjectViewModel {
 
     private final SimpleBooleanProperty active = new SimpleBooleanProperty(false);

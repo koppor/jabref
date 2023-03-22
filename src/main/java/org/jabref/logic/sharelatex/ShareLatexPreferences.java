@@ -77,5 +77,4 @@ public class ShareLatexPreferences {
     private Optional<String> getOptionalValue(String key) {
         return Optional.ofNullable(key);
     }
-
 }

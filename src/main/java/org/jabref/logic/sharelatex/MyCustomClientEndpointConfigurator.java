@@ -8,8 +8,12 @@ import java.util.stream.Collectors;
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.HandshakeResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MyCustomClientEndpointConfigurator extends ClientEndpointConfig.Configurator {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyCustomClientEndpointConfigurator.class);
     private final String userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.16; rv:84.0) Gecko/20100101 Firefox/84.0";
     private final String serverOrigin;
     private final Map<String, String> cookies;
@@ -22,7 +26,6 @@ public class MyCustomClientEndpointConfigurator extends ClientEndpointConfig.Con
 
     @Override
     public void beforeRequest(Map<String, List<String>> headers) {
-
         headers.put("User-Agent", Arrays.asList(userAgent));
         headers.put("Origin", Arrays.asList(serverOrigin));
 
@@ -36,8 +39,6 @@ public class MyCustomClientEndpointConfigurator extends ClientEndpointConfig.Con
     @Override
     public void afterResponse(HandshakeResponse handshakeResponse) {
         final Map<String, List<String>> headers = handshakeResponse.getHeaders();
-
-        System.out.println("headers " + headers);
-
+        LOGGER.debug("headers {}", headers);
     }
 }

@@ -32,7 +32,6 @@ public class ShareLatexParserTest {
         expected.add(project);
 
         assertEquals(expected, actual);
-
     }
 
     @Test
@@ -46,7 +45,6 @@ public class ShareLatexParserTest {
 
     @Test
     public void parseBibTexString() {
-
         String message = "6:::78988+[null,[\"@book{adams1995hitchhiker,       \",\"   title={The Hitchhiker's Guide to the Galaxy},\",\"  author={Adams, D.},\",\"  isbn={9781417642595},\",\"  url={http://books.google.com/books?id=W-xMPgAACAAJ},\",\"  year={199},\",\"  publisher={San Val}\",\"}\",\"\"],74,[],{}]";
         String expected = "@book{adams1995hitchhiker,       \n" +
                           "   title={The Hitchhiker's Guide to the Galaxy},\n" +
@@ -79,7 +77,6 @@ public class ShareLatexParserTest {
         ShareLatexParser parser = new ShareLatexParser();
         int actual = parser.getPositionFromBibtexJsonUpdateMessage(document);
         assertEquals(633, actual);
-
     }
 
     @Test
@@ -97,7 +94,6 @@ public class ShareLatexParserTest {
 
         String actual = parser.getOtErrorMessageContent(errorMessageJson);
         assertEquals(expected, actual);
-
     }
 
     @Test
@@ -113,7 +109,6 @@ public class ShareLatexParserTest {
         testDoc.setOperation("i");
 
         assertEquals(testDoc, docs.get(0));
-
     }
 
     @Test
@@ -153,12 +148,10 @@ public class ShareLatexParserTest {
         List<SharelatexDoc> docs = parser.generateDiffs(before, after);
 
         assertEquals(testdoc, docs.get(0));
-
     }
 
     @Test
     public void testShiftLaterDeleteByFirstDeletes() {
-
         String before = "the tall boy played with the red ball";
         String after = "the boy played with the ball";
 
@@ -177,7 +170,6 @@ public class ShareLatexParserTest {
 
         List<SharelatexDoc> docs = parser.generateDiffs(before, after);
         assertEquals(expected, docs);
-
     }
 
     @Test
@@ -237,6 +229,5 @@ public class ShareLatexParserTest {
 
         List<SharelatexDoc> docs = parser.generateDiffs(bibTexBefore, bibtexAfter);
         assertEquals(expected, docs);
-
     }
 }

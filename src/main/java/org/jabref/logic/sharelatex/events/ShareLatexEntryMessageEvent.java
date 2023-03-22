@@ -38,13 +38,11 @@ public class ShareLatexEntryMessageEvent {
     }
 
     public String getChars() {
-
         String chars = getOpFromAtPosZero(message).getChars();
         if (chars != null) {
             return chars;
         }
         return "";
-
     }
 
     private Op getOpFromAtPosZero(ShareLatexOtAppliedMessage message) {
@@ -54,7 +52,6 @@ public class ShareLatexEntryMessageEvent {
             if (!ops.isEmpty()) {
                 return ops.get(0);
             }
-
         }
         return new Op();
     }

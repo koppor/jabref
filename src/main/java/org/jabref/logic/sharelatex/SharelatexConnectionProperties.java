@@ -5,12 +5,12 @@ import java.util.Objects;
 
 import org.jabref.logic.shared.security.Password;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SharelatexConnectionProperties {
 
-    private static final Log LOGGER = LogFactory.getLog(SharelatexConnectionProperties.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SharelatexConnectionProperties.class);
 
     private String user;
     private String password;
@@ -72,7 +72,6 @@ public class SharelatexConnectionProperties {
     }
 
     private void setFromPreferences(ShareLatexPreferences prefs) {
-
         this.url = prefs.getSharelatexUrl();
         prefs.getDefaultProject().ifPresent(proj -> this.project = proj);
 
@@ -86,7 +85,5 @@ public class SharelatexConnectionProperties {
                 }
             }
         }
-
     }
-
 }

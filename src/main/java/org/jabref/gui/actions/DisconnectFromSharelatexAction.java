@@ -12,12 +12,10 @@ public class DisconnectFromSharelatexAction extends AbstractAction {
     public DisconnectFromSharelatexAction() {
         super();
         putValue(Action.NAME, "Disconnect from ShareLaTeX");
-
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Globals.shareLatexManager.disconnectAndCloseConnection();
     }
-
 }

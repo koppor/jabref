@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ShareLatexJsonMessageTest {
 
     @Test
-    public void testcreateDeleteInsertMessage() {
+    public void testCreateDeleteInsertMessage() {
         String expected = "{\"name\":\"applyOtUpdate\",\"args\":[\"5936d96b1bd5906b0082f53e\",{\"doc\":\"5936d96b1bd5906b0082f53e\",\"op\":[{\"p\":0,\"d\":\"ToDelete \"},{\"p\":0,\"i\":\" To Insert\"}],\"v\":68}]}";
         ShareLatexJsonMessage message = new ShareLatexJsonMessage();
 
@@ -38,6 +38,5 @@ public class ShareLatexJsonMessageTest {
         ShareLatexJsonMessage message = new ShareLatexJsonMessage();
         String result = message.createUpdateMessageAsInsertOrDelete("5936d96b1bd5906b0082f53e", 468, docsForTest);
         assertEquals(expected, result);
-
     }
 }

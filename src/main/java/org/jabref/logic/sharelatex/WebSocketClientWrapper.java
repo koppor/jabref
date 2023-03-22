@@ -30,15 +30,15 @@ import org.jabref.model.util.FileUpdateMonitor;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.client.ClientProperties;
 import org.glassfish.tyrus.ext.extension.deflate.PerMessageDeflateExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebSocketClientWrapper {
 
-    private static final Log LOGGER = LogFactory.getLog(WebSocketClientWrapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketClientWrapper.class);
     private final BlockingQueue<String> queue = new LinkedBlockingQueue<>();
     private final ShareLatexParser parser = new ShareLatexParser();
 
@@ -69,7 +69,6 @@ public class WebSocketClientWrapper {
     }
 
     public void createAndConnect(URI webSocketchannelUri, String projectId, BibDatabaseContext database) {
-
         try {
             this.projectId = projectId;
 
@@ -85,7 +84,6 @@ public class WebSocketClientWrapper {
             client.getProperties().put(ClientProperties.LOG_HTTP_UPGRADE, true);
 
             ClientManager.ReconnectHandler reconnectHandler = new ClientManager.ReconnectHandler() {
-
                 private final AtomicInteger counter = new AtomicInteger(0);
 
                 @Override
@@ -105,15 +103,12 @@ public class WebSocketClientWrapper {
                 public long getDelay() {
                     return 0;
                 }
-
             };
             client.getProperties().put(ClientProperties.RECONNECT_HANDLER, reconnectHandler);
 
             this.session = client.connectToServer(new Endpoint() {
-
                 @Override
                 public void onOpen(Session session, EndpointConfig config) {
-
                     session.addMessageHandler(String.class, (Whole<String>) message -> {
                         message = parser.fixUTF8Strings(message);
                         LOGGER.debug("Received new message " + message);
@@ -131,7 +126,6 @@ public class WebSocketClientWrapper {
                     if (errorReceived) {
                         LOGGER.debug("Error received in close session");
                     }
-
                 }
             }, cec, webSocketchannelUri);
 
@@ -139,11 +133,9 @@ public class WebSocketClientWrapper {
             // TODO: On database change event or on save event send new version
             // TODO: When new db content arrived run merge dialog
             // TODO: Identfiy active database/Name of database/doc Id (partly done)
-
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Exception", e);
         }
-
     }
 
     public void joinProject(String projectId) throws IOException {
@@ -165,7 +157,6 @@ public class WebSocketClientWrapper {
         if (session != null) {
             session.getBasicRemote().sendText(text);
         }
-
     }
 
     private void sendHeartBeat() throws IOException {
@@ -201,7 +192,6 @@ public class WebSocketClientWrapper {
                 LOGGER.debug("Exception in taking from queue", e);
             }
         }, "ListenToShareLatexTask");
-
     }
 
     /**
@@ -211,24 +201,20 @@ public class WebSocketClientWrapper {
      */
     private void parseContents(String message) {
         try {
-
-            System.out.println("Got message: " + message);
+            LOGGER.debug("Got message: {}", message);
             if (message.contains(":::1")) {
-
                 Thread.currentThread().sleep(400);
                 LOGGER.debug("After sleep in :::1");
 
-                //TODO: Does not work reliable we often get 7:::1+0 this is an error somehow
+                // TODO: Does not work reliable we often get 7:::1+0 this is an error somehow
                 // we need to get connection accepted with 5
 
                 // joinProject(projectId);
-
             }
             if (message.contains("2::")) {
                 setLeftDoc(false);
                 eventBus.post(new ShareLatexContinueMessageEvent());
                 sendHeartBeat();
-
             }
 
             if (message.endsWith("[null]")) {
@@ -245,18 +231,15 @@ public class WebSocketClientWrapper {
                 LOGGER.debug("DBs with ID " + docIdOfFirstBibtex);
                 setDocID(docIdOfFirstBibtex);
                 joinDoc(docId);
-
             }
             if (message.contains("{\"name\":\"connectionAccepted\"") && (projectId != null)) {
-
                 LOGGER.debug(" Conn accepted +Joining project");
                 Thread.sleep(200);
                 joinProject(projectId);
-
             }
 
             if (message.contains("[null,[")) {
-                System.out.println("Message could be an entry ");
+                LOGGER.debug("Message could be an entry ");
 
                 int version = parser.getVersionFromBibTexJsonString(message);
                 setVersion(version);
@@ -270,11 +253,10 @@ public class WebSocketClientWrapper {
 
                 eventBus.post(new ShareLatexEntryMessageEvent(entries, bibtexString, otAppliedMessage));
                 eventBus.post(new ShareLatexContinueMessageEvent());
-
             }
 
             if (message.contains("otUpdateApplied")) {
-                LOGGER.debug("We got an update " + message);
+                LOGGER.debug("We got an update {}", message);
 
                 otAppliedMessage = parser.getOtAppliedMessage(message);
                 leaveDocument(docId);
@@ -287,11 +269,10 @@ public class WebSocketClientWrapper {
             if (message.contains("0::")) {
                 leaveDocAndCloseConn();
             }
-
         } catch (IOException | ParseException e) {
             LOGGER.error("Error in parsing", e);
         } catch (InterruptedException e) {
-            LOGGER.debug(e);
+            LOGGER.debug("Exception", e);
         }
     }
 
@@ -305,17 +286,14 @@ public class WebSocketClientWrapper {
         if (session != null) {
             session.close();
         }
-
     }
 
     public void setServerNameOrigin(String serverOrigin) {
         this.serverOrigin = serverOrigin;
-
     }
 
     public void setCookies(Map<String, String> cookies) {
         this.cookies = cookies;
-
     }
 
     public void registerListener(Object listener) {
@@ -349,5 +327,4 @@ public class WebSocketClientWrapper {
     private synchronized void setErrorReceived(boolean errorReceived) {
         this.errorReceived = errorReceived;
     }
-
 }
