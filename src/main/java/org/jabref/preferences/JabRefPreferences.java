@@ -96,6 +96,7 @@ import org.jabref.logic.protectedterms.ProtectedTermsLoader;
 import org.jabref.logic.protectedterms.ProtectedTermsPreferences;
 import org.jabref.logic.remote.RemotePreferences;
 import org.jabref.logic.shared.prefs.SharedDatabasePreferences;
+import org.jabref.logic.sharelatex.ShareLatexPreferences;
 import org.jabref.logic.util.OS;
 import org.jabref.logic.util.Version;
 import org.jabref.logic.util.io.AutoLinkPreferences;
@@ -230,6 +231,15 @@ public class JabRefPreferences implements PreferencesService {
 
     public static final String ADD_CREATION_DATE = "addCreationDate";
     public static final String ADD_MODIFICATION_DATE = "addModificationDate";
+
+    // Sharelatex preferences
+    public static final String DEFAULT_NODE = "default";
+    public static final String PARENT_NODE = "jabref-sharelatex";
+    public static final String SHARELATEX_URL = "sharelatexUrl";
+    public static final String SHARELATEX_USER = "sharelatexUser";
+    public static final String SHARELATEX_PASSWORD = "sharelatexPassword";
+    public static final String SHARELATEX_REMEMBER_PASSWORD = "sharelatexRememberPassword";
+    public static final String SHARELATEX_PROJECT = "sharelatexProject";
 
     public static final String WARN_ABOUT_DUPLICATES_IN_INSPECTION = "warnAboutDuplicatesInInspection";
     public static final String NON_WRAPPABLE_FIELDS = "nonWrappableFields";
@@ -501,6 +511,10 @@ public class JabRefPreferences implements PreferencesService {
 
         defaults.put(USE_CUSTOM_DOI_URI, Boolean.FALSE);
         defaults.put(BASE_DOI_URI, "https://doi.org");
+
+        // Sharelatex
+        defaults.put(DEFAULT_NODE, "default");
+        defaults.put(PARENT_NODE, "jabref-sharelatex");
 
         if (OS.OS_X) {
             defaults.put(FONT_FAMILY, "SansSerif");
@@ -882,7 +896,7 @@ public class JabRefPreferences implements PreferencesService {
     }
 
     private boolean getBooleanDefault(String key) {
-        return (Boolean) defaults.get(key);
+        return (Boolean) (defaults.get(key) == null ? false : defaults.get(key));
     }
 
     public int getInt(String key) {
@@ -1116,6 +1130,26 @@ public class JabRefPreferences implements PreferencesService {
                 getNameFormatterPreferences(),
                 getFilePreferences().mainFileDirectoryProperty(),
                 repository);
+    }
+
+    public ShareLatexPreferences getShareLatexPreferences() {
+        return new ShareLatexPreferences(get(DEFAULT_NODE), get(PARENT_NODE), get(SHARELATEX_USER), get(SHARELATEX_URL), get(SHARELATEX_PASSWORD), getBoolean(SHARELATEX_REMEMBER_PASSWORD), get(SHARELATEX_PROJECT));
+    }
+
+    public void storeShareLatexPreferences(ShareLatexPreferences sharelatexPreferences) {
+        put(JabRefPreferences.DEFAULT_NODE, sharelatexPreferences.getDefaultNode());
+        put(JabRefPreferences.PARENT_NODE, sharelatexPreferences.getParentNode());
+        sharelatexPreferences.getUser().ifPresent(
+                user -> put(JabRefPreferences.SHARELATEX_USER, user)
+        );
+        put(JabRefPreferences.SHARELATEX_URL, sharelatexPreferences.getSharelatexUrl());
+        sharelatexPreferences.getPassword().ifPresent(
+                password -> put(JabRefPreferences.SHARELATEX_PASSWORD, password)
+        );
+        putBoolean(JabRefPreferences.SHARELATEX_REMEMBER_PASSWORD, sharelatexPreferences.getShareLatexRememberPassword());
+        sharelatexPreferences.getDefaultProject().ifPresent(
+                project -> put(JabRefPreferences.SHARELATEX_PROJECT, project)
+        );
     }
 
     @Override

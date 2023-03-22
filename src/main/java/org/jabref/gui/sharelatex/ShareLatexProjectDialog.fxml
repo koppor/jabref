@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+
+<DialogPane prefHeight="494.0" prefWidth="397.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.jabref.gui.sharelatex.ShareLatexProjectDialogView">
+   <content>
+      <BorderPane>
+         <top>
+            <TableView fx:id="tblProjects" BorderPane.alignment="CENTER">
+              <columns>
+                  <TableColumn fx:id="colActive" prefWidth="75.0" text="Active" />
+                <TableColumn fx:id="colTitle" prefWidth="75.0" text="Title" />
+                <TableColumn fx:id="colFirstName" prefWidth="75.0" text="First Name" />
+                  <TableColumn fx:id="colLastName" prefWidth="75.0" text="Last Name" />
+                  <TableColumn fx:id="colLastModified" prefWidth="75.0" text="Last modified" />
+              </columns>
+            </TableView>
+         </top>
+      </BorderPane>
+   </content>
+   <buttonTypes>
+        <ButtonType fx:constant="CLOSE"/>
+        <ButtonType fx:id="syncButton" buttonData="OK_DONE" text="%Synchronize Library"/>
+    </buttonTypes>
+</DialogPane>

@@ -7,7 +7,7 @@ import org.jabref.gui.actions.SimpleCommand;
 import com.airhacks.afterburner.injection.Injector;
 
 /**
- * Opens a shared database.
+ * Opens a shared SQL database
  */
 public class ConnectToSharedDatabaseCommand extends SimpleCommand {
 

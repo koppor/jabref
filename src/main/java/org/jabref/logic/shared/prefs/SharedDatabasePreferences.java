@@ -1,6 +1,5 @@
 package org.jabref.logic.shared.prefs;
 
-import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 import java.util.prefs.BackingStoreException;
@@ -169,7 +168,7 @@ public class SharedDatabasePreferences {
 
         try {
             setPassword(new Password(properties.getPassword().toCharArray(), properties.getUser()).encrypt());
-        } catch (GeneralSecurityException | UnsupportedEncodingException e) {
+        } catch (GeneralSecurityException e) {
             LOGGER.error("Could not store the password due to encryption problems.", e);
         }
     }

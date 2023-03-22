@@ -70,6 +70,7 @@ public enum StandardActions implements Action {
     EXPORT_SELECTED(Localization.lang("Export selected entries"), KeyBinding.EXPORT_SELECTED),
     CONNECT_TO_SHARED_DB(Localization.lang("Connect to shared database"), IconTheme.JabRefIcons.CONNECT_DB),
     PULL_CHANGES_FROM_SHARED_DB(Localization.lang("Pull changes from shared database"), KeyBinding.PULL_CHANGES_FROM_SHARED_DATABASE),
+    SYNCHRONIZE_WITH_SHARELATEX(Localization.lang("Connect to Overleaf"), IconTheme.JabRefIcons.CONNECT_DB),
     CLOSE_LIBRARY(Localization.lang("Close"), Localization.lang("Close the current library"), IconTheme.JabRefIcons.CLOSE, KeyBinding.CLOSE_DATABASE),
     CLOSE_OTHER_LIBRARIES(Localization.lang("Close others"), Localization.lang("Close other libraries"), IconTheme.JabRefIcons.CLOSE),
     CLOSE_ALL_LIBRARIES(Localization.lang("Close all"), Localization.lang("Close all libraries"), IconTheme.JabRefIcons.CLOSE),
@@ -173,11 +174,11 @@ public enum StandardActions implements Action {
     ERROR_CONSOLE(Localization.lang("View event log"), Localization.lang("Display all error messages")),
     SEARCH_FOR_UPDATES(Localization.lang("Check for updates")),
     ABOUT(Localization.lang("About JabRef"), Localization.lang("About JabRef")),
-
     EDIT_LIST(Localization.lang("Edit"), IconTheme.JabRefIcons.EDIT),
     VIEW_LIST(Localization.lang("View"), IconTheme.JabRefIcons.FILE),
     REMOVE_LIST(Localization.lang("Remove"), IconTheme.JabRefIcons.REMOVE),
-    RELOAD_LIST(Localization.lang("Reload"), IconTheme.JabRefIcons.REFRESH);
+    RELOAD_LIST(Localization.lang("Reload"), IconTheme.JabRefIcons.REFRESH),
+    SEND_TO_SHARELATEX("Send content to Overleaf", "Send to overleaf");
 
     private final String text;
     private final String description;

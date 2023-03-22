@@ -201,6 +201,11 @@ dependencies {
     implementation 'com.vladsch.flexmark:flexmark-ext-gfm-strikethrough:0.64.0'
     implementation 'com.vladsch.flexmark:flexmark-ext-gfm-tasklist:0.64.0'
 
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.glassfish.tyrus:tyrus-client:1.17'
+    implementation 'org.glassfish.tyrus:tyrus-container-grizzly-client:1.17'
+    implementation 'org.glassfish.tyrus.ext:tyrus-extension-deflate:1.17'
+
     implementation group: 'net.harawata', name: 'appdirs', version: '1.2.1'
 
     testImplementation 'io.github.classgraph:classgraph:4.8.157'

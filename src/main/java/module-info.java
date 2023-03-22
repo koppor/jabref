@@ -120,4 +120,8 @@ open module org.jabref {
     requires org.eclipse.jgit;
     uses org.eclipse.jgit.transport.SshSessionFactory;
     uses org.eclipse.jgit.lib.GpgSigner;
+
+    requires tyrus.client;
+    requires tyrus.extension.deflate;
+    requires javax.websocket.api;
 }

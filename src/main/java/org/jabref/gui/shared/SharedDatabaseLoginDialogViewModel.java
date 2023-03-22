@@ -1,6 +1,5 @@
 package org.jabref.gui.shared;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
@@ -204,7 +203,7 @@ public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
         if (rememberPassword.get()) {
             try {
                 sharedDatabasePreferences.setPassword(new Password(password.getValue(), user.getValue()).encrypt());
-            } catch (GeneralSecurityException | UnsupportedEncodingException e) {
+            } catch (GeneralSecurityException e) {
                 LOGGER.error("Could not store the password due to encryption problems.", e);
             }
         } else {
@@ -247,7 +246,7 @@ public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
         if (sharedDatabasePassword.isPresent() && sharedDatabaseUser.isPresent()) {
             try {
                 password.setValue(new Password(sharedDatabasePassword.get().toCharArray(), sharedDatabaseUser.get()).decrypt());
-            } catch (GeneralSecurityException | UnsupportedEncodingException e) {
+            } catch (GeneralSecurityException e) {
                 LOGGER.error("Could not read the password due to decryption problems.", e);
             }
         }

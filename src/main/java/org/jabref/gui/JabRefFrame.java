@@ -51,8 +51,10 @@ import javafx.stage.Stage;
 
 import org.jabref.gui.actions.ActionFactory;
 import org.jabref.gui.actions.ActionHelper;
+import org.jabref.gui.actions.SendChangesToShareLatexAction;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.actions.StandardActions;
+import org.jabref.gui.actions.SynchronizeWithShareLatexAction;
 import org.jabref.gui.auximport.NewSubLibraryAction;
 import org.jabref.gui.bibtexextractor.ExtractBibtexAction;
 import org.jabref.gui.citationkeypattern.GenerateCitationKeyAction;
@@ -793,7 +795,10 @@ public class JabRefFrame extends BorderPane {
 
                 factory.createSubMenu(StandardActions.REMOTE_DB,
                         factory.createMenuItem(StandardActions.CONNECT_TO_SHARED_DB, new ConnectToSharedDatabaseCommand(this)),
-                        factory.createMenuItem(StandardActions.PULL_CHANGES_FROM_SHARED_DB, new PullChangesFromSharedAction(stateManager))),
+                        factory.createMenuItem(StandardActions.PULL_CHANGES_FROM_SHARED_DB, new PullChangesFromSharedAction(stateManager)),
+                        factory.createMenuItem(StandardActions.SYNCHRONIZE_WITH_SHARELATEX, new SynchronizeWithShareLatexAction()),
+                        factory.createMenuItem(StandardActions.SEND_TO_SHARELATEX, new SendChangesToShareLatexAction())
+                    ),
 
                 new SeparatorMenuItem(),
 
