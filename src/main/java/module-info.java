@@ -46,15 +46,31 @@ open module org.jabref {
     with org.jabref.gui.logging.GuiWriter,
          org.jabref.gui.logging.ApplicationInsightsWriter;
 
-    // Preferences and XML
     requires java.prefs;
-    requires jakarta.xml.bind;
-    // needs to be loaded here as it's otherwise not found at runtime
-    requires org.glassfish.jaxb.runtime;
-    requires jdk.xml.dom;
 
     // Annotations (@PostConstruct)
     requires jakarta.annotation;
+    requires jakarta.inject;
+
+    // http server and client exchange
+    requires java.net.http;
+    requires jakarta.ws.rs;
+
+    // data mapping
+    requires jakarta.xml.bind;
+    requires jdk.xml.dom;
+    requires com.google.gson;
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.dataformat.yaml;
+    requires com.fasterxml.jackson.datatype.jsr310;
+    // needs to be loaded here as it's otherwise not found at runtime
+    requires org.glassfish.jaxb.runtime;
+
+    // OpenAPI generation
+    requires io.swagger.v3.core;
+    requires io.swagger.v3.oas.models;
+    requires io.swagger.v3.oas.integration;
+    requires io.swagger.v3.jaxrs2;
 
     // Microsoft application insights
     requires applicationinsights.core;
@@ -63,29 +79,32 @@ open module org.jabref {
     // Libre Office
     requires org.libreoffice.uno;
 
-    // Other modules
-    requires com.google.common;
-    requires jakarta.inject;
-    requires reactfx;
-    requires commons.cli;
-    requires com.github.tomtung.latex2unicode;
-    requires fastparse;
-    requires jbibtex;
-    requires citeproc.java;
-    requires de.saxsys.mvvmfx.validation;
-    requires com.google.gson;
+    // http clients
     requires unirest.java;
     requires org.apache.httpcomponents.httpclient;
     requires org.jsoup;
-    requires org.apache.commons.csv;
-    requires io.github.javadiffutils;
-    requires java.string.similarity;
+
+    // SQL databases
     requires ojdbc10;
     requires org.postgresql.jdbc;
     requires org.mariadb.jdbc;
     uses org.mariadb.jdbc.credential.CredentialPlugin;
+
+    requires commons.cli;
+    requires org.apache.commons.csv;
     requires org.apache.commons.lang3;
-    requires org.antlr.antlr4.runtime;
+    requires com.google.common;
+    requires io.github.javadiffutils;
+    requires java.string.similarity;
+
+    requires com.github.tomtung.latex2unicode;
+    requires fastparse;
+
+    requires jbibtex;
+    requires citeproc.java;
+
+    requires reactfx;
+    requires de.saxsys.mvvmfx.validation;
     requires org.fxmisc.flowless;
 
     requires pdfbox;
@@ -95,6 +114,7 @@ open module org.jabref {
     requires flexmark;
     requires flexmark.util.ast;
     requires flexmark.util.data;
+
     requires com.h2database.mvstore;
 
     // fulltext search
@@ -107,14 +127,13 @@ open module org.jabref {
     requires org.apache.lucene.analysis.common;
     requires org.apache.lucene.highlighter;
 
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.dataformat.yaml;
-    requires com.fasterxml.jackson.datatype.jsr310;
     requires net.harawata.appdirs;
     requires com.sun.jna;
     requires com.sun.jna.platform;
 
     requires org.eclipse.jgit;
+    requires org.antlr.antlr4.runtime;
+
     uses org.eclipse.jgit.transport.SshSessionFactory;
     uses org.eclipse.jgit.lib.GpgSigner;
 }

@@ -1,0 +1,34 @@
+// This file is for IntelliJ's HTTP Client, available in the Ultimate Edition
+
+POST http://localhost:8080/updates
+Accept: application/json
+
+[
+  {
+	"sharingMetadata": {
+	  "sharedID": 1,
+	  "version": 2
+	},
+	"type": "Misc",
+	"citationKey": "e1.v2",
+	"content": {},
+	"userComments": ""
+  },
+  {
+	"sharingMetadata": {
+	  "sharedID": 2,
+	  "version": 1
+	},
+	"type": "Misc",
+	"citationKey": "e2.v1",
+	"content": {},
+	"userComments": ""
+  }
+]
+
+### Fetch OpenAPI description
+
+// Client can be generated with  npx openapi-generator-cli generate -g java -o generated-client --library=jersey3 -i C:\git-repositories\jabref\.idea\httpRequests\2023-04-04T102607.200.json
+GET http://localhost:8080/openapi.json
+Accept: application/json
+
