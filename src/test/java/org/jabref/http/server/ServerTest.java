@@ -20,7 +20,6 @@ class ServerTest {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         Server.startServer(countDownLatch);
         httpClient = HttpClient.newHttpClient();
-        Server.addDummyDataToSyncState();
         countDownLatch.await();
     }
 

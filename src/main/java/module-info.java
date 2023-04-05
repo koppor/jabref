@@ -66,12 +66,6 @@ open module org.jabref {
     // needs to be loaded here as it's otherwise not found at runtime
     requires org.glassfish.jaxb.runtime;
 
-    // OpenAPI generation
-    requires io.swagger.v3.core;
-    requires io.swagger.v3.oas.models;
-    requires io.swagger.v3.oas.integration;
-    requires io.swagger.v3.jaxrs2;
-
     // Microsoft application insights
     requires applicationinsights.core;
     requires applicationinsights.logging.log4j2;
