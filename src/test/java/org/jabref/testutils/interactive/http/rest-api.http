@@ -1,2 +1,15 @@
 // This file is for IntelliJ's HTTP Client, available in the Ultimate Edition
 
+GET http://localhost:8080
+
+###
+
+GET http://localhost:8080/libraries
+
+###
+
+GET http://localhost:8080/libraries/notfound
+
+###
+
+GET http://localhost:8080/libraries?tofirst

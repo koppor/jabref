@@ -15,6 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ServerTest {
     private static HttpClient httpClient;
 
+    public static void main(final String[] args) throws InterruptedException {
+        Server.startServer(new CountDownLatch(1));
+        Thread.currentThread().join();
+    }
+
     @BeforeAll
     public static void startServer() throws Exception {
         CountDownLatch countDownLatch = new CountDownLatch(1);

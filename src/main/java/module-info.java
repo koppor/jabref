@@ -66,6 +66,9 @@ open module org.jabref {
     // needs to be loaded here as it's otherwise not found at runtime
     requires org.glassfish.jaxb.runtime;
 
+    // dependency injection using HK2
+    requires org.glassfish.hk2.api;
+
     // Microsoft application insights
     requires applicationinsights.core;
     requires applicationinsights.logging.log4j2;

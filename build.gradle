@@ -206,8 +206,10 @@ dependencies {
     implementation 'org.glassfish.jersey.core:jersey-server:3.1.1'
     // injection framework
     implementation 'org.glassfish.jersey.inject:jersey-hk2:3.1.1'
+    implementation 'org.glassfish.hk2:hk2-api:2.6.1'
     // HTTP server
-    implementation 'org.glassfish.jersey.containers:jersey-container-netty-http:3.1.1'
+    // implementation 'org.glassfish.jersey.containers:jersey-container-netty-http:3.1.1'
+    implementation 'org.glassfish.jersey.containers:jersey-container-grizzly2-http:3.1.1'
     // Allow objects "magically" to be mapped to JSON using GSON
     // implementation 'org.glassfish.jersey.media:jersey-media-json-gson:3.1.1'
 
