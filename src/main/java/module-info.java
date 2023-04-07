@@ -15,6 +15,9 @@ open module org.jabref {
     requires afterburner.fx;
     requires com.jfoenix;
     requires de.saxsys.mvvmfx;
+    requires reactfx;
+    requires de.saxsys.mvvmfx.validation;
+    requires org.fxmisc.flowless;
 
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.javafx;
@@ -38,6 +41,7 @@ open module org.jabref {
 
     // Logging
     requires org.slf4j;
+    requires jul.to.slf4j;
     requires org.tinylog.api;
     requires org.tinylog.api.slf4j;
     requires org.tinylog.impl;
@@ -55,6 +59,7 @@ open module org.jabref {
     // http server and client exchange
     requires java.net.http;
     requires jakarta.ws.rs;
+    requires grizzly.framework;
 
     // data mapping
     requires jakarta.xml.bind;
@@ -73,9 +78,6 @@ open module org.jabref {
     requires applicationinsights.core;
     requires applicationinsights.logging.log4j2;
 
-    // Libre Office
-    requires org.libreoffice.uno;
-
     // http clients
     requires unirest.java;
     requires org.apache.httpcomponents.httpclient;
@@ -87,6 +89,7 @@ open module org.jabref {
     requires org.mariadb.jdbc;
     uses org.mariadb.jdbc.credential.CredentialPlugin;
 
+    // Apache Commons and other (similar) helper libraries
     requires commons.cli;
     requires org.apache.commons.csv;
     requires org.apache.commons.lang3;
@@ -100,10 +103,6 @@ open module org.jabref {
     requires jbibtex;
     requires citeproc.java;
 
-    requires reactfx;
-    requires de.saxsys.mvvmfx.validation;
-    requires org.fxmisc.flowless;
-
     requires pdfbox;
     requires xmpbox;
     requires com.ibm.icu;
@@ -112,13 +111,10 @@ open module org.jabref {
     requires flexmark.util.ast;
     requires flexmark.util.data;
 
-    requires com.h2database.mvstore;
-
     // fulltext search
     requires org.apache.lucene.core;
     // In case the version is updated, please also adapt SearchFieldConstants#VERSION to the newly used version
     uses org.apache.lucene.codecs.lucene94.Lucene94Codec;
-
     requires org.apache.lucene.queryparser;
     uses org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
     requires org.apache.lucene.analysis.common;
@@ -129,8 +125,12 @@ open module org.jabref {
     requires com.sun.jna.platform;
 
     requires org.eclipse.jgit;
-    requires org.antlr.antlr4.runtime;
-
     uses org.eclipse.jgit.transport.SshSessionFactory;
     uses org.eclipse.jgit.lib.GpgSigner;
+
+    // other libraries
+    requires com.h2database.mvstore;
+    requires org.antlr.antlr4.runtime;
+    requires org.libreoffice.uno;
+
 }

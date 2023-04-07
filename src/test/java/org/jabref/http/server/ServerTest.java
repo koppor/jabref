@@ -17,11 +17,20 @@ import org.jabref.preferences.PreferencesService;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.junit.jupiter.api.BeforeAll;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 abstract class ServerTest extends JerseyTest {
+
+    @BeforeAll
+    static void installLoggingBridge() {
+        // Grizzly uses java.commons.logging, but we use TinyLog
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+    }
 
     protected void addPreferencesToResourceConfig(ResourceConfig resourceConfig) {
         resourceConfig.register(new AbstractBinder() {
