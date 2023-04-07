@@ -14,10 +14,23 @@ import org.jabref.preferences.BibEntryPreferences;
 import org.jabref.preferences.GuiPreferences;
 import org.jabref.preferences.PreferencesService;
 
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ServerTest {
+abstract class ServerTest extends JerseyTest {
+
+    protected void addPreferencesToResourceConfig(ResourceConfig resourceConfig) {
+        resourceConfig.register(new AbstractBinder() {
+            @Override
+            protected void configure() {
+                bind(ServerTest.preferencesService()).to(PreferencesService.class).ranked(2);
+            }
+        });
+    }
 
     static PreferencesService preferencesService() {
         PreferencesService preferencesService = mock(PreferencesService.class);
