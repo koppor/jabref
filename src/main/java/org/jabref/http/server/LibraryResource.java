@@ -1,6 +1,7 @@
 package org.jabref.http.server;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,6 +22,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +38,8 @@ public class LibraryResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String get(@PathParam("id") String id) {
-        java.nio.file.Path library = preferences.getGuiPreferences().getLastFilesOpened()
-                                                .stream()
-                                                .map(java.nio.file.Path::of)
-                                                .filter(p -> (p.getFileName() + "-" + BackupFileUtil.getUniqueFilePrefix(p)).equals(id))
-                                                .findAny()
-                                                .orElseThrow(() -> new NotFoundException());
+    public String getJson(@PathParam("id") String id) {
+        java.nio.file.Path library = getLibraryPath(id);
         ParserResult parserResult;
         try {
             parserResult = new BibtexImporter(preferences.getImportFormatPreferences(), new DummyFileUpdateMonitor()).importDatabase(library);
@@ -58,5 +55,31 @@ public class LibraryResource {
                                              .map(entry -> new BibEntryDTO(entry, parserResult.getDatabaseContext().getMode(), preferences.getFieldWriterPreferences(), Globals.entryTypesManager))
                                              .toList();
         return gson.toJson(list);
+    }
+
+    @GET
+    @Produces(org.jabref.http.MediaType.BIBTEX)
+    public Response getBibtex(@PathParam("id") String id) {
+        java.nio.file.Path library = getLibraryPath(id);
+        String libraryAsString;
+        try {
+            libraryAsString = Files.readString(library);
+        } catch (IOException e) {
+            LOGGER.error("Could not read library {}", library, e);
+            throw new InternalServerErrorException("Could not read library " + library, e);
+        }
+        return Response.ok()
+                .entity(libraryAsString)
+                .build();
+    }
+
+    private java.nio.file.Path getLibraryPath(String id) {
+        java.nio.file.Path library = preferences.getGuiPreferences().getLastFilesOpened()
+                                                .stream()
+                                                .map(java.nio.file.Path::of)
+                                                .filter(p -> (p.getFileName() + "-" + BackupFileUtil.getUniqueFilePrefix(p)).equals(id))
+                                                .findAny()
+                                                .orElseThrow(() -> new NotFoundException());
+        return library;
     }
 }

@@ -13,3 +13,8 @@ GET http://localhost:8080/libraries/notfound
 ###
 
 GET http://localhost:8080/libraries?tofirst
+
+###
+
+GET http://localhost:8080/libraries?tofirst
+Accept: application/x-bibtex

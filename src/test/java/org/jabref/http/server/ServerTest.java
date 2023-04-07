@@ -1,67 +1,56 @@
 package org.jabref.http.server;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.concurrent.CountDownLatch;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import javafx.collections.FXCollections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.jabref.logic.bibtex.FieldContentFormatterPreferences;
+import org.jabref.logic.bibtex.FieldWriterPreferences;
+import org.jabref.logic.importer.ImportFormatPreferences;
+import org.jabref.logic.util.io.BackupFileUtil;
+import org.jabref.preferences.BibEntryPreferences;
+import org.jabref.preferences.GuiPreferences;
+import org.jabref.preferences.PreferencesService;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ServerTest {
-    private static HttpClient httpClient;
 
-    public static void main(final String[] args) throws InterruptedException {
-        Server.startServer(new CountDownLatch(1));
-        Thread.currentThread().join();
+    static PreferencesService preferencesService() {
+        PreferencesService preferencesService = mock(PreferencesService.class);
+
+        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class);
+        when(preferencesService.getImportFormatPreferences()).thenReturn(importFormatPreferences);
+
+        BibEntryPreferences bibEntryPreferences = mock(BibEntryPreferences.class);
+        when(importFormatPreferences.bibEntryPreferences()).thenReturn(bibEntryPreferences);
+        when(bibEntryPreferences.getKeywordSeparator()).thenReturn(',');
+
+        FieldWriterPreferences fieldWriterPreferences = mock(FieldWriterPreferences.class);
+        when(preferencesService.getFieldWriterPreferences()).thenReturn(fieldWriterPreferences);
+        when(fieldWriterPreferences.isResolveStrings()).thenReturn(false);
+
+        // defaults are in {@link org.jabref.preferences.JabRefPreferences.NON_WRAPPABLE_FIELDS}
+        FieldContentFormatterPreferences fieldContentFormatterPreferences = new FieldContentFormatterPreferences(List.of());
+        when(preferencesService.getFieldWriterPreferences().getFieldContentFormatterPreferences()).thenReturn(fieldContentFormatterPreferences);
+
+        GuiPreferences guiPreferences = mock(GuiPreferences.class);
+        when(preferencesService.getGuiPreferences()).thenReturn(guiPreferences);
+
+        when(guiPreferences.getLastFilesOpened()).thenReturn(FXCollections.observableArrayList(pathOfGeneralServerTestBib().toString()));
+
+        return preferencesService;
     }
 
-    @BeforeAll
-    public static void startServer() throws Exception {
-        CountDownLatch countDownLatch = new CountDownLatch(1);
-        Server.startServer(countDownLatch);
-        httpClient = HttpClient.newHttpClient();
-        countDownLatch.await();
+    static Path pathOfGeneralServerTestBib() {
+        return Paths.get("src/test/resources/org/jabref/http/server/general-server-test.bib").toAbsolutePath();
     }
 
-    @AfterAll
-    public static void stopServer() {
-        Server.stopServer();
-    }
-
-    @Test
-    void initialData() throws Exception {
-        HttpRequest request = HttpRequest.newBuilder()
-                                         .uri(URI.create("http://localhost:8080/updates?lastUpdate=0"))
-                                         .GET()
-                                         .build();
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals("""
-                [
-                  {
-                    "sharingMetadata": {
-                      "sharedID": 1,
-                      "version": 2
-                    },
-                    "type": "Misc",
-                    "citationKey": "e1.v2",
-                    "content": {},
-                    "userComments": ""
-                  },
-                  {
-                    "sharingMetadata": {
-                      "sharedID": 2,
-                      "version": 1
-                    },
-                    "type": "Misc",
-                    "citationKey": "e2.v1",
-                    "content": {},
-                    "userComments": ""
-                  }
-                ]""", response.body());
+    static String idOfGeneralServerTestBib() {
+        Path path = pathOfGeneralServerTestBib();
+        return path.getFileName() + "-" + BackupFileUtil.getUniqueFilePrefix(path);
     }
 }
