@@ -4,7 +4,7 @@ parent: Decision Records
 ---
 <!-- we need to disable MD025, because we use the different heading "ADR Template" in the homepage (see above) than it is foreseen in the template -->
 <!-- markdownlint-disable-next-line MD025 -->
-# Return BibTeX string in the API
+# Return BibTeX string and CSL Item JSON in the API
 
 ## Context and Problem Statement
 
@@ -12,14 +12,22 @@ In the context of an http server, when a http client `GETs` a JSON data structur
 
 ## Considered Options
 
+* Offer both, BibTeX string and CSL JSON
 * Return BibTeX as is as string
 * Convert BibTeX to JSON
 
 ## Decision Outcome
 
-Chosen option: "Return BibTeX as is as string", because there are many browser libraries out there being able to parse BibTeX. Thus, we don't need to convert it.
+Chosen option: "Offer both, BibTeX string and CSL JSON", because there are many browser libraries out there being able to parse BibTeX. Thus, we don't need to convert it.
 
 ## Pros and Cons of the Options
+
+### Offer both, BibTeX string and CSL JSON
+
+- Good, because this follows "Backend for Frontend"
+- Good, because Word Addin works seamless with the data provided (and does not need another dependency)
+- Good, because other clients can work with BibTeX data
+- Bad, because two serializations have to be kept
 
 ### Return BibTeX as is as string
 
