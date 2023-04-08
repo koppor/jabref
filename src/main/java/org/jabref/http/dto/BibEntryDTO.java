@@ -2,8 +2,6 @@ package org.jabref.http.dto;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.jabref.logic.bibtex.BibEntryWriter;
 import org.jabref.logic.bibtex.FieldWriter;
@@ -13,8 +11,6 @@ import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.SharedBibEntryData;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.InternalField;
 
 import com.google.common.base.MoreObjects;
 import org.slf4j.Logger;
@@ -51,12 +47,6 @@ public record BibEntryDTO(SharedBibEntryData sharingMetadata, String userComment
             return "error";
         }
         return rawEntry.toString();
-    }
-
-    private static Map<Field, String> removeCitationKey(Map<Field, String> content) {
-        Map<Field, String> copy = new HashMap<>(content);
-        copy.remove(InternalField.KEY_FIELD);
-        return copy;
     }
 
     @Override
