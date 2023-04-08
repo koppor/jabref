@@ -13,11 +13,12 @@ class LibraryResourceTest extends ServerTest {
     protected jakarta.ws.rs.core.Application configure() {
         ResourceConfig resourceConfig = new ResourceConfig(LibraryResource.class);
         addPreferencesToResourceConfig(resourceConfig);
+        addGsonToResourceConfig(resourceConfig);
         return resourceConfig.getApplication();
     }
 
     @Test
-    void initialData() throws Exception {
+    void getJson() {
         assertEquals("""
                 @Misc{Author2023test,
                   author = {Demo Author},
@@ -27,5 +28,11 @@ class LibraryResourceTest extends ServerTest {
 
                 @Comment{jabref-meta: databaseType:bibtex;}
                 """, target("/libraries/" + ServerTest.idOfGeneralServerTestBib()).request(MediaType.BIBTEX).get(String.class));
+    }
+
+    @Test
+    void getClsItemJson() {
+        assertEquals("""
+                [{"id":"Author2023test","type":"article","author":[{"family":"Author","given":"Demo"}],"event-date":{"date-parts":[[2023]]},"issued":{"date-parts":[[2023]]},"title":"Demo Title"}]""", target("/libraries/" + ServerTest.idOfGeneralServerTestBib()).request(MediaType.JSON_CSL_ITEM).get(String.class));
     }
 }

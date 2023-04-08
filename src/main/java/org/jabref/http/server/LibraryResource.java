@@ -7,9 +7,11 @@ import java.util.Objects;
 
 import org.jabref.gui.Globals;
 import org.jabref.http.dto.BibEntryDTO;
+import org.jabref.logic.citationstyle.JabRefItemDataProvider;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.importer.fileformat.BibtexImporter;
 import org.jabref.logic.util.io.BackupFileUtil;
+import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.DummyFileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
 
@@ -39,14 +41,7 @@ public class LibraryResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getJson(@PathParam("id") String id) {
-        java.nio.file.Path library = getLibraryPath(id);
-        ParserResult parserResult;
-        try {
-            parserResult = new BibtexImporter(preferences.getImportFormatPreferences(), new DummyFileUpdateMonitor()).importDatabase(library);
-        } catch (IOException e) {
-            LOGGER.warn("Could not find open library file {}", library, e);
-            throw new InternalServerErrorException("Could not parse library", e);
-        }
+        ParserResult parserResult = getParserResult(id);
         List<BibEntryDTO> list = parserResult.getDatabase().getEntries().stream()
                                              .map(bibEntry -> {
                                                  bibEntry.getSharedBibEntryData().setSharedID(Objects.hash(bibEntry));
@@ -55,6 +50,27 @@ public class LibraryResource {
                                              .map(entry -> new BibEntryDTO(entry, parserResult.getDatabaseContext().getMode(), preferences.getFieldWriterPreferences(), Globals.entryTypesManager))
                                              .toList();
         return gson.toJson(list);
+    }
+
+    @GET
+    @Produces(org.jabref.http.MediaType.JSON_CSL_ITEM)
+    public String getClsItemJson(@PathParam("id") String id) {
+        ParserResult parserResult = getParserResult(id);
+        JabRefItemDataProvider jabRefItemDataProvider = new JabRefItemDataProvider();
+        jabRefItemDataProvider.setData(parserResult.getDatabaseContext(), new BibEntryTypesManager());
+        return jabRefItemDataProvider.toJson();
+    }
+
+    private ParserResult getParserResult(String id) {
+        java.nio.file.Path library = getLibraryPath(id);
+        ParserResult parserResult;
+        try {
+            parserResult = new BibtexImporter(preferences.getImportFormatPreferences(), new DummyFileUpdateMonitor()).importDatabase(library);
+        } catch (IOException e) {
+            LOGGER.warn("Could not find open library file {}", library, e);
+            throw new InternalServerErrorException("Could not parse library", e);
+        }
+        return parserResult;
     }
 
     @GET
