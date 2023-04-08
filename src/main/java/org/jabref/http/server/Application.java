@@ -2,6 +2,7 @@ package org.jabref.http.server;
 
 import java.util.Set;
 
+import org.jabref.http.dto.GsonFactory;
 import org.jabref.preferences.PreferenceServiceFactory;
 
 import jakarta.inject.Inject;
@@ -25,6 +26,7 @@ public class Application extends jakarta.ws.rs.core.Application {
      * Separate initialization method, because @Inject does not support injection at the constructor
      */
     private void initialize() {
+        ServiceLocatorUtilities.addFactoryConstants(serviceLocator, new GsonFactory());
         ServiceLocatorUtilities.addFactoryConstants(serviceLocator, new PreferenceServiceFactory());
     }
 }
