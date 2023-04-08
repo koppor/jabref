@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.tools.keytool.CertAndKeyGen;
-import sun.security.x509.X500Name;
 
 public class TrustStoreManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrustStoreManager.class);
@@ -40,41 +38,6 @@ public class TrustStoreManager {
         } catch (CertificateException | IOException | NoSuchAlgorithmException | KeyStoreException e) {
             LOGGER.warn("Error while loading trust store from: {}", storePath.toAbsolutePath(), e);
         }
-    }
-
-    public void generateSelfSignedCertificate() {
-        // Generate key pair and self-signed certificate
-        CertAndKeyGen certAndKeyGen = null;
-        try {
-            certAndKeyGen = new CertAndKeyGen("RSA", "SHA256WithRSA");
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error("Could not generate key", e);
-            return;
-        }
-        certAndKeyGen.generate(2048);
-        X500Name x500Name = null;
-        try {
-            x500Name = new X500Name("localhost", "JabRef Desktop App", "JabRef Application", "NoCity", "NoState", "NoCountry");
-        } catch (IOException e) {
-            LOGGER.error("Could not generate X500Name", e);
-            return;
-        }
-        X509Certificate[] chain = new X509Certificate[1];
-        try {
-            chain[0] = certAndKeyGen.getSelfCertificate(x500Name, 365 * 24 * 60 * 60);
-        } catch (Exception e) {
-            LOGGER.error("Could not generate certificate", e);
-            return;
-        }
-
-        try {
-            store.setKeyEntry("selfsigned", certAndKeyGen.getPrivateKey(), "jabref-keystore-pass".toCharArray(), chain);
-        } catch (KeyStoreException e) {
-            LOGGER.error("Could store  certificate", e);
-            return;
-        }
-
-        this.flush();
     }
 
     public void addCertificate(String alias, Path certPath) {

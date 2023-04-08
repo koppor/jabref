@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class JabRefItemDataProviderTest {
 
     @Test
-    void toJson() {
+    void toJsonOneEntry() {
         BibDatabase bibDatabase = new BibDatabase(List.of(
                 new BibEntry()
                         .withCitationKey("key")
@@ -26,6 +26,24 @@ class JabRefItemDataProviderTest {
         jabRefItemDataProvider.setData(bibDatabaseContext, new BibEntryTypesManager());
         assertEquals("""
                         [{"id":"key","type":"article","author":[{"family":"Author","given":"Test"}]}]""",
+                jabRefItemDataProvider.toJson());
+    }
+
+    @Test
+    void toJsonTwoEntries() {
+        BibDatabase bibDatabase = new BibDatabase(List.of(
+                new BibEntry()
+                        .withCitationKey("key")
+                        .withField(StandardField.AUTHOR, "Test Author"),
+                new BibEntry()
+                        .withCitationKey("key2")
+                        .withField(StandardField.AUTHOR, "Second Author")
+        ));
+        BibDatabaseContext bibDatabaseContext = new BibDatabaseContext(bibDatabase);
+        JabRefItemDataProvider jabRefItemDataProvider = new JabRefItemDataProvider();
+        jabRefItemDataProvider.setData(bibDatabaseContext, new BibEntryTypesManager());
+        assertEquals("""
+                        [{"id":"key","type":"article","author":[{"family":"Author","given":"Test"}]},{"id":"key2","type":"article","author":[{"family":"Author","given":"Second"}]}]""",
                 jabRefItemDataProvider.toJson());
     }
 }

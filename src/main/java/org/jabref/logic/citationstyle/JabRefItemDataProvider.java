@@ -24,7 +24,6 @@ import org.jabref.model.strings.LatexToUnicodeAdapter;
 import de.undercouch.citeproc.ItemDataProvider;
 import de.undercouch.citeproc.bibtex.BibTeXConverter;
 import de.undercouch.citeproc.csl.CSLItemData;
-import de.undercouch.citeproc.helper.json.JsonBuilder;
 import de.undercouch.citeproc.helper.json.StringJsonBuilderFactory;
 import org.jbibtex.BibTeXEntry;
 import org.jbibtex.DigitStringValue;
@@ -39,7 +38,6 @@ public class JabRefItemDataProvider implements ItemDataProvider {
     private static final BibTeXConverter BIBTEX_CONVERTER = new BibTeXConverter();
 
     private final StringJsonBuilderFactory stringJsonBuilderFactory;
-    private final JsonBuilder jsonBuilder;
 
     private final List<BibEntry> data = new ArrayList<>();
 
@@ -49,7 +47,6 @@ public class JabRefItemDataProvider implements ItemDataProvider {
 
     public JabRefItemDataProvider() {
         stringJsonBuilderFactory = new StringJsonBuilderFactory();
-        jsonBuilder = stringJsonBuilderFactory.createJsonBuilder();
     }
 
     /**
@@ -193,7 +190,7 @@ public class JabRefItemDataProvider implements ItemDataProvider {
         this.setData(entries, bibDatabaseContext, entryTypesManager);
         return entries.stream()
                 .map(entry -> bibEntryToCSLItemData(entry, bibDatabaseContext, entryTypesManager))
-                .map(item -> item.toJson(jsonBuilder))
+                .map(item -> item.toJson(stringJsonBuilderFactory.createJsonBuilder()))
                 .map(item -> (String) item)
                 .collect(Collectors.joining(",", "[", "]"));
     }

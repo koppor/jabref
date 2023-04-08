@@ -51,7 +51,7 @@ public class Server {
                                                             OS.APP_DIR_APP_NAME,
                                                             "ssl",
                                                             OS.APP_DIR_APP_AUTHOR))
-                                  .resolve("server.jks").toString();
+                                  .resolve("server.p12").toString();
 
         sslContextConfig.setKeyStoreFile(keystorePath);
         sslContextConfig.setKeyStorePass("changeit");

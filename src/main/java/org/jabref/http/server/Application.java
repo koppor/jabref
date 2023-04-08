@@ -19,7 +19,7 @@ public class Application extends jakarta.ws.rs.core.Application {
     @Override
     public Set<Class<?>> getClasses() {
         initialize();
-        return Set.of(RootResource.class, LibrariesResource.class, LibraryResource.class);
+        return Set.of(RootResource.class, LibrariesResource.class, LibraryResource.class, CORSFilter.class);
     }
 
     /**
