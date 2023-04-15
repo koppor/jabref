@@ -27,6 +27,8 @@ plugins {
     id 'project-report'
 
     id 'idea'
+
+    id("org.openrewrite.rewrite") version("5.39.0")
 }
 
 // Enable following for debugging
@@ -105,6 +107,10 @@ javafx {
 
 jacoco {
     toolVersion = "0.8.8"
+}
+
+rewrite {
+    activeRecipe("org.openrewrite.java.cleanup.Cleanup")
 }
 
 dependencies {
@@ -323,6 +329,10 @@ task generateJournalAbbreviationList(type: JournalAbbreviationConverter) {
     inputDir = file("build/journals")
 
     outputDir = file("src/main/resources/journals")
+}
+
+task fixCheckstyle {
+   dependsOn(rewriteRun)
 }
 
 tasks.withType(JavaCompile) {
