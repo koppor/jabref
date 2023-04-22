@@ -7,6 +7,7 @@ import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchIgnore;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.library.GeneralCodingRules;
+import org.jabref.http.sync.state.SyncState;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
@@ -132,5 +133,12 @@ class MainArchitectureTest {
                    .should(GeneralCodingRules.ACCESS_STANDARD_STREAMS)
                    .because("logging framework should be used instead or the class be marked explicitly as @AllowedToUseStandardStreams")
                    .check(classes);
+    }
+
+    @ArchTest
+    public static void SyncStateResetMayOnlyBeCalledAtTests(JavaClasses classes) {
+        noClasses()
+                .that().doNotHaveFullyQualifiedName("org.jabref.http.server.UpdatesResourceTest")
+                .should().callMethod(SyncState.class, "reset");
     }
 }

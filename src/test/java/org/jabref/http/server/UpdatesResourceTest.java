@@ -1,11 +1,19 @@
 package org.jabref.http.server;
 
 import org.glassfish.jersey.server.ResourceConfig;
+import org.jabref.http.sync.state.SyncState;
+import org.jabref.model.entry.BibEntry;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UpdatesResourceTest extends ServerTest {
+
+    @BeforeEach
+    void resetState() {
+        SyncState.INSTANCE.reset();
+    }
 
     @Override
     protected jakarta.ws.rs.core.Application configure() {
@@ -16,7 +24,27 @@ class UpdatesResourceTest extends ServerTest {
     }
 
     @Test
+    void noLastUpdateSupplied() {
+        assertEquals("[]", target("/updates").request().get(String.class));
+    }
+
+    @Test
     void initialData() {
+        assertEquals("[]", target("/updates").queryParam("lastUpdate", "0").request().get(String.class));
+    }
+
+    @Test
+    void twoVersions() {
+        BibEntry entryE1V1 = new BibEntry().withCitationKey("e1.v1").withSharedBibEntryData(1, 1);
+        BibEntry entryE1V2 = new BibEntry().withCitationKey("e1.v2").withSharedBibEntryData(1, 2);
+        BibEntry entryE2V1 = new BibEntry().withCitationKey("e2.v1").withSharedBibEntryData(2, 1);
+
+        SyncState.INSTANCE.putEntry(
+                1, entryE1V1);
+        SyncState.INSTANCE.putEntry(
+                1, entryE2V1);
+        SyncState.INSTANCE.putEntry(
+                2, entryE1V2);
         assertEquals("""
                 [
                   {

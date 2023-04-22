@@ -51,7 +51,7 @@ public record BibEntryDTO(SharedBibEntryData sharingMetadata, String userComment
         this(entry, BibDatabaseMode.BIBTEX);
     }
 
-    private static String convertToString(BibEntry entry, BibDatabaseMode bibDatabaseMode, FieldWriterPreferences fieldWriterPreferences, BibEntryTypesManager bibEntryTypesManager) {
+    static String convertToString(BibEntry entry, BibDatabaseMode bibDatabaseMode, FieldWriterPreferences fieldWriterPreferences, BibEntryTypesManager bibEntryTypesManager) {
         StringWriter rawEntry = new StringWriter();
         BibWriter bibWriter = new BibWriter(rawEntry, "\n");
         BibEntryWriter bibtexEntryWriter = new BibEntryWriter(new FieldWriter(fieldWriterPreferences), bibEntryTypesManager);

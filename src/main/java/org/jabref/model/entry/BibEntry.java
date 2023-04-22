@@ -748,6 +748,16 @@ public class BibEntry implements Cloneable {
         this.changed = changed;
     }
 
+
+    /**
+     * Required for our "builder".
+     * Each <code>with...</code> method sets <code>changed</code> to <code>false</code>.
+     */
+    public BibEntry withChanged(boolean changed) {
+        this.changed = changed;
+        return this;
+    }
+
     public Optional<FieldChange> putKeywords(List<String> keywords, Character delimiter) {
         Objects.requireNonNull(delimiter);
         return putKeywords(new KeywordList(keywords), delimiter);
@@ -915,6 +925,7 @@ public class BibEntry implements Cloneable {
      */
     public BibEntry withFields(Map<Field, String> content) {
         this.fields = FXCollections.observableMap(new HashMap<>(content));
+        this.setChanged(false);
         return this;
     }
 

@@ -12,6 +12,7 @@ import javax.net.ssl.SSLContext;
 
 import javafx.collections.ObservableList;
 
+import org.jabref.architecture.AllowedToUseStandardStreams;
 import org.jabref.logic.util.OS;
 import org.jabref.preferences.JabRefPreferences;
 
@@ -87,12 +88,12 @@ public class Server {
         SeBootstrap.start(Application.class, configuration).thenAccept(instance -> {
             LOGGER.debug("Server started.");
             instance.stopOnShutdown(stopResult ->
-                    System.out.printf("Stop result: %s [Native stop result: %s].%n", stopResult,
+                    LOGGER.info("Stop result: {} [Native stop result: {}}].", stopResult,
                             stopResult.unwrap(Object.class)));
             final URI uri = instance.configuration().baseUri();
-            System.out.printf("Instance %s running at %s [Native handle: %s].%n", instance, uri,
+            LOGGER.info("Instance {} running at {} [Native handle: {}].", instance, uri,
                     instance.unwrap(Object.class));
-            System.out.println("Send SIGKILL to shutdown.");
+            LOGGER.info("Send SIGKILL to shutdown.");
             serverInstance = instance;
         });
     }

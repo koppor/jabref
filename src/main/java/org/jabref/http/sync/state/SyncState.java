@@ -7,9 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.jabref.gui.Globals;
-import org.jabref.http.server.ServerPreferences;
-import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.http.dto.BibEntryDTO;
 
@@ -20,7 +17,7 @@ public enum SyncState {
     private Map<Integer, BibEntryDTO> lastStateOfEntries = new HashMap<>();
 
     // globalRevisionId -> set of IDs
-    private Map<Integer, Set<Integer>> idUpdated = new HashMap<>();
+    private Map<Integer, Set<Integer>> idsUpdated = new HashMap<>();
 
     /**
      * Adds or updates an entry
@@ -29,7 +26,7 @@ public enum SyncState {
         int sharedID = entry.getSharedBibEntryData().getSharedID();
         assert sharedID >= 0;
         lastStateOfEntries.put(sharedID, new BibEntryDTO(entry));
-        idUpdated.computeIfAbsent(globalRevision, k -> new HashSet<>()).add(sharedID);
+        idsUpdated.computeIfAbsent(globalRevision, k -> new HashSet<>()).add(sharedID);
     }
 
     /**
@@ -39,12 +36,21 @@ public enum SyncState {
      * @return a list of all changes
      */
     public List<BibEntryDTO> changes(Integer fromRevision) {
-        return idUpdated.entrySet().stream()
+        return idsUpdated.entrySet().stream()
                 .filter(entry -> entry.getKey() > fromRevision)
                 .flatMap(entry -> entry.getValue().stream())
                 .distinct()
                 .sorted()
                 .map(sharedId -> lastStateOfEntries.get(sharedId))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Required at testing to work around the single instance.
+     * May be used at testing only.
+     */
+    public void reset() {
+        lastStateOfEntries = new HashMap<>();
+        idsUpdated = new HashMap<>();
     }
 }
