@@ -35,9 +35,9 @@ class UpdatesResourceTest extends ServerTest {
 
     @Test
     void twoVersions() {
-        BibEntry entryE1V1 = new BibEntry().withCitationKey("e1.v1").withSharedBibEntryData(1, 1);
-        BibEntry entryE1V2 = new BibEntry().withCitationKey("e1.v2").withSharedBibEntryData(1, 2);
-        BibEntry entryE2V1 = new BibEntry().withCitationKey("e2.v1").withSharedBibEntryData(2, 1);
+        BibEntry entryE1V1 = new BibEntry().withCitationKey("e1.v1").withSharedBibEntryData(1, 1).withChanged(true);
+        BibEntry entryE1V2 = new BibEntry().withCitationKey("e1.v2").withSharedBibEntryData(1, 2).withChanged(true);
+        BibEntry entryE2V1 = new BibEntry().withCitationKey("e2.v1").withSharedBibEntryData(2, 1).withChanged(true);
 
         SyncState.INSTANCE.putEntry(
                 1, entryE1V1);
@@ -47,26 +47,24 @@ class UpdatesResourceTest extends ServerTest {
                 2, entryE1V2);
         assertEquals("""
                 [
-                  {
-                    "sharingMetadata": {
-                      "sharedID": 1,
-                      "version": 2
-                    },
-                    "type": "Misc",
-                    "citationKey": "e1.v2",
-                    "content": {},
-                    "userComments": ""
-                  },
-                  {
-                    "sharingMetadata": {
-                      "sharedID": 2,
-                      "version": 1
-                    },
-                    "type": "Misc",
-                    "citationKey": "e2.v1",
-                    "content": {},
-                    "userComments": ""
-                  }
-                ]""", target("/updates").queryParam("lastUpdate", "0").request().get(String.class));
+                   {
+                     "sharingMetadata": {
+                       "sharedID": 1,
+                       "version": 2
+                     },
+                     "userComments": "",
+                     "citationKey": "e1.v2",
+                     "bibtex": "@Misc{e1.v2,\\n}\\n"
+                   },
+                   {
+                     "sharingMetadata": {
+                       "sharedID": 2,
+                       "version": 1
+                     },
+                     "userComments": "",
+                     "citationKey": "e2.v1",
+                     "bibtex": "@Misc{e2.v1,\\n}\\n"
+                   }
+                 ]""", target("/updates").queryParam("lastUpdate", "0").request().get(String.class));
     }
 }
