@@ -62,6 +62,12 @@ open module org.jabref {
     requires jakarta.ws.rs;
     requires grizzly.framework;
 
+    // OpenAPI generation
+    requires io.swagger.v3.core;
+    requires io.swagger.v3.oas.models;
+    requires io.swagger.v3.oas.integration;
+    requires io.swagger.v3.jaxrs2;
+
     // data mapping
     requires jakarta.xml.bind;
     requires jdk.xml.dom;

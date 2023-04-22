@@ -82,15 +82,14 @@ abstract class ServerTest extends JerseyTest {
         when(importFormatPreferences.bibEntryPreferences()).thenReturn(bibEntryPreferences);
         when(bibEntryPreferences.getKeywordSeparator()).thenReturn(',');
 
-        FieldWriterPreferences fieldWriterPreferences = mock(FieldWriterPreferences.class);
-        when(preferencesService.getFieldWriterPreferences()).thenReturn(fieldWriterPreferences);
-        when(fieldWriterPreferences.isResolveStrings()).thenReturn(false);
+        when(preferencesService.getFieldWriterPreferences()).thenReturn(ServerPreferences.fieldWriterPreferences());
 
         // defaults are in {@link org.jabref.preferences.JabRefPreferences.NON_WRAPPABLE_FIELDS}
         FieldContentFormatterPreferences fieldContentFormatterPreferences = new FieldContentFormatterPreferences(List.of());
         // used twice, once for reading and once for writing
         when(importFormatPreferences.fieldContentFormatterPreferences()).thenReturn(fieldContentFormatterPreferences);
-        when(preferencesService.getFieldWriterPreferences().getFieldContentFormatterPreferences()).thenReturn(fieldContentFormatterPreferences);
+        // for writing, we use the "real" Server Preferences
+        // when(preferencesService.getFieldWriterPreferences().getFieldContentFormatterPreferences()).thenReturn(fieldContentFormatterPreferences);
 
         guiPreferences = mock(GuiPreferences.class);
         when(preferencesService.getGuiPreferences()).thenReturn(guiPreferences);

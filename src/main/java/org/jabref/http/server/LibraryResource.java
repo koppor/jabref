@@ -47,7 +47,7 @@ public class LibraryResource {
                                                  bibEntry.getSharedBibEntryData().setSharedID(Objects.hash(bibEntry));
                                                  return bibEntry;
                                              })
-                                             .map(entry -> new BibEntryDTO(entry, parserResult.getDatabaseContext().getMode(), preferences.getFieldWriterPreferences(), Globals.entryTypesManager))
+                                             .map(entry -> new BibEntryDTO(entry, parserResult.getDatabaseContext().getMode()))
                                              .toList();
         return gson.toJson(list);
     }

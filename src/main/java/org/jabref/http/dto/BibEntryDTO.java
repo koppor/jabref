@@ -3,6 +3,8 @@ package org.jabref.http.dto;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import org.jabref.gui.Globals;
+import org.jabref.http.server.ServerPreferences;
 import org.jabref.logic.bibtex.BibEntryWriter;
 import org.jabref.logic.bibtex.FieldWriter;
 import org.jabref.logic.bibtex.FieldWriterPreferences;
@@ -34,6 +36,19 @@ public record BibEntryDTO(SharedBibEntryData sharingMetadata, String userComment
                 bibEntry.getCitationKey().orElse(""),
                 convertToString(bibEntry, bibDatabaseMode, fieldWriterPreferences, bibEntryTypesManager)
         );
+    }
+
+    public BibEntryDTO(BibEntry entry, BibDatabaseMode mode) {
+        this(entry, mode, ServerPreferences.fieldWriterPreferences(), Globals.entryTypesManager);
+    }
+
+    /**
+     * Creates a DTO based on Bibtex and default field writer preferences
+     *
+     * TODO: We should check how the BibLaTeX mode influences serialization (it should not?!)
+     */
+    public BibEntryDTO(BibEntry entry) {
+        this(entry, BibDatabaseMode.BIBTEX);
     }
 
     private static String convertToString(BibEntry entry, BibDatabaseMode bibDatabaseMode, FieldWriterPreferences fieldWriterPreferences, BibEntryTypesManager bibEntryTypesManager) {

@@ -1157,4 +1157,5 @@ public class BibEntry implements Cloneable {
             }
         }
     }
+
 }
