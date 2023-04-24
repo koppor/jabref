@@ -61,6 +61,7 @@ open module org.jabref {
     requires java.net.http;
     requires jakarta.ws.rs;
     requires grizzly.framework;
+    // requires cuid;
 
     // OpenAPI generation
     requires io.swagger.v3.core;

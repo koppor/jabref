@@ -7,20 +7,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.http.dto.BibEntryDTO;
 
-public enum SyncState {
-    INSTANCE;
-
+public class SyncState {
+    private final BibDatabaseContext context;
     // mapping from the shared ID to the DTO
     private Map<Integer, BibEntryDTO> lastStateOfEntries = new HashMap<>();
 
     // globalRevisionId -> set of IDs
     private Map<Integer, Set<Integer>> idsUpdated = new HashMap<>();
 
+    public SyncState(BibDatabaseContext context) {
+        this.context = context;
+    }
+
     /**
-     * Adds or updates an entry
+     * Adds or updates an entry. Caller has to ensure consistent state with BibDatabaseContext
      */
     public void putEntry(Integer globalRevision, BibEntry entry) {
         int sharedID = entry.getSharedBibEntryData().getSharedID();
@@ -31,18 +35,22 @@ public enum SyncState {
 
     /**
      * Returns all changes between the given revisions.
+     * It also contains the hash values of all BibEntries of the server to enable a client to flag its view as dirty.
      *
      * @param fromRevision the revision to start from (exclusive)
-     * @return a list of all changes
      */
-    public List<BibEntryDTO> changes(Integer fromRevision) {
-        return idsUpdated.entrySet().stream()
+    public ChangesAndServerView changesAndServerView(Integer fromRevision) {
+        List<BibEntryDTO> changes = idsUpdated.entrySet().stream()
                 .filter(entry -> entry.getKey() > fromRevision)
                 .flatMap(entry -> entry.getValue().stream())
                 .distinct()
                 .sorted()
                 .map(sharedId -> lastStateOfEntries.get(sharedId))
                 .collect(Collectors.toList());
+        List<HashInfo> hashInfos = context.getEntries().stream()
+                .map(entry -> new HashInfo(entry))
+                .toList();
+        return new ChangesAndServerView(changes, hashInfos);
     }
 
     /**

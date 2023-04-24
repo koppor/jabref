@@ -221,6 +221,8 @@ dependencies {
     implementation 'io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.9'
     // Allow objects "magically" to be mapped to JSON using GSON
     // implementation 'org.glassfish.jersey.media:jersey-media-json-gson:3.1.1'
+    // We use CUID2 instead of UUID. See ADR-0029
+    // implementation 'io.github.thibaultmeyer:cuid:2.0.2'
 
     testImplementation 'io.github.classgraph:classgraph:4.8.157'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'

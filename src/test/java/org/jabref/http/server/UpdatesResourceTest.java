@@ -2,7 +2,11 @@ package org.jabref.http.server;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.jabref.http.sync.state.SyncState;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.metadata.MetaData;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,10 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UpdatesResourceTest extends ServerTest {
 
-    @BeforeEach
-    void resetState() {
-        SyncState.INSTANCE.reset();
-    }
+    private final String path = "/li<axSXSXXSSSSAAbraries/" + TestBibFile.GENERAL_SERVER_TEST.id + "/updates";
+
+    BibDatabaseContext bibDatabaseContext = new BibDatabaseContext(new BibDatabase(), new MetaData());
+
+    SyncState syncState = new SyncState(bibDatabaseContext);
 
     @Override
     protected jakarta.ws.rs.core.Application configure() {
@@ -25,12 +30,12 @@ class UpdatesResourceTest extends ServerTest {
 
     @Test
     void noLastUpdateSupplied() {
-        assertEquals("[]", target("/updates").request().get(String.class));
+        assertEquals("[]", target(path).request().get(String.class));
     }
 
     @Test
     void initialData() {
-        assertEquals("[]", target("/updates").queryParam("lastUpdate", "0").request().get(String.class));
+        assertEquals("[]", target(path).queryParam("lastUpdate", "0").request().get(String.class));
     }
 
     @Test
@@ -38,12 +43,12 @@ class UpdatesResourceTest extends ServerTest {
         BibEntry entryE1V1 = new BibEntry().withCitationKey("e1.v1").withSharedBibEntryData(1, 1).withChanged(true);
         BibEntry entryE1V2 = new BibEntry().withCitationKey("e1.v2").withSharedBibEntryData(1, 2).withChanged(true);
         BibEntry entryE2V1 = new BibEntry().withCitationKey("e2.v1").withSharedBibEntryData(2, 1).withChanged(true);
-
-        SyncState.INSTANCE.putEntry(
+        bibDatabaseContext.getDatabase().insertEntries(entryE1V2, entryE2V1);
+        syncState.putEntry(
                 1, entryE1V1);
-        SyncState.INSTANCE.putEntry(
+        syncState.putEntry(
                 1, entryE2V1);
-        SyncState.INSTANCE.putEntry(
+        syncState.putEntry(
                 2, entryE1V2);
         assertEquals("""
                 [
@@ -65,6 +70,6 @@ class UpdatesResourceTest extends ServerTest {
                      "citationKey": "e2.v1",
                      "bibtex": "@Misc{e2.v1,\\n}\\n"
                    }
-                 ]""", target("/updates").queryParam("lastUpdate", "0").request().get(String.class));
+                 ]""", target(path).queryParam("lastUpdate", "0").request().get(String.class));
     }
 }

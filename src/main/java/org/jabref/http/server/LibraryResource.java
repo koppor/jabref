@@ -41,7 +41,7 @@ public class LibraryResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getJson(@PathParam("id") String id) {
-        ParserResult parserResult = getParserResult(id);
+        ParserResult parserResult = getParserResult(preferences, id);
         List<BibEntryDTO> list = parserResult.getDatabase().getEntries().stream()
                                              .map(bibEntry -> {
                                                  bibEntry.getSharedBibEntryData().setSharedID(Objects.hash(bibEntry));
@@ -55,14 +55,14 @@ public class LibraryResource {
     @GET
     @Produces(org.jabref.http.MediaType.JSON_CSL_ITEM)
     public String getClsItemJson(@PathParam("id") String id) {
-        ParserResult parserResult = getParserResult(id);
+        ParserResult parserResult = getParserResult(preferences, id);
         JabRefItemDataProvider jabRefItemDataProvider = new JabRefItemDataProvider();
         jabRefItemDataProvider.setData(parserResult.getDatabaseContext(), new BibEntryTypesManager());
         return jabRefItemDataProvider.toJson();
     }
 
-    private ParserResult getParserResult(String id) {
-        java.nio.file.Path library = getLibraryPath(id);
+    static ParserResult getParserResult(PreferencesService preferences, String id) {
+        java.nio.file.Path library = getLibraryPath(preferences, id);
         ParserResult parserResult;
         try {
             parserResult = new BibtexImporter(preferences.getImportFormatPreferences(), new DummyFileUpdateMonitor()).importDatabase(library);
@@ -76,7 +76,7 @@ public class LibraryResource {
     @GET
     @Produces(org.jabref.http.MediaType.BIBTEX)
     public Response getBibtex(@PathParam("id") String id) {
-        java.nio.file.Path library = getLibraryPath(id);
+        java.nio.file.Path library = getLibraryPath(preferences, id);
         String libraryAsString;
         try {
             libraryAsString = Files.readString(library);
@@ -89,7 +89,7 @@ public class LibraryResource {
                 .build();
     }
 
-    private java.nio.file.Path getLibraryPath(String id) {
+    private static java.nio.file.Path getLibraryPath(PreferencesService preferences, String id) {
         java.nio.file.Path library = preferences.getGuiPreferences().getLastFilesOpened()
                                                 .stream()
                                                 .map(java.nio.file.Path::of)
