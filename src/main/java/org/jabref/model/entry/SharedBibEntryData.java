@@ -11,6 +11,8 @@ public class SharedBibEntryData implements Comparable<SharedBibEntryData> {
     // It has to be unique on remote DBS for all connected JabRef instances.
     // The old id above does not satisfy this requirement.
     // This is "ID" in JabDrive sync
+    // TODO: Migrate to CUID - see ADR0029, why we chose CUID over UUIDs
+    // We can even limit the length to 10: https://github.com/paralleldrive/cuid2#configuration
     private int sharedID;
 
     // Needed for version controlling if used on shared database

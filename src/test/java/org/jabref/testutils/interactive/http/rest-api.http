@@ -1,0 +1,69 @@
+// This file is for IntelliJ's HTTP Client, available in the Ultimate Edition
+
+GET https://localhost:6051
+
+###
+
+GET https://localhost:6051/libraries
+
+###
+
+GET https://localhost:6051/libraries/notfound
+
+###
+
+// if you have checkout the JabRef code at c:\git-repositories\jabref, then this
+// will show the contents of your first opened library as BibTeX
+
+GET https://localhost:6051/libraries/jabref-authors.bib-026bd7ec
+Accept: application/x-bibtex
+
+###
+
+// if you have checkout the JabRef code at c:\git-repositories\jabref, then this
+// will show the contents of your first opened library using CSL JSON
+
+GET https://localhost:6051/libraries/jabref-authors.bib-026bd7ec
+Accept: application/x-bibtex-library-csl+json
+
+###
+
+// if you have checkout the JabRef code at c:\git-repositories\jabref, then this
+// will show the contents of your first opened library using json + embedded BibTeX
+
+GET https://localhost:6051/libraries/jabref-authors.bib-026bd7ec
+Accept: application/json
+
+###
+
+POST http://localhost:8080/updates
+Accept: application/json
+
+[
+  {
+	"sharingMetadata": {
+	  "sharedID": 1,
+	  "version": 2
+	},
+	"type": "Misc",
+	"citationKey": "e1.v2",
+	"content": {},
+	"userComments": ""
+  },
+  {
+	"sharingMetadata": {
+	  "sharedID": 2,
+	  "version": 1
+	},
+	"type": "Misc",
+	"citationKey": "e2.v1",
+	"content": {},
+	"userComments": ""
+  }
+]
+
+### Fetch OpenAPI description
+
+// Client can be generated with  npx openapi-generator-cli generate -g java -o generated-client --library=jersey3 -i C:\git-repositories\jabref\.idea\httpRequests\2023-04-04T102607.200.json
+GET http://localhost:8080/openapi.json
+Accept: application/json
