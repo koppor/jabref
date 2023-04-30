@@ -89,7 +89,7 @@ recipeList:
   - org.openrewrite.java.cleanup.ObjectFinalizeCallsSuper
   - org.openrewrite.java.cleanup.OperatorWrap
   - org.openrewrite.java.cleanup.PadEmptyForLoopComponents
-#  - org.openrewrite.java.cleanup.PrimitiveWrapperClassConstructorToValueOf
+  - org.openrewrite.java.cleanup.PrimitiveWrapperClassConstructorToValueOf
 #  - org.openrewrite.java.cleanup.RedundantFileCreation
 #  - org.openrewrite.java.cleanup.ReferentialEqualityToObjectEquals
 #  - org.openrewrite.java.cleanup.RemoveCallsToObjectFinalize
