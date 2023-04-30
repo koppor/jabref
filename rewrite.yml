@@ -93,7 +93,7 @@ recipeList:
   - org.openrewrite.java.cleanup.PadEmptyForLoopComponents
   - org.openrewrite.java.cleanup.PrimitiveWrapperClassConstructorToValueOf
   - org.openrewrite.java.cleanup.RedundantFileCreation
-#  - org.openrewrite.java.cleanup.RemoveCallsToObjectFinalize
+  - org.openrewrite.java.cleanup.RemoveCallsToObjectFinalize
 #  - org.openrewrite.java.cleanup.RemoveCallsToSystemGc
 #  - org.openrewrite.java.cleanup.RemoveEmptyJavaDocParameters
 #  - org.openrewrite.java.cleanup.RemoveExtraSemicolons
