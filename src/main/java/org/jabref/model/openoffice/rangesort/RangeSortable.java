@@ -12,6 +12,7 @@ public interface RangeSortable<T> extends RangeHolder {
      * <p>
      * For citation marks in footnotes this may be the range of the footnote mark.
      */
+    @Override
     XTextRange getRange();
 
     /**

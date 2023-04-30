@@ -80,6 +80,7 @@ public class CustomEntryTypesTabViewModel implements PreferenceTabViewModel {
                 ValidationMessage.error(Localization.lang("Field cannot be empty. Please enter a name.")));
     }
 
+    @Override
     public void setValues() {
         if (this.entryTypesWithFields.size() > 0) {
             this.entryTypesWithFields.clear();
@@ -97,6 +98,7 @@ public class CustomEntryTypesTabViewModel implements PreferenceTabViewModel {
         }
     }
 
+    @Override
     public void storeSettings() {
         Set<Field> multilineFields = new HashSet<>();
         for (EntryTypeViewModel typeViewModel : entryTypesWithFields) {

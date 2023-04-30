@@ -66,9 +66,8 @@ recipeList:
   - org.openrewrite.java.cleanup.IndexOfShouldNotCompareGreaterThanZero
   - org.openrewrite.java.cleanup.InstanceOfPatternMatch
   - org.openrewrite.java.cleanup.IsEmptyCallOnCollections
-  - org.openrewrite.java.cleanup.LowercasePackage
   - org.openrewrite.java.cleanup.MethodParamPad
-#  - org.openrewrite.java.cleanup.MissingOverrideAnnotation
+  - org.openrewrite.java.cleanup.MissingOverrideAnnotation
 #  - org.openrewrite.java.cleanup.ModifierOrder
 #  - org.openrewrite.java.cleanup.MultipleVariableDeclarations
 #  - org.openrewrite.java.cleanup.NeedBraces

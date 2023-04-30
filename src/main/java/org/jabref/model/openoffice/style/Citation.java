@@ -87,6 +87,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry, Citati
         db = Citation.lookup(databases, citationKey);
     }
 
+    @Override
     public Optional<CitationLookupResult> getLookupResult() {
         return db;
     }
@@ -112,6 +113,7 @@ public class Citation implements ComparableCitation, CitationMarkerEntry, Citati
         return number.get();
     }
 
+    @Override
     public Optional<String> getUniqueLetter() {
         return uniqueLetter;
     }

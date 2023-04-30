@@ -47,6 +47,7 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
         this.telemetryPreferences = telemetryPreferences;
     }
 
+    @Override
     public void setValues() {
         languagesListProperty.setValue(new SortedList<>(FXCollections.observableArrayList(Language.values()), Comparator.comparing(Language::getDisplayName)));
         selectedLanguageProperty.setValue(generalPreferences.getLanguage());
@@ -62,6 +63,7 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
         showAdvancedHintsProperty.setValue(generalPreferences.shouldShowAdvancedHints());
     }
 
+    @Override
     public void storeSettings() {
         Language newLanguage = selectedLanguageProperty.getValue();
         if (newLanguage != generalPreferences.getLanguage()) {

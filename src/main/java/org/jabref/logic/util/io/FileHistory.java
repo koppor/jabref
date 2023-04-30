@@ -21,6 +21,7 @@ public class FileHistory extends ModifiableObservableListBase<Path> {
         return history.get(index);
     }
 
+    @Override
     public int size() {
         return history.size();
     }

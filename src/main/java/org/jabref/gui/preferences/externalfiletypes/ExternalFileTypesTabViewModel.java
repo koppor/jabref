@@ -34,6 +34,7 @@ public class ExternalFileTypesTabViewModel implements PreferenceTabViewModel {
         fileTypes.sort(Comparator.comparing(ExternalFileTypeItemViewModel::getName));
     }
 
+    @Override
     public void storeSettings() {
         Set<ExternalFileType> saveList = new HashSet<>();
 

@@ -84,6 +84,7 @@ public class KeyBindingsTabViewModel implements PreferenceTabViewModel {
         }
     }
 
+    @Override
     public void storeSettings() {
         preferences.storeKeyBindingRepository(keyBindingRepository);
 

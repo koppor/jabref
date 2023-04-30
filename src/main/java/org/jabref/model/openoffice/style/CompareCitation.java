@@ -16,6 +16,7 @@ public class CompareCitation implements Comparator<ComparableCitation> {
         this.citedKeyComparator = new CompareCitedKey(entryComparator, unresolvedComesFirst);
     }
 
+    @Override
     public int compare(ComparableCitation a, ComparableCitation b) {
         int res = citedKeyComparator.compare(a, b);
 

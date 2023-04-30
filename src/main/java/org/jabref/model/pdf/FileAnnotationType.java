@@ -70,6 +70,7 @@ public enum FileAnnotationType {
         return linkedFileAnnotationType;
     }
 
+    @Override
     public String toString() {
         return this.name;
     }

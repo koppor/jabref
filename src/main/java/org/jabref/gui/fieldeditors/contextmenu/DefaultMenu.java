@@ -32,6 +32,7 @@ public class DefaultMenu implements Supplier<List<MenuItem>> {
         this.textInputControl = textInputControl;
     }
 
+    @Override
     public List<MenuItem> get() {
         return List.of(
                 getCaseChangeMenu(textInputControl),

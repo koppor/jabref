@@ -19,6 +19,7 @@ public class CompareCitedKey implements Comparator<ComparableCitedKey> {
         this.unresolvedComesFirst = unresolvedComesFirst;
     }
 
+    @Override
     public int compare(ComparableCitedKey a, ComparableCitedKey b) {
         Optional<BibEntry> aBibEntry = a.getBibEntry();
         Optional<BibEntry> bBibEntry = b.getBibEntry();
