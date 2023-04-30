@@ -512,6 +512,8 @@ rewrite {
         'org.jabref.config.rewrite.cleanup'
     )
     exclusion (
+        "build.gradle",
+        "eclipse.gradle",
         "src-gen/**",
         "**/module-info.java",
         "**/*.py",
