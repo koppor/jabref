@@ -51,6 +51,8 @@ recipeList:
   #  - org.openrewrite.java.cleanup.RemoveInstanceOfPatternMatch
   # We need that for our CLI
   #  - org.openrewrite.java.cleanup.RemoveSystemOutPrintln
+  # Removes a field - and that wrong
+  #  - org.openrewrite.java.cleanup.RemoveUnusedPrivateMethods
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -108,7 +110,6 @@ recipeList:
   - org.openrewrite.java.cleanup.RemoveUnneededBlock
   - org.openrewrite.java.cleanup.RemoveUnusedLocalVariables
   - org.openrewrite.java.cleanup.RemoveUnusedPrivateFields
-#  - org.openrewrite.java.cleanup.RemoveUnusedPrivateMethods
 #  - org.openrewrite.java.cleanup.RenameExceptionInEmptyCatch
 #  - org.openrewrite.java.cleanup.RenameLocalVariablesToCamelCase
 #  - org.openrewrite.java.cleanup.RenameMethodsNamedHashcodeEqualOrTostring
