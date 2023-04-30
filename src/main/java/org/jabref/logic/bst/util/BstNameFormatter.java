@@ -200,9 +200,9 @@ public class BstNameFormatter {
                 }
                 if (sb.length() > 0) {
                     boolean noDisTie = false;
-                    if ((sb.charAt(sb.length() - 1) == '~') &&
-                            ((BstNameFormatter.numberOfChars(sb.substring(groupStart, sb.length()), 4) >= 4) ||
-                                    ((sb.length() > 1) && (noDisTie = sb.charAt(sb.length() - 2) == '~')))) {
+                    if ((sb.charAt(sb.length() - 1) == '~')
+                            && ((BstNameFormatter.numberOfChars(sb.substring(groupStart, sb.length()), 4) >= 4)
+                                    || ((sb.length() > 1) && (noDisTie = sb.charAt(sb.length() - 2) == '~')))) {
                         sb.deleteCharAt(sb.length() - 1);
                         if (!noDisTie) {
                             sb.append(' ');

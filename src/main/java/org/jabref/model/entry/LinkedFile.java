@@ -154,11 +154,11 @@ public class LinkedFile implements Serializable {
 
     @Override
     public String toString() {
-        return "ParsedFileField{" +
-                "description='" + description.get() + '\'' +
-                ", link='" + link.get() + '\'' +
-                ", fileType='" + fileType.get() + '\'' +
-                '}';
+        return "ParsedFileField{"
+                + "description='" + description.get() + '\''
+                + ", link='" + link.get() + '\''
+                + ", fileType='" + fileType.get() + '\''
+                + '}';
     }
 
     public boolean isEmpty() {

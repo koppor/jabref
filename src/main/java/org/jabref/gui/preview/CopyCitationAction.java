@@ -130,17 +130,17 @@ public class CopyCitationAction extends SimpleCommand {
      * Inserts each citation into a HTML body and copies it to the clipboard
      */
     protected static ClipboardContent processHtml(List<String> citations) {
-        String result = "<!DOCTYPE html>" + OS.NEWLINE +
-                "<html>" + OS.NEWLINE +
-                "   <head>" + OS.NEWLINE +
-                "      <meta charset=\"utf-8\">" + OS.NEWLINE +
-                "   </head>" + OS.NEWLINE +
-                "   <body>" + OS.NEWLINE + OS.NEWLINE;
+        String result = "<!DOCTYPE html>" + OS.NEWLINE
+                + "<html>" + OS.NEWLINE
+                + "   <head>" + OS.NEWLINE
+                + "      <meta charset=\"utf-8\">" + OS.NEWLINE
+                + "   </head>" + OS.NEWLINE
+                + "   <body>" + OS.NEWLINE + OS.NEWLINE;
 
         result += String.join(CitationStyleOutputFormat.HTML.getLineSeparator(), citations);
-        result += OS.NEWLINE +
-                "   </body>" + OS.NEWLINE +
-                "</html>" + OS.NEWLINE;
+        result += OS.NEWLINE
+                + "   </body>" + OS.NEWLINE
+                + "</html>" + OS.NEWLINE;
 
         ClipboardContent content = new ClipboardContent();
         content.putString(result);

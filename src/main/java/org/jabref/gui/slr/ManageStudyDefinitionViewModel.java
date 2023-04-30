@@ -180,8 +180,8 @@ public class ManageStudyDefinitionViewModel {
             new StudyYamlParser().writeStudyYamlFile(study, studyDefinitionFile);
         } catch (IOException e) {
             LOGGER.error("Could not write study file {}", studyDefinitionFile, e);
-            dialogService.notify(Localization.lang("Please enter a valid file path.") +
-                    ": " + studyDirectoryAsString);
+            dialogService.notify(Localization.lang("Please enter a valid file path.")
+                    + ": " + studyDirectoryAsString);
             // We do not assume another path - we return that there is an invalid object.
             return null;
         }
@@ -190,8 +190,8 @@ public class ManageStudyDefinitionViewModel {
             new GitHandler(studyDirectory).createCommitOnCurrentBranch("Update study definition", false);
         } catch (Exception e) {
             LOGGER.error("Could not commit study definition file in directory {}", studyDirectory, e);
-            dialogService.notify(Localization.lang("Please enter a valid file path.") +
-                    ": " + studyDirectory);
+            dialogService.notify(Localization.lang("Please enter a valid file path.")
+                    + ": " + studyDirectory);
             // We continue nevertheless as the directory itself could be valid
         }
 

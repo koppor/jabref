@@ -13,10 +13,10 @@ class CanonicalBibEntryTest {
     void canonicalRepresentationIsCorrectForStringMonth() {
         BibEntry entry = new BibEntry();
         entry.setMonth(Month.MAY);
-        assertEquals("@misc{,\n" +
-                "  month = {#may#},\n" +
-                "  _jabref_shared = {sharedId: -1, version: 1}\n" +
-                "}", CanonicalBibEntry.getCanonicalRepresentation(entry));
+        assertEquals("@misc{,\n"
+                + "  month = {#may#},\n"
+                + "  _jabref_shared = {sharedId: -1, version: 1}\n"
+                + "}", CanonicalBibEntry.getCanonicalRepresentation(entry));
     }
 
     @Test

@@ -276,8 +276,8 @@ public class ArXivFetcher implements FulltextFetcher, PagedSearchBasedFetcher, I
         try {
             this.inplaceAsyncInfuseArXivWithDoi(arXivBibEntryCompletedFuture, arXivBibEntryId);
         } catch (FetcherException e) {
-            LOGGER.error("FetcherException should not be found here, as main Bibtex Entry already exists " +
-                    "(and failing additional fetches should be skipped)", e);
+            LOGGER.error("FetcherException should not be found here, as main Bibtex Entry already exists "
+                    + "(and failing additional fetches should be skipped)", e);
         }
     }
 

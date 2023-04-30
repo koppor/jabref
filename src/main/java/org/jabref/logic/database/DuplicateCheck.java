@@ -89,16 +89,16 @@ public class DuplicateCheck {
     private static boolean haveDifferentEditions(final BibEntry one, final BibEntry two) {
         final Optional<String> editionOne = one.getField(StandardField.EDITION);
         final Optional<String> editionTwo = two.getField(StandardField.EDITION);
-        return editionOne.isPresent() &&
-                editionTwo.isPresent() &&
-                !editionOne.get().equals(editionTwo.get());
+        return editionOne.isPresent()
+                && editionTwo.isPresent()
+                && !editionOne.get().equals(editionTwo.get());
     }
 
     private static boolean haveDifferentChaptersOrPagesOfTheSameBook(final BibEntry one, final BibEntry two) {
-        return (compareSingleField(StandardField.AUTHOR, one, two) == EQUAL) &&
-                (compareSingleField(StandardField.TITLE, one, two) == EQUAL) &&
-                ((compareSingleField(StandardField.CHAPTER, one, two) == NOT_EQUAL) ||
-                        (compareSingleField(StandardField.PAGES, one, two) == NOT_EQUAL));
+        return (compareSingleField(StandardField.AUTHOR, one, two) == EQUAL)
+                && (compareSingleField(StandardField.TITLE, one, two) == EQUAL)
+                && ((compareSingleField(StandardField.CHAPTER, one, two) == NOT_EQUAL)
+                        || (compareSingleField(StandardField.PAGES, one, two) == NOT_EQUAL));
     }
 
     private static double[] compareRequiredFields(final BibEntryType type, final BibEntry one, final BibEntry two) {
@@ -338,9 +338,9 @@ public class DuplicateCheck {
             return Objects.equals(oneISBN, twoISBN);
         }
 
-        if (haveDifferentEntryType(one, two) ||
-                haveDifferentEditions(one, two) ||
-                haveDifferentChaptersOrPagesOfTheSameBook(one, two)) {
+        if (haveDifferentEntryType(one, two)
+                || haveDifferentEditions(one, two)
+                || haveDifferentChaptersOrPagesOfTheSameBook(one, two)) {
             return false;
         }
 

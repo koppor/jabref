@@ -264,8 +264,8 @@ public class JabRefFrame extends BorderPane {
                             tabDragEvent.consume();
                         } else {
                             for (Tab libraryTab : tabbedPane.getTabs()) {
-                                if (libraryTab.getId().equals(destinationTabNode.getId()) &&
-                                        !tabbedPane.getSelectionModel().getSelectedItem().equals(libraryTab)) {
+                                if (libraryTab.getId().equals(destinationTabNode.getId())
+                                        && !tabbedPane.getSelectionModel().getSelectedItem().equals(libraryTab)) {
                                     LibraryTab destinationLibraryTab = (LibraryTab) libraryTab;
                                     if (DragAndDropHelper.hasGroups(tabDragEvent.getDragboard())) {
                                         List<String> groupPathToSources = DragAndDropHelper.getGroups(tabDragEvent.getDragboard());

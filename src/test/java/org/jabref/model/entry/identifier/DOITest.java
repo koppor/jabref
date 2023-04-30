@@ -189,12 +189,12 @@ public class DOITest {
                 Arguments.of("10%12ab", DOI.findInText("other stuff /doi:10%12ab, end").get().getDOI()),
                 Arguments.of("10%12ab", DOI.findInText("other stuff /doi:10%12ab. end").get().getDOI()),
                 Arguments.of("10%12ab", DOI.findInText("other stuff /doi:10%12ab; end").get().getDOI()),
-                Arguments.of("10/1234", DOI.findInText("10/B(C)/15 \n" +
-                        " \n" +
-                        "10:51 \n" +
-                        " \n" +
-                        " \n" +
-                        "doi.org/10/1234 ").get().getDOI()),
+                Arguments.of("10/1234", DOI.findInText("10/B(C)/15 \n"
+                        + " \n"
+                        + "10:51 \n"
+                        + " \n"
+                        + " \n"
+                        + "doi.org/10/1234 ").get().getDOI()),
 
                 // findShortcutDoiInsideArbitraryText
                 Arguments.of("10/ab123", DOI.findInText("other stuff doi.org/ab123 end").get().getDOI()),

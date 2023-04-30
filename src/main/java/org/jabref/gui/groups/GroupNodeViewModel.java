@@ -179,15 +179,15 @@ public class GroupNodeViewModel {
 
     @Override
     public String toString() {
-        return "GroupNodeViewModel{" +
-                "displayName='" + displayName + '\'' +
-                ", isRoot=" + isRoot +
-                ", icon='" + getIcon() + '\'' +
-                ", children=" + children +
-                ", databaseContext=" + databaseContext +
-                ", groupNode=" + groupNode +
-                ", matchedEntries=" + matchedEntries +
-                '}';
+        return "GroupNodeViewModel{"
+                + "displayName='" + displayName + '\''
+                + ", isRoot=" + isRoot
+                + ", icon='" + getIcon() + '\''
+                + ", children=" + children
+                + ", databaseContext=" + databaseContext
+                + ", groupNode=" + groupNode
+                + ", matchedEntries=" + matchedEntries
+                + '}';
     }
 
     @Override

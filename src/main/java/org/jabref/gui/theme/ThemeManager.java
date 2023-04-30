@@ -197,8 +197,8 @@ public class ThemeManager {
     public void installCss(WebEngine webEngine) {
         updateRunner.accept(() -> {
             if (this.webEngines.add(webEngine)) {
-                webEngine.setUserStyleSheetLocation(this.theme.getAdditionalStylesheet().isPresent() ?
-                        this.theme.getAdditionalStylesheet().get().getWebEngineStylesheet() : "");
+                webEngine.setUserStyleSheetLocation(this.theme.getAdditionalStylesheet().isPresent()
+                        ? this.theme.getAdditionalStylesheet().get().getWebEngineStylesheet() : "");
             }
         });
     }

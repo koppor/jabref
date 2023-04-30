@@ -49,8 +49,8 @@ public class Author {
             return name;
         }
         // If only one character (uppercase letter), add a dot and return immediately:
-        if ((name.length() == 1) && Character.isLetter(name.charAt(0)) &&
-                Character.isUpperCase(name.charAt(0))) {
+        if ((name.length() == 1) && Character.isLetter(name.charAt(0))
+                && Character.isUpperCase(name.charAt(0))) {
             return name + ".";
         }
 

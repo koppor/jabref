@@ -84,12 +84,12 @@ public class SharedDatabaseUIManager {
         BibEntry localBibEntry = updateRefusedEvent.getLocalBibEntry();
         BibEntry sharedBibEntry = updateRefusedEvent.getSharedBibEntry();
 
-        String message = Localization.lang("Update could not be performed due to existing change conflicts.") + "\r\n" +
-                Localization.lang("You are not working on the newest version of BibEntry.") + "\r\n" +
-                Localization.lang("Shared version: %0", String.valueOf(sharedBibEntry.getSharedBibEntryData().getVersion())) + "\r\n" +
-                Localization.lang("Local version: %0", String.valueOf(localBibEntry.getSharedBibEntryData().getVersion())) + "\r\n" +
-                Localization.lang("Press \"Merge entries\" to merge the changes and resolve this problem.") + "\r\n" +
-                Localization.lang("Canceling this operation will leave your changes unsynchronized.");
+        String message = Localization.lang("Update could not be performed due to existing change conflicts.") + "\r\n"
+                + Localization.lang("You are not working on the newest version of BibEntry.") + "\r\n"
+                + Localization.lang("Shared version: %0", String.valueOf(sharedBibEntry.getSharedBibEntryData().getVersion())) + "\r\n"
+                + Localization.lang("Local version: %0", String.valueOf(localBibEntry.getSharedBibEntryData().getVersion())) + "\r\n"
+                + Localization.lang("Press \"Merge entries\" to merge the changes and resolve this problem.") + "\r\n"
+                + Localization.lang("Canceling this operation will leave your changes unsynchronized.");
 
         ButtonType merge = new ButtonType(Localization.lang("Merge entries"), ButtonBar.ButtonData.YES);
 

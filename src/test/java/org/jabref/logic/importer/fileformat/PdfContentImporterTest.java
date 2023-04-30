@@ -68,21 +68,21 @@ class PdfContentImporterTest {
         entry.setField(StandardField.PUBLISHER, "Springer");
         entry.setField(StandardField.TITLE, "Corpus Linguistics – An International Handbook – Lüdeling, Anke, Kytö, Merja (Eds.)");
 
-        String firstPageContents = "Corpus Linguistics – An International Handbook – Lüdeling, Anke,\n" +
-                                   "Kytö, Merja (Eds.)\n" +
-                                   "\n" +
-                                   "Anke Lüdeling, Merja Kytö (Eds.)\n" +
-                                   "\n" +
-                                   "VOLUME 2\n" +
-                                   "\n" +
-                                   "This handbook provides an up-to-date survey of the field of corpus linguistics, a Handbücher zur Sprach- und\n" +
-                                   "field whose methodology has revolutionized much of the empirical work done in Kommunikationswissenschaft / Handbooks\n" +
-                                   "\n" +
-                                   "of Linguistics and Communication Science\n" +
-                                   "most fields of linguistic study over the past decade. (HSK) 29/2\n" +
-                                   "\n" +
-                                   "vii, 578 pages\n" +
-                                   "Corpus linguistics investigates human language by starting out from large\n";
+        String firstPageContents = "Corpus Linguistics – An International Handbook – Lüdeling, Anke,\n"
+                                   + "Kytö, Merja (Eds.)\n"
+                                   + "\n"
+                                   + "Anke Lüdeling, Merja Kytö (Eds.)\n"
+                                   + "\n"
+                                   + "VOLUME 2\n"
+                                   + "\n"
+                                   + "This handbook provides an up-to-date survey of the field of corpus linguistics, a Handbücher zur Sprach- und\n"
+                                   + "field whose methodology has revolutionized much of the empirical work done in Kommunikationswissenschaft / Handbooks\n"
+                                   + "\n"
+                                   + "of Linguistics and Communication Science\n"
+                                   + "most fields of linguistic study over the past decade. (HSK) 29/2\n"
+                                   + "\n"
+                                   + "vii, 578 pages\n"
+                                   + "Corpus linguistics investigates human language by starting out from large\n";
 
         assertEquals(Optional.of(entry), importer.getEntryFromPDFContent(firstPageContents, "\n"));
     }

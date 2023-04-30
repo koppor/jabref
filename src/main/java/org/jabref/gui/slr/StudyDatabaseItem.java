@@ -47,10 +47,10 @@ public class StudyDatabaseItem {
 
     @Override
     public String toString() {
-        return "StudyDatabaseItem{" +
-                "name=" + name.get() +
-                ", enabled=" + enabled.get() +
-                '}';
+        return "StudyDatabaseItem{"
+                + "name=" + name.get()
+                + ", enabled=" + enabled.get()
+                + '}';
     }
 
     @Override

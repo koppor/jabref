@@ -47,9 +47,9 @@ public final class IntegrityMessage implements Cloneable {
             return false;
         }
         IntegrityMessage that = (IntegrityMessage) o;
-        return Objects.equals(entry, that.entry) &&
-                Objects.equals(field, that.field) &&
-                Objects.equals(message, that.message);
+        return Objects.equals(entry, that.entry)
+                && Objects.equals(field, that.field)
+                && Objects.equals(message, that.message);
     }
 
     @Override

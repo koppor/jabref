@@ -31,10 +31,10 @@ public class TestEntry {
         entry.setField(StandardField.DOI, "10.1001/bla.blubb");
         entry.setField(StandardField.ABSTRACT,
                 "This entry describes a test scenario which may be useful in JabRef. By providing a test entry it is possible to see how certain things will look in this graphical BIB-file mananger.");
-        entry.setField(StandardField.COMMENT, "Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et " +
-                "dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. " +
-                "Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non " +
-                "proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+        entry.setField(StandardField.COMMENT, "Lorem ipsum dolor sit amet, consectetur adipisici elit, sed eiusmod tempor incidunt ut labore et "
+                + "dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquid ex ea commodi consequat. "
+                + "Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non "
+                + "proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
         entry.putKeywords(Arrays.asList("KeyWord1", "KeyWord2", "KeyWord3", "Keyword4"), ';');
 
         return entry;

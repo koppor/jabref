@@ -1877,10 +1877,10 @@ class BibtexParserTest {
     void parseEntryUsingStringConstantsForTwoAuthorsWithEtAsStringConstant() throws ParseException {
         // source of the example: https://docs.jabref.org/fields/strings
         Collection<BibEntry> parsed = parser
-                .parseEntries("@String { kopp = \"Kopp, Oliver\" }" +
-                        "@String { kubovy = \"Kubovy, Jan\" }" +
-                        "@String { et = \" and \" }" +
-                        "@Misc{m1, author = kopp # et # kubovy }");
+                .parseEntries("@String { kopp = \"Kopp, Oliver\" }"
+                        + "@String { kubovy = \"Kubovy, Jan\" }"
+                        + "@String { et = \" and \" }"
+                        + "@Misc{m1, author = kopp # et # kubovy }");
 
         BibEntry expectedEntry = new BibEntry(StandardEntryType.Misc)
                 .withCitationKey("m1")
@@ -1893,10 +1893,10 @@ class BibtexParserTest {
     void parseStringConstantsForTwoAuthorsHasCorrectBibTeXEntry() throws ParseException {
         // source of the example: https://docs.jabref.org/fields/strings
         Collection<BibEntry> parsed = parser
-                .parseEntries("@String { kopp = \"Kopp, Oliver\" }" +
-                        "@String { kubovy = \"Kubovy, Jan\" }" +
-                        "@String { et = \" and \" }" +
-                        "@Misc{m2, author = kopp # \" and \" # kubovy }");
+                .parseEntries("@String { kopp = \"Kopp, Oliver\" }"
+                        + "@String { kubovy = \"Kubovy, Jan\" }"
+                        + "@String { et = \" and \" }"
+                        + "@Misc{m2, author = kopp # \" and \" # kubovy }");
 
         BibEntry expectedEntry = new BibEntry(StandardEntryType.Misc)
                 .withCitationKey("m2")
@@ -1909,10 +1909,10 @@ class BibtexParserTest {
     void parseStringConstantsForTwoAuthors() throws ParseException {
         // source of the example: https://docs.jabref.org/fields/strings
         Collection<BibEntry> parsed = parser
-                .parseEntries("@String { kopp = \"Kopp, Oliver\" }" +
-                        "@String { kubovy = \"Kubovy, Jan\" }" +
-                        "@String { et = \" and \" }" +
-                        "@Misc{m2, author = kopp # \" and \" # kubovy }");
+                .parseEntries("@String { kopp = \"Kopp, Oliver\" }"
+                        + "@String { kubovy = \"Kubovy, Jan\" }"
+                        + "@String { et = \" and \" }"
+                        + "@Misc{m2, author = kopp # \" and \" # kubovy }");
 
         assertEquals("#kopp# and #kubovy#", parsed.iterator().next().getField(StandardField.AUTHOR).get());
     }

@@ -166,8 +166,8 @@ public class LinkedFileViewModel extends AbstractViewModel {
                     ControlHelper.EllipsisPosition.CENTER);
         } else {
             return ControlHelper.truncateString(linkedFile.getDescription(), -1, "...",
-                    ControlHelper.EllipsisPosition.CENTER) + " (" +
-                    ControlHelper.truncateString(linkedFile.getLink(), -1, "...",
+                    ControlHelper.EllipsisPosition.CENTER) + " ("
+                    + ControlHelper.truncateString(linkedFile.getLink(), -1, "...",
                     ControlHelper.EllipsisPosition.CENTER) + ")";
         }
     }

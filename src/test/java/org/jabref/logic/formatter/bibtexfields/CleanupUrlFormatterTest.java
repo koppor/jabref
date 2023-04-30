@@ -47,8 +47,8 @@ class CleanupUrlFormatterTest {
 
     @Test
     void formatExample() {
-        assertEquals("http://www.focus.de/" +
-                        "gesundheit/ratgeber/herz/test/lebenserwartung-werden-sie-100-jahre-alt_aid_363828.html",
+        assertEquals("http://www.focus.de/"
+                        + "gesundheit/ratgeber/herz/test/lebenserwartung-werden-sie-100-jahre-alt_aid_363828.html",
                 formatter.format(formatter.getExampleInput()));
     }
 

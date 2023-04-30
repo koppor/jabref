@@ -72,8 +72,8 @@ class RegExpBasedFileFinder implements FileFinder {
      */
     private static String toFileNameRegex(String expandedContent) {
         var cleanedContent = FileNameCleaner.cleanFileName(expandedContent);
-        return expandedContent.equals(cleanedContent) ? Pattern.quote(expandedContent) :
-                "(" + Pattern.quote(expandedContent) + ")|(" + Pattern.quote(cleanedContent) + ")";
+        return expandedContent.equals(cleanedContent) ? Pattern.quote(expandedContent)
+                : "(" + Pattern.quote(expandedContent) + ")|(" + Pattern.quote(cleanedContent) + ")";
     }
 
     /**

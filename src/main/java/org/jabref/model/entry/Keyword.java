@@ -80,8 +80,8 @@ public class Keyword extends ChainNode<Keyword> implements Comparable<Keyword> {
      * E.g., calling {@link #getSubchainAsString(Character)} on the node "B" in "A > B > C" returns "B > C".
      */
     private String getSubchainAsString(Character hierarchicalDelimiter) {
-        return keyword +
-                getChild().map(child -> " " + hierarchicalDelimiter + " " + child.getSubchainAsString(hierarchicalDelimiter))
+        return keyword
+                + getChild().map(child -> " " + hierarchicalDelimiter + " " + child.getSubchainAsString(hierarchicalDelimiter))
                           .orElse("");
     }
 

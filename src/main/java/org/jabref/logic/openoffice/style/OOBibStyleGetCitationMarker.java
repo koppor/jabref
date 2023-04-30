@@ -677,9 +677,9 @@ class OOBibStyleGetCitationMarker {
 
                     // nAuthorsToEmitRevised[i-1] may have been indirectly increased,
                     // we have to check that too.
-                    if (!isFirst1 &&
-                        !isFirst2 &&
-                        (nAuthorsToEmitRevised[i - 1] == nAuthorsToEmit[i - 1])) {
+                    if (!isFirst1
+                        && !isFirst2
+                        && (nAuthorsToEmitRevised[i - 1] == nAuthorsToEmit[i - 1])) {
                         // we can rely on normalizedMarkers
                         nAuthorsShownInhibitsJoin = false;
                     } else if (style.getMaxAuthors() == style.getMaxAuthorsFirst()) {
@@ -723,8 +723,8 @@ class OOBibStyleGetCitationMarker {
                                                                && !normalizedMarkersDiffer
                                                                && !uniqueLettersDiffer);
 
-                if (uniqueLetterDoesNotMakeUnique &&
-                        nonUniqueCitationMarkerHandling == NonUniqueCitationMarker.THROWS) {
+                if (uniqueLetterDoesNotMakeUnique
+                        && nonUniqueCitationMarkerHandling == NonUniqueCitationMarker.THROWS) {
                     throw new IllegalArgumentException("different citation keys,"
                                                        + " but same normalizedMarker and uniqueLetter");
                 }

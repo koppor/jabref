@@ -58,9 +58,9 @@ public class GrobidServiceTest {
                                                                                     .withField(StandardField.VOLUME, "23")
                                                                                     .withField(StandardField.PUBLISHER, "Informa UK Limited")
                                                                                     .withField(StandardField.NUMBER, "4");
-        Optional<BibEntry> response = grobidService.processCitation("Derwing, T. M., Rossiter, M. J., & Munro, " +
-                "M. J. (2002). Teaching native speakers to listen to foreign-accented speech. " +
-                "Journal of Multilingual and Multicultural Development, 23(4), 245-259.", importFormatPreferences, GrobidService.ConsolidateCitations.WITH_METADATA);
+        Optional<BibEntry> response = grobidService.processCitation("Derwing, T. M., Rossiter, M. J., & Munro, "
+                + "M. J. (2002). Teaching native speakers to listen to foreign-accented speech. "
+                + "Journal of Multilingual and Multicultural Development, 23(4), 245-259.", importFormatPreferences, GrobidService.ConsolidateCitations.WITH_METADATA);
         assertTrue(response.isPresent());
         assertEquals(exampleBibEntry, response.get());
     }

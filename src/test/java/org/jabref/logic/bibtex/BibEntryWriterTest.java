@@ -265,12 +265,12 @@ class BibEntryWriterTest {
     @Test
     void roundTripWithPrependingNewlines() throws IOException {
         // @formatter:off
-        String bibtexEntry = "\r\n@Article{test," + OS.NEWLINE +
-                "  Author                   = {Foo Bar}," + OS.NEWLINE +
-                "  Journal                  = {International Journal of Something}," + OS.NEWLINE +
-                "  Note                     = {some note}," + OS.NEWLINE +
-                "  Number                   = {1}" + OS.NEWLINE +
-                "}" + OS.NEWLINE;
+        String bibtexEntry = "\r\n@Article{test," + OS.NEWLINE
+                + "  Author                   = {Foo Bar}," + OS.NEWLINE
+                + "  Journal                  = {International Journal of Something}," + OS.NEWLINE
+                + "  Note                     = {some note}," + OS.NEWLINE
+                + "  Number                   = {1}" + OS.NEWLINE
+                + "}" + OS.NEWLINE;
         // @formatter:on
 
         // read in bibtex string
@@ -287,12 +287,12 @@ class BibEntryWriterTest {
     @Test
     void roundTripWithKeepsCRLFLineBreakStyle() throws IOException {
         // @formatter:off
-        String bibtexEntry = "@Article{test,\r\n" +
-                "  Author                   = {Foo Bar},\r\n" +
-                "  Journal                  = {International Journal of Something},\r\n" +
-                "  Note                     = {some note},\r\n" +
-                "  Number                   = {1}\r\n" +
-                "}\r\n";
+        String bibtexEntry = "@Article{test,\r\n"
+                + "  Author                   = {Foo Bar},\r\n"
+                + "  Journal                  = {International Journal of Something},\r\n"
+                + "  Note                     = {some note},\r\n"
+                + "  Number                   = {1}\r\n"
+                + "}\r\n";
         // @formatter:on
 
         // read in bibtex string
@@ -311,12 +311,12 @@ class BibEntryWriterTest {
     @Test
     void roundTripWithKeepsLFLineBreakStyle() throws IOException {
         // @formatter:off
-        String bibtexEntry = "@Article{test,\n" +
-                "  Author                   = {Foo Bar},\n" +
-                "  Journal                  = {International Journal of Something},\n" +
-                "  Note                     = {some note},\n" +
-                "  Number                   = {1}\n" +
-                "}\n";
+        String bibtexEntry = "@Article{test,\n"
+                + "  Author                   = {Foo Bar},\n"
+                + "  Journal                  = {International Journal of Something},\n"
+                + "  Note                     = {some note},\n"
+                + "  Number                   = {1}\n"
+                + "}\n";
         // @formatter:on
 
         // read in bibtex string
@@ -451,12 +451,12 @@ class BibEntryWriterTest {
     @Test
     void roundTripWithAppendedNewlines() throws IOException {
         // @formatter:off
-        String bibtexEntry = "@Article{test," + OS.NEWLINE +
-                "  Author                   = {Foo Bar}," + OS.NEWLINE +
-                "  Journal                  = {International Journal of Something}," + OS.NEWLINE +
-                "  Number                   = {1}," + OS.NEWLINE +
-                "  Note                     = {some note}" + OS.NEWLINE +
-                "}\n\n";
+        String bibtexEntry = "@Article{test," + OS.NEWLINE
+                + "  Author                   = {Foo Bar}," + OS.NEWLINE
+                + "  Journal                  = {International Journal of Something}," + OS.NEWLINE
+                + "  Number                   = {1}," + OS.NEWLINE
+                + "  Note                     = {some note}" + OS.NEWLINE
+                + "}\n\n";
         // @formatter:on
 
         // read in bibtex string
@@ -476,12 +476,12 @@ class BibEntryWriterTest {
     @Test
     void roundTripNormalizesNewLines() throws IOException {
         // @formatter:off
-        String bibtexEntry = "@Article{test,\n" +
-                "  Author                   = {Foo Bar},\r\n" +
-                "  Journal                  = {International Journal of Something},\n" +
-                "  Number                   = {1},\n" +
-                "  Note                     = {some note}\r\n" +
-                "}\n\n";
+        String bibtexEntry = "@Article{test,\n"
+                + "  Author                   = {Foo Bar},\r\n"
+                + "  Journal                  = {International Journal of Something},\n"
+                + "  Number                   = {1},\n"
+                + "  Note                     = {some note}\r\n"
+                + "}\n\n";
         // @formatter:on
 
         // read in bibtex string
@@ -493,12 +493,12 @@ class BibEntryWriterTest {
         bibEntryWriter.write(entry, bibWriter, BibDatabaseMode.BIBTEX);
         String actual = stringWriter.toString();
 
-        String expected = "@Article{test," + OS.NEWLINE +
-                "  Author                   = {Foo Bar}," + OS.NEWLINE +
-                "  Journal                  = {International Journal of Something}," + OS.NEWLINE +
-                "  Number                   = {1}," + OS.NEWLINE +
-                "  Note                     = {some note}" + OS.NEWLINE +
-                "}" + OS.NEWLINE;
+        String expected = "@Article{test," + OS.NEWLINE
+                + "  Author                   = {Foo Bar}," + OS.NEWLINE
+                + "  Journal                  = {International Journal of Something}," + OS.NEWLINE
+                + "  Number                   = {1}," + OS.NEWLINE
+                + "  Note                     = {some note}" + OS.NEWLINE
+                + "}" + OS.NEWLINE;
         assertEquals(expected, actual);
     }
 
@@ -678,12 +678,12 @@ class BibEntryWriterTest {
     @Test
     void addFieldWithLongerLength() throws IOException {
         // @formatter:off
-        String bibtexEntry = OS.NEWLINE + OS.NEWLINE + "@Article{test," + OS.NEWLINE +
-                "  author =  {BlaBla}," + OS.NEWLINE +
-                "  journal = {International Journal of Something}," + OS.NEWLINE +
-                "  number =  {1}," + OS.NEWLINE +
-                "  note =    {some note}," + OS.NEWLINE +
-                "}";
+        String bibtexEntry = OS.NEWLINE + OS.NEWLINE + "@Article{test," + OS.NEWLINE
+                + "  author =  {BlaBla}," + OS.NEWLINE
+                + "  journal = {International Journal of Something}," + OS.NEWLINE
+                + "  number =  {1}," + OS.NEWLINE
+                + "  note =    {some note}," + OS.NEWLINE
+                + "}";
         // @formatter:on
 
         // read in bibtex string
@@ -698,13 +698,13 @@ class BibEntryWriterTest {
         bibEntryWriter.write(entry, bibWriter, BibDatabaseMode.BIBTEX);
 
         // @formatter:off
-        String expected = OS.NEWLINE + "@Article{test," + OS.NEWLINE +
-                "  author       = {BlaBla}," + OS.NEWLINE +
-                "  journal      = {International Journal of Something}," + OS.NEWLINE +
-                "  note         = {some note}," + OS.NEWLINE +
-                "  number       = {1}," + OS.NEWLINE +
-                "  howpublished = {asdf}," + OS.NEWLINE +
-                "}" + OS.NEWLINE;
+        String expected = OS.NEWLINE + "@Article{test," + OS.NEWLINE
+                + "  author       = {BlaBla}," + OS.NEWLINE
+                + "  journal      = {International Journal of Something}," + OS.NEWLINE
+                + "  note         = {some note}," + OS.NEWLINE
+                + "  number       = {1}," + OS.NEWLINE
+                + "  howpublished = {asdf}," + OS.NEWLINE
+                + "}" + OS.NEWLINE;
         // @formatter:on
         assertEquals(expected, stringWriter.toString());
     }
@@ -717,9 +717,9 @@ class BibEntryWriterTest {
 
         bibEntryWriter.write(entry, bibWriter, BibDatabaseMode.BIBTEX);
 
-        String expected = "@Article{," + OS.NEWLINE +
-                "  note   = {some note}," + OS.NEWLINE +
-                "}" + OS.NEWLINE;
+        String expected = "@Article{," + OS.NEWLINE
+                + "  note   = {some note}," + OS.NEWLINE
+                + "}" + OS.NEWLINE;
 
         assertEquals(expected, stringWriter.toString());
     }

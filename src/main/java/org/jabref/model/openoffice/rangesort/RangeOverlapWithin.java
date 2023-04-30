@@ -73,8 +73,8 @@ public class RangeOverlapWithin {
                     aValues.add(aHolder);
                     // aValues.add(bHolder);
                     // collect those equal
-                    while (i < (partition.size() - 1) &&
-                            UnoTextRange.compareStartsThenEndsUnsafe(
+                    while (i < (partition.size() - 1)
+                            && UnoTextRange.compareStartsThenEndsUnsafe(
                                     cmp,
                                     aRange,
                                     partition.get(i + 1).getRange()) == 0) {

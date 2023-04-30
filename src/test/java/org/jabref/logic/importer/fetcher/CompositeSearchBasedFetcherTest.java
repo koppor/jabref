@@ -63,8 +63,8 @@ public class CompositeSearchBasedFetcherTest {
         Assertions.assertEquals(queryResult, Collections.emptyList());
     }
 
-    @ParameterizedTest(name = "Perform search on query \"quantum\". Using the CompositeFetcher of the following " +
-            "Fetchers: {arguments}")
+    @ParameterizedTest(name = "Perform search on query \"quantum\". Using the CompositeFetcher of the following "
+            + "Fetchers: {arguments}")
     @MethodSource("performSearchParameters")
     public void performSearchOnNonEmptyQuery(Set<SearchBasedFetcher> fetchers) throws Exception {
         CompositeSearchBasedFetcher compositeFetcher = new CompositeSearchBasedFetcher(fetchers, Integer.MAX_VALUE);

@@ -59,8 +59,9 @@ public class GitIgnoreFileFilter implements DirectoryStream.Filter<Path> {
         // We assume that git does not stop at a patern, but tries all. We implement that behavior
         return gitIgnorePatterns.stream().noneMatch(filter ->
                 // we need this one for "*.png"
-                filter.matches(path.getFileName()) ||
+                filter.matches(path.getFileName())
                 // we need this one for "**/*.png"
+                || // we need this one for "**/*.png"
                 filter.matches(path));
     }
 }

@@ -301,8 +301,8 @@ public class ComplexSearchQuery {
         }
 
         private boolean textSearchFieldsAndYearFieldsAreEmpty() {
-            return this.stringListIsBlank(defaultFieldPhrases) && this.stringListIsBlank(titlePhrases) &&
-                    this.stringListIsBlank(authors) && this.stringListIsBlank(abstractPhrases) && StringUtil.isBlank(journal) && StringUtil.isBlank(doi) && yearFieldsAreEmpty();
+            return this.stringListIsBlank(defaultFieldPhrases) && this.stringListIsBlank(titlePhrases)
+                    && this.stringListIsBlank(authors) && this.stringListIsBlank(abstractPhrases) && StringUtil.isBlank(journal) && StringUtil.isBlank(doi) && yearFieldsAreEmpty();
         }
 
         private boolean yearFieldsAreEmpty() {

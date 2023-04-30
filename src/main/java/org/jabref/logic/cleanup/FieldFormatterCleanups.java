@@ -225,9 +225,9 @@ public class FieldFormatterCleanups {
 
     @Override
     public String toString() {
-        return "FieldFormatterCleanups{" +
-                "enabled=" + enabled + "," +
-                "actions=" + actions +
-                "}";
+        return "FieldFormatterCleanups{"
+                + "enabled=" + enabled + ","
+                + "actions=" + actions
+                + "}";
     }
 }

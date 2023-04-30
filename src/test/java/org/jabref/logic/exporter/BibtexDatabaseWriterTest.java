@@ -149,8 +149,8 @@ public class BibtexDatabaseWriterTest {
 
         databaseWriter.savePartOfDatabase(bibtexContext, Collections.emptyList());
 
-        assertEquals("% Encoding: US-ASCII" + OS.NEWLINE + OS.NEWLINE +
-                "@Preamble{Test preamble}" + OS.NEWLINE, stringWriter.toString());
+        assertEquals("% Encoding: US-ASCII" + OS.NEWLINE + OS.NEWLINE
+                + "@Preamble{Test preamble}" + OS.NEWLINE, stringWriter.toString());
     }
 
     @Test
@@ -207,8 +207,8 @@ public class BibtexDatabaseWriterTest {
         databaseWriter.savePartOfDatabase(bibtexContext, Collections.singletonList(entry));
 
         assertEquals(
-                "% Encoding: US-ASCII" + OS.NEWLINE + OS.NEWLINE +
-                        "@Article{," + OS.NEWLINE + "}"
+                "% Encoding: US-ASCII" + OS.NEWLINE + OS.NEWLINE
+                        + "@Article{," + OS.NEWLINE + "}"
                         + OS.NEWLINE,
                 stringWriter.toString());
     }
@@ -229,8 +229,8 @@ public class BibtexDatabaseWriterTest {
 
         databaseWriter.savePartOfDatabase(bibtexContext, Collections.emptyList());
 
-        assertEquals("% Encoding: US-ASCII" + OS.NEWLINE + OS.NEWLINE +
-                "Test epilog" + OS.NEWLINE, stringWriter.toString());
+        assertEquals("% Encoding: US-ASCII" + OS.NEWLINE + OS.NEWLINE
+                + "Test epilog" + OS.NEWLINE, stringWriter.toString());
     }
 
     @Test
@@ -276,8 +276,7 @@ public class BibtexDatabaseWriterTest {
         databaseWriter.savePartOfDatabase(bibtexContext, Collections.emptyList());
 
         assertEquals("% Encoding: US-ASCII" + OS.NEWLINE + OS.NEWLINE
-                +
-                "@Comment{jabref-meta: keypatterndefault:test;}" + OS.NEWLINE, stringWriter.toString());
+                + "@Comment{jabref-meta: keypatterndefault:test;}" + OS.NEWLINE, stringWriter.toString());
     }
 
     @Test
@@ -307,8 +306,8 @@ public class BibtexDatabaseWriterTest {
 
         // @formatter:off
         assertEquals(
-                "% Encoding: US-ASCII" + OS.NEWLINE +
-                        OS.NEWLINE
+                "% Encoding: US-ASCII" + OS.NEWLINE
+                        + OS.NEWLINE
                         + "@Comment{jabref-meta: grouping:" + OS.NEWLINE
                         + "0 AllEntriesGroup:;" + OS.NEWLINE
                         + "1 StaticGroup:test\\;2\\;1\\;\\;\\;\\;;" + OS.NEWLINE
@@ -332,8 +331,8 @@ public class BibtexDatabaseWriterTest {
 
         databaseWriter.savePartOfDatabase(bibtexContext, Collections.emptyList());
 
-        assertEquals("% Encoding: US-ASCII" + OS.NEWLINE + OS.NEWLINE +
-                "@String{name = {content}}" + OS.NEWLINE, stringWriter.toString());
+        assertEquals("% Encoding: US-ASCII" + OS.NEWLINE + OS.NEWLINE
+                + "@String{name = {content}}" + OS.NEWLINE, stringWriter.toString());
     }
 
     @Test
@@ -422,25 +421,25 @@ public class BibtexDatabaseWriterTest {
     @Test
     void roundtripUtf8EncodingHeaderRemoved() throws Exception {
         // @formatter:off
-        String bibtexEntry = OS.NEWLINE + "% Encoding: UTF8" + OS.NEWLINE +
-                OS.NEWLINE +
-                "@Article{," + OS.NEWLINE +
-                "  author  = {Foo Bar}," + OS.NEWLINE +
-                "  journal = {International Journal of Something}," + OS.NEWLINE +
-                "  note    = {some note}," + OS.NEWLINE +
-                "  number  = {1}," + OS.NEWLINE +
-                "}" + OS.NEWLINE;
+        String bibtexEntry = OS.NEWLINE + "% Encoding: UTF8" + OS.NEWLINE
+                + OS.NEWLINE
+                + "@Article{," + OS.NEWLINE
+                + "  author  = {Foo Bar}," + OS.NEWLINE
+                + "  journal = {International Journal of Something}," + OS.NEWLINE
+                + "  note    = {some note}," + OS.NEWLINE
+                + "  number  = {1}," + OS.NEWLINE
+                + "}" + OS.NEWLINE;
         // @formatter:on
         ParserResult result = new BibtexParser(importFormatPreferences, fileMonitor).parse(new StringReader(bibtexEntry));
         BibDatabaseContext context = new BibDatabaseContext(result.getDatabase(), result.getMetaData());
         databaseWriter.saveDatabase(context);
         // @formatter:off
-        String expected = "@Article{," + OS.NEWLINE +
-                "  author  = {Foo Bar}," + OS.NEWLINE +
-                "  journal = {International Journal of Something}," + OS.NEWLINE +
-                "  note    = {some note}," + OS.NEWLINE +
-                "  number  = {1}," + OS.NEWLINE +
-                "}" + OS.NEWLINE;
+        String expected = "@Article{," + OS.NEWLINE
+                + "  author  = {Foo Bar}," + OS.NEWLINE
+                + "  journal = {International Journal of Something}," + OS.NEWLINE
+                + "  note    = {some note}," + OS.NEWLINE
+                + "  number  = {1}," + OS.NEWLINE
+                + "}" + OS.NEWLINE;
         // @formatter:on
        assertEquals(expected, stringWriter.toString());
     }
@@ -550,13 +549,13 @@ public class BibtexDatabaseWriterTest {
 
     @Test
     void roundtripWithOneUserCommentAndEntryChange() throws Exception {
-        String bibEntry = "@Comment this in an unbracketed comment that should be preserved as well\n" +
-                "\n" +
-                "This is some arbitrary user comment that should be preserved\n" +
-                "\n" +
-                "@InProceedings{1137631,\n" +
-                "  author     = {Mr. Author},\n" +
-                "}\n";
+        String bibEntry = "@Comment this in an unbracketed comment that should be preserved as well\n"
+                + "\n"
+                + "This is some arbitrary user comment that should be preserved\n"
+                + "\n"
+                + "@InProceedings{1137631,\n"
+                + "  author     = {Mr. Author},\n"
+                + "}\n";
 
         // read in bibtex string
         ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
@@ -581,15 +580,15 @@ public class BibtexDatabaseWriterTest {
 
     @Test
     void roundtripWithTwoEntriesAndOneUserCommentAndEntryChange() throws Exception {
-        String bibEntry = "@Article{test,}\n" +
-                "\n" +
-                "@Comment this in an unbracketed comment that should be preserved as well\n" +
-                "\n" +
-                "This is some arbitrary user comment that should be preserved\n" +
-                "\n" +
-                "@InProceedings{1137631,\n" +
-                "  author     = {Mr. Author},\n" +
-                "}\n";
+        String bibEntry = "@Article{test,}\n"
+                + "\n"
+                + "@Comment this in an unbracketed comment that should be preserved as well\n"
+                + "\n"
+                + "This is some arbitrary user comment that should be preserved\n"
+                + "\n"
+                + "@InProceedings{1137631,\n"
+                + "  author     = {Mr. Author},\n"
+                + "}\n";
 
         // read in bibtex string
         ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
@@ -787,8 +786,8 @@ public class BibtexDatabaseWriterTest {
 
         databaseWriter.savePartOfDatabase(bibtexContext, Collections.emptyList());
 
-        assertEquals("@Comment{jabref-meta: fileDirectory:\\\\Literature\\\\;}" + OS.NEWLINE +
-                OS.NEWLINE + "@Comment{jabref-meta: fileDirectory-defaultOwner-user:D:\\\\Documents;}"
+        assertEquals("@Comment{jabref-meta: fileDirectory:\\\\Literature\\\\;}" + OS.NEWLINE
+                + OS.NEWLINE + "@Comment{jabref-meta: fileDirectory-defaultOwner-user:D:\\\\Documents;}"
                 + OS.NEWLINE + OS.NEWLINE + "@Comment{jabref-meta: fileDirectoryLatex-defaultOwner-user:D:\\\\Latex;}" + OS.NEWLINE, stringWriter.toString());
     }
 
@@ -821,20 +820,20 @@ public class BibtexDatabaseWriterTest {
 
         databaseWriter.savePartOfDatabase(bibtexContext, database.getEntries());
 
-        assertEquals("@Article{," + OS.NEWLINE +
-                        "  author = {A}," + OS.NEWLINE +
-                        "  year   = {2010}," + OS.NEWLINE +
-                        "}" + OS.NEWLINE + OS.NEWLINE +
-                        "@Article{," + OS.NEWLINE +
-                        "  author = {A}," + OS.NEWLINE +
-                        "  year   = {2000}," + OS.NEWLINE +
-                        "}" + OS.NEWLINE + OS.NEWLINE +
-                        "@Article{," + OS.NEWLINE +
-                        "  author = {B}," + OS.NEWLINE +
-                        "  year   = {2000}," + OS.NEWLINE +
-                        "}" + OS.NEWLINE + OS.NEWLINE +
-                        "@Comment{jabref-meta: saveOrderConfig:specified;author;false;year;true;abstract;false;}" +
-                        OS.NEWLINE,
+        assertEquals("@Article{," + OS.NEWLINE
+                        + "  author = {A}," + OS.NEWLINE
+                        + "  year   = {2010}," + OS.NEWLINE
+                        + "}" + OS.NEWLINE + OS.NEWLINE
+                        + "@Article{," + OS.NEWLINE
+                        + "  author = {A}," + OS.NEWLINE
+                        + "  year   = {2000}," + OS.NEWLINE
+                        + "}" + OS.NEWLINE + OS.NEWLINE
+                        + "@Article{," + OS.NEWLINE
+                        + "  author = {B}," + OS.NEWLINE
+                        + "  year   = {2000}," + OS.NEWLINE
+                        + "}" + OS.NEWLINE + OS.NEWLINE
+                        + "@Comment{jabref-meta: saveOrderConfig:specified;author;false;year;true;abstract;false;}"
+                        + OS.NEWLINE,
                 stringWriter.toString());
     }
 
@@ -861,18 +860,18 @@ public class BibtexDatabaseWriterTest {
 
         databaseWriter.savePartOfDatabase(bibtexContext, database.getEntries());
 
-        assertEquals("@Article{," + OS.NEWLINE +
-                        "  author = {A}," + OS.NEWLINE +
-                        "  year   = {2010}," + OS.NEWLINE +
-                        "}" + OS.NEWLINE + OS.NEWLINE +
-                        "@Article{," + OS.NEWLINE +
-                        "  author = {B}," + OS.NEWLINE +
-                        "  year   = {2000}," + OS.NEWLINE +
-                        "}" + OS.NEWLINE + OS.NEWLINE +
-                        "@Article{," + OS.NEWLINE +
-                        "  author = {A}," + OS.NEWLINE +
-                        "  year   = {2000}," + OS.NEWLINE +
-                        "}"
+        assertEquals("@Article{," + OS.NEWLINE
+                        + "  author = {A}," + OS.NEWLINE
+                        + "  year   = {2010}," + OS.NEWLINE
+                        + "}" + OS.NEWLINE + OS.NEWLINE
+                        + "@Article{," + OS.NEWLINE
+                        + "  author = {B}," + OS.NEWLINE
+                        + "  year   = {2000}," + OS.NEWLINE
+                        + "}" + OS.NEWLINE + OS.NEWLINE
+                        + "@Article{," + OS.NEWLINE
+                        + "  author = {A}," + OS.NEWLINE
+                        + "  year   = {2000}," + OS.NEWLINE
+                        + "}"
                         + OS.NEWLINE,
                 stringWriter.toString());
     }
@@ -885,9 +884,9 @@ public class BibtexDatabaseWriterTest {
 
         databaseWriter.saveDatabase(bibtexContext);
 
-        assertEquals("@Article{," + OS.NEWLINE +
-                        "  note = {some note}," + OS.NEWLINE +
-                        "}" + OS.NEWLINE,
+        assertEquals("@Article{," + OS.NEWLINE
+                        + "  note = {some note}," + OS.NEWLINE
+                        + "}" + OS.NEWLINE,
                 stringWriter.toString());
     }
 
@@ -901,9 +900,9 @@ public class BibtexDatabaseWriterTest {
 
         databaseWriter.saveDatabase(bibtexContext);
 
-        assertEquals("@Article{," + OS.NEWLINE +
-                        "  abstract = {" + text + "}," + OS.NEWLINE +
-                        "}" + OS.NEWLINE,
+        assertEquals("@Article{," + OS.NEWLINE
+                        + "  abstract = {" + text + "}," + OS.NEWLINE
+                        + "}" + OS.NEWLINE,
                 stringWriter.toString());
     }
 
@@ -926,12 +925,12 @@ public class BibtexDatabaseWriterTest {
     @Test
     void saveAlsoSavesSecondModification() throws Exception {
         // @formatter:off
-        String bibtexEntry = OS.NEWLINE + "@Article{test," + OS.NEWLINE +
-                "  Author                   = {Foo Bar}," + OS.NEWLINE +
-                "  Journal                  = {International Journal of Something}," + OS.NEWLINE +
-                "  Note                     = {some note}," + OS.NEWLINE +
-                "  Number                   = {1}," + OS.NEWLINE +
-                "}";
+        String bibtexEntry = OS.NEWLINE + "@Article{test," + OS.NEWLINE
+                + "  Author                   = {Foo Bar}," + OS.NEWLINE
+                + "  Journal                  = {International Journal of Something}," + OS.NEWLINE
+                + "  Note                     = {some note}," + OS.NEWLINE
+                + "  Number                   = {1}," + OS.NEWLINE
+                + "}";
         // @formatter:on
 
         // read in bibtex string
@@ -962,25 +961,25 @@ public class BibtexDatabaseWriterTest {
                 entryTypesManager);
         databaseWriter.savePartOfDatabase(context, firstParse.getDatabase().getEntries());
 
-        assertEquals("@Article{test," + OS.NEWLINE +
-                "  author  = {Test}," + OS.NEWLINE +
-                "  journal = {International Journal of Something}," + OS.NEWLINE +
-                "  note    = {some note}," + OS.NEWLINE +
-                "  number  = {1}," + OS.NEWLINE +
-                "}" + OS.NEWLINE +
-                "" + OS.NEWLINE +
-                "@Comment{jabref-meta: databaseType:bibtex;}" + OS.NEWLINE, stringWriter.toString());
+        assertEquals("@Article{test," + OS.NEWLINE
+                + "  author  = {Test}," + OS.NEWLINE
+                + "  journal = {International Journal of Something}," + OS.NEWLINE
+                + "  note    = {some note}," + OS.NEWLINE
+                + "  number  = {1}," + OS.NEWLINE
+                + "}" + OS.NEWLINE
+                + "" + OS.NEWLINE
+                + "@Comment{jabref-meta: databaseType:bibtex;}" + OS.NEWLINE, stringWriter.toString());
     }
 
     @Test
     void saveReturnsToOriginalEntryWhenEntryIsFlaggedUnchanged() throws Exception {
         // @formatter:off
-        String bibtexEntry = "@Article{test," + OS.NEWLINE +
-                "  Author                   = {Foo Bar}," + OS.NEWLINE +
-                "  Journal                  = {International Journal of Something}," + OS.NEWLINE +
-                "  Number                   = {1}," + OS.NEWLINE +
-                "  Note                     = {some note}," + OS.NEWLINE +
-                "}" + OS.NEWLINE;
+        String bibtexEntry = "@Article{test," + OS.NEWLINE
+                + "  Author                   = {Foo Bar}," + OS.NEWLINE
+                + "  Journal                  = {International Journal of Something}," + OS.NEWLINE
+                + "  Number                   = {1}," + OS.NEWLINE
+                + "  Note                     = {some note}," + OS.NEWLINE
+                + "}" + OS.NEWLINE;
         // @formatter:on
 
         // read in bibtex string
@@ -1005,12 +1004,12 @@ public class BibtexDatabaseWriterTest {
     @Test
     void saveReturnsToOriginalEntryWhenEntryIsFlaggedUnchangedEvenInThePresenceOfSavedModifications() throws Exception {
         // @formatter:off
-        String bibtexEntry = "@Article{test," + OS.NEWLINE +
-                "  Author                   = {Foo Bar}," + OS.NEWLINE +
-                "  Journal                  = {International Journal of Something}," + OS.NEWLINE +
-                "  Note                     = {some note}," + OS.NEWLINE +
-                "  Number                   = {1}," + OS.NEWLINE +
-                "}" + OS.NEWLINE;
+        String bibtexEntry = "@Article{test," + OS.NEWLINE
+                + "  Author                   = {Foo Bar}," + OS.NEWLINE
+                + "  Journal                  = {International Journal of Something}," + OS.NEWLINE
+                + "  Note                     = {some note}," + OS.NEWLINE
+                + "  Number                   = {1}," + OS.NEWLINE
+                + "}" + OS.NEWLINE;
         // @formatter:on
 
         // read in bibtex string

@@ -111,9 +111,9 @@ public class Theme {
 
     @Override
     public String toString() {
-        return "Theme{" +
-                "type=" + type +
-                ", name='" + name + '\'' +
-                '}';
+        return "Theme{"
+                + "type=" + type
+                + ", name='" + name + '\''
+                + '}';
     }
 }

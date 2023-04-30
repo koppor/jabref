@@ -127,8 +127,8 @@ public class BibDatabaseContext {
      */
     public boolean isStudy() {
         return this.getDatabasePath()
-                .map(path -> path.getFileName().toString().equals(Crawler.FILENAME_STUDY_RESULT_BIB) &&
-                        Files.exists(path.resolveSibling(StudyRepository.STUDY_DEFINITION_FILE_NAME)))
+                .map(path -> path.getFileName().toString().equals(Crawler.FILENAME_STUDY_RESULT_BIB)
+                        && Files.exists(path.resolveSibling(StudyRepository.STUDY_DEFINITION_FILE_NAME)))
                 .orElse(false);
     }
 
@@ -269,12 +269,12 @@ public class BibDatabaseContext {
 
     @Override
     public String toString() {
-        return "BibDatabaseContext{" +
-                "metaData=" + metaData +
-                ", mode=" + getMode() +
-                ", databasePath=" + getDatabasePath() +
-                ", biblatexMode=" + isBiblatexMode() +
-                ", fulltextIndexPath=" + getFulltextIndexPath() +
-                '}';
+        return "BibDatabaseContext{"
+                + "metaData=" + metaData
+                + ", mode=" + getMode()
+                + ", databasePath=" + getDatabasePath()
+                + ", biblatexMode=" + isBiblatexMode()
+                + ", fulltextIndexPath=" + getFulltextIndexPath()
+                + '}';
     }
 }

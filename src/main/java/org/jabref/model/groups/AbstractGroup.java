@@ -37,14 +37,14 @@ public abstract class AbstractGroup implements SearchMatcher {
 
     @Override
     public String toString() {
-        return "AbstractGroup{" +
-                "name='" + name.getValue() + '\'' +
-                ", context=" + context +
-                ", color=" + color +
-                ", isExpanded=" + isExpanded +
-                ", description=" + description +
-                ", iconName=" + iconName +
-                '}';
+        return "AbstractGroup{"
+                + "name='" + name.getValue() + '\''
+                + ", context=" + context
+                + ", color=" + color
+                + ", isExpanded=" + isExpanded
+                + ", description=" + description
+                + ", iconName=" + iconName
+                + '}';
     }
 
     @Override

@@ -113,8 +113,8 @@ public class ImportEntriesViewModel extends AbstractViewModel {
     }
 
     public boolean hasDuplicate(BibEntry entry) {
-        return findInternalDuplicate(entry).isPresent() ||
-                new DuplicateCheck(entryTypesManager)
+        return findInternalDuplicate(entry).isPresent()
+                || new DuplicateCheck(entryTypesManager)
                 .containsDuplicate(selectedDb.getValue().getDatabase(), entry, selectedDb.getValue().getMode()).isPresent();
     }
 

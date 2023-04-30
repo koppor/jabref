@@ -157,9 +157,9 @@ public class JabRefCLI {
     }
 
     public String getWriteMetadatatoPdf() {
-        return cl.hasOption("writeMetadatatoPdf") ? cl.getOptionValue("writeMetadatatoPdf") :
-                cl.hasOption("writeXMPtoPdf") ? cl.getOptionValue("writeXMPtoPdf") :
-                cl.hasOption("embeddBibfileInPdf") ? cl.getOptionValue("embeddBibfileInPdf") : null;
+        return cl.hasOption("writeMetadatatoPdf") ? cl.getOptionValue("writeMetadatatoPdf")
+                : cl.hasOption("writeXMPtoPdf") ? cl.getOptionValue("writeXMPtoPdf")
+                : cl.hasOption("embeddBibfileInPdf") ? cl.getOptionValue("embeddBibfileInPdf") : null;
     }
 
     private static Options getOptions() {

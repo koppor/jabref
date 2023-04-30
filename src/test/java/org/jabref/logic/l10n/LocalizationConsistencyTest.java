@@ -94,9 +94,9 @@ class LocalizationConsistencyTest {
                 .filter(key -> key.getKey().contains("\\_"))
                 .collect(Collectors.toList());
         assertEquals(Collections.emptyList(), quotedEntries,
-                "Language keys must not use underscores for spaces! Use \"This is a message\" instead of \"This_is_a_message\".\n" +
-                        "Please correct the following entries:\n" +
-                        quotedEntries
+                "Language keys must not use underscores for spaces! Use \"This is a message\" instead of \"This_is_a_message\".\n"
+                        + "Please correct the following entries:\n"
+                        + quotedEntries
                                 .stream()
                                 .map(key -> String.format("\n%s (%s)\n", key.getKey(), key.getPath()))
                                 .collect(Collectors.toList()));
@@ -110,9 +110,9 @@ class LocalizationConsistencyTest {
                 .filter(key -> key.getKey().contains("<br>") || key.getKey().contains("<p>"))
                 .collect(Collectors.toList());
         assertEquals(Collections.emptyList(), entriesWithHtml,
-                "Language keys must not contain HTML <br> or <p>. Use \\n for a line break.\n" +
-                        "Please correct the following entries:\n" +
-                        entriesWithHtml
+                "Language keys must not contain HTML <br> or <p>. Use \\n for a line break.\n"
+                        + "Please correct the following entries:\n"
+                        + entriesWithHtml
                                 .stream()
                                 .map(key -> String.format("\n%s (%s)\n", key.getKey(), key.getPath()))
                                 .collect(Collectors.toList()));
@@ -130,8 +130,8 @@ class LocalizationConsistencyTest {
                                    key.getEscapedPropertiesKey(),
                                    key.getValueForEnglishPropertiesFile()))
                            .collect(Collectors.joining("\n",
-                                   "\n\nDETECTED LANGUAGE KEYS WHICH ARE NOT IN THE ENGLISH LANGUAGE FILE\n" +
-                                           "PASTE THESE INTO THE ENGLISH LANGUAGE FILE\n\n",
+                                   "\n\nDETECTED LANGUAGE KEYS WHICH ARE NOT IN THE ENGLISH LANGUAGE FILE\n"
+                                           + "PASTE THESE INTO THE ENGLISH LANGUAGE FILE\n\n",
                                    "\n\n")));
     }
 
@@ -141,8 +141,8 @@ class LocalizationConsistencyTest {
         assertEquals(Collections.emptySet(), obsoleteKeys,
                 obsoleteKeys.stream().collect(Collectors.joining("\n",
                         "Obsolete keys found in language properties file: \n\n",
-                        "\n\n1. CHECK IF THE KEY IS REALLY NOT USED ANYMORE\n" +
-                                "2. REMOVE THESE FROM THE ENGLISH LANGUAGE FILE\n"))
+                        "\n\n1. CHECK IF THE KEY IS REALLY NOT USED ANYMORE\n"
+                                + "2. REMOVE THESE FROM THE ENGLISH LANGUAGE FILE\n"))
         );
     }
 

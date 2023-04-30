@@ -55,8 +55,8 @@ public class DOABFetcherTest {
                                 .withField(StandardField.URL, "http://library.oapen.org/handle/20.500.12657/25287")
                                 .withField(StandardField.URI, "https://directory.doabooks.org/handle/20.500.12854/26303")
                                 .withField(StandardField.LANGUAGE, "English")
-                                .withField(StandardField.KEYWORDS, "Open Access, Monographs, OAPEN Library, " +
-                                        "Directory of Open Access Books")
+                                .withField(StandardField.KEYWORDS, "Open Access, Monographs, OAPEN Library, "
+                                        + "Directory of Open Access Books")
                                 .withField(StandardField.PUBLISHER, "Amsterdam University Press"),
                         "the deliverance of open access books"
                 ),

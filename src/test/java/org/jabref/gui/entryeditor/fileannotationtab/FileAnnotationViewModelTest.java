@@ -19,8 +19,8 @@ public class FileAnnotationViewModelTest {
     @BeforeEach
     void setup() {
         String content = "This is content";
-        String marking = String.format("This is paragraph 1.%n" +
-                "This is paragr-%naph 2, and it crosses%nseveral lines,%nnow you can see next paragraph:%n"
+        String marking = String.format("This is paragraph 1.%n"
+                + "This is paragr-%naph 2, and it crosses%nseveral lines,%nnow you can see next paragraph:%n"
                 + "This is paragraph%n3.");
 
         FileAnnotation linkedFileAnnotation = new FileAnnotation("John", LocalDateTime.now(), 3, content, FileAnnotationType.FREETEXT, Optional.empty());
@@ -52,8 +52,8 @@ public class FileAnnotationViewModelTest {
 
     @Test
     public void retrieveCorrectContentWithoutLinkedFileAnnotation() {
-        String expectedMarking = String.format("This is paragraph 1.%n" +
-                "This is paragraph 2, and it crosses several lines, now you can see next paragraph:%n"
+        String expectedMarking = String.format("This is paragraph 1.%n"
+                + "This is paragraph 2, and it crosses several lines, now you can see next paragraph:%n"
                 + "This is paragraph 3.");
 
         assertEquals(expectedMarking, annotationViewModelWithoutFileAnnotation.getContent());
@@ -61,8 +61,8 @@ public class FileAnnotationViewModelTest {
 
     @Test
     public void removeOnlyLineBreaksNotPrecededByPeriodOrColon() {
-        String expectedMarking = String.format("This is paragraph 1.%n" +
-                "This is paragraph 2, and it crosses several lines, now you can see next paragraph:%n"
+        String expectedMarking = String.format("This is paragraph 1.%n"
+                + "This is paragraph 2, and it crosses several lines, now you can see next paragraph:%n"
                 + "This is paragraph 3.");
 
         assertEquals(expectedMarking, annotationViewModel.getMarking());

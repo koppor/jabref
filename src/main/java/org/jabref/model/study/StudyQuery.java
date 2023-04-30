@@ -42,8 +42,8 @@ public class StudyQuery {
 
     @Override
     public String toString() {
-        return "QueryEntry{" +
-                "query='" + query + '\'' +
-                '}';
+        return "QueryEntry{"
+                + "query='" + query + '\''
+                + '}';
     }
 }

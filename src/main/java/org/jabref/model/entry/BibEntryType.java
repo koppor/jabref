@@ -136,9 +136,9 @@ public class BibEntryType implements Comparable<BibEntryType> {
             return false;
         }
         BibEntryType that = (BibEntryType) o;
-        return type.equals(that.type) &&
-               Objects.equals(requiredFields, that.requiredFields) &&
-               Objects.equals(fields, that.fields);
+        return type.equals(that.type)
+               && Objects.equals(requiredFields, that.requiredFields)
+               && Objects.equals(fields, that.fields);
     }
 
     @Override
@@ -148,11 +148,11 @@ public class BibEntryType implements Comparable<BibEntryType> {
 
     @Override
     public String toString() {
-        return "BibEntryType{" +
-               "type=" + type +
-               ", requiredFields=" + requiredFields +
-               ", fields=" + fields +
-               '}';
+        return "BibEntryType{"
+               + "type=" + type
+               + ", requiredFields=" + requiredFields
+               + ", fields=" + fields
+               + '}';
     }
 
     @Override

@@ -40,9 +40,9 @@ public class FileNameUniqueness {
 
         int counter = 1;
         while (Files.exists(targetDirectory.resolve(newFileName))) {
-            newFileName = fileNameWithoutExtension +
-                    " (" + counter + ")" +
-                    extensionSuffix;
+            newFileName = fileNameWithoutExtension
+                    + " (" + counter + ")"
+                    + extensionSuffix;
             counter++;
         }
 
@@ -91,8 +91,8 @@ public class FileNameUniqueness {
                 return true;
             }
 
-            originalFileName = fileNameWithoutDuplicated +
-                    " (" + counter + ")"
+            originalFileName = fileNameWithoutDuplicated
+                    + " (" + counter + ")"
                     + extensionSuffix;
             counter++;
 

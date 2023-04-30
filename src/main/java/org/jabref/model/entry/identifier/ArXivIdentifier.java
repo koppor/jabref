@@ -73,10 +73,10 @@ public class ArXivIdentifier extends EprintIdentifier {
 
     @Override
     public String toString() {
-        return "ArXivIdentifier{" +
-                "identifier='" + identifier + '\'' +
-                ", classification='" + classification + '\'' +
-                '}';
+        return "ArXivIdentifier{"
+                + "identifier='" + identifier + '\''
+                + ", classification='" + classification + '\''
+                + '}';
     }
 
     @Override
@@ -89,8 +89,8 @@ public class ArXivIdentifier extends EprintIdentifier {
         }
 
         ArXivIdentifier that = (ArXivIdentifier) o;
-        return Objects.equals(identifier, that.identifier) &&
-                Objects.equals(classification, that.classification);
+        return Objects.equals(identifier, that.identifier)
+                && Objects.equals(classification, that.classification);
     }
 
     @Override

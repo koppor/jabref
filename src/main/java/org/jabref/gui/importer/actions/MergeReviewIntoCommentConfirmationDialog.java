@@ -24,10 +24,10 @@ public class MergeReviewIntoCommentConfirmationDialog {
                 .map(Optional::get)
                 .collect(Collectors.joining(",\n"));
 
-        String content = bibKeys + " " +
-                Localization.lang("has/have both a 'Comment' and a 'Review' field.") + "\n" +
-                Localization.lang("Since the 'Review' field was deprecated in JabRef 4.2, these two fields are about to be merged into the 'Comment' field.") + "\n" +
-                Localization.lang("The conflicting fields of these entries will be merged into the 'Comment' field.");
+        String content = bibKeys + " "
+                + Localization.lang("has/have both a 'Comment' and a 'Review' field.") + "\n"
+                + Localization.lang("Since the 'Review' field was deprecated in JabRef 4.2, these two fields are about to be merged into the 'Comment' field.") + "\n"
+                + Localization.lang("The conflicting fields of these entries will be merged into the 'Comment' field.");
 
         return dialogService.showConfirmationDialogAndWait(
                 Localization.lang("Review Field Migration"),

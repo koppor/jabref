@@ -45,16 +45,16 @@ public class PostgreSQLProcessor extends DBMSProcessor {
         connection.createStatement().executeUpdate("CREATE SCHEMA IF NOT EXISTS jabref");
 
         connection.createStatement().executeUpdate(
-                "CREATE TABLE IF NOT EXISTS " + escapeTable("ENTRY") + " (" +
-                        "\"SHARED_ID\" SERIAL PRIMARY KEY, " +
-                        "\"TYPE\" VARCHAR, " +
-                        "\"VERSION\" INTEGER DEFAULT 1)");
+                "CREATE TABLE IF NOT EXISTS " + escapeTable("ENTRY") + " ("
+                        + "\"SHARED_ID\" SERIAL PRIMARY KEY, "
+                        + "\"TYPE\" VARCHAR, "
+                        + "\"VERSION\" INTEGER DEFAULT 1)");
 
         connection.createStatement().executeUpdate(
-                "CREATE TABLE IF NOT EXISTS " + escapeTable("FIELD") + " (" +
-                        "\"ENTRY_SHARED_ID\" INTEGER REFERENCES " + escapeTable("ENTRY") + "(\"SHARED_ID\") ON DELETE CASCADE, " +
-                        "\"NAME\" VARCHAR, " +
-                        "\"VALUE\" TEXT)");
+                "CREATE TABLE IF NOT EXISTS " + escapeTable("FIELD") + " ("
+                        + "\"ENTRY_SHARED_ID\" INTEGER REFERENCES " + escapeTable("ENTRY") + "(\"SHARED_ID\") ON DELETE CASCADE, "
+                        + "\"NAME\" VARCHAR, "
+                        + "\"VALUE\" TEXT)");
 
         connection.createStatement().executeUpdate(
                 "CREATE TABLE IF NOT EXISTS " + escapeTable("METADATA") + " ("

@@ -69,11 +69,11 @@ public class CitationStyleGenerator {
         } catch (TokenMgrException e) {
             LOGGER.error("Bad character inside BibEntry", e);
             // sadly one cannot easily retrieve the bad char from the TokenMgrError
-            return Collections.singletonList(Localization.lang("Cannot generate preview based on selected citation style.") +
-                    outputFormat.getLineSeparator() +
-                    Localization.lang("Bad character inside entry") +
-                    outputFormat.getLineSeparator() +
-                    e.getLocalizedMessage());
+            return Collections.singletonList(Localization.lang("Cannot generate preview based on selected citation style.")
+                    + outputFormat.getLineSeparator()
+                    + Localization.lang("Bad character inside entry")
+                    + outputFormat.getLineSeparator()
+                    + e.getLocalizedMessage());
         }
     }
 }

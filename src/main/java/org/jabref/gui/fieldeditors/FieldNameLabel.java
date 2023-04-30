@@ -61,8 +61,8 @@ public class FieldNameLabel extends Label {
                 case COMMENT:
                     return Localization.lang("Comment to this entry.");
                 case COMMENTATOR:
-                    return Localization.lang("Author(s) of a commentary to the work.") + "\n" +
-                            Localization.lang("Note that this field is intended for commented editions which have a commentator in addition to the author. If the work is a stand-alone commentary, the commentator should be given in the author field.");
+                    return Localization.lang("Author(s) of a commentary to the work.") + "\n"
+                            + Localization.lang("Note that this field is intended for commented editions which have a commentator in addition to the author. If the work is a stand-alone commentary, the commentator should be given in the author field.");
                 case DATE:
                     return Localization.lang("Publication date of the work.");
                 case DOI:
@@ -86,15 +86,15 @@ public class FieldNameLabel extends Label {
                 case EDITORCTYPE:
                     return Localization.lang("Type of editorial role performed by the \"Editorc\".");
                 case EID:
-                    return Localization.lang("Electronic identifier of a work.") + "\n" +
-                            Localization.lang("This field may replace the pages field for journals deviating from the classic pagination scheme of printed journals by only enumerating articles or papers and not pages.");
+                    return Localization.lang("Electronic identifier of a work.") + "\n"
+                            + Localization.lang("This field may replace the pages field for journals deviating from the classic pagination scheme of printed journals by only enumerating articles or papers and not pages.");
                 case EPRINT:
-                    return Localization.lang("Electronic identifier of an online publication.") + "\n" +
-                            Localization.lang("This is roughly comparable to a DOI but specific to a certain archive, repository, service, or system.");
+                    return Localization.lang("Electronic identifier of an online publication.") + "\n"
+                            + Localization.lang("This is roughly comparable to a DOI but specific to a certain archive, repository, service, or system.");
                 case EPRINTCLASS:
                 case PRIMARYCLASS:
-                    return Localization.lang("Additional information related to the resource indicated by the eprint field.") + "\n" +
-                            Localization.lang("This could be a section of an archive, a path indicating a service, a classification of some sort.");
+                    return Localization.lang("Additional information related to the resource indicated by the eprint field.") + "\n"
+                            + Localization.lang("This could be a section of an archive, a path indicating a service, a classification of some sort.");
                 case EPRINTTYPE:
                 case ARCHIVEPREFIX:
                     return Localization.lang("Type of the eprint identifier, e. g., the name of the archive, repository, service, or system the eprint field refers to.");
@@ -104,8 +104,8 @@ public class FieldNameLabel extends Label {
                     return Localization.lang("Title of a conference, a symposium, or some other event.") + "\n"
                             + Localization.lang("Note that this field holds the plain title of the event. Things like \"Proceedings of the Fifth XYZ Conference\" go into the titleaddon or booktitleaddon field.");
                 case EVENTTITLEADDON:
-                    return Localization.lang("Annex to the eventtitle field.") + "\n" +
-                            Localization.lang("Can be used for known event acronyms.");
+                    return Localization.lang("Annex to the eventtitle field.") + "\n"
+                            + Localization.lang("Can be used for known event acronyms.");
                 case FILE:
                 case PDF:
                     return Localization.lang("Link(s) to a local PDF or other document of the work.");
@@ -125,8 +125,8 @@ public class FieldNameLabel extends Label {
                 case ISSN:
                     return Localization.lang("International Standard Serial Number of a periodical.");
                 case ISSUE:
-                    return Localization.lang("Issue of a journal.") + "\n" +
-                            Localization.lang("This field is intended for journals whose individual issues are identified by a designation such as \"Spring\" or \"Summer\" rather than the month or a number. Integer ranges and short designators are better written to the number field.");
+                    return Localization.lang("Issue of a journal.") + "\n"
+                            + Localization.lang("This field is intended for journals whose individual issues are identified by a designation such as \"Spring\" or \"Summer\" rather than the month or a number. Integer ranges and short designators are better written to the number field.");
                 case ISSUESUBTITLE:
                     return Localization.lang("Subtitle of a specific issue of a journal or other periodical.");
                 case ISSUETITLE:
@@ -166,8 +166,8 @@ public class FieldNameLabel extends Label {
                 case ORIGLANGUAGE:
                     return Localization.lang("If the work is a translation, the language(s) of the original work.");
                 case PAGES:
-                    return Localization.lang("One or more page numbers or page ranges.") + "\n" +
-                            Localization.lang("If the work is published as part of another one, such as an article in a journal or a collection, this field holds the relevant page range in that other work. It may also be used to limit the reference to a specific part of a work (a chapter in a book, for example). For papers in electronic journals with anon-classical pagination setup the eid field may be more suitable.");
+                    return Localization.lang("One or more page numbers or page ranges.") + "\n"
+                            + Localization.lang("If the work is published as part of another one, such as an article in a journal or a collection, this field holds the relevant page range in that other work. It may also be used to limit the reference to a specific part of a work (a chapter in a book, for example). For papers in electronic journals with anon-classical pagination setup the eid field may be more suitable.");
                 case PAGETOTAL:
                     return Localization.lang("Total number of pages of the work.");
                 case PAGINATION:

@@ -127,8 +127,8 @@ class LayoutTest {
 
         // combined (!a&&b)
         layoutText = layout(
-                "\\begin{!editor&&author}\\format[HTMLChars]{\\author}\\end{!editor&&author}" +
-                "\\begin{editor&&!author}\\format[HTMLChars]{\\editor} (eds.)\\end{editor&&!author}", entry);
+                "\\begin{!editor&&author}\\format[HTMLChars]{\\author}\\end{!editor&&author}"
+                + "\\begin{editor&&!author}\\format[HTMLChars]{\\editor} (eds.)\\end{editor&&!author}", entry);
 
         assertEquals("Author", layoutText);
     }

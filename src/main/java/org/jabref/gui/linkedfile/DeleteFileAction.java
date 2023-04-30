@@ -59,15 +59,15 @@ public class DeleteFileAction extends SimpleCommand {
 
         if (toBeDeleted.size() != 1) {
             dialogTitle = Localization.lang("Delete %0 files", toBeDeleted.size());
-            dialogContent = Localization.lang("Delete %0 files permanently from disk, or just remove the files from the entry? " +
-                    "Pressing Delete will delete the files permanently from disk.", toBeDeleted.size());
+            dialogContent = Localization.lang("Delete %0 files permanently from disk, or just remove the files from the entry? "
+                    + "Pressing Delete will delete the files permanently from disk.", toBeDeleted.size());
         } else {
             Optional<Path> file = toBeDeleted.get(0).getFile().findIn(databaseContext, preferences.getFilePreferences());
 
             if (file.isPresent()) {
                 dialogTitle = Localization.lang("Delete '%0'", file.get().getFileName().toString());
-                dialogContent = Localization.lang("Delete '%0' permanently from disk, or just remove the file from the entry? " +
-                        "Pressing Delete will delete the file permanently from disk.", file.get().toString());
+                dialogContent = Localization.lang("Delete '%0' permanently from disk, or just remove the file from the entry? "
+                        + "Pressing Delete will delete the file permanently from disk.", file.get().toString());
             } else {
                 dialogService.notify(Localization.lang("Error accessing file '%0'.", toBeDeleted.get(0).getFile().getLink()));
                 return;

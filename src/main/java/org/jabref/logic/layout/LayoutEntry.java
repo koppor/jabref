@@ -157,8 +157,8 @@ class LayoutEntry {
                 case LayoutHelper.IS_GROUP_END:
                     if (blockStart.equals(parsedEntry.s)) {
                         blockEntries.add(parsedEntry);
-                        int groupType = parsedEntry.i == LayoutHelper.IS_GROUP_END ? LayoutHelper.IS_GROUP_START :
-                                LayoutHelper.IS_FIELD_START;
+                        int groupType = parsedEntry.i == LayoutHelper.IS_GROUP_END ? LayoutHelper.IS_GROUP_START
+                                : LayoutHelper.IS_FIELD_START;
                         LayoutEntry le = new LayoutEntry(blockEntries, groupType, fileDirForDatabase, preferences);
                         tmpEntries.add(le);
                         blockEntries = null;

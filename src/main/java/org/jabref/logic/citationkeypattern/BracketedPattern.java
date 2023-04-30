@@ -524,9 +524,9 @@ public class BracketedPattern {
                          .map((author) -> {
                              // If the author is an institution, use an institution key instead of the full name
                              String lastName = author.getLast()
-                                                     .map(lastPart -> isInstitution(author) ?
-                                                             generateInstitutionKey(lastPart) :
-                                                             LatexToUnicodeAdapter.format(lastPart))
+                                                     .map(lastPart -> isInstitution(author)
+                                                             ? generateInstitutionKey(lastPart)
+                                                             : LatexToUnicodeAdapter.format(lastPart))
                                                      .orElse(null);
                              return new Author(
                                      author.getFirst().map(LatexToUnicodeAdapter::format).orElse(null),
@@ -755,8 +755,8 @@ public class BracketedPattern {
      * never return null.
      */
     private static String firstAuthorVonAndLast(AuthorList authorList) {
-        return authorList.isEmpty() ? "" :
-                authorList.getAuthor(0).getLastOnly().replaceAll(" ", "");
+        return authorList.isEmpty() ? ""
+                : authorList.getAuthor(0).getLastOnly().replaceAll(" ", "");
     }
 
     /**

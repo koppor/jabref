@@ -68,10 +68,10 @@ public class FulltextSearchResultsTab extends EntryEditorTab {
 
     @Override
     public boolean shouldShow(BibEntry entry) {
-        return this.stateManager.activeSearchQueryProperty().isPresent().get() &&
-                this.stateManager.activeSearchQueryProperty().get().isPresent() &&
-                this.stateManager.activeSearchQueryProperty().get().get().getSearchFlags().contains(SearchRules.SearchFlags.FULLTEXT) &&
-                this.stateManager.activeSearchQueryProperty().get().get().getQuery().length() > 0;
+        return this.stateManager.activeSearchQueryProperty().isPresent().get()
+                && this.stateManager.activeSearchQueryProperty().get().isPresent()
+                && this.stateManager.activeSearchQueryProperty().get().get().getSearchFlags().contains(SearchRules.SearchFlags.FULLTEXT)
+                && this.stateManager.activeSearchQueryProperty().get().get().getQuery().length() > 0;
     }
 
     @Override

@@ -74,10 +74,10 @@ public class InspecImporterTest {
 
     @Test
     public void importConferencePaperGivesInproceedings() throws IOException {
-        String testInput = "Record.*INSPEC.*\n" +
-                "\n" +
-                "RT ~ Conference-Paper\n" +
-                "AU ~ Prechelt, Lutz";
+        String testInput = "Record.*INSPEC.*\n"
+                + "\n"
+                + "RT ~ Conference-Paper\n"
+                + "AU ~ Prechelt, Lutz";
         BibEntry expectedEntry = new BibEntry(StandardEntryType.InProceedings);
         expectedEntry.setField(StandardField.AUTHOR, "Prechelt, Lutz");
 
@@ -89,10 +89,10 @@ public class InspecImporterTest {
 
     @Test
     public void importMiscGivesMisc() throws IOException {
-        String testInput = "Record.*INSPEC.*\n" +
-                "\n" +
-                "AU ~ Prechelt, Lutz \n" +
-                "RT ~ Misc";
+        String testInput = "Record.*INSPEC.*\n"
+                + "\n"
+                + "AU ~ Prechelt, Lutz \n"
+                + "RT ~ Misc";
         BibEntry expectedEntry = new BibEntry(StandardEntryType.Misc);
         expectedEntry.setField(StandardField.AUTHOR, "Prechelt, Lutz");
 

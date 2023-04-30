@@ -31,8 +31,8 @@ public class BiblioscapeImporterTest {
 
     @Test
     public void testGetDescription() {
-        assertEquals("Imports a Biblioscape Tag File.\n" +
-                "Several Biblioscape field types are ignored. Others are only included in the BibTeX field \"comment\".", importer.getDescription());
+        assertEquals("Imports a Biblioscape Tag File.\n"
+                + "Several Biblioscape field types are ignored. Others are only included in the BibTeX field \"comment\".", importer.getDescription());
     }
 
     @Test

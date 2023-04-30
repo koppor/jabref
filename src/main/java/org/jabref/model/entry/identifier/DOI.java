@@ -220,9 +220,9 @@ public class DOI implements Identifier {
 
     @Override
     public String toString() {
-        return "DOI{" +
-                "doi='" + doi + '\'' +
-                '}';
+        return "DOI{"
+                + "doi='" + doi + '\''
+                + '}';
     }
 
     /**

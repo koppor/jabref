@@ -223,8 +223,8 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
                         addEntry = entry.getField(StandardField.YEAR).filter(year -> {
                             int yearAsInteger = Integer.parseInt(year);
                             return
-                                    transformer.getStartYear().map(startYear -> yearAsInteger >= startYear).orElse(true) &&
-                                            transformer.getEndYear().map(endYear -> yearAsInteger <= endYear).orElse(true);
+                                    transformer.getStartYear().map(startYear -> yearAsInteger >= startYear).orElse(true)
+                                            && transformer.getEndYear().map(endYear -> yearAsInteger <= endYear).orElse(true);
                         }).isPresent();
                     } else {
                         addEntry = true;

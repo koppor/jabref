@@ -126,8 +126,8 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
             return false;
         }
         GroupTreeNode that = (GroupTreeNode) o;
-        return Objects.equals(group, that.group) &&
-                Objects.equals(getChildren(), that.getChildren());
+        return Objects.equals(group, that.group)
+                && Objects.equals(getChildren(), that.getChildren());
     }
 
     @Override
@@ -256,9 +256,9 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
 
     @Override
     public String toString() {
-        return "GroupTreeNode{" +
-                "group=" + group +
-                '}';
+        return "GroupTreeNode{"
+                + "group=" + group
+                + '}';
     }
 
     /**

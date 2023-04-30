@@ -101,10 +101,10 @@ public class ErrorConsoleViewModel extends AbstractViewModel {
 
             dialogService.notify(Localization.lang("Issue on GitHub successfully reported."));
             dialogService.showInformationDialogAndWait(Localization.lang("Issue report successful"),
-                    Localization.lang("Your issue was reported in your browser.") + "\n" +
-                            Localization.lang("The log and exception information was copied to your clipboard.") + " " +
-                            Localization.lang("Please paste this information (with Ctrl+V) in the issue description.") + "\n" +
-                            Localization.lang("Please also add all steps to reproduce this issue, if possible."));
+                    Localization.lang("Your issue was reported in your browser.") + "\n"
+                            + Localization.lang("The log and exception information was copied to your clipboard.") + " "
+                            + Localization.lang("Please paste this information (with Ctrl+V) in the issue description.") + "\n"
+                            + Localization.lang("Please also add all steps to reproduce this issue, if possible."));
 
             URIBuilder uriBuilder = new URIBuilder()
                     .setScheme("https").setHost("github.com")

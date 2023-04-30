@@ -92,8 +92,8 @@ public class LinkedIdentifierColumn extends MainTableColumn<Map<Field, String>> 
         }
 
         values.keySet().forEach(field -> {
-            MenuItem menuItem = new MenuItem(field.getDisplayName() + ": " +
-                    ControlHelper.truncateString(values.get(field), -1, "...", ControlHelper.EllipsisPosition.CENTER),
+            MenuItem menuItem = new MenuItem(field.getDisplayName() + ": "
+                    + ControlHelper.truncateString(values.get(field), -1, "...", ControlHelper.EllipsisPosition.CENTER),
                     cellFactory.getTableIcon(field));
             menuItem.setOnAction(event -> {
                 try {

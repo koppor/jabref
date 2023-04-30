@@ -134,9 +134,9 @@ public class JabRefGUI {
 
         if (!(Globals.getFileUpdateMonitor().isActive())) {
             getMainFrame().getDialogService()
-                          .showErrorDialogAndWait(Localization.lang("Unable to monitor file changes. Please close files " +
-                                  "and processes and restart. You may encounter errors if you continue " +
-                                  "with this session."));
+                          .showErrorDialogAndWait(Localization.lang("Unable to monitor file changes. Please close files "
+                                  + "and processes and restart. You may encounter errors if you continue "
+                                  + "with this session."));
         }
     }
 
@@ -204,8 +204,8 @@ public class JabRefGUI {
 
         for (ParserResult pr : failed) {
             String message = Localization.lang("Error opening file '%0'.",
-                    pr.getPath().map(Path::toString).orElse("(File name unknown)")) + "\n" +
-                    pr.getErrorMessage();
+                    pr.getPath().map(Path::toString).orElse("(File name unknown)")) + "\n"
+                    + pr.getErrorMessage();
 
             mainFrame.getDialogService().showErrorDialogAndWait(Localization.lang("Error opening file"), message);
         }
@@ -252,12 +252,12 @@ public class JabRefGUI {
      */
     private void debugLogWindowState(Stage mainStage) {
         if (LOGGER.isDebugEnabled()) {
-            String debugLogString = "SCREEN DATA:" +
-                    "mainStage.WINDOW_MAXIMISED: " + mainStage.isMaximized() + "\n" +
-                    "mainStage.POS_X: " + mainStage.getX() + "\n" +
-                    "mainStage.POS_Y: " + mainStage.getY() + "\n" +
-                    "mainStage.SIZE_X: " + mainStage.getWidth() + "\n" +
-                    "mainStages.SIZE_Y: " + mainStage.getHeight() + "\n";
+            String debugLogString = "SCREEN DATA:"
+                    + "mainStage.WINDOW_MAXIMISED: " + mainStage.isMaximized() + "\n"
+                    + "mainStage.POS_X: " + mainStage.getX() + "\n"
+                    + "mainStage.POS_Y: " + mainStage.getY() + "\n"
+                    + "mainStage.SIZE_X: " + mainStage.getWidth() + "\n"
+                    + "mainStages.SIZE_Y: " + mainStage.getHeight() + "\n";
             LOGGER.debug(debugLogString);
         }
     }

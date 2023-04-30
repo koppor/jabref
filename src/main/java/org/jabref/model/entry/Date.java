@@ -191,13 +191,13 @@ public class Date {
         }
         Date date1 = (Date) o;
 
-        return Objects.equals(getYear(), date1.getYear()) &&
-                Objects.equals(getMonth(), date1.getMonth()) &&
-                Objects.equals(getDay(), date1.getDay()) &&
-                Objects.equals(get(ChronoField.HOUR_OF_DAY), date1.get(ChronoField.HOUR_OF_DAY)) &&
-                Objects.equals(get(ChronoField.MINUTE_OF_HOUR), date1.get(ChronoField.MINUTE_OF_HOUR)) &&
-                Objects.equals(get(ChronoField.SECOND_OF_DAY), date1.get(ChronoField.SECOND_OF_DAY)) &&
-                Objects.equals(get(ChronoField.OFFSET_SECONDS), date1.get(ChronoField.OFFSET_SECONDS));
+        return Objects.equals(getYear(), date1.getYear())
+                && Objects.equals(getMonth(), date1.getMonth())
+                && Objects.equals(getDay(), date1.getDay())
+                && Objects.equals(get(ChronoField.HOUR_OF_DAY), date1.get(ChronoField.HOUR_OF_DAY))
+                && Objects.equals(get(ChronoField.MINUTE_OF_HOUR), date1.get(ChronoField.MINUTE_OF_HOUR))
+                && Objects.equals(get(ChronoField.SECOND_OF_DAY), date1.get(ChronoField.SECOND_OF_DAY))
+                && Objects.equals(get(ChronoField.OFFSET_SECONDS), date1.get(ChronoField.OFFSET_SECONDS));
     }
 
     @Override
@@ -210,9 +210,9 @@ public class Date {
         } else {
             formattedDate = DateTimeFormatter.ISO_DATE.format(date);
         }
-        return "Date{" +
-                "date=" + formattedDate +
-                '}';
+        return "Date{"
+                + "date=" + formattedDate
+                + '}';
     }
 
     @Override

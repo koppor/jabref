@@ -70,8 +70,8 @@ public class ViewModelTreeCellFactory<T> implements Callback<TreeView<T>, TreeCe
         StringConverter<TreeItem<T>> converter = new StringConverter<TreeItem<T>>() {
             @Override
             public String toString(TreeItem<T> treeItem) {
-                return (treeItem == null || treeItem.getValue() == null || toText == null) ?
-                        "" : toText.call(treeItem.getValue());
+                return (treeItem == null || treeItem.getValue() == null || toText == null)
+                        ? "" : toText.call(treeItem.getValue());
             }
 
             @Override

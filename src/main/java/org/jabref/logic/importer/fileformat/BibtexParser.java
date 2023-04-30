@@ -383,9 +383,9 @@ public class BibtexParser implements Parser {
             runningIndex++;
         }
         // strip empty lines
-        while ((runningIndex < indexOfAt) &&
-                ((context.charAt(runningIndex) == '\r') ||
-                        (context.charAt(runningIndex) == '\n'))) {
+        while ((runningIndex < indexOfAt)
+                && ((context.charAt(runningIndex) == '\r')
+                        || (context.charAt(runningIndex) == '\n'))) {
             runningIndex++;
         }
         return context.substring(runningIndex);
