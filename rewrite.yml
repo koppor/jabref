@@ -35,8 +35,10 @@ recipeList:
   #  - org.openrewrite.java.cleanup.LambdaBlockToExpression
   # Works on case-senstive file systems only
   #  - org.openrewrite.java.cleanup.LowercasePackage
-  # Needs manual intervention (not fixable)
+  # Needs manual intervention (not fixable at existing code)
   #  - org.openrewrite.java.cleanup.MethodNameCasing
+  # Needs manual intervention (not fixable at existing code)
+  #  - org.openrewrite.java.cleanup.MinimumSwitchCases
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -66,7 +68,6 @@ recipeList:
   - org.openrewrite.java.cleanup.IsEmptyCallOnCollections
   - org.openrewrite.java.cleanup.LowercasePackage
   - org.openrewrite.java.cleanup.MethodParamPad
-#  - org.openrewrite.java.cleanup.MinimumSwitchCases
 #  - org.openrewrite.java.cleanup.MissingOverrideAnnotation
 #  - org.openrewrite.java.cleanup.ModifierOrder
 #  - org.openrewrite.java.cleanup.MultipleVariableDeclarations

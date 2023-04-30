@@ -216,14 +216,12 @@ public class LinkedFilesEditor extends HBox implements FieldEditorFX {
         listView.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             Optional<KeyBinding> keyBinding = Globals.getKeyPrefs().mapToKeyBinding(event);
             if (keyBinding.isPresent()) {
-                switch (keyBinding.get()) {
-                    case DELETE_ENTRY:
-                        new DeleteFileAction(dialogService, preferencesService, databaseContext,
-                                viewModel, listView).execute();
-                        event.consume();
-                        break;
-                    default:
-                        // Pass other keys to children
+                if (keyBinding.get() == KeyBinding.DELETE_ENTRY) {
+                    new DeleteFileAction(dialogService, preferencesService, databaseContext,
+                            viewModel, listView).execute();
+                    event.consume();
+                } else {
+                    // Pass other keys to children
                 }
             }
         });

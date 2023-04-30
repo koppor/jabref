@@ -224,9 +224,8 @@ public class FieldNameLabel extends Label {
                     return Localization.lang("Timestamp of this entry, when it has been created or last modified.");
             }
         } else if (field instanceof InternalField internalField) {
-            switch (internalField) {
-                case KEY_FIELD:
-                    return Localization.lang("Key by which the work may be cited.");
+            if (internalField == InternalField.KEY_FIELD) {
+                return Localization.lang("Key by which the work may be cited.");
             }
         } else if (field instanceof SpecialField specialField) {
             switch (specialField) {
