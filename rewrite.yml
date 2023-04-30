@@ -69,7 +69,7 @@ recipeList:
   - org.openrewrite.java.cleanup.MethodParamPad
   - org.openrewrite.java.cleanup.MissingOverrideAnnotation
   - org.openrewrite.java.cleanup.ModifierOrder
-#  - org.openrewrite.java.cleanup.MultipleVariableDeclarations
+  - org.openrewrite.java.cleanup.MultipleVariableDeclarations
 #  - org.openrewrite.java.cleanup.NeedBraces
 #  - org.openrewrite.java.cleanup.NestedEnumsAreNotStatic
 #  - org.openrewrite.java.cleanup.NewStringBuilderBufferWithCharArgument
