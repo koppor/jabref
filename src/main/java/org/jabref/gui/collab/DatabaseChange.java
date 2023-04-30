@@ -21,7 +21,7 @@ import org.jabref.gui.undo.NamedCompound;
 import org.jabref.gui.util.OptionalObjectProperty;
 import org.jabref.model.database.BibDatabaseContext;
 
-public sealed abstract class DatabaseChange permits EntryAdd, EntryChange, EntryDelete, GroupChange, MetadataChange, PreambleChange, BibTexStringAdd, BibTexStringChange, BibTexStringDelete, BibTexStringRename {
+public abstract sealed class DatabaseChange permits EntryAdd, EntryChange, EntryDelete, GroupChange, MetadataChange, PreambleChange, BibTexStringAdd, BibTexStringChange, BibTexStringDelete, BibTexStringRename {
     protected final BibDatabaseContext databaseContext;
     protected final OptionalObjectProperty<DatabaseChangeResolver> externalChangeResolver = OptionalObjectProperty.empty();
     private final BooleanProperty accepted = new SimpleBooleanProperty();

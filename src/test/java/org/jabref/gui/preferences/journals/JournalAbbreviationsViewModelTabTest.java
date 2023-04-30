@@ -39,24 +39,24 @@ import static org.mockito.Mockito.when;
 
 class JournalAbbreviationsViewModelTabTest {
 
-    private final static TestAbbreviation ABBREVIATION_0 = new TestAbbreviation("Full0", "Abb0");
-    private final static TestAbbreviation ABBREVIATION_0_OTHER_SHORT_UNIQUE = new TestAbbreviation("Full0", "Abb0", "A0");
+    private static final TestAbbreviation ABBREVIATION_0 = new TestAbbreviation("Full0", "Abb0");
+    private static final TestAbbreviation ABBREVIATION_0_OTHER_SHORT_UNIQUE = new TestAbbreviation("Full0", "Abb0", "A0");
 
-    private final static TestAbbreviation ABBREVIATION_1 = new TestAbbreviation("Full1", "Abb1");
-    private final static TestAbbreviation ABBREVIATION_1_SHOW = new TestAbbreviation("Full1", "Abb1", true);
-    private final static TestAbbreviation ABBREVIATION_1_OTHER_SHORT_UNIQUE = new TestAbbreviation("Full1", "Abb1", "A1");
+    private static final TestAbbreviation ABBREVIATION_1 = new TestAbbreviation("Full1", "Abb1");
+    private static final TestAbbreviation ABBREVIATION_1_SHOW = new TestAbbreviation("Full1", "Abb1", true);
+    private static final TestAbbreviation ABBREVIATION_1_OTHER_SHORT_UNIQUE = new TestAbbreviation("Full1", "Abb1", "A1");
 
-    private final static TestAbbreviation ABBREVIATION_2 = new TestAbbreviation("Full2", "Abb2");
-    private final static TestAbbreviation ABBREVIATION_2_OTHER_SHORT_UNIQUE = new TestAbbreviation("Full2", "Abb2", "A2");
+    private static final TestAbbreviation ABBREVIATION_2 = new TestAbbreviation("Full2", "Abb2");
+    private static final TestAbbreviation ABBREVIATION_2_OTHER_SHORT_UNIQUE = new TestAbbreviation("Full2", "Abb2", "A2");
 
-    private final static TestAbbreviation ABBREVIATION_3 = new TestAbbreviation("Full3", "Abb3");
-    private final static TestAbbreviation ABBREVIATION_3_OTHER_SHORT_UNIQUE = new TestAbbreviation("Full3", "Abb3", "A3");
+    private static final TestAbbreviation ABBREVIATION_3 = new TestAbbreviation("Full3", "Abb3");
+    private static final TestAbbreviation ABBREVIATION_3_OTHER_SHORT_UNIQUE = new TestAbbreviation("Full3", "Abb3", "A3");
 
-    private final static TestAbbreviation ABBREVIATION_4 = new TestAbbreviation("Full4", "Abb4");
+    private static final TestAbbreviation ABBREVIATION_4 = new TestAbbreviation("Full4", "Abb4");
 
-    private final static TestAbbreviation ABBREVIATION_5 = new TestAbbreviation("Full5", "Abb5");
+    private static final TestAbbreviation ABBREVIATION_5 = new TestAbbreviation("Full5", "Abb5");
 
-    private final static TestAbbreviation ABBREVIATION_6 = new TestAbbreviation("Full6", "Abb6");
+    private static final TestAbbreviation ABBREVIATION_6 = new TestAbbreviation("Full6", "Abb6");
 
     private JournalAbbreviationsTabViewModel viewModel;
     private Path emptyTestFile;

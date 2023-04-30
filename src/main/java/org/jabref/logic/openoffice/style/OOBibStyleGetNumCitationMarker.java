@@ -13,7 +13,7 @@ import org.jabref.model.openoffice.util.OOListUtil;
 class OOBibStyleGetNumCitationMarker {
 
     // The number encoding "this entry is unresolved"
-    public final static int UNRESOLVED_ENTRY_NUMBER = 0;
+    public static final int UNRESOLVED_ENTRY_NUMBER = 0;
 
     private OOBibStyleGetNumCitationMarker() {
     }

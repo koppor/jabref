@@ -22,7 +22,7 @@ public class OnlyIntegerFormatter extends TextFormatter<Integer> {
     }
 
     private static class IntegerFilter implements UnaryOperator<Change> {
-        private final static Pattern DIGIT_PATTERN = Pattern.compile("\\d*");
+        private static final Pattern DIGIT_PATTERN = Pattern.compile("\\d*");
 
         @Override
         public Change apply(TextFormatter.Change aT) {

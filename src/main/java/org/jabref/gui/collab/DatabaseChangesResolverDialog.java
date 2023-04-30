@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DatabaseChangesResolverDialog extends BaseDialog<Boolean> {
-    private final static Logger LOGGER = LoggerFactory.getLogger(DatabaseChangesResolverDialog.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseChangesResolverDialog.class);
     /**
      * Reconstructing the details view to preview an {@link DatabaseChange} every time it's selected is a heavy operation.
      * It is also useless because changes are static and if the change data is static then the view doesn't have to change

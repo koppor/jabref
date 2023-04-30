@@ -22,7 +22,7 @@ import org.apache.http.client.utils.URIBuilder;
  */
 public class RfcFetcher implements IdBasedParserFetcher {
 
-    private final static String DRAFT_PREFIX = "draft";
+    private static final String DRAFT_PREFIX = "draft";
     private final ImportFormatPreferences importFormatPreferences;
 
     public RfcFetcher(ImportFormatPreferences importFormatPreferences) {

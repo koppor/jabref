@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 public class FileAnnotation {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileAnnotation.class);
 
-    private final static int ABBREVIATED_ANNOTATION_NAME_LENGTH = 45;
+    private static final int ABBREVIATED_ANNOTATION_NAME_LENGTH = 45;
     private static final String DATE_TIME_STRING = "^D:\\d{14}$";
     private static final String DATE_TIME_STRING_WITH_TIME_ZONE = "^D:\\d{14}.+";
     private static final String ANNOTATION_DATE_FORMAT = "yyyyMMddHHmmss";

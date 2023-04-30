@@ -19,8 +19,8 @@ import org.jabref.model.util.DummyFileUpdateMonitor;
 
 public class CollectionOfComputerScienceBibliographiesParser implements Parser {
 
-    final static Pattern REGEX_FOR_LINKS = Pattern.compile("<item>[\\s\\S]*?<link>([\\s\\S]*?)<\\/link>[\\s\\S]*?<\\/item>");
-    final static Pattern REGEX_FOR_BIBTEX = Pattern.compile("<pre class=\"bibtex\">([\\s\\S]*?)<\\/pre>");
+    static final Pattern REGEX_FOR_LINKS = Pattern.compile("<item>[\\s\\S]*?<link>([\\s\\S]*?)<\\/link>[\\s\\S]*?<\\/item>");
+    static final Pattern REGEX_FOR_BIBTEX = Pattern.compile("<pre class=\"bibtex\">([\\s\\S]*?)<\\/pre>");
 
     final BibtexParser bibtexParser;
     final HtmlToUnicodeFormatter htmlToUnicodeFormatter;

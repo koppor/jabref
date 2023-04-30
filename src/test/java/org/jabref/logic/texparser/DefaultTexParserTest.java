@@ -12,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultTexParserTest {
 
-    private final static String DARWIN = "Darwin1888";
-    private final static String EINSTEIN = "Einstein1920";
-    private final static String NEWTON = "Newton1999";
-    private final static String EINSTEIN_A = "Einstein1920a";
-    private final static String EINSTEIN_C = "Einstein1920c";
-    private final static String UNRESOLVED = "UnresolvedKey";
-    private final static String UNKNOWN = "UnknownKey";
+    private static final String DARWIN = "Darwin1888";
+    private static final String EINSTEIN = "Einstein1920";
+    private static final String NEWTON = "Newton1999";
+    private static final String EINSTEIN_A = "Einstein1920a";
+    private static final String EINSTEIN_C = "Einstein1920c";
+    private static final String UNRESOLVED = "UnresolvedKey";
+    private static final String UNKNOWN = "UnknownKey";
 
     private void testMatchCite(String key, String citeString) {
         LatexParserResult latexParserResult = new DefaultLatexParser().parse(citeString);

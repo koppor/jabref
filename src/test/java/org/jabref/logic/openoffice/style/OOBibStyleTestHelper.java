@@ -30,7 +30,7 @@ class OOBibStyleTestHelper {
         /*
          * The number encoding "this entry is unresolved" for the constructor.
          */
-        public final static int UNRESOLVED_ENTRY_NUMBER = 0;
+        public static final int UNRESOLVED_ENTRY_NUMBER = 0;
 
         private final String citationKey;
         private final Optional<Integer> num;

@@ -18,7 +18,7 @@ import com.tobiasdiez.easybind.EasyObservableValue;
 @DefaultProperty("children")
 public class DiffHighlightingEllipsingTextFlow extends TextFlow {
 
-    private final static String DEFAULT_ELLIPSIS_STRING = "...";
+    private static final String DEFAULT_ELLIPSIS_STRING = "...";
     private StringProperty ellipsisString;
 
     private final ObservableList<Node> allChildren = FXCollections.observableArrayList();

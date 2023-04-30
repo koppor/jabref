@@ -23,12 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class LatexParserTest {
-    private final static String DARWIN = "Darwin1888";
-    private final static String EINSTEIN = "Einstein1920";
-    private final static String NEWTON = "Newton1999";
-    private final static String EINSTEIN_A = "Einstein1920a";
-    private final static String EINSTEIN_B = "Einstein1920b";
-    private final static String EINSTEIN_C = "Einstein1920c";
+    private static final String DARWIN = "Darwin1888";
+    private static final String EINSTEIN = "Einstein1920";
+    private static final String NEWTON = "Newton1999";
+    private static final String EINSTEIN_A = "Einstein1920a";
+    private static final String EINSTEIN_B = "Einstein1920b";
+    private static final String EINSTEIN_C = "Einstein1920c";
 
     private final FileUpdateMonitor fileMonitor = new DummyFileUpdateMonitor();
     private GeneralPreferences generalPreferences;

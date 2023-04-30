@@ -16,7 +16,7 @@ import de.saxsys.mvvmfx.utils.validation.Validator;
 
 public class ConstantsItemModel {
 
-    private final static Pattern IS_NUMBER = Pattern.compile("-?\\d+(\\.\\d+)?");
+    private static final Pattern IS_NUMBER = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     private final StringProperty labelProperty = new SimpleStringProperty();
     private final StringProperty contentProperty = new SimpleStringProperty();
