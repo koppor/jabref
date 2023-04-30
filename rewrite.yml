@@ -24,7 +24,9 @@ recipeList:
   # Unreable code
   #  - org.openrewrite.java.cleanup.FinalizeLocalVariables
   # Unreadable code
-#  - org.openrewrite.java.cleanup.FinalizeMethodArguments
+  #  - org.openrewrite.java.cleanup.FinalizeMethodArguments
+  # Not sure about the consequences (LibraryTab).
+  #  - org.openrewrite.java.cleanup.FixStringFormatExpressions
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -45,7 +47,6 @@ recipeList:
   - org.openrewrite.java.cleanup.ExplicitInitialization
   - org.openrewrite.java.cleanup.ExternalizableHasNoArgsConstructor
   - org.openrewrite.java.cleanup.FallThrough
-#  - org.openrewrite.java.cleanup.FixStringFormatExpressions
 #  - org.openrewrite.java.cleanup.ForLoopControlVariablePostfixOperators
 #  - org.openrewrite.java.cleanup.ForLoopIncrementInUpdate
 #  - org.openrewrite.java.cleanup.HiddenField
