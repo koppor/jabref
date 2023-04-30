@@ -512,6 +512,7 @@ rewrite {
         'org.jabref.config.rewrite.cleanup'
     )
     exclusion (
+        "src-gen/**",
         "**/module-info.java",
         "**/*.py",
         "**/*.xml",
