@@ -109,14 +109,14 @@ public class EntryComparator implements Comparator<BibEntry> {
 
         int result;
 
-        if ((f1 instanceof Integer) && (f2 instanceof Integer)) {
-            result = ((Integer) f1).compareTo((Integer) f2);
-        } else if (f2 instanceof Integer) {
+        if ((f1 instanceof Integer f1AsInteger) && (f2 instanceof Integer f2AsInteger)) {
+            result = f1AsInteger.compareTo(f2AsInteger);
+        } else if (f2 instanceof Integer integer) {
             Integer f1AsInteger = Integer.valueOf(f1.toString());
-            result = f1AsInteger.compareTo((Integer) f2);
-        } else if (f1 instanceof Integer) {
+            result = f1AsInteger.compareTo(integer);
+        } else if (f1 instanceof Integer integer) {
             Integer f2AsInteger = Integer.valueOf(f2.toString());
-            result = ((Integer) f1).compareTo(f2AsInteger);
+            result = integer.compareTo(f2AsInteger);
         } else {
             String ours = ((String) f1).toLowerCase(Locale.ROOT);
             String theirs = ((String) f2).toLowerCase(Locale.ROOT);
