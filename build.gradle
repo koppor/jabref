@@ -515,6 +515,8 @@ rewrite {
         "build.gradle",
         "eclipse.gradle",
         "src-gen/**",
+        "src/main/resources/**",
+        "src/test/resources/**",
         "**/module-info.java",
         "**/*.py",
         "**/*.xml",

@@ -65,10 +65,6 @@ public class StringUtil {
     /**
      * Creates a substring from a text
      *
-     * @param text
-     * @param startIndex
-     * @param terminateOnEndBraceOnly
-     * @return
      */
     public static String getPart(String text, int startIndex, boolean terminateOnEndBraceOnly) {
         char c;
@@ -104,8 +100,6 @@ public class StringUtil {
      * Returns the string, after shaving off whitespace at the beginning and end,
      * and removing (at most) one pair of braces or " surrounding it.
      *
-     * @param toShave
-     * @return
      */
 
     public static String shaveString(String toShave) {
@@ -128,11 +122,7 @@ public class StringUtil {
      * String[] s = "ab/cd/ed".split("/"); join(s, "\\", 0, s.length) ->
      * "ab\\cd\\ed"
      *
-     * @param strings
-     * @param separator
-     * @param from
      * @param to        Excluding strings[to]
-     * @return
      */
     public static String join(String[] strings, String separator, int from, int to) {
         if ((strings.length == 0) || (from >= to)) {
@@ -152,8 +142,6 @@ public class StringUtil {
     /**
      * Removes optional square brackets from the string s
      *
-     * @param toStrip
-     * @return
      */
     public static String stripBrackets(String toStrip) {
         if (isInSquareBrackets(toStrip)) {

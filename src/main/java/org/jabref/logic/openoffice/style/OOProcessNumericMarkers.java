@@ -22,10 +22,8 @@ class OOProcessNumericMarkers {
      * Numbering is according to first appearance.
      * Assumes global order and local order are already applied.
      *
-     * @param citationGroups
-     * @param style
      *
-     */
+     **/
     static void produceCitationMarkers(CitationGroups citationGroups, OOBibStyle style) {
         assert style.isNumberEntries();
 
