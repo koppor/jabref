@@ -304,7 +304,7 @@ public class Bootstrap {
             String sConnect = "uno:socket,host=localhost,port=2083" + ";urp;StarOffice.ComponentContext";
 
             // wait until office is started
-            for (int i = 0; ; ++i) {
+            for (int i = 0; ; i++) {
                 try {
                     // try to connect to office
                     Object context = xUrlResolver.resolve(sConnect);

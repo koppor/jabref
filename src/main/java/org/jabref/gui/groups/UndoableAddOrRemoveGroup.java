@@ -111,7 +111,7 @@ public class UndoableAddOrRemoveGroup extends AbstractUndoableJabRefEdit {
         GroupTreeNode cursor = m_groupsRootHandle.getNode();
         final int childIndex = m_pathToNode.get(m_pathToNode.size() - 1);
         // traverse path up to but last element
-        for (int i = 0; i < (m_pathToNode.size() - 1); ++i) {
+        for (int i = 0; i < (m_pathToNode.size() - 1); i++) {
             cursor = cursor.getChildAt(m_pathToNode.get(i)).get();
         }
         if (undo) {
@@ -123,7 +123,7 @@ public class UndoableAddOrRemoveGroup extends AbstractUndoableJabRefEdit {
                     // move all children to newNode, then add newNode
                     GroupTreeNode newNode = m_subtreeBackup.copySubtree();
                     for (int i = childIndex; i < (childIndex
-                            + m_subtreeRootChildCount); ++i) {
+                            + m_subtreeRootChildCount); i++) {
                         cursor.getChildAt(childIndex).get().moveTo(newNode);
                     }
                     newNode.moveTo(cursor, childIndex);

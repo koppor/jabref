@@ -47,7 +47,7 @@ public class StringUtil {
         StringBuilder result = new StringBuilder();
         char c;
         boolean isSpecial;
-        for (int i = 0; i < toQuote.length(); ++i) {
+        for (int i = 0; i < toQuote.length(); i++) {
             c = toQuote.charAt(i);
 
             isSpecial = (c == quoteChar);
@@ -247,7 +247,7 @@ public class StringUtil {
      */
     public static String quoteForHTML(String toQuote) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < toQuote.length(); ++i) {
+        for (int i = 0; i < toQuote.length(); i++) {
             result.append("&#").append((int) toQuote.charAt(i)).append(';');
         }
         return result.toString();
@@ -671,7 +671,7 @@ public class StringUtil {
         StringBuilder result = new StringBuilder();
         char c;
         boolean quoted = false;
-        for (int i = 0; i < toUnquote.length(); ++i) {
+        for (int i = 0; i < toUnquote.length(); i++) {
             c = toUnquote.charAt(i);
             if (quoted) { // append literally...
                 if (c != '\n') {

@@ -2411,7 +2411,7 @@ public class JabRefPreferences implements PreferencesService {
         List<String> componentNames = getStringList(SIDE_PANE_COMPONENT_NAMES);
         List<String> componentPositions = getStringList(SIDE_PANE_COMPONENT_PREFERRED_POSITIONS);
 
-        for (int i = 0; i < componentNames.size(); ++i) {
+        for (int i = 0; i < componentNames.size(); i++) {
             String name = componentNames.get(i);
             try {
                 SidePaneType type = Enum.valueOf(SidePaneType.class, name);

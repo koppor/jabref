@@ -518,7 +518,7 @@ public abstract class TreeNode<T extends TreeNode<T>> {
         while (j > 0) {
             lastModified = j + 1;
             j = -1;
-            for (int i = 1; i < lastModified; ++i) {
+            for (int i = 1; i < lastModified; i++) {
                 T child1 = getChildAt(i - 1).get();
                 T child2 = getChildAt(i).get();
                 if (comparator.compare(child1, child2) > 0) {

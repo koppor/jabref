@@ -779,7 +779,7 @@ public class BibtexParser implements Parser {
     private StringBuilder removeWhitespaces(StringBuilder toRemove) {
         StringBuilder result = new StringBuilder();
         char current;
-        for (int i = 0; i < toRemove.length(); ++i) {
+        for (int i = 0; i < toRemove.length(); i++) {
             current = toRemove.charAt(i);
             if (!Character.isWhitespace(current)) {
                 result.append(current);
@@ -795,7 +795,7 @@ public class BibtexParser implements Parser {
      * @throws IOException can be thrown if buffer is bigger than LOOKAHEAD
      */
     private void unreadBuffer(StringBuilder stringBuilder) throws IOException {
-        for (int i = stringBuilder.length() - 1; i >= 0; --i) {
+        for (int i = stringBuilder.length() - 1; i >= 0; i--) {
             unread(stringBuilder.charAt(i));
         }
     }
