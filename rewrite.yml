@@ -16,6 +16,9 @@ recipeList:
   # - org.openrewrite.java.cleanup.AvoidBoxedBooleanExpressions
   # Leads to exception
   # - org.openrewrite.java.cleanup.CombineSemanticallyEqualCatchBlocks
+  # Unreable code
+  #   .ifPresent((Path selectedDirectory) -> {
+  # - org.openrewrite.java.cleanup.ExplicitLambdaArgumentTypes
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -34,7 +37,6 @@ recipeList:
   # Needs manual intervention
   - org.openrewrite.java.cleanup.ExplicitCharsetOnStringGetBytes
   - org.openrewrite.java.cleanup.ExplicitInitialization
-#  - org.openrewrite.java.cleanup.ExplicitLambdaArgumentTypes
 #  - org.openrewrite.java.cleanup.ExternalizableHasNoArgsConstructor
 #  - org.openrewrite.java.cleanup.FallThrough
 #  - org.openrewrite.java.cleanup.FinalClass
