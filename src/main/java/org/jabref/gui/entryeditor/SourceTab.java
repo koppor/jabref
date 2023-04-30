@@ -154,7 +154,6 @@ public class SourceTab extends EntryEditorTab {
 
         @Override
         public void cancelLatestCommittedText() {
-            return;
         }
 
         @Override
