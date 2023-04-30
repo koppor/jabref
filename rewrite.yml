@@ -53,7 +53,7 @@ recipeList:
   - org.openrewrite.java.cleanup.ForLoopIncrementInUpdate
   - org.openrewrite.java.cleanup.IndexOfChecksShouldUseAStartPosition
   - org.openrewrite.java.cleanup.IndexOfReplaceableByContains
-#  - org.openrewrite.java.cleanup.IndexOfShouldNotCompareGreaterThanZero
+  - org.openrewrite.java.cleanup.IndexOfShouldNotCompareGreaterThanZero
 #  - org.openrewrite.java.cleanup.InlineVariable
 #  - org.openrewrite.java.cleanup.InstanceOfPatternMatch
 #  - org.openrewrite.java.cleanup.IsEmptyCallOnCollections

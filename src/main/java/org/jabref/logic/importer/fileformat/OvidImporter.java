@@ -223,7 +223,7 @@ public class OvidImporter extends Importer {
         String names;
         if (content.indexOf(';') > 0) { // LN FN; [LN FN;]*
             names = content.replaceAll("[^\\.A-Za-z,;\\- ]", "").replace(";", " and");
-        } else if (content.indexOf("  ") > 0) {
+        } else if (content.indexOf("  ") >= 1) {
             String[] sNames = content.split("  ");
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < sNames.length; i++) {
