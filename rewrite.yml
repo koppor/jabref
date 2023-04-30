@@ -106,7 +106,7 @@ recipeList:
   - org.openrewrite.java.cleanup.RemoveRedundantTypeCast
   - org.openrewrite.java.cleanup.RemoveUnneededAssertion
   - org.openrewrite.java.cleanup.RemoveUnneededBlock
-#  - org.openrewrite.java.cleanup.RemoveUnusedLocalVariables
+  - org.openrewrite.java.cleanup.RemoveUnusedLocalVariables
 #  - org.openrewrite.java.cleanup.RemoveUnusedPrivateFields
 #  - org.openrewrite.java.cleanup.RemoveUnusedPrivateMethods
 #  - org.openrewrite.java.cleanup.RenameExceptionInEmptyCatch

@@ -911,7 +911,6 @@ public class BibtexDatabaseWriterTest {
         String encodingHeader = "% Encoding: UTF-8" + OS.NEWLINE + OS.NEWLINE;
         String commentEntry = "@Comment{jabref-meta: selector_journal:Test {\\\\\"U}mlaut;}" + OS.NEWLINE;
         String fileContent = encodingHeader + commentEntry;
-        Charset encoding = StandardCharsets.UTF_8;
 
         ParserResult firstParse = new BibtexParser(importFormatPreferences, fileMonitor).parse(new StringReader(fileContent));
 

@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
@@ -51,6 +52,7 @@ public class CitationTest {
     @ValueSource(ints = {1, 2})
     public void constructorLineLargerZeroTest(int line) {
         Citation citation = new Citation(path, line, 1, 5, "lineText");
+        assertNotNull(citation);
     }
 
     @ParameterizedTest
@@ -64,6 +66,7 @@ public class CitationTest {
     @MethodSource("colStartColEndInBounds")
     public void constructorColStartColEndInBoundsTest(int colStart, int colEnd) {
         Citation citation = new Citation(path, 10, colStart, colEnd, "lineText");
+        assertNotNull(citation);
     }
 
     @Test
