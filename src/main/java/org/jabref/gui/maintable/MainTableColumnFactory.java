@@ -108,8 +108,8 @@ public class MainTableColumnFactory {
                     }
                 }
                 break;
-            default:
             case NORMALFIELD:
+            default:
                 if (!column.getQualifier().isBlank()) {
                     returnColumn = createFieldColumn(column);
                 }

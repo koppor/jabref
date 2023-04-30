@@ -27,8 +27,8 @@ public class PersonNameStringConverter extends StringConverter<Author> {
                 autoCompFF = false;
                 autoCompLF = true;
                 break;
-            default:
             case BOTH:
+            default:
                 autoCompFF = true;
                 autoCompLF = true;
                 break;
