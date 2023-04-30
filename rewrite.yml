@@ -85,7 +85,7 @@ recipeList:
   - org.openrewrite.java.cleanup.NoRedundantJumpStatements
   - org.openrewrite.java.cleanup.NoToStringOnStringType
   - org.openrewrite.java.cleanup.NoValueOfOnStringType
-#  - org.openrewrite.java.cleanup.NoWhitespaceBefore
+  - org.openrewrite.java.cleanup.NoWhitespaceBefore
 #  - org.openrewrite.java.cleanup.ObjectFinalizeCallsSuper
 #  - org.openrewrite.java.cleanup.OperatorWrap
 #  - org.openrewrite.java.cleanup.PadEmptyForLoopComponents
