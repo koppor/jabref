@@ -157,7 +157,7 @@ public class LibraryTab extends Tab {
 
         // set LibraryTab ID for drag'n'drop
         // ID content doesn't matter, we only need different tabs to have different ID
-        this.setId(Long.valueOf(new Random().nextLong()).toString());
+        this.setId(Long.toString(new Random().nextLong()));
 
         Platform.runLater(() -> {
             EasyBind.subscribe(changedProperty, this::updateTabTitle);
