@@ -9,12 +9,8 @@ import javafx.scene.text.Text;
 
 import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.AbstractDelta;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DiffHighlighting {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DiffHighlighting.class);
 
     private DiffHighlighting() {
     }

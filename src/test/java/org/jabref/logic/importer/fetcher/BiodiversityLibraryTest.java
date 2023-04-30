@@ -28,7 +28,6 @@ import static org.mockito.Mockito.when;
 
 @FetcherTest
 public class BiodiversityLibraryTest {
-    private final String BASE_URL = "https://www.biodiversitylibrary.org/api3?";
     private final String RESPONSE_FORMAT = "&format=json";
     private final BuildInfo buildInfo = new BuildInfo();
 

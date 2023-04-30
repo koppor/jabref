@@ -17,12 +17,7 @@ import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.undo.NamedCompound;
 import org.jabref.logic.l10n.Localization;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ExternalChangesResolverViewModel extends AbstractViewModel {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalChangesResolverViewModel.class);
 
     private final NamedCompound ce = new NamedCompound(Localization.lang("Merged external changes"));
     private final ObservableList<DatabaseChange> visibleChanges = FXCollections.observableArrayList();

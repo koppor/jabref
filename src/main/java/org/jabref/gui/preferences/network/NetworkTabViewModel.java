@@ -42,11 +42,8 @@ import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
 import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
 import de.saxsys.mvvmfx.utils.validation.Validator;
 import kong.unirest.UnirestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NetworkTabViewModel implements PreferenceTabViewModel {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NetworkTabViewModel.class);
 
     private final BooleanProperty remoteServerProperty = new SimpleBooleanProperty();
     private final StringProperty remotePortProperty = new SimpleStringProperty("");

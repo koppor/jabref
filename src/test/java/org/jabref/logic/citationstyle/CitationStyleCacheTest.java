@@ -12,12 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CitationStyleCacheTest {
 
-  private BibEntry bibEntry;
-  private List<BibEntry> entries;
-  private BibDatabase database;
-  private BibDatabaseContext databaseContext;
-  private CitationStyleCache csCache;
-
   @Test
   void getCitationForTest() {
     BibEntry bibEntry = new BibEntry().withCitationKey("test");

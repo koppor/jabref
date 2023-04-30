@@ -18,12 +18,7 @@ import org.jabref.model.groups.GroupTreeNode;
 import org.jabref.model.groups.KeywordGroup;
 import org.jabref.model.groups.SearchGroup;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class GroupTreeNodeViewModel {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroupTreeNodeViewModel.class);
 
     private final GroupTreeNode node;
 

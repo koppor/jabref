@@ -34,15 +34,12 @@ import org.jabref.preferences.PreferencesService;
 
 import com.airhacks.afterburner.views.ViewLoader;
 import jakarta.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class controls the user interface of the study definition management dialog. The UI elements and their layout
  * are defined in the FXML file.
  */
 public class ManageStudyDefinitionView extends BaseDialog<SlrStudyAndDirectory> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ManageStudyDefinitionView.class);
 
     @FXML private TextField studyTitle;
     @FXML private TextField addAuthor;

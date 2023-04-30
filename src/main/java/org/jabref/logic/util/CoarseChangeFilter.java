@@ -21,7 +21,6 @@ public class CoarseChangeFilter {
 
     private Optional<Field> lastFieldChanged;
     private Optional<BibEntry> lastEntryChanged;
-    private int totalDelta;
 
     public CoarseChangeFilter(BibDatabaseContext bibDatabaseContext) {
         // Listen for change events

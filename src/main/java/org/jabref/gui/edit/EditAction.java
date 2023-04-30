@@ -1,6 +1,5 @@
 package org.jabref.gui.edit;
 
-import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.web.WebView;
 
@@ -23,7 +22,6 @@ public class EditAction extends SimpleCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(EditAction.class);
 
     private final JabRefFrame frame;
-    private TextField text;
     private final StandardActions action;
     private final StateManager stateManager;
 

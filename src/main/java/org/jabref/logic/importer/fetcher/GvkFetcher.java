@@ -3,8 +3,6 @@ package org.jabref.logic.importer.fetcher;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Optional;
 
 import org.jabref.logic.help.HelpFile;
@@ -20,12 +18,6 @@ import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 public class GvkFetcher implements SearchBasedParserFetcher {
 
     private static final String URL_PATTERN = "http://sru.gbv.de/gvk?";
-
-    /**
-     * Searchkeys are used to specify a search request. For example "tit" stands for "title".
-     * If no searchkey is used, the default searchkey "all" is used.
-     */
-    private final Collection<String> searchKeys = Arrays.asList("all", "tit", "per", "thm", "slw", "txt", "num", "kon", "ppn", "bkl", "erj");
 
     @Override
     public String getName() {

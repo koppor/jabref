@@ -56,7 +56,6 @@ public class StudyRepository {
     private static final Pattern MATCH_ILLEGAL_CHARACTERS = Pattern.compile("[^A-Za-z0-9_.\\s=-]");
 
     // Currently we make assumptions about the configuration: the remotes, work and search branch names
-    private static final String REMOTE = "origin";
     private static final String WORK_BRANCH = "work";
     private static final String SEARCH_BRANCH = "search";
 

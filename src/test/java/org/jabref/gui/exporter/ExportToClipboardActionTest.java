@@ -51,8 +51,6 @@ public class ExportToClipboardActionTest {
     private final PreferencesService preferences = mock(PreferencesService.class);
     private final ImportExportPreferences importExportPrefs = mock(ImportExportPreferences.class);
     private final StateManager stateManager = mock(StateManager.class);
-
-    private ExporterFactory exporterFactory;
     private TaskExecutor taskExecutor;
     private ObservableList<BibEntry> selectedEntries;
 

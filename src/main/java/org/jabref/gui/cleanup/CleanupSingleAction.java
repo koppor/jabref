@@ -28,7 +28,6 @@ public class CleanupSingleAction extends SimpleCommand {
     private final UndoManager undoManager;
 
     private boolean isCanceled;
-    private int modifiedEntriesCount;
 
     public CleanupSingleAction(BibEntry entry, PreferencesService preferences, DialogService dialogService, StateManager stateManager, UndoManager undoManager) {
         this.entry = entry;

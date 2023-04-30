@@ -19,8 +19,6 @@ public class ColorUtilTest {
     private static final Color C4 = Color.color(1, 1, 1, 1);
     private static final Color C5 = Color.color(0.6, 0.8, 0.5, 0.3);
 
-    private ColorUtil colorUtil = new ColorUtil();
-
     @Test
     public void toRGBCodeTest() {
         assertEquals("#3366FF", ColorUtil.toRGBCode(C1));
