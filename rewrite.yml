@@ -51,7 +51,6 @@ recipeList:
   - org.openrewrite.java.cleanup.FallThrough
   - org.openrewrite.java.cleanup.ForLoopControlVariablePostfixOperators
   - org.openrewrite.java.cleanup.ForLoopIncrementInUpdate
-#  - org.openrewrite.java.cleanup.HideUtilityClassConstructor
 #  - org.openrewrite.java.cleanup.IndexOfChecksShouldUseAStartPosition
 #  - org.openrewrite.java.cleanup.IndexOfReplaceableByContains
 #  - org.openrewrite.java.cleanup.IndexOfShouldNotCompareGreaterThanZero
