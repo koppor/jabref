@@ -14,6 +14,8 @@ recipeList:
   # - org.openrewrite.java.cleanup.AddSerialVersionUidToSerializable
   # Leads to "if (Boolean.TRUE.equals(proxyPrefs.shouldUseProxy())) {", which reads strange
   # - org.openrewrite.java.cleanup.AvoidBoxedBooleanExpressions
+  # Leads to exception
+  # - org.openrewrite.java.cleanup.CombineSemanticallyEqualCatchBlocks
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -21,7 +23,6 @@ recipeList:
   - org.openrewrite.java.cleanup.CaseInsensitiveComparisonsDoNotChangeCase
   - org.openrewrite.java.cleanup.CatchClauseOnlyRethrows
   - org.openrewrite.java.cleanup.ChainStringBuilderAppendCalls
-  #- org.openrewrite.java.cleanup.CombineSemanticallyEqualCatchBlocks
   #- org.openrewrite.java.cleanup.CompareEnumsWithEqualityOperator
   #- org.openrewrite.java.cleanup.ControlFlowIndentation
   #- org.openrewrite.java.cleanup.CovariantEquals
