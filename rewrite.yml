@@ -41,6 +41,8 @@ recipeList:
   #  - org.openrewrite.java.cleanup.MinimumSwitchCases
   # Leads to unreadable code
   #  - org.openrewrite.java.cleanup.NoFinalizedLocalVariables
+  # Contraticts JabRef's checkstyle
+  #  - org.openrewrite.java.cleanup.NoWhitespaceAfter
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -83,7 +85,6 @@ recipeList:
   - org.openrewrite.java.cleanup.NoRedundantJumpStatements
   - org.openrewrite.java.cleanup.NoToStringOnStringType
   - org.openrewrite.java.cleanup.NoValueOfOnStringType
-#  - org.openrewrite.java.cleanup.NoWhitespaceAfter
 #  - org.openrewrite.java.cleanup.NoWhitespaceBefore
 #  - org.openrewrite.java.cleanup.ObjectFinalizeCallsSuper
 #  - org.openrewrite.java.cleanup.OperatorWrap
