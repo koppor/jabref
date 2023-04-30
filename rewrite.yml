@@ -25,7 +25,7 @@ recipeList:
   - org.openrewrite.java.cleanup.ChainStringBuilderAppendCalls
   - org.openrewrite.java.cleanup.CompareEnumsWithEqualityOperator
   - org.openrewrite.java.cleanup.ControlFlowIndentation
-  #- org.openrewrite.java.cleanup.CovariantEquals
+  - org.openrewrite.java.cleanup.CovariantEquals
   #- org.openrewrite.java.cleanup.DeclarationSiteTypeVariance
   #- org.openrewrite.java.cleanup.DefaultComesLast
 #  - org.openrewrite.java.cleanup.EmptyBlock
