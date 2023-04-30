@@ -43,6 +43,8 @@ recipeList:
   #  - org.openrewrite.java.cleanup.NoFinalizedLocalVariables
   # Contraticts JabRef's checkstyle
   #  - org.openrewrite.java.cleanup.NoWhitespaceAfter
+  # We sometimes need == instead of equals
+  #  - org.openrewrite.java.cleanup.ReferentialEqualityToObjectEquals
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -91,7 +93,6 @@ recipeList:
   - org.openrewrite.java.cleanup.PadEmptyForLoopComponents
   - org.openrewrite.java.cleanup.PrimitiveWrapperClassConstructorToValueOf
   - org.openrewrite.java.cleanup.RedundantFileCreation
-#  - org.openrewrite.java.cleanup.ReferentialEqualityToObjectEquals
 #  - org.openrewrite.java.cleanup.RemoveCallsToObjectFinalize
 #  - org.openrewrite.java.cleanup.RemoveCallsToSystemGc
 #  - org.openrewrite.java.cleanup.RemoveEmptyJavaDocParameters
