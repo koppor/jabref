@@ -55,7 +55,7 @@ public class OpenDocumentSpreadsheetCreator extends Exporter {
             ze.setMethod(ZipEntry.STORED);
             ze.setSize(mime.length());
             CRC32 crc = new CRC32();
-            crc.update(mime.getBytes());
+            crc.update(mime.getBytes(StandardCharsets.UTF_8));
             ze.setCrc(crc.getValue());
             out.putNextEntry(ze);
             for (int i = 0; i < mime.length(); i++) {

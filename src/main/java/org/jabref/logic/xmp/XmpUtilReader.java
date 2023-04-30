@@ -2,6 +2,7 @@ package org.jabref.logic.xmp;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -127,7 +128,7 @@ public class XmpUtilReader {
             // END_TAG is appended, because of the split operation above
             String xmpMetaString = start + s + END_TAG + end;
             try {
-                metaList.add(XmpUtilShared.parseXmpMetadata(new ByteArrayInputStream(xmpMetaString.getBytes())));
+                metaList.add(XmpUtilShared.parseXmpMetadata(new ByteArrayInputStream(xmpMetaString.getBytes(StandardCharsets.UTF_8))));
             } catch (IOException ex) {
                 LOGGER.warn("Problem parsing XMP schema. Continuing with other schemas.", ex);
             }

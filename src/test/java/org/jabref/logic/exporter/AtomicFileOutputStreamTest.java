@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -29,7 +30,7 @@ class AtomicFileOutputStreamTest {
         Files.writeString(out, FIFTY_CHARS);
 
         try (AtomicFileOutputStream atomicFileOutputStream = new AtomicFileOutputStream(out)) {
-            InputStream inputStream = new ByteArrayInputStream(FIVE_THOUSAND_CHARS.getBytes());
+            InputStream inputStream = new ByteArrayInputStream(FIVE_THOUSAND_CHARS.getBytes(StandardCharsets.UTF_8));
             inputStream.transferTo(atomicFileOutputStream);
         }
 
@@ -56,7 +57,7 @@ class AtomicFileOutputStreamTest {
 
             assertThrows(IOException.class, () -> {
                 try (AtomicFileOutputStream atomicFileOutputStream = new AtomicFileOutputStream(pathToTestFile, pathToTmpFile, spiedOutputStream, false);
-                     InputStream inputStream = new ByteArrayInputStream(FIVE_THOUSAND_CHARS.getBytes())) {
+                     InputStream inputStream = new ByteArrayInputStream(FIVE_THOUSAND_CHARS.getBytes(StandardCharsets.UTF_8))) {
                     inputStream.transferTo(atomicFileOutputStream);
                 }
             });

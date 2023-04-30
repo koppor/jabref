@@ -32,10 +32,10 @@ public class Password {
     }
 
     public Password(String phrase, String key) throws NoSuchAlgorithmException, NoSuchPaddingException {
-        this.phrase = phrase.getBytes();
+        this.phrase = phrase.getBytes(StandardCharsets.UTF_8);
         this.cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        this.secretKey = new SecretKeySpec(get128BitHash(key.getBytes()), "AES");
-        this.ivSpec = new IvParameterSpec("ThisIsA128BitKey".getBytes());
+        this.secretKey = new SecretKeySpec(get128BitHash(key.getBytes(StandardCharsets.UTF_8)), "AES");
+        this.ivSpec = new IvParameterSpec("ThisIsA128BitKey".getBytes(StandardCharsets.UTF_8));
     }
 
     /**

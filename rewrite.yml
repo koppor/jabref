@@ -27,10 +27,12 @@ recipeList:
   - org.openrewrite.java.cleanup.ControlFlowIndentation
   - org.openrewrite.java.cleanup.CovariantEquals
   - org.openrewrite.java.cleanup.DeclarationSiteTypeVariance
+  # Needs manual internention
   - org.openrewrite.java.cleanup.DefaultComesLast
   - org.openrewrite.java.cleanup.EmptyBlock
   - org.openrewrite.java.cleanup.EqualsAvoidsNull
-#  - org.openrewrite.java.cleanup.ExplicitCharsetOnStringGetBytes
+  # Needs manual internention
+  - org.openrewrite.java.cleanup.ExplicitCharsetOnStringGetBytes
 #  - org.openrewrite.java.cleanup.ExplicitInitialization
 #  - org.openrewrite.java.cleanup.ExplicitLambdaArgumentTypes
 #  - org.openrewrite.java.cleanup.ExternalizableHasNoArgsConstructor
