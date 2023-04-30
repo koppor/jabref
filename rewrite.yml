@@ -49,6 +49,8 @@ recipeList:
   #  - org.openrewrite.java.cleanup.RemoveCallsToSystemGc
   # Crashes with NPE
   #  - org.openrewrite.java.cleanup.RemoveInstanceOfPatternMatch
+  # We need that for our CLI
+  #  - org.openrewrite.java.cleanup.RemoveSystemOutPrintln
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -102,7 +104,6 @@ recipeList:
   - org.openrewrite.java.cleanup.RemoveExtraSemicolons
   - org.openrewrite.java.cleanup.RemoveJavaDocAuthorTag
 #  - org.openrewrite.java.cleanup.RemoveRedundantTypeCast
-#  - org.openrewrite.java.cleanup.RemoveSystemOutPrintln
 #  - org.openrewrite.java.cleanup.RemoveUnneededAssertion
 #  - org.openrewrite.java.cleanup.RemoveUnneededBlock
 #  - org.openrewrite.java.cleanup.RemoveUnusedLocalVariables
