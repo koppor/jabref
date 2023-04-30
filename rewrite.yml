@@ -82,7 +82,7 @@ recipeList:
   - org.openrewrite.java.cleanup.NoPrimitiveWrappersForToStringOrCompareTo
   - org.openrewrite.java.cleanup.NoRedundantJumpStatements
   - org.openrewrite.java.cleanup.NoToStringOnStringType
-#  - org.openrewrite.java.cleanup.NoValueOfOnStringType
+  - org.openrewrite.java.cleanup.NoValueOfOnStringType
 #  - org.openrewrite.java.cleanup.NoWhitespaceAfter
 #  - org.openrewrite.java.cleanup.NoWhitespaceBefore
 #  - org.openrewrite.java.cleanup.ObjectFinalizeCallsSuper
