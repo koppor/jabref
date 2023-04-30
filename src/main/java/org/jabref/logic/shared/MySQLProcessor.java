@@ -58,9 +58,9 @@ public class MySQLProcessor extends DBMSProcessor {
             // We can to migrate from old table in new table
             if (CURRENT_VERSION_DB_STRUCT == 1 && checkTableAvailability("ENTRY", "FIELD", "METADATA")) {
                 LOGGER.info("Migrating from VersionDBStructure == 0");
-                connection.createStatement().executeUpdate("INSERT INTO " + escape_Table("ENTRY") + " SELECT * FROM `ENTRY`");
-                connection.createStatement().executeUpdate("INSERT INTO " + escape_Table("FIELD") + " SELECT * FROM `FIELD`");
-                connection.createStatement().executeUpdate("INSERT INTO " + escape_Table("METADATA") + " SELECT * FROM `METADATA`");
+                connection.createStatement().executeUpdate("INSERT INTO " + escapeTable("ENTRY") + " SELECT * FROM `ENTRY`");
+                connection.createStatement().executeUpdate("INSERT INTO " + escapeTable("FIELD") + " SELECT * FROM `FIELD`");
+                connection.createStatement().executeUpdate("INSERT INTO " + escapeTable("METADATA") + " SELECT * FROM `METADATA`");
                 metadata = getSharedMetaData();
             }
 
@@ -75,7 +75,7 @@ public class MySQLProcessor extends DBMSProcessor {
     }
 
     @Override
-    String escape_Table(String expression) {
+    String escapeTable(String expression) {
         return escape("JABREF_" + expression);
     }
 

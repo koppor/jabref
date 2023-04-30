@@ -109,12 +109,12 @@ public class BibtexExtractor {
     private String findAuthorsByPattern(String input, Pattern pattern) {
         Matcher matcher = pattern.matcher(input);
         while (matcher.find()) {
-            authors.add(GenerateAuthor(matcher.group(LASTNAME_GROUP), matcher.group(INITIALS_GROUP)));
+            authors.add(generateAuthor(matcher.group(LASTNAME_GROUP), matcher.group(INITIALS_GROUP)));
         }
         return fixSpaces(matcher.replaceAll(AUTHOR_TAG));
     }
 
-    private String GenerateAuthor(String lastName, String initials) {
+    private String generateAuthor(String lastName, String initials) {
         return lastName + ", " + initials;
     }
 
