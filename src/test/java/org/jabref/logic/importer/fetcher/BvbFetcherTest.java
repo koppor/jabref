@@ -30,7 +30,7 @@ public class BvbFetcherTest {
     void testPerformTest() throws Exception {
         String searchquery = "effective java author:bloch";
         List<BibEntry> result = fetcher.performSearch(searchquery);
-        assertTrue(result.size() > 0);
+        assertTrue(!result.isEmpty());
 
 //        System.out.println("Query:\n");
 //        System.out.println(fetcher.getURLForQuery(new StandardSyntaxParser().parse(searchquery, NO_EXPLICIT_FIELD)));

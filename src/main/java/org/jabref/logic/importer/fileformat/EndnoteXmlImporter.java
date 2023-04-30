@@ -278,7 +278,7 @@ public class EndnoteXmlImporter extends Importer implements Parser {
         Optional<List<Object>> urlContent = Optional.ofNullable(url).map(Url::getContent);
         List<Object> list = urlContent.orElse(Collections.emptyList());
         Optional<String> ret;
-        if (list.size() == 0) {
+        if (list.isEmpty()) {
             return Optional.empty();
         } else {
             boolean isStyleExist = false;
