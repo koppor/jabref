@@ -47,6 +47,8 @@ recipeList:
   #  - org.openrewrite.java.cleanup.ReferentialEqualityToObjectEquals
   # AuthorListTest uses System.gc
   #  - org.openrewrite.java.cleanup.RemoveCallsToSystemGc
+  # Crashes with NPE
+  #  - org.openrewrite.java.cleanup.RemoveInstanceOfPatternMatch
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -98,7 +100,6 @@ recipeList:
   - org.openrewrite.java.cleanup.RemoveCallsToObjectFinalize
   - org.openrewrite.java.cleanup.RemoveEmptyJavaDocParameters
   - org.openrewrite.java.cleanup.RemoveExtraSemicolons
-#  - org.openrewrite.java.cleanup.RemoveInstanceOfPatternMatch
 #  - org.openrewrite.java.cleanup.RemoveJavaDocAuthorTag
 #  - org.openrewrite.java.cleanup.RemoveRedundantTypeCast
 #  - org.openrewrite.java.cleanup.RemoveSystemOutPrintln

@@ -513,7 +513,9 @@ rewrite {
     )
     exclusion (
         "build.gradle",
+        "buildSrc/build.gradle",
         "eclipse.gradle",
+        "settings.gradle",
         "src-gen/**",
         "src/main/resources/**",
         "src/test/resources/**",
