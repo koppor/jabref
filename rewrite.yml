@@ -13,7 +13,7 @@ recipeList:
   # We are not relying on serialization, thus we do not want to maintain the serialVersionUID manually
   # - org.openrewrite.java.cleanup.AddSerialVersionUidToSerializable
 
-  #- org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
+  - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   #- org.openrewrite.java.cleanup.AvoidBoxedBooleanExpressions
   #- org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
   #- org.openrewrite.java.cleanup.BooleanChecksNotInverted
