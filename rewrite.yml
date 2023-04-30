@@ -12,9 +12,10 @@ recipeList:
   # - org.openrewrite.java.cleanup.HideUtilityClassConstructor
   # We are not relying on serialization, thus we do not want to maintain the serialVersionUID manually
   # - org.openrewrite.java.cleanup.AddSerialVersionUidToSerializable
+  # Leads to "if (Boolean.TRUE.equals(proxyPrefs.shouldUseProxy())) {", which reads strange
+  # - org.openrewrite.java.cleanup.AvoidBoxedBooleanExpressions
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
-  #- org.openrewrite.java.cleanup.AvoidBoxedBooleanExpressions
   #- org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
   #- org.openrewrite.java.cleanup.BooleanChecksNotInverted
   #- org.openrewrite.java.cleanup.CaseInsensitiveComparisonsDoNotChangeCase
