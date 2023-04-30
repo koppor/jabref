@@ -31,6 +31,8 @@ recipeList:
   #  - org.openrewrite.java.cleanup.HiddenField
   # Leads to unreadable code
   #  - org.openrewrite.java.cleanup.InlineVariable
+  # Leads to unreadable code
+  #  - org.openrewrite.java.cleanup.LambdaBlockToExpression
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -58,7 +60,6 @@ recipeList:
   - org.openrewrite.java.cleanup.IndexOfShouldNotCompareGreaterThanZero
   - org.openrewrite.java.cleanup.InstanceOfPatternMatch
   - org.openrewrite.java.cleanup.IsEmptyCallOnCollections
-#  - org.openrewrite.java.cleanup.LambdaBlockToExpression
 #  - org.openrewrite.java.cleanup.LowercasePackage
 #  - org.openrewrite.java.cleanup.MethodNameCasing
 #  - org.openrewrite.java.cleanup.MethodParamPad
