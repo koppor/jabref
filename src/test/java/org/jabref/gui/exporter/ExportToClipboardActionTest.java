@@ -14,7 +14,6 @@ import org.jabref.gui.StateManager;
 import org.jabref.gui.util.CurrentThreadTaskExecutor;
 import org.jabref.gui.util.TaskExecutor;
 import org.jabref.logic.exporter.Exporter;
-import org.jabref.logic.exporter.ExporterFactory;
 import org.jabref.logic.exporter.SaveConfiguration;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.StandardFileType;
