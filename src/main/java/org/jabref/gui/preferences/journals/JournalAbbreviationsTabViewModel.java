@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JournalAbbreviationsTabViewModel implements PreferenceTabViewModel {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(JournalAbbreviationsTabViewModel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JournalAbbreviationsTabViewModel.class);
 
     private final SimpleListProperty<AbbreviationsFileViewModel> journalFiles = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final SimpleListProperty<AbbreviationViewModel> abbreviations = new SimpleListProperty<>(FXCollections.observableArrayList());

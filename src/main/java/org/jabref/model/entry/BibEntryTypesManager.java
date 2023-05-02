@@ -19,11 +19,11 @@ import org.jabref.model.entry.types.EntryTypeFactory;
 import org.jabref.model.entry.types.IEEETranEntryTypeDefinitions;
 
 public class BibEntryTypesManager {
-    private final InternalEntryTypes BIBTEX_ENTRYTYPES = new InternalEntryTypes(
+    private static final InternalEntryTypes BIBTEX_ENTRYTYPES = new InternalEntryTypes(
             Stream.concat(BibtexEntryTypeDefinitions.ALL.stream(), IEEETranEntryTypeDefinitions.ALL.stream())
                   .collect(Collectors.toList()));
 
-    private final InternalEntryTypes BIBLATEX_ENTRYTYPES = new InternalEntryTypes(
+    private static final InternalEntryTypes BIBLATEX_ENTRYTYPES = new InternalEntryTypes(
             Stream.concat(BiblatexEntryTypeDefinitions.ALL.stream(),
                           Stream.concat(BiblatexSoftwareEntryTypeDefinitions.ALL.stream(), BiblatexAPAEntryTypeDefinitions.ALL.stream()))
                   .collect(Collectors.toList()));

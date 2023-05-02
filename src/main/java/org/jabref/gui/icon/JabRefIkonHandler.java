@@ -8,7 +8,7 @@ import org.kordamp.ikonli.Ikon;
 
 public class JabRefIkonHandler extends AbstractIkonHandler {
 
-    private static String FONT_RESOURCE = "/fonts/JabRefMaterialDesign.ttf";
+    private static final String FONT_RESOURCE = "/fonts/JabRefMaterialDesign.ttf";
 
     @Override
     public boolean supports(String description) {

@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 @FetcherTest
 class IEEETest implements SearchBasedFetcherCapabilityTest, PagedSearchFetcherTest {
 
-    private final BibEntry IGOR_NEWCOMERS = new BibEntry(StandardEntryType.InProceedings)
+    private static final BibEntry IGOR_NEWCOMERS = new BibEntry(StandardEntryType.InProceedings)
             .withField(StandardField.AUTHOR, "Igor Steinmacher and Tayana Uchoa Conte and Christoph Treude and Marco Aurélio Gerosa")
             .withField(StandardField.DATE, "14-22 May 2016")
             .withField(StandardField.YEAR, "2016")

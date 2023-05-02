@@ -6,8 +6,8 @@ import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
 
 public class TruncateFormatter extends Formatter {
-    private final int TRUNCATE_AFTER;
-    private final String KEY;
+    private final int truncateAfter;
+    private final String key;
 
     /**
      * The TruncateFormatter truncates a string after the given index and removes trailing whitespaces.
@@ -15,8 +15,8 @@ public class TruncateFormatter extends Formatter {
      * @param truncateIndex truncate a string after this index.
      */
     public TruncateFormatter(final int truncateIndex) {
-        TRUNCATE_AFTER = (truncateIndex >= 0) ? truncateIndex : Integer.MAX_VALUE;
-        KEY = "truncate" + TRUNCATE_AFTER;
+        truncateAfter = (truncateIndex >= 0) ? truncateIndex : Integer.MAX_VALUE;
+        key = "truncate" + truncateAfter;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class TruncateFormatter extends Formatter {
 
     @Override
     public String getKey() {
-        return KEY;
+        return key;
     }
 
     /**
@@ -35,7 +35,7 @@ public class TruncateFormatter extends Formatter {
     @Override
     public String format(final String input) {
         Objects.requireNonNull(input);
-        final int index = Math.min(TRUNCATE_AFTER, input.length());
+        final int index = Math.min(truncateAfter, input.length());
         return input.substring(0, index).stripTrailing();
     }
 

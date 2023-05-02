@@ -16,7 +16,7 @@ import org.jabref.preferences.PreferencesService;
 
 public class OpenExternalFileAction extends SimpleCommand {
 
-    private final int FILES_LIMIT = 10;
+    private static final int FILES_LIMIT = 10;
 
     private final DialogService dialogService;
     private final StateManager stateManager;

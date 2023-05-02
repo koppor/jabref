@@ -30,8 +30,8 @@ public class OracleProcessor extends DBMSProcessor {
 
     private DatabaseChangeRegistration databaseChangeRegistration;
 
-    private Integer VERSION_DB_STRUCT_DEFAULT = -1;
-    private Integer CURRENT_VERSION_DB_STRUCT = 0;
+    private Integer versionDbStructDefault = -1;
+    private Integer currentVersionDbStruct = 0;
 
     public OracleProcessor(DatabaseConnection connection) {
         super(connection);
@@ -71,19 +71,20 @@ public class OracleProcessor extends DBMSProcessor {
 
         Map<String, String> metadata = getSharedMetaData();
 
-        if (metadata.get(MetaData.VERSION_DB_STRUCT) != null) {
+        String metaDataVersionDbStruct = metadata.get(MetaData.VERSION_DB_STRUCT);
+        if (metaDataVersionDbStruct != null) {
             try {
-                VERSION_DB_STRUCT_DEFAULT = Integer.valueOf(metadata.get(MetaData.VERSION_DB_STRUCT));
+                versionDbStructDefault = Integer.valueOf(metaDataVersionDbStruct);
             } catch (Exception e) {
-                LOGGER.warn("[VERSION_DB_STRUCT_DEFAULT] not Integer!");
+                LOGGER.warn("[VERSION_DB_STRUCT] {} not Integer.", metaDataVersionDbStruct);
             }
         } else {
-            LOGGER.warn("[VERSION_DB_STRUCT_DEFAULT] not Exist!");
+            LOGGER.warn("[VERSION_DB_STRUCT] not exist.");
         }
 
-        if (VERSION_DB_STRUCT_DEFAULT < CURRENT_VERSION_DB_STRUCT) {
+        if (versionDbStructDefault < currentVersionDbStruct) {
             // We can to migrate from old table in new table
-            metadata.put(MetaData.VERSION_DB_STRUCT, CURRENT_VERSION_DB_STRUCT.toString());
+            metadata.put(MetaData.VERSION_DB_STRUCT, currentVersionDbStruct.toString());
             setSharedMetaData(metadata);
         }
     }
@@ -100,7 +101,7 @@ public class OracleProcessor extends DBMSProcessor {
 
     @Override
     Integer getCURRENT_VERSION_DB_STRUCT() {
-        return CURRENT_VERSION_DB_STRUCT;
+        return currentVersionDbStruct;
     }
 
     @Override

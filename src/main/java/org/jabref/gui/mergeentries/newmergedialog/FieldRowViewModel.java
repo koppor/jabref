@@ -37,7 +37,7 @@ public class FieldRowViewModel {
         NONE
     }
 
-    private final Logger LOGGER = LoggerFactory.getLogger(FieldRowViewModel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FieldRowViewModel.class);
     private final BooleanProperty isFieldsMerged = new SimpleBooleanProperty(Boolean.FALSE);
 
     private final ObjectProperty<Selection> selection = new SimpleObjectProperty<>();

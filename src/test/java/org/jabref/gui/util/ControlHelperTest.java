@@ -10,11 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ControlHelperTest {
 
-    private final String TEXT = "abcdef";
-    private final int MAX_CHARACTERS = 5;
-    private final int DEFAULT_MAX_CHARACTERS = -1;
-    private final String ELLIPSIS_STRING = "***";
-    private final ControlHelper.EllipsisPosition ELLIPSIS_POSITION = ControlHelper.EllipsisPosition.ENDING;
+    private static final String TEXT = "abcdef";
+    private static final int MAX_CHARACTERS = 5;
+    private static final int DEFAULT_MAX_CHARACTERS = -1;
+    private static final String ELLIPSIS_STRING = "***";
+    private static final ControlHelper.EllipsisPosition ELLIPSIS_POSITION = ControlHelper.EllipsisPosition.ENDING;
 
     @ParameterizedTest
     @NullAndEmptySource

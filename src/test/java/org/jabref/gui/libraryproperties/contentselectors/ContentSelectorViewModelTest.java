@@ -24,9 +24,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ContentSelectorViewModelTest {
-    private final DialogService dialogService = mock(DialogService.class);
-    private final List<StandardField> DEFAULT_FIELDS = Arrays.asList(
+    private static final List<StandardField> DEFAULT_FIELDS = Arrays.asList(
             StandardField.AUTHOR, StandardField.JOURNAL, StandardField.KEYWORDS, StandardField.PUBLISHER);
+    private final DialogService dialogService = mock(DialogService.class);
     private ContentSelectorViewModel viewModel;
     private BibDatabaseContext databaseContext;
 

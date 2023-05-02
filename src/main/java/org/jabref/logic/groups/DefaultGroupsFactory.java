@@ -5,7 +5,7 @@ import org.jabref.model.groups.AllEntriesGroup;
 
 public class DefaultGroupsFactory {
 
-    private static String ALL_ENTRIES_GROUP_DEFAULT_ICON = "ALL_ENTRIES_GROUP_ICON";
+    private static final String ALL_ENTRIES_GROUP_DEFAULT_ICON = "ALL_ENTRIES_GROUP_ICON";
 
     private DefaultGroupsFactory() {
     }

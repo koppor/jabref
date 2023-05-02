@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MSBibConverterTest {
 
-    private final BibEntry BIB_ENTRY_TEST = new BibEntry(StandardEntryType.InProceedings)
+    private final BibEntry bibEntryTest = new BibEntry(StandardEntryType.InProceedings)
             .withField(StandardField.AUTHOR, "Igor Steinmacher and Tayana Uchoa Conte and Christoph Treude and Marco Aurélio Gerosa")
             .withField(StandardField.DATE, "14-22 May 2016")
             .withField(StandardField.YEAR, "2016")
@@ -34,7 +34,7 @@ class MSBibConverterTest {
 
     @Test
     void convert() {
-        entry = BIB_ENTRY_TEST;
+        entry = bibEntryTest;
         MSBibConverter.convert(entry);
 
         assertEquals(Optional.of("english"), entry.getField(StandardField.LANGUAGE));
