@@ -282,18 +282,18 @@ public class EndnoteXmlImporter extends Importer implements Parser {
             return Optional.empty();
         } else {
             boolean isStyleExist = false;
-            int style_index = -1;
+            int styleIndex = -1;
             for (int i = 0; i < list.size(); i++) {
                 if (list.get(i) instanceof Style) {
                     isStyleExist = true;
-                    style_index = i;
+                    styleIndex = i;
                 }
             }
             if (!isStyleExist) {
                 ret = Optional.ofNullable((String) list.get(0))
                         .map(this::clean);
             } else {
-                ret = Optional.ofNullable((Style) list.get(style_index))
+                ret = Optional.ofNullable((Style) list.get(styleIndex))
                         .map(Style::getContent)
                         .map(this::clean);
             }

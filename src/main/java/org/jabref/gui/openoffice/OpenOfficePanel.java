@@ -145,8 +145,8 @@ public class OpenOfficePanel {
      * Return true if failed. In this case the dialog is already shown.
      */
     private boolean getOrUpdateTheStyle(String title) {
-        final boolean FAIL = true;
-        final boolean PASS = false;
+        final boolean fail = true;
+        final boolean pass = false;
 
         if (style == null) {
             style = loader.getUsedStyle();
@@ -159,10 +159,10 @@ public class OpenOfficePanel {
                         + "'" + style.getPath() + "'"
                         + "\n" + ex.getMessage());
                 new OOError(title, msg, ex).showErrorDialog(dialogService);
-                return FAIL;
+                return fail;
             }
         }
-        return PASS;
+        return pass;
     }
 
     private void initPanel() {
