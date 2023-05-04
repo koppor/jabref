@@ -34,7 +34,7 @@ public class TagBar<T> extends HBox {
     @FXML
     private HBox tagList;
     private BiConsumer<T, MouseEvent> onTagClicked;
-    private java.util.Set<FieldProperty> properties;
+    private Set<FieldProperty> properties;
 
     public TagBar() {
         tags = new SimpleListProperty<>(FXCollections.observableArrayList());

@@ -17,6 +17,7 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
+import org.jabref.model.entry.Date;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.metadata.SaveOrder;
@@ -70,7 +71,7 @@ public class DocBook5ExporterTest {
         entry.setField(StandardField.AUTHOR, "Stefan Kolb and Tobias Diez");
         entry.setField(StandardField.ISBN, "1-2-34");
         entry.setCitationKey("mykey");
-        entry.setDate(new org.jabref.model.entry.Date(myDate));
+        entry.setDate(new Date(myDate));
         entries = Collections.singletonList(entry);
     }
 
