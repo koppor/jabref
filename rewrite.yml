@@ -85,6 +85,8 @@ recipeList:
   #  - org.openrewrite.java.cleanup.UnnecessaryPrimitiveAnnotations
   # Removes too much throws
   #  - org.openrewrite.java.cleanup.UnnecessaryThrows
+  # Crashes
+  #  - org.openrewrite.java.cleanup.UseAsBuilder
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -157,7 +159,6 @@ recipeList:
   - org.openrewrite.java.cleanup.UnnecessaryParentheses
   - org.openrewrite.java.cleanup.UnwrapRepeatableAnnotations
   - org.openrewrite.java.cleanup.UpperCaseLiteralSuffixes
-#  - org.openrewrite.java.cleanup.UseAsBuilder
 #  - org.openrewrite.java.cleanup.UseCollectionInterfaces
 #  - org.openrewrite.java.cleanup.UseDiamondOperator
 #  - org.openrewrite.java.cleanup.UseForEachRemoveInsteadOfSetRemoveAll
