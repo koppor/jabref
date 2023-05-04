@@ -178,8 +178,7 @@ public final class BstCaseChanger {
      * @return the new position
      */
     private int convertAccented(char[] c, int start, String s, StringBuilder sb, FormatMode format) {
-        int pos = start;
-        pos += s.length();
+        int pos = start + s.length();
 
         switch (format) {
             case TITLE_LOWERS:
