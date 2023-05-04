@@ -63,6 +63,8 @@ recipeList:
   #  - org.openrewrite.java.cleanup.ReplaceDuplicateStringLiterals
   # Not everything correctly transformed
   #  - org.openrewrite.java.cleanup.ReplaceLambdaWithMethodReference
+  # Crashes
+  #  - org.openrewrite.java.cleanup.ReplaceStackWithDeque
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -123,7 +125,6 @@ recipeList:
   - org.openrewrite.java.cleanup.RenameLocalVariablesToCamelCase
   - org.openrewrite.java.cleanup.RenameMethodsNamedHashcodeEqualOrTostring
   - org.openrewrite.java.cleanup.ReplaceRedundantFormatWithPrintf
-#  - org.openrewrite.java.cleanup.ReplaceStackWithDeque
 #  - org.openrewrite.java.cleanup.ReplaceStreamToListWithCollect
 #  - org.openrewrite.java.cleanup.ReplaceStringBuilderWithString
 #  - org.openrewrite.java.cleanup.ReplaceTextBlockWithString
