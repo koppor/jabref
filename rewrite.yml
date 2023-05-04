@@ -75,6 +75,8 @@ recipeList:
   #  - org.openrewrite.java.cleanup.ReplaceValidateNotNullHavingVarargsWithObjectsRequireNonNull
   # Removes wrong variable
   #  - org.openrewrite.java.cleanup.SimplifyCompoundStatement
+  # We need that in OOBibStyleTest
+  #  - org.openrewrite.java.cleanup.SimplifyConstantIfBranchExecution
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -139,7 +141,6 @@ recipeList:
   - org.openrewrite.java.cleanup.SimplifyBooleanExpression
   - org.openrewrite.java.cleanup.SimplifyBooleanReturn
   - org.openrewrite.java.cleanup.SimplifyConsecutiveAssignments
-#  - org.openrewrite.java.cleanup.SimplifyConstantIfBranchExecution
 #  - org.openrewrite.java.cleanup.SimplifyDurationCreationUnits
 #  - org.openrewrite.java.cleanup.StaticMethodNotFinal
 #  - org.openrewrite.java.cleanup.StringLiteralEquality

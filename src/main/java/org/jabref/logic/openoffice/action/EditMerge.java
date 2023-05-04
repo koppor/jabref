@@ -179,7 +179,7 @@ public class EditMerge {
 
             // Sanity check: the current range should start later than the previous.
             int textOrder = UnoTextRange.compareStarts(state.prevRange, currentRange);
-            if (textOrder != (-1)) {
+            if (textOrder != -1) {
                 String msg =
                         String.format("MergeCitationGroups:"
                                         + " \"%s\" supposed to be followed by \"%s\","
