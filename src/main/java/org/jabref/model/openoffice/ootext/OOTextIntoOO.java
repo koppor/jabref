@@ -438,7 +438,7 @@ public class OOTextIntoOO {
         /**
          * Maintain a stack of layers, each containing a description of the desired state of properties. Each description is an ArrayList of property values, Optional.empty() encoding "not directly set".
          */
-        final Stack<ArrayList<Optional<Object>>> layers;
+        final Stack<List<Optional<Object>>> layers;
 
         MyPropertyStack(XTextCursor cursor) {
             XPropertySet propertySet = UnoCast.cast(XPropertySet.class, cursor).get();
@@ -483,7 +483,7 @@ public class OOTextIntoOO {
             XMultiPropertySet mps = UnoCast.cast(XMultiPropertySet.class, cursor).get();
             Object[] initialValues = mps.getPropertyValues(goodNames);
 
-            ArrayList<Optional<Object>> initialValuesOpt = new ArrayList<>(goodSize);
+            List<Optional<Object>> initialValuesOpt = new ArrayList<>(goodSize);
 
             for (int i = 0; i < goodSize; i++) {
                 if (propertyStates[i] == PropertyState.DIRECT_VALUE) {
@@ -493,7 +493,7 @@ public class OOTextIntoOO {
                 }
             }
 
-            this.layers = new Stack<>();
+            this.layers = new Stack<List<Optional<Object>>>();
             this.layers.push(initialValuesOpt);
         }
 
@@ -503,8 +503,8 @@ public class OOTextIntoOO {
          * Opening tags usually call this.
          */
         void pushLayer(List<OOPair<String, Object>> settings) {
-            ArrayList<Optional<Object>> oldLayer = layers.peek();
-            ArrayList<Optional<Object>> newLayer = new ArrayList<>(oldLayer);
+            List<Optional<Object>> oldLayer = layers.peek();
+            List<Optional<Object>> newLayer = new ArrayList<>(oldLayer);
             for (OOPair<String, Object> pair : settings) {
                 String name = pair.a;
                 Integer index = goodNameToIndex.get(name);
@@ -537,13 +537,13 @@ public class OOTextIntoOO {
         void apply(XTextCursor cursor) {
             XMultiPropertySet mps = UnoCast.cast(XMultiPropertySet.class, cursor).get();
             XMultiPropertyStates mpss = UnoCast.cast(XMultiPropertyStates.class, cursor).get();
-            ArrayList<Optional<Object>> topLayer = layers.peek();
+            List<Optional<Object>> topLayer = layers.peek();
             try {
                 // select values to be set
-                ArrayList<String> names = new ArrayList<>(goodSize);
-                ArrayList<Object> values = new ArrayList<>(goodSize);
+                List<String> names = new ArrayList<>(goodSize);
+                List<Object> values = new ArrayList<>(goodSize);
                 // and those to be cleared
-                ArrayList<String> delNames = new ArrayList<>(goodSize);
+                List<String> delNames = new ArrayList<>(goodSize);
                 for (int i = 0; i < goodSize; i++) {
                     if (topLayer.get(i).isPresent()) {
                         names.add(goodNames[i]);
@@ -570,7 +570,7 @@ public class OOTextIntoOO {
         Optional<Object> getPropertyValue(String name) {
             if (goodNameToIndex.containsKey(name)) {
                 int index = goodNameToIndex.get(name);
-                ArrayList<Optional<Object>> topLayer = layers.peek();
+                List<Optional<Object>> topLayer = layers.peek();
                 return topLayer.get(index);
             }
             return Optional.empty();

@@ -1,10 +1,10 @@
 package org.jabref.gui.search.rules.describer;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javafx.scene.text.Text;
@@ -23,10 +23,10 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 public class GrammarBasedSearchRuleDescriber implements SearchDescriber {
 
-    private final EnumSet<SearchFlags> searchFlags;
+    private final Set<SearchFlags> searchFlags;
     private final ParseTree parseTree;
 
-    public GrammarBasedSearchRuleDescriber(EnumSet<SearchFlags> searchFlags, ParseTree parseTree) {
+    public GrammarBasedSearchRuleDescriber(Set<SearchFlags> searchFlags, ParseTree parseTree) {
         this.searchFlags = searchFlags;
         this.parseTree = Objects.requireNonNull(parseTree);
     }

@@ -1,6 +1,6 @@
 package org.jabref.model.search.rules;
 
-import java.util.EnumSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -16,7 +16,7 @@ public class SearchRules {
     /**
      * Returns the appropriate search rule that fits best to the given parameter.
      */
-    public static SearchRule getSearchRuleByQuery(String query, EnumSet<SearchFlags> searchFlags) {
+    public static SearchRule getSearchRuleByQuery(String query, Set<SearchFlags> searchFlags) {
         if (isSimpleQuery(query)) {
             return new ContainsBasedSearchRule(searchFlags);
         }
@@ -35,7 +35,7 @@ public class SearchRules {
         return SIMPLE_EXPRESSION.matcher(query).matches();
     }
 
-    static SearchRule getSearchRule(EnumSet<SearchFlags> searchFlags) {
+    static SearchRule getSearchRule(Set<SearchFlags> searchFlags) {
         if (searchFlags.contains(SearchFlags.REGULAR_EXPRESSION)) {
             return new RegexBasedSearchRule(searchFlags);
         } else {

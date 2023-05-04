@@ -2,8 +2,8 @@ package org.jabref.model.search.rules;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jabref.architecture.AllowedToUseLogic;
@@ -27,14 +27,14 @@ public abstract class FullTextSearchRule implements SearchRule {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FullTextSearchRule.class);
 
-    protected final EnumSet<SearchRules.SearchFlags> searchFlags;
+    protected final Set<SearchRules.SearchFlags> searchFlags;
 
     protected String lastQuery;
     protected List<SearchResult> lastSearchResults;
 
     private final BibDatabaseContext databaseContext;
 
-    public FullTextSearchRule(EnumSet<SearchRules.SearchFlags> searchFlags) {
+    public FullTextSearchRule(Set<SearchRules.SearchFlags> searchFlags) {
         this.searchFlags = searchFlags;
         this.lastQuery = "";
         lastSearchResults = Collections.emptyList();
@@ -42,7 +42,7 @@ public abstract class FullTextSearchRule implements SearchRule {
         databaseContext = Globals.stateManager.getActiveDatabase().orElse(null);
     }
 
-    public EnumSet<SearchRules.SearchFlags> getSearchFlags() {
+    public Set<SearchRules.SearchFlags> getSearchFlags() {
         return searchFlags;
     }
 

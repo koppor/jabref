@@ -1,7 +1,7 @@
 package org.jabref.model.search.rules;
 
-import java.util.EnumSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -23,7 +23,7 @@ public class RegexBasedSearchRule extends FullTextSearchRule {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegexBasedSearchRule.class);
 
-    public RegexBasedSearchRule(EnumSet<SearchFlags> searchFlags) {
+    public RegexBasedSearchRule(Set<SearchFlags> searchFlags) {
         super(searchFlags);
     }
 

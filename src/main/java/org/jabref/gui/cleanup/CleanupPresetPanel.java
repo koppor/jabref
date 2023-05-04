@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -118,7 +119,7 @@ public class CleanupPresetPanel extends VBox {
     }
 
     public CleanupPreferences getCleanupPreset() {
-        EnumSet<CleanupPreferences.CleanupStep> activeJobs = EnumSet.noneOf(CleanupPreferences.CleanupStep.class);
+        Set<CleanupPreferences.CleanupStep> activeJobs = EnumSet.noneOf(CleanupPreferences.CleanupStep.class);
 
         if (cleanUpMovePDF.isSelected()) {
             activeJobs.add(CleanupPreferences.CleanupStep.MOVE_PDF);

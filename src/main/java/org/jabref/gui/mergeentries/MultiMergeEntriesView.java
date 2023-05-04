@@ -78,7 +78,7 @@ public class MultiMergeEntriesView extends BaseDialog<BibEntry> {
     @FXML private ComboBox<DiffMode> diffMode;
 
     private final ToggleGroup headerToggleGroup = new ToggleGroup();
-    private final HashMap<Field, FieldRow> fieldRows = new HashMap<>();
+    private final Map<Field, FieldRow> fieldRows = new HashMap<>();
 
     private final MultiMergeEntriesViewModel viewModel;
     private final TaskExecutor taskExecutor;

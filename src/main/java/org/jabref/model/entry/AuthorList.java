@@ -1,6 +1,7 @@
 package org.jabref.model.entry;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.function.Function;
@@ -115,7 +116,7 @@ import org.jabref.logic.importer.AuthorListParser;
 @AllowedToUseLogic("because it needs access to AuthorList parser")
 public class AuthorList {
 
-    private static final WeakHashMap<String, AuthorList> AUTHOR_CACHE = new WeakHashMap<>();
+    private static final Map<String, AuthorList> AUTHOR_CACHE = new WeakHashMap<>();
     private final List<Author> authors;
     private AuthorList latexFreeAuthors;
 

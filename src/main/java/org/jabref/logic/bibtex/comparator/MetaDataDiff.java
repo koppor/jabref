@@ -3,6 +3,7 @@ package org.jabref.logic.bibtex.comparator;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import org.jabref.model.metadata.MetaData;
 import org.jabref.preferences.PreferencesService;
@@ -44,8 +45,8 @@ public class MetaDataDiff {
     /**
      * @implNote Should be kept in sync with {@link MetaData#equals(Object)}
      */
-    public EnumSet<Difference> getDifferences(PreferencesService preferences) {
-        EnumSet<Difference> changes = EnumSet.noneOf(Difference.class);
+    public Set<Difference> getDifferences(PreferencesService preferences) {
+        Set<Difference> changes = EnumSet.noneOf(Difference.class);
 
         if (originalMetaData.isProtected() != newMetaData.isProtected()) {
             changes.add(Difference.PROTECTED);

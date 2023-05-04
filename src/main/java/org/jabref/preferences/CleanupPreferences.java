@@ -16,7 +16,7 @@ public class CleanupPreferences {
     private final ObservableSet<CleanupStep> activeJobs;
     private final ObjectProperty<FieldFormatterCleanups> fieldFormatterCleanups;
 
-    public CleanupPreferences(EnumSet<CleanupStep> activeJobs) {
+    public CleanupPreferences(Set<CleanupStep> activeJobs) {
         this(activeJobs, new FieldFormatterCleanups(false, new ArrayList<>()));
     }
 
@@ -28,12 +28,12 @@ public class CleanupPreferences {
         this(EnumSet.noneOf(CleanupStep.class), formatterCleanups);
     }
 
-    public CleanupPreferences(EnumSet<CleanupStep> activeJobs, FieldFormatterCleanups formatterCleanups) {
+    public CleanupPreferences(Set<CleanupStep> activeJobs, FieldFormatterCleanups formatterCleanups) {
         this.activeJobs = FXCollections.observableSet(activeJobs);
         this.fieldFormatterCleanups = new SimpleObjectProperty<>(formatterCleanups);
     }
 
-    public EnumSet<CleanupStep> getActiveJobs() {
+    public Set<CleanupStep> getActiveJobs() {
         if (activeJobs.isEmpty()) {
             return EnumSet.noneOf(CleanupStep.class);
         }

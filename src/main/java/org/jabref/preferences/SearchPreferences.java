@@ -1,6 +1,7 @@
 package org.jabref.preferences;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -45,14 +46,14 @@ public class SearchPreferences {
         this.setSearchWindowWidth(searchWindowWidth);
     }
 
-    public SearchPreferences(SearchDisplayMode searchDisplayMode, EnumSet<SearchFlags> searchFlags, boolean keepWindowOnTop) {
+    public SearchPreferences(SearchDisplayMode searchDisplayMode, Set<SearchFlags> searchFlags, boolean keepWindowOnTop) {
         this.searchDisplayMode = new SimpleObjectProperty<>(searchDisplayMode);
         this.keepWindowOnTop = new SimpleBooleanProperty(keepWindowOnTop);
 
         this.searchFlags = FXCollections.observableSet(searchFlags);
     }
 
-    public EnumSet<SearchFlags> getSearchFlags() {
+    public Set<SearchFlags> getSearchFlags() {
         // copy of returns an exception when the EnumSet is empty
         if (searchFlags.isEmpty()) {
             return EnumSet.noneOf(SearchFlags.class);

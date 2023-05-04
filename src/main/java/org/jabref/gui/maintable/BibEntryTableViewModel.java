@@ -130,7 +130,7 @@ public class BibEntryTableViewModel {
             return value;
         }
 
-        ArrayList<Observable> observables = new ArrayList<>(List.of(entry.getObservables()));
+        List<Observable> observables = new ArrayList<>(List.of(entry.getObservables()));
         observables.add(fieldValueFormatter);
 
         value = Bindings.createStringBinding(() ->

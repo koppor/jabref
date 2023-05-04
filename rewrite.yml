@@ -87,7 +87,7 @@ recipeList:
   #  - org.openrewrite.java.cleanup.UnnecessaryThrows
   # Crashes
   #  - org.openrewrite.java.cleanup.UseAsBuilder
-  # "Upgradeds" too much
+  # "Upgradeds" too much, deletss fields
   #  - org.openrewrite.java.cleanup.UseCollectionInterfaces
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet

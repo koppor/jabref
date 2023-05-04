@@ -1,10 +1,10 @@
 package org.jabref.logic.search;
 
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -58,10 +58,10 @@ public class SearchQuery implements SearchMatcher {
     }
 
     private final String query;
-    private EnumSet<SearchRules.SearchFlags> searchFlags;
+    private Set<SearchRules.SearchFlags> searchFlags;
     private final SearchRule rule;
 
-    public SearchQuery(String query, EnumSet<SearchRules.SearchFlags> searchFlags) {
+    public SearchQuery(String query, Set<SearchRules.SearchFlags> searchFlags) {
         this.query = Objects.requireNonNull(query);
         this.searchFlags = searchFlags;
         this.rule = SearchRules.getSearchRuleByQuery(query, searchFlags);
@@ -137,7 +137,7 @@ public class SearchQuery implements SearchMatcher {
         return query;
     }
 
-    public EnumSet<SearchRules.SearchFlags> getSearchFlags() {
+    public Set<SearchRules.SearchFlags> getSearchFlags() {
         return searchFlags;
     }
 

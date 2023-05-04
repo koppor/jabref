@@ -49,7 +49,7 @@ public class CffImporter extends Importer {
 
     // POJO classes for yaml data
     private static class CffFormat {
-        private final HashMap<String, String> values = new HashMap<>();
+        private final Map<String, String> values = new HashMap<>();
 
         @JsonProperty("authors")
         private List<CffAuthor> authors;
@@ -67,7 +67,7 @@ public class CffImporter extends Importer {
     }
 
     private static class CffAuthor {
-        private final HashMap<String, String> values = new HashMap<>();
+        private final Map<String, String> values = new HashMap<>();
 
         public CffAuthor() {
         }

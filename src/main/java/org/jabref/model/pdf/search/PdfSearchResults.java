@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class PdfSearchResults {
 
@@ -27,8 +28,8 @@ public final class PdfSearchResults {
         return this.searchResults;
     }
 
-    public HashMap<String, List<SearchResult>> getSearchResultsByPath() {
-        HashMap<String, List<SearchResult>> resultsByPath = new HashMap<>();
+    public Map<String, List<SearchResult>> getSearchResultsByPath() {
+        Map<String, List<SearchResult>> resultsByPath = new HashMap<>();
         for (SearchResult result : searchResults) {
             if (resultsByPath.containsKey(result.getPath())) {
                 resultsByPath.get(result.getPath()).add(result);

@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -63,7 +64,7 @@ public class CitaviXmlImporter extends Importer implements Parser {
     private static final Logger LOGGER = LoggerFactory.getLogger(CitaviXmlImporter.class);
     private static final byte UUID_LENGTH = 36;
     private static final byte UUID_SEMICOLON_OFFSET_INDEX = 37;
-    private static final EnumSet<QuotationTypeMapping> QUOTATION_TYPES = EnumSet.allOf(QuotationTypeMapping.class);
+    private static final Set<QuotationTypeMapping> QUOTATION_TYPES = EnumSet.allOf(QuotationTypeMapping.class);
     private final HtmlToLatexFormatter htmlToLatexFormatter = new HtmlToLatexFormatter();
     private final NormalizePagesFormatter pagesFormatter = new NormalizePagesFormatter();
 

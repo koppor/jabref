@@ -2,7 +2,6 @@ package org.jabref.model.search.rules;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,7 +48,7 @@ public class GrammarBasedSearchRule implements SearchRule {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GrammarBasedSearchRule.class);
 
-    private final EnumSet<SearchFlags> searchFlags;
+    private final Set<SearchFlags> searchFlags;
 
     private ParseTree tree;
     private String query;
@@ -69,12 +68,12 @@ public class GrammarBasedSearchRule implements SearchRule {
         }
     }
 
-    public GrammarBasedSearchRule(EnumSet<SearchFlags> searchFlags) throws RecognitionException {
+    public GrammarBasedSearchRule(Set<SearchFlags> searchFlags) throws RecognitionException {
         this.searchFlags = searchFlags;
         databaseContext = Globals.stateManager.getActiveDatabase().orElse(null);
     }
 
-    public static boolean isValid(EnumSet<SearchFlags> searchFlags, String query) {
+    public static boolean isValid(Set<SearchFlags> searchFlags, String query) {
         return new GrammarBasedSearchRule(searchFlags).validateSearchStrings(query);
     }
 
@@ -139,7 +138,7 @@ public class GrammarBasedSearchRule implements SearchRule {
         }
     }
 
-    public EnumSet<SearchFlags> getSearchFlags() {
+    public Set<SearchFlags> getSearchFlags() {
         return searchFlags;
     }
 
@@ -163,7 +162,7 @@ public class GrammarBasedSearchRule implements SearchRule {
         private final Pattern fieldPattern;
         private final Pattern valuePattern;
 
-        public Comparator(String field, String value, ComparisonOperator operator, EnumSet<SearchFlags> searchFlags) {
+        public Comparator(String field, String value, ComparisonOperator operator, Set<SearchFlags> searchFlags) {
             this.operator = operator;
 
             int option = searchFlags.contains(SearchRules.SearchFlags.CASE_SENSITIVE) ? 0 : Pattern.CASE_INSENSITIVE;
@@ -227,11 +226,11 @@ public class GrammarBasedSearchRule implements SearchRule {
      */
     static class BibtexSearchVisitor extends SearchBaseVisitor<Boolean> {
 
-        private final EnumSet<SearchFlags> searchFlags;
+        private final Set<SearchFlags> searchFlags;
 
         private final BibEntry entry;
 
-        public BibtexSearchVisitor(EnumSet<SearchFlags> searchFlags, BibEntry bibEntry) {
+        public BibtexSearchVisitor(Set<SearchFlags> searchFlags, BibEntry bibEntry) {
             this.searchFlags = searchFlags;
             this.entry = bibEntry;
         }

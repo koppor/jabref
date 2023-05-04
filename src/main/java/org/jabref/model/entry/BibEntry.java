@@ -960,7 +960,7 @@ public class BibEntry implements Cloneable {
             if (fieldValue == null) {
                 return Collections.emptySet();
             } else {
-                HashSet<String> words = new HashSet<>(StringUtil.getStringAsWords(fieldValue));
+                Set<String> words = new HashSet<>(StringUtil.getStringAsWords(fieldValue));
                 fieldsAsWords.put(field, words);
                 return words;
             }

@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.StringTokenizer;
 import java.util.function.Function;
@@ -111,8 +112,8 @@ public class BracketedPattern {
          * @param nameParts a list of words that constitute parts of an institution's name.
          * @return set containing all types that matches
          */
-        public static EnumSet<Institution> findTypes(List<String> nameParts) {
-            EnumSet<Institution> parts = EnumSet.noneOf(Institution.class);
+        public static Set<Institution> findTypes(List<String> nameParts) {
+            Set<Institution> parts = EnumSet.noneOf(Institution.class);
             // Deciding about a part type…
             for (String namePart : nameParts) {
                 if (UNIVERSITIES.matcher(namePart).matches()) {
@@ -1217,7 +1218,7 @@ public class BracketedPattern {
 
         for (int index = 0; index < institutionNameTokens.length; index++) {
             List<String> tokenParts = getValidInstitutionNameParts(institutionNameTokens[index]);
-            EnumSet<Institution> tokenTypes = Institution.findTypes(tokenParts);
+            Set<Institution> tokenTypes = Institution.findTypes(tokenParts);
 
             if (tokenTypes.contains(Institution.UNIVERSITY)) {
                 StringBuilder universitySB = new StringBuilder();

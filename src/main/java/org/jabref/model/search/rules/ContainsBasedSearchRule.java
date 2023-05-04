@@ -1,9 +1,9 @@
 package org.jabref.model.search.rules;
 
-import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.jabref.architecture.AllowedToUseLogic;
 import org.jabref.model.entry.BibEntry;
@@ -17,7 +17,7 @@ import org.jabref.model.strings.StringUtil;
 @AllowedToUseLogic("Because access to the lucene index is needed")
 public class ContainsBasedSearchRule extends FullTextSearchRule {
 
-    public ContainsBasedSearchRule(EnumSet<SearchFlags> searchFlags) {
+    public ContainsBasedSearchRule(Set<SearchFlags> searchFlags) {
         super(searchFlags);
     }
 

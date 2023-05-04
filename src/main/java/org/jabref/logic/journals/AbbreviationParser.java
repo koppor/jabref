@@ -24,8 +24,8 @@ public class AbbreviationParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbbreviationParser.class);
 
-    // Ensures ordering while preventing duplicates
-    private final LinkedHashSet<Abbreviation> abbreviations = new LinkedHashSet<>();
+    // LinkedHashSet ensures ordering while preventing duplicates
+    private final LinkedHashSet<Abbreviation> orderedAbbreviations = new LinkedHashSet<>();
 
     void readJournalListFromResource(String resourceFileName) {
         try (InputStream stream = JournalAbbreviationRepository.class.getResourceAsStream(resourceFileName);
@@ -65,12 +65,12 @@ public class AbbreviationParser {
                 }
 
                 Abbreviation abbreviationToAdd = new Abbreviation(name, abbreviation, shortestUniqueAbbreviation);
-                abbreviations.add(abbreviationToAdd);
+                orderedAbbreviations.add(abbreviationToAdd);
             }
         }
     }
 
     public Collection<Abbreviation> getAbbreviations() {
-        return abbreviations;
+        return orderedAbbreviations;
     }
 }

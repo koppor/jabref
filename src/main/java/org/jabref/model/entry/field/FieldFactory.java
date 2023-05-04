@@ -110,9 +110,9 @@ public class FieldFactory {
      * Returns a  List with all standard fields and including some common internal fields
      */
     public static Set<Field> getCommonFields() {
-        EnumSet<StandardField> allFields = EnumSet.allOf(StandardField.class);
+        Set<StandardField> allFields = EnumSet.allOf(StandardField.class);
 
-        LinkedHashSet<Field> publicAndInternalFields = new LinkedHashSet<>(allFields.size() + 3);
+        Set<Field> publicAndInternalFields = new LinkedHashSet<>(allFields.size() + 3);
         publicAndInternalFields.add(InternalField.INTERNAL_ALL_FIELD);
         publicAndInternalFields.add(InternalField.INTERNAL_ALL_TEXT_FIELDS_FIELD);
         publicAndInternalFields.add(InternalField.KEY_FIELD);
@@ -125,9 +125,9 @@ public class FieldFactory {
      * Returns a  List with all standard fields and the citation key field
      */
     public static Set<Field> getStandardFieldsWithCitationKey() {
-        EnumSet<StandardField> allFields = EnumSet.allOf(StandardField.class);
+        Set<StandardField> allFields = EnumSet.allOf(StandardField.class);
 
-        LinkedHashSet<Field> standardFieldsWithBibtexKey = new LinkedHashSet<>(allFields.size() + 1);
+        Set<Field> standardFieldsWithBibtexKey = new LinkedHashSet<>(allFields.size() + 1);
         standardFieldsWithBibtexKey.add(InternalField.KEY_FIELD);
         standardFieldsWithBibtexKey.addAll(allFields);
 

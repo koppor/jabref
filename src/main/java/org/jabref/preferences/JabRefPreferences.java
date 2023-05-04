@@ -2386,7 +2386,7 @@ public class JabRefPreferences implements PreferencesService {
     }
 
     private Set<SidePaneType> getVisibleSidePanes() {
-        HashSet<SidePaneType> visiblePanes = new HashSet<>();
+        Set<SidePaneType> visiblePanes = new HashSet<>();
         if (getBoolean(WEB_SEARCH_VISIBLE)) {
             visiblePanes.add(SidePaneType.WEB_SEARCH);
         }
@@ -2477,8 +2477,8 @@ public class JabRefPreferences implements PreferencesService {
                         FieldFormatterCleanups.parse((String) defaults.get(CLEANUP_FIELD_FORMATTERS))));
     }
 
-    private static EnumSet<CleanupPreferences.CleanupStep> getDefaultCleanupJobs() {
-        EnumSet<CleanupPreferences.CleanupStep> activeJobs = EnumSet.allOf(CleanupPreferences.CleanupStep.class);
+    private static Set<CleanupPreferences.CleanupStep> getDefaultCleanupJobs() {
+        Set<CleanupPreferences.CleanupStep> activeJobs = EnumSet.allOf(CleanupPreferences.CleanupStep.class);
         activeJobs.removeAll(EnumSet.of(
                 CleanupPreferences.CleanupStep.CLEAN_UP_UPGRADE_EXTERNAL_LINKS,
                 CleanupPreferences.CleanupStep.MOVE_PDF,

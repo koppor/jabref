@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -48,7 +49,7 @@ public enum SpecialField implements Field {
 
     private final List<SpecialFieldValue> values;
     private final KeywordList keywords;
-    private final HashMap<String, SpecialFieldValue> map;
+    private final Map<String, SpecialFieldValue> map;
     private final String fieldName;
 
     SpecialField(String fieldName, SpecialFieldValue... values) {

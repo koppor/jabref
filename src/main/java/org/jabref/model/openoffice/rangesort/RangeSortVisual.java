@@ -55,7 +55,7 @@ public class RangeSortVisual {
         fcursor.restore(doc);
 
         // order by position
-        ArrayList<ComparableMark<RangeSortable<T>>> comparableMarks = new ArrayList<>(inputSize);
+        List<ComparableMark<RangeSortable<T>>> comparableMarks = new ArrayList<>(inputSize);
         for (int i = 0; i < inputSize; i++) {
             RangeSortable<T> input = inputs.get(i);
             comparableMarks.add(new ComparableMark<>(positions.get(i),

@@ -1,5 +1,6 @@
 package org.jabref.gui.util;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
@@ -32,7 +33,7 @@ public class DefaultTaskExecutor implements TaskExecutor {
 
     private final ExecutorService executor = Executors.newFixedThreadPool(5);
     private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(2);
-    private final WeakHashMap<DelayTaskThrottler, Void> throttlers = new WeakHashMap<>();
+    private final Map<DelayTaskThrottler, Void> throttlers = new WeakHashMap<>();
 
     private final StateManager stateManager;
 

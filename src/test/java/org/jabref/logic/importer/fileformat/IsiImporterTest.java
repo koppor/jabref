@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -80,7 +81,7 @@ public class IsiImporterTest {
 
     @Test
     public void testProcessSubSup() {
-        HashMap<Field, String> subs = new HashMap<>();
+        Map<Field, String> subs = new HashMap<>();
 
         subs.put(StandardField.TITLE, "/sub 3/");
         IsiImporter.processSubSup(subs);

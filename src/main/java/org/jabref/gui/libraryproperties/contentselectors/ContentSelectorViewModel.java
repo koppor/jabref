@@ -197,15 +197,15 @@ public class ContentSelectorViewModel implements PropertiesTabViewModel {
     }
 
     private boolean keywordsHaveChanged(Field field, List<String> keywords) {
-        HashSet<String> keywordsSet = asHashSet(keywords);
+        Set<String> keywordsSet = asSet(keywords);
         List<String> existingKeywords = metaData.getContentSelectorValuesForField(field);
-        if (!keywordsSet.equals(asHashSet(existingKeywords))) {
+        if (!keywordsSet.equals(asSet(existingKeywords))) {
             return true;
         }
         return !keywordsSet.isEmpty() && existingKeywords.isEmpty();
     }
 
-    private HashSet<String> asHashSet(List<String> listToConvert) {
+    private Set<String> asSet(List<String> listToConvert) {
         return new HashSet<>(listToConvert);
     }
 }

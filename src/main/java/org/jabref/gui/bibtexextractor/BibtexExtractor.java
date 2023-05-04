@@ -133,7 +133,7 @@ public class BibtexExtractor {
     }
 
     private String findParts(String input) {
-        ArrayList<String> lastParts = new ArrayList<>();
+        List<String> lastParts = new ArrayList<>();
         int afterAuthorsIndex = input.lastIndexOf(AUTHOR_TAG);
         if (afterAuthorsIndex == -1) {
             return input;

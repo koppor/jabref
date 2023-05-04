@@ -1,7 +1,7 @@
 package org.jabref.gui.search.rules.describer;
 
-import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -14,10 +14,10 @@ import org.jabref.model.search.rules.SentenceAnalyzer;
 
 public class ContainsAndRegexBasedSearchRuleDescriber implements SearchDescriber {
 
-    private final EnumSet<SearchFlags> searchFlags;
+    private final Set<SearchFlags> searchFlags;
     private final String query;
 
-    public ContainsAndRegexBasedSearchRuleDescriber(EnumSet<SearchFlags> searchFlags, String query) {
+    public ContainsAndRegexBasedSearchRuleDescriber(Set<SearchFlags> searchFlags, String query) {
         this.searchFlags = searchFlags;
         this.query = query;
     }

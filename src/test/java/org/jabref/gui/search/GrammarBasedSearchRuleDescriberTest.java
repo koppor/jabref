@@ -3,6 +3,7 @@ package org.jabref.gui.search;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -32,7 +33,7 @@ class GrammarBasedSearchRuleDescriberTest {
         stage.show();
     }
 
-    private TextFlow createDescription(String query, EnumSet<SearchFlags> searchFlags) {
+    private TextFlow createDescription(String query, Set<SearchFlags> searchFlags) {
         GrammarBasedSearchRule grammarBasedSearchRule = new GrammarBasedSearchRule(searchFlags);
         assertTrue(grammarBasedSearchRule.validateSearchStrings(query));
         GrammarBasedSearchRuleDescriber describer = new GrammarBasedSearchRuleDescriber(searchFlags, grammarBasedSearchRule.getTree());
