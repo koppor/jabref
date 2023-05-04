@@ -206,7 +206,7 @@ public class Bootstrap {
      */
     public static XComponentContext defaultBootstrap_InitialComponentContext(String ini_file, Map<String, String> bootstrap_parameters) throws Exception {
         // jni convenience: easier to iterate over array than calling Hashtable
-        String pairs[] = null;
+        String[] pairs = null;
         if (null != bootstrap_parameters) {
             pairs = new String[2 * bootstrap_parameters.size()];
             int n = 0;
@@ -245,7 +245,7 @@ public class Bootstrap {
         return UnoRuntime.queryInterface(XComponentContext.class, cppuhelper_bootstrap(ini_file, pairs, Bootstrap.class.getClassLoader()));
     }
 
-    private static native Object cppuhelper_bootstrap(String ini_file, String bootstrap_parameters[], ClassLoader loader) throws Exception;
+    private static native Object cppuhelper_bootstrap(String ini_file, String[] bootstrap_parameters, ClassLoader loader) throws Exception;
 
     /**
      * Bootstraps the component context from a UNO installation.

@@ -165,7 +165,7 @@ recipeList:
   - org.openrewrite.java.cleanup.UnnecessaryParentheses
   - org.openrewrite.java.cleanup.UnwrapRepeatableAnnotations
   - org.openrewrite.java.cleanup.UpperCaseLiteralSuffixes
-#  - org.openrewrite.java.cleanup.UseJavaStyleArrayDeclarations
+  - org.openrewrite.java.cleanup.UseJavaStyleArrayDeclarations
 #  - org.openrewrite.java.cleanup.UseLambdaForFunctionalInterface
 #  - org.openrewrite.java.cleanup.UseListSort
 #  - org.openrewrite.java.cleanup.UseObjectNotifyAll
