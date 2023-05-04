@@ -108,7 +108,7 @@ public class Bootstrap {
      * @see #bootstrap(String[])
      * @since LibreOffice 5.1
      */
-    public static final String[] getDefaultOptions() {
+    public static String[] getDefaultOptions() {
         return new String[] {"--nologo", "--nodefault", "--norestore", "--nolockcheck"};
     }
 
@@ -177,7 +177,7 @@ public class Bootstrap {
      * <code>cppuhelper/defaultBootstrap_InitialComponentContext()</code>.
      * @throws Exception if things go awry.
      */
-    public static final XComponentContext defaultBootstrap_InitialComponentContext() throws Exception {
+    public static XComponentContext defaultBootstrap_InitialComponentContext() throws Exception {
         return defaultBootstrap_InitialComponentContext((String) null, (Map<String, String>) null);
     }
 
@@ -189,7 +189,7 @@ public class Bootstrap {
      * @return a freshly bootstrapped component context.
      * @throws Exception if things go awry.
      */
-    public static final XComponentContext defaultBootstrap_InitialComponentContext(String iniFile, Hashtable<String, String> bootstrapParameters) throws Exception {
+    public static XComponentContext defaultBootstrap_InitialComponentContext(String iniFile, Hashtable<String, String> bootstrapParameters) throws Exception {
         return defaultBootstrap_InitialComponentContext(iniFile, (Map<String, String>) bootstrapParameters);
     }
 
@@ -204,7 +204,7 @@ public class Bootstrap {
      * @return a freshly bootstrapped component context.
      * @throws Exception if things go awry.
      */
-    public static final XComponentContext defaultBootstrap_InitialComponentContext(String ini_file, Map<String, String> bootstrap_parameters) throws Exception {
+    public static XComponentContext defaultBootstrap_InitialComponentContext(String ini_file, Map<String, String> bootstrap_parameters) throws Exception {
         // jni convenience: easier to iterate over array than calling Hashtable
         String pairs[] = null;
         if (null != bootstrap_parameters) {
@@ -254,7 +254,7 @@ public class Bootstrap {
      * @throws BootstrapException if things go awry.
      * @since UDK 3.1.0
      */
-    public static final XComponentContext bootstrap(Path ooPath) throws BootstrapException {
+    public static XComponentContext bootstrap(Path ooPath) throws BootstrapException {
         String[] defaultArgArray = getDefaultOptions();
         return bootstrap(defaultArgArray, ooPath);
     }
@@ -268,7 +268,7 @@ public class Bootstrap {
      * @see #getDefaultOptions()
      * @since LibreOffice 5.1
      */
-    public static final XComponentContext bootstrap(String[] argArray, Path path) throws BootstrapException {
+    public static XComponentContext bootstrap(String[] argArray, Path path) throws BootstrapException {
 
         XComponentContext xContext = null;
 
