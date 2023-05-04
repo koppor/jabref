@@ -98,7 +98,7 @@ public class FulltextSearchResultsTab extends EntryEditorTab {
             // Iterate through pages (within file) with search hits
             for (SearchResult searchResult : resultsForPath.getValue()) {
                 for (String resultTextHtml : searchResult.getContentResultStringsHtml()) {
-                    content.getChildren().addAll(TooltipTextUtil.createTextsFromHtml(resultTextHtml.replaceAll("</b> <b>", " ")));
+                    content.getChildren().addAll(TooltipTextUtil.createTextsFromHtml(resultTextHtml.replace("</b> <b>", " ")));
                     content.getChildren().addAll(new Text(System.lineSeparator()), lineSeparator(0.8), createPageLink(searchResult.getPageNumber()));
                 }
                 if (!searchResult.getAnnotationsResultStringsHtml().isEmpty()) {
@@ -107,7 +107,7 @@ public class FulltextSearchResultsTab extends EntryEditorTab {
                     content.getChildren().add(annotationsText);
                 }
                 for (String resultTextHtml : searchResult.getAnnotationsResultStringsHtml()) {
-                    content.getChildren().addAll(TooltipTextUtil.createTextsFromHtml(resultTextHtml.replaceAll("</b> <b>", " ")));
+                    content.getChildren().addAll(TooltipTextUtil.createTextsFromHtml(resultTextHtml.replace("</b> <b>", " ")));
                     content.getChildren().addAll(new Text(System.lineSeparator()), lineSeparator(0.8), createPageLink(searchResult.getPageNumber()));
                 }
             }

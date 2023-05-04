@@ -81,9 +81,9 @@ public class CiteSeer implements SearchBasedParserFetcher {
             @Override
             public String format(String fieldText) {
                 String formatted = super.format(fieldText);
-                formatted = formatted.replaceAll("%3A", ":");
-                formatted = formatted.replaceAll("%3Cem%3", "");
-                formatted = formatted.replaceAll("%3C%2Fem%3E", "");
+                formatted = formatted.replace("%3A", ":");
+                formatted = formatted.replace("%3Cem%3", "");
+                formatted = formatted.replace("%3C%2Fem%3E", "");
                 formatted = formatted.replaceAll("%2C\\+", " ");
                 formatted = formatted.replaceAll("\\+", " ");
                 return formatted;

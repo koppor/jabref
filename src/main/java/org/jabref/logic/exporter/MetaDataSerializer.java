@@ -70,7 +70,7 @@ public class MetaDataSerializer {
             StringBuilder value = new StringBuilder();
             value.append(OS.NEWLINE);
             for (String line : entry.getValue()) {
-                value.append(line.replaceAll(";", "\\\\;") + MetaData.SEPARATOR_STRING + OS.NEWLINE);
+                value.append(line.replace(";", "\\\\;") + MetaData.SEPARATOR_STRING + OS.NEWLINE);
             }
             serializedMetaData.put(entry.getKey(), value.toString());
         }

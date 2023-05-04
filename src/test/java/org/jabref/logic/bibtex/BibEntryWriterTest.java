@@ -75,7 +75,7 @@ class BibEntryWriterTest {
                   note    = {some note},
                   number  = {1},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         assertEquals(expected, stringWriter.toString());
@@ -87,7 +87,7 @@ class BibEntryWriterTest {
                 @Other{test,
                   comment = {testentry},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
 
         BibEntry entry = new BibEntry(new UnknownEntryType("other"));
         entry.setField(StandardField.COMMENT, "testentry");
@@ -109,7 +109,7 @@ class BibEntryWriterTest {
                 @Article{,
                   file = {test:/home/uers/test.pdf:PDF},
                 }
-                """.replaceAll("\n", OS.NEWLINE), stringWriter.toString());
+                """.replace("\n", OS.NEWLINE), stringWriter.toString());
     }
 
     @Test
@@ -132,7 +132,7 @@ class BibEntryWriterTest {
                   number  = {1},
                   journal = {International Journal of Something},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         assertEquals(expected, stringWriter.toString());
@@ -160,7 +160,7 @@ class BibEntryWriterTest {
                   number  = {1},
                   journal = {International Journal of Something},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         assertEquals(expected, stringWriter.toString());
@@ -172,7 +172,7 @@ class BibEntryWriterTest {
                 @Reallyunknowntype{test,
                   comment = {testentry},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
 
         BibEntry entry = new BibEntry();
         entry.setType(new UnknownEntryType("ReallyUnknownType"));
@@ -192,7 +192,7 @@ class BibEntryWriterTest {
                   Note                     = {some note},
                   Number                   = {1}
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
 
         // read in bibtex string
         ParserResult result = new BibtexParser(importFormatPreferences, fileMonitor).parse(new StringReader(bibtexEntry));
@@ -211,7 +211,7 @@ class BibEntryWriterTest {
                 @Article{,
                   file = {Tagungen\\2013\\KWTK45},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
 
         // read in bibtex string
         ParserResult result = new BibtexParser(importFormatPreferences, fileMonitor).parse(new StringReader(bibtexEntry));
@@ -230,7 +230,7 @@ class BibEntryWriterTest {
                 @Article{,
                   demofield = {Tagungen\\2013\\KWTK45},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
 
         // read in bibtex string
         ParserResult result = new BibtexParser(importFormatPreferences, fileMonitor).parse(new StringReader(bibtexEntry));
@@ -249,7 +249,7 @@ class BibEntryWriterTest {
                 @Article{,
                   file = {dir\\},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
 
         // read in bibtex string
         ParserResult result = new BibtexParser(importFormatPreferences, fileMonitor).parse(new StringReader(bibtexEntry));
@@ -342,7 +342,7 @@ class BibEntryWriterTest {
                   Note                     = {some note},
                   Number                   = {1},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         // read in bibtex string
@@ -364,7 +364,7 @@ class BibEntryWriterTest {
                   note    = {some note},
                   number  = {1},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
         assertEquals(expected, stringWriter.toString());
     }
@@ -380,7 +380,7 @@ class BibEntryWriterTest {
                   Note                     = {some note},
                   HowPublished             = {asdf},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         // read in bibtex string
@@ -403,7 +403,7 @@ class BibEntryWriterTest {
                   number       = {1},
                   howpublished = {asdf},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
         assertEquals(expected, stringWriter.toString());
     }
@@ -420,7 +420,7 @@ class BibEntryWriterTest {
                   note         = {some note},
                   howpublished = {asdf},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         // read in bibtex string
@@ -443,7 +443,7 @@ class BibEntryWriterTest {
                   howpublished = {asdf},
                   journal      = {International Journal of Something},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
         assertEquals(expectedNewEntry, stringWriter.toString());
     }
@@ -512,7 +512,7 @@ class BibEntryWriterTest {
                   Note                     = {some note},
                   Number                   = {1}
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         String result = testSingleWrite(bibtexEntry);
@@ -547,7 +547,7 @@ class BibEntryWriterTest {
                   Month                    = mar,
                   Number                   = {1}
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         // read in bibtex string
@@ -610,7 +610,7 @@ class BibEntryWriterTest {
                   subtitle   = {Encyclopedia of Photography},
                   title      = {International Center of Photography},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
 
         assertEquals(expected, stringWriter.toString());
     }
@@ -628,7 +628,7 @@ class BibEntryWriterTest {
                         @Misc{,
                           month = apr,
                         }
-                        """.replaceAll("\n", OS.NEWLINE),
+                        """.replace("\n", OS.NEWLINE),
                 stringWriter.toString());
     }
 
@@ -645,7 +645,7 @@ class BibEntryWriterTest {
                         @Misc{,
                           month = {apr},
                         }
-                        """.replaceAll("\n", OS.NEWLINE),
+                        """.replace("\n", OS.NEWLINE),
                 stringWriter.toString());
     }
 
@@ -662,7 +662,7 @@ class BibEntryWriterTest {
                       file      = {:Hue17 - Leiter # Halbleiter # Supraleiter.pdf:PDF},
                       timestamp = {2020.10.13},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
 
         // read in bibtex string
         ParserResult result = new BibtexParser(importFormatPreferences, fileMonitor).parse(new StringReader(bibtexEntry));
@@ -743,7 +743,7 @@ class BibEntryWriterTest {
                   Note                     = {some note},
                   Number                   = {1}
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         // read in bibtex string
@@ -768,7 +768,7 @@ class BibEntryWriterTest {
                   Number                   = {1},
                   Note                     = {some note}
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         // read in bibtex string
@@ -791,7 +791,7 @@ class BibEntryWriterTest {
                   note    = {some note},
                   number  = {1},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         assertEquals(expected, stringWriter.toString());
@@ -826,7 +826,7 @@ class BibEntryWriterTest {
                   chapter      = {chapter},
                   year         = {2019},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         assertEquals(expected, stringWriter.toString());
@@ -876,7 +876,7 @@ class BibEntryWriterTest {
                   chapter      = {chapter},
                   year         = {2019},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         // @formatter:off
@@ -891,7 +891,7 @@ class BibEntryWriterTest {
                   booktitle = {The Big Book of Books},
                   year      = {2020},
                 }
-                """.replaceAll("\n", OS.NEWLINE);
+                """.replace("\n", OS.NEWLINE);
         // @formatter:on
 
         assertEquals(expected1 + OS.NEWLINE + expected2, output);

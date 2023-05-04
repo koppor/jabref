@@ -170,7 +170,7 @@ recipeList:
   - org.openrewrite.java.cleanup.UseListSort
   - org.openrewrite.java.cleanup.UseObjectNotifyAll
   - org.openrewrite.java.cleanup.UseStandardCharset
-#  - org.openrewrite.java.cleanup.UseStringReplace
+  - org.openrewrite.java.cleanup.UseStringReplace
 #  - org.openrewrite.java.cleanup.UseSystemLineSeparator
 #  - org.openrewrite.java.cleanup.WhileInsteadOfFor
 #  - org.openrewrite.java.cleanup.WriteOctalValuesAsDecimal
