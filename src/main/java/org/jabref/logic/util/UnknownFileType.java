@@ -1,7 +1,6 @@
 package org.jabref.logic.util;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -34,8 +33,8 @@ public class UnknownFileType implements FileType {
             return false;
         }
         FileType other = (FileType) o;
-        Collections.sort(extensions);
-        Collections.sort(other.getExtensions());
+        extensions.sort(null);
+        other.getExtensions().sort(null);
         return extensions.equals(other.getExtensions());
     }
 
