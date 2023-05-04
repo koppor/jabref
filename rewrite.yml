@@ -89,6 +89,8 @@ recipeList:
   #  - org.openrewrite.java.cleanup.UseAsBuilder
   # "Upgradeds" too much, deletss fields
   #  - org.openrewrite.java.cleanup.UseCollectionInterfaces
+  # Does not work at TreeNode
+  #  - org.openrewrite.java.cleanup.UseDiamondOperator
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -161,7 +163,6 @@ recipeList:
   - org.openrewrite.java.cleanup.UnnecessaryParentheses
   - org.openrewrite.java.cleanup.UnwrapRepeatableAnnotations
   - org.openrewrite.java.cleanup.UpperCaseLiteralSuffixes
-#  - org.openrewrite.java.cleanup.UseDiamondOperator
 #  - org.openrewrite.java.cleanup.UseForEachRemoveInsteadOfSetRemoveAll
 #  - org.openrewrite.java.cleanup.UseJavaStyleArrayDeclarations
 #  - org.openrewrite.java.cleanup.UseLambdaForFunctionalInterface

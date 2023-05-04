@@ -493,7 +493,7 @@ public class OOTextIntoOO {
                 }
             }
 
-            this.layers = new Stack<List<Optional<Object>>>();
+            this.layers = new Stack<>();
             this.layers.push(initialValuesOpt);
         }
 
