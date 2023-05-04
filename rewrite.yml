@@ -142,7 +142,7 @@ recipeList:
   - org.openrewrite.java.cleanup.SimplifyCompoundStatement
   - org.openrewrite.java.cleanup.SimplifyDurationCreationUnits
   - org.openrewrite.java.cleanup.StaticMethodNotFinal
-#  - org.openrewrite.java.cleanup.StringLiteralEquality
+  - org.openrewrite.java.cleanup.StringLiteralEquality
 #  - org.openrewrite.java.cleanup.TypecastParenPad
 #  - org.openrewrite.java.cleanup.UnnecessaryCatch
 #  - org.openrewrite.java.cleanup.UnnecessaryCloseInTryWithResources
