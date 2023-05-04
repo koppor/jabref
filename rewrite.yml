@@ -122,7 +122,7 @@ recipeList:
   - org.openrewrite.java.cleanup.RemoveUnusedPrivateFields
   - org.openrewrite.java.cleanup.RenameLocalVariablesToCamelCase
   - org.openrewrite.java.cleanup.RenameMethodsNamedHashcodeEqualOrTostring
-#  - org.openrewrite.java.cleanup.ReplaceRedundantFormatWithPrintf
+  - org.openrewrite.java.cleanup.ReplaceRedundantFormatWithPrintf
 #  - org.openrewrite.java.cleanup.ReplaceStackWithDeque
 #  - org.openrewrite.java.cleanup.ReplaceStreamToListWithCollect
 #  - org.openrewrite.java.cleanup.ReplaceStringBuilderWithString
