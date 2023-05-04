@@ -65,6 +65,12 @@ recipeList:
   #  - org.openrewrite.java.cleanup.ReplaceLambdaWithMethodReference
   # Crashes
   #  - org.openrewrite.java.cleanup.ReplaceStackWithDeque
+  # We want to keep JDK16 (and not downgrade to JDK11)
+  #  - org.openrewrite.java.cleanup.ReplaceStreamToListWithCollect
+  # Changes one item only
+  # - org.openrewrite.java.cleanup.ReplaceStringBuilderWithString
+  # We like text blocks
+  #  - org.openrewrite.java.cleanup.ReplaceTextBlockWithString
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -125,9 +131,6 @@ recipeList:
   - org.openrewrite.java.cleanup.RenameLocalVariablesToCamelCase
   - org.openrewrite.java.cleanup.RenameMethodsNamedHashcodeEqualOrTostring
   - org.openrewrite.java.cleanup.ReplaceRedundantFormatWithPrintf
-#  - org.openrewrite.java.cleanup.ReplaceStreamToListWithCollect
-#  - org.openrewrite.java.cleanup.ReplaceStringBuilderWithString
-#  - org.openrewrite.java.cleanup.ReplaceTextBlockWithString
 #  - org.openrewrite.java.cleanup.ReplaceValidateNotNullHavingVarargsWithObjectsRequireNonNull
 #  - org.openrewrite.java.cleanup.ShortenFullyQualifiedTypeReferences
 #  - org.openrewrite.java.cleanup.SimplifyBooleanExpression
