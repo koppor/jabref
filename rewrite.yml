@@ -75,6 +75,8 @@ recipeList:
   #  - org.openrewrite.java.cleanup.ReplaceValidateNotNullHavingVarargsWithObjectsRequireNonNull
   # We need that in OOBibStyleTest
   #  - org.openrewrite.java.cleanup.SimplifyConstantIfBranchExecution
+  # We log and wrap the exceptions
+  #  - org.openrewrite.java.cleanup.UnnecessaryCatch
 
   - org.openrewrite.java.cleanup.AtomicPrimitiveEqualsUsesGet
   - org.openrewrite.java.cleanup.BigDecimalRoundingConstantsToEnums
@@ -144,7 +146,6 @@ recipeList:
   - org.openrewrite.java.cleanup.StaticMethodNotFinal
   - org.openrewrite.java.cleanup.StringLiteralEquality
   - org.openrewrite.java.cleanup.TypecastParenPad
-#  - org.openrewrite.java.cleanup.UnnecessaryCatch
 #  - org.openrewrite.java.cleanup.UnnecessaryCloseInTryWithResources
 #  - org.openrewrite.java.cleanup.UnnecessaryExplicitTypeArguments
 #  - org.openrewrite.java.cleanup.UnnecessaryParentheses
