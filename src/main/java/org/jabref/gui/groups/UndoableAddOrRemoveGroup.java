@@ -26,27 +26,27 @@ public class UndoableAddOrRemoveGroup extends AbstractUndoableJabRefEdit {
     /**
      * The root of the global groups tree
      */
-    private final GroupTreeNodeViewModel mGroupsRootHandle;
+    private final GroupTreeNodeViewModel m_groupsRootHandle;
 
     /**
      * The subtree that was added or removed
      */
-    private final GroupTreeNode mSubtreeBackup;
+    private final GroupTreeNode m_subtreeBackup;
 
     /**
      * In case of removing a node but keeping all of its children, the number of children has to be stored.
      */
-    private final int mSubtreeRootChildCount;
+    private final int m_subtreeRootChildCount;
 
     /**
      * The path to the edited subtree's root node
      */
-    private final List<Integer> mPathToNode;
+    private final List<Integer> m_pathToNode;
 
     /**
      * The type of the editing (ADD_NODE, REMOVE_NODE_KEEP_CHILDREN, REMOVE_NODE_AND_CHILDREN)
      */
-    private final int mEditType;
+    private final int m_editType;
 
     /**
      * Creates an object that can undo/redo an edit event.
@@ -65,24 +65,24 @@ public class UndoableAddOrRemoveGroup extends AbstractUndoableJabRefEdit {
      */
     public UndoableAddOrRemoveGroup(GroupTreeNodeViewModel groupsRoot,
                                     GroupTreeNodeViewModel editedNode, int editType) {
-        mGroupsRootHandle = groupsRoot;
-        mEditType = editType;
-        mSubtreeRootChildCount = editedNode.getChildren().size();
+        m_groupsRootHandle = groupsRoot;
+        m_editType = editType;
+        m_subtreeRootChildCount = editedNode.getChildren().size();
         // storing a backup of the whole subtree is not required when children
         // are kept
-        mSubtreeBackup = editType != UndoableAddOrRemoveGroup.REMOVE_NODE_KEEP_CHILDREN
+        m_subtreeBackup = editType != UndoableAddOrRemoveGroup.REMOVE_NODE_KEEP_CHILDREN
                 ? editedNode.getNode()
                           .copySubtree()
                 : GroupTreeNode.fromGroup(editedNode.getNode().getGroup().deepCopy());
         // remember path to edited node. this cannot be stored as a reference,
         // because the reference itself might change. the method below is more
         // robust.
-        mPathToNode = editedNode.getNode().getIndexedPathFromRoot();
+        m_pathToNode = editedNode.getNode().getIndexedPathFromRoot();
     }
 
     @Override
     public String getPresentationName() {
-        switch (mEditType) {
+        switch (m_editType) {
             case ADD_NODE:
                 return Localization.lang("Add group");
             case REMOVE_NODE_KEEP_CHILDREN:
@@ -108,36 +108,36 @@ public class UndoableAddOrRemoveGroup extends AbstractUndoableJabRefEdit {
     }
 
     private void doOperation(boolean undo) {
-        GroupTreeNode cursor = mGroupsRootHandle.getNode();
-        final int childIndex = mPathToNode.get(mPathToNode.size() - 1);
+        GroupTreeNode cursor = m_groupsRootHandle.getNode();
+        final int childIndex = m_pathToNode.get(m_pathToNode.size() - 1);
         // traverse path up to but last element
-        for (int i = 0; i < (mPathToNode.size() - 1); i++) {
-            cursor = cursor.getChildAt(mPathToNode.get(i)).get();
+        for (int i = 0; i < (m_pathToNode.size() - 1); i++) {
+            cursor = cursor.getChildAt(m_pathToNode.get(i)).get();
         }
         if (undo) {
-            switch (mEditType) {
+            switch (m_editType) {
                 case ADD_NODE:
                     cursor.removeChild(childIndex);
                     break;
                 case REMOVE_NODE_KEEP_CHILDREN:
                     // move all children to newNode, then add newNode
-                    GroupTreeNode newNode = mSubtreeBackup.copySubtree();
+                    GroupTreeNode newNode = m_subtreeBackup.copySubtree();
                     for (int i = childIndex; i < (childIndex
-                            + mSubtreeRootChildCount); i++) {
+                            + m_subtreeRootChildCount); i++) {
                         cursor.getChildAt(childIndex).get().moveTo(newNode);
                     }
                     newNode.moveTo(cursor, childIndex);
                     break;
                 case REMOVE_NODE_AND_CHILDREN:
-                    mSubtreeBackup.copySubtree().moveTo(cursor, childIndex);
+                    m_subtreeBackup.copySubtree().moveTo(cursor, childIndex);
                     break;
                 default:
                     break;
             }
         } else { // redo
-            switch (mEditType) {
+            switch (m_editType) {
                 case ADD_NODE:
-                    mSubtreeBackup.copySubtree().moveTo(cursor, childIndex);
+                    m_subtreeBackup.copySubtree().moveTo(cursor, childIndex);
                     break;
                 case REMOVE_NODE_KEEP_CHILDREN:
                     // remove node, then insert all children

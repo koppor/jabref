@@ -8,7 +8,7 @@ import org.jabref.model.database.BibDatabase;
 
 public class EntryLinkList {
 
-    private static final String SEPARATOR = ",";
+    private static String SEPARATOR = ",";
 
     private EntryLinkList() {
     }

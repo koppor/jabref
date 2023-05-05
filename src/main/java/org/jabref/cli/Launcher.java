@@ -42,11 +42,11 @@ import org.tinylog.configuration.Configuration;
  * - Start the JavaFX application (if not in cli mode)
  */
 public class Launcher {
-    private static Logger logger;
-    private static String[] arguments;
+    private static Logger LOGGER;
+    private static String[] ARGUMENTS;
 
     public static void main(String[] args) {
-        arguments = args;
+        ARGUMENTS = args;
         addLogToDisk();
         try {
             // Init preferences
@@ -70,17 +70,17 @@ public class Launcher {
                 ArgumentProcessor argumentProcessor = new ArgumentProcessor(args, ArgumentProcessor.Mode.INITIAL_START,
                         preferences);
                 if (argumentProcessor.shouldShutDown()) {
-                    logger.debug("JabRef shut down after processing command line arguments");
+                    LOGGER.debug("JabRef shut down after processing command line arguments");
                     return;
                 }
 
-                MainApplication.main(argumentProcessor.getParserResults(), argumentProcessor.isBlank(), preferences, arguments);
+                MainApplication.main(argumentProcessor.getParserResults(), argumentProcessor.isBlank(), preferences, ARGUMENTS);
             } catch (ParseException e) {
-                logger.error("Problem parsing arguments", e);
+                LOGGER.error("Problem parsing arguments", e);
                 JabRefCLI.printUsage(preferences);
             }
         } catch (Exception ex) {
-            logger.error("Unexpected exception", ex);
+            LOGGER.error("Unexpected exception", ex);
         }
     }
 
@@ -100,7 +100,7 @@ public class Launcher {
             Files.createDirectories(directory);
         } catch (IOException e) {
             initializeLogger();
-            logger.error("Could not create log directory {}", directory, e);
+            LOGGER.error("Could not create log directory {}", directory, e);
             return;
         }
         // The "Shared File Writer" is explained at
@@ -116,7 +116,7 @@ public class Launcher {
     }
 
     private static void initializeLogger() {
-        logger = LoggerFactory.getLogger(MainApplication.class);
+        LOGGER = LoggerFactory.getLogger(MainApplication.class);
     }
 
     private static boolean handleMultipleAppInstances(String[] args, PreferencesService preferences) {
@@ -129,10 +129,10 @@ public class Launcher {
                 // arguments to other instance
                 if (remoteClient.sendCommandLineArguments(args)) {
                     // So we assume it's all taken care of, and quit.
-                    logger.info(Localization.lang("Arguments passed on to running JabRef instance. Shutting down."));
+                    LOGGER.info(Localization.lang("Arguments passed on to running JabRef instance. Shutting down."));
                     return false;
                 } else {
-                    logger.warn("Could not communicate with other running JabRef instance.");
+                    LOGGER.warn("Could not communicate with other running JabRef instance.");
                 }
             }
         }
@@ -174,14 +174,14 @@ public class Launcher {
         try {
             Files.createDirectories(currentIndexPath);
         } catch (IOException e) {
-            logger.error("Could not create index directory {}", appData, e);
+            LOGGER.error("Could not create index directory {}", appData, e);
         }
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(appData)) {
             for (Path path : stream) {
                 if (Files.isDirectory(path) && !path.toString().endsWith("ssl") && path.toString().contains("lucene")
                         && !path.equals(currentIndexPath)) {
-                    logger.info("Deleting out-of-date fulltext search index at {}.", path);
+                    LOGGER.info("Deleting out-of-date fulltext search index at {}.", path);
                     Files.walk(path)
                             .sorted(Comparator.reverseOrder())
                             .map(Path::toFile)
@@ -189,7 +189,7 @@ public class Launcher {
                 }
             }
         } catch (IOException e) {
-            logger.error("Could not access app-directory at {}", appData, e);
+            LOGGER.error("Could not access app-directory at {}", appData, e);
         }
     }
 }

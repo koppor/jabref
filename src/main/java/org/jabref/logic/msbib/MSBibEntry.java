@@ -28,15 +28,6 @@ import org.w3c.dom.NodeList;
  */
 class MSBibEntry {
 
-    /**
-     * reduced subset, supports only "CITY , STATE, COUNTRY" <br>
-     *  <b>\b(\w+)\s?[,]?\s?(\w+)\s?[,]?\s?(\w*)\b</b> <br>
-     *  WORD SPACE , SPACE WORD SPACE (Can be zero or more) , SPACE WORD (Can be zero or more) <br>
-     *  Matches both single locations (only city) like Berlin and full locations like Stroudsburg, PA, USA <br>
-     *  tested using http://www.regexpal.com/
-     */
-    private static final Pattern ADDRESS_PATTERN = Pattern.compile("\\b(\\w+)\\s?[,]?\\s?(\\w*)\\s?[,]?\\s?(\\w*)\\b");
-
     // MSBib fields and values
     public Map<String, String> fields = new HashMap<>();
     public List<MsBibAuthor> authors;
@@ -76,12 +67,24 @@ class MSBibEntry {
 
     private String bibtexEntryType;
 
+    /**
+     * reduced subset, supports only "CITY , STATE, COUNTRY" <br>
+     *  <b>\b(\w+)\s?[,]?\s?(\w+)\s?[,]?\s?(\w*)\b</b> <br>
+     *  WORD SPACE , SPACE WORD SPACE (Can be zero or more) , SPACE WORD (Can be zero or more) <br>
+     *  Matches both single locations (only city) like Berlin and full locations like Stroudsburg, PA, USA <br>
+     *  tested using http://www.regexpal.com/
+     */
+
+    private final Pattern ADDRESS_PATTERN = Pattern.compile("\\b(\\w+)\\s?[,]?\\s?(\\w*)\\s?[,]?\\s?(\\w*)\\b");
+
     public MSBibEntry() {
         // empty
     }
 
     /**
-     * Creates new MSBibEntry to import from an XML element
+     * Createa new {@link MsBibEntry} to import from an xml element
+     *
+     *
      */
     public MSBibEntry(Element entry) {
         populateFromXml(entry);

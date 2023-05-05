@@ -5,10 +5,9 @@ import java.util.Locale;
 import info.debatty.java.stringsimilarity.Levenshtein;
 
 public class StringSimilarity {
+    private final Levenshtein METRIC_DISTANCE = new Levenshtein();
     // edit distance threshold for entry title comparison
-    private static final int METRIC_THRESHOLD = 4;
-
-    private static final Levenshtein METRIC_DISTANCE = new Levenshtein();
+    private final int METRIC_THRESHOLD = 4;
 
     /**
      * String similarity based on Levenshtein, ignoreCase, and fixed metric threshold of 4.

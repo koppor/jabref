@@ -23,15 +23,15 @@ import org.jabref.model.entry.types.StandardEntryType;
  */
 public class CoinsParser implements Parser {
 
-    private static final Pattern DOI = Pattern.compile("%3Fdoi%3D([^&]+)");
-    private static final Pattern TITLE = Pattern.compile("&amp;rft.atitle=([^&]+)");
-    private static final Pattern JOURNAL = Pattern.compile("&amp;rft.jtitle=([^&]+)");
-    private static final Pattern YEAR = Pattern.compile("&amp;rft.date=([^&]+)");
-    private static final Pattern VOLUME = Pattern.compile("&amp;rft.volume=([^&]+)");
-    private static final Pattern PAGES = Pattern.compile("&amp;rft.pages=([^&]+)");
-    private static final Pattern ISSUE = Pattern.compile("&amp;rft.issue=([^&]+)");
-    private static final Pattern TYPE = Pattern.compile("&amp;rft.genre=([^&]+)");
-    private static final Pattern AUTHOR = Pattern.compile("&amp;rft.au=([^&]+)");
+    private final Pattern DOI = Pattern.compile("%3Fdoi%3D([^&]+)");
+    private final Pattern TITLE = Pattern.compile("&amp;rft.atitle=([^&]+)");
+    private final Pattern JOURNAL = Pattern.compile("&amp;rft.jtitle=([^&]+)");
+    private final Pattern YEAR = Pattern.compile("&amp;rft.date=([^&]+)");
+    private final Pattern VOLUME = Pattern.compile("&amp;rft.volume=([^&]+)");
+    private final Pattern PAGES = Pattern.compile("&amp;rft.pages=([^&]+)");
+    private final Pattern ISSUE = Pattern.compile("&amp;rft.issue=([^&]+)");
+    private final Pattern TYPE = Pattern.compile("&amp;rft.genre=([^&]+)");
+    private final Pattern AUTHOR = Pattern.compile("&amp;rft.au=([^&]+)");
 
     @Override
     public List<BibEntry> parseEntries(InputStream inputStream) throws ParseException {

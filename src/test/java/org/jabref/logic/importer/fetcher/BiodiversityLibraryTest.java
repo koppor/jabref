@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 @FetcherTest
 public class BiodiversityLibraryTest {
-    private static final String RESPONSE_FORMAT = "&format=json";
+    private final String RESPONSE_FORMAT = "&format=json";
     private final BuildInfo buildInfo = new BuildInfo();
 
     private BiodiversityLibrary fetcher;
