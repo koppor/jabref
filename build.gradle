@@ -503,13 +503,11 @@ checkstyle {
     sourceSets = []
 }
 
-task fixCheckstyle {
-   dependsOn(rewriteRun)
-}
-
 rewrite {
     activeRecipe(
-        'org.jabref.config.rewrite.cleanup'
+        'org.jabref.config.rewrite.cleanup',
+        'org.openrewrite.java.logging.slf4j.ParameterizedLogging',
+        'org.openrewrite.java.logging.slf4j.Slf4jLogShouldBeConstant'
     )
     exclusion (
         "build.gradle",
