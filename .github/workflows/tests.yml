@@ -47,7 +47,7 @@ jobs:
         if: ${{ failure() }}
         uses: thollander/actions-comment-pull-request@v2
         with:
-          message: |
+          message: >
               GitHub has automatic checks in place.
               One of them is checking for the formatting of the code.
               Consistent formatting ensures more easy reading of the code.
