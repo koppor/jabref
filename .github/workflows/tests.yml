@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   checkstyle:
-    name: Checkstyle
+    name: Style checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
@@ -43,6 +43,14 @@ jobs:
           checkstyle_version: '10.3'
       - name: Run checkstyle gradle
         run: ./gradlew checkstyleMain checkstyleTest checkstyleJmh
+      - name: Run OpenRewrite
+        run: |
+          ./gradlew rewriteDryRun
+      - name: Run modernizer
+        run: |
+          # enable failing of this task if modernizer complains
+          sed -i "s/failOnViolations = false/failOnViolations = true" build.gradle
+          ./gradlew modernizer
       - name: Run markdown-lint
         uses: avto-dev/markdown-lint@v1
         with:
@@ -61,7 +69,7 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
       - name: Run tests
-        run: xvfb-run --auto-servernum ./gradlew check -x checkstyleJmh -x checkstyleMain -x checkstyleTest
+        run: xvfb-run --auto-servernum ./gradlew check -x checkstyleJmh -x checkstyleMain -x checkstyleTest -x modernizer
         env:
           CI: "true"
       - name: Format failed test results
