@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.jabref.model.FieldChange;
-import org.jabref.model.cleanup.CleanupJob;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.EntryConverter;
 import org.jabref.model.entry.field.Field;
@@ -37,7 +36,7 @@ public class ConvertToBibtexCleanup implements CleanupJob {
             }
         });
 
-        for (Map.Entry<Field, Field> alias : EntryConverter.FIELD_ALIASES_TEX_TO_LTX.entrySet()) {
+        for (Map.Entry<Field, Field> alias : EntryConverter.FIELD_ALIASES_BIBTEX_TO_BIBLATEX.entrySet()) {
             Field oldField = alias.getValue();
             Field newField = alias.getKey();
             entry.getField(oldField).ifPresent(oldValue -> {

@@ -4,7 +4,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 import org.jabref.logic.formatter.bibtexfields.RemoveHyphenatedNewlinesFormatter;
-import org.jabref.logic.formatter.bibtexfields.RemoveNewlinesFormatter;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.pdf.FileAnnotation;
 import org.jabref.model.pdf.FileAnnotationType;
@@ -32,21 +31,22 @@ public class FileAnnotationViewModel {
             this.content.set(annotation.getLinkedFileAnnotation().getContent());
             String annotationContent = annotation.getContent();
             String illegibleTextMessage = Localization.lang("The marked area does not contain any legible text!");
-            String markingContent = (annotationContent.isEmpty() ? illegibleTextMessage : annotationContent);
-            // remove newlines && hyphens before linebreaks
-            markingContent = markingContent.replaceAll("-" + NEWLINE, "");
-            new RemoveHyphenatedNewlinesFormatter().format(markingContent);
-            // remove new lines not preceded by '.' or ':'
-            markingContent = markingContent.replaceAll("(?<![.|:])" + NEWLINE, " ");
-            this.marking.set(markingContent);
+            String markingContent = annotationContent.isEmpty() ? illegibleTextMessage : annotationContent;
+            this.marking.set(removePunctuationMark(markingContent));
         } else {
             String content = annotation.getContent();
-            // remove newlines && hyphens before linebreaks
-            content = new RemoveHyphenatedNewlinesFormatter().format(content);
-            content = new RemoveNewlinesFormatter().format(content);
-            this.content.set(content);
+            this.content.set(removePunctuationMark(content));
             this.marking.set("");
         }
+    }
+
+    public String removePunctuationMark(String content) {
+        // remove newlines && hyphens before linebreaks
+        content = content.replaceAll("-" + NEWLINE, "");
+        content = new RemoveHyphenatedNewlinesFormatter().format(content);
+        // remove new lines not preceded by '.' or ':'
+        content = content.replaceAll("(?<![.|:])" + NEWLINE, " ");
+        return content;
     }
 
     public String getAuthor() {
@@ -88,19 +88,19 @@ public class FileAnnotationViewModel {
     @Override
     public String toString() {
         if (annotation.hasLinkedAnnotation() && this.getContent().isEmpty()) {
-            if (FileAnnotationType.UNDERLINE.equals(annotation.getAnnotationType())) {
+            if (FileAnnotationType.UNDERLINE == annotation.getAnnotationType()) {
                 return Localization.lang("Empty Underline");
             }
-            if (FileAnnotationType.HIGHLIGHT.equals(annotation.getAnnotationType())) {
+            if (FileAnnotationType.HIGHLIGHT == annotation.getAnnotationType()) {
                 return Localization.lang("Empty Highlight");
             }
             return Localization.lang("Empty Marking");
         }
 
-        if (FileAnnotationType.UNDERLINE.equals(annotation.getAnnotationType())) {
+        if (FileAnnotationType.UNDERLINE == annotation.getAnnotationType()) {
             return Localization.lang("Underline") + ": " + this.getContent();
         }
-        if (FileAnnotationType.HIGHLIGHT.equals(annotation.getAnnotationType())) {
+        if (FileAnnotationType.HIGHLIGHT == annotation.getAnnotationType()) {
             return Localization.lang("Highlight") + ": " + this.getContent();
         }
 

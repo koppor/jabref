@@ -17,7 +17,7 @@ public class BibStringDiff {
     private final BibtexString originalString;
     private final BibtexString newString;
 
-    private BibStringDiff(BibtexString originalString, BibtexString newString) {
+    BibStringDiff(BibtexString originalString, BibtexString newString) {
         this.originalString = originalString;
         this.newString = newString;
     }
@@ -57,7 +57,7 @@ public class BibStringDiff {
 
             Optional<BibtexString> match = newDatabase
                     .getStringValues().stream()
-                    .filter(test -> test.getName().equals(original.getName()))
+                    .filter(test -> test.getContent().equals(original.getContent()))
                     .findAny();
             if (match.isPresent()) {
                 // We have found a string with the same content. It cannot have the same
@@ -87,5 +87,23 @@ public class BibStringDiff {
 
     public BibtexString getNewString() {
         return newString;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if ((other == null) || (getClass() != other.getClass())) {
+            return false;
+        }
+
+        BibStringDiff that = (BibStringDiff) other;
+        return Objects.equals(newString, that.newString) && Objects.equals(originalString, that.originalString);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(originalString, newString);
     }
 }

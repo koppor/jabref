@@ -5,10 +5,13 @@ public class FileFinders {
      * Creates a preconfigurated file finder based on the given AutoLink preferences.
      */
     public static FileFinder constructFromConfiguration(AutoLinkPreferences autoLinkPreferences) {
-        if (autoLinkPreferences.isUseRegularExpression()) {
-            return new RegExpBasedFileFinder(autoLinkPreferences.getRegularExpression(), autoLinkPreferences.getKeywordDelimiter());
-        } else {
-            return new CiteKeyBasedFileFinder(autoLinkPreferences.isOnlyFindByExactCiteKey());
-        }
+        return switch (autoLinkPreferences.getCitationKeyDependency()) {
+            case START ->
+                    new CitationKeyBasedFileFinder(false);
+            case EXACT ->
+                    new CitationKeyBasedFileFinder(true);
+            case REGEX ->
+                    new RegExpBasedFileFinder(autoLinkPreferences.getRegularExpression(), autoLinkPreferences.getKeywordSeparator());
+        };
     }
 }

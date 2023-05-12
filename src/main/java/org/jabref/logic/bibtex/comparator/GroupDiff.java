@@ -9,7 +9,7 @@ public class GroupDiff {
     private final GroupTreeNode originalGroupRoot;
     private final GroupTreeNode newGroupRoot;
 
-    private GroupDiff(GroupTreeNode originalGroupRoot, GroupTreeNode newGroupRoot) {
+    GroupDiff(GroupTreeNode originalGroupRoot, GroupTreeNode newGroupRoot) {
         this.originalGroupRoot = originalGroupRoot;
         this.newGroupRoot = newGroupRoot;
     }
@@ -23,7 +23,7 @@ public class GroupDiff {
         final Optional<GroupTreeNode> newGroups = newMetaData.getGroups();
 
         if (!originalGroups.equals(newGroups)) {
-            return Optional.of(new GroupDiff(newGroups.orElse(null), originalGroups.orElse(null)));
+            return Optional.of(new GroupDiff(originalGroups.orElse(null), newGroups.orElse(null)));
         } else {
             return Optional.empty();
         }

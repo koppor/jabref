@@ -1,13 +1,16 @@
 package org.jabref.logic.formatter.casechanger;
 
+import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.model.cleanup.Formatter;
 
+/**
+ * Converts all characters of the given string to upper case, but does not change words starting with "{"
+ */
 public class UpperCaseFormatter extends Formatter {
 
     @Override
     public String getName() {
-        return Localization.lang("Upper case");
+        return Localization.lang("UPPER CASE");
     }
 
     @Override
@@ -15,9 +18,6 @@ public class UpperCaseFormatter extends Formatter {
         return "upper_case";
     }
 
-    /**
-     * Converts all characters of the given string to upper case, but does not change words starting with "{"
-     */
     @Override
     public String format(String input) {
         Title title = new Title(input);
@@ -30,7 +30,7 @@ public class UpperCaseFormatter extends Formatter {
     @Override
     public String getDescription() {
         return Localization.lang(
-                "Changes all letters to upper case.");
+                "CHANGES ALL LETTER TO UPPER CASE.");
     }
 
     @Override

@@ -6,13 +6,13 @@ License: APPLICATION_LICENSE_TYPE
 Vendor: APPLICATION_VENDOR
 Prefix: %{dirname:APPLICATION_DIRECTORY}
 Provides: APPLICATION_PACKAGE
-%if "xAPPLICATION_GROUP" != x
+%if "xAPPLICATION_GROUP" != "x"
 Group: APPLICATION_GROUP
 %endif
 
 Autoprov: 0
 Autoreq: 0
-%if "xPACKAGE_DEFAULT_DEPENDENCIES" != x || "xPACKAGE_CUSTOM_DEPENDENCIES" != x
+%if "xPACKAGE_DEFAULT_DEPENDENCIES" != "x" || "xPACKAGE_CUSTOM_DEPENDENCIES" != "x"
 Requires: PACKAGE_DEFAULT_DEPENDENCIES PACKAGE_CUSTOM_DEPENDENCIES
 %endif
 
@@ -27,6 +27,8 @@ Requires: PACKAGE_DEFAULT_DEPENDENCIES PACKAGE_CUSTOM_DEPENDENCIES
 %description
 APPLICATION_DESCRIPTION
 
+%global __os_install_post %{nil}
+
 %prep
 
 %build
@@ -35,14 +37,14 @@ APPLICATION_DESCRIPTION
 rm -rf %{buildroot}
 install -d -m 755 %{buildroot}APPLICATION_DIRECTORY
 cp -r %{_sourcedir}APPLICATION_DIRECTORY/* %{buildroot}APPLICATION_DIRECTORY
-%if "xAPPLICATION_LICENSE_FILE" != x
+%if "xAPPLICATION_LICENSE_FILE" != "x"
   %define license_install_file %{_defaultlicensedir}/%{name}-%{version}/%{basename:APPLICATION_LICENSE_FILE}
   install -d -m 755 %{buildroot}%{dirname:%{license_install_file}}
   install -m 644 APPLICATION_LICENSE_FILE %{buildroot}%{license_install_file}
 %endif
 
 %files
-%if "xAPPLICATION_LICENSE_FILE" != x
+%if "xAPPLICATION_LICENSE_FILE" != "x"
   %license %{license_install_file}
   %{dirname:%{license_install_file}}
 %endif
@@ -52,20 +54,28 @@ cp -r %{_sourcedir}APPLICATION_DIRECTORY/* %{buildroot}APPLICATION_DIRECTORY
 %(echo APPLICATION_DIRECTORY | sed -e "s|\(^/[^/]\{1,\}\).*$|\1|")
 
 %post
+# Install the native-messaging host script for firefox/chrome/chromium
 install -D -m0755 /opt/jabref/lib/native-messaging-host/firefox/org.jabref.jabref.json /usr/lib/mozilla/native-messaging-hosts/org.jabref.jabref.json
 install -D -m0755 /opt/jabref/lib/native-messaging-host/chromium/org.jabref.jabref.json /etc/chromium/native-messaging-hosts/org.jabref.jabref.json
 install -D -m0755 /opt/jabref/lib/native-messaging-host/chromium/org.jabref.jabref.json /etc/opt/chrome/native-messaging-hosts/org.jabref.jabref.json
+# Trigger an auto-install of the browser addon for chrome/chromium browsers
+install -D -m0644 /opt/jabref/lib/native-messaging-host/chromium/bifehkofibaamoeaopjglfkddgkijdlh.json /opt/google/chrome/extensions/bifehkofibaamoeaopjglfkddgkijdlh.json
+install -D -m0644 /opt/jabref/lib/native-messaging-host/chromium/bifehkofibaamoeaopjglfkddgkijdlh.json /usr/share/google-chrome/extensions/bifehkofibaamoeaopjglfkddgkijdlh.json
 DESKTOP_COMMANDS_INSTALL
 
 %preun
+# Remove the native-messaging hosts script only if relative to the deb package
 for NATIVE_MESSAGING_JSON in "/usr/lib/mozilla/native-messaging-hosts/org.jabref.jabref.json"\
-                             "/etc/chromium/native-messaging-hosts/org.jabref.jabref.json"\
-                             "/etc/opt/chrome/native-messaging-hosts/org.jabref.jabref.json"; do
+                     "/etc/chromium/native-messaging-hosts/org.jabref.jabref.json"\
+                     "/etc/opt/chrome/native-messaging-hosts/org.jabref.jabref.json"; do
     if [ -e $NATIVE_MESSAGING_JSON ] && grep --quiet '"path": "/opt' $NATIVE_MESSAGING_JSON; then
         rm $NATIVE_MESSAGING_JSON
     fi
 done
-UTILITY_SCRIPTS
+# Remove the auto-install triggers of the browser addon for chrom/chromium
+rm -f /opt/google/chrome/extensions/bifehkofibaamoeaopjglfkddgkijdlh.json || true
+rm -f /usr/share/google-chrome/extensions/bifehkofibaamoeaopjglfkddgkijdlh.json || true
+DESKTOP_SCRIPTS
 DESKTOP_COMMANDS_UNINSTALL
 
 %clean

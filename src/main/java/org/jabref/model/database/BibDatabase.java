@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import org.jabref.logic.bibtex.FieldWriter;
 import org.jabref.model.database.event.EntriesAddedEvent;
 import org.jabref.model.database.event.EntriesRemovedEvent;
 import org.jabref.model.entry.BibEntry;
@@ -59,15 +60,23 @@ public class BibDatabase {
 
     // All file contents below the last entry in the file
     private String epilog = "";
+
     private String sharedDatabaseID;
 
-    public BibDatabase() {
-        this.registerListener(new KeyChangeListener(this));
+    private String newLineSeparator = System.lineSeparator();
+
+    public BibDatabase(List<BibEntry> entries, String newLineSeparator) {
+        this(entries);
+        this.newLineSeparator = newLineSeparator;
     }
 
     public BibDatabase(List<BibEntry> entries) {
         this();
         insertEntries(entries);
+    }
+
+    public BibDatabase() {
+        this.registerListener(new KeyChangeListener(this));
     }
 
     /**
@@ -137,11 +146,11 @@ public class BibDatabase {
     }
 
     /**
-     * Returns the entry with the given bibtex key.
+     * Returns the entry with the given citation key.
      */
-    public synchronized Optional<BibEntry> getEntryByKey(String key) {
+    public synchronized Optional<BibEntry> getEntryByCitationKey(String key) {
         for (BibEntry entry : entries) {
-            if (key.equals(entry.getCiteKeyOptional().orElse(null))) {
+            if (key.equals(entry.getCitationKey().orElse(null))) {
                 return Optional.of(entry);
             }
         }
@@ -149,17 +158,16 @@ public class BibDatabase {
     }
 
     /**
-     * Collects entries having the specified BibTeX key and returns these entries as list.
+     * Collects entries having the specified citation key and returns these entries as list.
      * The order of the entries is the order they appear in the database.
      *
-     * @param key
      * @return list of entries that contains the given key
      */
-    public synchronized List<BibEntry> getEntriesByKey(String key) {
+    public synchronized List<BibEntry> getEntriesByCitationKey(String key) {
         List<BibEntry> result = new ArrayList<>();
 
         for (BibEntry entry : entries) {
-            entry.getCiteKeyOptional().ifPresent(entryKey -> {
+            entry.getCitationKey().ifPresent(entryKey -> {
                 if (key.equals(entryKey)) {
                     result.add(entry);
                 }
@@ -285,6 +293,7 @@ public class BibDatabase {
     /**
      * Replaces the existing lists of BibTexString with the given one
      * Duplicates throw KeyCollisionException
+     *
      * @param stringsToAdd The collection of strings to set
      */
     public void setStrings(List<BibtexString> stringsToAdd) {
@@ -429,7 +438,6 @@ public class BibDatabase {
      * given BibtexEntries is modified.
      */
     public BibEntry resolveForStrings(BibEntry entry, boolean inPlace) {
-
         BibEntry resultingEntry;
         if (inPlace) {
             resultingEntry = entry;
@@ -495,14 +503,13 @@ public class BibDatabase {
             StringBuilder newRes = new StringBuilder();
             int piv = 0;
             int next;
-            while ((next = res.indexOf('#', piv)) >= 0) {
-
+            while ((next = res.indexOf(FieldWriter.BIBTEX_STRING_START_END_SYMBOL, piv)) >= 0) {
                 // We found the next string ref. Append the text
                 // up to it.
                 if (next > 0) {
                     newRes.append(res, piv, next);
                 }
-                int stringEnd = res.indexOf('#', next + 1);
+                int stringEnd = res.indexOf(FieldWriter.BIBTEX_STRING_START_END_SYMBOL, next + 1);
                 if (stringEnd >= 0) {
                     // We found the boundaries of the string ref,
                     // now resolve that one.
@@ -545,12 +552,12 @@ public class BibDatabase {
     }
 
     /**
-     * Registers an listener object (subscriber) to the internal event bus.
+     * Registers a listener object (subscriber) to the internal event bus.
      * The following events are posted:
      *
-     *   - {@link EntryAddedEvent}
-     *   - {@link EntryChangedEvent}
-     *   - {@link EntriesRemovedEvent}
+     * - {@link EntriesAddedEvent}
+     * - {@link EntryChangedEvent}
+     * - {@link EntriesRemovedEvent}
      *
      * @param listener listener (subscriber) to add
      */
@@ -578,7 +585,7 @@ public class BibDatabase {
     }
 
     public Optional<BibEntry> getReferencedEntry(BibEntry entry) {
-        return entry.getField(StandardField.CROSSREF).flatMap(this::getEntryByKey);
+        return entry.getField(StandardField.CROSSREF).flatMap(this::getEntryByCitationKey);
     }
 
     public Optional<String> getSharedDatabaseID() {
@@ -608,19 +615,33 @@ public class BibDatabase {
     }
 
     /**
-     * Returns the number of occurrences of the given key in this database.
+     * Returns the number of occurrences of the given citation key in this database.
      */
-    public long getNumberOfKeyOccurrences(String citeKey) {
+    public long getNumberOfCitationKeyOccurrences(String key) {
         return entries.stream()
-                      .flatMap(entry -> entry.getCiteKeyOptional().stream())
-                      .filter(key -> key.equals(citeKey))
+                      .flatMap(entry -> entry.getCitationKey().stream())
+                      .filter(key::equals)
                       .count();
     }
 
     /**
-     * Checks if there is more than one occurrence of the cite key
+     * Checks if there is more than one occurrence of the citation key.
      */
-    public boolean isDuplicateCiteKeyExisting(String citeKey) {
-        return getNumberOfKeyOccurrences(citeKey) > 1;
+    public boolean isDuplicateCitationKeyExisting(String key) {
+        return getNumberOfCitationKeyOccurrences(key) > 1;
+    }
+
+    /**
+     * Set the newline separator.
+     */
+    public void setNewLineSeparator(String newLineSeparator) {
+        this.newLineSeparator = newLineSeparator;
+    }
+
+    /**
+     * Returns the string used to indicate a linebreak
+     */
+    public String getNewLineSeparator() {
+        return newLineSeparator;
     }
 }

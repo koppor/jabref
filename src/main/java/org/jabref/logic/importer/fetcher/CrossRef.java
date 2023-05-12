@@ -4,9 +4,12 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
+import org.jabref.logic.cleanup.FieldFormatterCleanup;
 import org.jabref.logic.formatter.bibtexfields.ClearFormatter;
 import org.jabref.logic.formatter.bibtexfields.RemoveBracesFormatter;
 import org.jabref.logic.importer.EntryBasedParserFetcher;
@@ -16,9 +19,10 @@ import org.jabref.logic.importer.IdParserFetcher;
 import org.jabref.logic.importer.ParseException;
 import org.jabref.logic.importer.Parser;
 import org.jabref.logic.importer.SearchBasedParserFetcher;
+import org.jabref.logic.importer.fetcher.transformers.DefaultQueryTransformer;
 import org.jabref.logic.importer.util.JsonReader;
 import org.jabref.logic.util.strings.StringSimilarity;
-import org.jabref.model.cleanup.FieldFormatterCleanup;
+import org.jabref.model.entry.Author;
 import org.jabref.model.entry.AuthorList;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
@@ -31,6 +35,7 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 
 /**
  * A class for fetching DOIs from CrossRef
@@ -62,14 +67,14 @@ public class CrossRef implements IdParserFetcher<DOI>, EntryBasedParserFetcher, 
     }
 
     @Override
-    public URL getURLForQuery(String query) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder(API_URL);
-        uriBuilder.addParameter("query", query);
+        uriBuilder.addParameter("query", new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
         return uriBuilder.build().toURL();
     }
 
     @Override
-    public URL getURLForID(String identifier) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder(API_URL + "/" + identifier);
         return uriBuilder.build().toURL();
     }
@@ -77,23 +82,30 @@ public class CrossRef implements IdParserFetcher<DOI>, EntryBasedParserFetcher, 
     @Override
     public Parser getParser() {
         return inputStream -> {
-            JSONObject response = JsonReader.toJsonObject(inputStream).getJSONObject("message");
-
-            List<BibEntry> entries = new ArrayList<>();
-            if (response.has("items")) {
-                // Response contains a list
-                JSONArray items = response.getJSONArray("items");
-                for (int i = 0; i < items.length(); i++) {
-                    JSONObject item = items.getJSONObject(i);
-                    BibEntry entry = jsonItemToBibEntry(item);
-                    entries.add(entry);
-                }
-            } else {
-                // Singleton response
-                BibEntry entry = jsonItemToBibEntry(response);
-                entries.add(entry);
+            JSONObject response = JsonReader.toJsonObject(inputStream);
+            if (response.isEmpty()) {
+                return Collections.emptyList();
             }
 
+            response = response.getJSONObject("message");
+            if (response.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            if (!response.has("items")) {
+                // Singleton response
+                BibEntry entry = jsonItemToBibEntry(response);
+                return Collections.singletonList(entry);
+            }
+
+            // Response contains a list
+            JSONArray items = response.getJSONArray("items");
+            List<BibEntry> entries = new ArrayList<>(items.length());
+            for (int i = 0; i < items.length(); i++) {
+                JSONObject item = items.getJSONObject(i);
+                BibEntry entry = jsonItemToBibEntry(item);
+                entries.add(entry);
+            }
             return entries;
         };
     }
@@ -140,26 +152,17 @@ public class CrossRef implements IdParserFetcher<DOI>, EntryBasedParserFetcher, 
         }
 
         // input: list of {"given":"A.","family":"Riel","affiliation":[]}
-        AuthorList authorsParsed = new AuthorList();
-        for (int i = 0; i < authors.length(); i++) {
-            JSONObject author = authors.getJSONObject(i);
-            authorsParsed.addAuthor(
-                    author.optString("given", ""),
-                    "",
-                    "",
-                    author.optString("family", ""),
-                    "");
-        }
-        return authorsParsed.getAsFirstLastNamesWithAnd();
+        return IntStream.range(0, authors.length())
+                        .mapToObj(authors::getJSONObject)
+                        .map(author -> new Author(
+                                author.optString("given", ""), "", "",
+                                author.optString("family", ""), ""))
+                        .collect(AuthorList.collect())
+                        .getAsFirstLastNamesWithAnd();
     }
 
     private EntryType convertType(String type) {
-        switch (type) {
-            case "journal-article":
-                return StandardEntryType.Article;
-            default:
-                return StandardEntryType.Misc;
-        }
+        return "journal-article".equals(type) ? StandardEntryType.Article : StandardEntryType.Misc;
     }
 
     @Override

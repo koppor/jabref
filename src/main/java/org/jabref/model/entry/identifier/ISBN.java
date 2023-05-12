@@ -2,6 +2,7 @@ package org.jabref.model.entry.identifier;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -61,13 +62,13 @@ public class ISBN implements Identifier {
 
         int sum = 0;
         for (int pos = 0; pos <= 8; pos++) {
-            sum += (isbnString.charAt(pos) - '0') * ((10 - pos));
+            sum += (isbnString.charAt(pos) - '0') * (10 - pos);
         }
         char control = isbnString.charAt(9);
         if ((control == 'x') || (control == 'X')) {
             control = '9' + 1;
         }
-        sum += (control - '0');
+        sum += control - '0';
         return (sum % 11) == 0;
     }
 
@@ -105,5 +106,22 @@ public class ISBN implements Identifier {
         } catch (URISyntaxException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if ((o == null) || (getClass() != o.getClass())) {
+            return false;
+        }
+        ISBN other = (ISBN) o;
+        return isbnString.equalsIgnoreCase(other.isbnString);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(isbnString.toLowerCase(Locale.ENGLISH));
     }
 }

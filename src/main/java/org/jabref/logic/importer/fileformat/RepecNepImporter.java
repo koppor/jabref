@@ -230,7 +230,6 @@ public class RepecNepImporter extends Importer {
     /**
      * Implements grammar rule "TitleString".
      *
-     * @param be
      * @throws IOException
      */
     private void parseTitleString(BibEntry be, BufferedReader in) throws IOException {
@@ -242,7 +241,6 @@ public class RepecNepImporter extends Importer {
     /**
      * Implements grammar rule "Authors"
      *
-     * @param be
      * @throws IOException
      */
     private void parseAuthors(BibEntry be, BufferedReader in) throws IOException {
@@ -250,7 +248,6 @@ public class RepecNepImporter extends Importer {
         List<String> authors = new ArrayList<>();
         StringBuilder institutions = new StringBuilder();
         while ((this.lastLine != null) && !"".equals(this.lastLine) && !startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS)) {
-
             // read single author
             String author;
             StringBuilder institution = new StringBuilder();
@@ -296,7 +293,6 @@ public class RepecNepImporter extends Importer {
     /**
      * Implements grammar rule "Abstract".
      *
-     * @param be
      * @throws IOException
      */
     private void parseAbstract(BibEntry be, BufferedReader in) throws IOException {
@@ -310,7 +306,6 @@ public class RepecNepImporter extends Importer {
     /**
      * Implements grammar rule "AdditionalFields".
      *
-     * @param be
      * @throws IOException
      */
     private void parseAdditionalFields(BibEntry be, boolean multilineUrlFieldAllowed, BufferedReader in)
@@ -323,7 +318,6 @@ public class RepecNepImporter extends Importer {
 
         // read other fields
         while ((this.lastLine != null) && !isStartOfWorkingPaper() && (startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS) || "".equals(this.lastLine))) {
-
             // if multiple lines for a field are allowed and field consists of multiple lines, join them
             String keyword = "".equals(this.lastLine) ? "" : this.lastLine.substring(0, this.lastLine.indexOf(':')).trim();
             // skip keyword
@@ -334,7 +328,7 @@ public class RepecNepImporter extends Importer {
                 String content = readMultipleLines(in);
                 String[] keywords = content.split("[,;]");
                 be.addKeywords(Arrays.asList(keywords),
-                        importFormatPreferences.getKeywordSeparator());
+                        importFormatPreferences.bibEntryPreferences().getKeywordSeparator());
             } else if ("JEL".equals(keyword)) {
                 // parse JEL field
                 be.setField(new UnknownField("jel"), readMultipleLines(in));
@@ -379,7 +373,6 @@ public class RepecNepImporter extends Importer {
         try {
             readLine(reader); // skip header and editor information
             while (this.lastLine != null) {
-
                 if (this.lastLine.startsWith("-----------------------------")) {
                     this.inOverviewSection = this.preLine.startsWith("In this issue we have");
                 }

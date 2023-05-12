@@ -1,5 +1,7 @@
 package org.jabref.logic.cleanup;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,8 +9,6 @@ import java.util.Optional;
 
 import org.jabref.logic.formatter.bibtexfields.ClearFormatter;
 import org.jabref.model.FieldChange;
-import org.jabref.model.cleanup.CleanupJob;
-import org.jabref.model.cleanup.FieldFormatterCleanup;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
@@ -27,12 +27,15 @@ public class DoiCleanup implements CleanupJob {
 
     @Override
     public List<FieldChange> cleanup(BibEntry entry) {
-
         List<FieldChange> changes = new ArrayList<>();
 
         // First check if the Doi Field is empty
         if (entry.hasField(StandardField.DOI)) {
             String doiFieldValue = entry.getField(StandardField.DOI).orElse(null);
+
+            String decodeDoiFieldValue = "";
+            decodeDoiFieldValue = URLDecoder.decode(doiFieldValue, StandardCharsets.UTF_8);
+            doiFieldValue = decodeDoiFieldValue;
 
             Optional<DOI> doi = DOI.parse(doiFieldValue);
 
@@ -60,12 +63,10 @@ public class DoiCleanup implements CleanupJob {
                     // Update Doi
                     Optional<FieldChange> change = entry.setField(StandardField.DOI, doi.get().getDOI());
                     change.ifPresent(changes::add);
-
                     removeFieldValue(entry, field, changes);
                 }
             }
         }
-
         return changes;
     }
 

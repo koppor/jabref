@@ -17,11 +17,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.jabref.JabRefMain;
 import org.jabref.logic.util.StandardFileType;
 
 import de.undercouch.citeproc.helper.CSLUtils;
@@ -40,10 +38,11 @@ import org.xml.sax.SAXException;
 public class CitationStyle {
 
     public static final String DEFAULT = "/ieee.csl";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CitationStyle.class);
     private static final String STYLES_ROOT = "/csl-styles";
-
     private static final List<CitationStyle> STYLES = new ArrayList<>();
+    private static final DocumentBuilderFactory FACTORY = DocumentBuilderFactory.newInstance();
 
     private final String filePath;
     private final String title;
@@ -61,13 +60,19 @@ public class CitationStyle {
     private static Optional<CitationStyle> createCitationStyleFromSource(final String source, final String filename) {
         if ((filename != null) && !filename.isEmpty() && (source != null) && !source.isEmpty()) {
             try {
-                DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                InputSource is = new InputSource();
-                is.setCharacterStream(new StringReader(stripInvalidProlog(source)));
+                InputSource inputSource = new InputSource();
+                inputSource.setCharacterStream(new StringReader(stripInvalidProlog(source)));
 
-                Document doc = db.parse(is);
+                Document doc = FACTORY.newDocumentBuilder().parse(inputSource);
+
+                // See CSL#canFormatBibliographies, checks if the tag exists
+                NodeList bibs = doc.getElementsByTagName("bibliography");
+                if (bibs.getLength() <= 0) {
+                    LOGGER.debug("no bibliography element for file {} ", filename);
+                    return Optional.empty();
+                }
+
                 NodeList nodes = doc.getElementsByTagName("info");
-
                 NodeList titleNode = ((Element) nodes.item(0)).getElementsByTagName("title");
                 String title = ((CharacterData) titleNode.item(0).getFirstChild()).getData();
 
@@ -101,6 +106,7 @@ public class CitationStyle {
             String text;
             String internalFile = STYLES_ROOT + (styleFile.startsWith("/") ? "" : "/") + styleFile;
             URL url = CitationStyle.class.getResource(internalFile);
+
             if (url != null) {
                 text = CSLUtils.readURLToString(url, StandardCharsets.UTF_8.toString());
             } else {
@@ -109,7 +115,7 @@ public class CitationStyle {
             }
             return createCitationStyleFromSource(text, styleFile);
         } catch (NoSuchFileException e) {
-            LOGGER.error("Could not find file: " + styleFile, e);
+            LOGGER.error("Could not find file: {}", styleFile, e);
         } catch (IOException e) {
             LOGGER.error("Error reading source file", e);
         }
@@ -135,13 +141,12 @@ public class CitationStyle {
             return STYLES;
         }
 
-        URL url = JabRefMain.class.getResource(STYLES_ROOT + "/acm-siggraph.csl");
+        URL url = CitationStyle.class.getResource(STYLES_ROOT + "/acm-siggraph.csl");
         Objects.requireNonNull(url);
 
         try {
             URI uri = url.toURI();
             Path path = Path.of(uri).getParent();
-
             STYLES.addAll(discoverCitationStylesInPath(path));
 
             return STYLES;

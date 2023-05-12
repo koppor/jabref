@@ -1,13 +1,13 @@
 package org.jabref.logic.importer;
 
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import org.jabref.logic.xmp.XmpPreferences;
+import javafx.collections.FXCollections;
+
 import org.jabref.model.util.DummyFileUpdateMonitor;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,9 +26,12 @@ class ImportFormatReaderIntegrationTest {
     @BeforeEach
     void setUp() {
         reader = new ImportFormatReader();
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.getEncoding()).thenReturn(StandardCharsets.UTF_8);
-        reader.resetImportFormats(importFormatPreferences, mock(XmpPreferences.class), new DummyFileUpdateMonitor());
+        ImporterPreferences importerPreferences = mock(ImporterPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        when(importerPreferences.getCustomImportList()).thenReturn(FXCollections.emptyObservableSet());
+        reader.resetImportFormats(
+                importerPreferences,
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS),
+                new DummyFileUpdateMonitor());
     }
 
     @ParameterizedTest
@@ -50,7 +53,7 @@ class ImportFormatReaderIntegrationTest {
     @MethodSource("importFormats")
     void testImportUnknownFormatFromString(String resource, String format, int count) throws Exception {
         Path file = Path.of(ImportFormatReaderIntegrationTest.class.getResource(resource).toURI());
-        String data = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+        String data = Files.readString(file);
         assertEquals(count, reader.importUnknownFormat(data).parserResult.getDatabase().getEntries().size());
     }
 

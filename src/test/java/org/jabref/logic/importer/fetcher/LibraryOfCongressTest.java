@@ -2,16 +2,19 @@ package org.jabref.logic.importer.fetcher;
 
 import java.util.Optional;
 
+import org.jabref.logic.importer.FetcherClientException;
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
+import org.jabref.preferences.BibEntryPreferences;
 import org.jabref.testutils.category.FetcherTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,27 +25,29 @@ public class LibraryOfCongressTest {
 
     @BeforeEach
     public void setUp() {
-        ImportFormatPreferences prefs = mock(ImportFormatPreferences.class);
-        when(prefs.getKeywordSeparator()).thenReturn(',');
-        fetcher = new LibraryOfCongress(prefs);
+        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class);
+        when(importFormatPreferences.bibEntryPreferences()).thenReturn(mock(BibEntryPreferences.class));
+        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
+
+        fetcher = new LibraryOfCongress(importFormatPreferences);
     }
 
     @Test
     public void performSearchById() throws Exception {
-        BibEntry expected = new BibEntry();
-        expected.setField(StandardField.ADDRESS, "Burlington, MA");
-        expected.setField(StandardField.AUTHOR, "West, Matthew");
-        expected.setField(StandardField.ISBN, "0123751063 (pbk.)");
-        expected.setField(new UnknownField("issuance"), "monographic");
-        expected.setField(StandardField.KEYWORDS, "Database design, Data structures (Computer science)");
-        expected.setField(StandardField.LANGUAGE, "eng");
-        expected.setField(new UnknownField("lccn"), "2010045158");
-        expected.setField(StandardField.NOTE, "Matthew West., Includes index.");
-        expected.setField(new UnknownField("oclc"), "ocn665135773");
-        expected.setField(StandardField.PUBLISHER, "Morgan Kaufmann");
-        expected.setField(new UnknownField("source"), "DLC");
-        expected.setField(StandardField.TITLE, "Developing high quality data models");
-        expected.setField(StandardField.YEAR, "2011");
+        BibEntry expected = new BibEntry()
+                .withField(StandardField.ADDRESS, "mau, Burlington, MA")
+                .withField(StandardField.AUTHOR, "West, Matthew")
+                .withField(StandardField.DATE, "2011")
+                .withField(StandardField.ISBN, "0123751063 (pbk.)")
+                .withField(new UnknownField("issuance"), "monographic")
+                .withField(StandardField.KEYWORDS, "Database design, Data structures (Computer science)")
+                .withField(StandardField.LANGUAGE, "eng")
+                .withField(new UnknownField("lccn"), "2010045158")
+                .withField(StandardField.NOTE, "Matthew West., Includes index.")
+                .withField(new UnknownField("oclc"), "ocn665135773")
+                .withField(new UnknownField("source"), "aacr")
+                .withField(StandardField.TITLE, "Developing high quality data models")
+                .withField(StandardField.YEAR, "2011");
 
         assertEquals(Optional.of(expected), fetcher.performSearchById("2010045158"));
     }
@@ -53,7 +58,7 @@ public class LibraryOfCongressTest {
     }
 
     @Test
-    public void performSearchByInvalidId() throws Exception {
-        assertEquals(Optional.empty(), fetcher.performSearchById("xxx"));
+    public void performSearchByInvalidId() {
+        assertThrows(FetcherClientException.class, () -> fetcher.performSearchById("xxx"));
     }
 }

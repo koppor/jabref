@@ -1,6 +1,5 @@
 package org.jabref.logic.importer;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import org.jabref.logic.importer.fileformat.BibtexImporter;
@@ -27,12 +26,12 @@ class DatabaseFileLookupTest {
     @BeforeEach
     void setUp() throws Exception {
         ParserResult result = new BibtexImporter(mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS), new DummyFileUpdateMonitor())
-                .importDatabase(ImportDataTest.UNLINKED_FILES_TEST_BIB, StandardCharsets.UTF_8);
+                .importDatabase(ImportDataTest.UNLINKED_FILES_TEST_BIB);
         database = result.getDatabase();
         entries = database.getEntries();
 
-        entry1 = database.getEntryByKey("entry1").get();
-        entry2 = database.getEntryByKey("entry2").get();
+        entry1 = database.getEntryByCitationKey("entry1").get();
+        entry2 = database.getEntryByCitationKey("entry2").get();
     }
 
     /**

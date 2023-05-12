@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.jabref.logic.bibtexkeypattern.BibtexKeyGenerator;
+import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.logic.importer.Importer;
 import org.jabref.logic.importer.ParserResult;
@@ -111,7 +111,6 @@ public class EndnoteImporter extends Importer {
             boolean isEditedBook = false;
             String[] fields = entry.trim().substring(1).split("\n%");
             for (String field : fields) {
-
                 if (field.length() < 3) {
                     continue;
                 }
@@ -232,7 +231,7 @@ public class EndnoteImporter extends Importer {
                         type = StandardEntryType.MastersThesis;
                     }
                 } else if ("F".equals(prefix)) {
-                    hm.put(InternalField.KEY_FIELD, BibtexKeyGenerator.cleanKey(val, ""));
+                    hm.put(InternalField.KEY_FIELD, CitationKeyGenerator.cleanKey(val, ""));
                 }
             }
 
@@ -271,6 +270,7 @@ public class EndnoteImporter extends Importer {
      * separated by " and ". This is the correct behaviour.
      * One source lists the names separated by comma, with a comma at the end. We can detect
      * this format and fix it.
+     *
      * @param s The author string
      * @return The fixed author string
      */

@@ -1,7 +1,6 @@
 package org.jabref.logic.texparser;
 
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
 
@@ -14,6 +13,7 @@ import org.jabref.model.texparser.LatexBibEntriesResolverResult;
 import org.jabref.model.texparser.LatexParserResult;
 import org.jabref.model.util.DummyFileUpdateMonitor;
 import org.jabref.model.util.FileUpdateMonitor;
+import org.jabref.preferences.GeneralPreferences;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,6 @@ import org.mockito.Answers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class LatexParserTest {
     private final static String DARWIN = "Darwin1888";
@@ -32,20 +31,21 @@ public class LatexParserTest {
     private final static String EINSTEIN_C = "Einstein1920c";
 
     private final FileUpdateMonitor fileMonitor = new DummyFileUpdateMonitor();
+    private GeneralPreferences generalPreferences;
     private ImportFormatPreferences importFormatPreferences;
     private BibDatabase database;
     private BibDatabase database2;
 
     @BeforeEach
-    private void setUp() {
+    void setUp() {
+        generalPreferences = mock(GeneralPreferences.class, Answers.RETURNS_DEEP_STUBS);
         importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.getEncoding()).thenReturn(StandardCharsets.UTF_8);
 
         database = new BibDatabase();
         database2 = new BibDatabase();
 
         BibEntry darwin = new BibEntry(StandardEntryType.Book)
-                .withCiteKey(DARWIN)
+                .withCitationKey(DARWIN)
                 .withField(StandardField.TITLE, "The descent of man, and selection in relation to sex")
                 .withField(StandardField.PUBLISHER, "J. Murray")
                 .withField(StandardField.YEAR, "1888")
@@ -53,7 +53,7 @@ public class LatexParserTest {
         database.insertEntry(darwin);
 
         BibEntry einstein = new BibEntry(StandardEntryType.Book)
-                .withCiteKey(EINSTEIN)
+                .withCitationKey(EINSTEIN)
                 .withField(StandardField.TITLE, "Relativity: The special and general theory")
                 .withField(StandardField.PUBLISHER, "Penguin")
                 .withField(StandardField.YEAR, "1920")
@@ -61,7 +61,7 @@ public class LatexParserTest {
         database.insertEntry(einstein);
 
         BibEntry newton = new BibEntry(StandardEntryType.Book)
-                .withCiteKey(NEWTON)
+                .withCitationKey(NEWTON)
                 .withField(StandardField.TITLE, "The Principia: mathematical principles of natural philosophy")
                 .withField(StandardField.PUBLISHER, "Univ of California Press")
                 .withField(StandardField.YEAR, "1999")
@@ -70,19 +70,19 @@ public class LatexParserTest {
         database2.insertEntry(newton);
 
         BibEntry einsteinA = new BibEntry(StandardEntryType.InBook)
-                .withCiteKey(EINSTEIN_A)
+                .withCitationKey(EINSTEIN_A)
                 .withField(StandardField.CROSSREF, "Einstein1920")
                 .withField(StandardField.PAGES, "22--23");
         database.insertEntry(einsteinA);
 
         BibEntry einsteinB = new BibEntry(StandardEntryType.InBook)
-                .withCiteKey(EINSTEIN_B)
+                .withCitationKey(EINSTEIN_B)
                 .withField(StandardField.CROSSREF, "Einstein1921")
                 .withField(StandardField.PAGES, "22--23");
         database.insertEntry(einsteinB);
 
         BibEntry einsteinC = new BibEntry(StandardEntryType.InBook)
-                .withCiteKey(EINSTEIN_C)
+                .withCitationKey(EINSTEIN_C)
                 .withField(StandardField.CROSSREF, "Einstein1920")
                 .withField(StandardField.PAGES, "25--33");
         database.insertEntry(einsteinC);
@@ -102,16 +102,16 @@ public class LatexParserTest {
         expectedParserResult.addKey(EINSTEIN, texFile, 6, 14, 33, "Einstein said \\cite{Einstein1920} that lorem impsum, consectetur adipiscing elit.");
         expectedParserResult.addKey(DARWIN, texFile, 7, 67, 84, "Nunc ultricies leo nec libero rhoncus, eu vehicula enim efficitur. \\cite{Darwin1888}");
 
-        LatexBibEntriesResolverResult crossingResult = new TexBibEntriesResolver(database, importFormatPreferences, fileMonitor).resolve(parserResult);
+        LatexBibEntriesResolverResult crossingResult = new TexBibEntriesResolver(database, generalPreferences, importFormatPreferences, fileMonitor).resolve(parserResult);
         LatexBibEntriesResolverResult expectedCrossingResult = new LatexBibEntriesResolverResult(expectedParserResult);
 
         assertEquals(expectedCrossingResult, crossingResult);
 
-        LatexBibEntriesResolverResult crossingResult2 = new TexBibEntriesResolver(database2, importFormatPreferences, fileMonitor).resolve(parserResult);
+        LatexBibEntriesResolverResult crossingResult2 = new TexBibEntriesResolver(database2, generalPreferences, importFormatPreferences, fileMonitor).resolve(parserResult);
         LatexBibEntriesResolverResult expectedCrossingResult2 = new LatexBibEntriesResolverResult(expectedParserResult);
 
-        expectedCrossingResult2.addEntry(database.getEntryByKey(EINSTEIN).get());
-        expectedCrossingResult2.addEntry(database.getEntryByKey(DARWIN).get());
+        expectedCrossingResult2.addEntry(database.getEntryByCitationKey(EINSTEIN).get());
+        expectedCrossingResult2.addEntry(database.getEntryByCitationKey(DARWIN).get());
 
         assertEquals(expectedCrossingResult2, crossingResult2);
     }
@@ -135,16 +135,16 @@ public class LatexParserTest {
         expectedParserResult.addKey(EINSTEIN, texFile2, 5, 48, 67, "This is some content trying to cite a bib file: \\cite{Einstein1920}");
         expectedParserResult.addKey(NEWTON, texFile2, 6, 48, 65, "This is some content trying to cite a bib file: \\cite{Newton1999}");
 
-        LatexBibEntriesResolverResult crossingResult = new TexBibEntriesResolver(database, importFormatPreferences, fileMonitor).resolve(parserResult);
+        LatexBibEntriesResolverResult crossingResult = new TexBibEntriesResolver(database, generalPreferences, importFormatPreferences, fileMonitor).resolve(parserResult);
         LatexBibEntriesResolverResult expectedCrossingResult = new LatexBibEntriesResolverResult(expectedParserResult);
 
         assertEquals(expectedCrossingResult, crossingResult);
 
-        LatexBibEntriesResolverResult crossingResult2 = new TexBibEntriesResolver(database2, importFormatPreferences, fileMonitor).resolve(parserResult);
+        LatexBibEntriesResolverResult crossingResult2 = new TexBibEntriesResolver(database2, generalPreferences, importFormatPreferences, fileMonitor).resolve(parserResult);
         LatexBibEntriesResolverResult expectedCrossingResult2 = new LatexBibEntriesResolverResult(expectedParserResult);
 
-        expectedCrossingResult2.addEntry(database.getEntryByKey(EINSTEIN).get());
-        expectedCrossingResult2.addEntry(database.getEntryByKey(DARWIN).get());
+        expectedCrossingResult2.addEntry(database.getEntryByCitationKey(EINSTEIN).get());
+        expectedCrossingResult2.addEntry(database.getEntryByCitationKey(DARWIN).get());
 
         assertEquals(expectedCrossingResult2, crossingResult2);
     }

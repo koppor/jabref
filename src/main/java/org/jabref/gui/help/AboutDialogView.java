@@ -1,7 +1,5 @@
 package org.jabref.gui.help;
 
-import javax.inject.Inject;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
@@ -14,6 +12,7 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.BuildInfo;
 
 import com.airhacks.afterburner.views.ViewLoader;
+import jakarta.inject.Inject;
 
 public class AboutDialogView extends BaseDialog<Void> {
 
@@ -45,6 +44,7 @@ public class AboutDialogView extends BaseDialog<Void> {
         viewModel = new AboutDialogViewModel(dialogService, clipBoardManager, buildInfo);
 
         textAreaVersions.setText(viewModel.getVersionInfo());
+        this.setResizable(false);
     }
 
     @FXML
@@ -75,6 +75,11 @@ public class AboutDialogView extends BaseDialog<Void> {
     @FXML
     public void openLicense() {
         viewModel.openLicense();
+    }
+
+    @FXML
+    public void openContributors() {
+        viewModel.openContributors();
     }
 
     @FXML

@@ -13,10 +13,12 @@ public class SuggestionProviders {
     private final boolean isEmpty;
     private BibDatabase database;
     private JournalAbbreviationRepository abbreviationRepository;
+    private AutoCompletePreferences autoCompletePreferences;
 
-    public SuggestionProviders(BibDatabase database, JournalAbbreviationRepository abbreviationRepository) {
+    public SuggestionProviders(BibDatabase database, JournalAbbreviationRepository abbreviationRepository, AutoCompletePreferences autoCompletePreferences) {
         this.database = database;
         this.abbreviationRepository = abbreviationRepository;
+        this.autoCompletePreferences = autoCompletePreferences;
         this.isEmpty = false;
     }
 
@@ -25,17 +27,16 @@ public class SuggestionProviders {
     }
 
     public SuggestionProvider<?> getForField(Field field) {
-        if (isEmpty) {
+        if (isEmpty || !autoCompletePreferences.getCompleteFields().contains(field)) {
             return new EmptySuggestionProvider();
         }
 
         Set<FieldProperty> fieldProperties = field.getProperties();
         if (fieldProperties.contains(FieldProperty.PERSON_NAMES)) {
             return new PersonNameSuggestionProvider(field, database);
-        } else if (fieldProperties.contains(FieldProperty.SINGLE_ENTRY_LINK)) {
+        } else if (fieldProperties.contains(FieldProperty.SINGLE_ENTRY_LINK) || fieldProperties.contains(FieldProperty.MULTIPLE_ENTRY_LINK)) {
             return new BibEntrySuggestionProvider(database);
-        } else if (fieldProperties.contains(FieldProperty.JOURNAL_NAME)
-                || StandardField.PUBLISHER.equals(field)) {
+        } else if (fieldProperties.contains(FieldProperty.JOURNAL_NAME) || StandardField.PUBLISHER == field) {
             return new JournalsSuggestionProvider(field, database, abbreviationRepository);
         } else {
             return new WordSuggestionProvider(field, database);

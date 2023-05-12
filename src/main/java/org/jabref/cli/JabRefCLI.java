@@ -2,8 +2,11 @@ package org.jabref.cli;
 
 import java.util.List;
 
-import org.jabref.Globals;
+import org.jabref.gui.Globals;
+import org.jabref.logic.exporter.Exporter;
+import org.jabref.logic.exporter.ExporterFactory;
 import org.jabref.logic.l10n.Localization;
+import org.jabref.preferences.PreferencesService;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -11,15 +14,13 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JabRefCLI {
+    private static final int WIDTH = 100; // Number of characters per line before a line break must be added.
+    private static final String WRAPPED_LINE_PREFIX = ""; // If a line break is added, this prefix will be inserted at the beginning of the next line
 
-    private static final int WIDTH = 100; // Number of characters per line
-    private static final Logger LOGGER = LoggerFactory.getLogger(JabRefCLI.class);
     private final CommandLine cl;
-    private List<String> leftOver;
+    private final List<String> leftOver;
 
     public JabRefCLI(String[] args) throws ParseException {
         Options options = getOptions();
@@ -45,10 +46,6 @@ public class JabRefCLI {
 
     public boolean isBlank() {
         return cl.hasOption("blank");
-    }
-
-    public boolean isLoadSession() {
-        return cl.hasOption("loads");
     }
 
     public boolean isDisableGui() {
@@ -139,12 +136,30 @@ public class JabRefCLI {
         return cl.getOptionValue("exportMatches");
     }
 
-    public boolean isGenerateBibtexKeys() {
-        return cl.hasOption("generateBibtexKeys");
+    public boolean isGenerateCitationKeys() {
+        return cl.hasOption("generateCitationKeys");
     }
 
     public boolean isAutomaticallySetFileLinks() {
         return cl.hasOption("automaticallySetFileLinks");
+    }
+
+    public boolean isWriteXMPtoPdf() {
+        return cl.hasOption("writeXMPtoPdf");
+    }
+
+    public boolean isEmbeddBibfileInPdf() {
+        return cl.hasOption("embeddBibfileInPdf");
+    }
+
+    public boolean isWriteMetadatatoPdf() {
+        return cl.hasOption("writeMetadatatoPdf");
+    }
+
+    public String getWriteMetadatatoPdf() {
+        return cl.hasOption("writeMetadatatoPdf") ? cl.getOptionValue("writeMetadatatoPdf") :
+                cl.hasOption("writeXMPtoPdf") ? cl.getOptionValue("writeXMPtoPdf") :
+                cl.hasOption("embeddBibfileInPdf") ? cl.getOptionValue("embeddBibfileInPdf") : null;
     }
 
     private static Options getOptions() {
@@ -154,7 +169,7 @@ public class JabRefCLI {
         options.addOption("h", "help", false, Localization.lang("Display help on command line options"));
         options.addOption("n", "nogui", false, Localization.lang("No GUI. Only process command line options"));
         options.addOption("asfl", "automaticallySetFileLinks", false, Localization.lang("Automatically set file links"));
-        options.addOption("g", "generateBibtexKeys", false, Localization.lang("Regenerate all keys for the entries in a BibTeX file"));
+        options.addOption("g", "generateCitationKeys", false, Localization.lang("Regenerate all keys for the entries in a BibTeX file"));
         options.addOption("b", "blank", false, Localization.lang("Do not open any files at startup"));
         options.addOption("v", "version", false, Localization.lang("Display version"));
         options.addOption(null, "debug", false, Localization.lang("Show debug level messages"));
@@ -242,6 +257,30 @@ public class JabRefCLI {
                 .argName("KEY1[,KEY2][,KEYn] | all")
                 .build());
 
+        options.addOption(Option
+                .builder()
+                .longOpt("writeXMPtoPdf")
+                .desc(String.format("%s: '%s'", Localization.lang("Write BibTeXEntry as XMP metadata to PDF."), "-w pathToMyOwnPaper.pdf"))
+                .hasArg()
+                .argName("CITEKEY1[,CITEKEY2][,CITEKEYn] | PDF1[,PDF2][,PDFn] | all")
+                .build());
+
+        options.addOption(Option
+                .builder()
+                .longOpt("embeddBibfileInPdf")
+                .desc(String.format("%s: '%s'", Localization.lang("Embed BibTeXEntry in PDF."), "-w pathToMyOwnPaper.pdf"))
+                .hasArg()
+                .argName("CITEKEY1[,CITEKEY2][,CITEKEYn] | PDF1[,PDF2][,PDFn] | all")
+                .build());
+
+        options.addOption(Option
+                .builder("w")
+                .longOpt("writeMetadatatoPdf")
+                .desc(String.format("%s: '%s'", Localization.lang("Write BibTeXEntry as metadata to PDF."), "-w pathToMyOwnPaper.pdf"))
+                .hasArg()
+                .argName("CITEKEY1[,CITEKEY2][,CITEKEYn] | PDF1[,PDF2][,PDFn] | all")
+                .build());
+
         return options;
     }
 
@@ -249,14 +288,19 @@ public class JabRefCLI {
         System.out.println(getVersionInfo());
     }
 
-    public static void printUsage() {
+    public static void printUsage(PreferencesService preferencesService) {
         String header = "";
 
         String importFormats = Globals.IMPORT_FORMAT_READER.getImportFormatList();
         String importFormatsList = String.format("%s:%n%s%n", Localization.lang("Available import formats"), importFormats);
 
-        String outFormats = Globals.exportFactory.getExportersAsString(70, 20, "");
-        String outFormatsList = String.format("%s: %s%n", Localization.lang("Available export formats"), outFormats);
+        ExporterFactory exporterFactory = ExporterFactory.create(
+                preferencesService,
+                Globals.entryTypesManager,
+                Globals.journalAbbreviationRepository);
+        String outFormatsIntro = Localization.lang("Available export formats");
+        String outFormats = wrapStringList(exporterFactory.getExporters().stream().map(Exporter::getId).toList(), outFormatsIntro.length());
+        String outFormatsList = String.format("%s: %s%n", outFormatsIntro, outFormats);
 
         String footer = '\n' + importFormatsList + outFormatsList + "\nPlease report issues at https://github.com/JabRef/jabref/issues.";
 
@@ -270,5 +314,26 @@ public class JabRefCLI {
 
     public List<String> getLeftOver() {
         return leftOver;
+    }
+
+    /**
+     * Creates and wraps a multi-line and colon-seperated string from a List of Strings.
+     */
+    protected static String wrapStringList(List<String> list, int firstLineIntroLength) {
+        StringBuilder builder = new StringBuilder();
+        int lastBreak = -firstLineIntroLength;
+
+        for (String line : list) {
+            if (((builder.length() + 2 + line.length()) - lastBreak) > WIDTH) {
+                builder.append(",\n");
+                lastBreak = builder.length();
+                builder.append(WRAPPED_LINE_PREFIX);
+            } else if (builder.length() > 0) {
+                builder.append(", ");
+            }
+            builder.append(line);
+        }
+
+        return builder.toString();
     }
 }

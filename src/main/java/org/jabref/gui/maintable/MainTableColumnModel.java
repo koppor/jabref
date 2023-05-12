@@ -36,12 +36,13 @@ public class MainTableColumnModel {
         GROUPS("groups", Localization.lang("Groups")),
         LINKED_IDENTIFIER("linked_id", Localization.lang("Linked identifiers")),
         NORMALFIELD("field"),
-        SPECIALFIELD("special", Localization.lang("Special"));
+        SPECIALFIELD("special", Localization.lang("Special")),
+        LIBRARY_NAME("library", Localization.lang("Library"));
 
         public static final EnumSet<Type> ICON_COLUMNS = EnumSet.of(EXTRAFILE, FILES, GROUPS, LINKED_IDENTIFIER);
 
-        private String name;
-        private String displayName;
+        private final String name;
+        private final String displayName;
 
         Type(String name) {
             this.name = name;
@@ -67,7 +68,7 @@ public class MainTableColumnModel {
                     return type;
                 }
             }
-            LOGGER.warn(Localization.lang("Column type %0 is unknown.", text));
+            LOGGER.warn("Column type '{}' is unknown.", text);
             return NORMALFIELD;
         }
     }
@@ -138,7 +139,7 @@ public class MainTableColumnModel {
 
     public String getDisplayName() {
         if ((Type.ICON_COLUMNS.contains(typeProperty.getValue()) && qualifierProperty.getValue().isBlank())
-                || typeProperty.getValue() == Type.INDEX) {
+                || (typeProperty.getValue() == Type.INDEX)) {
             return typeProperty.getValue().getDisplayName();
         } else {
             return FieldsUtil.getNameWithType(FieldFactory.parseField(qualifierProperty.getValue()));
@@ -165,23 +166,25 @@ public class MainTableColumnModel {
         return sortTypeProperty;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
 
-        if (o == null || getClass() != o.getClass()) {
+        if ((o == null) || (getClass() != o.getClass())) {
             return false;
         }
 
         MainTableColumnModel that = (MainTableColumnModel) o;
 
-        if (typeProperty != that.typeProperty) {
+        if (typeProperty.getValue() != that.typeProperty.getValue()) {
             return false;
         }
-        return Objects.equals(qualifierProperty, that.qualifierProperty);
+        return Objects.equals(qualifierProperty.getValue(), that.qualifierProperty.getValue());
     }
 
+    @Override
     public int hashCode() {
         return Objects.hash(typeProperty.getValue(), qualifierProperty.getValue());
     }
@@ -199,9 +202,9 @@ public class MainTableColumnModel {
         Type type = Type.fromString(splittedName[0]);
         String qualifier = "";
 
-        if (type == Type.NORMALFIELD
-                || type == Type.SPECIALFIELD
-                || type == Type.EXTRAFILE) {
+        if ((type == Type.NORMALFIELD)
+                || (type == Type.SPECIALFIELD)
+                || (type == Type.EXTRAFILE)) {
             if (splittedName.length == 1) {
                 qualifier = splittedName[0]; // By default the rawColumnName is parsed as NORMALFIELD
             } else {

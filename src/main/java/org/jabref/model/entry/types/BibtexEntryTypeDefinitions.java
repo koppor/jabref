@@ -9,10 +9,8 @@ import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.entry.field.StandardField;
 
 /**
- * This class represents all supported BibTex entry types.
- * <p>
- * Article, Book, Booklet, Conference, Inbook, Incollection, Inproceedings,
- * Manual, Mastersthesis, Misc, Phdthesis, Proceedings, Techreport, Unpublished
+ * This class represents all supported BibTeX entry types.
+ * The BibLaTeX entry types are defined at {@link BiblatexEntryTypeDefinitions}.
  */
 public class BibtexEntryTypeDefinitions {
     /**
@@ -179,6 +177,8 @@ public class BibtexEntryTypeDefinitions {
 
     public static final List<BibEntryType> ALL = Arrays.asList(ARTICLE, INBOOK, BOOK, BOOKLET, INCOLLECTION, CONFERENCE,
             INPROCEEDINGS, PROCEEDINGS, MANUAL, MASTERSTHESIS, PHDTHESIS, TECHREPORT, UNPUBLISHED, MISC);
+
+    public static final List<BibEntryType> RECOMMENDED = Arrays.asList(ARTICLE, BOOK, INPROCEEDINGS, TECHREPORT, MISC);
 
     private BibtexEntryTypeDefinitions() {
     }

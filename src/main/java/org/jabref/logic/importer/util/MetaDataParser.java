@@ -6,20 +6,23 @@ import java.io.StringReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.jabref.logic.cleanup.Cleanups;
+import org.jabref.logic.cleanup.FieldFormatterCleanups;
 import org.jabref.logic.importer.ParseException;
 import org.jabref.model.database.BibDatabaseMode;
+import org.jabref.model.entry.BibEntryType;
+import org.jabref.model.entry.BibEntryTypeBuilder;
 import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.EntryTypeFactory;
 import org.jabref.model.metadata.ContentSelectors;
 import org.jabref.model.metadata.MetaData;
-import org.jabref.model.metadata.SaveOrderConfig;
+import org.jabref.model.metadata.SaveOrder;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.model.util.FileUpdateMonitor;
 
@@ -33,6 +36,30 @@ public class MetaDataParser {
 
     public MetaDataParser(FileUpdateMonitor fileMonitor) {
         MetaDataParser.fileMonitor = fileMonitor;
+    }
+
+    public static Optional<BibEntryType> parseCustomEntryType(String comment) {
+        String rest = comment.substring(MetaData.ENTRYTYPE_FLAG.length());
+        int indexEndOfName = rest.indexOf(':');
+        if (indexEndOfName < 0) {
+            return Optional.empty();
+        }
+        String fieldsDescription = rest.substring(indexEndOfName + 2);
+
+        int indexEndOfRequiredFields = fieldsDescription.indexOf(']');
+        int indexEndOfOptionalFields = fieldsDescription.indexOf(']', indexEndOfRequiredFields + 1);
+        if ((indexEndOfRequiredFields < 4) || (indexEndOfOptionalFields < (indexEndOfRequiredFields + 6))) {
+            return Optional.empty();
+        }
+        EntryType type = EntryTypeFactory.parse(rest.substring(0, indexEndOfName));
+        String reqFields = fieldsDescription.substring(4, indexEndOfRequiredFields);
+        String optFields = fieldsDescription.substring(indexEndOfRequiredFields + 6, indexEndOfOptionalFields);
+
+        BibEntryTypeBuilder entryTypeBuilder = new BibEntryTypeBuilder()
+                .withType(type)
+                .withImportantFields(FieldFactory.parseFieldList(optFields))
+                .withRequiredFields(FieldFactory.parseOrFieldsList(reqFields));
+        return Optional.of(entryTypeBuilder.build());
     }
 
     /**
@@ -49,61 +76,54 @@ public class MetaDataParser {
         List<String> defaultCiteKeyPattern = new ArrayList<>();
         Map<EntryType, List<String>> nonDefaultCiteKeyPatterns = new HashMap<>();
 
-        for (Map.Entry<String, String> entry : data.entrySet()) {
+        // process groups (GROUPSTREE and GROUPSTREE_LEGACY) at the very end (otherwise it can happen that not all dependent data are set)
+        List<Map.Entry<String, String>> entryList = new ArrayList<>(data.entrySet());
+        entryList.sort(groupsLast());
+
+        for (Map.Entry<String, String> entry : entryList) {
             List<String> value = getAsList(entry.getValue());
 
             if (entry.getKey().startsWith(MetaData.PREFIX_KEYPATTERN)) {
                 EntryType entryType = EntryTypeFactory.parse(entry.getKey().substring(MetaData.PREFIX_KEYPATTERN.length()));
                 nonDefaultCiteKeyPatterns.put(entryType, Collections.singletonList(getSingleItem(value)));
-                continue;
             } else if (entry.getKey().startsWith(MetaData.FILE_DIRECTORY + '-')) {
                 // The user name comes directly after "FILE_DIRECTORY-"
                 String user = entry.getKey().substring(MetaData.FILE_DIRECTORY.length() + 1);
                 metaData.setUserFileDirectory(user, getSingleItem(value));
-                continue;
             } else if (entry.getKey().startsWith(MetaData.SELECTOR_META_PREFIX)) {
+                // edge case, it might be one special field e.g. article from biblatex-apa, but we can't distinguish this from any other field and rather prefer to handle it as UnknownField
                 metaData.addContentSelector(ContentSelectors.parse(FieldFactory.parseField(entry.getKey().substring(MetaData.SELECTOR_META_PREFIX.length())), StringUtil.unquote(entry.getValue(), MetaData.ESCAPE_CHARACTER)));
-                continue;
             } else if (entry.getKey().startsWith(MetaData.FILE_DIRECTORY + "Latex-")) {
                 // The user name comes directly after "FILE_DIRECTORYLatex-"
                 String user = entry.getKey().substring(MetaData.FILE_DIRECTORY.length() + 6);
                 Path path = Path.of(getSingleItem(value)).normalize();
                 metaData.setLatexFileDirectory(user, path);
-                continue;
-            }
-
-            switch (entry.getKey()) {
-                case MetaData.GROUPSTREE:
-                case MetaData.GROUPSTREE_LEGACY:
-                    metaData.setGroups(GroupsParser.importGroups(value, keywordSeparator, fileMonitor, metaData));
-                    break;
-                case MetaData.SAVE_ACTIONS:
-                    metaData.setSaveActions(Cleanups.parse(value));
-                    break;
-                case MetaData.DATABASE_TYPE:
-                    metaData.setMode(BibDatabaseMode.parse(getSingleItem(value)));
-                    break;
-                case MetaData.KEYPATTERNDEFAULT:
-                    defaultCiteKeyPattern = Collections.singletonList(getSingleItem(value));
-                    break;
-                case MetaData.PROTECTED_FLAG_META:
-                    if (Boolean.parseBoolean(getSingleItem(value))) {
-                        metaData.markAsProtected();
-                    } else {
-                        metaData.markAsNotProtected();
-                    }
-                    break;
-                case MetaData.FILE_DIRECTORY:
-                    metaData.setDefaultFileDirectory(getSingleItem(value));
-                    break;
-                case MetaData.SAVE_ORDER_CONFIG:
-                    metaData.setSaveOrderConfig(SaveOrderConfig.parse(value));
-                    break;
-                default:
-                    // Keep meta data items that we do not know in the file
-                    metaData.putUnknownMetaDataItem(entry.getKey(), value);
+            } else if (entry.getKey().equals(MetaData.SAVE_ACTIONS)) {
+                metaData.setSaveActions(FieldFormatterCleanups.parse(value));
+            } else if (entry.getKey().equals(MetaData.DATABASE_TYPE)) {
+                metaData.setMode(BibDatabaseMode.parse(getSingleItem(value)));
+            } else if (entry.getKey().equals(MetaData.KEYPATTERNDEFAULT)) {
+                defaultCiteKeyPattern = Collections.singletonList(getSingleItem(value));
+            } else if (entry.getKey().equals(MetaData.PROTECTED_FLAG_META)) {
+                if (Boolean.parseBoolean(getSingleItem(value))) {
+                    metaData.markAsProtected();
+                } else {
+                    metaData.markAsNotProtected();
+                }
+            } else if (entry.getKey().equals(MetaData.FILE_DIRECTORY)) {
+                metaData.setDefaultFileDirectory(getSingleItem(value));
+            } else if (entry.getKey().equals(MetaData.SAVE_ORDER_CONFIG)) {
+                metaData.setSaveOrderConfig(SaveOrder.parse(value));
+            } else if (entry.getKey().equals(MetaData.GROUPSTREE) || entry.getKey().equals(MetaData.GROUPSTREE_LEGACY)) {
+                metaData.setGroups(GroupsParser.importGroups(value, keywordSeparator, fileMonitor, metaData));
+            } else if (entry.getKey().equals(MetaData.VERSION_DB_STRUCT)) {
+                metaData.setVersionDBStructure(getSingleItem(value));
+            } else {
+                // Keep meta data items that we do not know in the file
+                metaData.putUnknownMetaDataItem(entry.getKey(), value);
             }
         }
+
         if (!defaultCiteKeyPattern.isEmpty() || !nonDefaultCiteKeyPatterns.isEmpty()) {
             metaData.setCiteKeyPattern(defaultCiteKeyPattern, nonDefaultCiteKeyPatterns);
         }
@@ -111,17 +131,20 @@ public class MetaDataParser {
         return metaData;
     }
 
+    private static Comparator<? super Map.Entry<String, String>> groupsLast() {
+        return (s1, s2) -> MetaData.GROUPSTREE.equals(s1.getKey()) || MetaData.GROUPSTREE_LEGACY.equals(s1.getKey()) ? 1 :
+                MetaData.GROUPSTREE.equals(s2.getKey()) || MetaData.GROUPSTREE_LEGACY.equals(s2.getKey()) ? -1 : 0;
+    }
+
     /**
      * Returns the first item in the list.
      * If the specified list does not contain exactly one item, then a {@link ParseException} will be thrown.
-     * @param value
-     * @return
      */
     private static String getSingleItem(List<String> value) throws ParseException {
         if (value.size() == 1) {
             return value.get(0);
         } else {
-            throw new ParseException("Expected a single item but received " + value.toString());
+            throw new ParseException("Expected a single item but received " + value);
         }
     }
 

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -24,6 +23,7 @@ import org.jabref.model.entry.Month;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.entry.identifier.DOI;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.IEEETranEntryType;
 import org.jabref.model.entry.types.StandardEntryType;
@@ -62,13 +62,12 @@ public class RisImporter extends Importer {
         String linesAsString = reader.lines().reduce((line, nextline) -> line + "\n" + nextline).orElse("");
 
         String[] entries = linesAsString.replace("\u2013", "-").replace("\u2014", "--").replace("\u2015", "--")
-                                        .split("ER  -.*\\n");
+                                        .split("ER  -.*(\\n)*");
 
         // stores all the date tags from highest to lowest priority
         List<String> dateTags = Arrays.asList("Y1", "PY", "DA", "Y2");
 
         for (String entry1 : entries) {
-
             String dateTag = "";
             String dateValue = "";
             int datePriority = dateTags.size();
@@ -204,8 +203,7 @@ public class RisImporter extends Importer {
                         }
                     } else if ("UR".equals(tag) || "L2".equals(tag) || "LK".equals(tag)) {
                         fields.put(StandardField.URL, value);
-                    } else if ((tagPriority = dateTags.indexOf(tag)) != -1 && value.length() >= 4) {
-
+                    } else if (((tagPriority = dateTags.indexOf(tag)) != -1) && (value.length() >= 4)) {
                         if (tagPriority < datePriority) {
                             String year = value.substring(0, 4);
 
@@ -311,11 +309,8 @@ public class RisImporter extends Importer {
         return new ParserResult(bibitems);
     }
 
-    private void addDoi(Map<Field, String> hm, String val) {
-        String doi = val.toLowerCase(Locale.ENGLISH);
-        if (doi.startsWith("doi:")) {
-            doi = doi.replaceAll("(?i)doi:", "").trim();
-            hm.put(StandardField.DOI, doi);
-        }
-    }
+  private void addDoi(Map<Field, String> hm, String val) {
+      Optional<DOI> parsedDoi = DOI.parse(val);
+      parsedDoi.ifPresent(doi -> hm.put(StandardField.DOI, doi.getDOI()));
+  }
 }

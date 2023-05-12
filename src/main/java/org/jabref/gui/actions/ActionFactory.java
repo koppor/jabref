@@ -1,9 +1,11 @@
 package org.jabref.gui.actions;
 
+import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+import javafx.beans.binding.BooleanExpression;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.CheckMenuItem;
@@ -66,7 +68,7 @@ public class ActionFactory {
                 Method getLabel = ContextMenuContent.MenuItemContainer.class.getDeclaredMethod("getLabel");
                 getLabel.setAccessible(true);
                 return (Label) getLabel.invoke(container);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (InaccessibleObjectException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 LOGGER.warn("Could not get label of menu item", e);
             }
         }
@@ -112,6 +114,14 @@ public class ActionFactory {
         return checkMenuItem;
     }
 
+    public CheckMenuItem createCheckMenuItem(Action action, Command command, BooleanExpression selectedBinding) {
+        CheckMenuItem checkMenuItem = ActionUtils.createCheckMenuItem(new JabRefAction(action, command, keyBindingRepository, Sources.FromMenu));
+        EasyBind.subscribe(selectedBinding, checkMenuItem::setSelected);
+        setGraphic(checkMenuItem, action);
+
+        return checkMenuItem;
+    }
+
     public Menu createMenu(Action action) {
         Menu menu = ActionUtils.createMenu(new JabRefAction(action, keyBindingRepository));
 
@@ -135,10 +145,12 @@ public class ActionFactory {
         button.graphicProperty().unbind();
         action.getIcon().ifPresent(icon -> button.setGraphic(icon.getGraphicNode()));
 
+        button.setFocusTraversable(false); // Prevent the buttons from stealing the focus
         return button;
     }
 
     public ButtonBase configureIconButton(Action action, Command command, ButtonBase button) {
+        ActionUtils.unconfigureButton(button);
         ActionUtils.configureButton(
                 new JabRefAction(action, command, keyBindingRepository, Sources.FromButton),
                 button,

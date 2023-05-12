@@ -1,12 +1,6 @@
 package org.jabref.model.strings;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,9 +10,9 @@ import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.jabref.architecture.ApacheCommonsLang3Allowed;
+import org.jabref.logic.bibtex.FieldWriter;
 
 import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.StringUtils;
@@ -56,9 +50,9 @@ public class StringUtil {
         for (int i = 0; i < toQuote.length(); ++i) {
             c = toQuote.charAt(i);
 
-            isSpecial = (c == quoteChar);
+            isSpecial = c == quoteChar;
             // If non-null specials performs logic-or with specials.indexOf(c) >= 0
-            isSpecial |= ((specials != null) && (specials.indexOf(c) >= 0));
+            isSpecial |= (specials != null) && (specials.indexOf(c) >= 0);
 
             if (isSpecial) {
                 result.append(quoteChar);
@@ -70,11 +64,6 @@ public class StringUtil {
 
     /**
      * Creates a substring from a text
-     *
-     * @param text
-     * @param startIndex
-     * @param terminateOnEndBraceOnly
-     * @return
      */
     public static String getPart(String text, int startIndex, boolean terminateOnEndBraceOnly) {
         char c;
@@ -109,11 +98,7 @@ public class StringUtil {
     /**
      * Returns the string, after shaving off whitespace at the beginning and end,
      * and removing (at most) one pair of braces or " surrounding it.
-     *
-     * @param toShave
-     * @return
      */
-
     public static String shaveString(String toShave) {
         if ((toShave == null) || (toShave.isEmpty())) {
             return "";
@@ -134,18 +119,14 @@ public class StringUtil {
      * String[] s = "ab/cd/ed".split("/"); join(s, "\\", 0, s.length) ->
      * "ab\\cd\\ed"
      *
-     * @param strings
-     * @param separator
-     * @param from
      * @param to        Excluding strings[to]
-     * @return
      */
     public static String join(String[] strings, String separator, int from, int to) {
         if ((strings.length == 0) || (from >= to)) {
             return "";
         }
 
-        int updatedFrom = Math.max(from, 0);
+        int updatedFrom = Math.max(0, from);
         int updatedTo = Math.min(strings.length, to);
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -157,9 +138,6 @@ public class StringUtil {
 
     /**
      * Removes optional square brackets from the string s
-     *
-     * @param toStrip
-     * @return
      */
     public static String stripBrackets(String toStrip) {
         if (isInSquareBrackets(toStrip)) {
@@ -204,7 +182,6 @@ public class StringUtil {
         // remove all whitespace at the end of the string, this especially includes \r created when the field content has \r\n as line separator
         addWrappedLine(result, CharMatcher.whitespace().trimTrailingFrom(lines[0]), wrapAmount, newline);
         for (int i = 1; i < lines.length; i++) {
-
             if (lines[i].trim().isEmpty()) {
                 result.append(newline);
                 result.append('\t');
@@ -264,6 +241,7 @@ public class StringUtil {
      * Decodes an encoded double String array back into array form. The array
      * is assumed to be square, and delimited by the characters ';' (first dim) and
      * ':' (second dim).
+     *
      * @param value The encoded String to be decoded.
      * @return The decoded String array.
      */
@@ -317,7 +295,6 @@ public class StringUtil {
      * @return The resulting string after wrapping capitals.
      */
     public static String putBracesAroundCapitals(String s) {
-
         boolean inString = false;
         boolean isBracing = false;
         boolean escaped = false;
@@ -330,21 +307,19 @@ public class StringUtil {
                 inBrace++;
             } else if (c == '}') {
                 inBrace--;
-            } else if (!escaped && (c == '#')) {
+            } else if (!escaped && (c == FieldWriter.BIBTEX_STRING_START_END_SYMBOL)) {
                 inString = !inString;
             }
 
             // See if we should start bracing:
             if ((inBrace == 0) && !isBracing && !inString && Character.isLetter((char) c)
                     && Character.isUpperCase((char) c)) {
-
                 buf.append('{');
                 isBracing = true;
             }
 
             // See if we should close a brace set:
             if (isBracing && !(Character.isLetter((char) c) && Character.isUpperCase((char) c))) {
-
                 buf.append('}');
                 isBracing = false;
             }
@@ -401,6 +376,7 @@ public class StringUtil {
 
     /**
      * Replaces all platform-dependent line breaks by OS.NEWLINE line breaks.
+     * AKA normalize newlines
      * <p>
      * We do NOT use UNIX line breaks as the user explicitly configures its linebreaks and this method is used in bibtex field writing
      *
@@ -418,6 +394,7 @@ public class StringUtil {
     /**
      * Checks if the given String has exactly one pair of surrounding curly braces <br>
      * Strings with escaped characters in curly braces at the beginning and end are respected, too
+     *
      * @param toCheck The string to check
      * @return True, if the check was succesful. False otherwise.
      */
@@ -587,7 +564,12 @@ public class StringUtil {
      * accept. The basis for replacement is the HashMap UnicodeToReadableCharMap.
      */
     public static String replaceSpecialCharacters(String s) {
-        String result = s;
+        /* Some unicode characters can be encoded in multiple ways. This uses <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/text/Normalizer.Form.html#NFC">NFC</a>
+         * to re-encode the characters so that these characters can be found.
+         * Most people expect Unicode to work similar to NFC, i.e., if characters looks the same, it is likely that they are equivalent.
+         * Hence, if someone debugs issues in the `UNICODE_CHAR_MAP`, they will expect NFC.
+         * A more holistic approach should likely start with the <a href="http://unicode.org/reports/tr15/#Compatibility_Equivalence_Figure">compatibility equivalence</a>. */
+        String result = Normalizer.normalize(s, Normalizer.Form.NFC);
         for (Map.Entry<String, String> chrAndReplace : UNICODE_CHAR_MAP.entrySet()) {
             result = result.replace(chrAndReplace.getKey(), chrAndReplace.getValue());
         }
@@ -601,7 +583,7 @@ public class StringUtil {
      * @return String with n spaces
      */
     public static String repeatSpaces(int n) {
-        return repeat(n, ' ');
+        return repeat(Math.max(0, n), ' ');
     }
 
     /**
@@ -622,7 +604,7 @@ public class StringUtil {
     }
 
     public static boolean isNullOrEmpty(String toTest) {
-        return ((toTest == null) || toTest.isEmpty());
+        return (toTest == null) || toTest.isEmpty();
     }
 
     public static boolean isBlank(String string) {
@@ -656,7 +638,6 @@ public class StringUtil {
      * Return string enclosed in HTML bold tags  if not null, otherwise return alternative text in HTML bold tags
      */
     public static String boldHTML(String input, String alternative) {
-
         if (input == null) {
             return "<b>" + alternative + "</b>";
         }
@@ -706,7 +687,6 @@ public class StringUtil {
         } else {
             return toCapitalize.toUpperCase(Locale.ROOT);
         }
-
     }
 
     /**
@@ -720,6 +700,15 @@ public class StringUtil {
         return Arrays.asList(text.split("[\\s,;]+"));
     }
 
+    /**
+     * Returns a list of sentences contained in the given text.
+     */
+    public static List<String> getStringAsSentences(String text) {
+        // A sentence ends with a .?!;, but not in the case of "Mr.", "Ms.", "Mrs.", "Dr.", "st.", "jr.", "co.", "inc.", and "ltd."
+        Pattern splitTextPattern = Pattern.compile("(?<=[\\.!;\\?])(?<![Mm](([Rr]|[Rr][Ss])|[Ss])\\.|[Dd][Rr]\\.|[Ss][Tt]\\.|[Jj][Rr]\\.|[Cc][Oo]\\.|[Ii][Nn][Cc]\\.|[Ll][Tt][Dd]\\.)\\s+");
+        return Arrays.asList(splitTextPattern.split(text));
+    }
+
     @ApacheCommonsLang3Allowed("No direct Guava equivalent existing - see https://stackoverflow.com/q/16560635/873282")
     public static boolean containsIgnoreCase(String text, String searchString) {
         return StringUtils.containsIgnoreCase(text, searchString);
@@ -729,18 +718,41 @@ public class StringUtil {
         return StringUtils.substringBetween(str, open, close);
     }
 
-    public static String getResourceFileAsString(URL resource) {
-        try {
-            URLConnection conn = resource.openConnection();
-            conn.connect();
+    public static String ignoreCurlyBracket(String title) {
+        return isNotBlank(title) ? title.replace("{", "").replace("}", "") : title;
+    }
 
-            try (InputStream inputStream = new BufferedInputStream(conn.getInputStream());
-                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                 BufferedReader reader = new BufferedReader(inputStreamReader)) {
-                return reader.lines().collect(Collectors.joining(System.lineSeparator()));
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    /**
+     * Encloses the given string with " if there is a space contained
+     *
+     * @return Returns a string
+     */
+    public static String quoteStringIfSpaceIsContained(String string) {
+        if (string.contains(" ")) {
+            return "\"" + string + "\"";
+        } else {
+            return string;
         }
+    }
+
+    /**
+     * Checks if the given string contains any whitespace characters. The supported whitespace characters
+     * are the set of characters matched by {@code \s} in regular expressions, which are {@code [ \t\n\x0B\f\r]}.
+     *
+     * @param s The string to check
+     * @return {@code True} if the given string does contain at least one whitespace character, {@code False} otherwise
+     * */
+    public static boolean containsWhitespace(String s) {
+        return s.chars().anyMatch(Character::isWhitespace);
+    }
+
+    @ApacheCommonsLang3Allowed("No Guava equivalent existing - see https://stackoverflow.com/a/23825984")
+    public static String removeStringAtTheEnd(String string, String stringToBeRemoved) {
+        return StringUtils.removeEndIgnoreCase(string, stringToBeRemoved);
+    }
+
+    @ApacheCommonsLang3Allowed("No Guava equivalent existing")
+    public static boolean endsWithIgnoreCase(String string, String suffix) {
+        return StringUtils.endsWithIgnoreCase(string, suffix);
     }
 }

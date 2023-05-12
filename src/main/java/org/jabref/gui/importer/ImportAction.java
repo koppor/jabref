@@ -1,6 +1,5 @@
 package org.jabref.gui.importer;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -8,32 +7,33 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.jabref.Globals;
-import org.jabref.JabRefException;
-import org.jabref.gui.BasePanel;
 import org.jabref.gui.DialogService;
+import org.jabref.gui.Globals;
 import org.jabref.gui.JabRefFrame;
+import org.jabref.gui.LibraryTab;
 import org.jabref.gui.util.BackgroundTask;
 import org.jabref.gui.util.DefaultTaskExecutor;
 import org.jabref.gui.util.TaskExecutor;
+import org.jabref.logic.JabRefException;
+import org.jabref.logic.database.DatabaseMerger;
 import org.jabref.logic.importer.ImportException;
 import org.jabref.logic.importer.ImportFormatReader;
 import org.jabref.logic.importer.Importer;
 import org.jabref.logic.importer.ParserResult;
+import org.jabref.logic.importer.fileformat.PdfGrobidImporter;
+import org.jabref.logic.importer.fileformat.PdfMergeMetadataImporter;
 import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.util.StandardFileType;
 import org.jabref.logic.util.UpdateField;
+import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.BibtexString;
-import org.jabref.model.groups.AllEntriesGroup;
-import org.jabref.model.groups.ExplicitGroup;
-import org.jabref.model.groups.GroupHierarchyType;
-import org.jabref.model.metadata.ContentSelector;
+import org.jabref.preferences.PreferencesService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ImportAction {
+// FixMe: Command pattern is broken, should extend SimpleCommand
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ImportAction.class);
 
@@ -44,11 +44,14 @@ public class ImportAction {
     private Exception importError;
     private final TaskExecutor taskExecutor = Globals.TASK_EXECUTOR;
 
-    public ImportAction(JabRefFrame frame, boolean openInNew, Importer importer) {
+    private final PreferencesService prefs;
+
+    public ImportAction(JabRefFrame frame, boolean openInNew, Importer importer, PreferencesService prefs) {
         this.importer = Optional.ofNullable(importer);
         this.frame = frame;
         this.dialogService = frame.getDialogService();
         this.openInNew = openInNew;
+        this.prefs = prefs;
     }
 
     /**
@@ -74,6 +77,10 @@ public class ImportAction {
                 if (importError == null) {
                     // TODO: No control flow using exceptions
                     throw new JabRefException(Localization.lang("No entries found. Please make sure you are using the correct import filter."));
+                } else if (importError instanceof ImportException) {
+                    String content = Localization.lang("Please check your library file for wrong syntax.") + "\n\n"
+                            + importError.getLocalizedMessage();
+                    DefaultTaskExecutor.runAndWaitInJavaFXThread(() -> dialogService.showWarningDialogAndWait(Localization.lang("Import error"), content));
                 } else {
                     throw importError;
                 }
@@ -87,14 +94,23 @@ public class ImportAction {
                 frame.addTab(parserResult.getDatabaseContext(), true);
                 dialogService.notify(Localization.lang("Imported entries") + ": " + parserResult.getDatabase().getEntries().size());
             })
-                .executeWith(taskExecutor);
+           .onFailure(ex-> {
+               LOGGER.error("Error importing", ex);
+               dialogService.notify(Localization.lang("Error importing. See the error log for details."));
+           })
+           .executeWith(taskExecutor);
         } else {
-            final BasePanel panel = frame.getCurrentBasePanel();
+            final LibraryTab libraryTab = frame.getCurrentLibraryTab();
 
-            ImportEntriesDialog dialog = new ImportEntriesDialog(panel.getBibDatabaseContext(), task);
+            ImportEntriesDialog dialog = new ImportEntriesDialog(libraryTab.getBibDatabaseContext(), task);
             dialog.setTitle(Localization.lang("Import"));
-            dialog.showAndWait();
+            dialogService.showCustomDialogAndWait(dialog);
         }
+    }
+
+    private boolean fileIsPdf(Path filename) {
+        Optional<String> extension = FileUtil.getFileExtension(filename);
+        return extension.isPresent() && StandardFileType.PDF.getExtensions().contains(extension.get());
     }
 
     private List<ImportFormatReader.UnknownFormatImport> doImport(List<Path> files) {
@@ -102,15 +118,33 @@ public class ImportAction {
         List<ImportFormatReader.UnknownFormatImport> imports = new ArrayList<>();
         for (Path filename : files) {
             try {
-                if (!importer.isPresent()) {
+                if (importer.isEmpty()) {
                     // Unknown format:
-                    DefaultTaskExecutor.runInJavaFXThread(() -> frame.getDialogService().notify(Localization.lang("Importing in unknown format") + "..."));
+                    DefaultTaskExecutor.runAndWaitInJavaFXThread(() -> {
+                        if (fileIsPdf(filename) && GrobidOptInDialogHelper.showAndWaitIfUserIsUndecided(frame.getDialogService(), prefs.getGrobidPreferences())) {
+                            Globals.IMPORT_FORMAT_READER.resetImportFormats(
+                                    prefs.getImporterPreferences(),
+                                    prefs.getImportFormatPreferences(),
+                                    Globals.getFileUpdateMonitor());
+                        }
+                        frame.getDialogService().notify(Localization.lang("Importing in unknown format") + "...");
+                    });
                     // This import method never throws an IOException:
                     imports.add(Globals.IMPORT_FORMAT_READER.importUnknownFormat(filename, Globals.getFileUpdateMonitor()));
                 } else {
-                    DefaultTaskExecutor.runInJavaFXThread(() -> frame.getDialogService().notify(Localization.lang("Importing in %0 format", importer.get().getName()) + "..."));
+                    DefaultTaskExecutor.runAndWaitInJavaFXThread(() -> {
+                        if ((importer.get() instanceof PdfGrobidImporter) || (
+                                (importer.get() instanceof PdfMergeMetadataImporter)
+                                && GrobidOptInDialogHelper.showAndWaitIfUserIsUndecided(frame.getDialogService(), prefs.getGrobidPreferences()))) {
+                                Globals.IMPORT_FORMAT_READER.resetImportFormats(
+                                        prefs.getImporterPreferences(),
+                                        prefs.getImportFormatPreferences(),
+                                        Globals.getFileUpdateMonitor());
+                        }
+                        frame.getDialogService().notify(Localization.lang("Importing in %0 format", importer.get().getName()) + "...");
+                    });
                     // Specific importer:
-                    ParserResult pr = importer.get().importDatabase(filename, Globals.prefs.getDefaultEncoding());
+                    ParserResult pr = importer.get().importDatabase(filename);
                     imports.add(new ImportFormatReader.UnknownFormatImport(importer.get().getName(), pr));
                 }
             } catch (ImportException | IOException e) {
@@ -135,61 +169,21 @@ public class ImportAction {
                 continue;
             }
             ParserResult parserResult = importResult.parserResult;
-            List<BibEntry> entries = parserResult.getDatabase().getEntries();
-            resultDatabase.insertEntries(entries);
+            resultDatabase.insertEntries(parserResult.getDatabase().getEntries());
 
             if (ImportFormatReader.BIBTEX_FORMAT.equals(importResult.format)) {
                 // additional treatment of BibTeX
-                // merge into existing database
-
-                // Merge strings
-                for (BibtexString bibtexString : parserResult.getDatabase().getStringValues()) {
-                    String bibtexStringName = bibtexString.getName();
-                    if (resultDatabase.hasStringByName(bibtexStringName)) {
-                        String importedContent = bibtexString.getContent();
-                        String existingContent = resultDatabase.getStringByName(bibtexStringName).get().getContent();
-                        if (!importedContent.equals(existingContent)) {
-                            LOGGER.warn("String contents differ for {}: {} != {}", bibtexStringName, importedContent, existingContent);
-                            // TODO: decide what to do here (in case the same string exits)
-                        }
-                    } else {
-                        resultDatabase.addString(bibtexString);
-                    }
-                }
-
-                // Merge groups
-                // Adds the specified node as a child of the current root. The group contained in <b>newGroups </b> must not be of
-                // type AllEntriesGroup, since every tree has exactly one AllEntriesGroup (its root). The <b>newGroups </b> are
-                // inserted directly, i.e. they are not deepCopy()'d.
-                parserResult.getMetaData().getGroups().ifPresent(newGroups -> {
-                    // ensure that there is always only one AllEntriesGroup in the resulting database
-                    // "Rename" the AllEntriesGroup of the imported database to "Imported"
-                    if (newGroups.getGroup() instanceof AllEntriesGroup) {
-                        // create a dummy group
-                        try {
-                            // This will cause a bug if the group already exists
-                            // There will be group where the two groups are merged
-                            String newGroupName = importResult.parserResult.getFile().map(File::getName).orElse("unknown");
-                            ExplicitGroup group = new ExplicitGroup("Imported " + newGroupName, GroupHierarchyType.INDEPENDENT,
-                                    Globals.prefs.getKeywordDelimiter());
-                            newGroups.setGroup(group);
-                            group.add(parserResult.getDatabase().getEntries());
-                        } catch (IllegalArgumentException e) {
-                            LOGGER.error("Problem appending entries to group", e);
-                        }
-                    }
-                    result.getMetaData().getGroups().ifPresent(newGroups::moveTo);
-                });
-
-                for (ContentSelector selector : parserResult.getMetaData().getContentSelectorList()) {
-                    result.getMetaData().addContentSelector(selector);
-                }
+                new DatabaseMerger(prefs.getBibEntryPreferences().getKeywordSeparator()).mergeMetaData(
+                        result.getMetaData(),
+                        parserResult.getMetaData(),
+                        importResult.parserResult.getPath().map(path -> path.getFileName().toString()).orElse("unknown"),
+                        parserResult.getDatabase().getEntries());
             }
             // TODO: collect errors into ParserResult, because they are currently ignored (see caller of this method)
         }
 
         // set timestamp and owner
-        UpdateField.setAutomaticFields(resultDatabase.getEntries(), Globals.prefs.getOwnerPreferences(), Globals.prefs.getTimestampPreferences()); // set timestamp and owner
+        UpdateField.setAutomaticFields(resultDatabase.getEntries(), prefs.getOwnerPreferences(), prefs.getTimestampPreferences()); // set timestamp and owner
 
         return result;
     }

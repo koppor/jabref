@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +19,6 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
 
-import org.apache.commons.codec.Charsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -77,10 +74,9 @@ class MedlinePlainImporterTest {
 
     @Test
     void testImportMultipleEntriesInSingleFile() throws IOException, URISyntaxException {
-        Path inputFile = Paths
-                .get(MedlinePlainImporter.class.getResource("MedlinePlainImporterTestMultipleEntries.txt").toURI());
+        Path inputFile = Path.of(MedlinePlainImporter.class.getResource("MedlinePlainImporterTestMultipleEntries.txt").toURI());
 
-        List<BibEntry> entries = importer.importDatabase(inputFile, StandardCharsets.UTF_8).getDatabase()
+        List<BibEntry> entries = importer.importDatabase(inputFile).getDatabase()
                                          .getEntries();
         BibEntry testEntry = entries.get(0);
 
@@ -149,7 +145,7 @@ class MedlinePlainImporterTest {
         Path file = Path.of(MedlinePlainImporter.class.getResource(medlineFile).toURI());
 
         try (InputStream nis = MedlinePlainImporter.class.getResourceAsStream(bibtexFile)) {
-            List<BibEntry> entries = importer.importDatabase(file, StandardCharsets.UTF_8).getDatabase().getEntries();
+            List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
             assertNotNull(entries);
             assertEquals(1, entries.size());
             BibEntryAssert.assertEquals(nis, entries.get(0));
@@ -191,27 +187,25 @@ class MedlinePlainImporterTest {
     void testWithNbibFile() throws IOException, URISyntaxException {
         Path file = Path.of(MedlinePlainImporter.class.getResource("NbibImporterTest.nbib").toURI());
 
-        List<BibEntry> entries = importer.importDatabase(file, StandardCharsets.UTF_8).getDatabase().getEntries();
+        List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
 
         BibEntryAssert.assertEquals(MedlinePlainImporter.class, "NbibImporterTest.bib", entries);
     }
 
     @Test
     void testWithMultipleEntries() throws IOException, URISyntaxException {
-        Path file = Paths
-                .get(MedlinePlainImporter.class.getResource("MedlinePlainImporterStringOutOfBounds.txt").toURI());
+        Path file = Path.of(MedlinePlainImporter.class.getResource("MedlinePlainImporterStringOutOfBounds.txt").toURI());
 
-        List<BibEntry> entries = importer.importDatabase(file, Charsets.UTF_8).getDatabase().getEntries();
+        List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
 
         BibEntryAssert.assertEquals(MedlinePlainImporter.class, "MedlinePlainImporterStringOutOfBounds.bib", entries);
     }
 
     @Test
     void testInvalidFormat() throws URISyntaxException, IOException {
-        Path file = Paths
-                .get(MedlinePlainImporter.class.getResource("MedlinePlainImporterTestInvalidFormat.xml").toURI());
+        Path file = Path.of(MedlinePlainImporter.class.getResource("MedlinePlainImporterTestInvalidFormat.xml").toURI());
 
-        List<BibEntry> entries = importer.importDatabase(file, Charsets.UTF_8).getDatabase().getEntries();
+        List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
 
         assertEquals(Collections.emptyList(), entries);
     }

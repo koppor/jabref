@@ -43,6 +43,8 @@ public class MSBibConverter {
         entry.getLatexFreeField(StandardField.PAGES).ifPresent(pages -> result.pages = new PageNumbers(pages));
         entry.getLatexFreeField(new UnknownField(MSBIB_PREFIX + "accessed")).ifPresent(accesed -> result.dateAccessed = accesed);
 
+        entry.getLatexFreeField(StandardField.URLDATE).ifPresent(acessed -> result.dateAccessed = acessed);
+
         // TODO: currently this can never happen
         if ("SoundRecording".equals(msBibType)) {
             result.albumTitle = entry.getLatexFreeField(StandardField.TITLE).orElse(null);
@@ -61,7 +63,7 @@ public class MSBibConverter {
         }
 
         result.day = entry.getFieldOrAliasLatexFree(StandardField.DAY).orElse(null);
-        result.month = entry.getMonth().map(Month::getNumber).map(Object::toString).orElse(null);
+        result.month = entry.getMonth().map(Month::getFullName).orElse(null);
 
         if (!entry.getLatexFreeField(StandardField.YEAR).isPresent()) {
             result.year = entry.getFieldOrAliasLatexFree(StandardField.YEAR).orElse(null);
@@ -69,14 +71,13 @@ public class MSBibConverter {
         result.journalName = entry.getFieldOrAliasLatexFree(StandardField.JOURNAL).orElse(null);
 
         // Value must be converted
-        // Currently only english is supported
         entry.getLatexFreeField(StandardField.LANGUAGE)
              .ifPresent(lang -> result.fields.put("LCID", String.valueOf(MSBibMapping.getLCID(lang))));
         StringBuilder sbNumber = new StringBuilder();
-        entry.getLatexFreeField(StandardField.ISBN).ifPresent(isbn -> sbNumber.append(" ISBN: " + isbn));
-        entry.getLatexFreeField(StandardField.ISSN).ifPresent(issn -> sbNumber.append(" ISSN: " + issn));
-        entry.getLatexFreeField(new UnknownField("lccn")).ifPresent(lccn -> sbNumber.append("LCCN: " + lccn));
-        entry.getLatexFreeField(StandardField.MR_NUMBER).ifPresent(mrnumber -> sbNumber.append(" MRN: " + mrnumber));
+        entry.getLatexFreeField(StandardField.ISBN).ifPresent(isbn -> sbNumber.append(" ISBN: ").append(isbn));
+        entry.getLatexFreeField(StandardField.ISSN).ifPresent(issn -> sbNumber.append(" ISSN: ").append(issn));
+        entry.getLatexFreeField(new UnknownField("lccn")).ifPresent(lccn -> sbNumber.append("LCCN: ").append(lccn));
+        entry.getLatexFreeField(StandardField.MR_NUMBER).ifPresent(mrnumber -> sbNumber.append(" MRN: ").append(mrnumber));
 
         result.standardNumber = sbNumber.toString();
         if (result.standardNumber.isEmpty()) {
@@ -100,7 +101,7 @@ public class MSBibConverter {
         }
 
         // TODO: currently this can never happen
-        if (("InternetSite".equals(msBibType) || "DocumentFromInternetSite".equals(msBibType))) {
+        if ("InternetSite".equals(msBibType) || "DocumentFromInternetSite".equals(msBibType)) {
             result.internetSiteTitle = entry.getLatexFreeField(StandardField.TITLE).orElse(null);
         }
 
@@ -109,7 +110,11 @@ public class MSBibConverter {
             result.publicationTitle = entry.getLatexFreeField(StandardField.TITLE).orElse(null);
         }
 
-        entry.getField(StandardField.AUTHOR).ifPresent(authors -> result.authors = getAuthors(entry, authors, StandardField.AUTHOR));
+        if (entry.getType().equals(IEEETranEntryType.Patent)) {
+            entry.getField(StandardField.AUTHOR).ifPresent(authors -> result.inventors = getAuthors(entry, authors, StandardField.AUTHOR));
+        } else {
+            entry.getField(StandardField.AUTHOR).ifPresent(authors -> result.authors = getAuthors(entry, authors, StandardField.AUTHOR));
+        }
         entry.getField(StandardField.EDITOR).ifPresent(editors -> result.editors = getAuthors(entry, editors, StandardField.EDITOR));
         entry.getField(StandardField.TRANSLATOR).ifPresent(translator -> result.translators = getAuthors(entry, translator, StandardField.EDITOR));
 

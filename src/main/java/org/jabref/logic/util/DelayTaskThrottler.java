@@ -1,9 +1,12 @@
 package org.jabref.logic.util;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.Callable;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import org.jabref.gui.JabRefExecutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +24,10 @@ public class DelayTaskThrottler {
     private static final Logger LOGGER = LoggerFactory.getLogger(DelayTaskThrottler.class);
 
     private final ScheduledThreadPoolExecutor executor;
-    private final int delay;
 
-    private Future<?> scheduledTask;
+    private int delay;
+
+    private ScheduledFuture<?> scheduledTask;
 
     /**
      * @param delay delay in milliseconds
@@ -32,20 +36,48 @@ public class DelayTaskThrottler {
         this.delay = delay;
         this.executor = new ScheduledThreadPoolExecutor(1);
         this.executor.setRemoveOnCancelPolicy(true);
+        this.executor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
     }
 
-    public void schedule(Runnable command) {
+    public ScheduledFuture<?> schedule(Runnable command) {
         if (scheduledTask != null) {
-            scheduledTask.cancel(false);
+            cancel();
         }
         try {
             scheduledTask = executor.schedule(command, delay, TimeUnit.MILLISECONDS);
         } catch (RejectedExecutionException e) {
             LOGGER.debug("Rejecting while another process is already running.");
         }
+        return scheduledTask;
     }
 
+    public <T> ScheduledFuture<?> scheduleTask(Callable<?> command) {
+        if (scheduledTask != null) {
+            cancel();
+        }
+        try {
+            scheduledTask = executor.schedule(command, delay, TimeUnit.MILLISECONDS);
+        } catch (RejectedExecutionException e) {
+            LOGGER.debug("Rejecting while another process is already running.");
+        }
+        return scheduledTask;
+    }
+
+    // Execute scheduled Runnable early
+    public void execute(Runnable command) {
+        delay = 0;
+        schedule(command);
+    }
+
+    // Cancel scheduled Runnable gracefully
+    public void cancel() {
+        scheduledTask.cancel(false);
+    }
+
+    /**
+     * Shuts everything down. Upon termination, this method returns.
+     */
     public void shutdown() {
-        executor.shutdown();
+        JabRefExecutorService.gracefullyShutdown(executor);
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.jabref.model.cleanup.Formatter;
+import org.jabref.logic.cleanup.Formatter;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.identifier.Identifier;
 
@@ -88,8 +88,10 @@ public interface IdParserFetcher<T extends Identifier> extends IdFetcher<T> {
             LOGGER.debug("Id not found");
             return Optional.empty();
         } catch (IOException e) {
-            // TODO: Catch HTTP Response 401 errors and report that user has no rights to access resource
-            // TODO catch 503 service unavailable and alert user
+            // check for the case where we already have a FetcherException from UrlDownload
+            if (e.getCause() instanceof FetcherException fe) {
+                throw fe;
+            }
             throw new FetcherException("An I/O exception occurred", e);
         } catch (ParseException e) {
             throw new FetcherException("An internal parser error occurred", e);

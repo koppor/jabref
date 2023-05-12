@@ -18,7 +18,7 @@ import org.jabref.logic.util.Version;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
-import org.jabref.preferences.JabRefPreferences;
+import org.jabref.preferences.MrDlibPreferences;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
@@ -38,10 +38,12 @@ public class MrDLibFetcher implements EntryBasedFetcher {
     private String heading;
     private String description;
     private String recommendationSetId;
+    private final MrDlibPreferences preferences;
 
-    public MrDLibFetcher(String language, Version version) {
+    public MrDLibFetcher(String language, Version version, MrDlibPreferences preferences) {
         LANGUAGE = language;
         VERSION = version;
+        this.preferences = preferences;
     }
 
     @Override
@@ -96,7 +98,6 @@ public class MrDLibFetcher implements EntryBasedFetcher {
     private String makeServerRequest(String queryByTitle) throws FetcherException {
         try {
             URLDownload urlDownload = new URLDownload(constructQuery(queryByTitle));
-            URLDownload.bypassSSLVerification();
             String response = urlDownload.asString();
 
             // Conversion of < and >
@@ -125,14 +126,13 @@ public class MrDLibFetcher implements EntryBasedFetcher {
         builder.addParameter("app_id", "jabref_desktop");
         builder.addParameter("app_version", VERSION.getFullVersion());
 
-        JabRefPreferences prefs = JabRefPreferences.getInstance();
-        if (prefs.getBoolean(JabRefPreferences.SEND_LANGUAGE_DATA)) {
+        if (preferences.shouldSendLanguage()) {
             builder.addParameter("app_lang", LANGUAGE);
         }
-        if (prefs.getBoolean(JabRefPreferences.SEND_OS_DATA)) {
+        if (preferences.shouldSendOs()) {
             builder.addParameter("os", System.getProperty("os.name"));
         }
-        if (prefs.getBoolean(JabRefPreferences.SEND_TIMEZONE_DATA)) {
+        if (preferences.shouldSendTimezone()) {
             builder.addParameter("timezone", Calendar.getInstance().getTimeZone().getID());
         }
 

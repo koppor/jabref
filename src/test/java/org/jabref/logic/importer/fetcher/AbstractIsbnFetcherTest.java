@@ -15,11 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public abstract class AbstractIsbnFetcherTest {
 
     protected AbstractIsbnFetcher fetcher;
-    protected BibEntry bibEntry;
+    protected BibEntry bibEntryEffectiveJava;
 
     public abstract void testName();
-
-    public abstract void testHelpPage();
 
     public abstract void authorsAreCorrectlyFormatted() throws Exception;
 
@@ -28,7 +26,7 @@ public abstract class AbstractIsbnFetcherTest {
     @Test
     public void searchByIdSuccessfulWithLongISBN() throws FetcherException {
         Optional<BibEntry> fetchedEntry = fetcher.performSearchById("978-0321356680");
-        assertEquals(Optional.of(bibEntry), fetchedEntry);
+        assertEquals(Optional.of(bibEntryEffectiveJava), fetchedEntry);
     }
 
     @Test

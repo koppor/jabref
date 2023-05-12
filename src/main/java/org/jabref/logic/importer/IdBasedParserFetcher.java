@@ -8,8 +8,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
-import org.jabref.logic.net.URLDownload;
-import org.jabref.model.cleanup.Formatter;
+import org.jabref.logic.cleanup.Formatter;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.strings.StringUtil;
 
@@ -31,7 +30,7 @@ public interface IdBasedParserFetcher extends IdBasedFetcher {
      *
      * @param identifier the ID
      */
-    URL getURLForID(String identifier) throws URISyntaxException, MalformedURLException, FetcherException;
+    URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException, FetcherException;
 
     /**
      * Returns the parser used to convert the response to a list of {@link BibEntry}.
@@ -49,6 +48,7 @@ public interface IdBasedParserFetcher extends IdBasedFetcher {
      * {@code new FieldFormatterCleanup(StandardField.TITLE, new RemoveBracesFormatter()).cleanup(entry);}
      *
      * By default, no cleanup is done.
+     *
      * @param entry the entry to be cleaned-up
      */
     default void doPostCleanup(BibEntry entry) {
@@ -61,7 +61,7 @@ public interface IdBasedParserFetcher extends IdBasedFetcher {
             return Optional.empty();
         }
 
-        try (InputStream stream = new URLDownload(getURLForID(identifier)).asInputStream()) {
+        try (InputStream stream = getUrlDownload(getUrlForIdentifier(identifier)).asInputStream()) {
             List<BibEntry> fetchedEntries = getParser().parseEntries(stream);
 
             if (fetchedEntries.isEmpty()) {
@@ -69,8 +69,7 @@ public interface IdBasedParserFetcher extends IdBasedFetcher {
             }
 
             if (fetchedEntries.size() > 1) {
-                LOGGER.info("Fetcher " + getName() + "found more than one result for identifier " + identifier
-                        + ". We will use the first entry.");
+                LOGGER.info("Fetcher {} found more than one result for identifier {}. We will use the first entry.", getName(), identifier);
             }
 
             BibEntry entry = fetchedEntries.get(0);
@@ -82,7 +81,10 @@ public interface IdBasedParserFetcher extends IdBasedFetcher {
         } catch (URISyntaxException e) {
             throw new FetcherException("Search URI is malformed", e);
         } catch (IOException e) {
-            // TODO: Catch HTTP Response 401 errors and report that user has no rights to access resource. It might be that there is an UnknownHostException (eutils.ncbi.nlm.nih.gov cannot be resolved).
+            // check for the case where we already have a FetcherException from UrlDownload
+            if (e.getCause() instanceof FetcherException fe) {
+                throw fe;
+            }
             throw new FetcherException("A network error occurred", e);
         } catch (ParseException e) {
             throw new FetcherException("An internal parser error occurred", e);

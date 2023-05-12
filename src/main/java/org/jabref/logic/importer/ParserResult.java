@@ -1,6 +1,5 @@
 package org.jabref.logic.importer;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
@@ -93,12 +91,12 @@ public class ParserResult {
         return entryTypes;
     }
 
-    public Optional<File> getFile() {
-        return Optional.ofNullable(file).map(Path::toFile);
+    public Optional<Path> getPath() {
+        return Optional.ofNullable(file);
     }
 
-    public void setFile(File f) {
-        file = f.toPath();
+    public void setPath(Path path) {
+        file = path;
     }
 
     /**
@@ -134,7 +132,7 @@ public class ParserResult {
     }
 
     public String getErrorMessage() {
-        return warnings().stream().collect(Collectors.joining(" "));
+        return String.join(" ", warnings());
     }
 
     public BibDatabaseContext getDatabaseContext() {

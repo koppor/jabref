@@ -3,10 +3,9 @@ package org.jabref.logic.layout.format;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.jabref.logic.importer.util.FileFieldParser;
 import org.jabref.logic.layout.ParamLayoutFormatter;
-import org.jabref.model.entry.FileFieldParser;
 import org.jabref.model.entry.LinkedFile;
 
 /**
@@ -15,11 +14,13 @@ import org.jabref.model.entry.LinkedFile;
  */
 public class FileLink implements ParamLayoutFormatter {
 
-    private final FileLinkPreferences prefs;
+    private final List<Path> fileDirectories;
+    private final String mainFileDirectory;
     private String fileType;
 
-    public FileLink(FileLinkPreferences fileLinkPreferences) {
-        this.prefs = fileLinkPreferences;
+    public FileLink(List<Path> fileDirectories, String mainFileDirectory) {
+        this.fileDirectories = fileDirectories;
+        this.mainFileDirectory = mainFileDirectory;
     }
 
     @Override
@@ -50,18 +51,14 @@ public class FileLink implements ParamLayoutFormatter {
             return "";
         }
 
-        List<String> dirs;
-        // We need to resolve the file directory from the database's metadata,
-        // but that is not available from a formatter. Therefore, as an
-        // ugly hack, the export routine has set a global variable before
-        // starting the export, which contains the database's file directory:
-        if (prefs.getFileDirForDatabase() == null) {
-            dirs = Collections.singletonList(prefs.getMainFileDirectory());
+        List<Path> dirs;
+        if (fileDirectories.isEmpty()) {
+            dirs = Collections.singletonList(Path.of(mainFileDirectory));
         } else {
-            dirs = prefs.getFileDirForDatabase();
+            dirs = fileDirectories;
         }
 
-        return link.findIn(dirs.stream().map(Path::of).collect(Collectors.toList()))
+        return link.findIn(dirs)
                    .map(path -> path.normalize().toString())
                    .orElse(link.getLink());
     }
@@ -69,6 +66,7 @@ public class FileLink implements ParamLayoutFormatter {
     /**
      * This method is called if the layout file specifies an argument for this
      * formatter. We use it as an indicator of which file type we should look for.
+     *
      * @param arg The file type.
      */
     @Override

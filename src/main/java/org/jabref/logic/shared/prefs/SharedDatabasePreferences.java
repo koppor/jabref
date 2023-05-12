@@ -6,22 +6,18 @@ import java.util.Optional;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import org.jabref.JabRefMain;
+import org.jabref.logic.shared.DatabaseConnectionProperties;
 import org.jabref.logic.shared.security.Password;
-import org.jabref.model.database.shared.DatabaseConnectionProperties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Stores and reads persistent data for {@link org.jabref.gui.shared.ConnectToSharedDatabaseDialog}.
- */
 public class SharedDatabasePreferences {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SharedDatabasePreferences.class);
 
     private static final String DEFAULT_NODE = "default";
-    private static final String PARENT_NODE = "jabref-shared";
+    private static final String PREFERENCES_PATH_NAME = "/org/jabref-shared";
 
     private static final String SHARED_DATABASE_TYPE = "sharedDatabaseType";
     private static final String SHARED_DATABASE_HOST = "sharedDatabaseHost";
@@ -29,6 +25,8 @@ public class SharedDatabasePreferences {
     private static final String SHARED_DATABASE_NAME = "sharedDatabaseName";
     private static final String SHARED_DATABASE_USER = "sharedDatabaseUser";
     private static final String SHARED_DATABASE_PASSWORD = "sharedDatabasePassword";
+    private static final String SHARED_DATABASE_FOLDER = "sharedDatabaseFolder";
+    private static final String SHARED_DATABASE_AUTOSAVE = "sharedDatabaseAutosave";
     private static final String SHARED_DATABASE_REMEMBER_PASSWORD = "sharedDatabaseRememberPassword";
     private static final String SHARED_DATABASE_USE_SSL = "sharedDatabaseUseSSL";
     private static final String SHARED_DATABASE_KEYSTORE_FILE = "sharedDatabaseKeyStoreFile";
@@ -42,7 +40,7 @@ public class SharedDatabasePreferences {
     }
 
     public SharedDatabasePreferences(String sharedDatabaseID) {
-        internalPrefs = Preferences.userNodeForPackage(JabRefMain.class).parent().node(PARENT_NODE).node(sharedDatabaseID);
+        internalPrefs = Preferences.userRoot().node(PREFERENCES_PATH_NAME).node(sharedDatabaseID);
     }
 
     public Optional<String> getType() {
@@ -81,6 +79,14 @@ public class SharedDatabasePreferences {
         return internalPrefs.getBoolean(SHARED_DATABASE_REMEMBER_PASSWORD, false);
     }
 
+    public Optional<String> getFolder() {
+        return getOptionalValue(SHARED_DATABASE_FOLDER);
+    }
+
+    public boolean getAutosave() {
+        return internalPrefs.getBoolean(SHARED_DATABASE_AUTOSAVE, false);
+    }
+
     public boolean isUseSSL() {
         return internalPrefs.getBoolean(SHARED_DATABASE_USE_SSL, false);
     }
@@ -113,6 +119,14 @@ public class SharedDatabasePreferences {
         internalPrefs.putBoolean(SHARED_DATABASE_REMEMBER_PASSWORD, rememberPassword);
     }
 
+    public void setFolder(String folder) {
+        internalPrefs.put(SHARED_DATABASE_FOLDER, folder);
+    }
+
+    public void setAutosave(boolean autosave) {
+        internalPrefs.putBoolean(SHARED_DATABASE_AUTOSAVE, autosave);
+    }
+
     public void setUseSSL(boolean useSSL) {
         internalPrefs.putBoolean(SHARED_DATABASE_USE_SSL, useSSL);
     }
@@ -138,7 +152,7 @@ public class SharedDatabasePreferences {
     }
 
     public static void clearAll() throws BackingStoreException {
-        Preferences.userNodeForPackage(JabRefMain.class).parent().node(PARENT_NODE).clear();
+        Preferences.userRoot().node(PREFERENCES_PATH_NAME).clear();
     }
 
     public void putAllDBMSConnectionProperties(DatabaseConnectionProperties properties) {

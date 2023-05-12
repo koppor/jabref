@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.jabref.Globals;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.EntryTypeView;
+import org.jabref.gui.Globals;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.types.EntryType;
-import org.jabref.preferences.JabRefPreferences;
+import org.jabref.preferences.PreferencesService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +24,17 @@ public class NewEntryAction extends SimpleCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(NewEntryAction.class);
 
     private final JabRefFrame jabRefFrame;
+
     /**
      * The type of the entry to create.
      */
     private Optional<EntryType> type;
-    private final DialogService dialogService;
-    private final JabRefPreferences preferences;
 
-    public NewEntryAction(JabRefFrame jabRefFrame, DialogService dialogService, JabRefPreferences preferences, StateManager stateManager) {
+    private final DialogService dialogService;
+
+    private final PreferencesService preferences;
+
+    public NewEntryAction(JabRefFrame jabRefFrame, DialogService dialogService, PreferencesService preferences, StateManager stateManager) {
         this.jabRefFrame = jabRefFrame;
         this.dialogService = dialogService;
         this.preferences = preferences;
@@ -41,7 +44,7 @@ public class NewEntryAction extends SimpleCommand {
         this.executable.bind(needsDatabase(stateManager));
     }
 
-    public NewEntryAction(JabRefFrame jabRefFrame, EntryType type, DialogService dialogService, JabRefPreferences preferences, StateManager stateManager) {
+    public NewEntryAction(JabRefFrame jabRefFrame, EntryType type, DialogService dialogService, PreferencesService preferences, StateManager stateManager) {
         this(jabRefFrame, dialogService, preferences, stateManager);
         this.type = Optional.of(type);
     }
@@ -54,16 +57,16 @@ public class NewEntryAction extends SimpleCommand {
         }
 
         if (type.isPresent()) {
-            jabRefFrame.getCurrentBasePanel().insertEntry(new BibEntry(type.get()));
+            jabRefFrame.getCurrentLibraryTab().insertEntry(new BibEntry(type.get()));
         } else {
-            EntryTypeView typeChoiceDialog = new EntryTypeView(jabRefFrame.getCurrentBasePanel(), dialogService, preferences);
-            EntryType selectedType = typeChoiceDialog.showAndWait().orElse(null);
+            EntryTypeView typeChoiceDialog = new EntryTypeView(jabRefFrame.getCurrentLibraryTab(), dialogService, preferences);
+            EntryType selectedType = dialogService.showCustomDialogAndWait(typeChoiceDialog).orElse(null);
             if (selectedType == null) {
                 return;
             }
 
             trackNewEntry(selectedType);
-            jabRefFrame.getCurrentBasePanel().insertEntry(new BibEntry(selectedType));
+            jabRefFrame.getCurrentLibraryTab().insertEntry(new BibEntry(selectedType));
         }
     }
 

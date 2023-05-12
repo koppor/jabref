@@ -27,7 +27,7 @@ class BibEntrySuggestionProviderTest {
 
     @Test
     void completeWithoutAddingAnythingReturnsNothing() {
-        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest(("test")));
+        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest("test"));
         assertEquals(Collections.emptyList(), result);
     }
 
@@ -36,79 +36,79 @@ class BibEntrySuggestionProviderTest {
         BibEntry entry = new BibEntry();
         database.insertEntry(entry);
 
-        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest(("test")));
+        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest("test"));
         assertEquals(Collections.emptyList(), result);
     }
 
     @Test
     void completeKeyReturnsKey() {
         BibEntry entry = new BibEntry();
-        entry.setCiteKey("testKey");
+        entry.setCitationKey("testKey");
         database.insertEntry(entry);
 
-        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest(("testKey")));
+        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest("testKey"));
         assertEquals(Collections.singletonList(entry), result);
     }
 
     @Test
     void completeBeginningOfKeyReturnsKey() {
         BibEntry entry = new BibEntry();
-        entry.setCiteKey("testKey");
+        entry.setCitationKey("testKey");
         database.insertEntry(entry);
 
-        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest(("test")));
+        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest("test"));
         assertEquals(Collections.singletonList(entry), result);
     }
 
     @Test
     void completeLowercaseKeyReturnsKey() {
         BibEntry entry = new BibEntry();
-        entry.setCiteKey("testKey");
+        entry.setCitationKey("testKey");
         database.insertEntry(entry);
 
-        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest(("testkey")));
+        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest("testkey"));
         assertEquals(Collections.singletonList(entry), result);
     }
 
     @Test
     void completeNullThrowsException() {
         BibEntry entry = new BibEntry();
-        entry.setCiteKey("testKey");
+        entry.setCitationKey("testKey");
         database.insertEntry(entry);
 
-        assertThrows(NullPointerException.class, () -> autoCompleter.provideSuggestions(getRequest((null))));
+        assertThrows(NullPointerException.class, () -> autoCompleter.provideSuggestions(getRequest(null)));
     }
 
     @Test
     void completeEmptyStringReturnsNothing() {
         BibEntry entry = new BibEntry();
-        entry.setCiteKey("testKey");
+        entry.setCitationKey("testKey");
         database.insertEntry(entry);
 
-        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest(("")));
+        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest(""));
         assertEquals(Collections.emptyList(), result);
     }
 
     @Test
     void completeReturnsMultipleResults() {
         BibEntry entryOne = new BibEntry();
-        entryOne.setCiteKey("testKeyOne");
+        entryOne.setCitationKey("testKeyOne");
         database.insertEntry(entryOne);
         BibEntry entryTwo = new BibEntry();
-        entryTwo.setCiteKey("testKeyTwo");
+        entryTwo.setCitationKey("testKeyTwo");
         database.insertEntry(entryTwo);
 
-        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest(("testKey")));
+        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest("testKey"));
         assertEquals(Arrays.asList(entryTwo, entryOne), result);
     }
 
     @Test
     void completeShortKeyReturnsKey() {
         BibEntry entry = new BibEntry();
-        entry.setCiteKey("key");
+        entry.setCitationKey("key");
         database.insertEntry(entry);
 
-        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest(("k")));
+        Collection<BibEntry> result = autoCompleter.provideSuggestions(getRequest("k"));
         assertEquals(Collections.singletonList(entry), result);
     }
 }

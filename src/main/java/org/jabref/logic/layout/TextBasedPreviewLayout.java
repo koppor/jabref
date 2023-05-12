@@ -5,7 +5,7 @@ import java.io.StringReader;
 
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.preview.PreviewLayout;
-import org.jabref.model.database.BibDatabase;
+import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 
 import org.slf4j.Logger;
@@ -15,8 +15,9 @@ import org.slf4j.LoggerFactory;
  * Implements the preview based JabRef's <a href="https://docs.jabref.org/import-export/export/customexports">Custom export fitlters</a>.
  */
 public class TextBasedPreviewLayout implements PreviewLayout {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TextBasedPreviewLayout.class);
+    public static final String NAME = "PREVIEW";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TextBasedPreviewLayout.class);
     private Layout layout;
     private String text;
     private LayoutFormatterPreferences layoutFormatterPreferences;
@@ -42,9 +43,9 @@ public class TextBasedPreviewLayout implements PreviewLayout {
     }
 
     @Override
-    public String generatePreview(BibEntry entry, BibDatabase database) {
+    public String generatePreview(BibEntry entry, BibDatabaseContext databaseContext) {
         if (layout != null) {
-            return layout.doLayout(entry, database);
+            return layout.doLayout(entry, databaseContext.getDatabase());
         } else {
             return "";
         }
@@ -56,6 +57,11 @@ public class TextBasedPreviewLayout implements PreviewLayout {
 
     @Override
     public String getName() {
-        return Localization.lang("Preview");
+        return NAME;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return Localization.lang("Customized preview style");
     }
 }

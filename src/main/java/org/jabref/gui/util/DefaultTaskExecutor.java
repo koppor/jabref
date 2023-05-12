@@ -106,7 +106,7 @@ public class DefaultTaskExecutor implements TaskExecutor {
     public <V> Future<V> execute(BackgroundTask<V> task) {
         Task<V> javafxTask = getJavaFXTask(task);
         if (task.showToUser()) {
-            stateManager.addBackgroundTask(javafxTask);
+            stateManager.addBackgroundTask(task, javafxTask);
         }
         return execute(javafxTask);
     }
@@ -122,8 +122,12 @@ public class DefaultTaskExecutor implements TaskExecutor {
         return scheduledExecutor.schedule(getJavaFXTask(task), delay, unit);
     }
 
+    /**
+     * Shuts everything down. After termination, this method returns.
+     */
     @Override
     public void shutdown() {
+        stateManager.getBackgroundTasks().stream().filter(task -> !task.isDone()).forEach(Task::cancel);
         executor.shutdownNow();
         scheduledExecutor.shutdownNow();
         throttlers.forEach((throttler, aVoid) -> throttler.shutdown());
@@ -138,7 +142,6 @@ public class DefaultTaskExecutor implements TaskExecutor {
 
     private <V> Task<V> getJavaFXTask(BackgroundTask<V> task) {
         Task<V> javaTask = new Task<V>() {
-
             {
                 this.updateMessage(task.messageProperty().get());
                 this.updateTitle(task.titleProperty().get());
@@ -150,6 +153,7 @@ public class DefaultTaskExecutor implements TaskExecutor {
                         cancel();
                     }
                 });
+                setOnCancelled(event -> task.cancel());
             }
 
             @Override

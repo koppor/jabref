@@ -3,19 +3,24 @@ package org.jabref.benchmarks;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import org.jabref.Globals;
+import org.jabref.gui.Globals;
+import org.jabref.logic.bibtex.FieldPreferences;
+import org.jabref.logic.citationkeypattern.CitationKeyPatternPreferences;
+import org.jabref.logic.exporter.BibWriter;
 import org.jabref.logic.exporter.BibtexDatabaseWriter;
-import org.jabref.logic.exporter.SavePreferences;
+import org.jabref.logic.exporter.SaveConfiguration;
 import org.jabref.logic.formatter.bibtexfields.HtmlToLatexFormatter;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.importer.fileformat.BibtexParser;
 import org.jabref.logic.layout.format.HTMLChars;
 import org.jabref.logic.layout.format.LatexToUnicodeFormatter;
 import org.jabref.logic.search.SearchQuery;
+import org.jabref.logic.util.OS;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.database.BibDatabaseMode;
@@ -28,6 +33,7 @@ import org.jabref.model.groups.GroupHierarchyType;
 import org.jabref.model.groups.KeywordGroup;
 import org.jabref.model.groups.WordKeywordGroup;
 import org.jabref.model.metadata.MetaData;
+import org.jabref.model.search.rules.SearchRules.SearchFlags;
 import org.jabref.model.util.DummyFileUpdateMonitor;
 import org.jabref.preferences.JabRefPreferences;
 
@@ -55,7 +61,7 @@ public class Benchmarks {
         Random randomizer = new Random();
         for (int i = 0; i < 1000; i++) {
             BibEntry entry = new BibEntry();
-            entry.setCiteKey("id" + i);
+            entry.setCitationKey("id" + i);
             entry.setField(StandardField.TITLE, "This is my title " + i);
             entry.setField(StandardField.AUTHOR, "Firstname Lastname and FirstnameA LastnameA and FirstnameB LastnameB" + i);
             entry.setField(StandardField.JOURNAL, "Journal Title " + i);
@@ -74,7 +80,13 @@ public class Benchmarks {
 
     private StringWriter getOutputWriter() throws IOException {
         StringWriter outputWriter = new StringWriter();
-        BibtexDatabaseWriter databaseWriter = new BibtexDatabaseWriter(outputWriter, mock(SavePreferences.class), new BibEntryTypesManager());
+        BibWriter bibWriter = new BibWriter(outputWriter, OS.NEWLINE);
+        BibtexDatabaseWriter databaseWriter = new BibtexDatabaseWriter(
+                bibWriter,
+                mock(SaveConfiguration.class),
+                mock(FieldPreferences.class),
+                mock(CitationKeyPatternPreferences.class),
+                new BibEntryTypesManager());
         databaseWriter.savePartOfDatabase(new BibDatabaseContext(database, new MetaData()), database.getEntries());
         return outputWriter;
     }
@@ -93,14 +105,14 @@ public class Benchmarks {
     @Benchmark
     public List<BibEntry> search() {
         // FIXME: Reuse SearchWorker here
-        SearchQuery searchQuery = new SearchQuery("Journal Title 500", false, false);
+        SearchQuery searchQuery = new SearchQuery("Journal Title 500", EnumSet.noneOf(SearchFlags.class));
         return database.getEntries().stream().filter(searchQuery::isMatch).collect(Collectors.toList());
     }
 
     @Benchmark
     public List<BibEntry> parallelSearch() {
         // FIXME: Reuse SearchWorker here
-        SearchQuery searchQuery = new SearchQuery("Journal Title 500", false, false);
+        SearchQuery searchQuery = new SearchQuery("Journal Title 500", EnumSet.noneOf(SearchFlags.class));
         return database.getEntries().parallelStream().filter(searchQuery::isMatch).collect(Collectors.toList());
     }
 

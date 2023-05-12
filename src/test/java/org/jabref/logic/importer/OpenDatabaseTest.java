@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -14,6 +13,7 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.util.DummyFileUpdateMonitor;
 import org.jabref.model.util.FileUpdateMonitor;
+import org.jabref.preferences.GeneralPreferences;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,11 +21,11 @@ import org.mockito.Answers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class OpenDatabaseTest {
 
     private final Charset defaultEncoding = StandardCharsets.UTF_8;
+    private GeneralPreferences generalPreferences;
     private ImportFormatPreferences importFormatPreferences;
     private final Path bibNoHeader;
     private final Path bibWrongHeader;
@@ -39,14 +39,13 @@ class OpenDatabaseTest {
         bibWrongHeader = Path.of(OpenDatabaseTest.class.getResource("wrong-header.bib").toURI());
         bibHeader = Path.of(OpenDatabaseTest.class.getResource("encoding-header.bib").toURI());
         bibHeaderAndSignature = Path.of(OpenDatabaseTest.class.getResource("jabref-header.bib").toURI());
-        bibEncodingWithoutNewline = Paths
-                .get(OpenDatabaseTest.class.getResource("encodingWithoutNewline.bib").toURI());
+        bibEncodingWithoutNewline = Path.of(OpenDatabaseTest.class.getResource("encodingWithoutNewline.bib").toURI());
     }
 
     @BeforeEach
     void setUp() {
+        generalPreferences = mock(GeneralPreferences.class, Answers.RETURNS_DEEP_STUBS);
         importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.getEncoding()).thenReturn(StandardCharsets.UTF_8);
     }
 
     @Test
@@ -63,15 +62,13 @@ class OpenDatabaseTest {
 
     @Test
     void useSpecifiedEncoding() throws IOException {
-        ParserResult result = OpenDatabase.loadDatabase(bibHeader,
-                importFormatPreferences.withEncoding(StandardCharsets.US_ASCII), fileMonitor);
+        ParserResult result = OpenDatabase.loadDatabase(bibHeader, importFormatPreferences, fileMonitor);
         assertEquals(defaultEncoding, result.getMetaData().getEncoding().get());
     }
 
     @Test
     void useSpecifiedEncodingWithSignature() throws IOException {
-        ParserResult result = OpenDatabase.loadDatabase(bibHeaderAndSignature,
-                importFormatPreferences.withEncoding(StandardCharsets.US_ASCII), fileMonitor);
+        ParserResult result = OpenDatabase.loadDatabase(bibHeaderAndSignature, importFormatPreferences, fileMonitor);
         assertEquals(defaultEncoding, result.getMetaData().getEncoding().get());
     }
 
@@ -82,7 +79,7 @@ class OpenDatabaseTest {
 
         // Entry
         assertEquals(1, db.getEntryCount());
-        assertEquals(Optional.of("2014"), db.getEntryByKey("1").get().getField(StandardField.YEAR));
+        assertEquals(Optional.of("2014"), db.getEntryByCitationKey("1").get().getField(StandardField.YEAR));
     }
 
     @Test
@@ -92,7 +89,7 @@ class OpenDatabaseTest {
 
         // Entry
         assertEquals(1, db.getEntryCount());
-        assertEquals(Optional.of("2014"), db.getEntryByKey("1").get().getField(StandardField.YEAR));
+        assertEquals(Optional.of("2014"), db.getEntryByCitationKey("1").get().getField(StandardField.YEAR));
     }
 
     @Test
@@ -102,7 +99,7 @@ class OpenDatabaseTest {
 
         // Entry
         assertEquals(1, db.getEntryCount());
-        assertEquals(Optional.of("2014"), db.getEntryByKey("1").get().getField(StandardField.YEAR));
+        assertEquals(Optional.of("2014"), db.getEntryByCitationKey("1").get().getField(StandardField.YEAR));
     }
 
     /**
@@ -120,6 +117,6 @@ class OpenDatabaseTest {
         assertEquals(1, entries.size());
 
         BibEntry entry = entries.iterator().next();
-        assertEquals(Optional.of("testArticle"), entry.getCiteKeyOptional());
+        assertEquals(Optional.of("testArticle"), entry.getCitationKey());
     }
 }

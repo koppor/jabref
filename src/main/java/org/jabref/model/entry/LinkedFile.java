@@ -11,43 +11,53 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import org.jabref.architecture.AllowedToUseLogic;
+import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.metadata.FilePreferences;
-import org.jabref.model.util.FileHelper;
+import org.jabref.preferences.FilePreferences;
 
 /**
  * Represents the link to an external file (e.g. associated PDF file).
  * This class is {@link Serializable} which is needed for drag and drop in gui
  */
+@AllowedToUseLogic("Uses FileUtil from logic")
 public class LinkedFile implements Serializable {
 
-    private static final LinkedFile NULL_OBJECT = new LinkedFile("", "", "");
+    private static final String REGEX_URL = "^((?:https?\\:\\/\\/|www\\.)(?:[-a-z0-9]+\\.)*[-a-z0-9]+.*)";
+    private static final Pattern URL_PATTERN = Pattern.compile(REGEX_URL);
+
+    private static final LinkedFile NULL_OBJECT = new LinkedFile("", Path.of(""), "");
+
     // We have to mark these properties as transient because they can't be serialized directly
     private transient StringProperty description = new SimpleStringProperty();
     private transient StringProperty link = new SimpleStringProperty();
     private transient StringProperty fileType = new SimpleStringProperty();
 
     public LinkedFile(String description, Path link, String fileType) {
-        this(description, link.toString(), fileType);
+        this(Objects.requireNonNull(description), Objects.requireNonNull(link).toString(), Objects.requireNonNull(fileType));
     }
 
     /**
-     * @deprecated use the other constructor {@link #LinkedFile(String, Path, String)}
+     * Constructor for non-valid paths. We need to parse them, because the GUI needs to render it.
      */
-    @Deprecated
     public LinkedFile(String description, String link, String fileType) {
         this.description.setValue(Objects.requireNonNull(description));
+        setLink(link);
         this.fileType.setValue(Objects.requireNonNull(fileType));
-        setLink(Objects.requireNonNull(link));
     }
 
     public LinkedFile(URL link, String fileType) {
-        this("", Objects.requireNonNull(link).toString(), fileType);
+        this("", Objects.requireNonNull(link).toString(), Objects.requireNonNull(fileType));
+    }
+
+    public LinkedFile(String description, URL link, String fileType) {
+        this(description, Objects.requireNonNull(link).toString(), Objects.requireNonNull(fileType));
     }
 
     public StringProperty descriptionProperty() {
@@ -110,9 +120,6 @@ public class LinkedFile implements Serializable {
 
     /**
      * Writes serialized object to ObjectOutputStream, automatically called
-     *
-     * @param out {@link ObjectOutputStream}
-     * @throws IOException
      */
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeUTF(getFileType());
@@ -123,9 +130,6 @@ public class LinkedFile implements Serializable {
 
     /**
      * Reads serialized object from ObjectInputStreamm, automatically called
-     *
-     * @param in {@link ObjectInputStream}
-     * @throws IOException
      */
     private void readObject(ObjectInputStream in) throws IOException {
         fileType = new SimpleStringProperty(in.readUTF());
@@ -139,9 +143,9 @@ public class LinkedFile implements Serializable {
      * @param toCheck The String to check
      * @return <code>true</code>, if it starts with "http://", "https://" or contains "www."; <code>false</code> otherwise
      */
-    private boolean isOnlineLink(String toCheck) {
+    public static boolean isOnlineLink(String toCheck) {
         String normalizedFilePath = toCheck.trim().toLowerCase();
-        return normalizedFilePath.startsWith("http://") || normalizedFilePath.startsWith("https://") || normalizedFilePath.contains("www.");
+        return URL_PATTERN.matcher(normalizedFilePath).matches();
     }
 
     @Override
@@ -167,7 +171,7 @@ public class LinkedFile implements Serializable {
     }
 
     public Optional<Path> findIn(BibDatabaseContext databaseContext, FilePreferences filePreferences) {
-        List<Path> dirs = databaseContext.getFileDirectoriesAsPaths(filePreferences);
+        List<Path> dirs = databaseContext.getFileDirectories(filePreferences);
         return findIn(dirs);
     }
 
@@ -190,7 +194,7 @@ public class LinkedFile implements Serializable {
                     return Optional.empty();
                 }
             } else {
-                return FileHelper.find(link.get(), directories);
+                return FileUtil.find(link.get(), directories);
             }
         } catch (InvalidPathException ex) {
             return Optional.empty();

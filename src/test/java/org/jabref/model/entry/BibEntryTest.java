@@ -1,14 +1,19 @@
 package org.jabref.model.entry;
 
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.jabref.model.FieldChange;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.field.BibField;
+import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldPriority;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.entry.field.OrFields;
@@ -18,8 +23,6 @@ import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.entry.types.StandardEntryType;
 
 import com.google.common.collect.Sets;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 
@@ -33,17 +36,7 @@ import static org.junit.jupiter.api.parallel.ExecutionMode.CONCURRENT;
 
 @Execution(CONCURRENT)
 class BibEntryTest {
-    private BibEntry entry;
-
-    @BeforeEach
-    void setUp() {
-        entry = new BibEntry();
-    }
-
-    @AfterEach
-    void tearDown() {
-        entry = null;
-    }
+    private BibEntry entry = new BibEntry();
 
     @Test
     void testDefaultConstructor() {
@@ -71,7 +64,7 @@ class BibEntryTest {
     @Test
     void getFieldWorksWithBibFieldAsWell() throws Exception {
         entry.setField(StandardField.AUTHOR, "value");
-        assertEquals(Optional.of("value"), entry.getField(new BibField(StandardField.AUTHOR, FieldPriority.IMPORTANT).getField()));
+        assertEquals(Optional.of("value"), entry.getField(new BibField(StandardField.AUTHOR, FieldPriority.IMPORTANT).field()));
     }
 
     @Test
@@ -87,7 +80,7 @@ class BibEntryTest {
 
     @Test
     void setFieldWorksWithBibFieldAsWell() throws Exception {
-        entry.setField(new BibField(StandardField.AUTHOR, FieldPriority.IMPORTANT).getField(), "value");
+        entry.setField(new BibField(StandardField.AUTHOR, FieldPriority.IMPORTANT).field(), "value");
         assertEquals(Optional.of("value"), entry.getField(StandardField.AUTHOR));
     }
 
@@ -95,6 +88,19 @@ class BibEntryTest {
     void clonedBibEntryHasUniqueID() throws Exception {
         BibEntry entryClone = (BibEntry) entry.clone();
         assertNotEquals(entry.getId(), entryClone.getId());
+    }
+
+    @Test
+    void clonedBibEntryWithMiscTypeHasOriginalChangedFlag() throws Exception {
+        BibEntry entryClone = (BibEntry) entry.clone();
+        assertFalse(entryClone.hasChanged());
+    }
+
+    @Test
+    void clonedBibEntryWithBookTypeAndOneFieldHasOriginalChangedFlag() throws Exception {
+        entry = new BibEntry(StandardEntryType.Book).withField(StandardField.AUTHOR, "value");
+        BibEntry entryClone = (BibEntry) entry.clone();
+        assertFalse(entryClone.hasChanged());
     }
 
     @Test
@@ -241,9 +247,21 @@ class BibEntryTest {
     @Test
     void testGetAndAddToLinkedFileList() {
         List<LinkedFile> files = entry.getFiles();
-        files.add(new LinkedFile("", "", ""));
+        files.add(new LinkedFile("", Path.of(""), ""));
         entry.setFiles(files);
-        assertEquals(Arrays.asList(new LinkedFile("", "", "")), entry.getFiles());
+        assertEquals(Arrays.asList(new LinkedFile("", Path.of(""), "")), entry.getFiles());
+    }
+
+    @Test
+    void replaceOfLinkWorks() throws Exception {
+        List<LinkedFile> files = new ArrayList<>();
+        String urlAsString = "https://www.example.org/file.pdf";
+        files.add(new LinkedFile(new URL(urlAsString), ""));
+        entry.setFiles(files);
+
+        LinkedFile linkedFile = new LinkedFile("", Path.of("file.pdf", ""), "");
+        entry.replaceDownloadedFile(urlAsString, linkedFile);
+        assertEquals(List.of(linkedFile), entry.getFiles());
     }
 
     @Test
@@ -263,16 +281,16 @@ class BibEntryTest {
 
     @Test
     void settingCiteKeyLeadsToCorrectCiteKey() {
-        assertFalse(entry.hasCiteKey());
-        entry.setCiteKey("Einstein1931");
-        assertEquals(Optional.of("Einstein1931"), entry.getCiteKeyOptional());
+        assertFalse(entry.hasCitationKey());
+        entry.setCitationKey("Einstein1931");
+        assertEquals(Optional.of("Einstein1931"), entry.getCitationKey());
     }
 
     @Test
     void settingCiteKeyLeadsToHasCiteKy() {
-        assertFalse(entry.hasCiteKey());
-        entry.setCiteKey("Einstein1931");
-        assertTrue(entry.hasCiteKey());
+        assertFalse(entry.hasCitationKey());
+        entry.setCitationKey("Einstein1931");
+        assertTrue(entry.hasCitationKey());
     }
 
     @Test
@@ -322,22 +340,22 @@ class BibEntryTest {
     @Test
     void isNullCiteKeyThrowsNPE() {
         BibEntry e = new BibEntry(StandardEntryType.Article);
-        assertThrows(NullPointerException.class, () -> e.setCiteKey(null));
+        assertThrows(NullPointerException.class, () -> e.setCitationKey(null));
     }
 
     @Test
     void isEmptyCiteKey() {
         BibEntry e = new BibEntry(StandardEntryType.Article);
-        assertFalse(e.hasCiteKey());
+        assertFalse(e.hasCitationKey());
 
-        e.setCiteKey("");
-        assertFalse(e.hasCiteKey());
+        e.setCitationKey("");
+        assertFalse(e.hasCitationKey());
 
-        e.setCiteKey("key");
-        assertTrue(e.hasCiteKey());
+        e.setCitationKey("key");
+        assertTrue(e.hasCitationKey());
 
         e.clearField(InternalField.KEY_FIELD);
-        assertFalse(e.hasCiteKey());
+        assertFalse(e.hasCitationKey());
     }
 
     @Test
@@ -587,7 +605,7 @@ class BibEntryTest {
         database.insertEntry(entry);
 
         BibEntry entry2 = new BibEntry();
-        entry2.setCiteKey("entry2");
+        entry2.setCitationKey("entry2");
         database.insertEntry(entry2);
 
         KeywordList actual = entry.getResolvedKeywords(',', database);
@@ -601,7 +619,7 @@ class BibEntryTest {
         entry.setField(StandardField.CROSSREF, "entry2");
 
         BibEntry entry2 = new BibEntry();
-        entry2.setCiteKey("entry2");
+        entry2.setCitationKey("entry2");
         entry2.addKeyword("kw", ',');
 
         database.insertEntry(entry2);
@@ -618,7 +636,7 @@ class BibEntryTest {
         entry.setField(StandardField.CROSSREF, "entry2");
 
         BibEntry entry2 = new BibEntry();
-        entry2.setCiteKey("entry2");
+        entry2.setCitationKey("entry2");
         entry2.addKeyword("kw", ',');
         entry2.addKeyword("kw2", ',');
         entry2.addKeyword("kw3", ',');
@@ -641,5 +659,154 @@ class BibEntryTest {
     void builderReturnsABibEntryNotChangedFlagged() {
         entry = new BibEntry().withField(StandardField.AUTHOR, "value");
         assertFalse(entry.hasChanged());
+    }
+
+    @Test
+    void mergeEntriesWithNoOverlap() {
+        BibEntry expected = new BibEntry()
+                .withField(StandardField.AUTHOR, "Test Author")
+                .withField(StandardField.TITLE, "Test Title")
+                .withField(StandardField.EPRINT, "1234.56789")
+                .withField(StandardField.DATE, "1970-01-01");
+
+        BibEntry copyEntry = (BibEntry) entry.clone();
+        BibEntry otherEntry = new BibEntry();
+
+        copyEntry.setField(Map.of(
+                StandardField.AUTHOR, "Test Author",
+                StandardField.TITLE, "Test Title"));
+
+        otherEntry.setField(Map.of(
+                StandardField.EPRINT, "1234.56789",
+                StandardField.DATE, "1970-01-01"
+        ));
+
+        copyEntry.mergeWith(otherEntry);
+        assertEquals(expected.getFields(), copyEntry.getFields());
+    }
+
+    @Test
+    void mergeEntriesWithOverlap() {
+        BibEntry expected = new BibEntry()
+                .withField(StandardField.AUTHOR, "Test Author")
+                .withField(StandardField.TITLE, "Test Title")
+                .withField(StandardField.DATE, "1970-01-01");
+
+        BibEntry copyEntry = (BibEntry) entry.clone();
+        BibEntry otherEntry = new BibEntry();
+
+        copyEntry.setField(Map.of(
+                StandardField.AUTHOR, "Test Author",
+                StandardField.TITLE, "Test Title"));
+
+        otherEntry.setField(Map.of(
+                StandardField.AUTHOR, "Another Test Author",
+                StandardField.DATE, "1970-01-01"
+        ));
+
+        copyEntry.mergeWith(otherEntry);
+        assertEquals(expected.getFields(), copyEntry.getFields());
+    }
+
+    @Test
+    void mergeEntriesWithNoOverlapAndNonExistingPriorityFields() {
+        BibEntry expected = new BibEntry()
+                .withField(StandardField.AUTHOR, "Test Author")
+                .withField(StandardField.TITLE, "Test Title")
+                .withField(StandardField.EPRINT, "1234.56789")
+                .withField(StandardField.DATE, "1970-01-01");
+
+        BibEntry copyEntry = (BibEntry) entry.clone();
+        BibEntry otherEntry = new BibEntry();
+
+        copyEntry.setField(Map.of(
+                StandardField.AUTHOR, "Test Author",
+                StandardField.TITLE, "Test Title"));
+
+        otherEntry.setField(Map.of(
+                StandardField.EPRINT, "1234.56789",
+                StandardField.DATE, "1970-01-01"
+        ));
+
+        Set<Field> otherPrioritizedFields = Set.of(StandardField.VOLUME, StandardField.KEYWORDS);
+
+        copyEntry.mergeWith(otherEntry, otherPrioritizedFields);
+        assertEquals(expected.getFields(), copyEntry.getFields());
+    }
+
+    @Test
+    void mergeEntriesWithNoOverlapAndExistingPriorityFields() {
+        BibEntry expected = new BibEntry()
+                .withField(StandardField.AUTHOR, "Test Author")
+                .withField(StandardField.TITLE, "Test Title")
+                .withField(StandardField.EPRINT, "1234.56789")
+                .withField(StandardField.DATE, "1970-01-01");
+
+        BibEntry copyEntry = (BibEntry) entry.clone();
+        BibEntry otherEntry = new BibEntry();
+
+        copyEntry.setField(Map.of(
+                StandardField.AUTHOR, "Test Author",
+                StandardField.TITLE, "Test Title"));
+
+        otherEntry.setField(Map.of(
+                StandardField.EPRINT, "1234.56789",
+                StandardField.DATE, "1970-01-01"
+        ));
+
+        Set<Field> otherPrioritizedFields = Set.of(StandardField.AUTHOR, StandardField.EPRINT);
+
+        copyEntry.mergeWith(otherEntry, otherPrioritizedFields);
+        assertEquals(expected.getFields(), copyEntry.getFields());
+    }
+
+    @Test
+    void mergeEntriesWithOverlapAndPriorityGivenToNonOverlappingField() {
+        BibEntry expected = new BibEntry()
+                .withField(StandardField.AUTHOR, "Test Author")
+                .withField(StandardField.TITLE, "Test Title")
+                .withField(StandardField.DATE, "1970-01-01");
+
+        BibEntry copyEntry = (BibEntry) entry.clone();
+        BibEntry otherEntry = new BibEntry();
+
+        copyEntry.setField(Map.of(
+                StandardField.AUTHOR, "Test Author",
+                StandardField.TITLE, "Test Title"));
+
+        otherEntry.setField(Map.of(
+                StandardField.AUTHOR, "Another Test Author",
+                StandardField.DATE, "1970-01-01"
+        ));
+
+        Set<Field> otherPrioritizedFields = Set.of(StandardField.TITLE, StandardField.DATE);
+
+        copyEntry.mergeWith(otherEntry, otherPrioritizedFields);
+        assertEquals(expected.getFields(), copyEntry.getFields());
+    }
+
+    @Test
+    void mergeEntriesWithOverlapAndPriorityGivenToOverlappingField() {
+        BibEntry expected = new BibEntry()
+                .withField(StandardField.AUTHOR, "Another Test Author")
+                .withField(StandardField.TITLE, "Test Title")
+                .withField(StandardField.DATE, "1970-01-01");
+
+        BibEntry copyEntry = (BibEntry) entry.clone();
+        BibEntry otherEntry = new BibEntry();
+
+        copyEntry.setField(Map.of(
+                StandardField.AUTHOR, "Test Author",
+                StandardField.TITLE, "Test Title"));
+
+        otherEntry.setField(Map.of(
+                StandardField.AUTHOR, "Another Test Author",
+                StandardField.DATE, "1970-01-01"
+        ));
+
+        Set<Field> otherPrioritizedFields = Set.of(StandardField.AUTHOR, StandardField.DATE);
+
+        copyEntry.mergeWith(otherEntry, otherPrioritizedFields);
+        assertEquals(expected.getFields(), copyEntry.getFields());
     }
 }

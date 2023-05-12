@@ -18,11 +18,11 @@
 }
 
 .numberColumn > .hits {
-    -fx-font-size: 85%;
+    -fx-font-size: 0.75em;
     -fx-background-color: -jr-group-hits-bg;
     -fx-padding: 0.4em 0.4em 0.4em 0.4em;
     -fx-background-insets: 0;
-    -fx-background-radius: 0.8em;
+    -fx-background-radius: 0.7em;
 }
 
 .numberColumn > .hits .text {
@@ -102,10 +102,6 @@
     -fx-translate-x: -0.4em;
 }
 
-#newGroupButton {
-    -fx-padding: 0.1em 1.5em 0.1em 1.5em;
-}
-
 #groupFilterBar {
     -fx-background-color: -jr-sidepane-header-background;
     -fx-border-color: -jr-separator;
@@ -114,5 +110,9 @@
 }
 
 #groupFilterBar .glyph-icon {
+    -fx-font-size: 2em;
+}
+
+#groupBar .glyph-icon {
     -fx-font-size: 2em;
 }

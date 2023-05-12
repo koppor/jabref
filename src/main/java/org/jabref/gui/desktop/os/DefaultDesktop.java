@@ -5,9 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.jabref.architecture.AllowedToUseAwt;
+import org.jabref.gui.DialogService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@AllowedToUseAwt("Requires AWT to open a file")
 public class DefaultDesktop implements NativeDesktop {
     private static final Logger LOGGER = LoggerFactory.getLogger(NativeDesktop.class);
 
@@ -28,7 +32,7 @@ public class DefaultDesktop implements NativeDesktop {
     }
 
     @Override
-    public void openConsole(String absolutePath) throws IOException {
+    public void openConsole(String absolutePath, DialogService dialogService) throws IOException {
         LOGGER.error("This feature is not supported by your Operating System.");
     }
 
@@ -40,5 +44,10 @@ public class DefaultDesktop implements NativeDesktop {
     @Override
     public Path getApplicationDirectory() {
         return getUserDirectory();
+    }
+
+    @Override
+    public Path getDefaultFileChooserDirectory() {
+        return Path.of(System.getProperty("user.home"));
     }
 }

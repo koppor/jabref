@@ -3,6 +3,7 @@ package org.jabref.logic.importer.fetcher;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.jabref.logic.help.HelpFile;
@@ -22,6 +23,7 @@ import org.apache.http.client.utils.URIBuilder;
  */
 public class RfcFetcher implements IdBasedParserFetcher {
 
+    private final static String DRAFT_PREFIX = "draft";
     private final ImportFormatPreferences importFormatPreferences;
 
     public RfcFetcher(ImportFormatPreferences importFormatPreferences) {
@@ -38,14 +40,21 @@ public class RfcFetcher implements IdBasedParserFetcher {
         return Optional.of(HelpFile.FETCHER_RFC);
     }
 
+    /**
+     * Get the URL of the RFC resource according to the given identifier
+     *
+     * @param identifier the ID
+     * @return the URL of the RFC resource
+     */
     @Override
-    public URL getURLForID(String identifier) throws URISyntaxException, MalformedURLException, FetcherException {
-        // Add "rfc" prefix if user's search entry was numerical
-        String prefixedIdentifier = identifier;
-        prefixedIdentifier = (!identifier.toLowerCase().startsWith("rfc")) ? "rfc" + prefixedIdentifier : prefixedIdentifier;
-
+    public URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException, FetcherException {
+        String prefixedIdentifier = identifier.toLowerCase(Locale.ENGLISH);
+        // if not a "draft" version
+        if ((!prefixedIdentifier.startsWith(DRAFT_PREFIX)) && (!prefixedIdentifier.startsWith("rfc"))) {
+            // Add "rfc" prefix if user's search entry was numerical
+            prefixedIdentifier = "rfc" + prefixedIdentifier;
+        }
         URIBuilder uriBuilder = new URIBuilder("https://datatracker.ietf.org/doc/" + prefixedIdentifier + "/bibtex/");
-
         return uriBuilder.build().toURL();
     }
 

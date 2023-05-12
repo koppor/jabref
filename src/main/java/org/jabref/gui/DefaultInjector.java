@@ -4,12 +4,13 @@ import java.util.function.Function;
 
 import javax.swing.undo.UndoManager;
 
-import org.jabref.Globals;
-import org.jabref.JabRefGUI;
 import org.jabref.gui.keyboard.KeyBindingRepository;
+import org.jabref.gui.theme.ThemeManager;
 import org.jabref.gui.util.TaskExecutor;
+import org.jabref.logic.importer.ImportFormatReader;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.logic.protectedterms.ProtectedTermsLoader;
+import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
 
@@ -40,14 +41,20 @@ public class DefaultInjector implements PresenterFactory {
             return Globals.journalAbbreviationRepository;
         } else if (clazz == StateManager.class) {
             return Globals.stateManager;
+        } else if (clazz == ThemeManager.class) {
+            return Globals.getThemeManager();
         } else if (clazz == FileUpdateMonitor.class) {
             return Globals.getFileUpdateMonitor();
         } else if (clazz == ProtectedTermsLoader.class) {
             return Globals.protectedTermsLoader;
         } else if (clazz == ClipBoardManager.class) {
-            return Globals.clipboardManager;
+            return Globals.getClipboardManager();
         } else if (clazz == UndoManager.class) {
             return Globals.undoManager;
+        } else if (clazz == BibEntryTypesManager.class) {
+            return Globals.entryTypesManager;
+        } else if (clazz == ImportFormatReader.class) {
+            return Globals.IMPORT_FORMAT_READER;
         } else {
             try {
                 return clazz.newInstance();
@@ -60,7 +67,7 @@ public class DefaultInjector implements PresenterFactory {
 
     @Override
     public <T> T instantiatePresenter(Class<T> clazz, Function<String, Object> injectionContext) {
-        LOGGER.debug("Instantiate " + clazz.getName());
+        LOGGER.debug("Instantiate {}", clazz.getName());
 
         // Use our own method to construct dependencies
         Injector.setInstanceSupplier(DefaultInjector::createDependency);
@@ -70,7 +77,7 @@ public class DefaultInjector implements PresenterFactory {
 
     @Override
     public void injectMembers(Object instance, Function<String, Object> injectionContext) {
-        LOGGER.debug("Inject into " + instance.getClass().getName());
+        LOGGER.debug("Inject into {}", instance.getClass().getName());
 
         // Use our own method to construct dependencies
         Injector.setInstanceSupplier(DefaultInjector::createDependency);

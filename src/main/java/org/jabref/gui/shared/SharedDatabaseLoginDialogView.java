@@ -1,7 +1,5 @@
 package org.jabref.gui.shared;
 
-import javax.inject.Inject;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,11 +16,13 @@ import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.ControlHelper;
 import org.jabref.gui.util.IconValidationDecorator;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.model.database.shared.DBMSType;
+import org.jabref.logic.shared.DBMSType;
+import org.jabref.preferences.PreferencesService;
 
 import com.airhacks.afterburner.views.ViewLoader;
 import com.tobiasdiez.easybind.EasyBind;
 import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+import jakarta.inject.Inject;
 
 public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
 
@@ -46,6 +46,7 @@ public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
     @FXML private TextField serverTimezone;
 
     @Inject private DialogService dialogService;
+    @Inject private PreferencesService preferencesService;
 
     private SharedDatabaseLoginDialogViewModel viewModel;
     private final ControlsFxVisualizer visualizer = new ControlsFxVisualizer();
@@ -62,7 +63,7 @@ public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
         Button btnConnect = (Button) this.getDialogPane().lookupButton(connectButton);
         // must be set here, because in initialize the button is still null
         btnConnect.disableProperty().bind(viewModel.formValidation().validProperty().not());
-        btnConnect.textProperty().bind(EasyBind.map(viewModel.loadingProperty(), loading -> (loading) ? Localization.lang("Connecting...") : Localization.lang("Connect")));
+        btnConnect.textProperty().bind(EasyBind.map(viewModel.loadingProperty(), loading -> loading ? Localization.lang("Connecting...") : Localization.lang("Connect")));
     }
 
     @FXML
@@ -78,7 +79,7 @@ public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
     private void initialize() {
         visualizer.setDecoration(new IconValidationDecorator());
 
-        viewModel = new SharedDatabaseLoginDialogViewModel(frame, dialogService);
+        viewModel = new SharedDatabaseLoginDialogViewModel(frame, dialogService, preferencesService);
         databaseType.getItems().addAll(DBMSType.values());
         databaseType.getSelectionModel().select(0);
 
@@ -102,6 +103,7 @@ public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
         browseKeystore.disableProperty().bind(viewModel.useSSLProperty().not());
         passwordKeystore.disableProperty().bind(viewModel.useSSLProperty().not());
         passwordKeystore.textProperty().bindBidirectional(viewModel.keyStorePasswordProperty());
+        rememberPassword.selectedProperty().bindBidirectional(viewModel.rememberPasswordProperty());
 
         // Must be executed after the initialization of the view, otherwise it doesn't work
         Platform.runLater(() -> {
@@ -110,13 +112,11 @@ public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
             visualizer.initVisualization(viewModel.portValidation(), port, true);
             visualizer.initVisualization(viewModel.userValidation(), user, true);
 
-            EasyBind.subscribe(autosave.selectedProperty(), selected -> {
-                visualizer.initVisualization(viewModel.folderValidation(), folder, true);
-            });
+            EasyBind.subscribe(autosave.selectedProperty(), selected ->
+                    visualizer.initVisualization(viewModel.folderValidation(), folder, true));
 
-            EasyBind.subscribe(useSSL.selectedProperty(), selected -> {
-                visualizer.initVisualization(viewModel.keystoreValidation(), fileKeystore, true);
-            });
+            EasyBind.subscribe(useSSL.selectedProperty(), selected ->
+                    visualizer.initVisualization(viewModel.keystoreValidation(), fileKeystore, true));
         });
     }
 

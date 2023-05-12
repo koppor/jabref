@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.metadata.FilePreferences;
+import org.jabref.preferences.FilePreferences;
 
 /**
  * Search class for files. <br>
@@ -26,17 +26,20 @@ public class DatabaseFileLookup {
 
     private final List<Path> possibleFilePaths;
 
+    private final Path pathOfDatabase;
+
     /**
      * Creates an instance by passing a {@link BibDatabase} which will be used for the searches.
      */
     public DatabaseFileLookup(BibDatabaseContext databaseContext, FilePreferences filePreferences) {
         Objects.requireNonNull(databaseContext);
-        possibleFilePaths = Optional.ofNullable(databaseContext.getFileDirectoriesAsPaths(filePreferences))
+        possibleFilePaths = Optional.ofNullable(databaseContext.getFileDirectories(filePreferences))
                                     .orElse(new ArrayList<>());
 
         for (BibEntry entry : databaseContext.getDatabase().getEntries()) {
             fileCache.addAll(parseFileField(entry));
         }
+        this.pathOfDatabase = databaseContext.getDatabasePath().orElse(Path.of(""));
     }
 
     /**
@@ -48,12 +51,12 @@ public class DatabaseFileLookup {
      * <br>
      * For the matching, the absolute file paths will be used.
      *
-     * @param file A {@link File} Object.
+     * @param pathname A {@link File} Object.
      * @return <code>true</code>, if the file Object is stored in at least one
      * entry in the database, otherwise <code>false</code>.
      */
-    public boolean lookupDatabase(File file) {
-        return fileCache.contains(file.toPath());
+    public boolean lookupDatabase(Path pathname) {
+        return fileCache.contains(pathname);
     }
 
     private List<Path> parseFileField(BibEntry entry) {
@@ -65,5 +68,12 @@ public class DatabaseFileLookup {
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .collect(Collectors.toList());
+    }
+
+    /**
+     * @return "" if the path does not exist
+     */
+    public Path getPathOfDatabase() {
+        return pathOfDatabase;
     }
 }

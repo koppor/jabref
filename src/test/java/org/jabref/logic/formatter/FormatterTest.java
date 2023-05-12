@@ -5,11 +5,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.formatter.casechanger.ProtectTermsFormatter;
 import org.jabref.logic.formatter.minifier.TruncateFormatter;
 import org.jabref.logic.protectedterms.ProtectedTermsLoader;
 import org.jabref.logic.protectedterms.ProtectedTermsPreferences;
-import org.jabref.model.cleanup.Formatter;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class FormatterTest {
         // idea for uniqueness checking by https://stackoverflow.com/a/44032568/873282
         assertEquals(Collections.emptyList(),
                 getFormatters().collect(Collectors.groupingBy(
-                        formatter -> formatter.getKey(),
+                                       Formatter::getKey,
                         Collectors.counting()))
                                .entrySet().stream()
                                .filter(e -> e.getValue() > 1)

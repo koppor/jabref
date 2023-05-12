@@ -8,7 +8,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import org.jabref.Globals;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.keyboard.KeyBinding;
 import org.jabref.gui.keyboard.KeyBindingRepository;
@@ -48,7 +47,7 @@ public class FXDialog extends Alert {
     public FXDialog(AlertType type, boolean isModal) {
         super(type);
 
-        setDialogIcon(IconTheme.getJabRefImageFX());
+        setDialogIcon(IconTheme.getJabRefImage());
 
         Stage dialogWindow = getDialogWindow();
         dialogWindow.setOnCloseRequest(evt -> this.close());

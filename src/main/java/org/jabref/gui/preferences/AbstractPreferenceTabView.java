@@ -2,23 +2,22 @@ package org.jabref.gui.preferences;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 
 import org.jabref.gui.DialogService;
 import org.jabref.gui.util.TaskExecutor;
-import org.jabref.preferences.JabRefPreferences;
+import org.jabref.preferences.PreferencesService;
+
+import jakarta.inject.Inject;
 
 public abstract class AbstractPreferenceTabView<T extends PreferenceTabViewModel> extends VBox implements PreferencesTab {
 
     @Inject protected TaskExecutor taskExecutor;
     @Inject protected DialogService dialogService;
+    @Inject protected PreferencesService preferencesService;
 
     protected T viewModel;
-
-    protected JabRefPreferences preferences;
 
     @Override
     public Node getBuilder() {

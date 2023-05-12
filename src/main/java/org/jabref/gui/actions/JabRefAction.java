@@ -1,11 +1,10 @@
 package org.jabref.gui.actions;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javafx.beans.binding.Bindings;
 
-import org.jabref.Globals;
+import org.jabref.gui.Globals;
 import org.jabref.gui.keyboard.KeyBindingRepository;
 
 import de.saxsys.mvvmfx.utils.commands.Command;
@@ -20,7 +19,7 @@ class JabRefAction extends org.controlsfx.control.action.Action {
         action.getIcon()
               .ifPresent(icon -> setGraphic(icon.getGraphicNode()));
         action.getKeyBinding()
-              .ifPresent(keyBinding -> setAccelerator(keyBindingRepository.getKeyCombination(keyBinding)));
+              .ifPresent(keyBinding -> keyBindingRepository.getKeyCombination(keyBinding).ifPresent(combination -> setAccelerator(combination)));
 
         setLongText(action.getDescription());
     }
@@ -77,10 +76,9 @@ class JabRefAction extends org.controlsfx.control.action.Action {
     }
 
     private void trackUserActionSource(String actionName, Sources source) {
-        Map<String, String> properties = new HashMap<>();
-        Map<String, Double> measurements = new HashMap<>();
-        properties.put("Source", source.toString());
-
-        Globals.getTelemetryClient().ifPresent(telemetryClient -> telemetryClient.trackEvent(actionName, properties, measurements));
+        Globals.getTelemetryClient().ifPresent(telemetryClient -> telemetryClient.trackEvent(
+                actionName,
+                Map.of("Source", source.toString()),
+                Map.of()));
     }
 }

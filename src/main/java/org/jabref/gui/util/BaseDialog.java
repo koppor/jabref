@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
-import org.jabref.Globals;
+import org.jabref.gui.Globals;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.keyboard.KeyBinding;
 import org.jabref.gui.keyboard.KeyBindingRepository;
@@ -34,9 +34,8 @@ public class BaseDialog<T> extends Dialog<T> implements org.jabref.gui.Dialog<T>
             }
         });
 
-        setDialogIcon(IconTheme.getJabRefImageFX());
+        setDialogIcon(IconTheme.getJabRefImage());
         setResizable(true);
-        Globals.getThemeLoader().installCss(getDialogPane().getScene(), Globals.prefs);
     }
 
     private Optional<Button> getDefaultButton() {

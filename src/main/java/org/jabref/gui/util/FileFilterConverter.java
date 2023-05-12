@@ -1,6 +1,9 @@
 package org.jabref.gui.util;
 
 import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.DirectoryStream.Filter;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -24,12 +27,13 @@ public class FileFilterConverter {
     }
 
     public static FileChooser.ExtensionFilter toExtensionFilter(FileType fileType) {
-        String description = Localization.lang("%0 file", fileType.toString());
-        return new FileChooser.ExtensionFilter(description, fileType.getExtensionsWithDot());
+        String fileList = String.join(", ", fileType.getExtensionsWithAsteriskAndDot());
+        String description = Localization.lang("%0 file (%1)", fileType.getName(), fileList);
+        return new FileChooser.ExtensionFilter(description, fileType.getExtensionsWithAsteriskAndDot());
     }
 
     public static FileChooser.ExtensionFilter toExtensionFilter(String description, FileType fileType) {
-        return new FileChooser.ExtensionFilter(description, fileType.getExtensionsWithDot());
+        return new FileChooser.ExtensionFilter(description, fileType.getExtensionsWithAsteriskAndDot());
     }
 
     public static Optional<Importer> getImporter(FileChooser.ExtensionFilter extensionFilter, Collection<Importer> importers) {
@@ -43,7 +47,7 @@ public class FileFilterConverter {
     public static FileChooser.ExtensionFilter forAllImporters(SortedSet<Importer> importers) {
         List<FileType> fileTypes = importers.stream().map(Importer::getFileType).collect(Collectors.toList());
         List<String> flatExtensions = fileTypes.stream()
-                                               .flatMap(type -> type.getExtensionsWithDot().stream())
+                                               .flatMap(type -> type.getExtensionsWithAsteriskAndDot().stream())
                                                .collect(Collectors.toList());
 
         return new FileChooser.ExtensionFilter(Localization.lang("Available import formats"), flatExtensions);
@@ -62,16 +66,30 @@ public class FileFilterConverter {
     }
 
     public static FileFilter toFileFilter(FileChooser.ExtensionFilter extensionFilter) {
-        List<String> extensionsCleaned = extensionFilter.getExtensions()
-                                                        .stream()
-                                                        .map(extension -> extension.replace(".", "").replace("*", ""))
-                                                        .filter(StringUtil::isNotBlank)
-                                                        .collect(Collectors.toList());
+        return toFileFilter(extensionFilter.getExtensions());
+    }
+
+    public static FileFilter toFileFilter(List<String> extensions) {
+        var filter = toDirFilter(extensions);
+        return file -> {
+            try {
+                return filter.accept(file.toPath());
+            } catch (IOException e) {
+                return false;
+            }
+        };
+    }
+
+    public static Filter<Path> toDirFilter(List<String> extensions) {
+        List<String> extensionsCleaned = extensions.stream()
+                                                   .map(extension -> extension.replace(".", "").replace("*", ""))
+                                                   .filter(StringUtil::isNotBlank)
+                                                   .collect(Collectors.toList());
         if (extensionsCleaned.isEmpty()) {
             // Except every file
-            return pathname -> true;
+            return path -> true;
         } else {
-            return pathname -> FileUtil.getFileExtension(pathname.toPath())
+            return path -> FileUtil.getFileExtension(path)
                                        .map(extensionsCleaned::contains)
                                        .orElse(false);
         }

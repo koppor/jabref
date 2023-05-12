@@ -6,9 +6,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.jabref.logic.bibtex.FieldContentFormatterPreferences;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.ImportFormatPreferences;
+import org.jabref.logic.importer.PagedSearchBasedFetcher;
+import org.jabref.logic.importer.SearchBasedFetcher;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
@@ -17,28 +18,26 @@ import org.jabref.testutils.category.FetcherTest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Answers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @FetcherTest
-class GoogleScholarTest {
+@DisabledOnCIServer("CI server is blocked by Google")
+class GoogleScholarTest implements SearchBasedFetcherCapabilityTest, PagedSearchFetcherTest {
 
     private GoogleScholar finder;
     private BibEntry entry;
 
     @BeforeEach
     void setUp() {
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class);
-        when(importFormatPreferences.getFieldContentFormatterPreferences()).thenReturn(
-                mock(FieldContentFormatterPreferences.class));
+        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
         finder = new GoogleScholar(importFormatPreferences);
         entry = new BibEntry();
     }
 
     @Test
-    @DisabledOnCIServer("CI server is blocked by Google")
     void linkFound() throws IOException, FetcherException {
         entry.setField(StandardField.TITLE, "Towards Application Portability in Platform as a Service");
 
@@ -49,7 +48,6 @@ class GoogleScholarTest {
     }
 
     @Test
-    @DisabledOnCIServer("CI server is blocked by Google")
     void noLinkFound() throws IOException, FetcherException {
         entry.setField(StandardField.TITLE, "Curriculum programme of career-oriented java specialty guided by principles of software engineering");
 
@@ -57,10 +55,9 @@ class GoogleScholarTest {
     }
 
     @Test
-    @DisabledOnCIServer("CI server is blocked by Google")
     void findSingleEntry() throws FetcherException {
         entry.setType(StandardEntryType.InProceedings);
-        entry.setCiteKey("geiger2013detecting");
+        entry.setCitationKey("geiger2013detecting");
         entry.setField(StandardField.TITLE, "Detecting Interoperability and Correctness Issues in BPMN 2.0 Process Models.");
         entry.setField(StandardField.AUTHOR, "Geiger, Matthias and Wirtz, Guido");
         entry.setField(StandardField.BOOKTITLE, "ZEUS");
@@ -73,10 +70,29 @@ class GoogleScholarTest {
     }
 
     @Test
-    @DisabledOnCIServer("CI server is blocked by Google")
     void findManyEntries() throws FetcherException {
         List<BibEntry> foundEntries = finder.performSearch("random test string");
 
         assertEquals(20, foundEntries.size());
+    }
+
+    @Override
+    public SearchBasedFetcher getFetcher() {
+        return finder;
+    }
+
+    @Override
+    public PagedSearchBasedFetcher getPagedFetcher() {
+        return finder;
+    }
+
+    @Override
+    public List<String> getTestAuthors() {
+        return List.of("Mittermeier", "Myers");
+    }
+
+    @Override
+    public String getTestJournal() {
+        return "Nature";
     }
 }

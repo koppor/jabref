@@ -1,8 +1,8 @@
 package org.jabref.gui.importer;
 
 import java.util.EnumSet;
+import java.util.Optional;
 
-import javax.inject.Inject;
 import javax.swing.undo.UndoManager;
 
 import javafx.beans.binding.Bindings;
@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
@@ -21,7 +22,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import org.jabref.Globals;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.icon.IconTheme;
@@ -33,8 +33,11 @@ import org.jabref.gui.util.TextFlowLimited;
 import org.jabref.gui.util.ViewModelListCellFactory;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.shared.DatabaseLocation;
+import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.StandardEntryType;
@@ -43,11 +46,13 @@ import org.jabref.preferences.PreferencesService;
 
 import com.airhacks.afterburner.views.ViewLoader;
 import com.tobiasdiez.easybind.EasyBind;
+import jakarta.inject.Inject;
 import org.controlsfx.control.CheckListView;
 
 public class ImportEntriesDialog extends BaseDialog<Boolean> {
 
     public CheckListView<BibEntry> entriesListView;
+    public ComboBox<BibDatabaseContext> libraryListView;
     public ButtonType importButton;
     public Label totalItems;
     public Label selectedItems;
@@ -59,6 +64,7 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
     @Inject private UndoManager undoManager;
     @Inject private PreferencesService preferences;
     @Inject private StateManager stateManager;
+    @Inject private BibEntryTypesManager entryTypesManager;
     @Inject private FileUpdateMonitor fileUpdateMonitor;
     private final BibDatabaseContext database;
 
@@ -79,7 +85,7 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
         Button btn = (Button) this.getDialogPane().lookupButton(importButton);
         btn.disableProperty().bind(booleanBind);
 
-        downloadLinkedOnlineFiles.setSelected(preferences.getFilePreferences().getDownloadLinkedFiles());
+        downloadLinkedOnlineFiles.setSelected(preferences.getFilePreferences().shouldDownloadLinkedFiles());
 
         setResultConverter(button -> {
             if (button == importButton) {
@@ -94,11 +100,33 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
 
     @FXML
     private void initialize() {
-        viewModel = new ImportEntriesViewModel(task, taskExecutor, database, dialogService, undoManager, preferences, stateManager, fileUpdateMonitor);
+        viewModel = new ImportEntriesViewModel(task, taskExecutor, database, dialogService, undoManager, preferences, stateManager, entryTypesManager, fileUpdateMonitor);
         Label placeholder = new Label();
         placeholder.textProperty().bind(viewModel.messageProperty());
         entriesListView.setPlaceholder(placeholder);
         entriesListView.setItems(viewModel.getEntries());
+
+        libraryListView.setEditable(false);
+        libraryListView.getItems().addAll(stateManager.getOpenDatabases());
+        new ViewModelListCellFactory<BibDatabaseContext>()
+                .withText(database -> {
+                    Optional<String> dbOpt = Optional.empty();
+                    if (database.getDatabasePath().isPresent()) {
+                        dbOpt = FileUtil.getUniquePathFragment(stateManager.collectAllDatabasePaths(), database.getDatabasePath().get());
+                    }
+                    if (database.getLocation() == DatabaseLocation.SHARED) {
+                        return database.getDBMSSynchronizer().getDBName() + " [" + Localization.lang("shared") + "]";
+                    }
+
+                    if (dbOpt.isEmpty()) {
+                        return Localization.lang("untitled");
+                    }
+
+                    return dbOpt.get();
+                })
+                .install(libraryListView);
+        viewModel.selectedDbProperty().bind(libraryListView.getSelectionModel().selectedItemProperty());
+        stateManager.getActiveDatabase().ifPresent(database1 -> libraryListView.getSelectionModel().select(database1));
 
         PseudoClass entrySelected = PseudoClass.getPseudoClass("entry-selected");
         new ViewModelListCellFactory<BibEntry>()
@@ -127,7 +155,7 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
                             duplicateButton.setOnAction(event -> viewModel.resolveDuplicate(entry));
                             container.getChildren().add(1, duplicateButton);
                         }
-                    }).executeWith(Globals.TASK_EXECUTOR);
+                    }).executeWith(taskExecutor);
 
                     /*
                     inserted the if-statement here, since a Platform.runLater() call did not work.
@@ -196,5 +224,10 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
                 entriesListView.getCheckModel().check(entry);
             }
         }
+    }
+
+    public void selectAllEntries() {
+        unselectAll();
+        entriesListView.getCheckModel().checkAll();
     }
 }

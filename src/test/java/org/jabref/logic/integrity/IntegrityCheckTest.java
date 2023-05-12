@@ -9,10 +9,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import org.jabref.logic.bibtexkeypattern.BibtexKeyGenerator;
-import org.jabref.logic.bibtexkeypattern.BibtexKeyPatternPreferences;
+import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
+import org.jabref.logic.citationkeypattern.CitationKeyPatternPreferences;
+import org.jabref.logic.citationkeypattern.GlobalCitationKeyPattern;
 import org.jabref.logic.journals.JournalAbbreviationLoader;
-import org.jabref.model.bibtexkeypattern.GlobalBibtexKeyPattern;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.database.BibDatabaseMode;
@@ -23,8 +23,8 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.IEEETranEntryType;
 import org.jabref.model.entry.types.StandardEntryType;
-import org.jabref.model.metadata.FilePreferences;
 import org.jabref.model.metadata.MetaData;
+import org.jabref.preferences.FilePreferences;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -34,8 +34,9 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * This class tests the Integrity Checker as a whole.
@@ -86,9 +87,9 @@ class IntegrityCheckTest {
 
     private static Stream<String> provideIncorrectFormat() {
         return Stream.of("   Knuth, Donald E. ",
-                         "Knuth, Donald E. and Kurt Cobain and A. Einstein",
-                         ", and Kurt Cobain and A. Einstein", "Donald E. Knuth and Kurt Cobain and ,",
-                         "and Kurt Cobain and A. Einstein", "Donald E. Knuth and Kurt Cobain and");
+                "Knuth, Donald E. and Kurt Cobain and A. Einstein",
+                ", and Kurt Cobain and A. Einstein", "Donald E. Knuth and Kurt Cobain and ,",
+                "and Kurt Cobain and A. Einstein", "Donald E. Knuth and Kurt Cobain and");
     }
 
     @Test
@@ -137,7 +138,7 @@ class IntegrityCheckTest {
 
         new IntegrityCheck(context,
                 mock(FilePreferences.class),
-                createBibtexKeyPatternPreferences(),
+                createCitationKeyPatternPreferences(),
                 JournalAbbreviationLoader.loadBuiltInRepository(), false)
                 .check();
 
@@ -170,41 +171,35 @@ class IntegrityCheckTest {
     private void assertWrong(BibDatabaseContext context) {
         List<IntegrityMessage> messages = new IntegrityCheck(context,
                 mock(FilePreferences.class),
-                createBibtexKeyPatternPreferences(),
+                createCitationKeyPatternPreferences(),
                 JournalAbbreviationLoader.loadBuiltInRepository(), false)
                 .check();
         assertNotEquals(Collections.emptyList(), messages);
     }
 
     private void assertCorrect(BibDatabaseContext context) {
+        FilePreferences filePreferencesMock = mock(FilePreferences.class);
+        when(filePreferencesMock.shouldStoreFilesRelativeToBibFile()).thenReturn(true);
         List<IntegrityMessage> messages = new IntegrityCheck(context,
-                mock(FilePreferences.class),
-                createBibtexKeyPatternPreferences(),
+                filePreferencesMock,
+                createCitationKeyPatternPreferences(),
                 JournalAbbreviationLoader.loadBuiltInRepository(), false
         ).check();
         assertEquals(Collections.emptyList(), messages);
     }
 
-    private void assertCorrect(BibDatabaseContext context, boolean allowIntegerEdition) {
-        List<IntegrityMessage> messages = new IntegrityCheck(context,
-                                                             mock(FilePreferences.class),
-                                                             createBibtexKeyPatternPreferences(),
-                                                             JournalAbbreviationLoader.loadBuiltInRepository(),
-                                                             allowIntegerEdition).check();
-        assertEquals(Collections.emptyList(), messages);
-    }
-
-    private BibtexKeyPatternPreferences createBibtexKeyPatternPreferences() {
-        final GlobalBibtexKeyPattern keyPattern = GlobalBibtexKeyPattern.fromPattern("[auth][year]");
-        return new BibtexKeyPatternPreferences(
+    private CitationKeyPatternPreferences createCitationKeyPatternPreferences() {
+        return new CitationKeyPatternPreferences(
+                false,
+                false,
+                false,
+                CitationKeyPatternPreferences.KeySuffix.SECOND_WITH_B,
                 "",
                 "",
-                false,
-                false,
-                keyPattern,
-                ',',
-                false,
-                BibtexKeyGenerator.DEFAULT_UNWANTED_CHARACTERS);
+                CitationKeyGenerator.DEFAULT_UNWANTED_CHARACTERS,
+                GlobalCitationKeyPattern.fromPattern("[auth][year]"),
+                "",
+                ',');
     }
 
     private BibDatabaseContext withMode(BibDatabaseContext context, BibDatabaseMode mode) {

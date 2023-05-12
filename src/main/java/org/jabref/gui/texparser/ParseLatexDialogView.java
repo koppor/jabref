@@ -1,7 +1,5 @@
 package org.jabref.gui.texparser;
 
-import javax.inject.Inject;
-
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -12,8 +10,10 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 
 import org.jabref.gui.DialogService;
+import org.jabref.gui.theme.ThemeManager;
 import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.ControlHelper;
+import org.jabref.gui.util.FileNodeViewModel;
 import org.jabref.gui.util.IconValidationDecorator;
 import org.jabref.gui.util.RecursiveTreeItem;
 import org.jabref.gui.util.TaskExecutor;
@@ -26,6 +26,7 @@ import org.jabref.preferences.PreferencesService;
 import com.airhacks.afterburner.views.ViewLoader;
 import com.tobiasdiez.easybind.EasyBind;
 import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+import jakarta.inject.Inject;
 import org.controlsfx.control.CheckTreeView;
 
 public class ParseLatexDialogView extends BaseDialog<Void> {
@@ -44,6 +45,7 @@ public class ParseLatexDialogView extends BaseDialog<Void> {
     @Inject private TaskExecutor taskExecutor;
     @Inject private PreferencesService preferencesService;
     @Inject private FileUpdateMonitor fileMonitor;
+    @Inject private ThemeManager themeManager;
     private ParseLatexDialogViewModel viewModel;
 
     public ParseLatexDialogView(BibDatabaseContext databaseContext) {
@@ -58,6 +60,8 @@ public class ParseLatexDialogView extends BaseDialog<Void> {
         Button parseButton = (Button) getDialogPane().lookupButton(parseButtonType);
         parseButton.disableProperty().bind(viewModel.noFilesFoundProperty().or(
                 Bindings.isEmpty(viewModel.getCheckedFileList())));
+
+        themeManager.updateFontStyle(getDialogPane().getScene());
     }
 
     @FXML
@@ -76,7 +80,7 @@ public class ParseLatexDialogView extends BaseDialog<Void> {
         EasyBind.subscribe(fileTreeView.rootProperty(), root -> {
             ((CheckBoxTreeItem<FileNodeViewModel>) root).setSelected(true);
             root.setExpanded(true);
-            EasyBind.listBind(viewModel.getCheckedFileList(), fileTreeView.getCheckModel().getCheckedItems());
+            EasyBind.bindContent(viewModel.getCheckedFileList(), fileTreeView.getCheckModel().getCheckedItems());
         });
 
         latexDirectoryField.textProperty().bindBidirectional(viewModel.latexFileDirectoryProperty());

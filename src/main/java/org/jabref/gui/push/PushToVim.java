@@ -4,35 +4,42 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.jabref.Globals;
-import org.jabref.JabRefExecutorService;
 import org.jabref.gui.DialogService;
+import org.jabref.gui.JabRefExecutorService;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.preferences.JabRefPreferences;
+import org.jabref.preferences.PreferencesService;
+import org.jabref.preferences.PushToApplicationPreferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PushToVim extends AbstractPushToApplication implements PushToApplication {
+public class PushToVim extends AbstractPushToApplication {
+
+    public static final String NAME = PushToApplications.VIM;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PushToVim.class);
 
-    public PushToVim(DialogService dialogService) {
-        super(dialogService);
+    public PushToVim(DialogService dialogService, PreferencesService preferencesService) {
+        super(dialogService, preferencesService);
     }
 
     @Override
-    public String getApplicationName() {
-        return "Vim";
+    public String getDisplayName() {
+        return NAME;
     }
 
     @Override
-    public JabRefIcon getIcon() {
+    public JabRefIcon getApplicationIcon() {
         return IconTheme.JabRefIcons.APPLICATION_VIM;
+    }
+
+    @Override
+    public PushToApplicationSettings getSettings(PushToApplication application, PushToApplicationPreferences preferences) {
+        return new PushToVimSettings(application, dialogService, preferencesService.getFilePreferences(), preferences);
     }
 
     @Override
@@ -41,8 +48,7 @@ public class PushToVim extends AbstractPushToApplication implements PushToApplic
         couldNotCall = false;
         notDefined = false;
 
-        initParameters();
-        commandPath = Globals.prefs.get(commandPathPreferenceKey);
+        commandPath = preferencesService.getPushToApplicationPreferences().getCommandPaths().get(this.getDisplayName());
 
         if ((commandPath == null) || commandPath.trim().isEmpty()) {
             notDefined = true;
@@ -50,8 +56,8 @@ public class PushToVim extends AbstractPushToApplication implements PushToApplic
         }
 
         try {
-            String[] com = new String[] {commandPath, "--servername",
-                    Globals.prefs.get(JabRefPreferences.VIM_SERVER), "--remote-send",
+            String[] com = new String[]{commandPath, "--servername",
+                    preferencesService.getPushToApplicationPreferences().getVimServer(), "--remote-send",
                     "<C-\\><C-N>a" + getCiteCommand() +
                             "{" + keys + "}"};
 
@@ -84,7 +90,7 @@ public class PushToVim extends AbstractPushToApplication implements PushToApplic
     }
 
     @Override
-    public void operationCompleted() {
+    public void onOperationCompleted() {
         if (couldNotConnect) {
             dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"),
                     Localization.lang("Could not connect to Vim server. Make sure that Vim is running with correct server name."));
@@ -92,12 +98,7 @@ public class PushToVim extends AbstractPushToApplication implements PushToApplic
             dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"),
                     Localization.lang("Could not run the 'vim' program."));
         } else {
-            super.operationCompleted();
+            super.onOperationCompleted();
         }
-    }
-
-    @Override
-    protected void initParameters() {
-        commandPathPreferenceKey = JabRefPreferences.VIM;
     }
 }

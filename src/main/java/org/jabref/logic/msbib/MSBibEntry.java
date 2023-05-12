@@ -82,9 +82,7 @@ class MSBibEntry {
     }
 
     /**
-     * Createa new {@link MsBibEntry} to import from an xml element
-     *
-     * @param entry
+     * Create a new {@link MsBibEntry} to import from an xml element
      */
     public MSBibEntry(Element entry) {
         populateFromXml(entry);
@@ -323,7 +321,6 @@ class MSBibEntry {
             corporate.setTextContent(person.getFirstLast());
             authorTop.appendChild(corporate);
         } else {
-
             Element nameList = document.createElementNS(MSBibDatabase.NAMESPACE, MSBibDatabase.PREFIX + "NameList");
             for (MsBibAuthor name : authorsLst) {
                 Element person = document.createElementNS(MSBibDatabase.NAMESPACE, MSBibDatabase.PREFIX + "Person");
@@ -344,7 +341,7 @@ class MSBibEntry {
         });
 
         parsedDateAcesseField.flatMap(Date::getMonth)
-                             .map(Month::getTwoDigitNumber).ifPresent(monthAcessed -> {
+                             .map(Month::getFullName).ifPresent(monthAcessed -> {
             addField(document, rootNode, "Month" + "Accessed", monthAcessed);
         });
         parsedDateAcesseField.flatMap(Date::getDay).map(Object::toString).ifPresent(dayAccessed -> {

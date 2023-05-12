@@ -1,13 +1,13 @@
 package org.jabref.logic.formatter.casechanger;
 
+import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.model.cleanup.Formatter;
 
 public class LowerCaseFormatter extends Formatter {
 
     @Override
     public String getName() {
-        return Localization.lang("Lower case");
+        return Localization.lang("lower case");
     }
 
     @Override
@@ -29,7 +29,7 @@ public class LowerCaseFormatter extends Formatter {
 
     @Override
     public String getDescription() {
-        return Localization.lang("Changes all letters to lower case.");
+        return Localization.lang("changes all letters to lower case.");
     }
 
     @Override

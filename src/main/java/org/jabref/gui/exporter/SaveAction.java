@@ -1,10 +1,11 @@
 package org.jabref.gui.exporter;
 
-import org.jabref.Globals;
+import org.jabref.gui.Globals;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.ActionHelper;
 import org.jabref.gui.actions.SimpleCommand;
+import org.jabref.preferences.PreferencesService;
 
 /**
  * This class is just a simple wrapper for the soon to be refactored SaveDatabaseAction.
@@ -15,10 +16,12 @@ public class SaveAction extends SimpleCommand {
 
     private final SaveMethod saveMethod;
     private final JabRefFrame frame;
+    private final PreferencesService preferencesService;
 
-    public SaveAction(SaveMethod saveMethod, JabRefFrame frame, StateManager stateManager) {
+    public SaveAction(SaveMethod saveMethod, JabRefFrame frame, PreferencesService preferencesService, StateManager stateManager) {
         this.saveMethod = saveMethod;
         this.frame = frame;
+        this.preferencesService = preferencesService;
 
         if (saveMethod == SaveMethod.SAVE_SELECTED) {
             this.executable.bind(ActionHelper.needsEntriesSelected(stateManager));
@@ -30,22 +33,14 @@ public class SaveAction extends SimpleCommand {
     @Override
     public void execute() {
         SaveDatabaseAction saveDatabaseAction = new SaveDatabaseAction(
-                frame.getCurrentBasePanel(),
-                Globals.prefs,
+                frame.getCurrentLibraryTab(),
+                preferencesService,
                 Globals.entryTypesManager);
 
         switch (saveMethod) {
-            case SAVE:
-                saveDatabaseAction.save();
-                break;
-            case SAVE_AS:
-                saveDatabaseAction.saveAs();
-                break;
-            case SAVE_SELECTED:
-                saveDatabaseAction.saveSelectedAsPlain();
-                break;
-            default:
-                // Never happens
+            case SAVE -> saveDatabaseAction.save();
+            case SAVE_AS -> saveDatabaseAction.saveAs();
+            case SAVE_SELECTED -> saveDatabaseAction.saveSelectedAsPlain();
         }
     }
 }

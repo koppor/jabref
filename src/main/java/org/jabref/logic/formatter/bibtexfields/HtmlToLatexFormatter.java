@@ -5,10 +5,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.layout.LayoutFormatter;
 import org.jabref.logic.util.strings.HTMLUnicodeConversionMaps;
-import org.jabref.model.cleanup.Formatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +41,15 @@ public class HtmlToLatexFormatter extends Formatter implements LayoutFormatter {
         // Note that (at least) the IEEE Xplore fetcher must be fixed as it relies on the current way to
         // remove tags for its image alt-tag to equation converter
         for (int i = 0; i < result.length(); i++) {
-
             int c = result.charAt(i);
 
             if (c == '<') {
+                int oldI = i;
                 i = readTag(result, i);
+                if (oldI == i) {
+                    // just a single <, which needs to be kept
+                    sb.append('<');
+                }
             } else {
                 sb.append((char) c);
             }

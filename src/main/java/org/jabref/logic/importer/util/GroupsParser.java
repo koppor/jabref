@@ -3,6 +3,7 @@ package org.jabref.logic.importer.util;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.jabref.logic.auxparser.DefaultAuxParser;
@@ -26,6 +27,8 @@ import org.jabref.model.groups.SearchGroup;
 import org.jabref.model.groups.TexGroup;
 import org.jabref.model.groups.WordKeywordGroup;
 import org.jabref.model.metadata.MetaData;
+import org.jabref.model.search.rules.SearchRules;
+import org.jabref.model.search.rules.SearchRules.SearchFlags;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.model.util.FileUpdateMonitor;
 
@@ -84,8 +87,7 @@ public class GroupsParser {
     /**
      * Re-create a group instance from a textual representation.
      *
-     * @param s           The result from the group's toString() method.
-     * @param fileMonitor
+     * @param s The result from the group's toString() method.
      * @return New instance of the encoded group.
      * @throws ParseException If an error occurred and a group could not be created, e.g. due to a malformed regular expression.
      */
@@ -133,7 +135,7 @@ public class GroupsParser {
                 return newGroup;
             } catch (IOException ex) {
                 // Problem accessing file -> create without file monitoring
-                LOGGER.warn("Could not access file " + path + ". The group " + name + " will not reflect changes to the aux file.", ex);
+                LOGGER.warn("Could not access file {}. The group {} will not reflect changes to the aux file.", path, name, ex);
 
                 TexGroup newGroup = TexGroup.createWithoutFileMonitoring(name, context, path, new DefaultAuxParser(new BibDatabase()), fileMonitor, metaData);
                 addGroupDetails(tok, newGroup);
@@ -275,13 +277,20 @@ public class GroupsParser {
         String name = StringUtil.unquote(tok.nextToken(), MetadataSerializationConfiguration.GROUP_QUOTE_CHAR);
         int context = Integer.parseInt(tok.nextToken());
         String expression = StringUtil.unquote(tok.nextToken(), MetadataSerializationConfiguration.GROUP_QUOTE_CHAR);
-        boolean caseSensitive = Integer.parseInt(tok.nextToken()) == 1;
-        boolean regExp = Integer.parseInt(tok.nextToken()) == 1;
+        EnumSet<SearchFlags> searchFlags = EnumSet.noneOf(SearchFlags.class);
+        if (Integer.parseInt(tok.nextToken()) == 1) {
+            searchFlags.add(SearchRules.SearchFlags.CASE_SENSITIVE);
+        }
+        if (Integer.parseInt(tok.nextToken()) == 1) {
+            searchFlags.add(SearchRules.SearchFlags.REGULAR_EXPRESSION);
+        }
         // version 0 contained 4 additional booleans to specify search
         // fields; these are ignored now, all fields are always searched
-        return new SearchGroup(name,
-                GroupHierarchyType.getByNumberOrDefault(context), expression, caseSensitive, regExp
+        SearchGroup searchGroup = new SearchGroup(name,
+                GroupHierarchyType.getByNumberOrDefault(context), expression, searchFlags
         );
+        addGroupDetails(tok, searchGroup);
+        return searchGroup;
     }
 
     private static void addGroupDetails(QuotedStringTokenizer tokenizer, AbstractGroup group) {

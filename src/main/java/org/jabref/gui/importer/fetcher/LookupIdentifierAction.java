@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import javax.swing.undo.UndoManager;
 
-import org.jabref.Globals;
+import org.jabref.gui.Globals;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.Action;
@@ -63,7 +63,6 @@ public class LookupIdentifierAction<T extends Identifier> extends SimpleCommand 
 
     public Action getAction() {
         return new Action() {
-
             @Override
             public Optional<JabRefIcon> getIcon() {
                 return Optional.empty();
