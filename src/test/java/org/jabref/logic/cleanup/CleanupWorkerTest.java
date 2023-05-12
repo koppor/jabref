@@ -85,20 +85,20 @@ class CleanupWorkerTest {
 
     @Test
     void cleanupDoesNothingByDefault(@TempDir Path bibFolder) throws IOException {
-        BibEntry entry = new BibEntry();
-        entry.setCitationKey("Toot");
-        entry.setField(StandardField.PDF, "aPdfFile");
-        entry.setField(new UnknownField("some"), "1st");
-        entry.setField(StandardField.DOI, "http://dx.doi.org/10.1016/0001-8708(80)90035-3");
-        entry.setField(StandardField.MONTH, "01");
-        entry.setField(StandardField.PAGES, "1-2");
-        entry.setField(StandardField.DATE, "01/1999");
-        entry.setField(StandardField.PDF, "aPdfFile");
-        entry.setField(StandardField.ISSN, "aPsFile");
-        entry.setField(StandardField.FILE, "link::");
-        entry.setField(StandardField.JOURNAL, "test");
-        entry.setField(StandardField.TITLE, "<b>hallo</b> units 1 A case AlGaAs and latex $\\alpha$$\\beta$");
-        entry.setField(StandardField.ABSTRACT, "Réflexions");
+        BibEntry entry = new BibEntry()
+                .withCitationKey("Toot")
+                .withField(StandardField.PDF, "aPdfFile")
+                .withField(new UnknownField("some"), "1st")
+                .withField(StandardField.DOI, "http://dx.doi.org/10.1016/0001-8708(80)90035-3")
+                .withField(StandardField.MONTH, "01")
+                .withField(StandardField.PAGES, "1-2")
+                .withField(StandardField.DATE, "01/1999")
+                .withField(StandardField.PDF, "aPdfFile")
+                .withField(StandardField.ISSN, "aPsFile")
+                .withField(StandardField.FILE, "link::")
+                .withField(StandardField.JOURNAL, "test")
+                .withField(StandardField.TITLE, "<b>hallo</b> units 1 A case AlGaAs and latex $\\alpha$$\\beta$")
+                .withField(StandardField.ABSTRACT, "Réflexions");
         Path path = bibFolder.resolve("ARandomlyNamedFile");
         Files.createFile(path);
         LinkedFile fileField = new LinkedFile("", path.toAbsolutePath(), "");
@@ -111,8 +111,7 @@ class CleanupWorkerTest {
     @Test
     void upgradeExternalLinksMoveFromPdfToFile() {
         CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_UPGRADE_EXTERNAL_LINKS);
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.PDF, "aPdfFile");
+        BibEntry entry = new BibEntry().withField(StandardField.PDF, "aPdfFile");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.empty(), entry.getField(StandardField.PDF));
@@ -122,8 +121,7 @@ class CleanupWorkerTest {
     @Test
     void upgradeExternalLinksMoveFromPsToFile() {
         CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_UPGRADE_EXTERNAL_LINKS);
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.PS, "aPsFile");
+        BibEntry entry = new BibEntry().withField(StandardField.PS, "aPsFile");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.empty(), entry.getField(StandardField.PDF));
@@ -133,8 +131,7 @@ class CleanupWorkerTest {
     @Test
     void cleanupDoiRemovesLeadingHttp() {
         CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_DOI);
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.DOI, "http://dx.doi.org/10.1016/0001-8708(80)90035-3");
+        BibEntry entry = new BibEntry().withField(StandardField.DOI, "http://dx.doi.org/10.1016/0001-8708(80)90035-3");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.of("10.1016/0001-8708(80)90035-3"), entry.getField(StandardField.DOI));
@@ -143,8 +140,7 @@ class CleanupWorkerTest {
     @Test
     void cleanupDoiReturnsChanges() {
         CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_DOI);
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.DOI, "http://dx.doi.org/10.1016/0001-8708(80)90035-3");
+        BibEntry entry = new BibEntry().withField(StandardField.DOI, "http://dx.doi.org/10.1016/0001-8708(80)90035-3");
 
         List<FieldChange> changes = worker.cleanup(preset, entry);
 
@@ -155,8 +151,7 @@ class CleanupWorkerTest {
     @Test
     void cleanupDoiFindsDoiInURLFieldAndMoveItToDOIField() {
         CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_DOI);
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.URL, "http://dx.doi.org/10.1016/0001-8708(80)90035-3");
+        BibEntry entry = new BibEntry().withField(StandardField.URL, "http://dx.doi.org/10.1016/0001-8708(80)90035-3");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.of("10.1016/0001-8708(80)90035-3"), entry.getField(StandardField.DOI));
@@ -166,8 +161,7 @@ class CleanupWorkerTest {
     @Test
     void cleanupDoiReturnsChangeWhenDoiInURLField() {
         CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_DOI);
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.URL, "http://dx.doi.org/10.1016/0001-8708(80)90035-3");
+        BibEntry entry = new BibEntry().withField(StandardField.URL, "http://dx.doi.org/10.1016/0001-8708(80)90035-3");
 
         List<FieldChange> changes = worker.cleanup(preset, entry);
         List<FieldChange> changeList = new ArrayList<>();
@@ -180,8 +174,7 @@ class CleanupWorkerTest {
     void cleanupMonthChangesNumberToBibtex() {
         CleanupPreferences preset = new CleanupPreferences(new FieldFormatterCleanups(true,
                 Collections.singletonList(new FieldFormatterCleanup(StandardField.MONTH, new NormalizeMonthFormatter()))));
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.MONTH, "01");
+        BibEntry entry = new BibEntry().withField(StandardField.MONTH, "01");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.of("#jan#"), entry.getField(StandardField.MONTH));
@@ -191,8 +184,7 @@ class CleanupWorkerTest {
     void cleanupPageNumbersConvertsSingleDashToDouble() {
         CleanupPreferences preset = new CleanupPreferences(new FieldFormatterCleanups(true,
                 Collections.singletonList(new FieldFormatterCleanup(StandardField.PAGES, new NormalizePagesFormatter()))));
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.PAGES, "1-2");
+        BibEntry entry = new BibEntry().withField(StandardField.PAGES, "1-2");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.of("1--2"), entry.getField(StandardField.PAGES));
@@ -202,8 +194,7 @@ class CleanupWorkerTest {
     void cleanupDatesConvertsToCorrectFormat() {
         CleanupPreferences preset = new CleanupPreferences(new FieldFormatterCleanups(true,
                 Collections.singletonList(new FieldFormatterCleanup(StandardField.DATE, new NormalizeDateFormatter()))));
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.DATE, "01/1999");
+        BibEntry entry = new BibEntry().withField(StandardField.DATE, "01/1999");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.of("1999-01"), entry.getField(StandardField.DATE));
@@ -212,8 +203,7 @@ class CleanupWorkerTest {
     @Test
     void cleanupFixFileLinksMovesSingleDescriptionToLink() {
         CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.FIX_FILE_LINKS);
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.FILE, "link::");
+        BibEntry entry = new BibEntry().withField(StandardField.FILE, "link::");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.of(":link:"), entry.getField(StandardField.FILE));
@@ -222,13 +212,11 @@ class CleanupWorkerTest {
     @Test
     void cleanupMoveFilesMovesFileFromSubfolder(@TempDir Path bibFolder) throws IOException {
         CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.MOVE_PDF);
-
         Path path = bibFolder.resolve("AnotherRandomlyNamedFolder");
         Files.createDirectory(path);
         Path tempFile = Files.createFile(path.resolve("test.pdf"));
-        BibEntry entry = new BibEntry();
         LinkedFile fileField = new LinkedFile("", tempFile.toAbsolutePath(), "");
-        entry.setField(StandardField.FILE, FileFieldWriter.getStringRepresentation(fileField));
+        BibEntry entry = new BibEntry().withField(StandardField.FILE, FileFieldWriter.getStringRepresentation(fileField));
 
         worker.cleanup(preset, entry);
         LinkedFile newFileField = new LinkedFile("", tempFile.getFileName(), "");
@@ -253,13 +241,12 @@ class CleanupWorkerTest {
     @Test
     void cleanupRenamePdfRenamesRelativeFile() throws IOException {
         CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.RENAME_PDF);
-
         Path path = pdfPath.resolve("AnotherRandomlyNamedFile.tmp");
         Files.createFile(path);
-        BibEntry entry = new BibEntry()
-                .withCitationKey("Toot");
         LinkedFile fileField = new LinkedFile("", path.toAbsolutePath(), "");
-        entry.setField(StandardField.FILE, FileFieldWriter.getStringRepresentation(fileField));
+        BibEntry entry = new BibEntry()
+                .withCitationKey("Toot")
+                .withField(StandardField.FILE, FileFieldWriter.getStringRepresentation(fileField));
 
         worker.cleanup(preset, entry);
         LinkedFile newFileField = new LinkedFile("", Path.of("Toot.tmp"), "");
@@ -270,8 +257,7 @@ class CleanupWorkerTest {
     void cleanupHtmlToLatexConvertsEpsilonToLatex() {
         CleanupPreferences preset = new CleanupPreferences(new FieldFormatterCleanups(true,
                 Collections.singletonList(new FieldFormatterCleanup(StandardField.TITLE, new HtmlToLatexFormatter()))));
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.TITLE, "&Epsilon;");
+        BibEntry entry = new BibEntry().withField(StandardField.TITLE, "&Epsilon;");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.of("{{$\\Epsilon$}}"), entry.getField(StandardField.TITLE));
@@ -281,8 +267,7 @@ class CleanupWorkerTest {
     void cleanupUnitsConvertsOneAmpereToLatex() {
         CleanupPreferences preset = new CleanupPreferences(new FieldFormatterCleanups(true,
                 Collections.singletonList(new FieldFormatterCleanup(StandardField.TITLE, new UnitsToLatexFormatter()))));
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.TITLE, "1 A");
+        BibEntry entry = new BibEntry().withField(StandardField.TITLE, "1 A");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.of("1~{A}"), entry.getField(StandardField.TITLE));
@@ -296,8 +281,7 @@ class CleanupWorkerTest {
         assertNotEquals(Collections.emptyList(), protectedTermsLoader.getProtectedTerms());
         CleanupPreferences preset = new CleanupPreferences(new FieldFormatterCleanups(true, Collections
                 .singletonList(new FieldFormatterCleanup(StandardField.TITLE, new ProtectTermsFormatter(protectedTermsLoader)))));
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.TITLE, "AlGaAs");
+        BibEntry entry = new BibEntry().withField(StandardField.TITLE, "AlGaAs");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.of("{AlGaAs}"), entry.getField(StandardField.TITLE));
@@ -307,8 +291,7 @@ class CleanupWorkerTest {
     void cleanupLatexMergesTwoLatexMathEnvironments() {
         CleanupPreferences preset = new CleanupPreferences(new FieldFormatterCleanups(true,
                 Collections.singletonList(new FieldFormatterCleanup(StandardField.TITLE, new LatexCleanupFormatter()))));
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.TITLE, "$\\alpha$$\\beta$");
+        BibEntry entry = new BibEntry().withField(StandardField.TITLE, "$\\alpha$$\\beta$");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.of("$\\alpha\\beta$"), entry.getField(StandardField.TITLE));
@@ -317,8 +300,7 @@ class CleanupWorkerTest {
     @Test
     void convertToBiblatexMovesAddressToLocation() {
         CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.CONVERT_TO_BIBLATEX);
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.ADDRESS, "test");
+        BibEntry entry = new BibEntry().withField(StandardField.ADDRESS, "test");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.empty(), entry.getField(StandardField.ADDRESS));
@@ -328,8 +310,7 @@ class CleanupWorkerTest {
     @Test
     void convertToBiblatexMovesJournalToJournalTitle() {
         CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.CONVERT_TO_BIBLATEX);
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.JOURNAL, "test");
+        BibEntry entry = new BibEntry().withField(StandardField.JOURNAL, "test");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.empty(), entry.getField(StandardField.JOURNAL));
@@ -340,8 +321,7 @@ class CleanupWorkerTest {
     void cleanupWithDisabledFieldFormatterChangesNothing() {
         CleanupPreferences preset = new CleanupPreferences(new FieldFormatterCleanups(false,
                 Collections.singletonList(new FieldFormatterCleanup(StandardField.MONTH, new NormalizeMonthFormatter()))));
-        BibEntry entry = new BibEntry();
-        entry.setField(StandardField.MONTH, "01");
+        BibEntry entry = new BibEntry().withField(StandardField.MONTH, "01");
 
         worker.cleanup(preset, entry);
         assertEquals(Optional.of("01"), entry.getField(StandardField.MONTH));
