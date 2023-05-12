@@ -5,18 +5,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.jabref.logic.formatter.bibtexfields.LatexToUnicodeFormatter;
 import org.jabref.model.entry.Author;
 import org.jabref.model.entry.AuthorList;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
-import org.jabref.model.strings.LatexToUnicodeAdapter;
 
 /**
  * Matches based on a latex free last name in a specified field. The field is parsed as an author list and the last names are resolved of latex.
  */
 public class LastNameGroup extends KeywordGroup {
+
     public LastNameGroup(String groupName, GroupHierarchyType context, Field searchField, String lastName) {
-        super(groupName, context, searchField, LatexToUnicodeAdapter.format(lastName), true);
+        super(groupName, context, searchField, new LatexToUnicodeFormatter().format(lastName), true);
     }
 
     static List<String> getAsLastNamesLatexFree(Field field, BibEntry bibEntry) {

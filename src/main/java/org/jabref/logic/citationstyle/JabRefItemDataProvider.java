@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
+import org.jabref.logic.formatter.bibtexfields.LatexToUnicodeFormatter;
 import org.jabref.logic.formatter.bibtexfields.RemoveNewlinesFormatter;
 import org.jabref.logic.integrity.PagesChecker;
 import org.jabref.model.database.BibDatabaseContext;
@@ -18,7 +19,6 @@ import org.jabref.model.entry.Month;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
-import org.jabref.model.strings.LatexToUnicodeAdapter;
 
 import de.undercouch.citeproc.ItemDataProvider;
 import de.undercouch.citeproc.bibtex.BibTeXConverter;
@@ -43,6 +43,8 @@ public class JabRefItemDataProvider implements ItemDataProvider {
     private BibDatabaseContext bibDatabaseContext;
     private BibEntryTypesManager entryTypesManager;
     private PagesChecker pagesChecker;
+
+    private LatexToUnicodeFormatter latexToUnicodeFormatter = new LatexToUnicodeFormatter();
 
     public JabRefItemDataProvider() {
         stringJsonBuilderFactory = new StringJsonBuilderFactory();
@@ -152,7 +154,7 @@ public class JabRefItemDataProvider implements ItemDataProvider {
         for (Field key : fields) {
             bibEntry.getResolvedFieldOrAlias(key, bibDatabaseContext.getDatabase())
                     .map(removeNewlinesFormatter::format)
-                    .map(LatexToUnicodeAdapter::format)
+                    .map(latexToUnicodeFormatter::format)
                     .ifPresent(value -> {
                         if (StandardField.MONTH == key) {
                             // Change month from #mon# to mon because CSL does not support the former format

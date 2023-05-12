@@ -3,7 +3,7 @@ package org.jabref.model.entry;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.jabref.model.strings.LatexToUnicodeAdapter;
+import org.jabref.logic.formatter.bibtexfields.LatexToUnicodeFormatter;
 import org.jabref.model.strings.StringUtil;
 
 /**
@@ -26,6 +26,8 @@ public class Author {
     private final String lastPart;
     private final String jrPart;
     private Author latexFreeAuthor;
+
+    private LatexToUnicodeFormatter latexToUnicodeFormatter = new LatexToUnicodeFormatter();
 
     /**
      * Creates the Author object. If any part of the name is absent, <CODE>null</CODE> must be passed; otherwise other methods may return erroneous results.
@@ -370,11 +372,11 @@ public class Author {
      */
     public Author latexFree() {
         if (latexFreeAuthor == null) {
-            String first = getFirst().map(LatexToUnicodeAdapter::format).orElse(null);
-            String firstabbr = getFirstAbbr().map(LatexToUnicodeAdapter::format).orElse(null);
-            String von = getVon().map(LatexToUnicodeAdapter::format).orElse(null);
-            String last = getLast().map(LatexToUnicodeAdapter::format).orElse(null);
-            String jr = getJr().map(LatexToUnicodeAdapter::format).orElse(null);
+            String first = getFirst().map(latexToUnicodeFormatter::format).orElse(null);
+            String firstabbr = getFirstAbbr().map(latexToUnicodeFormatter::format).orElse(null);
+            String von = getVon().map(latexToUnicodeFormatter::format).orElse(null);
+            String last = getLast().map(latexToUnicodeFormatter::format).orElse(null);
+            String jr = getJr().map(latexToUnicodeFormatter::format).orElse(null);
             latexFreeAuthor = new Author(first, firstabbr, von, last, jr);
             latexFreeAuthor.latexFreeAuthor = latexFreeAuthor;
         }

@@ -1,5 +1,6 @@
 package org.jabref.logic.formatter.bibtexfields;
 
+import java.text.Normalizer;
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,10 +21,12 @@ public class UnicodeToLatexFormatter extends Formatter implements LayoutFormatte
 
     @Override
     public String format(String text) {
-        String result = Objects.requireNonNull(text);
-        if (result.isEmpty()) {
-            return result;
+        if (Objects.requireNonNull(text).isEmpty()) {
+            return text;
         }
+
+        // normalize the unicode characters to cover more cases
+        String result = Normalizer.normalize(text, Normalizer.Form.NFC);
 
         // Standard symbols
         for (Map.Entry<String, String> unicodeLatexPair : HTMLUnicodeConversionMaps.UNICODE_LATEX_CONVERSION_MAP

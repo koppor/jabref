@@ -1,7 +1,6 @@
 package org.jabref.logic.citationkeypattern;
 
 import java.math.BigInteger;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 
 import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.formatter.Formatters;
+import org.jabref.logic.formatter.bibtexfields.LatexToUnicodeFormatter;
 import org.jabref.logic.formatter.casechanger.Word;
 import org.jabref.logic.layout.format.RemoveLatexCommandsFormatter;
 import org.jabref.model.database.BibDatabase;
@@ -32,7 +32,6 @@ import org.jabref.model.entry.KeywordList;
 import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.strings.LatexToUnicodeAdapter;
 import org.jabref.model.strings.StringUtil;
 
 import org.slf4j.Logger;
@@ -83,6 +82,8 @@ public class BracketedPattern {
     private static final Pattern DEPARTMENTS = Pattern.compile("^d[ei]p.*", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern WHITESPACE = Pattern.compile("\\p{javaWhitespace}");
+
+    private static final LatexToUnicodeFormatter LATEX_TO_UNICODE_FORMATTER = new LatexToUnicodeFormatter();
 
     private enum Institution {
         SCHOOL,
@@ -513,7 +514,7 @@ public class BracketedPattern {
     }
 
     /**
-     * Parses the provided string to an {@link AuthorList}, which are then formatted by {@link LatexToUnicodeAdapter}.
+     * Parses the provided string to an {@link AuthorList}, which are then formatted by {@link LatexToUnicodeFormatter}.
      * Afterward, any institutions are formatted into an institution key.
      *
      * @param unparsedAuthors a string representation of authors or editors
@@ -526,14 +527,14 @@ public class BracketedPattern {
                              String lastName = author.getLast()
                                                      .map(lastPart -> isInstitution(author) ?
                                                              generateInstitutionKey(lastPart) :
-                                                             LatexToUnicodeAdapter.format(lastPart))
+                                                             LATEX_TO_UNICODE_FORMATTER.format(lastPart))
                                                      .orElse(null);
                              return new Author(
-                                     author.getFirst().map(LatexToUnicodeAdapter::format).orElse(null),
-                                     author.getFirstAbbr().map(LatexToUnicodeAdapter::format).orElse(null),
-                                     author.getVon().map(LatexToUnicodeAdapter::format).orElse(null),
+                                     author.getFirst().map(LATEX_TO_UNICODE_FORMATTER::format).orElse(null),
+                                     author.getFirstAbbr().map(LATEX_TO_UNICODE_FORMATTER::format).orElse(null),
+                                     author.getVon().map(LATEX_TO_UNICODE_FORMATTER::format).orElse(null),
                                      lastName,
-                                     author.getJr().map(LatexToUnicodeAdapter::format).orElse(null));
+                                     author.getJr().map(LATEX_TO_UNICODE_FORMATTER::format).orElse(null));
                          })
                          .collect(AuthorList.collect());
     }
@@ -1195,14 +1196,10 @@ public class BracketedPattern {
 
         Matcher matcher = INLINE_ABBREVIATION.matcher(content);
         if (matcher.find()) {
-            return LatexToUnicodeAdapter.format(matcher.group());
+            return LATEX_TO_UNICODE_FORMATTER.format(matcher.group());
         }
 
-        Optional<String> unicodeFormattedName = LatexToUnicodeAdapter.parse(content);
-        if (unicodeFormattedName.isEmpty()) {
-            LOGGER.warn("{} could not be converted to unicode. This can result in an incorrect or missing institute citation key", content);
-        }
-        String result = unicodeFormattedName.orElse(Normalizer.normalize(content, Normalizer.Form.NFC));
+        String result = LATEX_TO_UNICODE_FORMATTER.format(content);
 
         // Special characters can't be allowed past this point because the citation key generator might replace them with multiple mixed-case characters
         result = StringUtil.replaceSpecialCharacters(result);
