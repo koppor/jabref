@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.jabref.logic.formatter.bibtexfields.HtmlToLatexFormatter;
+import org.jabref.logic.formatter.bibtexfields.LatexToUnicodeFormatter;
 import org.jabref.logic.formatter.bibtexfields.UnicodeToLatexFormatter;
 import org.jabref.logic.layout.format.AuthorAbbreviator;
 import org.jabref.logic.layout.format.AuthorAndToSemicolonReplacer;
@@ -58,7 +59,6 @@ import org.jabref.logic.layout.format.Iso690FormatDate;
 import org.jabref.logic.layout.format.Iso690NamesAuthors;
 import org.jabref.logic.layout.format.JournalAbbreviator;
 import org.jabref.logic.layout.format.LastPage;
-import org.jabref.logic.layout.format.LatexToUnicodeFormatter;
 import org.jabref.logic.layout.format.MarkdownFormatter;
 import org.jabref.logic.layout.format.NameFormatter;
 import org.jabref.logic.layout.format.NoSpaceBetweenAbbreviations;

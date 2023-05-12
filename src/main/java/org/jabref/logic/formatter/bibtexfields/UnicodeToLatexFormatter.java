@@ -11,6 +11,9 @@ import org.jabref.logic.util.strings.HTMLUnicodeConversionMaps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The inverse operation is {@link LatexToUnicodeFormatter}.
+ */
 public class UnicodeToLatexFormatter extends Formatter implements LayoutFormatter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UnicodeToLatexFormatter.class);

@@ -1,4 +1,4 @@
-package org.jabref.logic.layout.format;
+package org.jabref.logic.formatter.bibtexfields;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

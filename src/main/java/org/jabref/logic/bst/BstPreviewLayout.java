@@ -5,9 +5,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 import org.jabref.logic.cleanup.ConvertToBibtexCleanup;
+import org.jabref.logic.formatter.bibtexfields.LatexToUnicodeFormatter;
 import org.jabref.logic.formatter.bibtexfields.RemoveNewlinesFormatter;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.layout.format.LatexToUnicodeFormatter;
 import org.jabref.logic.layout.format.RemoveLatexCommandsFormatter;
 import org.jabref.logic.layout.format.RemoveTilde;
 import org.jabref.logic.preview.PreviewLayout;

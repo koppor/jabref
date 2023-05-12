@@ -1,16 +1,18 @@
-package org.jabref.logic.layout.format;
+package org.jabref.logic.formatter.bibtexfields;
 
 import java.util.Map;
 import java.util.Objects;
 
+import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.layout.LayoutFormatter;
 import org.jabref.logic.util.strings.HTMLUnicodeConversionMaps;
-import org.jabref.model.cleanup.Formatter;
 
 /**
  * This formatter converts LaTeX character sequences their equivalent unicode characters,
  * and removes other LaTeX commands without handling them.
+ *
+ * The inverse operation is {@link UnicodeToLatexFormatter}.
  */
 public class LatexToUnicodeFormatter extends Formatter implements LayoutFormatter {
 

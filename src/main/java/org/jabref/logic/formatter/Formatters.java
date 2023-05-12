@@ -16,6 +16,7 @@ import org.jabref.logic.formatter.bibtexfields.EscapeUnderscoresFormatter;
 import org.jabref.logic.formatter.bibtexfields.HtmlToLatexFormatter;
 import org.jabref.logic.formatter.bibtexfields.HtmlToUnicodeFormatter;
 import org.jabref.logic.formatter.bibtexfields.LatexCleanupFormatter;
+import org.jabref.logic.formatter.bibtexfields.LatexToUnicodeFormatter;
 import org.jabref.logic.formatter.bibtexfields.NormalizeDateFormatter;
 import org.jabref.logic.formatter.bibtexfields.NormalizeMonthFormatter;
 import org.jabref.logic.formatter.bibtexfields.NormalizeNamesFormatter;
@@ -34,7 +35,6 @@ import org.jabref.logic.formatter.casechanger.UnprotectTermsFormatter;
 import org.jabref.logic.formatter.casechanger.UpperCaseFormatter;
 import org.jabref.logic.formatter.minifier.MinifyNameListFormatter;
 import org.jabref.logic.formatter.minifier.TruncateFormatter;
-import org.jabref.logic.layout.format.LatexToUnicodeFormatter;
 
 public class Formatters {
     private static final Pattern TRUNCATE_PATTERN = Pattern.compile("\\Atruncate\\d+\\z");
