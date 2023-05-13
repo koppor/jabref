@@ -1,7 +1,6 @@
 package org.jabref.logic.formatter.bibtexfields;
 
 import java.text.Normalizer;
-import java.util.Map;
 import java.util.Objects;
 
 import org.jabref.logic.cleanup.Formatter;
@@ -28,10 +27,20 @@ public class UnicodeToLatexFormatter extends Formatter implements LayoutFormatte
         // normalize the unicode characters to cover more cases
         String result = Normalizer.normalize(text, Normalizer.Form.NFC);
 
-        // Standard symbols
-        for (Map.Entry<String, String> unicodeLatexPair : HTMLUnicodeConversionMaps.UNICODE_LATEX_CONVERSION_MAP
-                .entrySet()) {
-            result = result.replace(unicodeLatexPair.getKey(), unicodeLatexPair.getValue());
+        // Convert single Unicode characters to LaTeX commands
+        boolean changed = false;
+        StringBuilder stringBuilder = new StringBuilder();
+        for (char c : text.toCharArray()) {
+            String lookup = HTMLUnicodeConversionMaps.UNICODE_LATEX_CONVERSION_MAP.get(c);
+            if (lookup == null) {
+                stringBuilder.append(c);
+            } else {
+                stringBuilder.append(lookup);
+                changed = true;
+            }
+        }
+        if (changed) {
+            result = stringBuilder.toString();
         }
 
         // Combining accents
@@ -65,7 +74,7 @@ public class UnicodeToLatexFormatter extends Formatter implements LayoutFormatte
         for (int i = 0; i <= (result.length() - 1); i++) {
             int cp = result.codePointAt(i);
             if (cp >= 129) {
-                LOGGER.warn("Unicode character not converted: " + cp);
+                LOGGER.warn("Unicode character not converted: {}", cp);
             }
         }
         return result;

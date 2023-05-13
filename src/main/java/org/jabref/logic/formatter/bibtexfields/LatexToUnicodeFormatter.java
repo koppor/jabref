@@ -29,15 +29,14 @@ public class LatexToUnicodeFormatter extends Formatter implements LayoutFormatte
     @Override
     public String format(String text) {
         String result = Objects.requireNonNull(text);
-
         if (result.isEmpty()) {
             return result;
         }
 
         // Standard symbols
-        for (Map.Entry<String, String> unicodeLatexPair : HTMLUnicodeConversionMaps.UNICODE_LATEX_CONVERSION_MAP
+        for (Map.Entry<Character, String> unicodeLatexPair : HTMLUnicodeConversionMaps.UNICODE_LATEX_CONVERSION_MAP
                 .entrySet()) {
-            result = result.replace(unicodeLatexPair.getValue(), unicodeLatexPair.getKey());
+            result = result.replace(unicodeLatexPair.getValue(), unicodeLatexPair.getKey().toString());
         }
 
         return result;

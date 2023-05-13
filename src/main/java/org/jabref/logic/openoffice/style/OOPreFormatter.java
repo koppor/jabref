@@ -12,7 +12,7 @@ import org.jabref.model.strings.StringUtil;
  */
 public class OOPreFormatter implements LayoutFormatter {
 
-    private static final Map<String, String> CHARS = HTMLUnicodeConversionMaps.LATEX_UNICODE_CONVERSION_MAP;
+    private static final Map<String, Character> CHARS = HTMLUnicodeConversionMaps.LATEX_UNICODE_CONVERSION_MAP;
 
     @Override
     public String format(String field) {
@@ -37,7 +37,7 @@ public class OOPreFormatter implements LayoutFormatter {
                 if (incommand) {
                     /* Close Command */
                     String command = currentCommand.toString();
-                    String result = OOPreFormatter.CHARS.get(command);
+                    Character result = OOPreFormatter.CHARS.get(command);
                     sb.append(Objects.requireNonNullElse(result, command));
                 }
                 escaped = true;
@@ -73,8 +73,7 @@ public class OOPreFormatter implements LayoutFormatter {
                         } else {
                             combody = finalResult.substring(i, i + 1);
                         }
-                        String result = OOPreFormatter.CHARS.get(command + combody);
-
+                        Character result = OOPreFormatter.CHARS.get(command + combody);
                         if (result != null) {
                             sb.append(result);
                         }
@@ -85,7 +84,7 @@ public class OOPreFormatter implements LayoutFormatter {
                         // Are we already at the end of the string?
                         if ((i + 1) == finalResult.length()) {
                             String command = currentCommand.toString();
-                            String result = OOPreFormatter.CHARS.get(command);
+                            Character result = OOPreFormatter.CHARS.get(command);
                             // If found, then use translated version. If not, then keep the text of the parameter intact.
                             sb.append(Objects.requireNonNullElse(result, command));
                         }
@@ -110,17 +109,17 @@ public class OOPreFormatter implements LayoutFormatter {
                         i += part.length();
                         argument = part;
                         // handle common case of general latex command
-                        String result = OOPreFormatter.CHARS.get(command + argument);
+                        Character result = OOPreFormatter.CHARS.get(command + argument);
                         // If found, then use translated version. If not, then keep the text of the parameter intact.
                         sb.append(Objects.requireNonNullElse(result, argument));
                     } else if (c == '}') {
                         // This end brace terminates a command. This can be the case in constructs like {\aa}. The
                         // correct behaviour should be to substitute the evaluated command and swallow the brace:
-                        String result = OOPreFormatter.CHARS.get(command);
+                        Character result = OOPreFormatter.CHARS.get(command);
                         // If the command is unknown, just print it:
                         sb.append(Objects.requireNonNullElse(result, command));
                     } else {
-                        String result = OOPreFormatter.CHARS.get(command);
+                        Character result = OOPreFormatter.CHARS.get(command);
                         sb.append(Objects.requireNonNullElse(result, command));
                         sb.append(' ');
                     }

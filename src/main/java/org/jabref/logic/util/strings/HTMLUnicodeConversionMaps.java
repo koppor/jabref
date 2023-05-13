@@ -3,7 +3,14 @@ package org.jabref.logic.util.strings;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class HTMLUnicodeConversionMaps {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HTMLUnicodeConversionMaps.class);
+
+    // We support "Basic Multilingual Plane" (BMP) only - due to speed reasons
 
     // most of the LaTeX commands can be read at http://en.wikibooks.org/wiki/LaTeX/Accents
     // The symbols can be seen at http://www.fileformat.info/info/unicode/char/a4/index.htm. Replace "a4" with the U+ number
@@ -13,9 +20,9 @@ public class HTMLUnicodeConversionMaps {
     public static final Map<Integer, String> ESCAPED_ACCENTS = new HashMap<>();
     public static final Map<String, String> UNICODE_ESCAPED_ACCENTS = new HashMap<>();
     public static final Map<Integer, String> NUMERICAL_LATEX_CONVERSION_MAP = new HashMap<>();
-    public static final Map<String, String> UNICODE_LATEX_CONVERSION_MAP = new HashMap<>();
+    public static final Map<Character, String> UNICODE_LATEX_CONVERSION_MAP = new HashMap<Character, String>();
     public static final Map<String, String> LATEX_HTML_CONVERSION_MAP = new HashMap<>();
-    public static final Map<String, String> LATEX_UNICODE_CONVERSION_MAP = new HashMap<>();
+    public static final Map<String, Character> LATEX_UNICODE_CONVERSION_MAP = new HashMap<String, Character>();
 
     /*   Portions © International Organization for Standardization 1986:
      Permission to copy in any form is granted for use with
@@ -41,7 +48,7 @@ public class HTMLUnicodeConversionMaps {
      *
      * Mappings from unicode to latex, unicode to HTML, HTML to unicode, ... are generated based on these entries.
      *
-     * Helper scripts to gernerate entries:
+     * Helper scripts to generate entries:
      *
      *   - copy table from https://www.utf8-chartable.de/unicode-utf8-table.pl to input.txt
      *   -  grep "DOT BELOW" input.txt > input-dot-below.txt
@@ -110,31 +117,31 @@ public class HTMLUnicodeConversionMaps {
             //                                 U+00C2 ISOlat1
             {"195", "Atilde", "{{\\~{A}}}"}, // latin capital letter A with tilde,
             //                                 U+00C3 ISOlat1
-            {"196", "Auml", "{{\\\"{A}}}"}, // latin capital letter A with diaeresis,
+            {"196", "Auml", "\\\"{A}"}, // latin capital letter A with diaeresis, "Ä"
             //                                 U+00C4 ISOlat1
-            {"197", "Aring", "{{\\AA}}"}, // latin capital letter A with ring above
+            {"197", "Aring", "{\\AA}"}, // latin capital letter A with ring above
             //                                 = latin capital letter A ring,
             //                                 U+00C5 ISOlat1
-            {"198", "AElig", "{{\\AE}}"}, // latin capital letter AE
+            {"198", "AElig", "{\\AE}"}, // latin capital letter AE
             //                                 = latin capital ligature AE,
             //                                 U+00C6 ISOlat1
-            {"199", "Ccedil", "{{\\c{C}}}"}, // latin capital letter C with cedilla,
+            {"199", "Ccedil", "\\c{C}"}, // latin capital letter C with cedilla,
             //                                 U+00C7 ISOlat1
-            {"200", "Egrave", "{{\\`{E}}}"}, // latin capital letter E with grave,
+            {"200", "Egrave", "\\`{E}"}, // latin capital letter E with grave,
             //                                 U+00C8 ISOlat1
-            {"201", "Eacute", "{{\\'{E}}}"}, // latin capital letter E with acute,
+            {"201", "Eacute", "\\'{E}"}, // latin capital letter E with acute,
             //                                 U+00C9 ISOlat1
-            {"202", "Ecirc", "{{\\^{E}}}"}, // latin capital letter E with circumflex,
+            {"202", "Ecirc", "\\^{E}"}, // latin capital letter E with circumflex,
             //                                 U+00CA ISOlat1
-            {"203", "Euml", "{{\\\"{E}}}"}, // latin capital letter E with diaeresis,
+            {"203", "Euml", "\\\"{E}"}, // latin capital letter E with diaeresis,
             //                                 U+00CB ISOlat1
-            {"204", "Igrave", "{{\\`{I}}}"}, // latin capital letter I with grave,
+            {"204", "Igrave", "\\`{I}"}, // latin capital letter I with grave,
             //                                 U+00CC ISOlat1
-            {"205", "Iacute", "{{\\'{I}}}"}, // latin capital letter I with acute,
+            {"205", "Iacute", "\\'{I}"}, // latin capital letter I with acute,
             //                                 U+00CD ISOlat1
-            {"206", "Icirc", "{{\\^{I}}}"}, // latin capital letter I with circumflex,
+            {"206", "Icirc", "\\^{I}"}, // latin capital letter I with circumflex,
             //                                 U+00CE ISOlat1
-            {"207", "Iuml", "{{\\\"{I}}}"}, // latin capital letter I with diaeresis,
+            {"207", "Iuml", "\\\"{I}"}, // latin capital letter I with diaeresis,
             //                                 U+00CF ISOlat1
             {"208", "ETH", "{{\\DH}}"}, // latin capital letter ETH, U+00D0 ISOlat1
             {"209", "Ntilde", "{{\\~{N}}}"}, // latin capital letter N with tilde,
@@ -153,53 +160,53 @@ public class HTMLUnicodeConversionMaps {
             {"216", "Oslash", "{{\\O}}"}, // latin capital letter O with stroke
             //                                 = latin capital letter O slash,
             //                                 U+00D8 ISOlat1
-            {"217", "Ugrave", "{{\\`{U}}}"}, // latin capital letter U with grave,
+            {"217", "Ugrave", "\\`{U}"}, // latin capital letter U with grave,
             //                                 U+00D9 ISOlat1
-            {"218", "Uacute", "{{\\'{U}}}"}, // latin capital letter U with acute,
+            {"218", "Uacute", "\\'{U}"}, // latin capital letter U with acute,
             //                                 U+00DA ISOlat1
-            {"219", "Ucirc", "{{\\^{U}}}"}, // latin capital letter U with circumflex,
+            {"219", "Ucirc", "\\^{U}}"}, // latin capital letter U with circumflex,
             //                                 U+00DB ISOlat1
-            {"220", "Uuml", "{{\\\"{U}}}"}, // latin capital letter U with diaeresis,
+            {"220", "Uuml", "\\\"{U}"}, // latin capital letter U with diaeresis,
             //                                 U+00DC ISOlat1
-            {"221", "Yacute", "{{\\'{Y}}}"}, // latin capital letter Y with acute,
+            {"221", "Yacute", "\\'{Y}"}, // latin capital letter Y with acute,
             //                                 U+00DD ISOlat1
-            {"222", "THORN", "{{\\TH}}"}, // latin capital letter THORN,
+            {"222", "THORN", "{\\TH}"}, // latin capital letter THORN,
             //                                 U+00DE ISOlat1
             {"223", "szlig", "{\\ss}"}, // latin small letter sharp s = ess-zed,
             //                                 U+00DF ISOlat1
-            {"224", "agrave", "{\\`{a}}"}, // latin small letter a with grave
+            {"224", "agrave", "\\`{a}"}, // latin small letter a with grave
             //                                 = latin small letter a grave,
             //                                 U+00E0 ISOlat1
-            {"225", "aacute", "{\\'{a}}"}, // latin small letter a with acute,
+            {"225", "aacute", "\\'{a}"}, // latin small letter a with acute,
             //                                 U+00E1 ISOlat1
-            {"226", "acirc", "{\\^{a}}"}, // latin small letter a with circumflex,
+            {"226", "acirc", "\\^{a}"}, // latin small letter a with circumflex,
             //                                 U+00E2 ISOlat1
-            {"227", "atilde", "{\\~{a}}"}, // latin small letter a with tilde,
+            {"227", "atilde", "\\~{a}"}, // latin small letter a with tilde,
             //                                 U+00E3 ISOlat1
-            {"228", "auml", "{\\\"{a}}"}, // latin small letter a with diaeresis,
+            {"228", "auml", "\\\"{a}"}, // latin small letter a with diaeresis, "ä"
             //                                 U+00E4 ISOlat1
-            {"229", "aring", "{{\\aa}}"}, // latin small letter a with ring above
+            {"229", "aring", "{\\aa}"}, // latin small letter a with ring above
             //                                 = latin small letter a ring,
             //                                 U+00E5 ISOlat1
             {"230", "aelig", "{\\ae}"}, // latin small letter ae
             //                                 = latin small ligature ae, U+00E6 ISOlat1
-            {"231", "ccedil", "{\\c{c}}"}, // latin small letter c with cedilla,
+            {"231", "ccedil", "\\c{c}"}, // latin small letter c with cedilla,
             //                                 U+00E7 ISOlat1
-            {"232", "egrave", "{\\`{e}}"}, // latin small letter e with grave,
+            {"232", "egrave", "\\`{e}"}, // latin small letter e with grave,
             //                                 U+00E8 ISOlat1
-            {"233", "eacute", "{\\'{e}}"}, // latin small letter e with acute,
+            {"233", "eacute", "\\'{e}"}, // latin small letter e with acute,
             //                                 U+00E9 ISOlat1
-            {"234", "ecirc", "{\\^{e}}"}, // latin small letter e with circumflex,
+            {"234", "ecirc", "\\^{e}"}, // latin small letter e with circumflex,
             //                                 U+00EA ISOlat1
-            {"235", "euml", "{\\\"{e}}"}, // latin small letter e with diaeresis,
+            {"235", "euml", "\\\"{e}"}, // latin small letter e with diaeresis,
             //                                 U+00EB ISOlat1
-            {"236", "igrave", "{\\`{i}}"}, // latin small letter i with grave,
+            {"236", "igrave", "\\`{i}"}, // latin small letter i with grave,
             //                                 U+00EC ISOlat1
-            {"237", "iacute", "{\\'{i}}"}, // latin small letter i with acute,
+            {"237", "iacute", "\\'{i}"}, // latin small letter i with acute,
             //                                 U+00ED ISOlat1
-            {"238", "icirc", "{\\^{i}}"}, // latin small letter i with circumflex,
+            {"238", "icirc", "\\^{i}"}, // latin small letter i with circumflex,
             //                                 U+00EE ISOlat1
-            {"239", "iuml", "{\\\"{i}}"}, // latin small letter i with diaeresis,
+            {"239", "iuml", "\\\"{i}"}, // latin small letter i with diaeresis,
             //                                 U+00EF ISOlat1
             {"240", "eth", "{\\dh}"}, // latin small letter eth, U+00F0 ISOlat1
             {"241", "ntilde", "{\\~{n}}"}, // latin small letter n with tilde,
@@ -657,10 +664,10 @@ public class HTMLUnicodeConversionMaps {
             {"318", "", "{\\v{l}}"}, // small l with caron
             // {"319", "Lmidot", "{\\Lmidot}"}, // upper case L with mid dot
             // {"320", "lmidot", "{\\lmidot}"}, // lower case l with mid dot
-            {"321", "Lstrok", "{{\\L}}"}, // upper case L with stroke
-            {"322", "lstrok", "{{\\l}}"}, // lower case l with stroke
-            {"323", "Nacute", "{{\\'{N}}}"}, // upper case N with acute
-            {"324", "nacute", "{{\\'{n}}}"}, // lower case n with acute
+            {"321", "Lstrok", "{\\L}"}, // upper case L with stroke
+            {"322", "lstrok", "{\\l}"}, // lower case l with stroke
+            {"323", "Nacute", "\\'{N}"}, // upper case N with acute
+            {"324", "nacute", "\\'{n}"}, // lower case n with acute
             {"325", "", "{{\\c{N}}}"}, // capital N with cedilla
             {"326", "", "{\\c{n}}"}, // small n with cedilla
             {"327", "", "{{\\v{N}}}"}, // capital N with caron
@@ -688,8 +695,8 @@ public class HTMLUnicodeConversionMaps {
             {"349", "scirc", "{\\^{s}}"}, // lower case s with circumflex
             {"350", "Scedil", "{{\\c{S}}}"}, // upper case S with cedilla
             {"351", "scedil", "{\\c{s}}"}, // lower case s with cedilla
-            {"352", "Scaron", "{{\\v{S}}}"}, // latin capital letter S with caron,
-            {"353", "scaron", "{\\v{s}}"}, // latin small letter s with caron,
+            {"352", "Scaron", "\\v{S}"}, // latin capital letter S with caron,
+            {"353", "scaron", "\\v{s}"}, // latin small letter s with caron,
             {"354", "", "{{\\c{T}}}"}, // upper case T with cedilla
             {"355", "", "{{\\c{T}}}"}, // lower case t with cedilla
             {"356", "", "{{\\v{T}}}"}, // latin capital letter T with caron,
@@ -958,7 +965,12 @@ public class HTMLUnicodeConversionMaps {
                 if (!(aConversionList[0].isEmpty())) {
                     NUMERICAL_LATEX_CONVERSION_MAP.put(Integer.decode(aConversionList[0]), aConversionList[2]);
                     if (Integer.decode(aConversionList[0]) > 128) {
-                        String unicodeSymbol = String.valueOf(Character.toChars(Integer.decode(aConversionList[0])));
+                        // with [0] we assume BMP
+                        char[] chars = Character.toChars(Integer.decode(aConversionList[0]));
+                        if (chars.length > 1) {
+                            LOGGER.error("Non-BMP unicode range");
+                        }
+                        Character unicodeSymbol = chars[0];
                         UNICODE_LATEX_CONVERSION_MAP.put(unicodeSymbol, aConversionList[2]);
                         if (!strippedLaTeX.isEmpty()) {
                             LATEX_UNICODE_CONVERSION_MAP.put(strippedLaTeX, unicodeSymbol);
@@ -974,19 +986,19 @@ public class HTMLUnicodeConversionMaps {
         }
         // Manually added values which are killed by cleanLaTeX
         LATEX_HTML_CONVERSION_MAP.put("$", "&dollar;");
-        LATEX_UNICODE_CONVERSION_MAP.put("$", "$");
+        LATEX_UNICODE_CONVERSION_MAP.put("$", '$');
 
         // Manual corrections
         LATEX_HTML_CONVERSION_MAP.put("AA", "&Aring;"); // Overwritten by &angst; which is less supported
-        LATEX_UNICODE_CONVERSION_MAP.put("AA", "Å"); // Overwritten by Ångstrom symbol
+        LATEX_UNICODE_CONVERSION_MAP.put("AA", 'Å'); // Overwritten by Ångstrom symbol
 
         // Manual additions
         // Support relax to the extent that it is simply removed
         LATEX_HTML_CONVERSION_MAP.put("relax", "");
-        LATEX_UNICODE_CONVERSION_MAP.put("relax", "");
+        // LATEX_UNICODE_CONVERSION_MAP.put("relax", "");
         // Support a special version of apostrophe
         LATEX_HTML_CONVERSION_MAP.put("textquotesingle", "&#39;");
-        LATEX_UNICODE_CONVERSION_MAP.put("textquotesingle", "'"); // apostrophe, U+00027
+        LATEX_UNICODE_CONVERSION_MAP.put("textquotesingle", '\''); // apostrophe, U+00027
     }
 
     private HTMLUnicodeConversionMaps() {

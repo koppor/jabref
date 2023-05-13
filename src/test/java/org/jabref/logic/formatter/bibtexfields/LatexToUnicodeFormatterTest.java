@@ -15,6 +15,9 @@ class LatexToUnicodeFormatterTest {
         assertEquals("Mönch", formatter.format(formatter.getExampleInput()));
     }
 
+    /**
+     * In case of an update of the test data, also update {@link UnicodeToLatexFormatterTest#test(String, String)}
+     */
     @ParameterizedTest
     @CsvSource({
             "aaa, aaa",
