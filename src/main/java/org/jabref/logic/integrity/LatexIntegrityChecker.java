@@ -3,10 +3,7 @@ package org.jabref.logic.integrity;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
-import uk.ac.ed.ph.snuggletex.ErrorCode;
-import uk.ac.ed.ph.snuggletex.SnuggleEngine;
-import uk.ac.ed.ph.snuggletex.SnuggleInput;
-import uk.ac.ed.ph.snuggletex.SnuggleSession;
+import uk.ac.ed.ph.snuggletex.*;
 import uk.ac.ed.ph.snuggletex.definitions.CoreErrorGroup;
 
 import java.io.IOException;
@@ -22,6 +19,8 @@ public class LatexIntegrityChecker implements EntryChecker {
 
         SnuggleEngine engine = new SnuggleEngine();
         SnuggleSession session = engine.createSession();
+        session.getConfiguration().setFailingFast(true);
+
         for (Map.Entry<Field, String> field : entry.getFieldMap().entrySet()) {
             SnuggleInput input = new SnuggleInput(field.getValue());
             try {
@@ -30,11 +29,12 @@ public class LatexIntegrityChecker implements EntryChecker {
                 e.printStackTrace();
             }
             if (!session.getErrors().isEmpty()) {
-                ErrorCode code = session.getErrors().get(0).getErrorCode();
+                InputError error = session.getErrors().get(0);
+                ErrorCode errorCode = error.getErrorCode();
                 // exclude Dom building errors as this functionality is not used, and we do not have the translations
-                if (!code.getErrorGroup().equals(CoreErrorGroup.TDE)) {
-                    String message = Localization.lang(code.getName());
-                    //String message = CorePackageDefinitions.getPackage().getErrorMessageBundle().getString(code.getName());
+                if (!errorCode.getErrorGroup().equals(CoreErrorGroup.TDE)) {
+                    //todo filter for specific errors
+                    String message = Localization.lang(errorCode.getName(), error.getArguments());
                     results.add(new IntegrityMessage(message, entry, field.getKey()));
                     session.getErrors().clear();
                 }
