@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * https://tinylog.org/v2/configuration/
  **/
 @AllowedToUseAwt("Requires AWT to open a file")
-public class DefaultDesktop implements NativeDesktop {
+public class DefaultDesktop extends NativeDesktop {
 
     @Override
     public void openFile(String filePath, String fileType) throws IOException {
@@ -49,10 +49,5 @@ public class DefaultDesktop implements NativeDesktop {
     @Override
     public Path getApplicationDirectory() {
         return getUserDirectory();
-    }
-
-    @Override
-    public Path getDefaultFileChooserDirectory() {
-        return Path.of(System.getProperty("user.home"));
     }
 }

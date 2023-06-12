@@ -124,7 +124,6 @@ import org.jabref.logic.citationstyle.CitationStyleOutputFormat;
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.importer.IdFetcher;
 import org.jabref.logic.importer.ImportCleanup;
-import org.jabref.logic.importer.ImportFormatReader;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.importer.WebFetchers;
 import org.jabref.logic.l10n.Localization;
@@ -138,6 +137,7 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.SpecialField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.groups.GroupTreeNode;
+import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
 import org.jabref.preferences.TelemetryPreferences;
 
@@ -170,9 +170,9 @@ public class JabRefFrame extends BorderPane {
 
     private final Stage mainStage;
     private final StateManager stateManager;
-    private final ThemeManager themeManager;
     private final CountingUndoManager undoManager;
     private final DialogService dialogService;
+    private final FileUpdateMonitor fileUpdateMonitor;
     private final PushToApplicationCommand pushToApplicationCommand;
     private SidePane sidePane;
     private TabPane tabbedPane;
@@ -182,19 +182,17 @@ public class JabRefFrame extends BorderPane {
     private Subscription dividerSubscription;
 
     private final TaskExecutor taskExecutor;
-    private final ImportFormatReader importFormatReader;
 
     public JabRefFrame(Stage mainStage) {
         this.mainStage = mainStage;
         this.stateManager = Globals.stateManager;
-        this.themeManager = Globals.getThemeManager();
-        this.dialogService = new JabRefDialogService(mainStage, this, themeManager);
+        this.dialogService = new JabRefDialogService(mainStage);
         this.undoManager = Globals.undoManager;
+        this.fileUpdateMonitor = Globals.getFileUpdateMonitor();
         this.globalSearchBar = new GlobalSearchBar(this, stateManager, prefs, undoManager, dialogService);
         this.pushToApplicationCommand = new PushToApplicationCommand(stateManager, dialogService, prefs);
         this.fileHistory = new FileHistoryMenu(prefs.getGuiPreferences().getFileHistory(), dialogService, getOpenDatabaseAction());
         this.taskExecutor = Globals.TASK_EXECUTOR;
-        this.importFormatReader = Globals.IMPORT_FORMAT_READER;
         this.setOnKeyTyped(key -> {
             if (this.fileHistory.isShowing()) {
                 if (this.fileHistory.openFileByKey(key)) {
@@ -255,9 +253,9 @@ public class JabRefFrame extends BorderPane {
 
                         Dragboard dragboard = tabDragEvent.getDragboard();
 
-                        if (DragAndDropHelper.hasBibFiles(tabDragEvent.getDragboard())) {
+                        if (DragAndDropHelper.hasBibFiles(dragboard)) {
                             tabbedPane.getTabs().remove(dndIndicator);
-                            List<Path> bibFiles = DragAndDropHelper.getBibFiles(tabDragEvent.getDragboard());
+                            List<Path> bibFiles = DragAndDropHelper.getBibFiles(dragboard);
                             OpenDatabaseAction openDatabaseAction = this.getOpenDatabaseAction();
                             openDatabaseAction.openFiles(bibFiles);
                             tabDragEvent.setDropCompleted(true);
@@ -267,8 +265,8 @@ public class JabRefFrame extends BorderPane {
                                 if (libraryTab.getId().equals(destinationTabNode.getId()) &&
                                         !tabbedPane.getSelectionModel().getSelectedItem().equals(libraryTab)) {
                                     LibraryTab destinationLibraryTab = (LibraryTab) libraryTab;
-                                    if (DragAndDropHelper.hasGroups(tabDragEvent.getDragboard())) {
-                                        List<String> groupPathToSources = DragAndDropHelper.getGroups(tabDragEvent.getDragboard());
+                                    if (DragAndDropHelper.hasGroups(dragboard)) {
+                                        List<String> groupPathToSources = DragAndDropHelper.getGroups(dragboard);
 
                                         copyRootNode(destinationLibraryTab);
 
@@ -320,6 +318,10 @@ public class JabRefFrame extends BorderPane {
                         getCurrentLibraryTab().getMainTable().requestFocus();
                         event.consume();
                         break;
+                    case FOCUS_GROUP_LIST:
+                        sidePane.getSidePaneComponent(SidePaneType.GROUPS).requestFocus();
+                        event.consume();
+                    break;
                     case NEXT_LIBRARY:
                         tabbedPane.getSelectionModel().selectNext();
                         event.consume();
@@ -560,7 +562,7 @@ public class JabRefFrame extends BorderPane {
         ToolBar toolBar = new ToolBar(
                 new HBox(
                         factory.createIconButton(StandardActions.NEW_LIBRARY, new NewDatabaseAction(this, prefs)),
-                        factory.createIconButton(StandardActions.OPEN_LIBRARY, new OpenDatabaseAction(this, prefs, dialogService, stateManager, themeManager)),
+                        factory.createIconButton(StandardActions.OPEN_LIBRARY, new OpenDatabaseAction(this, prefs, dialogService, stateManager, fileUpdateMonitor)),
                         factory.createIconButton(StandardActions.SAVE_LIBRARY, new SaveAction(SaveAction.SaveMethod.SAVE, this, prefs, stateManager))),
 
                 leftSpacer,
@@ -641,7 +643,7 @@ public class JabRefFrame extends BorderPane {
     }
 
     public void init() {
-        sidePane = new SidePane(prefs, taskExecutor, dialogService, stateManager, undoManager);
+        sidePane = new SidePane(prefs, Globals.journalAbbreviationRepository, taskExecutor, dialogService, stateManager, undoManager);
         tabbedPane = new TabPane();
         tabbedPane.setTabDragPolicy(TabPane.TabDragPolicy.REORDER);
 
@@ -772,8 +774,8 @@ public class JabRefFrame extends BorderPane {
                 new SeparatorMenuItem(),
 
                 factory.createSubMenu(StandardActions.IMPORT,
-                        factory.createMenuItem(StandardActions.IMPORT_INTO_CURRENT_LIBRARY, new ImportCommand(this, false, prefs, stateManager)),
-                        factory.createMenuItem(StandardActions.IMPORT_INTO_NEW_LIBRARY, new ImportCommand(this, true, prefs, stateManager))),
+                        factory.createMenuItem(StandardActions.IMPORT_INTO_CURRENT_LIBRARY, new ImportCommand(this, false, prefs, stateManager, fileUpdateMonitor)),
+                        factory.createMenuItem(StandardActions.IMPORT_INTO_NEW_LIBRARY, new ImportCommand(this, true, prefs, stateManager, fileUpdateMonitor))),
 
                 factory.createSubMenu(StandardActions.EXPORT,
                         factory.createMenuItem(StandardActions.EXPORT_ALL, new ExportCommand(ExportCommand.ExportMethod.EXPORT_ALL, this, stateManager, dialogService, prefs)),
@@ -806,12 +808,12 @@ public class JabRefFrame extends BorderPane {
 
                 factory.createMenuItem(StandardActions.COPY, new EditAction(StandardActions.COPY, this, stateManager)),
                 factory.createSubMenu(StandardActions.COPY_MORE,
-                        factory.createMenuItem(StandardActions.COPY_TITLE, new CopyMoreAction(StandardActions.COPY_TITLE, dialogService, stateManager, Globals.getClipboardManager(), prefs)),
-                        factory.createMenuItem(StandardActions.COPY_KEY, new CopyMoreAction(StandardActions.COPY_KEY, dialogService, stateManager, Globals.getClipboardManager(), prefs)),
-                        factory.createMenuItem(StandardActions.COPY_CITE_KEY, new CopyMoreAction(StandardActions.COPY_CITE_KEY, dialogService, stateManager, Globals.getClipboardManager(), prefs)),
-                        factory.createMenuItem(StandardActions.COPY_KEY_AND_TITLE, new CopyMoreAction(StandardActions.COPY_KEY_AND_TITLE, dialogService, stateManager, Globals.getClipboardManager(), prefs)),
-                        factory.createMenuItem(StandardActions.COPY_KEY_AND_LINK, new CopyMoreAction(StandardActions.COPY_KEY_AND_LINK, dialogService, stateManager, Globals.getClipboardManager(), prefs)),
-                        factory.createMenuItem(StandardActions.COPY_CITATION_PREVIEW, new CopyCitationAction(CitationStyleOutputFormat.HTML, dialogService, stateManager, Globals.getClipboardManager(), Globals.TASK_EXECUTOR, prefs.getPreviewPreferences())),
+                        factory.createMenuItem(StandardActions.COPY_TITLE, new CopyMoreAction(StandardActions.COPY_TITLE, dialogService, stateManager, Globals.getClipboardManager(), prefs, Globals.journalAbbreviationRepository)),
+                        factory.createMenuItem(StandardActions.COPY_KEY, new CopyMoreAction(StandardActions.COPY_KEY, dialogService, stateManager, Globals.getClipboardManager(), prefs, Globals.journalAbbreviationRepository)),
+                        factory.createMenuItem(StandardActions.COPY_CITE_KEY, new CopyMoreAction(StandardActions.COPY_CITE_KEY, dialogService, stateManager, Globals.getClipboardManager(), prefs, Globals.journalAbbreviationRepository)),
+                        factory.createMenuItem(StandardActions.COPY_KEY_AND_TITLE, new CopyMoreAction(StandardActions.COPY_KEY_AND_TITLE, dialogService, stateManager, Globals.getClipboardManager(), prefs, Globals.journalAbbreviationRepository)),
+                        factory.createMenuItem(StandardActions.COPY_KEY_AND_LINK, new CopyMoreAction(StandardActions.COPY_KEY_AND_LINK, dialogService, stateManager, Globals.getClipboardManager(), prefs, Globals.journalAbbreviationRepository)),
+                        factory.createMenuItem(StandardActions.COPY_CITATION_PREVIEW, new CopyCitationAction(CitationStyleOutputFormat.HTML, dialogService, stateManager, Globals.getClipboardManager(), Globals.TASK_EXECUTOR, prefs, Globals.journalAbbreviationRepository)),
                         factory.createMenuItem(StandardActions.EXPORT_SELECTED_TO_CLIPBOARD, new ExportToClipboardAction(dialogService, stateManager, Globals.getClipboardManager(), Globals.TASK_EXECUTOR, prefs))),
 
                 factory.createMenuItem(StandardActions.PASTE, new EditAction(StandardActions.PASTE, this, stateManager)),
@@ -906,15 +908,15 @@ public class JabRefFrame extends BorderPane {
 
                 new SeparatorMenuItem(),
 
-                factory.createMenuItem(StandardActions.SEND_AS_EMAIL, new SendAsEMailAction(dialogService, this.prefs, stateManager)),
+                createSendSubMenu(factory, dialogService, stateManager, prefs),
                 pushToApplicationMenuItem,
 
                 new SeparatorMenuItem(),
 
                 // Systematic Literature Review (SLR)
-                factory.createMenuItem(StandardActions.START_NEW_STUDY, new StartNewStudyAction(this, Globals.getFileUpdateMonitor(), Globals.TASK_EXECUTOR, prefs, stateManager)),
+                factory.createMenuItem(StandardActions.START_NEW_STUDY, new StartNewStudyAction(this, fileUpdateMonitor, taskExecutor, prefs, stateManager)),
                 factory.createMenuItem(StandardActions.EDIT_EXISTING_STUDY, new EditExistingStudyAction(this.dialogService, this.stateManager)),
-                factory.createMenuItem(StandardActions.UPDATE_SEARCH_RESULTS_OF_STUDY, new ExistingStudySearchAction(this, this.getOpenDatabaseAction(), this.getDialogService(), Globals.getFileUpdateMonitor(), Globals.TASK_EXECUTOR, prefs, stateManager)),
+                factory.createMenuItem(StandardActions.UPDATE_SEARCH_RESULTS_OF_STUDY, new ExistingStudySearchAction(this, this.getOpenDatabaseAction(), this.getDialogService(), fileUpdateMonitor, Globals.TASK_EXECUTOR, prefs, stateManager)),
 
                 new SeparatorMenuItem(),
 
@@ -1155,7 +1157,7 @@ public class JabRefFrame extends BorderPane {
     public LibraryTab addTab(BibDatabaseContext databaseContext, boolean raisePanel) {
         Objects.requireNonNull(databaseContext);
 
-        LibraryTab libraryTab = new LibraryTab(databaseContext, this, prefs, stateManager, themeManager);
+        LibraryTab libraryTab = new LibraryTab(databaseContext, this, prefs, stateManager, fileUpdateMonitor);
         addTab(libraryTab, raisePanel);
         return libraryTab;
     }
@@ -1273,7 +1275,7 @@ public class JabRefFrame extends BorderPane {
     }
 
     public OpenDatabaseAction getOpenDatabaseAction() {
-        return new OpenDatabaseAction(this, prefs, dialogService, stateManager, themeManager);
+        return new OpenDatabaseAction(this, prefs, dialogService, stateManager, fileUpdateMonitor);
     }
 
     public GlobalSearchBar getGlobalSearchBar() {
@@ -1322,6 +1324,19 @@ public class JabRefFrame extends BorderPane {
         destinationLibraryTab.getBibDatabaseContext()
                              .getMetaData()
                              .setGroups(currentLibraryGroupRoot);
+    }
+
+    private Menu createSendSubMenu(ActionFactory factory,
+                                          DialogService dialogService,
+                                          StateManager stateManager,
+                                          PreferencesService preferencesService) {
+        Menu sendMenu = factory.createMenu(StandardActions.SEND);
+        sendMenu.getItems().addAll(
+                factory.createMenuItem(StandardActions.SEND_AS_EMAIL, new SendAsStandardEmailAction(dialogService, preferencesService, stateManager)),
+                factory.createMenuItem(StandardActions.SEND_TO_KINDLE, new SendAsKindleEmailAction(dialogService, preferencesService, stateManager))
+        );
+
+        return sendMenu;
     }
 
     /**

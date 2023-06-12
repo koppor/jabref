@@ -96,7 +96,10 @@ open module org.jabref {
     requires flexmark;
     requires flexmark.util.ast;
     requires flexmark.util.data;
+
     requires com.h2database.mvstore;
+
+    requires org.jooq.jool;
 
     // fulltext search
     requires org.apache.lucene.core;
