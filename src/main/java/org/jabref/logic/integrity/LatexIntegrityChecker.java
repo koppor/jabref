@@ -56,15 +56,19 @@ public class LatexIntegrityChecker implements EntryChecker {
                 // Exclude all DOM building errors as this functionality is not used.
                 // Further, exclude individual errors.
                 if (!errorCode.getErrorGroup().equals(CoreErrorGroup.TDE) && !EXCLUDED_ERRORS.contains(errorCode)) {
-                    String snuggletexMessagePattern = ERROR_MESSAGES.getString(errorCode.getName());
-                    String snuggletexErrorMessage = MessageFormat.format(snuggletexMessagePattern, error.getArguments());
-                    String jabrefMessageWrapper = Localization.lang("LaTeX Parsing Error: %0", snuggletexErrorMessage);
+                    String jabrefMessageWrapper = errorMessageFormatHelper(errorCode, error.getArguments());
                     results.add(new IntegrityMessage(jabrefMessageWrapper, entry, field.getKey()));
                 }
             }
             SESSION.reset();
         }
         return results;
+    }
+
+    public static String errorMessageFormatHelper(ErrorCode snuggleTexErrorCode, Object... arguments) {
+        String snuggletexMessagePattern = LatexIntegrityChecker.ERROR_MESSAGES.getString(snuggleTexErrorCode.getName());
+        String snuggletexErrorMessage = MessageFormat.format(snuggletexMessagePattern, arguments);
+        return Localization.lang("LaTeX Parsing Error: %0", snuggletexErrorMessage);
     }
 }
 
