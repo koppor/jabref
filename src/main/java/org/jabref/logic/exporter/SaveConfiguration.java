@@ -11,17 +11,14 @@ public class SaveConfiguration {
     private SaveOrder saveOrder;
     private boolean makeBackup;
     private BibDatabaseWriter.SaveType saveType;
-    private boolean useMetadataSaveOrder;
 
     public SaveConfiguration(SaveOrder saveOrder,
                              Boolean makeBackup,
                              BibDatabaseWriter.SaveType saveType,
-                             Boolean useMetadataSaveOrder,
                              Boolean reformatFile) {
         this.saveOrder = saveOrder;
         this.makeBackup = makeBackup;
         this.saveType = saveType;
-        this.useMetadataSaveOrder = useMetadataSaveOrder;
         this.reformatFile = reformatFile;
     }
 
@@ -29,17 +26,7 @@ public class SaveConfiguration {
         this(SaveOrder.getDefaultSaveOrder(),
                 false,
                 BibDatabaseWriter.SaveType.WITH_JABREF_META_DATA,
-                true,
                 false);
-    }
-
-    public boolean useMetadataSaveOrder() {
-        return useMetadataSaveOrder;
-    }
-
-    public SaveConfiguration withMetadataSaveOrder(boolean newTakeMetadataSaveOrderInAccount) {
-        this.useMetadataSaveOrder = newTakeMetadataSaveOrderInAccount;
-        return this;
     }
 
     public SaveOrder getSaveOrder() {

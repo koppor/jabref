@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
 
@@ -17,45 +22,14 @@ import org.slf4j.LoggerFactory;
  */
 public class SaveOrder {
 
-    public enum OrderType {
-        SPECIFIED("specified"),
-        ORIGINAL("original"),
-        TABLE("table");
-
-        private final String name;
-
-        OrderType(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-
-        public static SaveOrder.OrderType fromBooleans(boolean saveInSpecifiedOrder, boolean saveInOriginalOrder) {
-            SaveOrder.OrderType orderType = SaveOrder.OrderType.TABLE;
-            if (saveInSpecifiedOrder) {
-                orderType = SaveOrder.OrderType.SPECIFIED;
-            } else if (saveInOriginalOrder) {
-                orderType = SaveOrder.OrderType.ORIGINAL;
-            }
-
-            return orderType;
-        }
-    }
-
     private static final Logger LOGGER = LoggerFactory.getLogger(SaveOrder.class);
 
-    private final List<SortCriterion> sortCriteria = new ArrayList<>();
-    private OrderType orderType;
-
-    private SaveOrder() {
-    }
+    private final ObservableList<SortCriterion> sortCriteria;
+    private final ObjectProperty<OrderType> orderType;
 
     public SaveOrder(OrderType orderType, List<SortCriterion> sortCriteria) {
-        this.orderType = orderType;
-        this.sortCriteria.addAll(sortCriteria);
+        this.orderType = new SimpleObjectProperty<>(orderType);
+        this.sortCriteria = FXCollections.observableArrayList(sortCriteria);
     }
 
     private SaveOrder(List<String> data) {
@@ -65,22 +39,27 @@ public class SaveOrder {
             throw new IllegalArgumentException();
         }
 
+        OrderType orderType;
         try {
-            this.orderType = OrderType.valueOf(data.get(0).toUpperCase());
+            orderType = OrderType.valueOf(data.get(0).toUpperCase());
         } catch (IllegalArgumentException ex) {
             if (data.size() > 1 && data.size() % 2 == 1) {
                 LOGGER.warn("Could not parse sort order: {} - trying to parse the sort criteria", data.get(0));
-                this.orderType = OrderType.SPECIFIED;
+                orderType = OrderType.SPECIFIED;
             } else {
                 LOGGER.warn("Could not parse sort order: {}", data.get(0));
-                this.orderType = OrderType.ORIGINAL;
+                this.sortCriteria = FXCollections.observableArrayList();
+                this.orderType = new SimpleObjectProperty<>(OrderType.ORIGINAL);
                 return;
             }
         }
+        this.orderType = new SimpleObjectProperty<>(orderType);
 
+        List<SortCriterion> sortCriteria = new ArrayList<>(data.size() / 2);
         for (int index = 1; index < data.size(); index = index + 2) {
             sortCriteria.add(new SortCriterion(FieldFactory.parseField(data.get(index)), data.get(index + 1)));
         }
+        this.sortCriteria = FXCollections.observableArrayList(sortCriteria);
     }
 
     public static SaveOrder parse(List<String> orderedData) {
@@ -88,16 +67,14 @@ public class SaveOrder {
     }
 
     public static SaveOrder getDefaultSaveOrder() {
-        SaveOrder standard = new SaveOrder();
-        standard.orderType = OrderType.ORIGINAL;
-        return standard;
+        return new SaveOrder(OrderType.ORIGINAL, List.of());
     }
 
     public OrderType getOrderType() {
-        return orderType;
+        return orderType.get();
     }
 
-    public List<SortCriterion> getSortCriteria() {
+    public ObservableList<SortCriterion> getSortCriteria() {
         return sortCriteria;
     }
 
@@ -130,7 +107,7 @@ public class SaveOrder {
      */
     public List<String> getAsStringList() {
         List<String> res = new ArrayList<>(7);
-        if (orderType == OrderType.ORIGINAL) {
+        if (orderType.get() == OrderType.ORIGINAL) {
             res.add(OrderType.ORIGINAL.toString());
         } else {
             res.add(OrderType.SPECIFIED.toString());
@@ -146,9 +123,9 @@ public class SaveOrder {
 
     public static class SortCriterion {
 
-        public Field field;
+        public final Field field;
 
-        public boolean descending;
+        public final boolean descending;
 
         /**
          *
@@ -163,9 +140,6 @@ public class SaveOrder {
         public SortCriterion(Field field, boolean descending) {
             this.field = field;
             this.descending = descending;
-        }
-
-        public SortCriterion() {
         }
 
         @Override
@@ -191,6 +165,34 @@ public class SaveOrder {
         @Override
         public int hashCode() {
             return Objects.hash(field, descending);
+        }
+    }
+
+    public enum OrderType {
+        SPECIFIED("specified"),
+        ORIGINAL("original"),
+        TABLE("table");
+
+        private final String name;
+
+        OrderType(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        public static SaveOrder.OrderType fromBooleans(boolean saveInSpecifiedOrder, boolean saveInOriginalOrder) {
+            SaveOrder.OrderType orderType = SaveOrder.OrderType.TABLE;
+            if (saveInSpecifiedOrder) {
+                orderType = SaveOrder.OrderType.SPECIFIED;
+            } else if (saveInOriginalOrder) {
+                orderType = SaveOrder.OrderType.ORIGINAL;
+            }
+
+            return orderType;
         }
     }
 }
