@@ -28,7 +28,7 @@ public class SaveConfiguration {
     public SaveConfiguration() {
         this(SaveOrder.getDefaultSaveOrder(),
                 false,
-                BibDatabaseWriter.SaveType.ALL,
+                BibDatabaseWriter.SaveType.WITH_JABREF_META_DATA,
                 true,
                 false);
     }

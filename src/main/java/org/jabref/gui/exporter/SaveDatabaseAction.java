@@ -210,7 +210,7 @@ public class SaveDatabaseAction {
             libraryTab.getBibDatabaseContext().getMetaData().setEncoding(encoding, ChangePropagation.DO_NOT_POST_EVENT);
 
             // Save the database
-            boolean success = saveDatabase(targetPath, false, encoding, BibDatabaseWriter.SaveType.ALL);
+            boolean success = saveDatabase(targetPath, false, encoding, BibDatabaseWriter.SaveType.WITH_JABREF_META_DATA);
 
             if (success) {
                 libraryTab.getUndoManager().markUnchanged();

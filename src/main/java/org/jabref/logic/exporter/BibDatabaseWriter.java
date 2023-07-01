@@ -54,7 +54,7 @@ import org.jooq.lambda.Unchecked;
  */
 public abstract class BibDatabaseWriter {
 
-    public enum SaveType { ALL, PLAIN_BIBTEX }
+    public enum SaveType { WITH_JABREF_META_DATA, PLAIN_BIBTEX }
 
     private static final Pattern REFERENCE_PATTERN = Pattern.compile("(#[A-Za-z]+#)"); // Used to detect string references in strings
     protected final BibWriter bibWriter;
@@ -190,7 +190,7 @@ public abstract class BibDatabaseWriter {
         sharedDatabaseIDOptional.ifPresent(Unchecked.consumer(id -> writeDatabaseID(id)));
 
         // Some file formats write something at the start of the file (like the encoding)
-        if (saveConfiguration.getSaveType() != SaveType.PLAIN_BIBTEX) {
+        if (saveConfiguration.getSaveType() == SaveType.WITH_JABREF_META_DATA) {
             Charset charset = bibDatabaseContext.getMetaData().getEncoding().orElse(StandardCharsets.UTF_8);
             writeProlog(bibDatabaseContext, charset);
         }
@@ -228,7 +228,7 @@ public abstract class BibDatabaseWriter {
             writeEntry(entry, bibDatabaseContext.getMode());
         }
 
-        if (saveConfiguration.getSaveType() != SaveType.PLAIN_BIBTEX) {
+        if (saveConfiguration.getSaveType() == SaveType.WITH_JABREF_META_DATA) {
             // Write meta data.
             writeMetaData(bibDatabaseContext.getMetaData(), keyPatternPreferences.getKeyPattern());
 
