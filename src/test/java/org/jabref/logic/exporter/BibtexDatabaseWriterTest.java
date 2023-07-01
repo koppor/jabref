@@ -738,7 +738,7 @@ public class BibtexDatabaseWriterTest {
                 List.of(new SaveOrder.SortCriterion(StandardField.AUTHOR, false),
                         new SaveOrder.SortCriterion(StandardField.YEAR, true),
                         new SaveOrder.SortCriterion(StandardField.ABSTRACT, false)));
-        metaData.setSaveOrderConfig(saveOrder);
+        metaData.setSaveOrder(saveOrder);
 
         databaseWriter.savePartOfDatabase(bibtexContext, Collections.emptyList());
 
@@ -799,7 +799,7 @@ public class BibtexDatabaseWriterTest {
                 List.of(new SaveOrder.SortCriterion(StandardField.AUTHOR, false),
                         new SaveOrder.SortCriterion(StandardField.YEAR, true),
                         new SaveOrder.SortCriterion(StandardField.ABSTRACT, false)));
-        metaData.setSaveOrderConfig(saveOrder);
+        metaData.setSaveOrder(saveOrder);
 
         BibEntry firstEntry = new BibEntry(StandardEntryType.Article)
                 .withField(StandardField.AUTHOR, "A")

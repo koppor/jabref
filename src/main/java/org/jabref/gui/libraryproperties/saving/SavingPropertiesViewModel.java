@@ -48,7 +48,7 @@ public class SavingPropertiesViewModel implements PropertiesTabViewModel {
         this.databaseContext = databaseContext;
         this.preferencesService = preferencesService;
         this.initialMetaData = databaseContext.getMetaData();
-        this.exportSaveOrder = initialMetaData.getSaveOrderConfig()
+        this.exportSaveOrder = initialMetaData.getSaveOrder()
                                               .orElseGet(() -> preferencesService.getExportPreferences().getExportSaveOrder());
     }
 
@@ -122,9 +122,9 @@ public class SavingPropertiesViewModel implements PropertiesTabViewModel {
 
         if (!newSaveOrder.equals(exportSaveOrder)) {
             if (newSaveOrder.equals(SaveOrder.getDefaultSaveOrder())) {
-                newMetaData.clearSaveOrderConfig();
+                newMetaData.clearSaveOrder();
             } else {
-                newMetaData.setSaveOrderConfig(newSaveOrder);
+                newMetaData.setSaveOrder(newSaveOrder);
             }
         }
 
