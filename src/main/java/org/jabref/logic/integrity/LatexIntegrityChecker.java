@@ -51,6 +51,9 @@ public class LatexIntegrityChecker implements EntryChecker {
                 LOGGER.error("Error at parsing", e);
             }
             if (!SESSION.getErrors().isEmpty()) {
+                // Retrieve the first error only because it is likely to be more meaningful.
+                // Displaying all (subsequent) faults may lead to confusion.
+                // We further get a slight performance benefit from failing fast (see static config in class header).
                 InputError error = SESSION.getErrors().get(0);
                 ErrorCode errorCode = error.getErrorCode();
                 // Exclude all DOM building errors as this functionality is not used.
