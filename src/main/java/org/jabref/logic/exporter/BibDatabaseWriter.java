@@ -124,7 +124,7 @@ public abstract class BibDatabaseWriter {
     }
 
     /**
-     * We have begun to use getSortedEntries() for both database save operations and non-database save operations.  In a
+     * We have begun to use getSortedEntries() for both database save operations and non-database save operations. In a
      * non-database save operation (such as the exportDatabase call), we do not wish to use the global preference of
      * saving in standard order.
      */
@@ -178,7 +178,7 @@ public abstract class BibDatabaseWriter {
         writeStrings(bibDatabaseContext.getDatabase());
 
         // Write database entries.
-        List<BibEntry> sortedEntries = getSortedEntries(entries, saveConfiguration);
+        List<BibEntry> sortedEntries = getSortedEntries(entries, saveConfiguration.getSaveOrder());
         List<FieldChange> saveActionChanges = applySaveActions(sortedEntries, bibDatabaseContext.getMetaData());
         saveActionsFieldChanges.addAll(saveActionChanges);
         if (keyPatternPreferences.shouldGenerateCiteKeysBeforeSaving()) {
