@@ -2287,7 +2287,7 @@ public class JabRefPreferences implements PreferencesService {
                     formatData.get(EXPORTER_FILENAME_INDEX),
                     formatData.get(EXPORTER_EXTENSION_INDEX),
                     layoutPreferences,
-                    saveConfiguration);
+                    saveConfiguration.getSaveOrder());
             format.setCustomExport(true);
             formats.add(format);
         }
