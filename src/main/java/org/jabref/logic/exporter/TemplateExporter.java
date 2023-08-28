@@ -30,6 +30,8 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.metadata.SaveOrder;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,22 +103,14 @@ public class TemplateExporter extends Exporter {
      * @param directory         Directory in which to find the layout file.
      * @param extension         Should contain the . (for instance .txt).
      */
-    public TemplateExporter(String displayName,
-                            String consoleName,
-                            String lfFileName,
-                            String directory,
-                            FileType extension,
+    public TemplateExporter(@NonNull String displayName,
+                            @NonNull String consoleName,
+                            @NonNull String lfFileName,
+                            @Nullable String directory,
+                            @NonNull FileType extension,
                             LayoutFormatterPreferences layoutPreferences,
                             SaveOrder saveOrder) {
-        super(consoleName, displayName, extension);
-        if (Objects.requireNonNull(lfFileName).endsWith(LAYOUT_EXTENSION)) {
-            this.lfFileName = lfFileName.substring(0, lfFileName.length() - LAYOUT_EXTENSION.length());
-        } else {
-            this.lfFileName = lfFileName;
-        }
-        this.directory = directory;
-        this.layoutPreferences = layoutPreferences;
-        this.saveOrder = saveOrder;
+        this(displayName, consoleName, lfFileName, directory, extension, layoutPreferences, saveOrder, null);
     }
 
     /**
@@ -146,7 +140,7 @@ public class TemplateExporter extends Exporter {
         }
         this.directory = directory;
         this.layoutPreferences = layoutPreferences;
-        this.saveOrder = saveOrder;
+        this.saveOrder = saveOrder == null ? SaveOrder.getDefaultSaveOrder() : saveOrder;
         this.blankLineBehaviour = blankLineBehaviour;
     }
 
