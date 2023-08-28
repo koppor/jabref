@@ -41,24 +41,23 @@ public class SavingPropertiesViewModel implements PropertiesTabViewModel {
 
     private final BibDatabaseContext databaseContext;
     private final MetaData initialMetaData;
-    private final SaveOrder exportSaveOrder;
+    private final SaveOrder saveOrder;
     private final PreferencesService preferencesService;
 
     public SavingPropertiesViewModel(BibDatabaseContext databaseContext, PreferencesService preferencesService) {
         this.databaseContext = databaseContext;
         this.preferencesService = preferencesService;
         this.initialMetaData = databaseContext.getMetaData();
-        this.exportSaveOrder = initialMetaData.getSaveOrder()
-                                              .orElseGet(() -> preferencesService.getExportPreferences().getExportSaveOrder());
+        this.saveOrder = initialMetaData.getSaveOrder().orElse(SaveOrder.getDefaultSaveOrder());
     }
 
     @Override
     public void setValues() {
         libraryProtectedProperty.setValue(initialMetaData.isProtected());
 
-        // SaveOrderConfigPanel
+        // SaveOrderConfigPanel, included via ?Import
 
-        switch (exportSaveOrder.getOrderType()) {
+        switch (saveOrder.getOrderType()) {
             case SPECIFIED -> saveInSpecifiedOrderProperty.setValue(true);
             case ORIGINAL -> saveInOriginalProperty.setValue(true);
             case TABLE -> saveInTableOrderProperty.setValue(true);
@@ -74,11 +73,11 @@ public class SavingPropertiesViewModel implements PropertiesTabViewModel {
 
         sortableFieldsProperty.addAll(FieldFactory.getStandardFieldsWithCitationKey());
         sortCriteriaProperty.clear();
-        sortCriteriaProperty.addAll(exportSaveOrder.getSortCriteria().stream()
-                                                   .map(SortCriterionViewModel::new)
-                                                   .toList());
+        sortCriteriaProperty.addAll(saveOrder.getSortCriteria().stream()
+                                             .map(SortCriterionViewModel::new)
+                                             .toList());
 
-        // FieldFormatterCleanupsPanel
+        // FieldFormatterCleanupsPanel, included via ?Import
 
         Optional<FieldFormatterCleanups> saveActions = initialMetaData.getSaveActions();
         saveActions.ifPresentOrElse(value -> {
@@ -120,7 +119,7 @@ public class SavingPropertiesViewModel implements PropertiesTabViewModel {
                 SaveOrder.OrderType.fromBooleans(saveInSpecifiedOrderProperty.getValue(), saveInOriginalProperty.getValue()),
                 sortCriteriaProperty.stream().map(SortCriterionViewModel::getCriterion).toList());
 
-        if (!newSaveOrder.equals(exportSaveOrder)) {
+        if (!newSaveOrder.equals(saveOrder)) {
             if (newSaveOrder.equals(SaveOrder.getDefaultSaveOrder())) {
                 newMetaData.clearSaveOrder();
             } else {
