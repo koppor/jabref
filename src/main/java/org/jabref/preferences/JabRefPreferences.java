@@ -2272,7 +2272,6 @@ public class JabRefPreferences implements PreferencesService {
 
         return new SaveConfiguration()
                 .withSaveOrder(saveOrder)
-                .withMetadataSaveOrder(false)
                 .withReformatOnSave(getLibraryPreferences().shouldAlwaysReformatOnSave());
     }
 
