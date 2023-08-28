@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Stores the save order config from MetaData
  * <p>
- * Format: &lt;choice>, pair of field + ascending (boolean)
+ * Format: &lt;choice>, a pair of field + ascending (boolean)
  */
 public class SaveOrder {
 
