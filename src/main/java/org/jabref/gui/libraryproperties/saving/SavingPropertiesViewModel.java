@@ -65,7 +65,7 @@ public class SavingPropertiesViewModel implements PropertiesTabViewModel {
     public void setValues() {
         libraryProtectedProperty.setValue(initialMetaData.isProtected());
 
-        // SaveOrderConfigPanel, included via ?Import
+        // SaveOrderConfigPanel, included via <iImport ...> in FXML
 
         switch (saveOrder.getOrderType()) {
             case SPECIFIED -> saveInSpecifiedOrderProperty.setValue(true);
@@ -87,7 +87,7 @@ public class SavingPropertiesViewModel implements PropertiesTabViewModel {
                                              .map(SortCriterionViewModel::new)
                                              .toList());
 
-        // FieldFormatterCleanupsPanel, included via ?Import
+        // FieldFormatterCleanupsPanel, included via <iImport ...> in FXML
 
         Optional<FieldFormatterCleanups> saveActions = initialMetaData.getSaveActions();
         saveActions.ifPresentOrElse(value -> {
