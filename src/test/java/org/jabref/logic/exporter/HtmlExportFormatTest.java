@@ -31,16 +31,13 @@ public class HtmlExportFormatTest {
 
     @BeforeEach
     public void setUp() {
-        SaveConfiguration saveConfiguration = mock(SaveConfiguration.class);
-        when(saveConfiguration.getSaveOrder()).thenReturn(SaveOrder.getDefaultSaveOrder());
-
         exportFormat = new TemplateExporter("HTML",
                 "html",
                 "html",
                 null,
                 StandardFileType.HTML,
                 mock(LayoutFormatterPreferences.class, Answers.RETURNS_DEEP_STUBS),
-                saveConfiguration);
+                SaveOrder.getDefaultSaveOrder());
 
         databaseContext = new BibDatabaseContext();
         charset = StandardCharsets.UTF_8;

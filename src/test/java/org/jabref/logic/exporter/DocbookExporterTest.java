@@ -32,9 +32,6 @@ public class DocbookExporterTest {
 
     @BeforeEach
     public void setUp() {
-        SaveConfiguration saveConfiguration = mock(SaveConfiguration.class);
-        when(saveConfiguration.getSaveOrder()).thenReturn(SaveOrder.getDefaultSaveOrder());
-
         exportFormat = new TemplateExporter(
                 "DocBook 4",
                 "docbook4",
@@ -42,7 +39,7 @@ public class DocbookExporterTest {
                 null,
                 StandardFileType.XML,
                 mock(LayoutFormatterPreferences.class, Answers.RETURNS_DEEP_STUBS),
-                saveConfiguration);
+                SaveOrder.getDefaultSaveOrder());
     }
 
     @Test
