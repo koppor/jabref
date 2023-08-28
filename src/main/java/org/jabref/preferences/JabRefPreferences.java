@@ -587,7 +587,7 @@ public class JabRefPreferences implements PreferencesService {
         defaults.put(EXPORT_SECONDARY_SORT_FIELD, StandardField.AUTHOR.getName());
         defaults.put(EXPORT_SECONDARY_SORT_DESCENDING, Boolean.FALSE);
         defaults.put(EXPORT_TERTIARY_SORT_FIELD, StandardField.TITLE.getName());
-        defaults.put(EXPORT_TERTIARY_SORT_DESCENDING, Boolean.TRUE);
+        defaults.put(EXPORT_TERTIARY_SORT_DESCENDING, Boolean.FALSE);
 
         defaults.put(NEWLINE, System.lineSeparator());
 
