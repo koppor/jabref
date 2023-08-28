@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
 
@@ -24,12 +19,12 @@ public class SaveOrder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SaveOrder.class);
 
-    private final ObservableList<SortCriterion> sortCriteria;
-    private final ObjectProperty<OrderType> orderType;
+    private final OrderType orderType;
+    private final List<SortCriterion> sortCriteria;
 
     public SaveOrder(OrderType orderType, List<SortCriterion> sortCriteria) {
-        this.orderType = new SimpleObjectProperty<>(orderType);
-        this.sortCriteria = FXCollections.observableArrayList(sortCriteria);
+        this.orderType = orderType;
+        this.sortCriteria = sortCriteria;
     }
 
     private SaveOrder(List<String> data) {
@@ -48,18 +43,18 @@ public class SaveOrder {
                 orderType = OrderType.SPECIFIED;
             } else {
                 LOGGER.warn("Could not parse sort order: {}", data.get(0));
-                this.sortCriteria = FXCollections.observableArrayList();
-                this.orderType = new SimpleObjectProperty<>(OrderType.ORIGINAL);
+                this.sortCriteria = List.of();
+                this.orderType = OrderType.ORIGINAL;
                 return;
             }
         }
-        this.orderType = new SimpleObjectProperty<>(orderType);
+        this.orderType = orderType;
 
         List<SortCriterion> sortCriteria = new ArrayList<>(data.size() / 2);
         for (int index = 1; index < data.size(); index = index + 2) {
             sortCriteria.add(new SortCriterion(FieldFactory.parseField(data.get(index)), data.get(index + 1)));
         }
-        this.sortCriteria = FXCollections.observableArrayList(sortCriteria);
+        this.sortCriteria = sortCriteria;
     }
 
     public static SaveOrder parse(List<String> orderedData) {
@@ -71,10 +66,10 @@ public class SaveOrder {
     }
 
     public OrderType getOrderType() {
-        return orderType.get();
+        return orderType;
     }
 
-    public ObservableList<SortCriterion> getSortCriteria() {
+    public List<SortCriterion> getSortCriteria() {
         return sortCriteria;
     }
 
@@ -107,7 +102,7 @@ public class SaveOrder {
      */
     public List<String> getAsStringList() {
         List<String> res = new ArrayList<>(7);
-        if (orderType.get() == OrderType.ORIGINAL) {
+        if (orderType == OrderType.ORIGINAL) {
             res.add(OrderType.ORIGINAL.toString());
         } else {
             res.add(OrderType.SPECIFIED.toString());
