@@ -42,6 +42,7 @@ import org.jabref.model.metadata.SaveOrder;
 import org.jabref.model.strings.StringUtil;
 
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A generic writer for our database. This is independent of the concrete serialization format.
@@ -51,6 +52,7 @@ import org.jooq.lambda.Unchecked;
  * <p>
  * The opposite class is {@link org.jabref.logic.importer.fileformat.BibtexParser}
  */
+@NullMarked
 public abstract class BibDatabaseWriter {
 
     public enum SaveType { WITH_JABREF_META_DATA, PLAIN_BIBTEX }
@@ -130,6 +132,7 @@ public abstract class BibDatabaseWriter {
      */
     public static List<BibEntry> getSortedEntries(List<BibEntry> entriesToSort, SaveOrder saveOrder) {
         Objects.requireNonNull(entriesToSort);
+        Objects.requireNonNull(saveOrder);
 
         List<Comparator<BibEntry>> comparators = getSaveComparators(saveOrder);
         FieldComparatorStack<BibEntry> comparatorStack = new FieldComparatorStack<>(comparators);
