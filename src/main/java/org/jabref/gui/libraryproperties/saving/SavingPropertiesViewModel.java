@@ -1,6 +1,7 @@
 package org.jabref.gui.libraryproperties.saving;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,12 +19,21 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.InternalField;
+import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.metadata.MetaData;
 import org.jabref.model.metadata.SaveOrder;
 import org.jabref.preferences.CleanupPreferences;
 import org.jabref.preferences.PreferencesService;
 
 public class SavingPropertiesViewModel implements PropertiesTabViewModel {
+
+    private static final SaveOrder UI_DEFAULT_SAVE_ORDER = new SaveOrder(SaveOrder.OrderType.ORIGINAL, List.of(
+            new SaveOrder.SortCriterion(StandardField.AUTHOR),
+            new SaveOrder.SortCriterion(StandardField.YEAR),
+            new SaveOrder.SortCriterion(StandardField.TITLE),
+            // Pro users generate their citation keys well. They can just delete the above three proposals and get a well-sorted library.
+            new SaveOrder.SortCriterion(InternalField.KEY_FIELD)
+    ));
 
     private final BooleanProperty protectDisableProperty = new SimpleBooleanProperty();
     private final BooleanProperty libraryProtectedProperty = new SimpleBooleanProperty();
@@ -48,7 +58,7 @@ public class SavingPropertiesViewModel implements PropertiesTabViewModel {
         this.databaseContext = databaseContext;
         this.preferencesService = preferencesService;
         this.initialMetaData = databaseContext.getMetaData();
-        this.saveOrder = initialMetaData.getSaveOrder().orElse(SaveOrder.getDefaultSaveOrder());
+        this.saveOrder = initialMetaData.getSaveOrder().orElse(UI_DEFAULT_SAVE_ORDER);
     }
 
     @Override

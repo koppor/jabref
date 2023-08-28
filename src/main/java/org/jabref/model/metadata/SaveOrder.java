@@ -128,7 +128,13 @@ public class SaveOrder {
         public final boolean descending;
 
         /**
-         *
+         * Given field sorted ascending
+         */
+        public SortCriterion(Field field) {
+            this(field, false);
+        }
+
+        /**
          * @param field The field
          * @param descending Must be a boolean value as string, e.g. "true", "false"
          */
