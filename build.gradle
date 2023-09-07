@@ -552,7 +552,7 @@ jpackage.dependsOn deleteInstallerTemp
 jlink {
     addOptions('--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages')
     launcher {
-        name = 'JabRef'
+        name = 'jabref'
     }
 
     addOptions("--bind-services")
