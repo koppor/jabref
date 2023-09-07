@@ -205,8 +205,6 @@ jobs:
           --resource-dir buildres/mac \
           --file-associations buildres/mac/bibtexAssociations.properties \
           --jlink-options --bind-services
-      - name: Debug
-        run: ls -la build/distribution/
       - name: Package application image (non-macos)
         if: (matrix.os != 'macos-latest')
         shell: bash
