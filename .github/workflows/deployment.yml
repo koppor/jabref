@@ -208,7 +208,7 @@ jobs:
       - name: Package application image (non-macos)
         if: (matrix.os != 'macos-latest')
         shell: bash
-        run: ls -la build/distribution/ && ${{ matrix.archivePortable }}
+        run: ls -la build/distribution/ && ls -la build/distribution/JabRef/ && ls -la ls -la build/distribution/jabref/ && ${{ matrix.archivePortable }}
       - name: Rename files
         if: (matrix.os != 'macos-latest') || (steps.checksecrets.outputs.secretspresent == 'YES')
         shell: pwsh
