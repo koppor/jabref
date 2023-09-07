@@ -625,7 +625,7 @@ jlink {
                     '--icon', "${projectDir}/src/main/resources/icons/jabref.ico",
             ]
             installerOptions = [
-                    '--vendor', 'JabRef',
+                    '--vendor', 'JabRef e.V.',
                     '--app-version', "${project.version}",
                     '--verbose',
                     '--win-upgrade-uuid', 'd636b4ee-6f10-451e-bf57-c89656780e36',
@@ -647,7 +647,7 @@ jlink {
             ]
             installerOptions = [
                     '--verbose',
-                    '--vendor', 'JabRef',
+                    '--vendor', 'JabRef e.V.',
                     '--app-version', "${project.version}",
                     // '--temp', "$buildDir/installer",
                     '--resource-dir', "${projectDir}/buildres/linux",
