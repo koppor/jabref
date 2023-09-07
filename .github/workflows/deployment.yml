@@ -205,10 +205,12 @@ jobs:
           --resource-dir buildres/mac \
           --file-associations buildres/mac/bibtexAssociations.properties \
           --jlink-options --bind-services
+      - name: Debug
+        run: ls -la build/distribution/
       - name: Package application image (non-macos)
         if: (matrix.os != 'macos-latest')
         shell: bash
-        run: ls -la build/distribution/ && ls -la build/distribution/JabRef/ && ls -la ls -la build/distribution/jabref/ && ${{ matrix.archivePortable }}
+        run: ${{ matrix.archivePortable }}
       - name: Rename files
         if: (matrix.os != 'macos-latest') || (steps.checksecrets.outputs.secretspresent == 'YES')
         shell: pwsh
