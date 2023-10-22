@@ -2,9 +2,11 @@ package org.jabref.gui.libraryproperties.general;
 
 import java.nio.charset.Charset;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 
 import org.jabref.gui.libraryproperties.AbstractPropertiesTabView;
 import org.jabref.gui.util.ViewModelListCellFactory;
@@ -31,6 +33,8 @@ public class GeneralPropertiesView extends AbstractPropertiesTabView<GeneralProp
         ViewLoader.view(this)
                   .root(this)
                   .load();
+        // Get the ViewModel
+        viewModel.setUsername(preferencesService.getFilePreferences().getUserAndHost());
     }
 
     @Override
@@ -53,9 +57,11 @@ public class GeneralPropertiesView extends AbstractPropertiesTabView<GeneralProp
                 .install(databaseMode);
         databaseMode.itemsProperty().bind(viewModel.databaseModesProperty());
         databaseMode.valueProperty().bindBidirectional(viewModel.selectedDatabaseModeProperty());
-
         generalFileDirectory.textProperty().bindBidirectional(viewModel.generalFileDirectoryPropertyProperty());
         userSpecificFileDirectory.textProperty().bindBidirectional(viewModel.userSpecificFileDirectoryProperty());
+        Tooltip tooltip = new Tooltip();
+        tooltip.textProperty().bind(Bindings.concat("Host: ", viewModel.hostPropertyProperty(), "\nUsername: ", viewModel.usernamePropertyProperty()));
+        userSpecificFileDirectory.setTooltip(tooltip);
         laTexFileDirectory.textProperty().bindBidirectional(viewModel.laTexFileDirectoryProperty());
     }
 

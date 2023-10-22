@@ -19,7 +19,7 @@ Note that this project **does not** adhere to [Semantic Versioning](https://semv
 - We added a link "Get more themes..." in the preferences to that points to [themes.jabref.org](https://themes.jabref.org) allowing the user to download new themes. [#10243](https://github.com/JabRef/jabref/issues/10243)
 - We added a fetcher for [LOBID](https://lobid.org/resources/api) resources. [koppor#386](https://github.com/koppor/jabref/issues/386)
 - When in `biblatex` mode, the [integrity check](https://docs.jabref.org/finding-sorting-and-cleaning-entries/checkintegrity) for journal titles now also checks the field `journal`.
-
+- We added a hover on user-specific file directory. If the mouse is on hower, JabRef displays: user: {username}, host: {hostname}. [#572](https://github.com/koppor/jabref/issues/572)
 ### Changed
 
 - The export formats `listrefs`, `tablerefs`, `tablerefsabsbib`, now use the ISO date format in the footer [#10383](https://github.com/JabRef/jabref/pull/10383).

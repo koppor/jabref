@@ -1,5 +1,6 @@
 package org.jabref.gui.libraryproperties.general;
 
+import java.net.InetAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -33,6 +34,10 @@ public class GeneralPropertiesViewModel implements PropertiesTabViewModel {
     private final SimpleObjectProperty<BibDatabaseMode> selectedDatabaseModeProperty = new SimpleObjectProperty<>(BibDatabaseMode.BIBLATEX);
     private final StringProperty generalFileDirectoryProperty = new SimpleStringProperty("");
     private final StringProperty userSpecificFileDirectoryProperty = new SimpleStringProperty("");
+    private final StringProperty hostProperty = new SimpleStringProperty("");
+
+
+    private final StringProperty usernameProperty = new SimpleStringProperty("");
     private final StringProperty laTexFileDirectoryProperty = new SimpleStringProperty("");
 
     private final DialogService dialogService;
@@ -61,6 +66,16 @@ public class GeneralPropertiesViewModel implements PropertiesTabViewModel {
         selectedDatabaseModeProperty.setValue(metaData.getMode().orElse(BibDatabaseMode.BIBLATEX));
         generalFileDirectoryProperty.setValue(metaData.getDefaultFileDirectory().orElse("").trim());
         userSpecificFileDirectoryProperty.setValue(metaData.getUserFileDirectory(preferencesService.getFilePreferences().getUserAndHost()).orElse("").trim());
+        userSpecificFileDirectoryProperty.setValue(metaData.getUserFileDirectory(preferencesService.getFilePreferences().getUserAndHost()).map(path -> usernameProperty.getValue() + ": " + path).orElse("").trim());
+        String username = preferencesService.getFilePreferences().getUserAndHost();   // get the username
+        usernameProperty.setValue(username);
+        try {
+            InetAddress localHost = InetAddress.getLocalHost();
+            hostProperty.set(localHost.getHostName()); // get the host Name
+        } catch (Exception e) {
+            hostProperty.set("N/A"); // if fail to get host, display N/A（Not Available）
+        }
+
         laTexFileDirectoryProperty.setValue(metaData.getLatexFileDirectory(preferencesService.getFilePreferences().getUserAndHost()).map(Path::toString).orElse(""));
     }
 
@@ -140,5 +155,17 @@ public class GeneralPropertiesViewModel implements PropertiesTabViewModel {
 
     public StringProperty laTexFileDirectoryProperty() {
         return this.laTexFileDirectoryProperty;
+    }
+
+    public void setUsername(String username) {
+        usernameProperty.setValue(username);
+    }
+
+    public StringProperty usernamePropertyProperty() {
+        return usernameProperty;
+    }
+
+    public StringProperty hostPropertyProperty() {
+        return hostProperty;
     }
 }

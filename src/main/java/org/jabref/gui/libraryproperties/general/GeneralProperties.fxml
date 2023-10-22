@@ -47,9 +47,11 @@
         </Button>
 
         <Label text="%User-specific file directory"
-               GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+               GridPane.columnIndex="0" GridPane.rowIndex="2">
+        </Label>
         <TextField fx:id="userSpecificFileDirectory"
                    GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
         <Button onAction="#browseUserSpecificFileDirectory"
                 styleClass="icon-button,narrow" prefHeight="20.0" prefWidth="20.0"
                 GridPane.columnIndex="2" GridPane.rowIndex="2">
