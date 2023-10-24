@@ -2,6 +2,15 @@ import org.gradle.internal.os.OperatingSystem
 import org.jabref.build.xjc.XjcPlugin
 import org.jabref.build.xjc.XjcTask
 
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath 'org.beryx.jlink:org.beryx.jlink.gradle.plugin:3.0.2'
+    }
+}
+
 plugins {
     id 'application'
 
@@ -12,8 +21,6 @@ plugins {
     id 'org.javamodularity.moduleplugin' version '1.8.12'
 
     id 'org.openjfx.javafxplugin' version '0.1.0'
-
-    id 'org.beryx.jlink' version '3.0.0'
 
     // nicer test outputs during running and completion
     // Homepage: https://github.com/radarsh/gradle-test-logger-plugin
@@ -29,6 +36,9 @@ plugins {
 
     id 'org.openrewrite.rewrite' version '6.4.0'
 }
+
+apply plugin: 'org.beryx.jlink'
+
 
 // Enable following for debugging
 // gradle.startParameter.showStacktrace = org.gradle.api.logging.configuration.ShowStacktrace.
@@ -546,7 +556,6 @@ tasks.register('deleteInstallerTemp', Delete) {
 }
 
 jpackage.dependsOn deleteInstallerTemp
-jlinkZip.dependsOn jpackage
 jlink {
     addOptions('--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages')
     launcher {
