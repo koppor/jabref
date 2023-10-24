@@ -92,7 +92,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 21.0.1
+          java-version: '17.0.9'
           distribution: 'liberica'
           cache: 'gradle'
       - name: Setup badass-jlink-plugin
@@ -101,6 +101,12 @@ jobs:
           cd badass-jlink-plugin/
           ./gradlew shadowJar
           mvn install:install-file -Dfile=build/libs/badass-jlink-plugin-3.0.1.jar -DgroupId=org.beryx.jlink -DartifactId=org.beryx.jlink.gradle.plugin -Dversion=3.0.2 -Dpackaging=jar
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21.0.1
+          distribution: 'liberica'
+          cache: 'gradle'
       - name: Prepare merged jars and modules dir (macOS)
         if: (matrix.os == 'macos-latest') || (steps.checksecrets.outputs.secretspresent == 'NO')
         run: ./gradlew -i -PprojVersion="${{ steps.gitversion.outputs.AssemblySemVer }}" -PprojVersionInfo="${{ steps.gitversion.outputs.InformationalVersion }}" prepareModulesDir
