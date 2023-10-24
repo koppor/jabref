@@ -96,6 +96,7 @@ jobs:
           distribution: 'liberica'
           cache: 'gradle'
       - name: Setup badass-jlink-plugin
+        shell: bash
         run: |
           git clone --depth=1 https://github.com/beryx/badass-jlink-plugin.git
           cd badass-jlink-plugin/
