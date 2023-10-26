@@ -6,7 +6,33 @@ nav_order: 13
 
 # Step 3: Using JabRef's code style
 
-Contributions to JabRef's source code need to have a code formatting that is consistent with existing source code. For that purpose, JabRef provides code-style and check-style definitions.
+Contributions to JabRef's source code need to have a code formatting that is consistent with existing source code.
+For that purpose, JabRef relies on both the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) and [checkstyle](https://checkstyle.sourceforge.io/).
+
+## Google Java Style (AOSP)
+
+### Install google-java-format plugin
+
+Install the [google-java-format IDEA plugin](https://plugins.jetbrains.com/plugin/8527-google-java-format):
+Navigate to **File > Settings... > Plugins"**.
+On the top, click on "Marketplace".
+Then, search for "google-java-format".
+Click on "Install".
+
+### Configure google-java-format plugin
+
+JabRef likes to have 4 spaces indentation.
+This is called the "AOSP" style in the Google Java Format style.
+Navigate to **File > Settings... > google-java-format Settings"**.
+Change "Code style" to "Android Open Source Project (AOSP) style".
+
+{% figure caption:"Enable AOSP style in Google Java Format" %}
+![Enable GJF AOSP](guidelines-intellij-gfm-aosp.png)
+{% endfigure %}
+
+## Checkstyle
+
+## Install checkstyle plugin
 
 Install the [CheckStyle-IDEA plugin](http://plugins.jetbrains.com/plugin/1065?pr=idea), it can be found via the plug-in repository:
 Navigate to **File > Settings... > Plugins"**.
@@ -34,37 +60,7 @@ Afterwards, use the "Restart IDE" button to restart IntelliJ.
 
 Click on "Restart" to finally restart.
 
-Wait for IntelliJ coming up again.
-
-Go to **File > Settings... > Editor > Code Style**
-
-Click on the settings wheel (next to the scheme chooser),
-then click "Import Scheme >",
-then click "IntelliJ IDEA code style XML"
-
-{% figure caption:"Location of “Import Scheme > IntelliJ IDEA code style XML”" %}
-![Location of IntelliJ IDEA code style XML](guidelines-intellij-codestyle-import.png)
-{% endfigure %}
-
-You have to browse for the directory `config` in JabRef's code.
-There is an `IntelliJ Code Style.xml`.
-
-{% figure caption:"Browsing for `config/IntelliJ Code Style.xml`" %}
-![Browsing for config/IntelliJ Code Style.xml](guidelines-intellij-codestyle-import-select-xml-file.png)
-{% endfigure %}
-
-Click "OK".
-
-At following dialog is "Import Scheme".
-Click there "OK", too.
-
-{% figure caption:"Import to JabRef" %}
-![Import to JabRef](guidelines-intellij-codestyle-import-as-jabref.png)
-{% endfigure %}
-
-Click on "Apply" to store the preferences.
-
-## Put JabRef's checkstyle configuration in place
+### Put JabRef's checkstyle configuration in place
 
 Now, put the checkstyle configuration file is in place:
 
@@ -110,18 +106,6 @@ Then, you can run a check on all modified files.
 
 {% figure caption:"JabRef's style is active - and we are ready to run a check on all modified files" %}
 ![JabRef's style is active - and we are ready to run a check on all modified files](guidelines-intellij-checkstyle-window.png)
-{% endfigure %}
-
-## Have auto format working properly in JavaDoc
-
-To have auto format working properly in the context of JavaDoc and line wrapping, "Wrap at right margin" has to be disabled. Details are found in [IntelliJ issue 240517](https://youtrack.jetbrains.com/issue/IDEA-240517).
-
-Go to **File > Settings... > Editor > Code Style > Java > JavaDoc**.
-
-At "Other", disable "Wrap at right margin"
-
-{% figure caption:"”Wrap at right margin” disabled" %}
-!["Wrap at right margin" disabled](guidelines-intellij-editor-javadoc-do-not-wrap.png)
 {% endfigure %}
 
 ## Enable proper import cleanup

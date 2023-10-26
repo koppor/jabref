@@ -25,8 +25,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  checkstyle:
-    name: Checkstyle
+  gjf-checkstyle:
+    name: GJF (AOSP) and Checkstyle
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
@@ -40,6 +40,10 @@ jobs:
           java-version: 21.0.1
           distribution: 'liberica'
           cache: 'gradle'
+      - uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "--skip-sorting-imports --replace"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run checkstyle reporter
         uses: nikitasavinov/checkstyle-action@master
         with:
