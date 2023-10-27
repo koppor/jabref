@@ -10,9 +10,10 @@ Note that this project **does not** adhere to [Semantic Versioning](https://semv
 ## [Unreleased]
 
 ### Added
-
+    - New Class called IEEE cleanup
+    - Added a new testcase called 
 ### Changed
-
+    added cleanup method before setting title field
 ### Fixed
 
 ### Removed

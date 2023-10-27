@@ -145,6 +145,16 @@ class IEEETest implements SearchBasedFetcherCapabilityTest, PagedSearchFetcherTe
         assertEquals(Collections.singletonList(IGOR_NEWCOMERS), fetchedEntries);
     }
 
+    @Test
+    void testEmDashCleanUp() throws Exception{
+        List<BibEntry> entry = fetcher.performSearch("10.1109/PERCOMW.2015.7133989");
+        if (entry.get(0).getTitle().isPresent()){
+            assertEquals("Towards situation-aware adaptive workflows: SitOPT A general purpose situation-aware workflow management system"
+                    ,entry.get(0).getTitle().get());
+        }
+    }
+
+
     @Override
     public SearchBasedFetcher getFetcher() {
         return fetcher;

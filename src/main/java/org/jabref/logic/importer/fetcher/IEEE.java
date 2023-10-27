@@ -77,7 +77,7 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
      */
     private static BibEntry parseJsonResponse(JSONObject jsonEntry, Character keywordSeparator) {
         BibEntry entry = new BibEntry();
-
+        IEEEcleanup ieeEcleanup = new IEEEcleanup();
         switch (jsonEntry.optString("content_type")) {
             case "Books" -> entry.setType(StandardEntryType.Book);
             case "Conferences" -> entry.setType(StandardEntryType.InProceedings);
@@ -129,7 +129,7 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
         entry.setField(StandardField.EVENTTITLEADDON, jsonEntry.optString("conference_location"));
         entry.setField(StandardField.EVENTDATE, jsonEntry.optString("conference_dates"));
         entry.setField(StandardField.PUBLISHER, jsonEntry.optString("publisher"));
-        entry.setField(StandardField.TITLE, jsonEntry.optString("title"));
+        entry.setField(StandardField.TITLE, ieeEcleanup.clean(jsonEntry.optString("title"),"{&}{#}x2014$\\mathsemicolon$"));
         entry.setField(StandardField.VOLUME, jsonEntry.optString("volume"));
 
         return entry;
