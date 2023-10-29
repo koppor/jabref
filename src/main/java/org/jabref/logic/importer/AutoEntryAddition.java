@@ -119,10 +119,11 @@ public class AutoEntryAddition {
         // Fetch data from the CrossRef API.
         List<BibEntry> fetchedEntries = fetchDataFromUrl(apiUrl);
 
-        // Step 5: Extract the DOI.
+        // Extract the DOI.
         return crossRef.extractIdentifier(entry, fetchedEntries);
     }
 
+    // need logic confirmation here
     private List<BibEntry> fetchDataFromUrl(URL apiUrl) {
         return null;
     }
