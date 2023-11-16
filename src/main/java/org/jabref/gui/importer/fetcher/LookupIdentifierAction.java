@@ -1,10 +1,5 @@
 package org.jabref.gui.importer.fetcher;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.Action;
@@ -21,9 +16,12 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.FieldChange;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.identifier.Identifier;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.UndoManager;
+import java.util.List;
+import java.util.Optional;
 
 import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 import static org.jabref.gui.actions.ActionHelper.needsEntriesSelected;

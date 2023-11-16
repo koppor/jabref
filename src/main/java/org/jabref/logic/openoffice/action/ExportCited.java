@@ -1,10 +1,7 @@
 package org.jabref.logic.openoffice.action;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.text.XTextDocument;
 import org.jabref.logic.openoffice.frontend.OOFrontend;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
@@ -13,8 +10,10 @@ import org.jabref.model.openoffice.style.CitedKey;
 import org.jabref.model.openoffice.style.CitedKeys;
 import org.jabref.model.openoffice.uno.NoDocumentException;
 
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XTextDocument;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ExportCited {
 

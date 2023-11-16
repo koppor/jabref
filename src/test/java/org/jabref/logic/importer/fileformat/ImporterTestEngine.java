@@ -1,5 +1,12 @@
 package org.jabref.logic.importer.fileformat;
 
+import org.jabref.logic.bibtex.BibEntryAssert;
+import org.jabref.logic.importer.ImportException;
+import org.jabref.logic.importer.Importer;
+import org.jabref.logic.importer.ParserResult;
+import org.jabref.model.entry.BibEntry;
+import org.junit.jupiter.api.Assertions;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -10,14 +17,6 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jabref.logic.bibtex.BibEntryAssert;
-import org.jabref.logic.importer.ImportException;
-import org.jabref.logic.importer.Importer;
-import org.jabref.logic.importer.ParserResult;
-import org.jabref.model.entry.BibEntry;
-
-import org.junit.jupiter.api.Assertions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -1,12 +1,11 @@
 package org.jabref.logic.importer.util;
 
-import java.io.ByteArrayInputStream;
-
-import org.jabref.logic.importer.ParseException;
-
 import kong.unirest.json.JSONObject;
+import org.jabref.logic.importer.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayInputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

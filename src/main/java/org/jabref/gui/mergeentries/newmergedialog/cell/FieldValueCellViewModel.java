@@ -1,11 +1,6 @@
 package org.jabref.gui.mergeentries.newmergedialog.cell;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.scene.control.ToggleGroup;
 
 public class FieldValueCellViewModel {

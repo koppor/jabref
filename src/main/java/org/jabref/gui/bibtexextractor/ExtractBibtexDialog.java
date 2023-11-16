@@ -1,13 +1,12 @@
 package org.jabref.gui.bibtexextractor;
 
-import javax.swing.undo.UndoManager;
-
+import com.airhacks.afterburner.views.ViewLoader;
+import jakarta.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.util.BaseDialog;
@@ -17,8 +16,7 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import javax.swing.undo.UndoManager;
 
 /**
  * GUI Dialog for the feature "Extract BibTeX from plain text".

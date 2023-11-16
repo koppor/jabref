@@ -1,11 +1,11 @@
 package org.jabref.model.groups;
 
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.Field;
+
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.Field;
 
 public class AutomaticPersonsGroup extends AutomaticGroup {
 

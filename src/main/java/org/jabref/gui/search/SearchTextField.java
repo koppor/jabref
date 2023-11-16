@@ -1,10 +1,9 @@
 package org.jabref.gui.search;
 
-import org.jabref.gui.icon.IconTheme;
-import org.jabref.logic.l10n.Localization;
-
 import org.controlsfx.control.textfield.CustomTextField;
 import org.controlsfx.control.textfield.TextFields;
+import org.jabref.gui.icon.IconTheme;
+import org.jabref.logic.l10n.Localization;
 
 public class SearchTextField {
 

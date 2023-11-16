@@ -1,18 +1,11 @@
 package org.jabref.gui.menus;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-
 import org.jabref.gui.actions.ActionFactory;
 import org.jabref.gui.keyboard.KeyBindingRepository;
 import org.jabref.logic.l10n.Localization;
@@ -23,6 +16,11 @@ import org.jabref.model.entry.BibEntryType;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.types.BibtexEntryTypeDefinitions;
 import org.jabref.model.entry.types.IEEETranEntryTypeDefinitions;
+
+import javax.swing.undo.UndoManager;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 public class ChangeEntryTypeMenu {
 

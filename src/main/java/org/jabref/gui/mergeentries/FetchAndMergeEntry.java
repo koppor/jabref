@@ -1,28 +1,12 @@
 package org.jabref.gui.mergeentries;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.undo.NamedCompound;
 import org.jabref.gui.undo.UndoableChangeType;
 import org.jabref.gui.undo.UndoableFieldChange;
 import org.jabref.gui.util.BackgroundTask;
 import org.jabref.gui.util.TaskExecutor;
-import org.jabref.logic.importer.EntryBasedFetcher;
-import org.jabref.logic.importer.FetcherClientException;
-import org.jabref.logic.importer.FetcherServerException;
-import org.jabref.logic.importer.IdBasedFetcher;
-import org.jabref.logic.importer.ImportCleanup;
-import org.jabref.logic.importer.WebFetcher;
-import org.jabref.logic.importer.WebFetchers;
+import org.jabref.logic.importer.*;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
@@ -31,9 +15,11 @@ import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.preferences.PreferencesService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.UndoManager;
+import java.util.*;
 
 /**
  * Class for fetching and merging bibliographic information

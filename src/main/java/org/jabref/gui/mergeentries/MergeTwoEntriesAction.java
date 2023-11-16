@@ -1,8 +1,5 @@
 package org.jabref.gui.mergeentries;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.jabref.gui.Globals;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.SimpleCommand;
@@ -12,6 +9,9 @@ import org.jabref.gui.undo.UndoableRemoveEntries;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class MergeTwoEntriesAction extends SimpleCommand {
     private final EntriesMergeResult entriesMergeResult;

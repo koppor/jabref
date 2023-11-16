@@ -1,21 +1,16 @@
 package org.jabref.logic.openoffice.backend;
 
-import java.util.Optional;
-
+import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.text.*;
 import org.jabref.model.openoffice.backend.NamedRange;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.uno.UnoCursor;
 import org.jabref.model.openoffice.uno.UnoReferenceMark;
-
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XText;
-import com.sun.star.text.XTextContent;
-import com.sun.star.text.XTextCursor;
-import com.sun.star.text.XTextDocument;
-import com.sun.star.text.XTextRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 class NamedRangeReferenceMark implements NamedRange {
 

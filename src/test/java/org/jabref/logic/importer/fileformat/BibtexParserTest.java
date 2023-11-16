@@ -1,60 +1,26 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.InetAddress;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
 import javafx.collections.FXCollections;
-
 import org.jabref.logic.citationkeypattern.AbstractCitationKeyPattern;
 import org.jabref.logic.citationkeypattern.DatabaseCitationKeyPattern;
 import org.jabref.logic.citationkeypattern.GlobalCitationKeyPattern;
 import org.jabref.logic.cleanup.FieldFormatterCleanup;
 import org.jabref.logic.cleanup.FieldFormatterCleanups;
 import org.jabref.logic.exporter.SaveConfiguration;
-import org.jabref.logic.formatter.bibtexfields.EscapeAmpersandsFormatter;
-import org.jabref.logic.formatter.bibtexfields.EscapeDollarSignFormatter;
-import org.jabref.logic.formatter.bibtexfields.EscapeUnderscoresFormatter;
-import org.jabref.logic.formatter.bibtexfields.LatexCleanupFormatter;
-import org.jabref.logic.formatter.bibtexfields.NormalizeMonthFormatter;
-import org.jabref.logic.formatter.bibtexfields.NormalizePagesFormatter;
+import org.jabref.logic.formatter.bibtexfields.*;
 import org.jabref.logic.formatter.casechanger.LowerCaseFormatter;
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.logic.importer.ParseException;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.util.OS;
 import org.jabref.model.database.BibDatabaseMode;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.BibEntryType;
-import org.jabref.model.entry.BibtexString;
 import org.jabref.model.entry.Date;
-import org.jabref.model.entry.Month;
-import org.jabref.model.entry.field.BibField;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.FieldPriority;
-import org.jabref.model.entry.field.InternalField;
-import org.jabref.model.entry.field.OrFields;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.entry.*;
+import org.jabref.model.entry.field.*;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.entry.types.UnknownEntryType;
-import org.jabref.model.groups.AllEntriesGroup;
-import org.jabref.model.groups.ExplicitGroup;
-import org.jabref.model.groups.GroupHierarchyType;
-import org.jabref.model.groups.GroupTreeNode;
-import org.jabref.model.groups.RegexKeywordGroup;
-import org.jabref.model.groups.TexGroup;
-import org.jabref.model.groups.WordKeywordGroup;
+import org.jabref.model.groups.*;
 import org.jabref.model.metadata.SaveOrder;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -62,10 +28,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Answers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.InetAddress;
+import java.nio.file.Path;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

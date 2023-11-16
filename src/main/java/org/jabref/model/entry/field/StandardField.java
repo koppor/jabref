@@ -1,11 +1,11 @@
 package org.jabref.model.entry.field;
 
+import org.jabref.gui.fieldeditors.FieldNameLabel;
+
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
-
-import org.jabref.gui.fieldeditors.FieldNameLabel;
 
 /**
  * Standard BibTeX and BibLaTeX fields, as well as "normal" JabRef specific fields.

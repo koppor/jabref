@@ -3,7 +3,6 @@ package org.jabref.gui.mergeentries.newmergedialog;
 import javafx.geometry.Insets;
 import javafx.scene.control.Control;
 import javafx.scene.layout.GridPane;
-
 import org.jabref.gui.mergeentries.newmergedialog.cell.HeaderCell;
 import org.jabref.logic.l10n.Localization;
 

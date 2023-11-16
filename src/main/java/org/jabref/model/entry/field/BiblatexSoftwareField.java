@@ -1,11 +1,11 @@
 package org.jabref.model.entry.field;
 
+import org.jabref.model.entry.types.BiblatexSoftwareEntryType;
+
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
-
-import org.jabref.model.entry.types.BiblatexSoftwareEntryType;
 
 public enum BiblatexSoftwareField implements Field {
     HALID("hal_id"),

@@ -1,17 +1,16 @@
 package org.jabref.logic.formatter.bibtexfields;
 
-import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
 import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.importer.util.ShortDOIService;
 import org.jabref.logic.importer.util.ShortDOIServiceException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.identifier.DOI;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class ShortenDOIFormatter extends Formatter {
 

@@ -1,9 +1,9 @@
 package org.jabref.gui.util.comparator;
 
+import org.jabref.gui.specialfields.SpecialFieldValueViewModel;
+
 import java.util.Comparator;
 import java.util.Optional;
-
-import org.jabref.gui.specialfields.SpecialFieldValueViewModel;
 
 /**
  * Comparator for rankings.

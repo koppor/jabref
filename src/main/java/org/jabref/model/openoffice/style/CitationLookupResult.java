@@ -1,9 +1,9 @@
 package org.jabref.model.openoffice.style;
 
-import java.util.Objects;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
+
+import java.util.Objects;
 
 public class CitationLookupResult {
 

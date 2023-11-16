@@ -1,23 +1,10 @@
 package org.jabref.logic.openoffice.style;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import org.jabref.model.openoffice.ootext.OOText;
-import org.jabref.model.openoffice.style.Citation;
-import org.jabref.model.openoffice.style.CitationGroup;
-import org.jabref.model.openoffice.style.CitationGroups;
-import org.jabref.model.openoffice.style.CitationMarkerEntry;
-import org.jabref.model.openoffice.style.CitationType;
-import org.jabref.model.openoffice.style.CitedKey;
-import org.jabref.model.openoffice.style.CitedKeys;
-import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
+import org.jabref.model.openoffice.style.*;
 import org.jabref.model.openoffice.util.OOListUtil;
+
+import java.util.*;
 
 class OOProcessAuthorYearMarkers {
 

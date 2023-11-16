@@ -1,27 +1,24 @@
 package org.jabref.gui.edit.automaticfiededitor;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.undo.CannotUndoException;
-import javax.swing.undo.UndoManager;
-
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-
 import org.jabref.gui.Globals;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.util.BaseDialog;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
-
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AutomaticFieldEditorDialog extends BaseDialog<String> {
 

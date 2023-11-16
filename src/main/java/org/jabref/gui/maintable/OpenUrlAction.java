@@ -1,11 +1,6 @@
 package org.jabref.gui.maintable;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
 import javafx.beans.binding.BooleanExpression;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.ActionHelper;
@@ -16,6 +11,10 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.preferences.PreferencesService;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 public class OpenUrlAction extends SimpleCommand {
 

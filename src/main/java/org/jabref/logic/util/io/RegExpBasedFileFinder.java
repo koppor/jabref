@@ -1,5 +1,9 @@
 package org.jabref.logic.util.io;
 
+import org.jabref.logic.citationkeypattern.BracketedPattern;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.strings.StringUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -16,10 +20,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jabref.logic.citationkeypattern.BracketedPattern;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.strings.StringUtil;
 
 class RegExpBasedFileFinder implements FileFinder {
 

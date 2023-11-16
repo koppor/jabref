@@ -1,12 +1,12 @@
 package org.jabref.logic.integrity;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.entry.types.EntryTypeFactory;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * BibTeX mode only checker

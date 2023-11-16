@@ -1,10 +1,7 @@
 package org.jabref.gui.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
+import com.tobiasdiez.easybind.Subscription;
+import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
 import javafx.application.Platform;
 import javafx.css.PseudoClass;
 import javafx.scene.control.TableCell;
@@ -16,8 +13,10 @@ import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
-import com.tobiasdiez.easybind.Subscription;
-import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class ViewModelTextFieldTableCellVisualizationFactory<S, T>
         implements Callback<TableColumn<S, T>, TableCell<S, T>> {

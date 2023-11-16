@@ -1,14 +1,13 @@
 package org.jabref.model.openoffice.backend;
 
-import java.util.Optional;
-
-import org.jabref.model.openoffice.uno.CreationException;
-import org.jabref.model.openoffice.uno.NoDocumentException;
-
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
+
+import java.util.Optional;
 
 /**
  * NamedRange (with NamedRangeManager) attempts to provide a common interface for working with reference mark based and bookmark based text ranges to be used as locations to fill with citation markers. LibreOffice supports name-based lookup and listing names for both (hence the name).

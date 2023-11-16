@@ -1,12 +1,12 @@
 package org.jabref.gui.entryeditor.citationrelationtab;
 
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.identifier.DOI;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.identifier.DOI;
 
 public class BibEntryRelationsCache {
     private static final Map<String, List<BibEntry>> CITATIONS_MAP = new HashMap<>();

@@ -1,14 +1,5 @@
 package org.jabref.gui.maintable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,16 +11,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.icon.IconTheme;
-import org.jabref.gui.maintable.columns.FieldColumn;
-import org.jabref.gui.maintable.columns.FileColumn;
-import org.jabref.gui.maintable.columns.LibraryColumn;
-import org.jabref.gui.maintable.columns.LinkedIdentifierColumn;
-import org.jabref.gui.maintable.columns.MainTableColumn;
-import org.jabref.gui.maintable.columns.SpecialFieldColumn;
+import org.jabref.gui.maintable.columns.*;
 import org.jabref.gui.specialfields.SpecialFieldValueViewModel;
 import org.jabref.gui.util.TaskExecutor;
 import org.jabref.gui.util.ValueTableCellFactory;
@@ -41,9 +26,12 @@ import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.SpecialField;
 import org.jabref.model.groups.AbstractGroup;
 import org.jabref.preferences.PreferencesService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.UndoManager;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MainTableColumnFactory {
 

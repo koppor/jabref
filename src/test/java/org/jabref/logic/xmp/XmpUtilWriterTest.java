@@ -1,8 +1,7 @@
 package org.jabref.logic.xmp;
 
-import java.nio.file.Path;
-import java.util.List;
-
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.jabref.logic.exporter.XmpExporterTest;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.Date;
@@ -10,16 +9,14 @@ import org.jabref.model.entry.Month;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.entry.types.StandardEntryType;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.jabref.logic.xmp.DublinCoreExtractor.DC_COVERAGE;
-import static org.jabref.logic.xmp.DublinCoreExtractor.DC_RIGHTS;
-import static org.jabref.logic.xmp.DublinCoreExtractor.DC_SOURCE;
+import java.nio.file.Path;
+import java.util.List;
+
+import static org.jabref.logic.xmp.DublinCoreExtractor.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

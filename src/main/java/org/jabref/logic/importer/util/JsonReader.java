@@ -1,14 +1,13 @@
 package org.jabref.logic.importer.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
-import org.jabref.logic.importer.ParseException;
-
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
+import org.jabref.logic.importer.ParseException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Converts an {@link InputStream} into a {@link JSONObject}.

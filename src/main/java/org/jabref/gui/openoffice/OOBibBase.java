@@ -1,43 +1,5 @@
 package org.jabref.gui.openoffice;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import org.jabref.gui.DialogService;
-import org.jabref.logic.JabRefException;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.openoffice.NoDocumentFoundException;
-import org.jabref.logic.openoffice.action.EditInsert;
-import org.jabref.logic.openoffice.action.EditMerge;
-import org.jabref.logic.openoffice.action.EditSeparate;
-import org.jabref.logic.openoffice.action.ExportCited;
-import org.jabref.logic.openoffice.action.ManageCitations;
-import org.jabref.logic.openoffice.action.Update;
-import org.jabref.logic.openoffice.frontend.OOFrontend;
-import org.jabref.logic.openoffice.frontend.RangeForOverlapCheck;
-import org.jabref.logic.openoffice.style.OOBibStyle;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.openoffice.CitationEntry;
-import org.jabref.model.openoffice.rangesort.FunctionalTextViewCursor;
-import org.jabref.model.openoffice.style.CitationGroupId;
-import org.jabref.model.openoffice.style.CitationType;
-import org.jabref.model.openoffice.uno.CreationException;
-import org.jabref.model.openoffice.uno.NoDocumentException;
-import org.jabref.model.openoffice.uno.UnoCrossRef;
-import org.jabref.model.openoffice.uno.UnoCursor;
-import org.jabref.model.openoffice.uno.UnoRedlines;
-import org.jabref.model.openoffice.uno.UnoStyle;
-import org.jabref.model.openoffice.uno.UnoUndo;
-import org.jabref.model.openoffice.util.OOResult;
-import org.jabref.model.openoffice.util.OOVoidResult;
-
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
 import com.sun.star.beans.PropertyVetoException;
@@ -47,8 +9,30 @@ import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
+import org.jabref.gui.DialogService;
+import org.jabref.logic.JabRefException;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.openoffice.NoDocumentFoundException;
+import org.jabref.logic.openoffice.action.*;
+import org.jabref.logic.openoffice.frontend.OOFrontend;
+import org.jabref.logic.openoffice.frontend.RangeForOverlapCheck;
+import org.jabref.logic.openoffice.style.OOBibStyle;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.openoffice.CitationEntry;
+import org.jabref.model.openoffice.rangesort.FunctionalTextViewCursor;
+import org.jabref.model.openoffice.style.CitationGroupId;
+import org.jabref.model.openoffice.style.CitationType;
+import org.jabref.model.openoffice.uno.*;
+import org.jabref.model.openoffice.util.OOResult;
+import org.jabref.model.openoffice.util.OOVoidResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Class for manipulating the Bibliography of the currently started document in OpenOffice.

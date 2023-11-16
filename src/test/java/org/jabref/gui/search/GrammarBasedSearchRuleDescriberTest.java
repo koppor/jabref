@@ -1,24 +1,22 @@
 package org.jabref.gui.search;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-
 import org.jabref.gui.search.rules.describer.GrammarBasedSearchRuleDescriber;
 import org.jabref.gui.util.TooltipTextUtil;
 import org.jabref.model.search.rules.GrammarBasedSearchRule;
 import org.jabref.model.search.rules.SearchRules;
 import org.jabref.model.search.rules.SearchRules.SearchFlags;
 import org.jabref.testutils.category.GUITest;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
+
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

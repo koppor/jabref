@@ -1,10 +1,9 @@
 package org.jabref.logic.shared;
 
-import java.util.Optional;
-
 import org.jabref.testutils.category.DatabaseTest;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

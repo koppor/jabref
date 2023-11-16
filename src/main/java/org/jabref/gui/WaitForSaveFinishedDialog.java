@@ -1,10 +1,9 @@
 package org.jabref.gui;
 
-import java.util.List;
-
 import javafx.concurrent.Task;
-
 import org.jabref.logic.l10n.Localization;
+
+import java.util.List;
 
 /**
  * Dialog shown when closing of application needs to wait for a save operation to finish.

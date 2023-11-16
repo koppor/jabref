@@ -1,16 +1,13 @@
 package org.jabref.gui.maintable.columns;
 
-import java.util.Optional;
-
-import javax.swing.undo.UndoManager;
-
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-
+import org.controlsfx.control.Rating;
 import org.jabref.gui.icon.JabRefIcon;
 import org.jabref.gui.maintable.BibEntryTableViewModel;
 import org.jabref.gui.maintable.ColumnPreferences;
@@ -28,8 +25,8 @@ import org.jabref.model.entry.field.SpecialField;
 import org.jabref.model.entry.field.SpecialFieldValue;
 import org.jabref.preferences.PreferencesService;
 
-import com.tobiasdiez.easybind.EasyBind;
-import org.controlsfx.control.Rating;
+import javax.swing.undo.UndoManager;
+import java.util.Optional;
 
 /**
  * A column that displays a SpecialField

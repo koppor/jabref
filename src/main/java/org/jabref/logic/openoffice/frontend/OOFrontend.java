@@ -1,38 +1,5 @@
 package org.jabref.logic.openoffice.frontend;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.jabref.logic.JabRefException;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.openoffice.backend.Backend52;
-import org.jabref.model.openoffice.CitationEntry;
-import org.jabref.model.openoffice.ootext.OOText;
-import org.jabref.model.openoffice.rangesort.FunctionalTextViewCursor;
-import org.jabref.model.openoffice.rangesort.RangeOverlap;
-import org.jabref.model.openoffice.rangesort.RangeOverlapBetween;
-import org.jabref.model.openoffice.rangesort.RangeOverlapWithin;
-import org.jabref.model.openoffice.rangesort.RangeSort;
-import org.jabref.model.openoffice.rangesort.RangeSortEntry;
-import org.jabref.model.openoffice.rangesort.RangeSortVisual;
-import org.jabref.model.openoffice.rangesort.RangeSortable;
-import org.jabref.model.openoffice.style.CitationGroup;
-import org.jabref.model.openoffice.style.CitationGroupId;
-import org.jabref.model.openoffice.style.CitationGroups;
-import org.jabref.model.openoffice.style.CitationType;
-import org.jabref.model.openoffice.style.OODataModel;
-import org.jabref.model.openoffice.uno.CreationException;
-import org.jabref.model.openoffice.uno.NoDocumentException;
-import org.jabref.model.openoffice.uno.UnoCursor;
-import org.jabref.model.openoffice.uno.UnoTextRange;
-import org.jabref.model.openoffice.util.OOListUtil;
-import org.jabref.model.openoffice.util.OOVoidResult;
-
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
 import com.sun.star.beans.PropertyVetoException;
@@ -40,6 +7,22 @@ import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
+import org.jabref.logic.JabRefException;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.openoffice.backend.Backend52;
+import org.jabref.model.openoffice.CitationEntry;
+import org.jabref.model.openoffice.ootext.OOText;
+import org.jabref.model.openoffice.rangesort.*;
+import org.jabref.model.openoffice.style.*;
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
+import org.jabref.model.openoffice.uno.UnoCursor;
+import org.jabref.model.openoffice.uno.UnoTextRange;
+import org.jabref.model.openoffice.util.OOListUtil;
+import org.jabref.model.openoffice.util.OOVoidResult;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class OOFrontend {
 

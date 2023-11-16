@@ -1,13 +1,11 @@
 package org.jabref.gui.actions;
 
-import java.util.Map;
-
+import de.saxsys.mvvmfx.utils.commands.Command;
 import javafx.beans.binding.Bindings;
-
 import org.jabref.gui.Telemetry;
 import org.jabref.gui.keyboard.KeyBindingRepository;
 
-import de.saxsys.mvvmfx.utils.commands.Command;
+import java.util.Map;
 
 /**
  * Wrapper around one of our actions from {@link Action} to convert them to controlsfx {@link org.controlsfx.control.action.Action}.

@@ -1,13 +1,6 @@
 package org.jabref.cli;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-
 import javafx.collections.FXCollections;
-
 import org.jabref.cli.ArgumentProcessor.Mode;
 import org.jabref.logic.bibtex.BibEntryAssert;
 import org.jabref.logic.exporter.BibDatabaseWriter;
@@ -25,11 +18,16 @@ import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.ExportPreferences;
 import org.jabref.preferences.PreferencesService;
 import org.jabref.preferences.SearchPreferences;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Answers;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;

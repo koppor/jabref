@@ -1,7 +1,5 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Optional;
-
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.NoSuchElementException;
@@ -10,6 +8,8 @@ import com.sun.star.container.XEnumerationAccess;
 import com.sun.star.document.XRedlinesSupplier;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextDocument;
+
+import java.util.Optional;
 
 /**
  * Change tracking and Redlines

@@ -1,10 +1,10 @@
 package org.jabref.gui.icon;
 
-import java.io.InputStream;
-import java.net.URL;
-
 import org.kordamp.ikonli.AbstractIkonHandler;
 import org.kordamp.ikonli.Ikon;
+
+import java.io.InputStream;
+import java.net.URL;
 
 public class JabRefIkonHandler extends AbstractIkonHandler {
 

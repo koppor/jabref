@@ -1,17 +1,15 @@
 package org.jabref.gui.exporter;
 
+import com.airhacks.afterburner.views.ViewLoader;
+import jakarta.inject.Inject;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.util.BaseDialog;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.preferences.PreferencesService;
-
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
 
 public class CreateModifyExporterDialogView extends BaseDialog<ExporterViewModel> {
 

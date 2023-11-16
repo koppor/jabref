@@ -1,13 +1,13 @@
 package org.jabref.logic.layout.format;
 
+import org.jabref.logic.bst.util.BstNameFormatter;
+import org.jabref.logic.layout.LayoutFormatter;
+import org.jabref.model.entry.AuthorList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import org.jabref.logic.bst.util.BstNameFormatter;
-import org.jabref.logic.layout.LayoutFormatter;
-import org.jabref.model.entry.AuthorList;
 
 /**
  * This layout formatter uses the Bibtex name.format$ method and provides ultimate flexibility:

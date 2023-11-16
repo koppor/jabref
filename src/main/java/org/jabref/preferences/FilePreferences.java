@@ -1,22 +1,16 @@
 package org.jabref.preferences;
 
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableSet;
+import org.jabref.gui.externalfiletype.ExternalFileType;
+import org.jabref.model.strings.StringUtil;
+
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableSet;
-
-import org.jabref.gui.externalfiletype.ExternalFileType;
-import org.jabref.model.strings.StringUtil;
 
 /**
  *  Preferences for the linked files

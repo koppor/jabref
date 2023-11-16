@@ -1,8 +1,8 @@
 package org.jabref.model.groups;
 
-import java.util.Objects;
-
 import org.jabref.model.entry.field.Field;
+
+import java.util.Objects;
 
 /**
  * Matches entries based on a search phrase relative to the content in a specified field.

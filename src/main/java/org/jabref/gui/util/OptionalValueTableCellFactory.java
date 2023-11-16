@@ -1,10 +1,10 @@
 package org.jabref.gui.util;
 
-import java.util.Optional;
-import java.util.function.BiFunction;
-
 import javafx.scene.Node;
 import javafx.scene.control.TableCell;
+
+import java.util.Optional;
+import java.util.function.BiFunction;
 
 /**
  * Constructs a {@link TableCell} based on an optional value of the cell and a bunch of specified converter methods.

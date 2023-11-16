@@ -1,10 +1,10 @@
 package org.jabref.gui.mergeentries.newmergedialog.cell;
 
-import java.util.Objects;
-
 import org.jabref.gui.ClipBoardManager;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.preferences.PreferencesService;
+
+import java.util.Objects;
 
 public class CopyFieldValueCommand extends SimpleCommand {
     private final String fieldValue;

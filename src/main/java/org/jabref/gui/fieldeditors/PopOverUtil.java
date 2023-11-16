@@ -1,10 +1,8 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.Optional;
-
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
-
+import org.controlsfx.control.PopOver;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.fieldeditors.journalinfo.JournalInfoView;
 import org.jabref.gui.util.BackgroundTask;
@@ -13,7 +11,7 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 
-import org.controlsfx.control.PopOver;
+import java.util.Optional;
 
 public class PopOverUtil {
 

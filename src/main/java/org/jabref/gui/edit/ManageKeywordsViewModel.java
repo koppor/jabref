@@ -1,13 +1,10 @@
 package org.jabref.gui.edit;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.jabref.gui.undo.NamedCompound;
 import org.jabref.gui.undo.UndoableFieldChange;
 import org.jabref.logic.l10n.Localization;
@@ -17,7 +14,8 @@ import org.jabref.model.entry.Keyword;
 import org.jabref.model.entry.KeywordList;
 import org.jabref.preferences.BibEntryPreferences;
 
-import com.tobiasdiez.easybind.EasyBind;
+import java.util.List;
+import java.util.Optional;
 
 public class ManageKeywordsViewModel {
 

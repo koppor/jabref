@@ -1,11 +1,10 @@
 package org.jabref.gui.search;
 
-import java.util.List;
-
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-
 import org.junit.jupiter.api.Assertions;
+
+import java.util.List;
 
 public class TextFlowEqualityHelper {
 

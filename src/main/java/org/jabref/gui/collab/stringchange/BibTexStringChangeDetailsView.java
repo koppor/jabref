@@ -2,7 +2,6 @@ package org.jabref.gui.collab.stringchange;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-
 import org.jabref.gui.collab.DatabaseChangeDetailsView;
 import org.jabref.logic.l10n.Localization;
 

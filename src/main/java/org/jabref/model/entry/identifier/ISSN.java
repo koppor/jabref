@@ -1,13 +1,13 @@
 package org.jabref.model.entry.identifier;
 
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.StandardField;
+
 import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.StandardField;
 
 public class ISSN implements Identifier {
 

@@ -1,17 +1,9 @@
 package org.jabref.gui.maintable;
 
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.SeparatorMenuItem;
-
-import org.jabref.gui.ClipBoardManager;
-import org.jabref.gui.DialogService;
-import org.jabref.gui.LibraryTab;
-import org.jabref.gui.SendAsKindleEmailAction;
-import org.jabref.gui.SendAsStandardEmailAction;
-import org.jabref.gui.StateManager;
+import org.jabref.gui.*;
 import org.jabref.gui.actions.ActionFactory;
 import org.jabref.gui.actions.StandardActions;
 import org.jabref.gui.edit.CopyMoreAction;
@@ -33,6 +25,8 @@ import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.field.SpecialField;
 import org.jabref.preferences.PreferencesService;
 import org.jabref.preferences.PreviewPreferences;
+
+import javax.swing.undo.UndoManager;
 
 public class RightClickMenu {
 

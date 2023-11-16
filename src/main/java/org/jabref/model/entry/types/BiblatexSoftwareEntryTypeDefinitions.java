@@ -1,13 +1,13 @@
 package org.jabref.model.entry.types;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.jabref.model.entry.BibEntryType;
 import org.jabref.model.entry.BibEntryTypeBuilder;
 import org.jabref.model.entry.field.BiblatexSoftwareField;
 import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.entry.field.StandardField;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class BiblatexSoftwareEntryTypeDefinitions {
     private static final BibEntryType SOFTWARE = new BibEntryTypeBuilder()

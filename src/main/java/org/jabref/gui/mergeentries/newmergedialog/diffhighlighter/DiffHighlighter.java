@@ -1,12 +1,11 @@
 package org.jabref.gui.mergeentries.newmergedialog.diffhighlighter;
 
+import org.fxmisc.richtext.StyleClassedTextArea;
+import org.jabref.gui.mergeentries.newmergedialog.DiffMethod;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import org.jabref.gui.mergeentries.newmergedialog.DiffMethod;
-
-import org.fxmisc.richtext.StyleClassedTextArea;
 
 public abstract sealed class DiffHighlighter permits SplitDiffHighlighter, UnifiedDiffHighlighter {
     protected final StyleClassedTextArea sourceTextview;

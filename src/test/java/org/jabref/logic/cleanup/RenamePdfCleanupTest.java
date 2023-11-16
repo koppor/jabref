@@ -1,11 +1,5 @@
 package org.jabref.logic.cleanup;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Optional;
-
 import org.jabref.logic.bibtex.FileFieldWriter;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
@@ -14,10 +8,15 @@ import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.metadata.MetaData;
 import org.jabref.preferences.FilePreferences;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -48,7 +47,7 @@ class RenamePdfCleanupTest {
         when(filePreferences.shouldStoreFilesRelativeToBibFile())
                 .thenReturn(
                         true); // Set Biblocation as Primary Directory, otherwise the tmp folders won't be cleaned up
-                               // correctly
+        // correctly
         cleanup = new RenamePdfCleanup(false, context, filePreferences);
     }
 

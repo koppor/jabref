@@ -1,7 +1,7 @@
 package org.jabref.gui.commonfxcontrols;
 
-import java.util.Collection;
-
+import com.airhacks.afterburner.views.ViewLoader;
+import jakarta.inject.Inject;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.fxml.FXML;
@@ -10,7 +10,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyEvent;
-
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.util.ValueTableCellFactory;
 import org.jabref.logic.citationkeypattern.AbstractCitationKeyPattern;
@@ -19,8 +18,7 @@ import org.jabref.model.entry.BibEntryType;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.preferences.PreferencesService;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import java.util.Collection;
 
 public class CitationKeyPatternPanel extends TableView<CitationKeyPatternPanelItemModel> {
 

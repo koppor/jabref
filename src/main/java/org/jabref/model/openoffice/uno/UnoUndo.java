@@ -1,11 +1,11 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Optional;
-
 import com.sun.star.document.XUndoManager;
 import com.sun.star.document.XUndoManagerSupplier;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.util.InvalidStateException;
+
+import java.util.Optional;
 
 /**
  * Undo : group document changes into larger Undo actions.

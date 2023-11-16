@@ -1,10 +1,10 @@
 package org.jabref.gui.mergeentries.newmergedialog.fieldsmerger;
 
-import java.util.Objects;
-
 import org.jabref.model.entry.KeywordList;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.preferences.BibEntryPreferences;
+
+import java.util.Objects;
 
 /**
  * A merger for the {@link StandardField#KEYWORDS} field

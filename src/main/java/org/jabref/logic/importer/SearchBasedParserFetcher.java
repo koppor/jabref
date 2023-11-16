@@ -1,16 +1,15 @@
 package org.jabref.logic.importer;
 
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import org.jabref.logic.cleanup.Formatter;
+import org.jabref.model.entry.BibEntry;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
-
-import org.jabref.logic.cleanup.Formatter;
-import org.jabref.model.entry.BibEntry;
-
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 
 /**
  * Provides a convenient interface for search-based fetcher, which follows the usual three-step procedure:

@@ -1,11 +1,11 @@
 package org.jabref.model.entry.field;
 
+import org.jabref.model.strings.StringUtil;
+
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
-
-import org.jabref.model.strings.StringUtil;
 
 public class UnknownField implements Field {
     private String name;

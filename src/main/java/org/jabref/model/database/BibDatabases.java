@@ -1,10 +1,10 @@
 package org.jabref.model.database;
 
+import org.jabref.model.entry.BibEntry;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.jabref.model.entry.BibEntry;
 
 public class BibDatabases {
 

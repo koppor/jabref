@@ -1,12 +1,11 @@
 package org.jabref.logic.importer.fetcher.transformers;
 
-import java.util.Calendar;
-import java.util.Optional;
-
-import org.jabref.model.strings.StringUtil;
-
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+import org.jabref.model.strings.StringUtil;
+
+import java.util.Calendar;
+import java.util.Optional;
 
 public class CiteSeerQueryTransformer extends AbstractQueryTransformer {
 

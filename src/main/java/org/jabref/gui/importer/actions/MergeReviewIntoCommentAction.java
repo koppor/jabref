@@ -1,11 +1,11 @@
 package org.jabref.gui.importer.actions;
 
-import java.util.List;
-
 import org.jabref.gui.LibraryTab;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.migrations.MergeReviewIntoCommentMigration;
 import org.jabref.model.entry.BibEntry;
+
+import java.util.List;
 
 public class MergeReviewIntoCommentAction implements GUIPostOpenAction {
 

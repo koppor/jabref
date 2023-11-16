@@ -1,10 +1,6 @@
 package org.jabref.logic.util;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 public class UnknownFileType implements FileType {
 

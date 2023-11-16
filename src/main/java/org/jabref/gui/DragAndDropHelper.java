@@ -1,14 +1,13 @@
 package org.jabref.gui;
 
+import javafx.scene.input.Dragboard;
+import org.jabref.logic.util.io.FileUtil;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javafx.scene.input.Dragboard;
-
-import org.jabref.logic.util.io.FileUtil;
 
 public class DragAndDropHelper {
 

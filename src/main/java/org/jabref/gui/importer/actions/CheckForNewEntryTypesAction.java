@@ -1,8 +1,6 @@
 package org.jabref.gui.importer.actions;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.airhacks.afterburner.injection.Injector;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.Globals;
 import org.jabref.gui.LibraryTab;
@@ -11,7 +9,8 @@ import org.jabref.logic.importer.ParserResult;
 import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntryType;
 
-import com.airhacks.afterburner.injection.Injector;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This action checks whether any new custom entry types were loaded from this

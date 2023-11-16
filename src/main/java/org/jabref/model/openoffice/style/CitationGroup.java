@@ -1,13 +1,13 @@
 package org.jabref.model.openoffice.style;
 
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.openoffice.ootext.OOText;
+import org.jabref.model.openoffice.util.OOListUtil;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.openoffice.ootext.OOText;
-import org.jabref.model.openoffice.util.OOListUtil;
 
 /**
  * A CitationGroup describes a group of citations.

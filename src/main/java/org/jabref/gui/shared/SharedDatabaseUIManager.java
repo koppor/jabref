@@ -1,16 +1,10 @@
 package org.jabref.gui.shared;
 
-import java.sql.SQLException;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.swing.undo.UndoManager;
-
+import com.google.common.eventbus.Subscribe;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.LibraryTab;
@@ -23,11 +17,7 @@ import org.jabref.gui.undo.UndoableRemoveEntries;
 import org.jabref.gui.util.TaskExecutor;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.shared.DBMSConnection;
-import org.jabref.logic.shared.DBMSConnectionProperties;
-import org.jabref.logic.shared.DBMSSynchronizer;
-import org.jabref.logic.shared.DatabaseNotSupportedException;
-import org.jabref.logic.shared.DatabaseSynchronizer;
+import org.jabref.logic.shared.*;
 import org.jabref.logic.shared.event.ConnectionLostEvent;
 import org.jabref.logic.shared.event.SharedEntriesNotPresentEvent;
 import org.jabref.logic.shared.event.UpdateRefusedEvent;
@@ -40,7 +30,10 @@ import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
 
-import com.google.common.eventbus.Subscribe;
+import javax.swing.undo.UndoManager;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.Optional;
 
 public class SharedDatabaseUIManager {
 

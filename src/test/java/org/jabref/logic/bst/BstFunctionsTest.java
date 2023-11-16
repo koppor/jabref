@@ -1,26 +1,18 @@
 package org.jabref.logic.bst;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.jabref.logic.bst.util.BstCaseChangersTest;
-import org.jabref.logic.bst.util.BstNameFormatterTest;
-import org.jabref.logic.bst.util.BstPurifierTest;
-import org.jabref.logic.bst.util.BstTextPrefixerTest;
-import org.jabref.logic.bst.util.BstWidthCalculatorTest;
+import org.antlr.v4.runtime.RecognitionException;
+import org.jabref.logic.bst.util.*;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
-
-import org.antlr.v4.runtime.RecognitionException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * For additional tests see for

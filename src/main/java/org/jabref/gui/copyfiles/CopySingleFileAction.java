@@ -1,11 +1,6 @@
 package org.jabref.gui.copyfiles;
 
-import java.nio.file.Path;
-import java.util.Optional;
-import java.util.function.BiFunction;
-
 import javafx.beans.binding.Bindings;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.util.DirectoryDialogConfiguration;
@@ -15,6 +10,10 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.util.OptionalUtil;
 import org.jabref.preferences.FilePreferences;
+
+import java.nio.file.Path;
+import java.util.Optional;
+import java.util.function.BiFunction;
 
 public class CopySingleFileAction extends SimpleCommand {
 

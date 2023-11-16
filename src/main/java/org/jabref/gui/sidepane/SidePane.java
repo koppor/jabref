@@ -1,15 +1,9 @@
 package org.jabref.gui.sidepane;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.collections.ListChangeListener;
 import javafx.scene.layout.VBox;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTabContainer;
 import org.jabref.gui.StateManager;
@@ -19,6 +13,10 @@ import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
+
+import javax.swing.undo.UndoManager;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SidePane extends VBox {
     private final SidePaneViewModel viewModel;

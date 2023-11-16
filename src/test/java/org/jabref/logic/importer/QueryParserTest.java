@@ -1,7 +1,6 @@
 package org.jabref.logic.importer;
 
 import org.jabref.logic.importer.fetcher.ComplexSearchQuery;
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

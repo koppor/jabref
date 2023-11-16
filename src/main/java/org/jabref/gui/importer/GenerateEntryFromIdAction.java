@@ -1,7 +1,6 @@
 package org.jabref.gui.importer;
 
-import java.util.Optional;
-
+import org.controlsfx.control.PopOver;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
@@ -18,10 +17,10 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
-
-import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 public class GenerateEntryFromIdAction extends SimpleCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(GenerateEntryFromIdAction.class);

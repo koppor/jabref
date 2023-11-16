@@ -1,12 +1,13 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.Collection;
-
-import javax.swing.undo.UndoManager;
-
+import com.tobiasdiez.easybind.EasyObservableValue;
+import de.saxsys.mvvmfx.utils.validation.CompositeValidator;
+import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
+import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
+import de.saxsys.mvvmfx.utils.validation.Validator;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
+import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.autocompleter.SuggestionProvider;
 import org.jabref.gui.undo.UndoableFieldChange;
@@ -16,12 +17,8 @@ import org.jabref.logic.integrity.ValueChecker;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 
-import com.tobiasdiez.easybind.EasyObservableValue;
-import de.saxsys.mvvmfx.utils.validation.CompositeValidator;
-import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
-import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
-import de.saxsys.mvvmfx.utils.validation.Validator;
-import org.controlsfx.control.textfield.AutoCompletionBinding;
+import javax.swing.undo.UndoManager;
+import java.util.Collection;
 
 public class AbstractEditorViewModel extends AbstractViewModel {
     protected final Field field;

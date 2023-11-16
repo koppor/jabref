@@ -1,9 +1,9 @@
 package org.jabref.gui;
 
-import java.util.Optional;
-
 import org.jabref.logic.util.BuildInfo;
 import org.jabref.preferences.TelemetryPreferences;
+
+import java.util.Optional;
 
 public class Telemetry {
     private Telemetry() {}

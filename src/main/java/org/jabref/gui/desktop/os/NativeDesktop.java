@@ -1,12 +1,6 @@
 package org.jabref.gui.desktop.os;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
+import net.harawata.appdirs.AppDirsFactory;
 import org.jabref.cli.Launcher;
 import org.jabref.gui.DialogService;
 import org.jabref.logic.util.BuildInfo;
@@ -14,9 +8,14 @@ import org.jabref.logic.util.OS;
 import org.jabref.model.pdf.search.SearchFieldConstants;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.preferences.FilePreferences;
-
-import net.harawata.appdirs.AppDirsFactory;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * This class contains bundles OS specific implementations for file directories and file/application open handling methods.

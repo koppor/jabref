@@ -1,10 +1,10 @@
 package org.jabref.model.entry;
 
+import org.jabref.model.database.BibDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.jabref.model.database.BibDatabase;
 
 public class EntryLinkList {
 

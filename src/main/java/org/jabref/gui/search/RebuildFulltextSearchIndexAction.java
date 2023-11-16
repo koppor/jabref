@@ -1,7 +1,5 @@
 package org.jabref.gui.search;
 
-import java.io.IOException;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
@@ -12,9 +10,10 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.pdf.search.indexing.PdfIndexer;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.preferences.FilePreferences;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 

@@ -23,7 +23,7 @@ import java.util.Optional;
  */
 @SuppressWarnings(
         "unchecked") // We use some explicit casts of the form "(T) this". The constructor ensures that this cast is
-                     // valid.
+// valid.
 public abstract class ChainNode<T extends ChainNode<T>> {
 
     /**

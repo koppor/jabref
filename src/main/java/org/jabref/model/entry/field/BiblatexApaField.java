@@ -1,11 +1,11 @@
 package org.jabref.model.entry.field;
 
+import org.jabref.model.entry.types.BiblatexApaEntryType;
+
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
-
-import org.jabref.model.entry.types.BiblatexApaEntryType;
 
 public enum BiblatexApaField implements Field {
     AMENDMENT("amendment"),

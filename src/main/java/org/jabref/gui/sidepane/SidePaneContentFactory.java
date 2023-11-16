@@ -1,9 +1,6 @@
 package org.jabref.gui.sidepane;
 
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.Node;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTabContainer;
 import org.jabref.gui.StateManager;
@@ -15,6 +12,8 @@ import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
+
+import javax.swing.undo.UndoManager;
 
 public class SidePaneContentFactory {
     private final LibraryTabContainer tabContainer;

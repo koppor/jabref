@@ -1,50 +1,6 @@
 package org.jabref.logic.importer;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import org.jabref.logic.importer.fetcher.ACMPortalFetcher;
-import org.jabref.logic.importer.fetcher.ACS;
-import org.jabref.logic.importer.fetcher.ApsFetcher;
-import org.jabref.logic.importer.fetcher.ArXivFetcher;
-import org.jabref.logic.importer.fetcher.AstrophysicsDataSystem;
-import org.jabref.logic.importer.fetcher.BiodiversityLibrary;
-import org.jabref.logic.importer.fetcher.BvbFetcher;
-import org.jabref.logic.importer.fetcher.CiteSeer;
-import org.jabref.logic.importer.fetcher.CompositeSearchBasedFetcher;
-import org.jabref.logic.importer.fetcher.CrossRef;
-import org.jabref.logic.importer.fetcher.CustomizableKeyFetcher;
-import org.jabref.logic.importer.fetcher.DBLPFetcher;
-import org.jabref.logic.importer.fetcher.DOABFetcher;
-import org.jabref.logic.importer.fetcher.DOAJFetcher;
-import org.jabref.logic.importer.fetcher.DiVA;
-import org.jabref.logic.importer.fetcher.DoiFetcher;
-import org.jabref.logic.importer.fetcher.DoiResolution;
-import org.jabref.logic.importer.fetcher.GvkFetcher;
-import org.jabref.logic.importer.fetcher.IEEE;
-import org.jabref.logic.importer.fetcher.INSPIREFetcher;
-import org.jabref.logic.importer.fetcher.IacrEprintFetcher;
-import org.jabref.logic.importer.fetcher.IssnFetcher;
-import org.jabref.logic.importer.fetcher.LOBIDFetcher;
-import org.jabref.logic.importer.fetcher.LibraryOfCongress;
-import org.jabref.logic.importer.fetcher.MathSciNet;
-import org.jabref.logic.importer.fetcher.MedlineFetcher;
-import org.jabref.logic.importer.fetcher.Medra;
-import org.jabref.logic.importer.fetcher.OpenAccessDoi;
-import org.jabref.logic.importer.fetcher.ResearchGate;
-import org.jabref.logic.importer.fetcher.RfcFetcher;
-import org.jabref.logic.importer.fetcher.ScholarArchiveFetcher;
-import org.jabref.logic.importer.fetcher.ScienceDirect;
-import org.jabref.logic.importer.fetcher.SemanticScholar;
-import org.jabref.logic.importer.fetcher.SpringerFetcher;
-import org.jabref.logic.importer.fetcher.SpringerLink;
-import org.jabref.logic.importer.fetcher.TitleFetcher;
-import org.jabref.logic.importer.fetcher.ZbMATH;
+import org.jabref.logic.importer.fetcher.*;
 import org.jabref.logic.importer.fetcher.isbntobibtex.IsbnFetcher;
 import org.jabref.logic.importer.fileformat.PdfMergeMetadataImporter;
 import org.jabref.model.database.BibDatabaseContext;
@@ -54,10 +10,9 @@ import org.jabref.model.entry.identifier.DOI;
 import org.jabref.model.entry.identifier.Identifier;
 import org.jabref.preferences.FilePreferences;
 
-import static org.jabref.model.entry.field.StandardField.DOI;
-import static org.jabref.model.entry.field.StandardField.EPRINT;
-import static org.jabref.model.entry.field.StandardField.ISBN;
-import static org.jabref.model.entry.field.StandardField.ISSN;
+import java.util.*;
+
+import static org.jabref.model.entry.field.StandardField.*;
 
 public class WebFetchers {
 

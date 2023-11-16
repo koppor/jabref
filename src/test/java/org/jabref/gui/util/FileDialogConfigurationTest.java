@@ -1,17 +1,15 @@
 package org.jabref.gui.util;
 
-import java.nio.file.Path;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import javafx.stage.FileChooser;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.FileType;
 import org.jabref.logic.util.StandardFileType;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import java.nio.file.Path;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

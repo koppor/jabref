@@ -1,6 +1,17 @@
 package org.jabref.gui.desktop.os;
 
-import java.awt.Desktop;
+import org.jabref.architecture.AllowedToUseAwt;
+import org.jabref.cli.Launcher;
+import org.jabref.gui.DialogService;
+import org.jabref.gui.JabRefExecutorService;
+import org.jabref.gui.externalfiletype.ExternalFileType;
+import org.jabref.gui.externalfiletype.ExternalFileTypes;
+import org.jabref.gui.util.StreamGobbler;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.preferences.FilePreferences;
+import org.slf4j.LoggerFactory;
+
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -11,18 +22,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-
-import org.jabref.architecture.AllowedToUseAwt;
-import org.jabref.cli.Launcher;
-import org.jabref.gui.DialogService;
-import org.jabref.gui.JabRefExecutorService;
-import org.jabref.gui.externalfiletype.ExternalFileType;
-import org.jabref.gui.externalfiletype.ExternalFileTypes;
-import org.jabref.gui.util.StreamGobbler;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.preferences.FilePreferences;
-
-import org.slf4j.LoggerFactory;
 
 /**
  * This class contains Linux specific implementations for file directories and file/application open handling methods <br>

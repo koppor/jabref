@@ -1,10 +1,10 @@
 package org.jabref.logic.formatter.casechanger;
 
-import java.util.stream.Collectors;
-
 import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.stream.Collectors;
 
 public class TitleCaseFormatter extends Formatter {
 

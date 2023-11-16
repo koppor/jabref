@@ -1,17 +1,15 @@
 package org.jabref.gui.maintable;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javafx.beans.InvalidationListener;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-
 import org.jabref.gui.maintable.columns.MainTableColumn;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Keep track of changes made to the columns (reordering, resorting, resizing).

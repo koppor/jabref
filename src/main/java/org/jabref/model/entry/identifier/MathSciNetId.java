@@ -1,13 +1,13 @@
 package org.jabref.model.entry.identifier;
 
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.strings.StringUtil;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.strings.StringUtil;
 
 /**
  * Article identifier for MathSciNet (also sometimes called "MRNumber")

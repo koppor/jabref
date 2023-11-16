@@ -1,7 +1,6 @@
 package org.jabref.gui.collab.entrychange;
 
 import javafx.scene.control.TabPane;
-
 import org.jabref.gui.collab.DatabaseChangeDetailsView;
 import org.jabref.gui.preview.PreviewViewer;
 import org.jabref.model.database.BibDatabaseContext;

@@ -1,8 +1,8 @@
 package org.jabref.logic.bibtex.comparator;
 
-import java.util.Comparator;
-
 import org.jabref.model.entry.BibEntry;
+
+import java.util.Comparator;
 
 /**
  * Comparator for sorting BibEntry objects based on their ID. This

@@ -1,16 +1,15 @@
 package org.jabref.logic.shared.prefs;
 
+import org.jabref.logic.shared.DatabaseConnectionProperties;
+import org.jabref.logic.shared.security.Password;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
-import org.jabref.logic.shared.DatabaseConnectionProperties;
-import org.jabref.logic.shared.security.Password;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SharedDatabasePreferences {
 

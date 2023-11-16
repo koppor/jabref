@@ -1,11 +1,10 @@
 package org.jabref.logic.shared;
 
-import java.sql.SQLException;
-
 import org.jabref.testutils.category.DatabaseTest;
-
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

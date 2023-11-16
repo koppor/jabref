@@ -1,16 +1,12 @@
 package org.jabref.model.entry;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.WeakHashMap;
+import org.jabref.architecture.AllowedToUseLogic;
+import org.jabref.logic.importer.AuthorListParser;
+
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import org.jabref.architecture.AllowedToUseLogic;
-import org.jabref.logic.importer.AuthorListParser;
 
 /**
  * This is an immutable class representing information of either <CODE>author</CODE> or <CODE>editor</CODE> field in bibtex record.

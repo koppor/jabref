@@ -1,22 +1,18 @@
 package org.jabref.logic.bibtex.comparator;
 
+import org.jabref.model.entry.AuthorList;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.Month;
+import org.jabref.model.entry.field.*;
+import org.jabref.model.metadata.SaveOrder;
+import org.jabref.model.strings.StringUtil;
+
 import java.text.Collator;
 import java.text.ParseException;
 import java.text.RuleBasedCollator;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.Optional;
-
-import org.jabref.model.entry.AuthorList;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.Month;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.FieldProperty;
-import org.jabref.model.entry.field.InternalField;
-import org.jabref.model.entry.field.OrFields;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.metadata.SaveOrder;
-import org.jabref.model.strings.StringUtil;
 
 /**
  * A comparator for BibEntry fields

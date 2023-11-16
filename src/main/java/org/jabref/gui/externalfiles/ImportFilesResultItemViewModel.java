@@ -1,15 +1,14 @@
 package org.jabref.gui.externalfiles;
 
-import java.nio.file.Path;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
-
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
+
+import java.nio.file.Path;
 
 public class ImportFilesResultItemViewModel {
 

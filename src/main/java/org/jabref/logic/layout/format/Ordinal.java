@@ -1,9 +1,9 @@
 package org.jabref.logic.layout.format;
 
+import org.jabref.logic.layout.LayoutFormatter;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.logic.layout.LayoutFormatter;
 
 /**
  * Converts number to ordinal

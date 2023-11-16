@@ -1,7 +1,7 @@
 package org.jabref.gui.sidepane;
 
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.scene.control.Button;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.groups.GroupModeViewModel;
@@ -9,8 +9,6 @@ import org.jabref.gui.groups.GroupViewMode;
 import org.jabref.gui.groups.GroupsPreferences;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.logic.l10n.Localization;
-
-import com.tobiasdiez.easybind.EasyBind;
 
 public class GroupsSidePaneComponent extends SidePaneComponent {
     private final GroupsPreferences groupsPreferences;

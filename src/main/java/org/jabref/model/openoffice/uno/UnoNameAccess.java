@@ -1,11 +1,11 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Optional;
-
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextContent;
+
+import java.util.Optional;
 
 public class UnoNameAccess {
 

@@ -1,12 +1,11 @@
 package org.jabref.logic.util;
 
-import java.net.URISyntaxException;
-import java.util.Optional;
-
+import org.apache.http.client.utils.URIBuilder;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 
-import org.apache.http.client.utils.URIBuilder;
+import java.net.URISyntaxException;
+import java.util.Optional;
 
 public class ExternalLinkCreator {
     private static final String SHORTSCIENCE_SEARCH_URL = "https://www.shortscience.org/internalsearch";

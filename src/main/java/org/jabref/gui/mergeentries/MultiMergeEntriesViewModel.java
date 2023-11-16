@@ -1,24 +1,16 @@
 package org.jabref.gui.mergeentries;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ButtonType;
-
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.util.BackgroundTask;
 import org.jabref.gui.util.TaskExecutor;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class MultiMergeEntriesViewModel extends AbstractViewModel {
 

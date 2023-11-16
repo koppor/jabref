@@ -1,21 +1,7 @@
 package org.jabref.logic.cleanup;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.logic.bibtex.FileFieldWriter;
-import org.jabref.logic.formatter.bibtexfields.HtmlToLatexFormatter;
-import org.jabref.logic.formatter.bibtexfields.LatexCleanupFormatter;
-import org.jabref.logic.formatter.bibtexfields.NormalizeDateFormatter;
-import org.jabref.logic.formatter.bibtexfields.NormalizeMonthFormatter;
-import org.jabref.logic.formatter.bibtexfields.NormalizePagesFormatter;
-import org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter;
+import org.jabref.logic.formatter.bibtexfields.*;
 import org.jabref.logic.formatter.casechanger.ProtectTermsFormatter;
 import org.jabref.logic.preferences.TimestampPreferences;
 import org.jabref.logic.protectedterms.ProtectedTermsLoader;
@@ -30,15 +16,17 @@ import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.metadata.MetaData;
 import org.jabref.preferences.CleanupPreferences;
 import org.jabref.preferences.FilePreferences;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Answers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

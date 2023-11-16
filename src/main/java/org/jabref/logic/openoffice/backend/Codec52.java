@@ -1,15 +1,11 @@
 package org.jabref.logic.openoffice.backend;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import org.jabref.model.openoffice.style.CitationType;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.jabref.model.openoffice.style.CitationType;
 
 /**
  * How and what is encoded in reference mark names under JabRef 5.2.

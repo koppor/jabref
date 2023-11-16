@@ -1,11 +1,10 @@
 package org.jabref.logic.formatter.bibtexfields;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jabref.architecture.ApacheCommonsLang3Allowed;
 import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.layout.LayoutFormatter;
-
-import org.apache.commons.lang3.StringEscapeUtils;
 
 @ApacheCommonsLang3Allowed("There is no equivalent in Google's Guava")
 public class HtmlToUnicodeFormatter extends Formatter implements LayoutFormatter {

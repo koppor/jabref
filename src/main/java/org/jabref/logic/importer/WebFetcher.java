@@ -1,10 +1,10 @@
 package org.jabref.logic.importer;
 
-import java.net.URL;
-import java.util.Optional;
-
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.net.URLDownload;
+
+import java.net.URL;
+import java.util.Optional;
 
 /**
  * Searches web resources for bibliographic information.

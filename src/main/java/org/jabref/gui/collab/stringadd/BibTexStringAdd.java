@@ -8,7 +8,6 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.database.KeyCollisionException;
 import org.jabref.model.entry.BibtexString;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,8 +1,8 @@
 package org.jabref.logic.citationkeypattern;
 
-import java.util.List;
-
 import org.jabref.model.entry.types.EntryType;
+
+import java.util.List;
 
 public class GlobalCitationKeyPattern extends AbstractCitationKeyPattern {
 

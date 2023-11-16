@@ -1,12 +1,11 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.nio.file.Path;
-import java.util.Arrays;
-
 import org.jabref.logic.importer.Importer;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

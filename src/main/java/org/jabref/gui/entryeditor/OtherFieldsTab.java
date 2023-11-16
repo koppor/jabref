@@ -1,17 +1,6 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.control.Tooltip;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.autocompleter.SuggestionProviders;
@@ -26,12 +15,12 @@ import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryType;
 import org.jabref.model.entry.BibEntryTypesManager;
-import org.jabref.model.entry.field.BibField;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.InternalField;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.field.UserSpecificCommentField;
+import org.jabref.model.entry.field.*;
 import org.jabref.preferences.PreferencesService;
+
+import javax.swing.undo.UndoManager;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class OtherFieldsTab extends FieldsEditorTab {
 

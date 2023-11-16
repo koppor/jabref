@@ -1,25 +1,15 @@
 package org.jabref.gui.importer;
 
-import org.jabref.gui.DialogService;
-import org.jabref.gui.EntryTypeView;
-import org.jabref.gui.JabRefFrame;
-import org.jabref.gui.LibraryTab;
-import org.jabref.gui.StateManager;
+import org.jabref.gui.*;
 import org.jabref.gui.util.OptionalObjectProperty;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.preferences.PreferencesService;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class NewEntryActionTest {
 

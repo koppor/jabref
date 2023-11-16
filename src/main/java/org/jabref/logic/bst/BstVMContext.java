@@ -1,14 +1,9 @@
 package org.jabref.logic.bst;
 
-import java.nio.file.Path;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.jabref.model.database.BibDatabase;
+
+import java.nio.file.Path;
+import java.util.*;
 
 public record BstVMContext(
         List<BstEntry> entries,

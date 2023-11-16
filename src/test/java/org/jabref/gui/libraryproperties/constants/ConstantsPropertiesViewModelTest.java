@@ -1,18 +1,16 @@
 package org.jabref.gui.libraryproperties.constants;
 
-import java.util.List;
-
 import javafx.beans.property.StringProperty;
-
 import org.jabref.gui.DialogService;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibtexString;
 import org.jabref.preferences.FilePreferences;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;

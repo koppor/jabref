@@ -1,13 +1,9 @@
 package org.jabref.gui.fieldeditors.contextmenu;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextInputControl;
-
 import org.jabref.gui.Globals;
 import org.jabref.gui.actions.Action;
 import org.jabref.gui.actions.ActionFactory;
@@ -19,6 +15,9 @@ import org.jabref.logic.formatter.casechanger.ProtectTermsFormatter;
 import org.jabref.logic.formatter.casechanger.UnprotectTermsFormatter;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.protectedterms.ProtectedTermsList;
+
+import java.util.Objects;
+import java.util.Optional;
 
 class ProtectedTermsMenu extends Menu {
 

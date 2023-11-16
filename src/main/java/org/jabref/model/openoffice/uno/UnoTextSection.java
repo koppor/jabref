@@ -1,18 +1,14 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Optional;
-
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.container.XNamed;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XTextContent;
-import com.sun.star.text.XTextDocument;
-import com.sun.star.text.XTextRange;
-import com.sun.star.text.XTextSection;
-import com.sun.star.text.XTextSectionsSupplier;
+import com.sun.star.text.*;
 import com.sun.star.uno.Any;
+
+import java.util.Optional;
 
 public class UnoTextSection {
 

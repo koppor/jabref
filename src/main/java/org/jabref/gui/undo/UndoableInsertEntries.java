@@ -1,15 +1,14 @@
 package org.jabref.gui.undo;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.strings.StringUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class represents the removal of entries. The constructor needs

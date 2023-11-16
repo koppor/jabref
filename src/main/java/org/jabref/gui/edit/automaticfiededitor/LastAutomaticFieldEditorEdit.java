@@ -1,10 +1,10 @@
 package org.jabref.gui.edit.automaticfiededitor;
 
+import org.jabref.gui.undo.NamedCompound;
+
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
-
-import org.jabref.gui.undo.NamedCompound;
 
 public class LastAutomaticFieldEditorEdit extends AbstractUndoableEdit {
     private final Integer affectedEntries;

@@ -1,9 +1,9 @@
 package org.jabref.logic.preview;
 
-import java.util.Locale;
-
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
+
+import java.util.Locale;
 
 /**
  * Used for displaying a rendered entry in the UI. Due to historical reasons, "rendering" is called "layout".

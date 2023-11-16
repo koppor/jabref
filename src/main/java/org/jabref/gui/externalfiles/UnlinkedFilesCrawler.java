@@ -1,5 +1,14 @@
 package org.jabref.gui.externalfiles;
 
+import javafx.scene.control.CheckBoxTreeItem;
+import org.jabref.gui.util.BackgroundTask;
+import org.jabref.gui.util.FileNodeViewModel;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.preferences.FilePreferences;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream.Filter;
@@ -11,17 +20,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import javafx.scene.control.CheckBoxTreeItem;
-
-import org.jabref.gui.util.BackgroundTask;
-import org.jabref.gui.util.FileNodeViewModel;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.preferences.FilePreferences;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Util class for searching files on the file system which are not linked to a provided {@link BibDatabase}.

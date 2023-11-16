@@ -1,12 +1,10 @@
 package org.jabref.gui.keyboard;
 
 import javafx.scene.input.KeyEvent;
-
-import org.jabref.logic.util.strings.StringManipulator;
-import org.jabref.model.util.ResultingStringState;
-
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.NavigationActions;
+import org.jabref.logic.util.strings.StringManipulator;
+import org.jabref.model.util.ResultingStringState;
 
 public class CodeAreaKeyBindings {
 

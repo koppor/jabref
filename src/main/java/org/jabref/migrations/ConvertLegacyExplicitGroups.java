@@ -1,13 +1,13 @@
 package org.jabref.migrations;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.groups.ExplicitGroup;
 import org.jabref.model.groups.GroupTreeNode;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Converts legacy explicit groups, where the group contained a list of assigned entries, to the new format,

@@ -1,12 +1,12 @@
 package org.jabref.gui.collab;
 
-import java.util.Optional;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.collab.entrychange.EntryChange;
 import org.jabref.gui.collab.entrychange.EntryChangeResolver;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.preferences.PreferencesService;
+
+import java.util.Optional;
 
 public class DatabaseChangeResolverFactory {
     private final DialogService dialogService;

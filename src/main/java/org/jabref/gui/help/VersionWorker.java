@@ -1,11 +1,5 @@
 package org.jabref.gui.help;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.util.BackgroundTask;
 import org.jabref.gui.util.TaskExecutor;
@@ -14,9 +8,14 @@ import org.jabref.logic.util.Version;
 import org.jabref.preferences.FilePreferences;
 import org.jabref.preferences.InternalPreferences;
 import org.jabref.preferences.PreferencesService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This worker checks if there is a new version of JabRef available. If there is it will display a dialog to the user

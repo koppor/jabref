@@ -1,5 +1,8 @@
 package org.jabref.logic.util.io;
 
+import org.jabref.gui.DialogService;
+import org.jabref.logic.l10n.Localization;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -7,9 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.gui.DialogService;
-import org.jabref.logic.l10n.Localization;
 
 public class FileNameUniqueness {
     private static final Pattern DUPLICATE_MARK_PATTERN = Pattern.compile("(.*) \\(\\d+\\)");

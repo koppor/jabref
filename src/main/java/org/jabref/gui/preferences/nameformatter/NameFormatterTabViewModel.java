@@ -1,17 +1,16 @@
 package org.jabref.gui.preferences.nameformatter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-
 import org.jabref.gui.preferences.PreferenceTabViewModel;
 import org.jabref.logic.layout.format.NameFormatterPreferences;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NameFormatterTabViewModel implements PreferenceTabViewModel {
 

@@ -1,5 +1,13 @@
 package org.jabref.logic.shared;
 
+import oracle.jdbc.OracleConnection;
+import oracle.jdbc.OracleStatement;
+import oracle.jdbc.dcn.DatabaseChangeRegistration;
+import org.jabref.logic.shared.listener.OracleNotificationListener;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.metadata.MetaData;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,15 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
-
-import org.jabref.logic.shared.listener.OracleNotificationListener;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.metadata.MetaData;
-
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleStatement;
-import oracle.jdbc.dcn.DatabaseChangeRegistration;
 
 /**
  * Processes all incoming or outgoing bib data to Oracle database and manages its structure.

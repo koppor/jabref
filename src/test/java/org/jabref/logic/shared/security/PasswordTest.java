@@ -1,9 +1,9 @@
 package org.jabref.logic.shared.security;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

@@ -1,5 +1,17 @@
 package org.jabref.gui.copyfiles;
 
+import javafx.concurrent.Task;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.util.OS;
+import org.jabref.logic.util.io.FileUtil;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.LinkedFile;
+import org.jabref.model.util.OptionalUtil;
+import org.jabref.preferences.PreferencesService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -11,20 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
-
-import javafx.concurrent.Task;
-
-import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.util.OS;
-import org.jabref.logic.util.io.FileUtil;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.LinkedFile;
-import org.jabref.model.util.OptionalUtil;
-import org.jabref.preferences.PreferencesService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CopyFilesTask extends Task<List<CopyFilesResultItemViewModel>> {
 

@@ -1,13 +1,13 @@
 package org.jabref.gui.edit.automaticfiededitor;
 
-import java.util.List;
-
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.undo.NamedCompound;
 import org.jabref.gui.undo.UndoableFieldChange;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.List;
 
 public class MoveFieldValueAction extends SimpleCommand {
     private final Field fromField;

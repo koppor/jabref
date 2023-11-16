@@ -1,49 +1,27 @@
 package org.jabref.model.openoffice.ootext;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.sun.star.awt.FontSlant;
+import com.sun.star.awt.FontStrikeout;
+import com.sun.star.awt.FontUnderline;
+import com.sun.star.awt.FontWeight;
+import com.sun.star.beans.*;
+import com.sun.star.lang.Locale;
+import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.style.CaseMap;
+import com.sun.star.text.*;
 import org.jabref.architecture.AllowedToUseAwt;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.UnoCast;
 import org.jabref.model.openoffice.uno.UnoCrossRef;
 import org.jabref.model.openoffice.util.OOPair;
 import org.jabref.model.strings.StringUtil;
-
-import com.sun.star.awt.FontSlant;
-import com.sun.star.awt.FontStrikeout;
-import com.sun.star.awt.FontUnderline;
-import com.sun.star.awt.FontWeight;
-import com.sun.star.beans.Property;
-import com.sun.star.beans.PropertyAttribute;
-import com.sun.star.beans.PropertyState;
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.beans.XMultiPropertySet;
-import com.sun.star.beans.XMultiPropertyStates;
-import com.sun.star.beans.XPropertySet;
-import com.sun.star.beans.XPropertySetInfo;
-import com.sun.star.beans.XPropertyState;
-import com.sun.star.lang.Locale;
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.style.CaseMap;
-import com.sun.star.text.ControlCharacter;
-import com.sun.star.text.XParagraphCursor;
-import com.sun.star.text.XText;
-import com.sun.star.text.XTextCursor;
-import com.sun.star.text.XTextDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Interpret OOText into an OpenOffice or LibreOffice writer document.

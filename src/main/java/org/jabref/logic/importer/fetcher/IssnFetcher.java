@@ -1,15 +1,15 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.logic.importer.EntryBasedFetcher;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.IdBasedFetcher;
 import org.jabref.logic.journals.JournalInformation;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Fetcher to generate the BibTex entry from an ISSN.

@@ -1,13 +1,12 @@
 package org.jabref.model.texparser;
 
+import com.google.common.collect.Multimap;
+import org.jabref.model.entry.BibEntry;
+
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import org.jabref.model.entry.BibEntry;
-
-import com.google.common.collect.Multimap;
 
 public class LatexBibEntriesResolverResult {
 

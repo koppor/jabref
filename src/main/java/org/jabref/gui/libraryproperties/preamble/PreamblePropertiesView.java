@@ -1,16 +1,14 @@
 package org.jabref.gui.libraryproperties.preamble;
 
-import javax.swing.undo.UndoManager;
-
+import com.airhacks.afterburner.views.ViewLoader;
+import jakarta.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
-
 import org.jabref.gui.libraryproperties.AbstractPropertiesTabView;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import javax.swing.undo.UndoManager;
 
 public class PreamblePropertiesView extends AbstractPropertiesTabView<PreamblePropertiesViewModel> {
     @FXML

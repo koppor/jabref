@@ -1,9 +1,9 @@
 package org.jabref.logic.bibtex.comparator;
 
-import java.util.Comparator;
-
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
+
+import java.util.Comparator;
 
 /**
  * Compares Bibtex entries based on their 'crossref' fields. Entries including

@@ -1,13 +1,12 @@
 package org.jabref.gui.entryeditor.fileannotationtab;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
 import org.jabref.model.pdf.FileAnnotation;
 import org.jabref.model.pdf.FileAnnotationType;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

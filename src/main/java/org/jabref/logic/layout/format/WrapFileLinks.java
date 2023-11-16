@@ -1,16 +1,12 @@
 package org.jabref.logic.layout.format;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jabref.logic.importer.util.FileFieldParser;
 import org.jabref.logic.layout.AbstractParamLayoutFormatter;
 import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.entry.LinkedFile;
+
+import java.nio.file.Path;
+import java.util.*;
 
 /**
  * This formatter iterates over all file links, or all file links of a specified

@@ -1,9 +1,6 @@
 package org.jabref.logic.importer.fetcher.isbntobibtex;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-
+import org.apache.http.client.utils.URIBuilder;
 import org.jabref.logic.cleanup.FieldFormatterCleanup;
 import org.jabref.logic.formatter.bibtexfields.NormalizeNamesFormatter;
 import org.jabref.logic.formatter.bibtexfields.NormalizePagesFormatter;
@@ -13,7 +10,9 @@ import org.jabref.logic.importer.fetcher.AbstractIsbnFetcher;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 
-import org.apache.http.client.utils.URIBuilder;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * Fetcher for ISBN using <a href="https://www.ebook.de">https://www.ebook.de</a>.

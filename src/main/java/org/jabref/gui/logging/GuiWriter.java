@@ -1,15 +1,14 @@
 package org.jabref.gui.logging;
 
+import org.jabref.logic.logging.LogMessages;
+import org.tinylog.core.LogEntry;
+import org.tinylog.core.LogEntryValue;
+import org.tinylog.writers.AbstractFormatPatternWriter;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
-
-import org.jabref.logic.logging.LogMessages;
-
-import org.tinylog.core.LogEntry;
-import org.tinylog.core.LogEntryValue;
-import org.tinylog.writers.AbstractFormatPatternWriter;
 
 public class GuiWriter extends AbstractFormatPatternWriter {
 

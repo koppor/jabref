@@ -1,12 +1,7 @@
 package org.jabref.gui.menus;
 
-import java.util.List;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
-
 import org.jabref.gui.EntryTypeView;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.undo.NamedCompound;
@@ -14,6 +9,9 @@ import org.jabref.gui.undo.UndoableChangeType;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.types.EntryType;
+
+import javax.swing.undo.UndoManager;
+import java.util.List;
 
 public class ChangeEntryTypeAction extends SimpleCommand {
 

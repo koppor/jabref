@@ -1,11 +1,11 @@
 package org.jabref.model.entry;
 
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.StandardField;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.StandardField;
 
 /**
  * Converts Entry models from BibTex to biblatex and back.

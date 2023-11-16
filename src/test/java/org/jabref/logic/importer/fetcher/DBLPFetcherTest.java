@@ -1,8 +1,5 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.model.entry.BibEntry;
@@ -10,10 +7,12 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -58,9 +57,8 @@ public class DBLPFetcherTest {
 
     @Test
     public void findSingleEntryUsingComplexOperators() throws FetcherException {
-        String query =
-                "geiger harrer betsy$ softw.trends"; // -wirtz Negative operators do no longer work,  see issue
-                                                     // https://github.com/JabRef/jabref/issues/2890
+        String query = "geiger harrer betsy$ softw.trends"; // -wirtz Negative operators do no longer work,  see issue
+        // https://github.com/JabRef/jabref/issues/2890
         List<BibEntry> result = dblpFetcher.performSearch(query);
 
         assertEquals(Collections.singletonList(entry), result);

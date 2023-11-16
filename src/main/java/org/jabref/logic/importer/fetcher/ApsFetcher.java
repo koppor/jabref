@@ -1,20 +1,19 @@
 package org.jabref.logic.importer.fetcher;
 
+import kong.unirest.Unirest;
+import org.jabref.logic.importer.FulltextFetcher;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.identifier.DOI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.jabref.logic.importer.FulltextFetcher;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.identifier.DOI;
-
-import kong.unirest.Unirest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * FulltextFetcher implementation that attempts to find a PDF URL at APS. Also see the <a

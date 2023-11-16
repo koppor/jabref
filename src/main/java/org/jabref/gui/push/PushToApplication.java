@@ -1,12 +1,12 @@
 package org.jabref.gui.push;
 
-import java.util.List;
-
 import org.jabref.gui.actions.Action;
 import org.jabref.gui.icon.JabRefIcon;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.preferences.PushToApplicationPreferences;
+
+import java.util.List;
 
 /**
  * Class that defines interaction with an external application in the form of "pushing" selected entries to it.

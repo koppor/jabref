@@ -1,11 +1,5 @@
 package org.jabref.gui.fieldeditors;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Optional;
-
-import javax.xml.transform.TransformerException;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.util.BackgroundTask;
@@ -21,9 +15,13 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.preferences.FilePreferences;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * Writes XMP metadata to the selected file according to the linking entry

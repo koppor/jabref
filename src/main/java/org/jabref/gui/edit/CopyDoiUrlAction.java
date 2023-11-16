@@ -1,15 +1,14 @@
 package org.jabref.gui.edit;
 
-import java.util.Optional;
-
 import javafx.scene.control.TextArea;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.Globals;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.actions.StandardActions;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.identifier.DOI;
+
+import java.util.Optional;
 
 /**
  * Copies the doi url to the clipboard

@@ -1,19 +1,18 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
 import org.jabref.logic.importer.AuthorListParser;
 import org.jabref.logic.importer.ParseException;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.strings.StringUtil;
 
-import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONObject;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class CiteSeerParser {
 

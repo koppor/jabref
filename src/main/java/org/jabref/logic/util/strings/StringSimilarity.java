@@ -1,8 +1,8 @@
 package org.jabref.logic.util.strings;
 
-import java.util.Locale;
-
 import info.debatty.java.stringsimilarity.Levenshtein;
+
+import java.util.Locale;
 
 public class StringSimilarity {
     private final Levenshtein METRIC_DISTANCE = new Levenshtein();

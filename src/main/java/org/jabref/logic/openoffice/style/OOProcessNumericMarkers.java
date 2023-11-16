@@ -1,13 +1,13 @@
 package org.jabref.logic.openoffice.style;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.style.CitationGroup;
 import org.jabref.model.openoffice.style.CitationGroups;
 import org.jabref.model.openoffice.style.CitationMarkerNumericEntry;
 import org.jabref.model.openoffice.util.OOListUtil;
+
+import java.util.List;
+import java.util.Optional;
 
 class OOProcessNumericMarkers {
 

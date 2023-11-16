@@ -1,14 +1,14 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import com.sun.star.frame.XController;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.view.XSelectionSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Selection in the document.

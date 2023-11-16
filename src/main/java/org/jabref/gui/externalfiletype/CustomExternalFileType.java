@@ -1,9 +1,9 @@
 package org.jabref.gui.externalfiletype;
 
-import java.util.Objects;
-
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
+
+import java.util.Objects;
 
 /**
  * This class defines a type of external files that can be linked to from JabRef.

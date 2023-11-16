@@ -1,10 +1,9 @@
 package org.jabref.gui;
 
-import java.util.List;
-
 import javafx.scene.input.DataFormat;
-
 import org.jabref.logic.preview.PreviewLayout;
+
+import java.util.List;
 
 /**
  * Contains all the different {@link DataFormat}s that may occur in JabRef.

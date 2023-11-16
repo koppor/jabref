@@ -1,8 +1,8 @@
 package org.jabref.model.entry.field;
 
-import java.util.Optional;
-
 import org.jabref.model.entry.Keyword;
+
+import java.util.Optional;
 
 public enum SpecialFieldValue {
     PRINTED("printed"),

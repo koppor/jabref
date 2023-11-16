@@ -1,8 +1,5 @@
 package org.jabref.gui.push;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -10,13 +7,15 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.util.FileDialogConfiguration;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.preferences.FilePreferences;
 import org.jabref.preferences.PushToApplicationPreferences;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PushToApplicationSettings {
 

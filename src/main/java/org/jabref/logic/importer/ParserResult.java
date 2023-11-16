@@ -1,21 +1,14 @@
 package org.jabref.logic.importer;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.database.BibDatabases;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryType;
 import org.jabref.model.metadata.MetaData;
+
+import java.nio.file.Path;
+import java.util.*;
 
 public class ParserResult {
     private final Set<BibEntryType> entryTypes;

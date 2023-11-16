@@ -1,17 +1,17 @@
 package org.jabref.gui.externalfiles;
 
+import org.jabref.logic.util.io.DatabaseFileLookup;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.preferences.FilePreferences;
+
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.DirectoryStream.Filter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.jabref.logic.util.io.DatabaseFileLookup;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.preferences.FilePreferences;
 
 /**
  * {@link FileFilter} implementation, that allows only files which are not linked in any of the {@link BibEntry}s of the

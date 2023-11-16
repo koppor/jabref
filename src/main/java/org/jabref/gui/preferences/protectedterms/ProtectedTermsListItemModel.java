@@ -1,12 +1,6 @@
 package org.jabref.gui.preferences.protectedterms;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
-
+import javafx.beans.property.*;
 import org.jabref.logic.protectedterms.ProtectedTermsList;
 
 public class ProtectedTermsListItemModel {

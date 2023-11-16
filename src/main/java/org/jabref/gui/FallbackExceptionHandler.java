@@ -1,8 +1,7 @@
 package org.jabref.gui;
 
-import org.jabref.gui.util.DefaultTaskExecutor;
-
 import com.airhacks.afterburner.injection.Injector;
+import org.jabref.gui.util.DefaultTaskExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

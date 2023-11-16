@@ -1,9 +1,9 @@
 package org.jabref.model.entry.field;
 
+import org.jabref.model.strings.StringUtil;
+
 import java.util.Optional;
 import java.util.Set;
-
-import org.jabref.model.strings.StringUtil;
 
 public interface Field {
 

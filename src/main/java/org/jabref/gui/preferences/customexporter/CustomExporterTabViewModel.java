@@ -1,19 +1,18 @@
 package org.jabref.gui.preferences.customexporter;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.exporter.CreateModifyExporterDialogView;
 import org.jabref.gui.exporter.ExporterViewModel;
 import org.jabref.gui.preferences.PreferenceTabViewModel;
 import org.jabref.logic.exporter.TemplateExporter;
 import org.jabref.preferences.PreferencesService;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CustomExporterTabViewModel implements PreferenceTabViewModel {
 

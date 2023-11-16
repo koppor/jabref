@@ -1,5 +1,6 @@
 package org.jabref.gui.fieldeditors;
 
+import com.sun.javafx.scene.control.Properties;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -11,8 +12,6 @@ import javafx.scene.control.skin.TextFieldSkin;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.stage.Screen;
 import javafx.stage.Window;
-
-import com.sun.javafx.scene.control.Properties;
 
 /**
  * This class contains some code taken from {@link com.sun.javafx.scene.control.behavior.TextInputControlBehavior},

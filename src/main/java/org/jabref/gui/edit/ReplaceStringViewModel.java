@@ -1,13 +1,9 @@
 package org.jabref.gui.edit;
 
-import java.util.Objects;
-import java.util.Set;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.undo.NamedCompound;
@@ -16,6 +12,9 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
+
+import java.util.Objects;
+import java.util.Set;
 
 public class ReplaceStringViewModel extends AbstractViewModel {
     private boolean allFieldReplace;

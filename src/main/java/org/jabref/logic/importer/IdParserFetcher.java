@@ -1,5 +1,11 @@
 package org.jabref.logic.importer;
 
+import org.jabref.logic.cleanup.Formatter;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.identifier.Identifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,13 +16,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.jabref.logic.cleanup.Formatter;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.identifier.Identifier;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides a convenient interface for {@link IdFetcher}, which follow the usual three-step procedure:

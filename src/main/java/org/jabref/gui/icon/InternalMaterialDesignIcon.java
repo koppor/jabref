@@ -1,17 +1,15 @@
 package org.jabref.gui.icon;
 
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import org.jabref.gui.util.ColorUtil;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.javafx.FontIcon;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javafx.scene.Node;
-import javafx.scene.paint.Color;
-
-import org.jabref.gui.util.ColorUtil;
-
-import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 public class InternalMaterialDesignIcon implements JabRefIcon {
 

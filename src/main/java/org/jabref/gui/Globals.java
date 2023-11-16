@@ -1,5 +1,6 @@
 package org.jabref.gui;
 
+import kong.unirest.Unirest;
 import org.jabref.architecture.AllowedToUseAwt;
 import org.jabref.gui.keyboard.KeyBindingRepository;
 import org.jabref.gui.remote.CLIMessageHandler;
@@ -16,8 +17,6 @@ import org.jabref.logic.util.BuildInfo;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
-
-import kong.unirest.Unirest;
 
 /**
  * @deprecated try to use {@link StateManager} and {@link org.jabref.preferences.PreferencesService}

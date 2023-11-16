@@ -1,42 +1,14 @@
 package org.jabref.cli;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
-import java.util.prefs.BackingStoreException;
-
+import com.google.common.base.Throwables;
 import org.jabref.gui.Globals;
 import org.jabref.gui.externalfiles.AutoSetFileLinksUtil;
 import org.jabref.gui.undo.NamedCompound;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.bibtex.FieldPreferences;
 import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
-import org.jabref.logic.exporter.AtomicFileWriter;
-import org.jabref.logic.exporter.BibDatabaseWriter;
-import org.jabref.logic.exporter.BibWriter;
-import org.jabref.logic.exporter.BibtexDatabaseWriter;
-import org.jabref.logic.exporter.EmbeddedBibFilePdfExporter;
-import org.jabref.logic.exporter.Exporter;
-import org.jabref.logic.exporter.ExporterFactory;
-import org.jabref.logic.exporter.SelfContainedSaveConfiguration;
-import org.jabref.logic.exporter.XmpPdfExporter;
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.ImportException;
-import org.jabref.logic.importer.ImportFormatPreferences;
-import org.jabref.logic.importer.ImportFormatReader;
-import org.jabref.logic.importer.OpenDatabase;
-import org.jabref.logic.importer.OutputPrinter;
-import org.jabref.logic.importer.ParseException;
-import org.jabref.logic.importer.ParserResult;
-import org.jabref.logic.importer.SearchBasedFetcher;
-import org.jabref.logic.importer.WebFetchers;
+import org.jabref.logic.exporter.*;
+import org.jabref.logic.importer.*;
 import org.jabref.logic.importer.fileformat.BibtexParser;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.logic.l10n.Localization;
@@ -58,10 +30,15 @@ import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.FilePreferences;
 import org.jabref.preferences.PreferencesService;
 import org.jabref.preferences.SearchPreferences;
-
-import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.prefs.BackingStoreException;
 
 public class ArgumentProcessor {
 

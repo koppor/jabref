@@ -1,18 +1,11 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import com.sun.star.beans.Property;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.beans.XPropertyContainer;
-import com.sun.star.beans.XPropertySet;
-import com.sun.star.beans.XPropertySetInfo;
+import com.sun.star.beans.*;
 import com.sun.star.lang.WrappedTargetException;
+
+import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Utilities for properties.

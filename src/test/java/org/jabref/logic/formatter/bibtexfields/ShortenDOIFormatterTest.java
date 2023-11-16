@@ -1,7 +1,6 @@
 package org.jabref.logic.formatter.bibtexfields;
 
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

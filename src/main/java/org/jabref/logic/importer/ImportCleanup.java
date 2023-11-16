@@ -1,9 +1,9 @@
 package org.jabref.logic.importer;
 
-import java.util.Collection;
-
 import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntry;
+
+import java.util.Collection;
 
 public interface ImportCleanup {
 

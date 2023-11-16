@@ -1,18 +1,8 @@
 package org.jabref.gui.preferences.customentrytypes;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
+import javafx.beans.property.*;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.model.entry.field.BibField;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.FieldFactory;
-import org.jabref.model.entry.field.FieldPriority;
-import org.jabref.model.entry.field.FieldProperty;
+import org.jabref.model.entry.field.*;
 
 public class FieldViewModel {
 

@@ -1,8 +1,8 @@
 package org.jabref.logic.journals;
 
-import java.util.List;
-
 import javafx.util.Pair;
+
+import java.util.List;
 
 public record JournalInformation(
         String title,

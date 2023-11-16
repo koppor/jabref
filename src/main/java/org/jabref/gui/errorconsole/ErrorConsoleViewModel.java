@@ -1,15 +1,10 @@
 package org.jabref.gui.errorconsole;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.ObservableList;
-
+import org.apache.http.client.utils.URIBuilder;
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.ClipBoardManager;
 import org.jabref.gui.DialogService;
@@ -20,11 +15,14 @@ import org.jabref.logic.logging.LogMessages;
 import org.jabref.logic.util.BuildInfo;
 import org.jabref.logic.util.OS;
 import org.jabref.preferences.PreferencesService;
-
-import com.tobiasdiez.easybind.EasyBind;
-import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ErrorConsoleViewModel extends AbstractViewModel {
 

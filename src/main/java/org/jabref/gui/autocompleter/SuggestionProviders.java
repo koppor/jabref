@@ -1,12 +1,12 @@
 package org.jabref.gui.autocompleter;
 
-import java.util.Set;
-
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldProperty;
 import org.jabref.model.entry.field.StandardField;
+
+import java.util.Set;
 
 public class SuggestionProviders {
 

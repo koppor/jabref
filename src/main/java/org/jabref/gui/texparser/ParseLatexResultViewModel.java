@@ -1,16 +1,11 @@
 package org.jabref.gui.texparser;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.airhacks.afterburner.injection.Injector;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.importer.ImportEntriesDialog;
@@ -21,7 +16,10 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.texparser.Citation;
 import org.jabref.model.texparser.LatexBibEntriesResolverResult;
 
-import com.airhacks.afterburner.injection.Injector;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ParseLatexResultViewModel extends AbstractViewModel {
 

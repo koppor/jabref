@@ -1,13 +1,12 @@
 package org.jabref.logic.preferences;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import org.jabref.model.entry.field.Field;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-
-import org.jabref.model.entry.field.Field;
 
 public class TimestampPreferences {
     private final BooleanProperty addCreationDate;

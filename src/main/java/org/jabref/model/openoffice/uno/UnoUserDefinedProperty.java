@@ -1,19 +1,6 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import com.sun.star.beans.IllegalTypeException;
-import com.sun.star.beans.NotRemoveableException;
-import com.sun.star.beans.PropertyAttribute;
-import com.sun.star.beans.PropertyExistException;
-import com.sun.star.beans.PropertyVetoException;
-import com.sun.star.beans.UnknownPropertyException;
-import com.sun.star.beans.XPropertyContainer;
-import com.sun.star.beans.XPropertySet;
-import com.sun.star.beans.XPropertySetInfo;
+import com.sun.star.beans.*;
 import com.sun.star.document.XDocumentProperties;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextDocument;
@@ -21,6 +8,11 @@ import com.sun.star.uno.Any;
 import com.sun.star.uno.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Document level user-defined properties.

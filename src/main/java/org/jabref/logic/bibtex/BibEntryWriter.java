@@ -1,19 +1,5 @@
 package org.jabref.logic.bibtex;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import org.jabref.logic.TypedBibEntry;
 import org.jabref.logic.exporter.BibWriter;
 import org.jabref.logic.util.OS;
@@ -26,8 +12,13 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.strings.StringUtil;
-
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class BibEntryWriter {
 

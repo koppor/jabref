@@ -1,14 +1,14 @@
 package org.jabref.gui.fieldeditors;
 
+import org.jabref.gui.externalfiletype.ExternalFileTypes;
+import org.jabref.preferences.FilePreferences;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.jabref.gui.externalfiletype.ExternalFileTypes;
-import org.jabref.preferences.FilePreferences;
 
 public class URLUtil {
     private static final String URL_EXP = "^(https?|ftp)://.+";

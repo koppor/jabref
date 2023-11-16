@@ -1,13 +1,11 @@
 package org.jabref.gui.preferences.export;
 
+import com.airhacks.afterburner.views.ViewLoader;
 import javafx.fxml.FXML;
-
 import org.jabref.gui.commonfxcontrols.SaveOrderConfigPanel;
 import org.jabref.gui.preferences.AbstractPreferenceTabView;
 import org.jabref.gui.preferences.PreferencesTab;
 import org.jabref.logic.l10n.Localization;
-
-import com.airhacks.afterburner.views.ViewLoader;
 
 public class ExportTab extends AbstractPreferenceTabView<ExportTabViewModel> implements PreferencesTab {
     @FXML

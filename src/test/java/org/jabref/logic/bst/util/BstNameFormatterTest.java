@@ -1,7 +1,6 @@
 package org.jabref.logic.bst.util;
 
 import org.jabref.model.entry.AuthorList;
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,11 +1,10 @@
 package org.jabref.gui.preferences;
 
+import com.airhacks.afterburner.injection.Injector;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.util.TaskExecutor;
-
-import com.airhacks.afterburner.injection.Injector;
 
 public class ShowPreferencesAction extends SimpleCommand {
 

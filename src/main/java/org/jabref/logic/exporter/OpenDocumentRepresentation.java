@@ -1,12 +1,5 @@
 package org.jabref.logic.exporter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.jabref.logic.bibtex.comparator.FieldComparator;
 import org.jabref.logic.bibtex.comparator.FieldComparatorStack;
 import org.jabref.logic.layout.format.GetOpenOfficeType;
@@ -18,12 +11,17 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 class OpenDocumentRepresentation {
 
@@ -149,26 +147,16 @@ class OpenDocumentRepresentation {
                 addTableCell(result, row, getField(e, StandardField.ASSIGNEE));
                 addTableCell(result, row, getField(e, StandardField.ANNOTE));
                 addTableCell(
-                        result,
-                        row,
-                        getField(
-                                e,
-                                StandardField
-                                        .AUTHOR)); // new AuthorLastFirst().format(getField(e,
-                                                   // StandardField.AUTHOR_FIELD)));
+                        result, row, getField(e, StandardField.AUTHOR)); // new AuthorLastFirst().format(getField(e,
+                // StandardField.AUTHOR_FIELD)));
                 addTableCell(result, row, getField(e, StandardField.BOOKTITLE));
                 addTableCell(result, row, getField(e, StandardField.CHAPTER));
                 addTableCell(result, row, getField(e, StandardField.DAY));
                 addTableCell(result, row, getField(e, StandardField.DAYFILED));
                 addTableCell(result, row, getField(e, StandardField.EDITION));
                 addTableCell(
-                        result,
-                        row,
-                        getField(
-                                e,
-                                StandardField
-                                        .EDITOR)); // new AuthorLastFirst().format(getField(e,
-                                                   // StandardField.EDITOR_FIELD)));
+                        result, row, getField(e, StandardField.EDITOR)); // new AuthorLastFirst().format(getField(e,
+                // StandardField.EDITOR_FIELD)));
                 addTableCell(result, row, getField(e, StandardField.HOWPUBLISHED));
                 addTableCell(result, row, getField(e, StandardField.INSTITUTION));
                 addTableCell(result, row, getField(e, StandardField.JOURNAL));

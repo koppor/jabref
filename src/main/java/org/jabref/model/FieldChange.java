@@ -1,9 +1,9 @@
 package org.jabref.model;
 
-import java.util.Objects;
-
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
+
+import java.util.Objects;
 
 /**
  * This class is used in the instance of a field being modified, removed or added.

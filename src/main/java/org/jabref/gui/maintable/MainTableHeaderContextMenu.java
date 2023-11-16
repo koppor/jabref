@@ -1,16 +1,15 @@
 package org.jabref.gui.maintable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.layout.StackPane;
-
 import org.jabref.gui.maintable.columns.MainTableColumn;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainTableHeaderContextMenu extends ContextMenu {
 

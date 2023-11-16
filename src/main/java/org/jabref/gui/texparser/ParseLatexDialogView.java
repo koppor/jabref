@@ -1,33 +1,20 @@
 package org.jabref.gui.texparser;
 
-import javafx.beans.binding.Bindings;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBoxTreeItem;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextField;
-
-import org.jabref.gui.DialogService;
-import org.jabref.gui.theme.ThemeManager;
-import org.jabref.gui.util.BaseDialog;
-import org.jabref.gui.util.ControlHelper;
-import org.jabref.gui.util.FileNodeViewModel;
-import org.jabref.gui.util.IconValidationDecorator;
-import org.jabref.gui.util.RecursiveTreeItem;
-import org.jabref.gui.util.TaskExecutor;
-import org.jabref.gui.util.ViewModelTreeCellFactory;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.util.FileUpdateMonitor;
-import org.jabref.preferences.PreferencesService;
-
 import com.airhacks.afterburner.views.ViewLoader;
 import com.tobiasdiez.easybind.EasyBind;
 import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
 import jakarta.inject.Inject;
+import javafx.beans.binding.Bindings;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
 import org.controlsfx.control.CheckTreeView;
+import org.jabref.gui.DialogService;
+import org.jabref.gui.theme.ThemeManager;
+import org.jabref.gui.util.*;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.util.FileUpdateMonitor;
+import org.jabref.preferences.PreferencesService;
 
 public class ParseLatexDialogView extends BaseDialog<Void> {
 

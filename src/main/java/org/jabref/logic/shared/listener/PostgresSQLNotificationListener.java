@@ -1,14 +1,13 @@
 package org.jabref.logic.shared.listener;
 
-import java.sql.SQLException;
-
 import org.jabref.logic.shared.DBMSProcessor;
 import org.jabref.logic.shared.DBMSSynchronizer;
-
 import org.postgresql.PGConnection;
 import org.postgresql.PGNotification;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
 
 /**
  * A listener for PostgreSQL database notifications.

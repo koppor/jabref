@@ -1,25 +1,17 @@
 package org.jabref.gui.groups;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
-import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.undo.CountingUndoManager;
 import org.jabref.model.FieldChange;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.groups.AbstractGroup;
-import org.jabref.model.groups.AllEntriesGroup;
-import org.jabref.model.groups.ExplicitGroup;
-import org.jabref.model.groups.GroupEntryChanger;
-import org.jabref.model.groups.GroupTreeNode;
-import org.jabref.model.groups.KeywordGroup;
-import org.jabref.model.groups.SearchGroup;
-
+import org.jabref.model.groups.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.undo.UndoManager;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class GroupTreeNodeViewModel {
 

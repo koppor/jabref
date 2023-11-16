@@ -1,18 +1,12 @@
 package org.jabref.gui.libraryproperties.constants;
 
-import java.util.regex.Pattern;
-
+import de.saxsys.mvvmfx.utils.validation.*;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
 import org.jabref.logic.l10n.Localization;
 
-import de.saxsys.mvvmfx.utils.validation.CompositeValidator;
-import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
-import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
-import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
-import de.saxsys.mvvmfx.utils.validation.Validator;
+import java.util.regex.Pattern;
 
 public class ConstantsItemModel {
 

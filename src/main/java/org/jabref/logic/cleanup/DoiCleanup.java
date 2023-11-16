@@ -1,12 +1,5 @@
 package org.jabref.logic.cleanup;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.logic.formatter.bibtexfields.ClearFormatter;
 import org.jabref.model.FieldChange;
 import org.jabref.model.entry.BibEntry;
@@ -15,6 +8,13 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.entry.identifier.ArXivIdentifier;
 import org.jabref.model.entry.identifier.DOI;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Formats the DOI (e.g. removes http part) and also infers DOIs from the note, url, eprint or ee fields.

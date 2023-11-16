@@ -1,9 +1,5 @@
 package org.jabref.gui.push;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.actions.Action;
 import org.jabref.gui.icon.IconTheme;
@@ -16,9 +12,12 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.preferences.PreferencesService;
 import org.jabref.preferences.PushToApplicationPreferences;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Abstract class for pushing entries into different editors.

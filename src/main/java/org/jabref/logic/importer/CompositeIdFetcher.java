@@ -1,8 +1,5 @@
 package org.jabref.logic.importer;
 
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import org.jabref.logic.importer.fetcher.ArXivFetcher;
 import org.jabref.logic.importer.fetcher.DoiFetcher;
 import org.jabref.logic.importer.fetcher.isbntobibtex.IsbnFetcher;
@@ -10,6 +7,9 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.identifier.ArXivIdentifier;
 import org.jabref.model.entry.identifier.DOI;
 import org.jabref.model.entry.identifier.ISBN;
+
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class CompositeIdFetcher {
 

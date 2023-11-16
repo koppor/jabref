@@ -1,13 +1,6 @@
 package org.jabref.gui.fieldeditors;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Optional;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.collections.FXCollections;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.autocompleter.EmptySuggestionProvider;
 import org.jabref.gui.externalfiletype.StandardExternalFileType;
@@ -19,10 +12,14 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.preferences.FilePreferences;
 import org.jabref.preferences.PreferencesService;
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Answers;
+
+import javax.swing.undo.UndoManager;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;

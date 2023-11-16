@@ -1,17 +1,16 @@
 package org.jabref.gui;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.function.Supplier;
-
 import org.jabref.gui.actions.ActionHelper;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.desktop.JabRefDesktop;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.preferences.PreferencesService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 public class OpenConsoleAction extends SimpleCommand {
 

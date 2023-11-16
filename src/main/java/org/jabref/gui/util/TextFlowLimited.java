@@ -10,7 +10,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
-
 import org.jabref.logic.l10n.Localization;
 
 public class TextFlowLimited extends TextFlow {

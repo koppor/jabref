@@ -1,9 +1,5 @@
 package org.jabref.logic.journals;
 
-import java.util.Set;
-
-import javax.swing.undo.CompoundEdit;
-
 import org.jabref.architecture.AllowedToUseSwing;
 import org.jabref.gui.journals.AbbreviationType;
 import org.jabref.gui.journals.UndoableAbbreviator;
@@ -13,13 +9,13 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.AMSField;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import javax.swing.undo.CompoundEdit;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @AllowedToUseSwing(
         "UndoableUnabbreviator and UndoableAbbreviator requires Swing Compound Edit in order test the abbreviation and unabbreviation of journal titles")

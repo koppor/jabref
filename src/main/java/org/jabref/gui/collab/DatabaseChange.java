@@ -1,12 +1,9 @@
 package org.jabref.gui.collab;
 
-import java.util.Optional;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
 import org.jabref.gui.collab.entryadd.EntryAdd;
 import org.jabref.gui.collab.entrychange.EntryChange;
 import org.jabref.gui.collab.entrydelete.EntryDelete;
@@ -20,6 +17,8 @@ import org.jabref.gui.collab.stringrename.BibTexStringRename;
 import org.jabref.gui.undo.NamedCompound;
 import org.jabref.gui.util.OptionalObjectProperty;
 import org.jabref.model.database.BibDatabaseContext;
+
+import java.util.Optional;
 
 public abstract sealed class DatabaseChange
         permits EntryAdd,

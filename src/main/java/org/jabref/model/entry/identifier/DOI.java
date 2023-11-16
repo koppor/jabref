@@ -1,5 +1,12 @@
 package org.jabref.model.entry.identifier;
 
+import org.jabref.architecture.AllowedToUseLogic;
+import org.jabref.logic.layout.format.LatexToUnicodeFormatter;
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.StandardField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -9,14 +16,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.architecture.AllowedToUseLogic;
-import org.jabref.logic.layout.format.LatexToUnicodeFormatter;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.StandardField;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class for working with <a href="https://en.wikipedia.org/wiki/Digital_object_identifier">Digital object identifiers (DOIs)</a> and <a href="http://shortdoi.org">Short DOIs</a>
@@ -56,17 +55,17 @@ public class DOI implements Identifier {
             "" + "^\\s*(?:https?://)?(?:www\\.)?(?:doi\\.org/)([a-z0-9]{4,10})\\s*$"; // eg https://doi.org/bfrhmx
     private static final String IN_TEXT_SHORT_DOI_SHORTCUT = ""
             + "(?:https?://)?(?:www\\.)?(?:doi\\.org/)([a-z0-9]{4,10})"; // eg https://doi.org/bfrhmx somewhere in the
-                                                                         // text
+    // text
     private static final String SHORT_DOI_EXP_PREFIX = ""
             + "^(?:" // can begin with...
             + "\\s*(?:https?://)?(?:www\\.)?" // optional url parts "http(s)://"+"www."
             + "[a-zA-Z\\.]*doi[a-zA-Z\\.]*" //  eg "dx.doi." or "doi.acm." or "doi." if with url, must include "doi",
-                                            // otherwise too ambiguous
+            // otherwise too ambiguous
             + "\\.[a-zA-Z]{2,10}/)?"; // ".org" or ".de" or ".academy"
     private static final String SHORT_DOI_EXP = ""
             + "(?:" // begin "any one of these"
             + "(?:[\\s/]?(?:(?:urn:)|(?:doi:)|(?:urn:doi:)))" // "doi:10/12ab" or " urn:10/12ab" or "/urn:doi:/10/12ab"
-                                                              // ...
+            // ...
             + "|(?:\\s?/?)" // or "/10/12ab" or " /10/12ab" or "10/12ab" or " 10/12ab"
             + ")" // end "any one of these"
             + "(" // begin group \1
@@ -80,7 +79,7 @@ public class DOI implements Identifier {
             + "(?:(?:www\\.)?doi\\.org/)" // either doi.org
             + "|" // or any of the following with doi.org or not...
             + "(?:(?:doi.org/)?(?:(?:urn:)|(?:doi:)|(?:urn:doi:)))" // "doi:10/12ab" or " urn:10/12ab" or
-                                                                    // "/urn:doi:/10/12ab" or "doi.org/doi:10/12ab"...
+            // "/urn:doi:/10/12ab" or "doi.org/doi:10/12ab"...
             + ")" // end "any one of these"
             + "(" // begin group \1
             + "10" // directory indicator

@@ -1,9 +1,5 @@
 package org.jabref.gui.linkedfile;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Optional;
-
 import org.jabref.gui.ClipBoardManager;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
@@ -17,6 +13,10 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.preferences.PreferencesService;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Optional;
 
 public class AttachFileFromURLAction extends SimpleCommand {
 

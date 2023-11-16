@@ -1,16 +1,14 @@
 package org.jabref.gui.fieldeditors.journalinfo;
 
-import java.util.Objects;
-
+import com.airhacks.afterburner.views.ViewLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-
 import org.jabref.logic.importer.FetcherException;
 
-import com.airhacks.afterburner.views.ViewLoader;
+import java.util.Objects;
 
 public class JournalInfoView extends VBox {
     @FXML

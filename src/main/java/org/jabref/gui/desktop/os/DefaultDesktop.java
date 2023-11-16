@@ -1,16 +1,15 @@
 package org.jabref.gui.desktop.os;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-
 import org.jabref.architecture.AllowedToUseAwt;
 import org.jabref.cli.Launcher;
 import org.jabref.gui.DialogService;
 import org.jabref.preferences.FilePreferences;
-
 import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * This class contains some default implementations (if OS is neither linux, windows or osx) file directories and file/application open handling methods <br>

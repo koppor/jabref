@@ -1,11 +1,6 @@
 package org.jabref.gui.copyfiles;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-
 import javafx.concurrent.Task;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.SimpleCommand;
@@ -15,6 +10,10 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.preferences.PreferencesService;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 
 import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 import static org.jabref.gui.actions.ActionHelper.needsEntriesSelected;

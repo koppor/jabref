@@ -1,12 +1,8 @@
 package org.jabref.model.entry.types;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
 import org.jabref.model.entry.BibEntryType;
+
+import java.util.*;
 
 public class EntryTypeFactory {
 

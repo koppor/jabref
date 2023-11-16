@@ -1,12 +1,10 @@
 package org.jabref.gui.preview;
 
-import java.util.Arrays;
-
 import javafx.scene.input.ClipboardContent;
-
 import org.jabref.logic.util.OS;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

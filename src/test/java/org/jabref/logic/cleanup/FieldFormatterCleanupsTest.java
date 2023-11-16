@@ -1,28 +1,17 @@
 package org.jabref.logic.cleanup;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.logic.formatter.IdentityFormatter;
-import org.jabref.logic.formatter.bibtexfields.EscapeAmpersandsFormatter;
-import org.jabref.logic.formatter.bibtexfields.EscapeDollarSignFormatter;
-import org.jabref.logic.formatter.bibtexfields.EscapeUnderscoresFormatter;
-import org.jabref.logic.formatter.bibtexfields.LatexCleanupFormatter;
-import org.jabref.logic.formatter.bibtexfields.NormalizeDateFormatter;
-import org.jabref.logic.formatter.bibtexfields.NormalizeMonthFormatter;
-import org.jabref.logic.formatter.bibtexfields.NormalizePagesFormatter;
+import org.jabref.logic.formatter.bibtexfields.*;
 import org.jabref.logic.formatter.casechanger.LowerCaseFormatter;
 import org.jabref.logic.layout.format.ReplaceUnicodeLigaturesFormatter;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -1,9 +1,6 @@
 package org.jabref.gui.slr;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Optional;
-
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.util.TaskExecutor;
@@ -14,10 +11,12 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.study.Study;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
-
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * Used to start a new study:

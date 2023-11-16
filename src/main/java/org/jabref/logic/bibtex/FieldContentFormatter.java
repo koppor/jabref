@@ -1,12 +1,12 @@
 package org.jabref.logic.bibtex;
 
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.StandardField;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.StandardField;
 
 /**
  * This class provides the reformatting needed when reading BibTeX fields formatted

@@ -1,8 +1,7 @@
 package org.jabref.logic.openoffice.frontend;
 
-import org.jabref.model.openoffice.rangesort.RangeHolder;
-
 import com.sun.star.text.XTextRange;
+import org.jabref.model.openoffice.rangesort.RangeHolder;
 
 /**
  * Describe a protected range for overlap checking and reporting.

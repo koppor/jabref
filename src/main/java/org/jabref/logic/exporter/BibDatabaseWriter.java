@@ -1,27 +1,6 @@
 package org.jabref.logic.exporter;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import org.jabref.logic.bibtex.comparator.BibtexStringComparator;
-import org.jabref.logic.bibtex.comparator.CrossRefEntryComparator;
-import org.jabref.logic.bibtex.comparator.FieldComparator;
-import org.jabref.logic.bibtex.comparator.FieldComparatorStack;
-import org.jabref.logic.bibtex.comparator.IdComparator;
+import org.jabref.logic.bibtex.comparator.*;
 import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
 import org.jabref.logic.citationkeypattern.CitationKeyPatternPreferences;
 import org.jabref.logic.citationkeypattern.GlobalCitationKeyPattern;
@@ -41,8 +20,15 @@ import org.jabref.model.metadata.MetaData;
 import org.jabref.model.metadata.SaveOrder;
 import org.jabref.model.metadata.SelfContainedSaveOrder;
 import org.jabref.model.strings.StringUtil;
-
 import org.jooq.lambda.Unchecked;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * A generic writer for our database. This is independent of the concrete serialization format.

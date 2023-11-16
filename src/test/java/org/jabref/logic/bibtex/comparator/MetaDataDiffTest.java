@@ -1,12 +1,11 @@
 package org.jabref.logic.bibtex.comparator;
 
-import java.util.Optional;
-
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.metadata.ContentSelector;
 import org.jabref.model.metadata.MetaData;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

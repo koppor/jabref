@@ -1,12 +1,12 @@
 package org.jabref.gui.util;
 
+import javafx.scene.text.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javafx.scene.text.Text;
 
 /**
  * Utility class with static methods for javafx {@link Text} objects

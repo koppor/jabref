@@ -1,14 +1,7 @@
 package org.jabref.logic.citationkeypattern;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
 import com.google.common.annotations.VisibleForTesting;
+import javafx.beans.property.*;
 
 public class CitationKeyPatternPreferences {
 

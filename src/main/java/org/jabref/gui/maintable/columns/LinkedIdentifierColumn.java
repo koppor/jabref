@@ -1,30 +1,24 @@
 package org.jabref.gui.maintable.columns;
 
-import java.io.IOException;
-import java.util.Map;
-
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.desktop.JabRefDesktop;
 import org.jabref.gui.icon.IconTheme;
-import org.jabref.gui.maintable.BibEntryTableViewModel;
-import org.jabref.gui.maintable.CellFactory;
-import org.jabref.gui.maintable.ColumnPreferences;
-import org.jabref.gui.maintable.MainTableColumnFactory;
-import org.jabref.gui.maintable.MainTableColumnModel;
-import org.jabref.gui.maintable.OpenUrlAction;
+import org.jabref.gui.maintable.*;
 import org.jabref.gui.util.ControlHelper;
 import org.jabref.gui.util.ValueTableCellFactory;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.field.Field;
 import org.jabref.preferences.PreferencesService;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * A clickable icons column for DOIs, URLs, URIs and EPrints.

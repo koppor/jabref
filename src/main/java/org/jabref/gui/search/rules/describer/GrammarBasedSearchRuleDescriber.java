@@ -1,15 +1,8 @@
 package org.jabref.gui.search.rules.describer;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Pattern;
-
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.jabref.gui.util.TooltipTextUtil;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.search.rules.GrammarBasedSearchRule;
@@ -19,7 +12,8 @@ import org.jabref.model.strings.StringUtil;
 import org.jabref.search.SearchBaseVisitor;
 import org.jabref.search.SearchParser;
 
-import org.antlr.v4.runtime.tree.ParseTree;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class GrammarBasedSearchRuleDescriber implements SearchDescriber {
 

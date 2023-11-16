@@ -1,12 +1,11 @@
 package org.jabref.gui.util;
 
-import java.util.Optional;
-
+import com.tobiasdiez.easybind.PreboundBinding;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.SimpleObjectProperty;
 
-import com.tobiasdiez.easybind.PreboundBinding;
+import java.util.Optional;
 
 /**
  * Similar to {@link com.tobiasdiez.easybind.monadic.MonadicObservableValue}

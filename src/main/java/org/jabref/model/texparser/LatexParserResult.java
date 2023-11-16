@@ -1,17 +1,11 @@
 package org.jabref.model.texparser;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
-import org.jabref.model.entry.BibEntry;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import org.jabref.model.entry.BibEntry;
+
+import java.nio.file.Path;
+import java.util.*;
 
 public class LatexParserResult {
 

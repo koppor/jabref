@@ -1,16 +1,15 @@
 package org.jabref.logic.importer.util;
 
+import org.jabref.model.entry.LinkedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jabref.model.entry.LinkedFile;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FileFieldParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileFieldParser.class);

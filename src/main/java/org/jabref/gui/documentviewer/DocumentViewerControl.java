@@ -1,9 +1,6 @@
 package org.jabref.gui.documentviewer;
 
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
-
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.animation.FadeTransition;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -17,14 +14,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-
-import org.jabref.gui.util.BackgroundTask;
-import org.jabref.gui.util.TaskExecutor;
-
-import com.tobiasdiez.easybind.EasyBind;
 import org.fxmisc.flowless.Cell;
 import org.fxmisc.flowless.VirtualFlow;
 import org.fxmisc.flowless.VirtualFlowHit;
+import org.jabref.gui.util.BackgroundTask;
+import org.jabref.gui.util.TaskExecutor;
+
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 
 public class DocumentViewerControl extends StackPane {
 

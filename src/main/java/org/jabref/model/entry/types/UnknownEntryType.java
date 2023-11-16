@@ -1,9 +1,9 @@
 package org.jabref.model.entry.types;
 
+import org.jabref.model.strings.StringUtil;
+
 import java.util.Locale;
 import java.util.Objects;
-
-import org.jabref.model.strings.StringUtil;
 
 public class UnknownEntryType implements EntryType {
     private final String name;

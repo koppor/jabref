@@ -1,12 +1,12 @@
 package org.jabref.model.entry.types;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.jabref.model.entry.BibEntryType;
 import org.jabref.model.entry.BibEntryTypeBuilder;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class represents all supported entry types used in a study definition file

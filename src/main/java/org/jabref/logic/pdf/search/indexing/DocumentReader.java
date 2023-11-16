@@ -1,5 +1,23 @@
 package org.jabref.logic.pdf.search.indexing;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.jabref.gui.LibraryTab;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.LinkedFile;
+import org.jabref.model.strings.StringUtil;
+import org.jabref.preferences.FilePreferences;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,30 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.jabref.gui.LibraryTab;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.LinkedFile;
-import org.jabref.model.strings.StringUtil;
-import org.jabref.preferences.FilePreferences;
-
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
-import org.apache.pdfbox.text.PDFTextStripper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.jabref.model.pdf.search.SearchFieldConstants.ANNOTATIONS;
-import static org.jabref.model.pdf.search.SearchFieldConstants.CONTENT;
-import static org.jabref.model.pdf.search.SearchFieldConstants.MODIFIED;
-import static org.jabref.model.pdf.search.SearchFieldConstants.PAGE_NUMBER;
-import static org.jabref.model.pdf.search.SearchFieldConstants.PATH;
+import static org.jabref.model.pdf.search.SearchFieldConstants.*;
 
 /**
  * Utility class for reading the data from LinkedFiles of a BibEntry for Lucene.

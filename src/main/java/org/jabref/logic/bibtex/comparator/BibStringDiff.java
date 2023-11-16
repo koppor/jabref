@@ -1,16 +1,9 @@
 package org.jabref.logic.bibtex.comparator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibtexString;
+
+import java.util.*;
 
 public class BibStringDiff {
 

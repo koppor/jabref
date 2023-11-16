@@ -1,11 +1,11 @@
 package org.jabref.gui.mergeentries.newmergedialog.fieldsmerger;
 
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.strings.StringUtil;
+
 import java.util.Arrays;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.strings.StringUtil;
 
 /**
  * A merger for the {@link StandardField#GROUPS} field

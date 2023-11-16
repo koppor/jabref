@@ -1,10 +1,5 @@
 package org.jabref.logic.importer;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -12,9 +7,13 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
-
 import org.jabref.logic.importer.fileformat.CustomImporter;
 import org.jabref.logic.preferences.FetcherApiKey;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public class ImporterPreferences {
 

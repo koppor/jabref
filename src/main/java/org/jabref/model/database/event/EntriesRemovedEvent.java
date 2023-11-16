@@ -1,10 +1,10 @@
 package org.jabref.model.database.event;
 
-import java.util.List;
-
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.event.EntriesEvent;
 import org.jabref.model.entry.event.EntriesEventSource;
+
+import java.util.List;
 
 /**
  * <code>EntriesRemovedEvent</code> is fired when at least one <code>BibEntry</code> is being removed

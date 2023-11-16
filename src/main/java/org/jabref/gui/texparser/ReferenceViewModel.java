@@ -1,12 +1,11 @@
 package org.jabref.gui.texparser;
 
-import java.util.Collection;
-
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.jabref.model.texparser.Citation;
+
+import java.util.Collection;
 
 public class ReferenceViewModel {
 

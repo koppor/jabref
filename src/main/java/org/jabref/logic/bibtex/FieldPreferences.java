@@ -1,14 +1,13 @@
 package org.jabref.logic.bibtex;
 
-import java.util.Collection;
-import java.util.List;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.jabref.model.entry.field.Field;
+
+import java.util.Collection;
+import java.util.List;
 
 public class FieldPreferences {
 

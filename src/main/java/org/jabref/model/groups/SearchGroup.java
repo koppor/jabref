@@ -1,14 +1,13 @@
 package org.jabref.model.groups;
 
-import java.util.EnumSet;
-import java.util.Objects;
-
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.search.GroupSearchQuery;
 import org.jabref.model.search.rules.SearchRules.SearchFlags;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.EnumSet;
+import java.util.Objects;
 
 /**
  * This group matches entries by a complex search pattern, which might include conditions about the values of

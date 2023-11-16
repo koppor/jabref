@@ -1,10 +1,5 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.autocompleter.SuggestionProviders;
@@ -17,6 +12,10 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.preferences.PreferencesService;
+
+import javax.swing.undo.UndoManager;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class UserDefinedFieldsTab extends FieldsEditorTab {
     private final LinkedHashSet<Field> fields;

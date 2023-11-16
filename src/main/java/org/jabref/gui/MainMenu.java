@@ -1,13 +1,10 @@
 package org.jabref.gui;
 
-import javax.swing.undo.UndoManager;
-
 import javafx.event.ActionEvent;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-
 import org.jabref.gui.actions.ActionFactory;
 import org.jabref.gui.actions.StandardActions;
 import org.jabref.gui.auximport.NewSubLibraryAction;
@@ -17,19 +14,11 @@ import org.jabref.gui.cleanup.CleanupAction;
 import org.jabref.gui.copyfiles.CopyFilesAction;
 import org.jabref.gui.documentviewer.ShowDocumentViewerAction;
 import org.jabref.gui.duplicationFinder.DuplicateSearch;
-import org.jabref.gui.edit.CopyMoreAction;
-import org.jabref.gui.edit.EditAction;
-import org.jabref.gui.edit.ManageKeywordsAction;
-import org.jabref.gui.edit.OpenBrowserAction;
-import org.jabref.gui.edit.ReplaceStringAction;
+import org.jabref.gui.edit.*;
 import org.jabref.gui.edit.automaticfiededitor.AutomaticFieldEditorAction;
 import org.jabref.gui.entryeditor.OpenEntryEditorAction;
 import org.jabref.gui.entryeditor.PreviewSwitchAction;
-import org.jabref.gui.exporter.ExportCommand;
-import org.jabref.gui.exporter.ExportToClipboardAction;
-import org.jabref.gui.exporter.SaveAction;
-import org.jabref.gui.exporter.SaveAllAction;
-import org.jabref.gui.exporter.WriteMetadataToLinkedPdfsAction;
+import org.jabref.gui.exporter.*;
 import org.jabref.gui.externalfiles.AutoLinkFilesAction;
 import org.jabref.gui.externalfiles.DownloadFullTextAction;
 import org.jabref.gui.externalfiles.FindUnlinkedFilesAction;
@@ -71,6 +60,8 @@ import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.field.SpecialField;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
+
+import javax.swing.undo.UndoManager;
 
 public class MainMenu extends MenuBar {
     private final JabRefFrame frame;

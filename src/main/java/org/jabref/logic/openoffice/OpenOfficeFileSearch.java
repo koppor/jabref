@@ -1,23 +1,18 @@
 package org.jabref.logic.openoffice;
 
+import org.jabref.logic.util.OS;
+import org.jabref.logic.util.io.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jabref.logic.util.OS;
-import org.jabref.logic.util.io.FileUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OpenOfficeFileSearch {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenOfficeFileSearch.class);

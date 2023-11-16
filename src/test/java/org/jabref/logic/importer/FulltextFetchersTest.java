@@ -1,17 +1,16 @@
 package org.jabref.logic.importer;
 
+import org.jabref.logic.importer.fetcher.TrustLevel;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.testutils.category.FetcherTest;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.Set;
-
-import org.jabref.logic.importer.fetcher.TrustLevel;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.testutils.category.FetcherTest;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;

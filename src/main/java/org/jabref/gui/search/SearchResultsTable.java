@@ -1,26 +1,19 @@
 package org.jabref.gui.search;
 
-import java.util.List;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
-import org.jabref.gui.maintable.BibEntryTableViewModel;
-import org.jabref.gui.maintable.MainTable;
-import org.jabref.gui.maintable.MainTableColumnFactory;
-import org.jabref.gui.maintable.MainTablePreferences;
-import org.jabref.gui.maintable.PersistenceVisualStateTable;
-import org.jabref.gui.maintable.SmartConstrainedResizePolicy;
+import org.jabref.gui.maintable.*;
 import org.jabref.gui.maintable.columns.LibraryColumn;
 import org.jabref.gui.maintable.columns.MainTableColumn;
 import org.jabref.gui.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.preferences.PreferencesService;
+
+import javax.swing.undo.UndoManager;
+import java.util.List;
 
 public class SearchResultsTable extends TableView<BibEntryTableViewModel> {
 

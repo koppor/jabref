@@ -1,8 +1,8 @@
 package org.jabref.gui.search;
 
-import java.util.function.Supplier;
-
 import org.jabref.logic.l10n.Localization;
+
+import java.util.function.Supplier;
 
 /**
  * Collects the possible search modes

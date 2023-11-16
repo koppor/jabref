@@ -1,10 +1,7 @@
 package org.jabref.cli;
 
-import java.util.List;
-import java.util.Objects;
-
 import javafx.util.Pair;
-
+import org.apache.commons.cli.*;
 import org.jabref.gui.Globals;
 import org.jabref.logic.exporter.ExporterFactory;
 import org.jabref.logic.importer.ImportFormatReader;
@@ -14,12 +11,8 @@ import org.jabref.model.strings.StringUtil;
 import org.jabref.model.util.DummyFileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import java.util.List;
+import java.util.Objects;
 
 public class JabRefCLI {
     private static final int WIDTH = 100; // Number of characters per line before a line break must be added.

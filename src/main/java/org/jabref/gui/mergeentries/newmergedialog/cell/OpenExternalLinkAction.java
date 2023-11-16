@@ -1,15 +1,14 @@
 package org.jabref.gui.mergeentries.newmergedialog.cell;
 
-import java.io.IOException;
-import java.net.URI;
-
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.desktop.JabRefDesktop;
 import org.jabref.model.entry.identifier.DOI;
 import org.jabref.preferences.FilePreferences;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * A command for opening DOIs and URLs. This was created primarily for simplifying {@link FieldValueCell}.

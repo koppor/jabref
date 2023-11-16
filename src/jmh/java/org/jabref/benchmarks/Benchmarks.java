@@ -1,13 +1,5 @@
 package org.jabref.benchmarks;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-
 import org.jabref.gui.Globals;
 import org.jabref.logic.bibtex.FieldPreferences;
 import org.jabref.logic.citationkeypattern.CitationKeyPatternPreferences;
@@ -35,13 +27,20 @@ import org.jabref.model.groups.WordKeywordGroup;
 import org.jabref.model.metadata.MetaData;
 import org.jabref.model.search.rules.SearchRules.SearchFlags;
 import org.jabref.preferences.JabRefPreferences;
-
 import org.openjdk.jmh.Main;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.RunnerException;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
 

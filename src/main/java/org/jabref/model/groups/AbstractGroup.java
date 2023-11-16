@@ -1,16 +1,15 @@
 package org.jabref.model.groups;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.paint.Color;
-
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.search.SearchMatcher;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Base class for all groups.

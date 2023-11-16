@@ -1,14 +1,14 @@
 package org.jabref.logic.util;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import org.jabref.logic.preferences.OwnerPreferences;
 import org.jabref.logic.preferences.TimestampPreferences;
 import org.jabref.model.FieldChange;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
+
+import java.util.Collection;
+import java.util.Optional;
 
 public class UpdateField {
 

@@ -1,11 +1,10 @@
 package org.jabref.gui;
 
+import com.google.common.eventbus.Subscribe;
 import org.jabref.model.entry.event.EntriesEventSource;
 import org.jabref.model.entry.event.EntryChangedEvent;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.preferences.PreferencesService;
-
-import com.google.common.eventbus.Subscribe;
 
 /**
  * Updates the timestamp of changed entries if the feature is enabled

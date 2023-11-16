@@ -1,12 +1,8 @@
 package org.jabref.gui.fieldeditors;
 
-import java.io.IOException;
-
-import javax.swing.undo.UndoManager;
-
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.autocompleter.SuggestionProvider;
 import org.jabref.gui.desktop.JabRefDesktop;
@@ -16,7 +12,8 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.preferences.PreferencesService;
 
-import com.tobiasdiez.easybind.EasyBind;
+import javax.swing.undo.UndoManager;
+import java.io.IOException;
 
 public class UrlEditorViewModel extends AbstractEditorViewModel {
     private final DialogService dialogService;

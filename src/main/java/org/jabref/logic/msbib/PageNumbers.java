@@ -1,11 +1,11 @@
 package org.jabref.logic.msbib;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PageNumbers {
     private static final Pattern PAGE_PATTERN = Pattern.compile("\\s*(\\d+)\\s*-{1,2}\\s*(\\d+)\\s*");

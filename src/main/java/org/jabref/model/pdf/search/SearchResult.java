@@ -1,28 +1,19 @@
 package org.jabref.model.pdf.search;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.jabref.model.entry.BibEntry;
-
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.highlight.Highlighter;
-import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
-import org.apache.lucene.search.highlight.QueryScorer;
-import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
-import org.apache.lucene.search.highlight.TextFragment;
+import org.apache.lucene.search.highlight.*;
+import org.jabref.model.entry.BibEntry;
 
-import static org.jabref.model.pdf.search.SearchFieldConstants.ANNOTATIONS;
-import static org.jabref.model.pdf.search.SearchFieldConstants.CONTENT;
-import static org.jabref.model.pdf.search.SearchFieldConstants.MODIFIED;
-import static org.jabref.model.pdf.search.SearchFieldConstants.PAGE_NUMBER;
-import static org.jabref.model.pdf.search.SearchFieldConstants.PATH;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.jabref.model.pdf.search.SearchFieldConstants.*;
 
 public final class SearchResult {
 

@@ -1,33 +1,28 @@
 package org.jabref.logic.openoffice.action;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import org.jabref.logic.openoffice.frontend.OOFrontend;
-import org.jabref.logic.openoffice.frontend.UpdateCitationMarkers;
-import org.jabref.logic.openoffice.style.OOBibStyle;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.openoffice.ootext.OOText;
-import org.jabref.model.openoffice.style.Citation;
-import org.jabref.model.openoffice.style.CitationMarkerEntry;
-import org.jabref.model.openoffice.style.CitationType;
-import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
-import org.jabref.model.openoffice.style.OODataModel;
-import org.jabref.model.openoffice.uno.CreationException;
-import org.jabref.model.openoffice.uno.NoDocumentException;
-import org.jabref.model.openoffice.uno.UnoScreenRefresh;
-import org.jabref.model.openoffice.util.OOListUtil;
-import org.jabref.model.strings.StringUtil;
-
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
+import org.jabref.logic.openoffice.frontend.OOFrontend;
+import org.jabref.logic.openoffice.frontend.UpdateCitationMarkers;
+import org.jabref.logic.openoffice.style.OOBibStyle;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.openoffice.ootext.OOText;
+import org.jabref.model.openoffice.style.*;
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
+import org.jabref.model.openoffice.uno.UnoScreenRefresh;
+import org.jabref.model.openoffice.util.OOListUtil;
+import org.jabref.model.strings.StringUtil;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class EditInsert {
 

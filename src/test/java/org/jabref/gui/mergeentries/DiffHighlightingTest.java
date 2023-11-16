@@ -1,18 +1,16 @@
 package org.jabref.gui.mergeentries;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javafx.scene.text.Text;
-
 import org.jabref.testutils.category.GUITest;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @GUITest
 @ExtendWith(ApplicationExtension.class)

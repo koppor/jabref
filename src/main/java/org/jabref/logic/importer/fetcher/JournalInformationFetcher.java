@@ -1,29 +1,22 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import javafx.util.Pair;
-
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.WebFetcher;
-import org.jabref.logic.journals.JournalInformation;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.model.entry.identifier.ISSN;
-
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONException;
 import kong.unirest.json.JSONObject;
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.logic.importer.WebFetcher;
+import org.jabref.logic.journals.JournalInformation;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.model.entry.identifier.ISSN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Fetches journal information from the JabRef Web API

@@ -1,10 +1,6 @@
 package org.jabref.gui.libraryproperties.constants;
 
-import java.util.Comparator;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -12,7 +8,6 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.help.HelpAction;
 import org.jabref.gui.libraryproperties.PropertiesTabViewModel;
@@ -22,7 +17,10 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibtexString;
 import org.jabref.preferences.FilePreferences;
 
-import com.tobiasdiez.easybind.EasyBind;
+import java.util.Comparator;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ConstantsPropertiesViewModel implements PropertiesTabViewModel {
 

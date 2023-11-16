@@ -1,14 +1,13 @@
 package org.jabref.gui.commonfxcontrols;
 
-import java.util.Collections;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-
 import org.jabref.model.entry.field.Field;
+
+import java.util.Collections;
 
 public class SaveOrderConfigPanelViewModel {
 

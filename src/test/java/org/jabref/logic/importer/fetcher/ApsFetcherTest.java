@@ -1,14 +1,13 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.net.URL;
-import java.util.Optional;
-
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.net.URL;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -1,10 +1,6 @@
 package org.jabref.gui.maintable;
 
-import java.io.IOException;
-import java.util.List;
-
 import javafx.beans.binding.BooleanExpression;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.SimpleCommand;
@@ -14,6 +10,9 @@ import org.jabref.logic.util.ExternalLinkCreator;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.preferences.PreferencesService;
+
+import java.io.IOException;
+import java.util.List;
 
 import static org.jabref.gui.actions.ActionHelper.isFieldSetForSelectedEntry;
 import static org.jabref.gui.actions.ActionHelper.needsEntriesSelected;

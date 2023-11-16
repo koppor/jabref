@@ -1,28 +1,21 @@
 package org.jabref.gui.theme;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.function.Consumer;
-
+import com.jthemedetecor.OsThemeDetector;
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
-
 import org.jabref.gui.util.DefaultTaskExecutor;
 import org.jabref.model.util.FileUpdateListener;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.WorkspacePreferences;
-
-import com.jthemedetecor.OsThemeDetector;
-import com.tobiasdiez.easybind.EasyBind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Installs and manages style files and provides live reloading. JabRef provides two inbuilt themes and a user

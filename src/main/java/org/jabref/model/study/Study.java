@@ -1,13 +1,12 @@
 package org.jabref.model.study;
 
-import java.util.List;
-import java.util.Objects;
-
-import org.jabref.logic.crawler.StudyYamlParser;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.jabref.logic.crawler.StudyYamlParser;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * This class represents a scientific study.

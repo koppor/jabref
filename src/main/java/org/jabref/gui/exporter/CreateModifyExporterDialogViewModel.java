@@ -1,10 +1,7 @@
 package org.jabref.gui.exporter;
 
-import java.nio.file.Path;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.util.FileDialogConfiguration;
@@ -12,9 +9,10 @@ import org.jabref.logic.exporter.TemplateExporter;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.StandardFileType;
 import org.jabref.preferences.PreferencesService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
 
 /**
  * This view model can be used both for "add exporter" and "modify exporter" functionalities.

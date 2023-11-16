@@ -1,15 +1,14 @@
 package org.jabref.preferences;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Set;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
-
 import org.jabref.logic.cleanup.FieldFormatterCleanups;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Set;
 
 public class CleanupPreferences {
 

@@ -1,14 +1,13 @@
 package org.jabref.model.openoffice.rangesort;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jabref.model.openoffice.uno.UnoCast;
-import org.jabref.model.openoffice.uno.UnoTextRange;
-
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextRangeCompare;
+import org.jabref.model.openoffice.uno.UnoCast;
+import org.jabref.model.openoffice.uno.UnoTextRange;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RangeOverlapWithin {
 

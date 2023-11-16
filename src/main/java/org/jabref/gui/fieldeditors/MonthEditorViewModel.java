@@ -1,18 +1,16 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.util.StringConverter;
-
 import org.jabref.gui.autocompleter.SuggestionProvider;
 import org.jabref.logic.integrity.FieldCheckers;
 import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.Month;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.strings.StringUtil;
+
+import javax.swing.undo.UndoManager;
+import java.util.Arrays;
+import java.util.List;
 
 public class MonthEditorViewModel extends OptionEditorViewModel<Month> {
     private BibDatabaseMode databaseMode;

@@ -1,16 +1,15 @@
 package org.jabref.migrations;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class MergeReviewIntoCommentMigration {
     private static final Logger LOGGER = LoggerFactory.getLogger(MergeReviewIntoCommentMigration.class);

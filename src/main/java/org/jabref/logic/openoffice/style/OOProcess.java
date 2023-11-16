@@ -1,14 +1,14 @@
 package org.jabref.logic.openoffice.style;
 
-import java.util.Comparator;
-import java.util.List;
-
 import org.jabref.logic.bibtex.comparator.FieldComparator;
 import org.jabref.logic.bibtex.comparator.FieldComparatorStack;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.openoffice.style.CitationGroups;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class OOProcess {
 

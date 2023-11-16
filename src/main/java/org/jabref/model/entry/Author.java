@@ -1,10 +1,10 @@
 package org.jabref.model.entry;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import org.jabref.model.strings.LatexToUnicodeAdapter;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is an immutable class that keeps information regarding single author. It is just a container for the information, with very simple methods to access it.

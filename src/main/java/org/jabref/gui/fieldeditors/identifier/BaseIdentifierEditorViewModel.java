@@ -1,15 +1,10 @@
 package org.jabref.gui.fieldeditors.identifier;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import javax.swing.undo.UndoManager;
-
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.autocompleter.SuggestionProvider;
 import org.jabref.gui.desktop.JabRefDesktop;
@@ -25,10 +20,12 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.identifier.Identifier;
 import org.jabref.preferences.PreferencesService;
-
-import com.tobiasdiez.easybind.EasyBind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.UndoManager;
+import java.io.IOException;
+import java.util.Optional;
 
 public abstract class BaseIdentifierEditorViewModel<T extends Identifier> extends AbstractEditorViewModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseIdentifierEditorViewModel.class);

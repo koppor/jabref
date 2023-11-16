@@ -1,13 +1,13 @@
 package org.jabref.logic.externalfiles;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.logic.importer.OpenDatabase;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.importer.fileformat.PdfMergeMetadataImporter;
 import org.jabref.model.util.FileUpdateMonitor;
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 public class ExternalFilesContentImporter {
 

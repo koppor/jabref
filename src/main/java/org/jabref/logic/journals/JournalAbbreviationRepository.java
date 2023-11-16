@@ -1,18 +1,12 @@
 package org.jabref.logic.journals;
 
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
+
+import java.nio.file.Path;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A repository for all journal abbreviations, including add and find methods.

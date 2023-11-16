@@ -1,10 +1,10 @@
 package org.jabref.gui.util;
 
-import java.util.function.UnaryOperator;
-import java.util.regex.Pattern;
-
 import javafx.scene.control.TextFormatter;
 import javafx.util.converter.IntegerStringConverter;
+
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 
 /**
  * Formatter that only accepts integer.

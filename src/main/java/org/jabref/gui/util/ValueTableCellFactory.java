@@ -1,8 +1,5 @@
 package org.jabref.gui.util;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import javafx.beans.binding.BooleanExpression;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -14,8 +11,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Screen;
 import javafx.util.Callback;
-
 import org.jabref.model.strings.StringUtil;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Constructs a {@link TableCell} based on the value of the cell and a bunch of specified converter methods.

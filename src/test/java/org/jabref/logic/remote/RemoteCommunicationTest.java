@@ -1,15 +1,14 @@
 package org.jabref.logic.remote;
 
-import java.io.IOException;
-
 import org.jabref.logic.remote.client.RemoteClient;
 import org.jabref.logic.remote.server.RemoteListenerServerManager;
 import org.jabref.logic.remote.server.RemoteMessageHandler;
 import org.jabref.support.DisabledOnCIServer;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;

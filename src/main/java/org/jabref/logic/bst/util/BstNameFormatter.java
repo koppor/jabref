@@ -1,16 +1,15 @@
 package org.jabref.logic.bst.util;
 
+import org.jabref.logic.bst.BstVMException;
+import org.jabref.model.entry.Author;
+import org.jabref.model.entry.AuthorList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.jabref.logic.bst.BstVMException;
-import org.jabref.model.entry.Author;
-import org.jabref.model.entry.AuthorList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * From Bibtex:

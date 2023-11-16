@@ -1,15 +1,11 @@
 package org.jabref.gui.preferences.protectedterms;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.FileDialogConfiguration;
@@ -17,6 +13,9 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.protectedterms.ProtectedTermsList;
 import org.jabref.logic.util.StandardFileType;
 import org.jabref.preferences.FilePreferences;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewProtectedTermsFileDialog extends BaseDialog<Void> {
 

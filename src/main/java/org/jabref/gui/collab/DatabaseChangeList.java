@@ -1,9 +1,5 @@
 package org.jabref.gui.collab;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.jabref.gui.collab.entryadd.EntryAdd;
 import org.jabref.gui.collab.entrychange.EntryChange;
 import org.jabref.gui.collab.entrydelete.EntryDelete;
@@ -18,6 +14,10 @@ import org.jabref.logic.bibtex.comparator.BibDatabaseDiff;
 import org.jabref.logic.bibtex.comparator.BibEntryDiff;
 import org.jabref.logic.bibtex.comparator.BibStringDiff;
 import org.jabref.model.database.BibDatabaseContext;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class DatabaseChangeList {
     private DatabaseChangeList() {}

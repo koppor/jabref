@@ -1,21 +1,13 @@
 package org.jabref.model.entry;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.jabref.gui.importer.BibEntryTypePrefsAndFileViewModel;
 import org.jabref.logic.exporter.MetaDataSerializer;
 import org.jabref.model.database.BibDatabaseMode;
-import org.jabref.model.entry.field.BibField;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.FieldPriority;
-import org.jabref.model.entry.field.OrFields;
-import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.field.*;
 import org.jabref.model.entry.types.EntryType;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BibEntryType implements Comparable<BibEntryType> {
 

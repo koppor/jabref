@@ -1,15 +1,10 @@
 package org.jabref.gui.help;
 
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.Lists;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
-
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.ClipBoardManager;
 import org.jabref.gui.DialogService;
@@ -17,10 +12,13 @@ import org.jabref.gui.desktop.JabRefDesktop;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.BuildInfo;
 import org.jabref.preferences.PreferencesService;
-
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class AboutDialogViewModel extends AbstractViewModel {
 

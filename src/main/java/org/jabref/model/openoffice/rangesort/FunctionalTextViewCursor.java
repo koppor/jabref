@@ -1,16 +1,15 @@
 package org.jabref.model.openoffice.rangesort;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-import org.jabref.model.openoffice.uno.UnoCursor;
-import org.jabref.model.openoffice.uno.UnoSelection;
-import org.jabref.model.openoffice.util.OOResult;
-
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextViewCursor;
+import org.jabref.model.openoffice.uno.UnoCursor;
+import org.jabref.model.openoffice.uno.UnoSelection;
+import org.jabref.model.openoffice.util.OOResult;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /*
  * A problem with XTextViewCursor: if it is not in text, then we get a crippled version that does

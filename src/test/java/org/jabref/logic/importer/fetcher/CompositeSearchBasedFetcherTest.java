@@ -1,24 +1,11 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
-
 import javafx.collections.FXCollections;
-
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.ImportCleanup;
-import org.jabref.logic.importer.ImportFormatPreferences;
-import org.jabref.logic.importer.ImporterPreferences;
-import org.jabref.logic.importer.SearchBasedFetcher;
+import org.jabref.logic.importer.*;
 import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.support.DisabledOnCIServer;
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,6 +14,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Answers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

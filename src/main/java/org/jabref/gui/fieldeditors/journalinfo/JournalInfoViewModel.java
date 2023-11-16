@@ -1,20 +1,19 @@
 package org.jabref.gui.fieldeditors.journalinfo;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import javafx.util.Pair;
-
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.fetcher.JournalInformationFetcher;
 import org.jabref.logic.journals.JournalInformation;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class JournalInfoViewModel extends AbstractViewModel {
     private final ReadOnlyStringWrapper title = new ReadOnlyStringWrapper();

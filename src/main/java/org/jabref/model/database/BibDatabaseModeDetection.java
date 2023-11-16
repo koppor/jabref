@@ -1,10 +1,10 @@
 package org.jabref.model.database;
 
-import java.util.stream.Stream;
-
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.EntryTypeFactory;
+
+import java.util.stream.Stream;
 
 public class BibDatabaseModeDetection {
 

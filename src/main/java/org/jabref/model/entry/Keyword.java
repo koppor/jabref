@@ -1,11 +1,11 @@
 package org.jabref.model.entry;
 
+import org.jabref.model.ChainNode;
+
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jabref.model.ChainNode;
 
 /**
  * Represents a keyword in a chain of keywords.

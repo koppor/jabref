@@ -1,7 +1,6 @@
 package org.jabref.gui.fieldeditors;
 
 import javafx.scene.Parent;
-
 import org.jabref.gui.util.ControlHelper;
 import org.jabref.model.entry.BibEntry;
 

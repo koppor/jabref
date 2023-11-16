@@ -1,33 +1,25 @@
 package org.jabref.logic.importer;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.jabref.logic.importer.fetcher.AbstractIsbnFetcher;
-import org.jabref.logic.importer.fetcher.CollectionOfComputerScienceBibliographiesFetcher;
-import org.jabref.logic.importer.fetcher.GoogleScholar;
-import org.jabref.logic.importer.fetcher.GrobidCitationFetcher;
-import org.jabref.logic.importer.fetcher.GvkFetcher;
-import org.jabref.logic.importer.fetcher.IssnFetcher;
-import org.jabref.logic.importer.fetcher.JstorFetcher;
-import org.jabref.logic.importer.fetcher.MrDLibFetcher;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfoList;
+import io.github.classgraph.ScanResult;
+import org.jabref.logic.importer.fetcher.*;
 import org.jabref.logic.importer.fetcher.isbntobibtex.DoiToBibtexConverterComIsbnFetcher;
 import org.jabref.logic.importer.fetcher.isbntobibtex.EbookDeIsbnFetcher;
 import org.jabref.logic.importer.fetcher.isbntobibtex.OpenLibraryIsbnFetcher;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.preferences.FilePreferences;
-
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.ScanResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;

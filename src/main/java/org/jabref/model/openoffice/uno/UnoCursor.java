@@ -1,13 +1,8 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Optional;
+import com.sun.star.text.*;
 
-import com.sun.star.text.XTextContent;
-import com.sun.star.text.XTextCursor;
-import com.sun.star.text.XTextDocument;
-import com.sun.star.text.XTextRange;
-import com.sun.star.text.XTextViewCursor;
-import com.sun.star.text.XTextViewCursorSupplier;
+import java.util.Optional;
 
 public class UnoCursor {
 

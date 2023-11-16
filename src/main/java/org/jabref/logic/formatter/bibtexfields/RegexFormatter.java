@@ -1,17 +1,16 @@
 package org.jabref.logic.formatter.bibtexfields;
 
+import org.jabref.logic.cleanup.Formatter;
+import org.jabref.logic.l10n.Localization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import org.jabref.logic.cleanup.Formatter;
-import org.jabref.logic.l10n.Localization;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RegexFormatter extends Formatter {
     public static final String KEY = "regex";

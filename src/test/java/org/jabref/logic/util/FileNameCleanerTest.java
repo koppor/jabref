@@ -1,7 +1,6 @@
 package org.jabref.logic.util;
 
 import org.jabref.logic.util.io.FileNameCleaner;
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

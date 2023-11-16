@@ -1,11 +1,5 @@
 package org.jabref.gui.edit;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.jabref.gui.ClipBoardManager;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefDialogService;
@@ -21,9 +15,14 @@ import org.jabref.logic.util.OS;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.preferences.PreferencesService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CopyMoreAction extends SimpleCommand {
 

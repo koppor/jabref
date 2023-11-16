@@ -1,9 +1,9 @@
 package org.jabref.logic.integrity;
 
-import java.util.Objects;
-
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
+
+import java.util.Objects;
 
 public final class IntegrityMessage implements Cloneable {
     private final BibEntry entry;

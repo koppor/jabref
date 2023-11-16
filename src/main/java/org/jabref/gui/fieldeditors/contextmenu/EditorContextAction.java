@@ -1,7 +1,6 @@
 package org.jabref.gui.fieldeditors.contextmenu;
 
-import java.util.List;
-
+import com.sun.javafx.scene.control.Properties;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
@@ -9,7 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.Clipboard;
-
 import org.jabref.gui.actions.ActionFactory;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.actions.StandardActions;
@@ -17,7 +15,7 @@ import org.jabref.gui.keyboard.KeyBindingRepository;
 import org.jabref.gui.util.BindingsHelper;
 import org.jabref.logic.util.OS;
 
-import com.sun.javafx.scene.control.Properties;
+import java.util.List;
 
 public class EditorContextAction extends SimpleCommand {
 

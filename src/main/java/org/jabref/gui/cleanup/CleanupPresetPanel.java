@@ -1,16 +1,11 @@
 package org.jabref.gui.cleanup;
 
-import java.nio.file.Path;
-import java.util.EnumSet;
-import java.util.Objects;
-import java.util.Optional;
-
+import com.airhacks.afterburner.views.ViewLoader;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-
 import org.jabref.gui.commonfxcontrols.FieldFormatterCleanupsPanel;
 import org.jabref.logic.cleanup.FieldFormatterCleanups;
 import org.jabref.logic.l10n.Localization;
@@ -19,7 +14,10 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.preferences.CleanupPreferences;
 import org.jabref.preferences.FilePreferences;
 
-import com.airhacks.afterburner.views.ViewLoader;
+import java.nio.file.Path;
+import java.util.EnumSet;
+import java.util.Objects;
+import java.util.Optional;
 
 public class CleanupPresetPanel extends VBox {
 

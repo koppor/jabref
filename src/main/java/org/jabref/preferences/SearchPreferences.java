@@ -1,18 +1,12 @@
 package org.jabref.preferences;
 
-import java.util.EnumSet;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
-
 import org.jabref.gui.search.SearchDisplayMode;
 import org.jabref.model.search.rules.SearchRules.SearchFlags;
+
+import java.util.EnumSet;
 
 public class SearchPreferences {
 

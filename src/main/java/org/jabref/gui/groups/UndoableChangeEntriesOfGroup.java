@@ -1,13 +1,12 @@
 package org.jabref.gui.groups;
 
-import java.util.List;
-
-import javax.swing.undo.AbstractUndoableEdit;
-
 import org.jabref.gui.undo.NamedCompound;
 import org.jabref.gui.undo.UndoableFieldChange;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.FieldChange;
+
+import javax.swing.undo.AbstractUndoableEdit;
+import java.util.List;
 
 public class UndoableChangeEntriesOfGroup {
 

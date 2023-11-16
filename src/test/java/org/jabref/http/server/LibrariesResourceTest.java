@@ -1,11 +1,11 @@
 package org.jabref.http.server;
 
-import java.util.EnumSet;
-import java.util.stream.Collectors;
-
 import jakarta.ws.rs.core.Application;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
+
+import java.util.EnumSet;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

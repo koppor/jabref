@@ -1,9 +1,9 @@
 package org.jabref.gui.auximport;
 
-import java.util.stream.Collectors;
-
 import org.jabref.logic.auxparser.AuxParserResult;
 import org.jabref.logic.l10n.Localization;
+
+import java.util.stream.Collectors;
 
 public class AuxParserResultViewModel {
 

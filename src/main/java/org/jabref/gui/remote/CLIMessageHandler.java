@@ -1,9 +1,7 @@
 package org.jabref.gui.remote;
 
-import java.util.List;
-
 import javafx.application.Platform;
-
+import org.apache.commons.cli.ParseException;
 import org.jabref.cli.ArgumentProcessor;
 import org.jabref.gui.JabRefGUI;
 import org.jabref.logic.importer.ParserResult;
@@ -11,10 +9,10 @@ import org.jabref.logic.remote.server.RemoteMessageHandler;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
-
-import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class CLIMessageHandler implements RemoteMessageHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(CLIMessageHandler.class);

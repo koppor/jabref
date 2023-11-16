@@ -26,16 +26,14 @@
  */
 package org.jabref.gui.autocompleter;
 
-import java.util.Collection;
-
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TextInputControl;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-
+import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.jabref.gui.util.DefaultTaskExecutor;
 
-import org.controlsfx.control.textfield.AutoCompletionBinding;
+import java.util.Collection;
 
 /**
  * Represents a binding between a text input control and an auto-completion popup

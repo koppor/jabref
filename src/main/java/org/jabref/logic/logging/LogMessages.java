@@ -2,7 +2,6 @@ package org.jabref.logic.logging;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.tinylog.core.LogEntry;
 
 /**

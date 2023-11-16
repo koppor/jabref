@@ -1,11 +1,10 @@
 package org.jabref.cli;
 
+import javafx.util.Pair;
+import org.junit.jupiter.api.Test;
+
 import java.util.Collections;
 import java.util.List;
-
-import javafx.util.Pair;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

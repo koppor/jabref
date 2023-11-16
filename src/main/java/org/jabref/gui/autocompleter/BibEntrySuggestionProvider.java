@@ -1,16 +1,15 @@
 package org.jabref.gui.autocompleter;
 
-import java.util.Comparator;
-import java.util.stream.Stream;
-
+import com.google.common.base.Equivalence;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.jabref.logic.bibtex.comparator.EntryComparator;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.strings.StringUtil;
 
-import com.google.common.base.Equivalence;
-import org.controlsfx.control.textfield.AutoCompletionBinding;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 /**
  * Delivers possible completions as a list of {@link BibEntry} based on their citation key.

@@ -1,12 +1,11 @@
 package org.jabref.gui.edit.automaticfiededitor;
 
-import java.util.Collections;
-
 import javafx.scene.Node;
 import javafx.util.Duration;
-
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.icon.IconTheme;
+
+import java.util.Collections;
 
 public class NotificationPaneAdapter extends LibraryTab.DatabaseNotification {
 

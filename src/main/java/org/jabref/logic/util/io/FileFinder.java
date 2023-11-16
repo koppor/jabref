@@ -1,10 +1,10 @@
 package org.jabref.logic.util.io;
 
+import org.jabref.model.entry.BibEntry;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-
-import org.jabref.model.entry.BibEntry;
 
 public interface FileFinder {
 

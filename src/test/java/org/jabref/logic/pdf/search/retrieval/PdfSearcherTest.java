@@ -1,9 +1,6 @@
 package org.jabref.logic.pdf.search.retrieval;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collections;
-
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.jabref.logic.pdf.search.indexing.PdfIndexer;
 import org.jabref.logic.util.StandardFileType;
 import org.jabref.model.database.BibDatabase;
@@ -13,12 +10,14 @@ import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.pdf.search.PdfSearchResults;
 import org.jabref.preferences.FilePreferences;
-
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

@@ -1,22 +1,20 @@
 package org.jabref.gui.importer;
 
-import java.util.List;
-
+import com.airhacks.afterburner.views.ViewLoader;
+import jakarta.inject.Inject;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.layout.VBox;
-
+import org.controlsfx.control.CheckListView;
 import org.jabref.gui.util.BaseDialog;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntryType;
 import org.jabref.preferences.PreferencesService;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
-import org.controlsfx.control.CheckListView;
+import java.util.List;
 
 public class ImportCustomEntryTypesDialog extends BaseDialog<Void> {
 

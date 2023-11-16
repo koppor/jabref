@@ -1,5 +1,6 @@
 package org.jabref.gui.importer.fetcher;
 
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.beans.binding.BooleanExpression;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
@@ -11,7 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-
 import org.jabref.gui.ClipBoardManager;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
@@ -23,8 +23,6 @@ import org.jabref.gui.util.ViewModelListCellFactory;
 import org.jabref.logic.importer.SearchBasedFetcher;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.preferences.PreferencesService;
-
-import com.tobiasdiez.easybind.EasyBind;
 
 public class WebSearchPaneView extends VBox {
 

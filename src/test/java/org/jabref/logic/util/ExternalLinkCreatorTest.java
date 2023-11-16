@@ -1,14 +1,13 @@
 package org.jabref.logic.util;
 
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.junit.jupiter.api.Test;
+
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-
-import org.junit.jupiter.api.Test;
 
 import static org.jabref.logic.util.ExternalLinkCreator.getShortScienceSearchURL;
 import static org.junit.jupiter.api.Assertions.assertEquals;

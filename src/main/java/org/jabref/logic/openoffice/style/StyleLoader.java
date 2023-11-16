@@ -1,5 +1,11 @@
 package org.jabref.logic.openoffice.style;
 
+import org.jabref.logic.journals.JournalAbbreviationRepository;
+import org.jabref.logic.layout.LayoutFormatterPreferences;
+import org.jabref.logic.openoffice.OpenOfficePreferences;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -7,13 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import org.jabref.logic.journals.JournalAbbreviationRepository;
-import org.jabref.logic.layout.LayoutFormatterPreferences;
-import org.jabref.logic.openoffice.OpenOfficePreferences;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class StyleLoader {
 

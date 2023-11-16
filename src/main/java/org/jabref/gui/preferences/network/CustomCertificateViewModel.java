@@ -1,17 +1,11 @@
 package org.jabref.gui.preferences.network;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
+import javafx.beans.property.*;
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.logic.net.ssl.SSLCertificate;
+
+import java.time.LocalDate;
+import java.util.Optional;
 
 public class CustomCertificateViewModel extends AbstractViewModel {
     private final StringProperty serialNumberProperty = new SimpleStringProperty("");

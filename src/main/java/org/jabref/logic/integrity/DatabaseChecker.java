@@ -1,8 +1,8 @@
 package org.jabref.logic.integrity;
 
-import java.util.List;
-
 import org.jabref.model.database.BibDatabase;
+
+import java.util.List;
 
 @FunctionalInterface
 public interface DatabaseChecker {

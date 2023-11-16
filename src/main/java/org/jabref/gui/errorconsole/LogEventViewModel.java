@@ -1,14 +1,13 @@
 package org.jabref.gui.errorconsole;
 
-import java.util.Objects;
-import java.util.Optional;
-
+import com.google.common.base.Throwables;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
 import org.jabref.logic.util.OS;
-
-import com.google.common.base.Throwables;
 import org.tinylog.core.LogEntry;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public class LogEventViewModel {
 

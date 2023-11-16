@@ -1,9 +1,5 @@
 package org.jabref.gui.texparser;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
@@ -15,11 +11,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.util.ViewModelListCellFactory;
 import org.jabref.model.strings.LatexToUnicodeAdapter;
 import org.jabref.model.texparser.Citation;
+
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CitationsDisplay extends ListView<Citation> {
 

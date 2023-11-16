@@ -1,18 +1,10 @@
 package org.jabref.logic.importer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
 import org.jabref.model.entry.Author;
 import org.jabref.model.entry.AuthorList;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.*;
 
 public class AuthorListParser {
 

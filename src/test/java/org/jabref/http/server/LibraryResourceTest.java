@@ -1,9 +1,8 @@
 package org.jabref.http.server;
 
-import org.jabref.http.JabrefMediaType;
-
 import jakarta.ws.rs.core.Application;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.jabref.http.JabrefMediaType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

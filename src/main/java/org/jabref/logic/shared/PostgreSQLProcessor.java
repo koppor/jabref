@@ -1,18 +1,17 @@
 package org.jabref.logic.shared;
 
+import org.jabref.gui.JabRefExecutorService;
+import org.jabref.logic.shared.listener.PostgresSQLNotificationListener;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.metadata.MetaData;
+import org.postgresql.PGConnection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
-
-import org.jabref.gui.JabRefExecutorService;
-import org.jabref.logic.shared.listener.PostgresSQLNotificationListener;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.metadata.MetaData;
-
-import org.postgresql.PGConnection;
 
 /**
  * Processes all incoming or outgoing bib data to PostgreSQL database and manages its structure.

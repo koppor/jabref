@@ -1,12 +1,12 @@
 package org.jabref.logic.integrity;
 
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class TitleChecker implements ValueChecker {
 

@@ -1,9 +1,9 @@
 package org.jabref.logic.shared;
 
-import java.sql.SQLException;
-
 import org.jabref.logic.shared.exception.InvalidDBMSConnectionPropertiesException;
 import org.jabref.testutils.category.DatabaseTest;
+
+import java.sql.SQLException;
 
 /**
  * Stores the credentials for the test systems

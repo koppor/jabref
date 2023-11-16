@@ -1,15 +1,10 @@
 package org.jabref.model.entry;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedSet;
-import java.util.StringJoiner;
-import java.util.TreeSet;
-
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.InternalField;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public class CanonicalBibEntry {
 

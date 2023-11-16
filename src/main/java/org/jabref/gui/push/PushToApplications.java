@@ -1,11 +1,11 @@
 package org.jabref.gui.push;
 
+import org.jabref.gui.DialogService;
+import org.jabref.preferences.PreferencesService;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.jabref.gui.DialogService;
-import org.jabref.preferences.PreferencesService;
 
 public class PushToApplications {
 

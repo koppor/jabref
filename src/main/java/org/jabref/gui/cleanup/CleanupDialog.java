@@ -2,7 +2,6 @@ package org.jabref.gui.cleanup;
 
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
-
 import org.jabref.gui.util.BaseDialog;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;

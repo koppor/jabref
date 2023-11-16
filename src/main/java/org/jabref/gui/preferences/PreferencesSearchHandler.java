@@ -1,9 +1,6 @@
 package org.jabref.gui.preferences;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
+import com.google.common.collect.ArrayListMultimap;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -12,7 +9,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Labeled;
 
-import com.google.common.collect.ArrayListMultimap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 class PreferencesSearchHandler {
 

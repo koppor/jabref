@@ -1,15 +1,9 @@
 package org.jabref.preferences;
 
-import java.nio.file.Path;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
+import javafx.beans.property.*;
 import org.jabref.logic.util.Version;
+
+import java.nio.file.Path;
 
 public class InternalPreferences {
 

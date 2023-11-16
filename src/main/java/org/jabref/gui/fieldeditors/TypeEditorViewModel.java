@@ -1,14 +1,13 @@
 package org.jabref.gui.fieldeditors;
 
-import javax.swing.undo.UndoManager;
-
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import org.jabref.gui.autocompleter.SuggestionProvider;
 import org.jabref.logic.integrity.FieldCheckers;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.field.Field;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import javax.swing.undo.UndoManager;
 
 public class TypeEditorViewModel extends MapBasedEditorViewModel<String> {
 

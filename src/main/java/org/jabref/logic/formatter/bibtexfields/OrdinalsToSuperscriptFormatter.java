@@ -1,11 +1,11 @@
 package org.jabref.logic.formatter.bibtexfields;
 
+import org.jabref.logic.cleanup.Formatter;
+import org.jabref.logic.l10n.Localization;
+
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.logic.cleanup.Formatter;
-import org.jabref.logic.l10n.Localization;
 
 /**
  * This class transforms ordinal numbers into LaTeX superscripts.

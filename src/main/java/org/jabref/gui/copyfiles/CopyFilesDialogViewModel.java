@@ -2,7 +2,6 @@ package org.jabref.gui.copyfiles;
 
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-
 import org.jabref.gui.AbstractViewModel;
 
 public class CopyFilesDialogViewModel extends AbstractViewModel {

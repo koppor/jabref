@@ -1,12 +1,12 @@
 package org.jabref.model.openoffice.style;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.util.OOPair;
+
+import java.util.List;
+import java.util.Optional;
 
 public class Citation implements ComparableCitation, CitationMarkerEntry, CitationMarkerNumericEntry {
 

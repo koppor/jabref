@@ -1,5 +1,9 @@
 package org.jabref.logic.protectedterms;
 
+import org.jabref.logic.util.OS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -8,11 +12,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Objects;
-
-import org.jabref.logic.util.OS;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ProtectedTermsList implements Comparable<ProtectedTermsList> {
 

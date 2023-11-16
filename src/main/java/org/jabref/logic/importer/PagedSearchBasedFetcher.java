@@ -1,16 +1,15 @@
 package org.jabref.logic.importer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.paging.Page;
-
 import org.apache.lucene.queryparser.flexible.core.QueryNodeParseException;
 import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.apache.lucene.queryparser.flexible.core.parser.SyntaxParser;
 import org.apache.lucene.queryparser.flexible.standard.parser.StandardSyntaxParser;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.paging.Page;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public interface PagedSearchBasedFetcher extends SearchBasedFetcher {
 

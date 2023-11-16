@@ -1,32 +1,12 @@
 package org.jabref.gui.shared;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.GeneralSecurityException;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-
-import javax.swing.undo.UndoManager;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import com.tobiasdiez.easybind.EasyBind;
+import de.saxsys.mvvmfx.utils.validation.*;
+import javafx.beans.property.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-
-import org.jabref.gui.AbstractViewModel;
-import org.jabref.gui.DialogService;
-import org.jabref.gui.Globals;
-import org.jabref.gui.JabRefFrame;
-import org.jabref.gui.LibraryTab;
-import org.jabref.gui.StateManager;
+import org.jabref.gui.*;
 import org.jabref.gui.exporter.SaveDatabaseAction;
 import org.jabref.gui.help.HelpAction;
 import org.jabref.gui.util.FileDialogConfiguration;
@@ -34,11 +14,7 @@ import org.jabref.gui.util.FileFilterConverter;
 import org.jabref.gui.util.TaskExecutor;
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.shared.DBMSConnectionProperties;
-import org.jabref.logic.shared.DBMSConnectionPropertiesBuilder;
-import org.jabref.logic.shared.DBMSType;
-import org.jabref.logic.shared.DatabaseLocation;
-import org.jabref.logic.shared.DatabaseNotSupportedException;
+import org.jabref.logic.shared.*;
 import org.jabref.logic.shared.exception.InvalidDBMSConnectionPropertiesException;
 import org.jabref.logic.shared.prefs.SharedDatabasePreferences;
 import org.jabref.logic.shared.security.Password;
@@ -47,15 +23,18 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
-
-import com.tobiasdiez.easybind.EasyBind;
-import de.saxsys.mvvmfx.utils.validation.CompositeValidator;
-import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
-import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
-import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
-import de.saxsys.mvvmfx.utils.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.UndoManager;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.GeneralSecurityException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
 

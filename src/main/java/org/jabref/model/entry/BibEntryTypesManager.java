@@ -1,22 +1,12 @@
 package org.jabref.model.entry;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import org.jabref.model.database.BibDatabaseMode;
+import org.jabref.model.entry.types.*;
+
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jabref.model.database.BibDatabaseMode;
-import org.jabref.model.entry.types.BiblatexAPAEntryTypeDefinitions;
-import org.jabref.model.entry.types.BiblatexEntryTypeDefinitions;
-import org.jabref.model.entry.types.BiblatexSoftwareEntryTypeDefinitions;
-import org.jabref.model.entry.types.BibtexEntryTypeDefinitions;
-import org.jabref.model.entry.types.EntryType;
-import org.jabref.model.entry.types.EntryTypeFactory;
-import org.jabref.model.entry.types.IEEETranEntryTypeDefinitions;
 
 public class BibEntryTypesManager {
     private final InternalEntryTypes BIBTEX_ENTRYTYPES = new InternalEntryTypes(

@@ -1,25 +1,15 @@
 package org.jabref.gui.util;
 
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.TreeTableCell;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
 import javafx.util.Callback;
-
 import org.jabref.model.strings.StringUtil;
-
 import org.reactfx.util.TriConsumer;
+
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * Constructs a {@link TreeTableCell} based on the view model of the row and a bunch of specified converter methods.

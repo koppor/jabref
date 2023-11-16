@@ -1,16 +1,11 @@
 package org.jabref.model.openoffice.rangesort;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.sun.star.text.XText;
+import com.sun.star.text.XTextRangeCompare;
 import org.jabref.model.openoffice.uno.UnoCast;
 import org.jabref.model.openoffice.uno.UnoTextRange;
 
-import com.sun.star.text.XText;
-import com.sun.star.text.XTextRangeCompare;
+import java.util.*;
 
 /**
  * RangeSort provides sorting based on XTextRangeCompare, which only provides comparison between XTextRange values within the same XText.

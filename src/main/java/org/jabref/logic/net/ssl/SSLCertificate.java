@@ -1,5 +1,9 @@
 package org.jabref.logic.net.ssl;
 
+import com.google.common.hash.Hashing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -11,10 +15,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Objects;
 import java.util.Optional;
-
-import com.google.common.hash.Hashing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SSLCertificate {
     private static final Logger LOGGER = LoggerFactory.getLogger(SSLCertificate.class);

@@ -1,20 +1,15 @@
 package org.jabref.gui.mergeentries;
 
-import java.util.HashSet;
-import java.util.List;
-
+import com.google.common.collect.Comparators;
 import org.jabref.gui.mergeentries.newmergedialog.ThreeWayMergeViewModel;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.FieldFactory;
-import org.jabref.model.entry.field.InternalField;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.entry.field.*;
 import org.jabref.model.entry.types.StandardEntryType;
-
-import com.google.common.collect.Comparators;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -1,17 +1,12 @@
 package org.jabref.logic.util;
 
-import java.util.Locale;
-
-import org.jabref.gui.desktop.os.DefaultDesktop;
-import org.jabref.gui.desktop.os.Linux;
-import org.jabref.gui.desktop.os.NativeDesktop;
-import org.jabref.gui.desktop.os.OSX;
-import org.jabref.gui.desktop.os.Windows;
-
 import com.github.javakeyring.BackendNotSupportedException;
 import com.github.javakeyring.Keyring;
 import com.github.javakeyring.PasswordAccessException;
+import org.jabref.gui.desktop.os.*;
 import org.slf4j.LoggerFactory;
+
+import java.util.Locale;
 
 /**
  * Operating system (OS) detection

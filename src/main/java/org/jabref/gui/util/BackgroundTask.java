@@ -1,27 +1,18 @@
 package org.jabref.gui.util;
 
+import com.google.common.collect.ImmutableMap;
+import com.tobiasdiez.easybind.EasyBind;
+import javafx.beans.property.*;
+import javafx.concurrent.Task;
+import javafx.scene.Node;
+import org.jabref.gui.icon.IconTheme;
+import org.jabref.logic.l10n.Localization;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.concurrent.Task;
-import javafx.scene.Node;
-
-import org.jabref.gui.icon.IconTheme;
-import org.jabref.logic.l10n.Localization;
-
-import com.google.common.collect.ImmutableMap;
-import com.tobiasdiez.easybind.EasyBind;
 
 /**
  * This class is essentially a wrapper around {@link Task}.

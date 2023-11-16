@@ -1,17 +1,15 @@
 package org.jabref.gui.fieldeditors;
 
+import com.airhacks.afterburner.views.ViewLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.layout.HBox;
-
 import org.jabref.gui.Globals;
 import org.jabref.gui.fieldeditors.contextmenu.EditorContextAction;
 import org.jabref.gui.util.ViewModelListCellFactory;
 import org.jabref.model.entry.BibEntry;
-
-import com.airhacks.afterburner.views.ViewLoader;
 
 /**
  * Field editor that provides various pre-defined options as a drop-down combobox.

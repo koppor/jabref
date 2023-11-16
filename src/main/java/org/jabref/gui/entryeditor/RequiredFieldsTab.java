@@ -1,13 +1,6 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.control.Tooltip;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.autocompleter.SuggestionProviders;
@@ -25,6 +18,11 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.entry.field.OrFields;
 import org.jabref.preferences.PreferencesService;
+
+import javax.swing.undo.UndoManager;
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
 
 public class RequiredFieldsTab extends FieldsEditorTab {
 

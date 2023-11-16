@@ -1,11 +1,5 @@
 package org.jabref.logic.openoffice.style;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.Author;
 import org.jabref.model.entry.AuthorList;
@@ -13,12 +7,10 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.openoffice.ootext.OOText;
-import org.jabref.model.openoffice.style.CitationLookupResult;
-import org.jabref.model.openoffice.style.CitationMarkerEntry;
-import org.jabref.model.openoffice.style.CitationMarkerNormEntry;
-import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
-import org.jabref.model.openoffice.style.PageInfo;
+import org.jabref.model.openoffice.style.*;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.*;
 
 class OOBibStyleGetCitationMarker {
 

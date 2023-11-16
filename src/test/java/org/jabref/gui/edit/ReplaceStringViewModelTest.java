@@ -1,20 +1,18 @@
 package org.jabref.gui.edit;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
-
 import org.jabref.gui.LibraryTab;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -59,17 +57,17 @@ public class ReplaceStringViewModelTest {
                     "findString={0}, replaceString={1}, fieldString={2}, selectOnly={3}, allFieldReplace={4}, expectedResult={5}")
     @CsvSource({
         "randomText, replaceText, author, TRUE, FALSE, 0", // does not replace when findString does not exist in the
-                                                           // selected field
+        // selected field
         "Informatics, replaceText, randomField, TRUE, FALSE, 0", // does not replace if the BibEntry does not have
-                                                                 // selected field
+        // selected field
         "Informatics, replaceText, journaltitle, TRUE, FALSE, 1", // replace "Informatics" in the JOURNALTITLE field to
-                                                                  // "replaceText" in the BibEntry
+        // "replaceText" in the BibEntry
         "Informatics, replaceText, journaltitle, TRUE, TRUE, 1", // replace "Informatics" in the JOURNALTITLE field to
-                                                                 // "replaceText" in the BibEntry
+        // "replaceText" in the BibEntry
         "Informatics, replaceText, journaltitle, FALSE, FALSE, 1", // replace "Informatics" in the JOURNALTITLE field to
-                                                                   // "replaceText" in the BibEntry
+        // "replaceText" in the BibEntry
         "Informatics, replaceText, journaltitle, FALSE, TRUE, 1", // replace "Informatics" in the JOURNALTITLE field to
-                                                                  // "replaceText" in the BibEntry
+        // "replaceText" in the BibEntry
         "2020, 2021, date, TRUE, FALSE, 1", // only replace "2020" in the DATE field to "2021" in the BibEntry
         "2020, 2021, date, FALSE, TRUE, 2", // replace all the "2020"s in the entries
         "2020, 2021, date, FALSE, FALSE, 1", // only replace "2020" in the DATE field to "2021" in the BibEntry

@@ -1,25 +1,20 @@
 package org.jabref.logic.bst;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.jabref.logic.bst.util.*;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.entry.Author;
+import org.jabref.model.entry.AuthorList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.logic.bst.util.BstCaseChanger;
-import org.jabref.logic.bst.util.BstNameFormatter;
-import org.jabref.logic.bst.util.BstPurifier;
-import org.jabref.logic.bst.util.BstTextPrefixer;
-import org.jabref.logic.bst.util.BstWidthCalculator;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.Author;
-import org.jabref.model.entry.AuthorList;
-
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BstFunctions {
     private static final Logger LOGGER = LoggerFactory.getLogger(BstFunctions.class);

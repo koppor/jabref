@@ -1,7 +1,6 @@
 package org.jabref.gui.entryeditor;
 
 import javafx.scene.control.Tab;
-
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.types.EntryType;
 

@@ -1,12 +1,12 @@
 package org.jabref.logic.bibtex.comparator;
 
+import org.jabref.model.metadata.MetaData;
+import org.jabref.preferences.PreferencesService;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.jabref.model.metadata.MetaData;
-import org.jabref.preferences.PreferencesService;
 
 public class MetaDataDiff {
     public enum DifferenceType {

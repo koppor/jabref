@@ -1,5 +1,23 @@
 package org.jabref.logic.importer.fetcher;
 
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import org.jabref.logic.help.HelpFile;
+import org.jabref.logic.importer.*;
+import org.jabref.logic.importer.fetcher.transformers.IEEEQueryTransformer;
+import org.jabref.logic.net.URLDownload;
+import org.jabref.logic.util.BuildInfo;
+import org.jabref.logic.util.OS;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.LinkedFile;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.identifier.DOI;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,30 +31,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.jabref.logic.help.HelpFile;
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.FulltextFetcher;
-import org.jabref.logic.importer.ImportFormatPreferences;
-import org.jabref.logic.importer.ImporterPreferences;
-import org.jabref.logic.importer.PagedSearchBasedParserFetcher;
-import org.jabref.logic.importer.Parser;
-import org.jabref.logic.importer.fetcher.transformers.IEEEQueryTransformer;
-import org.jabref.logic.net.URLDownload;
-import org.jabref.logic.util.BuildInfo;
-import org.jabref.logic.util.OS;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.LinkedFile;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.identifier.DOI;
-import org.jabref.model.entry.types.StandardEntryType;
-
-import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONObject;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class for finding PDF URLs for entries on IEEE.

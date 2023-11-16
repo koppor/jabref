@@ -1,7 +1,5 @@
 package org.jabref.gui.libraryproperties;
 
-import java.util.List;
-
 import org.jabref.gui.libraryproperties.constants.ConstantsPropertiesView;
 import org.jabref.gui.libraryproperties.contentselectors.ContentSelectorView;
 import org.jabref.gui.libraryproperties.general.GeneralPropertiesView;
@@ -9,6 +7,8 @@ import org.jabref.gui.libraryproperties.keypattern.KeyPatternPropertiesView;
 import org.jabref.gui.libraryproperties.preamble.PreamblePropertiesView;
 import org.jabref.gui.libraryproperties.saving.SavingPropertiesView;
 import org.jabref.model.database.BibDatabaseContext;
+
+import java.util.List;
 
 public class LibraryPropertiesViewModel {
 

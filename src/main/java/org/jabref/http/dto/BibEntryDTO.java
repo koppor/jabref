@@ -1,8 +1,6 @@
 package org.jabref.http.dto;
 
-import java.io.IOException;
-import java.io.StringWriter;
-
+import com.google.common.base.MoreObjects;
 import org.jabref.logic.bibtex.BibEntryWriter;
 import org.jabref.logic.bibtex.FieldPreferences;
 import org.jabref.logic.bibtex.FieldWriter;
@@ -11,10 +9,11 @@ import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.SharedBibEntryData;
-
-import com.google.common.base.MoreObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringWriter;
 
 /**
  * The data transfer object (DTO) for an BibEntry

@@ -1,13 +1,11 @@
 package org.jabref.gui.icon;
 
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.css.Size;
 import javafx.css.SizeUnits;
-
 import org.jabref.gui.icon.IconTheme.JabRefIcons;
-
-import com.tobiasdiez.easybind.EasyBind;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 public class JabRefIconView extends FontIcon {

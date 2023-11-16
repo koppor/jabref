@@ -1,8 +1,8 @@
 package org.jabref.logic.layout.format;
 
-import java.util.List;
-
 import org.jabref.logic.layout.AbstractParamLayoutFormatter;
+
+import java.util.List;
 
 /**
  * This formatter takes two arguments and examines the field text.

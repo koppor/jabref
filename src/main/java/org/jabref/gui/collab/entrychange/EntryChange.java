@@ -1,7 +1,5 @@
 package org.jabref.gui.collab.entrychange;
 
-import javax.swing.undo.CompoundEdit;
-
 import org.jabref.gui.collab.DatabaseChange;
 import org.jabref.gui.collab.DatabaseChangeResolverFactory;
 import org.jabref.gui.undo.NamedCompound;
@@ -10,6 +8,8 @@ import org.jabref.gui.undo.UndoableRemoveEntries;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
+
+import javax.swing.undo.CompoundEdit;
 
 public final class EntryChange extends DatabaseChange {
     private final BibEntry oldEntry;

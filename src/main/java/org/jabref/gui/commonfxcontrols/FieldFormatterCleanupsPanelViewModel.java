@@ -1,17 +1,9 @@
 package org.jabref.gui.commonfxcontrols;
 
-import java.util.Comparator;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.SelectionModel;
-
 import org.jabref.gui.Globals;
 import org.jabref.gui.util.NoSelectionModel;
 import org.jabref.logic.cleanup.FieldFormatterCleanup;
@@ -20,6 +12,8 @@ import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.formatter.Formatters;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
+
+import java.util.Comparator;
 
 public class FieldFormatterCleanupsPanelViewModel {
 

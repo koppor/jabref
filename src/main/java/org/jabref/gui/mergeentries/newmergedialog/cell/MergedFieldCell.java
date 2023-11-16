@@ -5,10 +5,8 @@ import javafx.geometry.Pos;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-
-import org.jabref.gui.util.BindingsHelper;
-
 import org.fxmisc.richtext.StyleClassedTextArea;
+import org.jabref.gui.util.BindingsHelper;
 
 public class MergedFieldCell extends ThreeWayMergeCell {
     private static final String DEFAULT_STYLE_CLASS = "merged-field";

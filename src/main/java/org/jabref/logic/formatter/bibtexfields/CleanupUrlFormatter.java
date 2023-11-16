@@ -1,14 +1,14 @@
 package org.jabref.logic.formatter.bibtexfields;
 
+import org.jabref.logic.cleanup.Formatter;
+import org.jabref.logic.l10n.Localization;
+
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.logic.cleanup.Formatter;
-import org.jabref.logic.l10n.Localization;
 
 /**
  * Cleanup URL link.

@@ -1,5 +1,33 @@
 package org.jabref.gui;
 
+import com.tobiasdiez.easybind.EasyBind;
+import javafx.concurrent.Task;
+import javafx.geometry.Pos;
+import javafx.print.PrinterJob;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
+import org.controlsfx.control.TaskProgressView;
+import org.controlsfx.control.textfield.CustomPasswordField;
+import org.controlsfx.dialog.ExceptionDialog;
+import org.controlsfx.dialog.ProgressDialog;
+import org.jabref.gui.help.ErrorConsoleAction;
+import org.jabref.gui.icon.IconTheme;
+import org.jabref.gui.util.*;
+import org.jabref.logic.l10n.Localization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -11,48 +39,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import javafx.concurrent.Task;
-import javafx.geometry.Pos;
-import javafx.print.PrinterJob;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import javafx.util.Duration;
-
-import org.jabref.gui.help.ErrorConsoleAction;
-import org.jabref.gui.icon.IconTheme;
-import org.jabref.gui.util.BackgroundTask;
-import org.jabref.gui.util.BaseDialog;
-import org.jabref.gui.util.DefaultTaskExecutor;
-import org.jabref.gui.util.DirectoryDialogConfiguration;
-import org.jabref.gui.util.FileDialogConfiguration;
-import org.jabref.gui.util.ZipFileChooser;
-import org.jabref.logic.l10n.Localization;
-
-import com.tobiasdiez.easybind.EasyBind;
-import org.controlsfx.control.Notifications;
-import org.controlsfx.control.TaskProgressView;
-import org.controlsfx.control.textfield.CustomPasswordField;
-import org.controlsfx.dialog.ExceptionDialog;
-import org.controlsfx.dialog.ProgressDialog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class provides methods to create default

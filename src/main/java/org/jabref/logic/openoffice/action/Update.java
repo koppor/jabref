@@ -1,7 +1,7 @@
 package org.jabref.logic.openoffice.action;
 
-import java.util.List;
-
+import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.text.XTextDocument;
 import org.jabref.logic.openoffice.frontend.OOFrontend;
 import org.jabref.logic.openoffice.frontend.UpdateBibliography;
 import org.jabref.logic.openoffice.frontend.UpdateCitationMarkers;
@@ -13,8 +13,7 @@ import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.uno.UnoScreenRefresh;
 
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XTextDocument;
+import java.util.List;
 
 /**
  * Update document: citation marks and bibliography

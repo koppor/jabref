@@ -1,21 +1,14 @@
 package org.jabref.model.strings;
 
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.google.common.base.CharMatcher;
+import org.apache.commons.lang3.StringUtils;
 import org.jabref.architecture.ApacheCommonsLang3Allowed;
 import org.jabref.logic.bibtex.FieldWriter;
 
-import com.google.common.base.CharMatcher;
-import org.apache.commons.lang3.StringUtils;
+import java.text.Normalizer;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @ApacheCommonsLang3Allowed("There is no equivalent in Google's Guava")
 public class StringUtil {

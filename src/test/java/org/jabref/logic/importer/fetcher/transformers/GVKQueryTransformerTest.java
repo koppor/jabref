@@ -1,10 +1,10 @@
 package org.jabref.logic.importer.fetcher.transformers;
 
-import java.util.Optional;
-
 import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.apache.lucene.queryparser.flexible.standard.parser.StandardSyntaxParser;
 import org.junit.jupiter.api.Disabled;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

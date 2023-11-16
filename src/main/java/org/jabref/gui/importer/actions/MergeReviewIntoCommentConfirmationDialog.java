@@ -1,12 +1,12 @@
 package org.jabref.gui.importer.actions;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.jabref.gui.DialogService;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class MergeReviewIntoCommentConfirmationDialog {
 

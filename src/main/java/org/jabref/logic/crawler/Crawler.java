@@ -1,9 +1,6 @@
 package org.jabref.logic.crawler;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jabref.logic.exporter.SaveException;
 import org.jabref.logic.git.SlrGitHandler;
 import org.jabref.logic.importer.ParseException;
@@ -12,7 +9,9 @@ import org.jabref.model.study.QueryResult;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
 
 /**
  * This class provides a service for SLR support by conducting an automated search and persistance

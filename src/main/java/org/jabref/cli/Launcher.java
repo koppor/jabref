@@ -1,14 +1,6 @@
 package org.jabref.cli;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.Authenticator;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Comparator;
-import java.util.Map;
-
+import org.apache.commons.cli.ParseException;
 import org.jabref.gui.Globals;
 import org.jabref.gui.MainApplication;
 import org.jabref.logic.journals.JournalAbbreviationLoader;
@@ -27,12 +19,19 @@ import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.JabRefPreferences;
 import org.jabref.preferences.PreferencesService;
-
-import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.tinylog.configuration.Configuration;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.Authenticator;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.Map;
 
 /**
  * The main entry point for the JabRef application.

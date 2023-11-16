@@ -1,14 +1,13 @@
 package org.jabref.model.metadata;
 
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.FieldFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.FieldFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Stores the save order config for a library

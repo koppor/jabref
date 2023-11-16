@@ -1,22 +1,18 @@
 package org.jabref.gui.externalfiletype;
 
+import javafx.collections.FXCollections;
+import org.jabref.gui.icon.IconTheme;
+import org.jabref.model.entry.LinkedFile;
+import org.jabref.preferences.FilePreferences;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
-import javafx.collections.FXCollections;
-
-import org.jabref.gui.icon.IconTheme;
-import org.jabref.model.entry.LinkedFile;
-import org.jabref.preferences.FilePreferences;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

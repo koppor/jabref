@@ -1,13 +1,10 @@
 package org.jabref.gui.fieldeditors;
 
-import java.time.format.DateTimeFormatter;
-
-import javax.swing.undo.UndoManager;
-
+import com.airhacks.afterburner.views.ViewLoader;
+import jakarta.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.layout.HBox;
-
 import org.jabref.gui.autocompleter.SuggestionProvider;
 import org.jabref.gui.util.component.TemporalAccessorPicker;
 import org.jabref.logic.integrity.FieldCheckers;
@@ -15,8 +12,8 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.preferences.PreferencesService;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import javax.swing.undo.UndoManager;
+import java.time.format.DateTimeFormatter;
 
 public class DateEditor extends HBox implements FieldEditorFX {
 

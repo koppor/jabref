@@ -1,5 +1,6 @@
 package org.jabref.gui.collab.entrychange;
 
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.event.Event;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
@@ -8,7 +9,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.collab.DatabaseChangeDetailsView;
@@ -20,8 +20,6 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.preferences.PreferencesService;
-
-import com.tobiasdiez.easybind.EasyBind;
 
 public final class EntryChangeDetailsView extends DatabaseChangeDetailsView {
     private final PreviewWithSourceTab oldPreviewWithSourcesTab = new PreviewWithSourceTab();

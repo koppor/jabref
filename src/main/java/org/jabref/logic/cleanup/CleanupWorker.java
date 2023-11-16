@@ -1,15 +1,15 @@
 package org.jabref.logic.cleanup;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import org.jabref.logic.preferences.TimestampPreferences;
 import org.jabref.model.FieldChange;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.preferences.CleanupPreferences;
 import org.jabref.preferences.FilePreferences;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class CleanupWorker {
 

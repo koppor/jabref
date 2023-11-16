@@ -1,15 +1,13 @@
 package org.jabref.logic.journals;
 
-import java.util.List;
-import java.util.Optional;
-
 import javafx.util.Pair;
-
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.fetcher.JournalInformationFetcher;
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

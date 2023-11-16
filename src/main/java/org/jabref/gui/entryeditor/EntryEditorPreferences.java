@@ -1,20 +1,12 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.Map;
-import java.util.Set;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.MapProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleMapProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
-
 import org.jabref.model.entry.field.Field;
+
+import java.util.Map;
+import java.util.Set;
 
 public class EntryEditorPreferences {
 

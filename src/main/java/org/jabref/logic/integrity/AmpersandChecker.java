@@ -1,19 +1,17 @@
 package org.jabref.logic.integrity;
 
-import java.util.List;
-import java.util.Map;
-import java.util.regex.MatchResult;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
+import com.google.common.base.CharMatcher;
 import javafx.util.Pair;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldProperty;
 
-import com.google.common.base.CharMatcher;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * Checks if the BibEntry contains unescaped ampersands.

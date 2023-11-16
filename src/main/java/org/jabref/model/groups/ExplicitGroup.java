@@ -1,11 +1,11 @@
 package org.jabref.model.groups;
 
+import org.jabref.model.entry.field.StandardField;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import org.jabref.model.entry.field.StandardField;
 
 /**
  * This group contains entries, which were manually assigned to it.

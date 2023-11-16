@@ -1,12 +1,8 @@
 package org.jabref.gui.specialfields;
 
-import java.util.function.Function;
-
-import javax.swing.undo.UndoManager;
-
+import de.saxsys.mvvmfx.utils.commands.Command;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.StateManager;
@@ -15,7 +11,8 @@ import org.jabref.model.entry.field.SpecialField;
 import org.jabref.model.entry.field.SpecialFieldValue;
 import org.jabref.preferences.PreferencesService;
 
-import de.saxsys.mvvmfx.utils.commands.Command;
+import javax.swing.undo.UndoManager;
+import java.util.function.Function;
 
 public class SpecialFieldMenuItemFactory {
     public static MenuItem getSpecialFieldSingleItem(

@@ -1,21 +1,13 @@
 package org.jabref.preferences;
 
-import java.nio.file.Path;
-import java.util.List;
-
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.jabref.gui.mergeentries.DiffMode;
 import org.jabref.logic.util.io.FileHistory;
+
+import java.nio.file.Path;
+import java.util.List;
 
 public class GuiPreferences {
     private final DoubleProperty positionX;

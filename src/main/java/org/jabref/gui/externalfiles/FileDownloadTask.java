@@ -1,15 +1,14 @@
 package org.jabref.gui.externalfiles;
 
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-
+import com.tobiasdiez.easybind.EasyBind;
 import org.jabref.gui.util.BackgroundTask;
 import org.jabref.logic.net.ProgressInputStream;
 import org.jabref.logic.net.URLDownload;
 
-import com.tobiasdiez.easybind.EasyBind;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class FileDownloadTask extends BackgroundTask<Path> {
 

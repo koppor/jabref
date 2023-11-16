@@ -1,9 +1,9 @@
 package org.jabref.logic.bibtex.comparator;
 
+import org.jabref.model.database.BibDatabaseContext;
+
 import java.util.Objects;
 import java.util.Optional;
-
-import org.jabref.model.database.BibDatabaseContext;
 
 public class PreambleDiff {
 

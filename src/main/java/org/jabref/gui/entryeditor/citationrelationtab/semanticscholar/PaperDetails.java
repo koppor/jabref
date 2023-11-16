@@ -1,10 +1,10 @@
 package org.jabref.gui.entryeditor.citationrelationtab.semanticscholar;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PaperDetails {
     private String paperId;

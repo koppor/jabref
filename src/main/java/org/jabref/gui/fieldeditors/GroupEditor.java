@@ -1,12 +1,6 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.input.TransferMode;
-
 import org.jabref.gui.DragAndDropDataFormats;
 import org.jabref.gui.autocompleter.SuggestionProvider;
 import org.jabref.logic.integrity.FieldCheckers;
@@ -14,6 +8,10 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.preferences.PreferencesService;
+
+import javax.swing.undo.UndoManager;
+import java.util.List;
+import java.util.Optional;
 
 public class GroupEditor extends SimpleEditor {
 

@@ -1,18 +1,14 @@
 package org.jabref.gui.util;
 
-import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
-
 import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Cell;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.TextFormatter;
+import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
+
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 public class ControlHelper {
 

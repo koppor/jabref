@@ -1,15 +1,14 @@
 package org.jabref.preferences;
 
-import java.util.Map;
-import java.util.Set;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.collections.ObservableSet;
-
 import org.jabref.gui.sidepane.SidePaneType;
+
+import java.util.Map;
+import java.util.Set;
 
 public class SidePanePreferences {
     private final ObservableSet<SidePaneType> visiblePanes;

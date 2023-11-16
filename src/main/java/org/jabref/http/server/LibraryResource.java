@@ -1,10 +1,10 @@
 package org.jabref.http.server;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.Objects;
-
+import com.google.gson.Gson;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.jabref.gui.Globals;
 import org.jabref.http.JabrefMediaType;
 import org.jabref.http.dto.BibEntryDTO;
@@ -15,19 +15,13 @@ import org.jabref.logic.util.io.BackupFileUtil;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.DummyFileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
-
-import com.google.gson.Gson;
-import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.InternalServerErrorException;
-import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Objects;
 
 @Path("libraries/{id}")
 public class LibraryResource {

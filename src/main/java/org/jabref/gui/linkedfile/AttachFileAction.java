@@ -1,8 +1,5 @@
 package org.jabref.gui.linkedfile;
 
-import java.nio.file.Path;
-import java.util.Optional;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
@@ -17,6 +14,9 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.preferences.FilePreferences;
+
+import java.nio.file.Path;
+import java.util.Optional;
 
 public class AttachFileAction extends SimpleCommand {
 

@@ -1,11 +1,11 @@
 package org.jabref.logic.layout.format;
 
-import java.util.Map;
-import java.util.Objects;
-
 import org.jabref.logic.layout.LayoutFormatter;
 import org.jabref.logic.util.strings.HTMLUnicodeConversionMaps;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * This formatter escapes characters so they are suitable for HTML.

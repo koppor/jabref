@@ -1,7 +1,6 @@
 package org.jabref.logic.layout.format;
 
 import org.jabref.logic.util.OS;
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

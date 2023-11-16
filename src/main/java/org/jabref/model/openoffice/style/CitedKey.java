@@ -1,12 +1,12 @@
 package org.jabref.model.openoffice.style;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.ootext.OOText;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Cited keys are collected from the citations in citation groups.

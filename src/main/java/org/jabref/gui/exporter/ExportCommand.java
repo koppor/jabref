@@ -1,15 +1,8 @@
 package org.jabref.gui.exporter;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
-
+import org.controlsfx.control.action.Action;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.LibraryTab;
@@ -31,10 +24,15 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.preferences.PreferencesService;
-
-import org.controlsfx.control.action.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Performs an export action
@@ -140,7 +138,7 @@ public class ExportCommand extends SimpleCommand {
                             fileDirForDatabase,
                             abbreviationRepository);
                     return null; // can not use BackgroundTask.wrap(Runnable) because Runnable.run() can't throw
-                                 // Exceptions
+                    // Exceptions
                 })
                 .onSuccess(save -> {
                     LibraryTab.DatabaseNotification notificationPane =

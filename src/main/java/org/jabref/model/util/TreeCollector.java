@@ -1,21 +1,12 @@
 package org.jabref.model.util;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.jabref.model.TreeNode;
+
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.Collector;
 
 /**
  * Merges a list of nodes into a tree.

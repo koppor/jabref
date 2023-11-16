@@ -1,10 +1,8 @@
 package org.jabref.gui.fieldeditors.identifier;
 
-import javax.swing.undo.UndoManager;
-
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.collections.MapChangeListener;
 import javafx.collections.WeakMapChangeListener;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.autocompleter.SuggestionProvider;
 import org.jabref.gui.util.TaskExecutor;
@@ -17,7 +15,7 @@ import org.jabref.model.entry.identifier.ArXivIdentifier;
 import org.jabref.model.entry.identifier.EprintIdentifier;
 import org.jabref.preferences.PreferencesService;
 
-import com.tobiasdiez.easybind.EasyBind;
+import javax.swing.undo.UndoManager;
 
 public class EprintIdentifierEditorViewModel extends BaseIdentifierEditorViewModel<EprintIdentifier> {
 

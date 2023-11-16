@@ -1,18 +1,17 @@
 package org.jabref.gui.fieldeditors;
 
+import javafx.fxml.Initializable;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import org.jabref.gui.ClipBoardManager;
+import org.jabref.gui.Globals;
+import org.jabref.gui.fieldeditors.contextmenu.EditorContextAction;
+
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Supplier;
-
-import javafx.fxml.Initializable;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-
-import org.jabref.gui.ClipBoardManager;
-import org.jabref.gui.Globals;
-import org.jabref.gui.fieldeditors.contextmenu.EditorContextAction;
 
 public class EditorTextArea extends javafx.scene.control.TextArea implements Initializable, ContextMenuAddable {
 

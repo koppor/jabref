@@ -1,9 +1,9 @@
 package org.jabref.model.metadata;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * With this class, the user of an instance can directly sort things. Without looking up anything in the preferences or in the UI.

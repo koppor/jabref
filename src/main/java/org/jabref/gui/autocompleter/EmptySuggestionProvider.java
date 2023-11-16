@@ -1,10 +1,10 @@
 package org.jabref.gui.autocompleter;
 
-import java.util.Comparator;
-import java.util.stream.Stream;
-
 import com.google.common.base.Equivalence;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
+
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 public class EmptySuggestionProvider extends SuggestionProvider<String> {
     @Override

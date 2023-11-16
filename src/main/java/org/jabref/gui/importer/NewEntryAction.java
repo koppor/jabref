@@ -1,21 +1,16 @@
 package org.jabref.gui.importer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import org.jabref.gui.DialogService;
-import org.jabref.gui.EntryTypeView;
-import org.jabref.gui.JabRefFrame;
-import org.jabref.gui.StateManager;
-import org.jabref.gui.Telemetry;
+import org.jabref.gui.*;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.preferences.PreferencesService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 

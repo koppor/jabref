@@ -1,5 +1,13 @@
 package org.jabref.gui.util;
 
+import javafx.stage.FileChooser;
+import org.jabref.logic.exporter.Exporter;
+import org.jabref.logic.importer.Importer;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.util.FileType;
+import org.jabref.logic.util.io.FileUtil;
+import org.jabref.model.strings.StringUtil;
+
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.DirectoryStream.Filter;
@@ -9,15 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
-
-import javafx.stage.FileChooser;
-
-import org.jabref.logic.exporter.Exporter;
-import org.jabref.logic.importer.Importer;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.util.FileType;
-import org.jabref.logic.util.io.FileUtil;
-import org.jabref.model.strings.StringUtil;
 
 public class FileFilterConverter {
 

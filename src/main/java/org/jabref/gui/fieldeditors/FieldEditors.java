@@ -1,11 +1,5 @@
 package org.jabref.gui.fieldeditors;
 
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Set;
-
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.autocompleter.ContentSelectorSuggestionProvider;
 import org.jabref.gui.autocompleter.SuggestionProvider;
@@ -16,18 +10,18 @@ import org.jabref.logic.integrity.FieldCheckers;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.FieldFactory;
-import org.jabref.model.entry.field.FieldProperty;
-import org.jabref.model.entry.field.InternalField;
-import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.field.*;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.IEEETranEntryType;
 import org.jabref.model.metadata.MetaData;
 import org.jabref.preferences.PreferencesService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.UndoManager;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Set;
 
 @SuppressWarnings("unchecked")
 public class FieldEditors {

@@ -1,8 +1,5 @@
 package org.jabref.gui.cleanup;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.StateManager;
@@ -19,6 +16,9 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.preferences.CleanupPreferences;
 import org.jabref.preferences.PreferencesService;
+
+import java.util.List;
+import java.util.Optional;
 
 public class CleanupAction extends SimpleCommand {
 

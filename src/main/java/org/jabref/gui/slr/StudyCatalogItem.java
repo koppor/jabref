@@ -1,13 +1,12 @@
 package org.jabref.gui.slr;
 
-import java.util.Objects;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
 import org.jabref.model.study.StudyDatabase;
+
+import java.util.Objects;
 
 /**
  * View representation of {@link StudyDatabase}

@@ -1,8 +1,8 @@
 package org.jabref.gui.util.comparator;
 
-import java.util.Comparator;
-
 import org.jabref.model.strings.StringUtil;
+
+import java.util.Comparator;
 
 /**
  * Comparator for numeric cases. The purpose of this class is to add the numeric comparison, because values are sorted

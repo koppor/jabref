@@ -1,16 +1,12 @@
 package org.jabref.logic.layout;
 
+import org.jabref.logic.journals.JournalAbbreviationRepository;
+
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
-import org.jabref.logic.journals.JournalAbbreviationRepository;
+import java.util.*;
 
 /**
  * Helper class to get a Layout object.

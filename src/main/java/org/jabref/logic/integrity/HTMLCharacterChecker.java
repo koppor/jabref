@@ -1,11 +1,11 @@
 package org.jabref.logic.integrity;
 
-import java.util.List;
-import java.util.regex.Pattern;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.FieldProperty;
+
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Checks, if there are any HTML encoded characters in nonverbatim fields.

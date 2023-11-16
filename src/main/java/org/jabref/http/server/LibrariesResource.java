@@ -1,16 +1,15 @@
 package org.jabref.http.server;
 
-import java.util.List;
-
-import org.jabref.logic.util.io.BackupFileUtil;
-import org.jabref.preferences.PreferencesService;
-
 import com.google.gson.Gson;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import org.jabref.logic.util.io.BackupFileUtil;
+import org.jabref.preferences.PreferencesService;
+
+import java.util.List;
 
 @Path("libraries")
 public class LibrariesResource {

@@ -1,7 +1,6 @@
 package org.jabref.gui.util;
 
-import java.util.function.Predicate;
-
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -13,7 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.util.Callback;
 
-import com.tobiasdiez.easybind.EasyBind;
+import java.util.function.Predicate;
 
 /**
  * Taken from https://gist.github.com/lestard/011e9ed4433f9eb791a8

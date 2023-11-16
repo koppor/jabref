@@ -1,8 +1,5 @@
 package org.jabref.gui.slr;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.ActionHelper;
@@ -12,9 +9,11 @@ import org.jabref.logic.crawler.StudyYamlParser;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.study.Study;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 public class EditExistingStudyAction extends SimpleCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(EditExistingStudyAction.class);

@@ -1,14 +1,13 @@
 package org.jabref.gui.libraryproperties.contentselectors;
 
-import java.util.Optional;
-import java.util.function.Supplier;
-
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+import jakarta.inject.Inject;
 import javafx.beans.property.ListProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionModel;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.libraryproperties.AbstractPropertiesTabView;
 import org.jabref.gui.util.ViewModelListCellFactory;
@@ -16,9 +15,8 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import jakarta.inject.Inject;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 public class ContentSelectorView extends AbstractPropertiesTabView<ContentSelectorViewModel> {
 

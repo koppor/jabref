@@ -1,15 +1,14 @@
 package org.jabref.gui.mergeentries.newmergedialog.diffhighlighter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.jabref.gui.mergeentries.newmergedialog.DiffMethod;
-
 import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.AbstractDelta;
 import com.github.difflib.patch.DeltaType;
 import org.fxmisc.richtext.StyleClassedTextArea;
+import org.jabref.gui.mergeentries.newmergedialog.DiffMethod;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A diff highlighter in which differences of type {@link DeltaType#CHANGE} are unified and represented by an insertion

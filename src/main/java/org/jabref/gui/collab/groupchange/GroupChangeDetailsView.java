@@ -1,7 +1,6 @@
 package org.jabref.gui.collab.groupchange;
 
 import javafx.scene.control.Label;
-
 import org.jabref.gui.collab.DatabaseChangeDetailsView;
 import org.jabref.logic.l10n.Localization;
 

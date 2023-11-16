@@ -1,34 +1,20 @@
 package org.jabref.logic.exporter;
 
+import javafx.scene.paint.Color;
+import org.jabref.logic.auxparser.DefaultAuxParser;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.groups.*;
+import org.jabref.model.metadata.MetaData;
+import org.jabref.model.search.rules.SearchRules;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
-
-import javafx.scene.paint.Color;
-
-import org.jabref.logic.auxparser.DefaultAuxParser;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.groups.AllEntriesGroup;
-import org.jabref.model.groups.AutomaticGroup;
-import org.jabref.model.groups.AutomaticKeywordGroup;
-import org.jabref.model.groups.AutomaticPersonsGroup;
-import org.jabref.model.groups.ExplicitGroup;
-import org.jabref.model.groups.GroupHierarchyType;
-import org.jabref.model.groups.GroupTreeNode;
-import org.jabref.model.groups.GroupTreeNodeTest;
-import org.jabref.model.groups.KeywordGroup;
-import org.jabref.model.groups.RegexKeywordGroup;
-import org.jabref.model.groups.SearchGroup;
-import org.jabref.model.groups.TexGroup;
-import org.jabref.model.groups.WordKeywordGroup;
-import org.jabref.model.metadata.MetaData;
-import org.jabref.model.search.rules.SearchRules;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

@@ -1,12 +1,11 @@
 package org.jabref.gui.bibtexextractor;
 
+import com.airhacks.afterburner.injection.Injector;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.importer.GrobidOptInDialogHelper;
 import org.jabref.preferences.PreferencesService;
-
-import com.airhacks.afterburner.injection.Injector;
 
 import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 

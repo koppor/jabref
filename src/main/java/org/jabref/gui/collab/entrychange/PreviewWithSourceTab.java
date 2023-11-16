@@ -1,11 +1,8 @@
 package org.jabref.gui.collab.entrychange;
 
-import java.io.IOException;
-import java.io.StringWriter;
-
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-
+import org.fxmisc.richtext.CodeArea;
 import org.jabref.gui.preview.PreviewViewer;
 import org.jabref.logic.bibtex.BibEntryWriter;
 import org.jabref.logic.bibtex.FieldPreferences;
@@ -19,10 +16,11 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.preferences.PreferencesService;
-
-import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringWriter;
 
 public class PreviewWithSourceTab {
 

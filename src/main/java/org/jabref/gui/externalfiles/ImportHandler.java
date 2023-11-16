@@ -1,18 +1,6 @@
 package org.jabref.gui.externalfiles;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import javax.swing.undo.CompoundEdit;
-import javax.swing.undo.UndoManager;
-
+import com.google.common.annotations.VisibleForTesting;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.Globals;
 import org.jabref.gui.StateManager;
@@ -25,12 +13,8 @@ import org.jabref.gui.util.TaskExecutor;
 import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
 import org.jabref.logic.database.DuplicateCheck;
 import org.jabref.logic.externalfiles.ExternalFilesContentImporter;
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.ImportCleanup;
-import org.jabref.logic.importer.ImportException;
-import org.jabref.logic.importer.ImportFormatReader;
+import org.jabref.logic.importer.*;
 import org.jabref.logic.importer.ImportFormatReader.UnknownFormatImport;
-import org.jabref.logic.importer.ParseException;
 import org.jabref.logic.importer.fetcher.ArXivFetcher;
 import org.jabref.logic.importer.fetcher.DoiFetcher;
 import org.jabref.logic.importer.fetcher.isbntobibtex.IsbnFetcher;
@@ -51,10 +35,16 @@ import org.jabref.model.groups.GroupTreeNode;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.model.util.OptionalUtil;
 import org.jabref.preferences.PreferencesService;
-
-import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.CompoundEdit;
+import javax.swing.undo.UndoManager;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.*;
 
 public class ImportHandler {
 

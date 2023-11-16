@@ -1,15 +1,14 @@
 package org.jabref.gui.libraryproperties;
 
-import java.util.function.Supplier;
-
+import com.airhacks.afterburner.injection.Injector;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.model.database.BibDatabaseContext;
-
-import com.airhacks.afterburner.injection.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.function.Supplier;
 
 import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 

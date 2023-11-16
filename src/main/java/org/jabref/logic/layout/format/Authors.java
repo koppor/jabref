@@ -1,13 +1,13 @@
 package org.jabref.logic.layout.format;
 
+import org.jabref.logic.layout.AbstractParamLayoutFormatter;
+import org.jabref.model.entry.Author;
+import org.jabref.model.entry.AuthorList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
-import org.jabref.logic.layout.AbstractParamLayoutFormatter;
-import org.jabref.model.entry.Author;
-import org.jabref.model.entry.AuthorList;
 
 /**
  * Versatile author name formatter that takes arguments to control the formatting style.

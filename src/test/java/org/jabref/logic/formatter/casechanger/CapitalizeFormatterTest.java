@@ -43,9 +43,9 @@ public class CapitalizeFormatterTest {
                 "Upper {E}ach {NOT} First, Upper {E}ach {NOT} First", // multiple words correct with {}
                 "UPPER {E}ACH {NOT} FIRST, Upper {E}ach {NOT} First", // multiple words upper case with {}
                 "upper each first {NOT} {this}, Upper Each First {NOT} {this}", // multiple words in lower and upper
-                                                                                // case with {}
+                // case with {}
                 "upper each first {N}OT {t}his, Upper Each First {N}ot {t}his", // multiple words in lower and upper
-                                                                                // case with {} part 2
+                // case with {} part 2
                 "upper-each-first, Upper-Each-First", // multiple words lower case with -
                 "Upper-Each-First, Upper-Each-First", // multiple words correct with -
                 "Upper-each-First, Upper-Each-First", // multiple words in lower and upper case with -

@@ -1,9 +1,5 @@
 package org.jabref.model.schema;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.DublinCoreSchema;
@@ -13,6 +9,10 @@ import org.apache.xmpbox.type.DateType;
 import org.apache.xmpbox.type.StructuredType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *  A DublinCoreSchema extension Class.

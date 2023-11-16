@@ -1,8 +1,8 @@
 package org.jabref.gui;
 
-import java.util.List;
-
 import org.jabref.model.database.BibDatabaseContext;
+
+import java.util.List;
 
 public interface LibraryTabContainer {
     LibraryTab getLibraryTabAt(int i);

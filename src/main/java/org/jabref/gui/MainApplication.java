@@ -1,14 +1,13 @@
 package org.jabref.gui;
 
-import java.util.List;
-
 import javafx.application.Application;
 import javafx.stage.Stage;
-
 import org.jabref.gui.openoffice.OOBibBaseConnect;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.JabRefPreferences;
+
+import java.util.List;
 
 /**
  * JabRef's main class to process command line options and to start the UI

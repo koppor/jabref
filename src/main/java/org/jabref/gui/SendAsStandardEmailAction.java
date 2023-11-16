@@ -1,9 +1,5 @@
 package org.jabref.gui;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.List;
-
 import org.jabref.gui.actions.ActionHelper;
 import org.jabref.gui.util.TaskExecutor;
 import org.jabref.logic.bibtex.BibEntryWriter;
@@ -14,9 +10,12 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.preferences.PreferencesService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.List;
 
 /**
  * Sends the selected entries to any specifiable email

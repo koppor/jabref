@@ -1,9 +1,9 @@
 package org.jabref.logic.formatter.casechanger;
 
-import java.util.Objects;
-
 import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
+
+import java.util.Objects;
 
 /**
  * Remove {} braces around words in case they appear balanced

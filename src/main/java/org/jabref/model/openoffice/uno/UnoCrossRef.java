@@ -5,11 +5,7 @@ import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.lang.XMultiServiceFactory;
-import com.sun.star.text.ReferenceFieldPart;
-import com.sun.star.text.ReferenceFieldSource;
-import com.sun.star.text.XTextContent;
-import com.sun.star.text.XTextDocument;
-import com.sun.star.text.XTextRange;
+import com.sun.star.text.*;
 import com.sun.star.util.XRefreshable;
 
 public class UnoCrossRef {

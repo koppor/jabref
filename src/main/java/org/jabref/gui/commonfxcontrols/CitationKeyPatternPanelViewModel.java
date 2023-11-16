@@ -1,19 +1,18 @@
 package org.jabref.gui.commonfxcontrols;
 
-import java.util.Collection;
-import java.util.Comparator;
-
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-
 import org.jabref.logic.citationkeypattern.AbstractCitationKeyPattern;
 import org.jabref.logic.citationkeypattern.CitationKeyPatternPreferences;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntryType;
 import org.jabref.model.entry.types.EntryType;
+
+import java.util.Collection;
+import java.util.Comparator;
 
 public class CitationKeyPatternPanelViewModel {
 

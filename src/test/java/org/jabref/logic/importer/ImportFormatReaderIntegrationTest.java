@@ -1,19 +1,17 @@
 package org.jabref.logic.importer;
 
+import javafx.collections.FXCollections;
+import org.jabref.model.util.DummyFileUpdateMonitor;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Answers;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Stream;
-
-import javafx.collections.FXCollections;
-
-import org.jabref.model.util.DummyFileUpdateMonitor;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Answers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;

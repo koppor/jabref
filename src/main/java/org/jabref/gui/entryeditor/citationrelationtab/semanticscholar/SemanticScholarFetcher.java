@@ -1,16 +1,15 @@
 package org.jabref.gui.entryeditor.citationrelationtab.semanticscholar;
 
+import com.google.gson.Gson;
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.logic.net.URLDownload;
+import org.jabref.model.entry.BibEntry;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.net.URLDownload;
-import org.jabref.model.entry.BibEntry;
-
-import com.google.gson.Gson;
 
 public class SemanticScholarFetcher implements CitationFetcher {
     private static final String SEMANTIC_SCHOLAR_API = "https://api.semanticscholar.org/graph/v1/";

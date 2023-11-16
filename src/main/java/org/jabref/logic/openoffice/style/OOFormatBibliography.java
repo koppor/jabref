@@ -1,9 +1,5 @@
 package org.jabref.logic.openoffice.style;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.layout.Layout;
 import org.jabref.model.database.BibDatabase;
@@ -12,12 +8,11 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.openoffice.ootext.OOFormat;
 import org.jabref.model.openoffice.ootext.OOText;
-import org.jabref.model.openoffice.style.CitationGroup;
-import org.jabref.model.openoffice.style.CitationGroupId;
-import org.jabref.model.openoffice.style.CitationGroups;
-import org.jabref.model.openoffice.style.CitationPath;
-import org.jabref.model.openoffice.style.CitedKey;
-import org.jabref.model.openoffice.style.CitedKeys;
+import org.jabref.model.openoffice.style.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class OOFormatBibliography {
     private static final OOPreFormatter POSTFORMATTER = new OOPreFormatter();

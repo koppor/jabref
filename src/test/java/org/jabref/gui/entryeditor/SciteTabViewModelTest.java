@@ -1,18 +1,17 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.Optional;
-
+import kong.unirest.json.JSONObject;
 import org.jabref.gui.util.TaskExecutor;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.model.entry.identifier.DOI;
 import org.jabref.preferences.PreferencesService;
-
-import kong.unirest.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;

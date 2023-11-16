@@ -1,17 +1,16 @@
 package org.jabref.logic.citationstyle;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
-
 import org.jbibtex.TokenMgrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Facade to unify the access to the citation style engine. Use these methods if you need rendered BibTeX item(s) in a

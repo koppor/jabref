@@ -1,18 +1,14 @@
 package org.jabref.migrations;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.Keyword;
 import org.jabref.model.entry.KeywordList;
 import org.jabref.model.entry.field.SpecialField;
 import org.jabref.model.entry.field.SpecialFieldValue;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SpecialFieldsToSeparateFields implements PostOpenMigration {
     private final KeywordList possibleKeywordsToMigrate;

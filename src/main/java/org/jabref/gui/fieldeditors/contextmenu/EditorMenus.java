@@ -1,14 +1,10 @@
 package org.jabref.gui.fieldeditors.contextmenu;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
-
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.actions.ActionFactory;
 import org.jabref.gui.actions.StandardActions;
@@ -19,7 +15,9 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.preferences.PreferencesService;
 
-import com.tobiasdiez.easybind.EasyBind;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Provides context menus for the text fields of the entry editor. Note that we use {@link Supplier} to prevent an early

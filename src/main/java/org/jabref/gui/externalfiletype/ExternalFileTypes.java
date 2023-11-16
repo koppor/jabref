@@ -1,20 +1,13 @@
 package org.jabref.gui.externalfiletype;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
-
 import org.jabref.logic.bibtex.FileFieldWriter;
 import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.preferences.FilePreferences;
+
+import java.nio.file.Path;
+import java.util.*;
 
 // Do not make this class final, as it otherwise can't be mocked for tests
 public class ExternalFileTypes {

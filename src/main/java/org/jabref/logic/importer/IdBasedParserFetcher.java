@@ -1,5 +1,11 @@
 package org.jabref.logic.importer;
 
+import org.jabref.logic.cleanup.Formatter;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.strings.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -7,13 +13,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
-
-import org.jabref.logic.cleanup.Formatter;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.strings.StringUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides a convenient interface for ID-based fetcher, which follow the usual three-step procedure:

@@ -2,14 +2,12 @@ package org.jabref.gui.edit;
 
 import javafx.scene.control.TextInputControl;
 import javafx.scene.web.WebView;
-
+import org.fxmisc.richtext.CodeArea;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.ActionHelper;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.actions.StandardActions;
-
-import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,12 +1,11 @@
 package org.jabref.gui.openoffice;
 
+import com.sun.star.lang.DisposedException;
 import org.jabref.gui.DialogService;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.openoffice.NoDocumentFoundException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
-
-import com.sun.star.lang.DisposedException;
 
 class OOError extends JabRefException {
 

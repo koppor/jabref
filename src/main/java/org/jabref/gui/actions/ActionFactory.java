@@ -1,28 +1,20 @@
 package org.jabref.gui.actions;
 
+import com.sun.javafx.scene.control.ContextMenuContent;
+import com.tobiasdiez.easybind.EasyBind;
+import de.saxsys.mvvmfx.utils.commands.Command;
+import javafx.beans.binding.BooleanExpression;
+import javafx.scene.control.*;
+import org.controlsfx.control.action.ActionUtils;
+import org.jabref.gui.keyboard.KeyBindingRepository;
+import org.jabref.model.strings.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
-
-import javafx.beans.binding.BooleanExpression;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBase;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Tooltip;
-
-import org.jabref.gui.keyboard.KeyBindingRepository;
-import org.jabref.model.strings.StringUtil;
-
-import com.sun.javafx.scene.control.ContextMenuContent;
-import com.tobiasdiez.easybind.EasyBind;
-import de.saxsys.mvvmfx.utils.commands.Command;
-import org.controlsfx.control.action.ActionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper class to create and style controls according to an {@link Action}.

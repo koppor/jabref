@@ -1,21 +1,19 @@
 package org.jabref.logic.exporter;
 
+import javafx.collections.FXCollections;
+import org.jabref.logic.xmp.XmpPreferences;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javafx.collections.FXCollections;
-
-import org.jabref.logic.xmp.XmpPreferences;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -45,7 +43,7 @@ public class XmpExporterTest {
                 "\n",
                 Files.readAllLines(
                         file)); // we are using \n to join, so we need it in the expected string as well, \r\n would
-                                // fail
+        // fail
         String expected =
                 """
                   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -86,7 +84,7 @@ public class XmpExporterTest {
                 "\n",
                 Files.readAllLines(
                         file)); // we are using \n to join, so we need it in the expected string as well, \r\n would
-                                // fail
+        // fail
 
         String expected =
                 """

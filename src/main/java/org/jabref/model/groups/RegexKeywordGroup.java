@@ -1,11 +1,11 @@
 package org.jabref.model.groups;
 
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.Field;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.Field;
 
 /**
  * Matches entries if the content of a given field is matched by a regular expression.

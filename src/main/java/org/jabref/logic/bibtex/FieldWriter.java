@@ -1,7 +1,6 @@
 package org.jabref.logic.bibtex;
 
 import org.jabref.model.entry.field.Field;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

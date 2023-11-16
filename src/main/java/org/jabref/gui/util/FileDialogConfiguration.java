@@ -1,5 +1,8 @@
 package org.jabref.gui.util;
 
+import javafx.stage.FileChooser;
+import org.jabref.logic.util.FileType;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -7,10 +10,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
-
-import javafx.stage.FileChooser;
-
-import org.jabref.logic.util.FileType;
 
 public class FileDialogConfiguration {
 
@@ -67,9 +66,8 @@ public class FileDialogConfiguration {
         }
 
         public Builder withInitialDirectory(Path directory) {
-            if (directory
-                    == null) { // It could be that somehow the path is null, for example if it got deleted in the
-                               // meantime
+            if (directory == null) { // It could be that somehow the path is null, for example if it got deleted in the
+                // meantime
                 initialDirectory = null;
             } else { // Dir must be a folder, not a file
                 if (!Files.isDirectory(directory)) {

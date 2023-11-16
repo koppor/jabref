@@ -1,22 +1,14 @@
 package org.jabref.logic.search;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.search.SearchMatcher;
-import org.jabref.model.search.rules.ContainsBasedSearchRule;
-import org.jabref.model.search.rules.GrammarBasedSearchRule;
-import org.jabref.model.search.rules.SearchRule;
-import org.jabref.model.search.rules.SearchRules;
-import org.jabref.model.search.rules.SentenceAnalyzer;
+import org.jabref.model.search.rules.*;
+
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SearchQuery implements SearchMatcher {
 

@@ -1,11 +1,10 @@
 package org.jabref.gui.util;
 
+import javafx.concurrent.Task;
+import org.jabref.logic.util.DelayTaskThrottler;
+
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import javafx.concurrent.Task;
-
-import org.jabref.logic.util.DelayTaskThrottler;
 
 /**
  * An object that executes submitted {@link Task}s. This

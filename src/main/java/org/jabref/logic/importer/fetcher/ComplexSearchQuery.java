@@ -1,15 +1,9 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.StringJoiner;
-
+import org.apache.lucene.index.Term;
 import org.jabref.model.strings.StringUtil;
 
-import org.apache.lucene.index.Term;
+import java.util.*;
 
 public class ComplexSearchQuery {
     // Field for non-fielded search

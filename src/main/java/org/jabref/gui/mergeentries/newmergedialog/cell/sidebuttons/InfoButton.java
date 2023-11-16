@@ -1,11 +1,9 @@
 package org.jabref.gui.mergeentries.newmergedialog.cell.sidebuttons;
 
-import java.util.Optional;
-
+import com.tobiasdiez.easybind.EasyBind;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Button;
-
 import org.jabref.gui.Globals;
 import org.jabref.gui.actions.Action;
 import org.jabref.gui.actions.ActionFactory;
@@ -13,7 +11,7 @@ import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
 
-import com.tobiasdiez.easybind.EasyBind;
+import java.util.Optional;
 
 public class InfoButton extends Button {
     private final StringProperty infoMessage = new SimpleStringProperty();

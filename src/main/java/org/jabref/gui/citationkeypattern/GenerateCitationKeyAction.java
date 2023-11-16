@@ -1,8 +1,5 @@
 package org.jabref.gui.citationkeypattern;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.StateManager;
@@ -17,6 +14,9 @@ import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.preferences.PreferencesService;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 public class GenerateCitationKeyAction extends SimpleCommand {
 

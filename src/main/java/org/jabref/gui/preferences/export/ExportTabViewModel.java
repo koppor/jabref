@@ -1,14 +1,10 @@
 package org.jabref.gui.preferences.export;
 
-import java.util.ArrayList;
-import java.util.Set;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-
 import org.jabref.gui.commonfxcontrols.SortCriterionViewModel;
 import org.jabref.gui.preferences.PreferenceTabViewModel;
 import org.jabref.model.entry.field.Field;
@@ -16,6 +12,9 @@ import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.metadata.SaveOrder;
 import org.jabref.preferences.ExportPreferences;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 public class ExportTabViewModel implements PreferenceTabViewModel {
 

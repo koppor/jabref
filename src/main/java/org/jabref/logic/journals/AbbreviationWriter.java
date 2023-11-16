@@ -1,13 +1,13 @@
 package org.jabref.logic.journals;
 
+import org.apache.commons.csv.CSVPrinter;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-
-import org.apache.commons.csv.CSVPrinter;
 
 /**
  * This class provides handy static methods to save abbreviations to the file system.

@@ -1,19 +1,16 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.undo.UndoManager;
-
+import com.google.common.collect.BiMap;
 import javafx.util.StringConverter;
-
 import org.jabref.gui.autocompleter.SuggestionProvider;
 import org.jabref.logic.integrity.FieldCheckers;
 import org.jabref.model.entry.field.Field;
-
-import com.google.common.collect.BiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.UndoManager;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * View model for a field editor that shows various options backed by a map.

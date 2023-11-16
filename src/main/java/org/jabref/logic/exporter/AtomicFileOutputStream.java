@@ -1,5 +1,10 @@
 package org.jabref.logic.exporter;
 
+import org.jabref.logic.util.BackupFileType;
+import org.jabref.logic.util.io.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -12,12 +17,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.EnumSet;
 import java.util.Set;
-
-import org.jabref.logic.util.BackupFileType;
-import org.jabref.logic.util.io.FileUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A file output stream that is similar to the standard {@link FileOutputStream}, except that all writes are first

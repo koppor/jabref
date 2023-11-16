@@ -1,12 +1,11 @@
 package org.jabref.logic.layout;
 
+import javafx.beans.property.StringProperty;
+import org.jabref.logic.layout.format.NameFormatterPreferences;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import javafx.beans.property.StringProperty;
-
-import org.jabref.logic.layout.format.NameFormatterPreferences;
 
 public class LayoutFormatterPreferences {
 

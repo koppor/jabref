@@ -1,18 +1,17 @@
 package org.jabref.gui.preferences.externalfiletypes;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.externalfiletype.ExternalFileType;
 import org.jabref.gui.externalfiletype.ExternalFileTypes;
 import org.jabref.gui.preferences.PreferenceTabViewModel;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.preferences.FilePreferences;
+
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ExternalFileTypesTabViewModel implements PreferenceTabViewModel {
 

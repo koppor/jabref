@@ -1,11 +1,7 @@
 package org.jabref.gui.collab;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.util.Duration;
-
+import org.controlsfx.control.action.Action;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.icon.IconTheme;
@@ -16,10 +12,12 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.util.FileUpdateListener;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
-
-import org.controlsfx.control.action.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseChangeMonitor implements FileUpdateListener {
 

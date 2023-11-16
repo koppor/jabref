@@ -1,12 +1,11 @@
 package org.jabref.gui.autocompleter;
 
-import java.util.stream.Stream;
-
+import com.google.common.collect.Streams;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.field.Field;
 
-import com.google.common.collect.Streams;
+import java.util.stream.Stream;
 
 public class JournalsSuggestionProvider extends FieldValueSuggestionProvider {
 

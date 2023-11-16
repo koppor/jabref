@@ -1,16 +1,15 @@
 package org.jabref.gui.theme;
 
+import org.jabref.gui.JabRefFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Optional;
-
-import org.jabref.gui.JabRefFrame;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 abstract class StyleSheet {
 

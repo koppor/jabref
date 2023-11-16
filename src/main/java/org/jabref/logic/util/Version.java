@@ -1,5 +1,10 @@
 package org.jabref.logic.util;
 
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,11 +16,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the Application Version with the major and minor number, the full Version String and if it's a developer version

@@ -1,13 +1,7 @@
 package org.jabref.gui.openoffice;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.scene.Node;
-
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 

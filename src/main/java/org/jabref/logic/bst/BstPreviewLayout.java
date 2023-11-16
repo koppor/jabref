@@ -1,9 +1,5 @@
 package org.jabref.logic.bst;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
 import org.jabref.logic.cleanup.ConvertToBibtexCleanup;
 import org.jabref.logic.formatter.bibtexfields.RemoveNewlinesFormatter;
 import org.jabref.logic.l10n.Localization;
@@ -13,9 +9,12 @@ import org.jabref.logic.layout.format.RemoveTilde;
 import org.jabref.logic.preview.PreviewLayout;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 public class BstPreviewLayout implements PreviewLayout {
 

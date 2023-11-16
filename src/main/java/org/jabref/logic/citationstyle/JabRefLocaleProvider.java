@@ -1,13 +1,13 @@
 package org.jabref.logic.citationstyle;
 
+import de.undercouch.citeproc.LocaleProvider;
+import de.undercouch.citeproc.helper.CSLUtils;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import de.undercouch.citeproc.LocaleProvider;
-import de.undercouch.citeproc.helper.CSLUtils;
 
 /**
  * A {@link LocaleProvider} that loads locales from a directory in the current module.

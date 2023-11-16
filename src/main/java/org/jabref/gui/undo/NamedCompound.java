@@ -1,9 +1,9 @@
 package org.jabref.gui.undo;
 
+import org.jabref.logic.l10n.Localization;
+
 import javax.swing.undo.CompoundEdit;
 import javax.swing.undo.UndoableEdit;
-
-import org.jabref.logic.l10n.Localization;
 
 public class NamedCompound extends CompoundEdit {
 

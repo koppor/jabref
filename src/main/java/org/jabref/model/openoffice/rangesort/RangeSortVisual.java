@@ -1,16 +1,15 @@
 package org.jabref.model.openoffice.rangesort;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jabref.model.openoffice.uno.UnoScreenRefresh;
-
 import com.sun.star.awt.Point;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextViewCursor;
+import org.jabref.model.openoffice.uno.UnoScreenRefresh;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Sort XTextRange values visually (top-down,left-to-right).

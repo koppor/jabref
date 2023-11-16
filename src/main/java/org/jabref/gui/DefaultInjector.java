@@ -1,9 +1,7 @@
 package org.jabref.gui;
 
-import java.util.function.Function;
-
-import javax.swing.undo.UndoManager;
-
+import com.airhacks.afterburner.injection.Injector;
+import com.airhacks.afterburner.injection.PresenterFactory;
 import org.jabref.gui.keyboard.KeyBindingRepository;
 import org.jabref.gui.theme.ThemeManager;
 import org.jabref.gui.util.TaskExecutor;
@@ -12,11 +10,11 @@ import org.jabref.logic.protectedterms.ProtectedTermsLoader;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
-
-import com.airhacks.afterburner.injection.Injector;
-import com.airhacks.afterburner.injection.PresenterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.UndoManager;
+import java.util.function.Function;
 
 public class DefaultInjector implements PresenterFactory {
 

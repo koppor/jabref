@@ -3,7 +3,6 @@ package org.jabref.gui.keyboard;
 import javafx.scene.Scene;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyEvent;
-
 import org.jabref.gui.Globals;
 import org.jabref.logic.util.strings.StringManipulator;
 import org.jabref.model.util.ResultingStringState;

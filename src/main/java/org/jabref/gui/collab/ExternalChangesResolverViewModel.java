@@ -1,24 +1,21 @@
 package org.jabref.gui.collab;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.undo.NamedCompound;
 import org.jabref.logic.l10n.Localization;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.UndoManager;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class ExternalChangesResolverViewModel extends AbstractViewModel {
 

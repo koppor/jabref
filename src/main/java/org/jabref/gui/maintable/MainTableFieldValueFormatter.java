@@ -1,7 +1,5 @@
 package org.jabref.gui.maintable;
 
-import java.util.Optional;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.AuthorList;
@@ -9,6 +7,8 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldProperty;
 import org.jabref.model.entry.field.OrFields;
+
+import java.util.Optional;
 
 import static org.jabref.gui.maintable.NameDisplayPreferences.AbbreviationStyle;
 import static org.jabref.gui.maintable.NameDisplayPreferences.DisplayStyle;

@@ -1,8 +1,7 @@
 package org.jabref.gui.integrity;
 
-import java.util.List;
-import java.util.function.Function;
-
+import com.airhacks.afterburner.views.ViewLoader;
+import jakarta.inject.Inject;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -12,7 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Modality;
-
+import org.controlsfx.control.table.TableFilter;
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.theme.ThemeManager;
 import org.jabref.gui.util.BaseDialog;
@@ -20,9 +19,8 @@ import org.jabref.gui.util.ValueTableCellFactory;
 import org.jabref.logic.integrity.IntegrityMessage;
 import org.jabref.logic.l10n.Localization;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
-import org.controlsfx.control.table.TableFilter;
+import java.util.List;
+import java.util.function.Function;
 
 public class IntegrityCheckDialog extends BaseDialog<Void> {
 

@@ -26,14 +26,14 @@
  */
 package org.jabref.gui.autocompleter;
 
+import com.google.common.base.Equivalence;
+import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.google.common.base.Equivalence;
-import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
 
 /**
  * This is a simple implementation of a generic suggestion provider callback.

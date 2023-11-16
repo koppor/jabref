@@ -1,13 +1,12 @@
 package org.jabref.logic.importer.fileformat;
 
+import org.jabref.logic.util.StandardFileType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-
-import org.jabref.logic.util.StandardFileType;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

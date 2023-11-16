@@ -1,5 +1,10 @@
 package org.jabref.logic.util.io;
 
+import org.jabref.gui.autosaveandbackup.BackupManager;
+import org.jabref.logic.util.BackupFileType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -8,12 +13,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HexFormat;
 import java.util.Optional;
-
-import org.jabref.gui.autosaveandbackup.BackupManager;
-import org.jabref.logic.util.BackupFileType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BackupFileUtil {
 

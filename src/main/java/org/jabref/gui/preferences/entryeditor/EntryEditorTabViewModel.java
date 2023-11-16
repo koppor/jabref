@@ -1,14 +1,9 @@
 package org.jabref.gui.preferences.entryeditor;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.entryeditor.EntryEditorPreferences;
 import org.jabref.gui.preferences.PreferenceTabViewModel;
@@ -18,6 +13,10 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.preferences.MrDlibPreferences;
 import org.jabref.preferences.PreferencesService;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class EntryEditorTabViewModel implements PreferenceTabViewModel {
 

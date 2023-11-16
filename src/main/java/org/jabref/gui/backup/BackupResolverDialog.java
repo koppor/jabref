@@ -1,23 +1,21 @@
 package org.jabref.gui.backup;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Optional;
-
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
-
+import org.controlsfx.control.HyperlinkLabel;
 import org.jabref.gui.FXDialog;
 import org.jabref.gui.desktop.JabRefDesktop;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.BackupFileType;
 import org.jabref.logic.util.io.BackupFileUtil;
 import org.jabref.preferences.ExternalApplicationsPreferences;
-
-import org.controlsfx.control.HyperlinkLabel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Optional;
 
 public class BackupResolverDialog extends FXDialog {
     public static final ButtonType RESTORE_FROM_BACKUP =

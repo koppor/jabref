@@ -1,17 +1,6 @@
 package org.jabref.gui.journals;
 
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
-
-import org.jabref.gui.DialogService;
-import org.jabref.gui.Globals;
-import org.jabref.gui.JabRefExecutorService;
-import org.jabref.gui.JabRefFrame;
-import org.jabref.gui.StateManager;
+import org.jabref.gui.*;
 import org.jabref.gui.actions.ActionHelper;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.actions.StandardActions;
@@ -24,9 +13,15 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.FieldFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * Converts journal full names to either iso or medline abbreviations for all selected entries.

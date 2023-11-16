@@ -1,14 +1,13 @@
 package org.jabref.gui.preferences.journals;
 
-import java.util.Locale;
-import java.util.Objects;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
 import org.jabref.logic.journals.Abbreviation;
+
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * This class provides a view model for abbreviation objects which can also define placeholder objects of abbreviations.

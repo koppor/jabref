@@ -1,29 +1,23 @@
 package org.jabref.gui.util;
 
+import com.tobiasdiez.easybind.Subscription;
+import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
+import javafx.beans.value.ObservableValue;
+import javafx.css.PseudoClass;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.util.Callback;
+import org.jabref.gui.icon.JabRefIcon;
+import org.jabref.model.strings.StringUtil;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-
-import javafx.beans.value.ObservableValue;
-import javafx.css.PseudoClass;
-import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Tooltip;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.util.Callback;
-
-import org.jabref.gui.icon.JabRefIcon;
-import org.jabref.model.strings.StringUtil;
-
-import com.tobiasdiez.easybind.Subscription;
-import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
 
 /**
  * Constructs a {@link ListCell} based on the view model of the row and a bunch of specified converter methods.

@@ -1,7 +1,6 @@
 package org.jabref.gui.mergeentries;
 
-import java.util.List;
-
+import com.tobiasdiez.easybind.EasyObservableValue;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -13,7 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
-import com.tobiasdiez.easybind.EasyObservableValue;
+import java.util.List;
 
 @DefaultProperty("children")
 public class DiffHighlightingEllipsingTextFlow extends TextFlow {

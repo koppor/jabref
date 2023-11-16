@@ -1,24 +1,22 @@
 package org.jabref.http.server;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.google.gson.Gson;
 import javafx.collections.FXCollections;
-
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
 import org.jabref.http.dto.GsonFactory;
 import org.jabref.logic.bibtex.FieldPreferences;
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.preferences.BibEntryPreferences;
 import org.jabref.preferences.GuiPreferences;
 import org.jabref.preferences.PreferencesService;
-
-import com.google.gson.Gson;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+
+import java.util.EnumSet;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

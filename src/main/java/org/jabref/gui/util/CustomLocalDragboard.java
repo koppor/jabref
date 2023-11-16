@@ -1,14 +1,14 @@
 package org.jabref.gui.util;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jabref.gui.DragAndDropDataFormats;
 import org.jabref.gui.StateManager;
 import org.jabref.logic.preview.PreviewLayout;
 import org.jabref.model.entry.BibEntry;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Placeholder class for a custom generic type safe dragboard to be used in drag and drop, does not depend on serialization

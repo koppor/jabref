@@ -1,20 +1,18 @@
 package org.jabref.gui.util;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-
-import org.jabref.gui.icon.IconTheme;
-
 import org.controlsfx.control.decoration.Decoration;
 import org.controlsfx.control.decoration.GraphicDecoration;
 import org.controlsfx.validation.Severity;
 import org.controlsfx.validation.ValidationMessage;
 import org.controlsfx.validation.decoration.GraphicValidationDecoration;
+import org.jabref.gui.icon.IconTheme;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This class is similar to {@link GraphicValidationDecoration} but with a different style and font-based icon.

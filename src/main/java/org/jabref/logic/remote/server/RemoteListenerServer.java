@@ -1,18 +1,16 @@
 package org.jabref.logic.remote.server;
 
+import javafx.util.Pair;
+import org.jabref.logic.remote.Protocol;
+import org.jabref.logic.remote.RemoteMessage;
+import org.jabref.logic.remote.RemotePreferences;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-
-import javafx.util.Pair;
-
-import org.jabref.logic.remote.Protocol;
-import org.jabref.logic.remote.RemoteMessage;
-import org.jabref.logic.remote.RemotePreferences;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RemoteListenerServer implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteListenerServer.class);

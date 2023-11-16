@@ -1,13 +1,12 @@
 package org.jabref.logic.util;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
 import javafx.application.Platform;
 import javafx.scene.web.WebView;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 /**
  * A dynamic web view store. This is used primarily to prevent UI freezes while constructing web view instances.

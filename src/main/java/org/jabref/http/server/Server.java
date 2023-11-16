@@ -1,5 +1,17 @@
 package org.jabref.http.server;
 
+import jakarta.ws.rs.SeBootstrap;
+import javafx.collections.ObservableList;
+import net.harawata.appdirs.AppDirsFactory;
+import org.glassfish.grizzly.ssl.SSLContextConfigurator;
+import org.jabref.architecture.AllowedToUseStandardStreams;
+import org.jabref.logic.util.OS;
+import org.jabref.preferences.JabRefPreferences;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
+import javax.net.ssl.SSLContext;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -7,21 +19,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javax.net.ssl.SSLContext;
-
-import javafx.collections.ObservableList;
-
-import org.jabref.architecture.AllowedToUseStandardStreams;
-import org.jabref.logic.util.OS;
-import org.jabref.preferences.JabRefPreferences;
-
-import jakarta.ws.rs.SeBootstrap;
-import net.harawata.appdirs.AppDirsFactory;
-import org.glassfish.grizzly.ssl.SSLContextConfigurator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 @AllowedToUseStandardStreams(
         "This is a CLI application. It resides in the package http.server to be close to the other http server related classes.")

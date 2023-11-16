@@ -1,11 +1,6 @@
 package org.jabref.model.entry.field;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 
 public class OrFields implements Comparable<OrFields> {
 

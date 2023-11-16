@@ -1,10 +1,9 @@
 package org.jabref.gui.shared;
 
+import com.airhacks.afterburner.injection.Injector;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.actions.SimpleCommand;
-
-import com.airhacks.afterburner.injection.Injector;
 
 /**
  * Opens a shared database.

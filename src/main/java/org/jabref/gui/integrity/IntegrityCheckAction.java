@@ -1,11 +1,7 @@
 package org.jabref.gui.integrity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.StateManager;
@@ -18,6 +14,9 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.preferences.PreferencesService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 

@@ -1,27 +1,24 @@
 package org.jabref.logic.remote;
 
+import org.jabref.logic.remote.client.RemoteClient;
+import org.jabref.logic.remote.server.RemoteListenerServerManager;
+import org.jabref.logic.remote.server.RemoteMessageHandler;
+import org.jabref.logic.util.OS;
+import org.jabref.support.DisabledOnCIServer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
-import org.jabref.logic.remote.client.RemoteClient;
-import org.jabref.logic.remote.server.RemoteListenerServerManager;
-import org.jabref.logic.remote.server.RemoteMessageHandler;
-import org.jabref.logic.util.OS;
-import org.jabref.support.DisabledOnCIServer;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @DisabledOnCIServer("Tests fails sporadically on CI server")
 class RemoteSetupTest {

@@ -1,5 +1,18 @@
 package org.jabref.logic.importer.fetcher;
 
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.logic.importer.ImportFormatPreferences;
+import org.jabref.logic.importer.ParseException;
+import org.jabref.logic.importer.SearchBasedFetcher;
+import org.jabref.logic.importer.util.GrobidService;
+import org.jabref.model.entry.BibEntry;
+import org.jooq.lambda.Unchecked;
+import org.jooq.lambda.UncheckedException;
+import org.jsoup.HttpStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
@@ -7,20 +20,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.ImportFormatPreferences;
-import org.jabref.logic.importer.ParseException;
-import org.jabref.logic.importer.SearchBasedFetcher;
-import org.jabref.logic.importer.util.GrobidService;
-import org.jabref.model.entry.BibEntry;
-
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
-import org.jooq.lambda.Unchecked;
-import org.jooq.lambda.UncheckedException;
-import org.jsoup.HttpStatusException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class GrobidCitationFetcher implements SearchBasedFetcher {
 

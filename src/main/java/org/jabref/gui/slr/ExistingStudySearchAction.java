@@ -1,8 +1,6 @@
 package org.jabref.gui.slr;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.StateManager;
@@ -19,10 +17,11 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 import org.jabref.preferences.PreferencesService;
-
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 public class ExistingStudySearchAction extends SimpleCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExistingStudySearchAction.class);
@@ -127,7 +126,7 @@ public class ExistingStudySearchAction extends SimpleCommand {
         BackgroundTask.wrap(() -> {
                     crawler.performCrawl();
                     return 0; // Return any value to make this a callable instead of a runnable. This allows throwing
-                              // exceptions.
+                    // exceptions.
                 })
                 .onFailure(e -> {
                     LOGGER.error("Error during persistence of crawling results.");

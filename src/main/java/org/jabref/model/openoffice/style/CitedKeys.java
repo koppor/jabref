@@ -1,13 +1,9 @@
 package org.jabref.model.openoffice.style;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
+
+import java.util.*;
 
 public class CitedKeys {
 

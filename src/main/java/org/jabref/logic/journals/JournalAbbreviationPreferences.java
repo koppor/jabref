@@ -1,11 +1,11 @@
 package org.jabref.logic.journals;
 
-import java.util.List;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import java.util.List;
 
 public class JournalAbbreviationPreferences {
 

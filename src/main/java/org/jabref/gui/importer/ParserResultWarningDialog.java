@@ -1,11 +1,11 @@
 package org.jabref.gui.importer;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.jabref.gui.JabRefFrame;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.l10n.Localization;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Class for generating a dialog showing warnings from ParserResult

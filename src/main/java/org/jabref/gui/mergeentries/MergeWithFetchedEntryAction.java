@@ -1,7 +1,5 @@
 package org.jabref.gui.mergeentries;
 
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.ActionHelper;
@@ -12,6 +10,8 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.preferences.PreferencesService;
+
+import javax.swing.undo.UndoManager;
 
 public class MergeWithFetchedEntryAction extends SimpleCommand {
 

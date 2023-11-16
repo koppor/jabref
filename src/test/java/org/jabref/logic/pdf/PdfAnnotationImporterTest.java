@@ -1,14 +1,13 @@
 package org.jabref.logic.pdf;
 
+import org.jabref.model.pdf.FileAnnotation;
+import org.jabref.model.pdf.FileAnnotationType;
+import org.junit.jupiter.api.Test;
+
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
-
-import org.jabref.model.pdf.FileAnnotation;
-import org.jabref.model.pdf.FileAnnotationType;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

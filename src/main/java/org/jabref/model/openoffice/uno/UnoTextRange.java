@@ -1,11 +1,11 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Optional;
-
 import com.sun.star.text.XFootnote;
 import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextRangeCompare;
+
+import java.util.Optional;
 
 public class UnoTextRange {
 

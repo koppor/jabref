@@ -1,7 +1,5 @@
 package org.jabref.gui.fieldeditors.identifier;
 
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.autocompleter.SuggestionProvider;
@@ -13,6 +11,8 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.identifier.ISBN;
 import org.jabref.preferences.PreferencesService;
+
+import javax.swing.undo.UndoManager;
 
 public class ISBNIdentifierEditorViewModel extends BaseIdentifierEditorViewModel<ISBN> {
     private final UndoManager undoManager;

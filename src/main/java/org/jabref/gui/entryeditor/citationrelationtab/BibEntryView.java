@@ -1,19 +1,18 @@
 package org.jabref.gui.entryeditor.citationrelationtab;
 
-import java.util.EnumSet;
-
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.util.TextFlowLimited;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.StandardEntryType;
+
+import java.util.EnumSet;
 
 /**
  * Class to unify the display method of BibEntries in ListViews.

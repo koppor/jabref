@@ -1,31 +1,5 @@
 package org.jabref.logic.openoffice.backend;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.jabref.model.openoffice.CitationEntry;
-import org.jabref.model.openoffice.backend.NamedRange;
-import org.jabref.model.openoffice.backend.NamedRangeManager;
-import org.jabref.model.openoffice.ootext.OOText;
-import org.jabref.model.openoffice.style.Citation;
-import org.jabref.model.openoffice.style.CitationGroup;
-import org.jabref.model.openoffice.style.CitationGroupId;
-import org.jabref.model.openoffice.style.CitationGroups;
-import org.jabref.model.openoffice.style.CitationType;
-import org.jabref.model.openoffice.style.OODataModel;
-import org.jabref.model.openoffice.style.PageInfo;
-import org.jabref.model.openoffice.uno.CreationException;
-import org.jabref.model.openoffice.uno.NoDocumentException;
-import org.jabref.model.openoffice.uno.UnoUserDefinedProperty;
-import org.jabref.model.openoffice.util.OOListUtil;
-
 import com.sun.star.beans.IllegalTypeException;
 import com.sun.star.beans.NotRemoveableException;
 import com.sun.star.beans.PropertyVetoException;
@@ -33,8 +7,20 @@ import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
+import org.jabref.model.openoffice.CitationEntry;
+import org.jabref.model.openoffice.backend.NamedRange;
+import org.jabref.model.openoffice.backend.NamedRangeManager;
+import org.jabref.model.openoffice.ootext.OOText;
+import org.jabref.model.openoffice.style.*;
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.NoDocumentException;
+import org.jabref.model.openoffice.uno.UnoUserDefinedProperty;
+import org.jabref.model.openoffice.util.OOListUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Backend52, Codec52 and OODataModel.JabRef52 refer to the mode of storage, encoding and what-is-stored in the document under JabRef version 5.2. These basically did not change up to JabRef 5.4.

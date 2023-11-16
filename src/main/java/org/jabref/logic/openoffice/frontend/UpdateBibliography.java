@@ -1,7 +1,9 @@
 package org.jabref.logic.openoffice.frontend;
 
-import java.util.Optional;
-
+import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
+import com.sun.star.text.XTextRange;
 import org.jabref.logic.openoffice.style.OOBibStyle;
 import org.jabref.logic.openoffice.style.OOFormatBibliography;
 import org.jabref.model.openoffice.ootext.OOText;
@@ -12,10 +14,7 @@ import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.uno.UnoBookmark;
 import org.jabref.model.openoffice.uno.UnoTextSection;
 
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XTextCursor;
-import com.sun.star.text.XTextDocument;
-import com.sun.star.text.XTextRange;
+import java.util.Optional;
 
 public class UpdateBibliography {
 

@@ -1,25 +1,19 @@
 package org.jabref.logic.util.io;
 
+import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.strings.StringUtil;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.strings.StringUtil;
 
 class CitationKeyBasedFileFinder implements FileFinder {
 

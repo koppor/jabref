@@ -1,9 +1,9 @@
 package org.jabref.logic.shared;
 
+import org.jabref.model.metadata.MetaData;
+
 import java.sql.SQLException;
 import java.util.Map;
-
-import org.jabref.model.metadata.MetaData;
 
 /**
  * Processes all incoming or outgoing bib data to MySQL Database and manages its structure.

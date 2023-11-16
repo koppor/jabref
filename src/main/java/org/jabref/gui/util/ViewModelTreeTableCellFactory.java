@@ -7,7 +7,6 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
-
 import org.jabref.gui.icon.JabRefIcon;
 import org.jabref.model.strings.StringUtil;
 

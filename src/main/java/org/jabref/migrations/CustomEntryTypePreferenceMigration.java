@@ -1,10 +1,5 @@
 package org.jabref.migrations;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntryType;
 import org.jabref.model.entry.BibEntryTypeBuilder;
@@ -12,6 +7,11 @@ import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.types.EntryTypeFactory;
 import org.jabref.preferences.JabRefPreferences;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 class CustomEntryTypePreferenceMigration {
 

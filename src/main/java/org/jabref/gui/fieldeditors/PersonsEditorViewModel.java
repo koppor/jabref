@@ -1,21 +1,14 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.Collection;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.util.StringConverter;
-
-import org.jabref.gui.autocompleter.AppendPersonNamesStrategy;
-import org.jabref.gui.autocompleter.AutoCompletePreferences;
-import org.jabref.gui.autocompleter.AutoCompletionStrategy;
-import org.jabref.gui.autocompleter.PersonNameStringConverter;
-import org.jabref.gui.autocompleter.SuggestionProvider;
+import org.controlsfx.control.textfield.AutoCompletionBinding;
+import org.jabref.gui.autocompleter.*;
 import org.jabref.logic.integrity.FieldCheckers;
 import org.jabref.model.entry.Author;
 import org.jabref.model.entry.field.Field;
 
-import org.controlsfx.control.textfield.AutoCompletionBinding;
+import javax.swing.undo.UndoManager;
+import java.util.Collection;
 
 public class PersonsEditorViewModel extends AbstractEditorViewModel {
 

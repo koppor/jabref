@@ -1,12 +1,12 @@
 package org.jabref.preferences;
 
-import java.util.Map;
-
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+
+import java.util.Map;
 
 public class PushToApplicationPreferences {
     private final StringProperty activeApplicationName;
