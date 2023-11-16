@@ -24,8 +24,7 @@ public class MetaDataDiff {
         CONTENT_SELECTOR
     }
 
-    public record Difference(DifferenceType differenceType, Object originalObject, Object newObject) {
-    }
+    public record Difference(DifferenceType differenceType, Object originalObject, Object newObject) {}
 
     private final Optional<GroupDiff> groupDiff;
     private final MetaData originalMetaData;
@@ -45,7 +44,8 @@ public class MetaDataDiff {
         }
     }
 
-    private void addToListIfDiff(List<Difference> changes, DifferenceType differenceType, Object originalObject, Object newObject) {
+    private void addToListIfDiff(
+            List<Difference> changes, DifferenceType differenceType, Object originalObject, Object newObject) {
         if (!Objects.equals(originalObject, newObject)) {
             changes.add(new Difference(differenceType, originalObject, newObject));
         }
@@ -59,17 +59,43 @@ public class MetaDataDiff {
         addToListIfDiff(changes, DifferenceType.PROTECTED, originalMetaData.isProtected(), newMetaData.isProtected());
         addToListIfDiff(changes, DifferenceType.GROUPS_ALTERED, originalMetaData.getGroups(), newMetaData.getGroups());
         addToListIfDiff(changes, DifferenceType.ENCODING, originalMetaData.getEncoding(), newMetaData.getEncoding());
-        addToListIfDiff(changes, DifferenceType.SAVE_SORT_ORDER, originalMetaData.getSaveOrder(), newMetaData.getSaveOrder());
-        addToListIfDiff(changes, DifferenceType.KEY_PATTERNS,
-                originalMetaData.getCiteKeyPattern(preferences.getCitationKeyPatternPreferences().getKeyPattern()),
-                newMetaData.getCiteKeyPattern(preferences.getCitationKeyPatternPreferences().getKeyPattern()));
-        addToListIfDiff(changes, DifferenceType.USER_FILE_DIRECTORY, originalMetaData.getUserFileDirectories(), newMetaData.getUserFileDirectories());
-        addToListIfDiff(changes, DifferenceType.LATEX_FILE_DIRECTORY, originalMetaData.getLatexFileDirectories(), newMetaData.getLatexFileDirectories());
-        addToListIfDiff(changes, DifferenceType.DEFAULT_KEY_PATTERN, originalMetaData.getDefaultCiteKeyPattern(), newMetaData.getDefaultCiteKeyPattern());
-        addToListIfDiff(changes, DifferenceType.SAVE_ACTIONS, originalMetaData.getSaveActions(), newMetaData.getSaveActions());
+        addToListIfDiff(
+                changes, DifferenceType.SAVE_SORT_ORDER, originalMetaData.getSaveOrder(), newMetaData.getSaveOrder());
+        addToListIfDiff(
+                changes,
+                DifferenceType.KEY_PATTERNS,
+                originalMetaData.getCiteKeyPattern(
+                        preferences.getCitationKeyPatternPreferences().getKeyPattern()),
+                newMetaData.getCiteKeyPattern(
+                        preferences.getCitationKeyPatternPreferences().getKeyPattern()));
+        addToListIfDiff(
+                changes,
+                DifferenceType.USER_FILE_DIRECTORY,
+                originalMetaData.getUserFileDirectories(),
+                newMetaData.getUserFileDirectories());
+        addToListIfDiff(
+                changes,
+                DifferenceType.LATEX_FILE_DIRECTORY,
+                originalMetaData.getLatexFileDirectories(),
+                newMetaData.getLatexFileDirectories());
+        addToListIfDiff(
+                changes,
+                DifferenceType.DEFAULT_KEY_PATTERN,
+                originalMetaData.getDefaultCiteKeyPattern(),
+                newMetaData.getDefaultCiteKeyPattern());
+        addToListIfDiff(
+                changes, DifferenceType.SAVE_ACTIONS, originalMetaData.getSaveActions(), newMetaData.getSaveActions());
         addToListIfDiff(changes, DifferenceType.MODE, originalMetaData.getMode(), newMetaData.getMode());
-        addToListIfDiff(changes, DifferenceType.GENERAL_FILE_DIRECTORY, originalMetaData.getDefaultFileDirectory(), newMetaData.getDefaultFileDirectory());
-        addToListIfDiff(changes, DifferenceType.CONTENT_SELECTOR, originalMetaData.getContentSelectors(), newMetaData.getContentSelectors());
+        addToListIfDiff(
+                changes,
+                DifferenceType.GENERAL_FILE_DIRECTORY,
+                originalMetaData.getDefaultFileDirectory(),
+                newMetaData.getDefaultFileDirectory());
+        addToListIfDiff(
+                changes,
+                DifferenceType.CONTENT_SELECTOR,
+                originalMetaData.getContentSelectors(),
+                newMetaData.getContentSelectors());
         return changes;
     }
 

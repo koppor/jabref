@@ -25,6 +25,8 @@ public class PushToTeXstudio extends AbstractPushToApplication {
 
     @Override
     protected String[] getCommandLine(String keyString) {
-        return new String[] {commandPath, "--insert-cite", String.format("%s%s%s", getCitePrefix(), keyString, getCiteSuffix())};
+        return new String[] {
+            commandPath, "--insert-cite", String.format("%s%s%s", getCitePrefix(), keyString, getCiteSuffix())
+        };
     }
 }

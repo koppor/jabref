@@ -49,7 +49,8 @@ public class AtomicFileOutputStream extends FilterOutputStream {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtomicFileOutputStream.class);
 
     private static final String TEMPORARY_EXTENSION = ".tmp";
-    private static final String SAVE_EXTENSION = "." + BackupFileType.SAVE.getExtensions().get(0);
+    private static final String SAVE_EXTENSION =
+            "." + BackupFileType.SAVE.getExtensions().get(0);
 
     /**
      * The file we want to create/replace.
@@ -79,8 +80,13 @@ public class AtomicFileOutputStream extends FilterOutputStream {
      * @param keepBackup whether to keep the backup file (.sav) after a successful write process
      */
     public AtomicFileOutputStream(Path path, boolean keepBackup) throws IOException {
-        // Files.newOutputStream(getPathOfTemporaryFile(path)) leads to a "sun.nio.ch.ChannelOutputStream", which does not offer "lock"
-        this(path, getPathOfTemporaryFile(path), new FileOutputStream(getPathOfTemporaryFile(path).toFile()), keepBackup);
+        // Files.newOutputStream(getPathOfTemporaryFile(path)) leads to a "sun.nio.ch.ChannelOutputStream", which does
+        // not offer "lock"
+        this(
+                path,
+                getPathOfTemporaryFile(path),
+                new FileOutputStream(getPathOfTemporaryFile(path).toFile()),
+                keepBackup);
     }
 
     /**
@@ -96,7 +102,9 @@ public class AtomicFileOutputStream extends FilterOutputStream {
     /**
      * Required for proper testing
      */
-    AtomicFileOutputStream(Path path, Path pathOfTemporaryFile, OutputStream temporaryFileOutputStream, boolean keepBackup) throws IOException {
+    AtomicFileOutputStream(
+            Path path, Path pathOfTemporaryFile, OutputStream temporaryFileOutputStream, boolean keepBackup)
+            throws IOException {
         super(temporaryFileOutputStream);
         this.targetFile = path;
         this.temporaryFile = pathOfTemporaryFile;
@@ -117,7 +125,10 @@ public class AtomicFileOutputStream extends FilterOutputStream {
                 temporaryFileLock = null;
             }
         } catch (OverlappingFileLockException exception) {
-            throw new IOException("Could not obtain write access to " + temporaryFile + ". Maybe another instance of JabRef is currently writing to the same file?", exception);
+            throw new IOException(
+                    "Could not obtain write access to " + temporaryFile
+                            + ". Maybe another instance of JabRef is currently writing to the same file?",
+                    exception);
         }
     }
 
@@ -171,7 +182,9 @@ public class AtomicFileOutputStream extends FilterOutputStream {
             }
         } catch (IOException exception) {
             // Currently, we always get the exception:
-            // Unable to release lock on file C:\Users\koppor\AppData\Local\Temp\junit11976839611279549873\error-during-save.txt.tmp: java.nio.channels.ClosedChannelException
+            // Unable to release lock on file
+            // C:\Users\koppor\AppData\Local\Temp\junit11976839611279549873\error-during-save.txt.tmp:
+            // java.nio.channels.ClosedChannelException
             LOGGER.debug("Unable to release lock on file {}", temporaryFile, exception);
         }
         try {
@@ -206,8 +219,10 @@ public class AtomicFileOutputStream extends FilterOutputStream {
             }
 
             // We successfully wrote everything to the temporary file, lets copy it to the correct place
-            // First, make backup of original file and try to save file permissions to restore them later (by default: 664)
-            Set<PosixFilePermission> oldFilePermissions = EnumSet.of(PosixFilePermission.OWNER_READ,
+            // First, make backup of original file and try to save file permissions to restore them later (by default:
+            // 664)
+            Set<PosixFilePermission> oldFilePermissions = EnumSet.of(
+                    PosixFilePermission.OWNER_READ,
                     PosixFilePermission.OWNER_WRITE,
                     PosixFilePermission.GROUP_READ,
                     PosixFilePermission.GROUP_WRITE,
@@ -229,7 +244,8 @@ public class AtomicFileOutputStream extends FilterOutputStream {
 
             try {
                 // Move temporary file (replace original if it exists)
-                Files.move(temporaryFile, targetFile, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(
+                        temporaryFile, targetFile, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
             } catch (Exception e) {
                 LOGGER.warn("Could not move temporary file", e);
                 throw e;
@@ -274,4 +290,3 @@ public class AtomicFileOutputStream extends FilterOutputStream {
         }
     }
 }
-

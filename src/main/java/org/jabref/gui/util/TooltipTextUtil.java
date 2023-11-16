@@ -21,7 +21,10 @@ public class TooltipTextUtil {
     private static final Pattern B_TEXT = Pattern.compile("(?s)(?<before>.*?)<b>(?<in>.*?)</b>");
 
     public enum TextType {
-        NORMAL, BOLD, ITALIC, MONOSPACED
+        NORMAL,
+        BOLD,
+        ITALIC,
+        MONOSPACED
     }
 
     public static Text createText(String textString, TextType textType) {
@@ -108,7 +111,9 @@ public class TooltipTextUtil {
     }
 
     private static void splitReplace(List<Text> textList, TextReplacement replacement) {
-        Optional<Text> textContainingReplacement = textList.stream().filter(it -> it.getText().contains(replacement.toReplace)).findFirst();
+        Optional<Text> textContainingReplacement = textList.stream()
+                .filter(it -> it.getText().contains(replacement.toReplace))
+                .findFirst();
         if (textContainingReplacement.isPresent()) {
             int index = textList.indexOf(textContainingReplacement.get());
             String original = textContainingReplacement.get().getText();

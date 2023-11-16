@@ -21,11 +21,15 @@ public class FieldMergerFactory {
         } else if (field == StandardField.FILE) {
             return new FileMerger();
         } else {
-            throw new IllegalArgumentException("No implementation found for merging the given field: " + field.getDisplayName());
+            throw new IllegalArgumentException(
+                    "No implementation found for merging the given field: " + field.getDisplayName());
         }
     }
 
     public static boolean canMerge(Field field) {
-        return field == StandardField.GROUPS || field == StandardField.KEYWORDS || field == StandardField.COMMENT || field == StandardField.FILE;
+        return field == StandardField.GROUPS
+                || field == StandardField.KEYWORDS
+                || field == StandardField.COMMENT
+                || field == StandardField.FILE;
     }
 }

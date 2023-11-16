@@ -29,7 +29,8 @@ public abstract class AbstractPushToApplication implements PushToApplication {
     private static final String CITE_KEY1 = "key1";
     private static final String CITE_KEY2 = "key2";
 
-    protected boolean couldNotCall; // Set to true in case the command could not be executed, e.g., if the file is not found
+    protected boolean
+            couldNotCall; // Set to true in case the command could not be executed, e.g., if the file is not found
     protected boolean couldNotPush; // Set to true in case the tunnel to the program (if one is used) does not operate
     protected boolean notDefined; // Set to true if the corresponding path is not defined in the preferences
 
@@ -49,7 +50,8 @@ public abstract class AbstractPushToApplication implements PushToApplication {
     }
 
     private void dissectCiteCommand() {
-        String preferencesCiteCommand = preferencesService.getExternalApplicationsPreferences().getCiteCommand();
+        String preferencesCiteCommand =
+                preferencesService.getExternalApplicationsPreferences().getCiteCommand();
 
         if (preferencesCiteCommand != null && preferencesCiteCommand.equals(cachedCiteCommand)) {
             return;
@@ -64,8 +66,10 @@ public abstract class AbstractPushToApplication implements PushToApplication {
         }
 
         cachedCitePrefix = preferencesCiteCommand.substring(0, indexKey1);
-        cachedCiteDelimiter = preferencesCiteCommand.substring(preferencesCiteCommand.lastIndexOf(CITE_KEY1) + CITE_KEY1.length(), indexKey2);
-        cachedCiteSuffix = preferencesCiteCommand.substring(preferencesCiteCommand.lastIndexOf(CITE_KEY2) + CITE_KEY2.length());
+        cachedCiteDelimiter = preferencesCiteCommand.substring(
+                preferencesCiteCommand.lastIndexOf(CITE_KEY1) + CITE_KEY1.length(), indexKey2);
+        cachedCiteSuffix =
+                preferencesCiteCommand.substring(preferencesCiteCommand.lastIndexOf(CITE_KEY2) + CITE_KEY2.length());
     }
 
     @Override
@@ -89,7 +93,10 @@ public abstract class AbstractPushToApplication implements PushToApplication {
         couldNotCall = false;
         notDefined = false;
 
-        commandPath = preferencesService.getPushToApplicationPreferences().getCommandPaths().get(this.getDisplayName());
+        commandPath = preferencesService
+                .getPushToApplicationPreferences()
+                .getCommandPaths()
+                .get(this.getDisplayName());
 
         // Check if a path to the command has been specified
         if (StringUtil.isNullOrEmpty(commandPath)) {
@@ -105,15 +112,8 @@ public abstract class AbstractPushToApplication implements PushToApplication {
                     LOGGER.error("Commandline does not contain enough parameters to \"push to application\"");
                     return;
                 }
-                ProcessBuilder processBuilder = new ProcessBuilder(
-                        "open",
-                        "-a",
-                        commands[0],
-                        "-n",
-                        "--args",
-                        commands[1],
-                        commands[2]
-                );
+                ProcessBuilder processBuilder =
+                        new ProcessBuilder("open", "-a", commands[0], "-n", "--args", commands[1], commands[2]);
                 processBuilder.start();
             } else {
                 ProcessBuilder processBuilder = new ProcessBuilder(getCommandLine(keyString));
@@ -185,8 +185,10 @@ public abstract class AbstractPushToApplication implements PushToApplication {
     }
 
     @Override
-    public PushToApplicationSettings getSettings(PushToApplication application, PushToApplicationPreferences preferences) {
-        return new PushToApplicationSettings(application, dialogService, preferencesService.getFilePreferences(), preferences);
+    public PushToApplicationSettings getSettings(
+            PushToApplication application, PushToApplicationPreferences preferences) {
+        return new PushToApplicationSettings(
+                application, dialogService, preferencesService.getFilePreferences(), preferences);
     }
 
     protected class PushToApplicationAction implements Action {

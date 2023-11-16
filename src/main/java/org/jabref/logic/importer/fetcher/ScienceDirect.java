@@ -62,10 +62,10 @@ public class ScienceDirect implements FulltextFetcher, CustomizableKeyFetcher {
         }
         // Scrape the web page as desktop client (not as mobile client!)
         Document html = Jsoup.connect(urlFromDoi)
-                             .userAgent(URLDownload.USER_AGENT)
-                             .referrer("https://www.google.com")
-                             .ignoreHttpErrors(true)
-                             .get();
+                .userAgent(URLDownload.USER_AGENT)
+                .referrer("https://www.google.com")
+                .ignoreHttpErrors(true)
+                .get();
 
         // Retrieve PDF link from meta data (most recent)
         Elements metaLinks = html.getElementsByAttributeValue("name", "citation_pdf_url");
@@ -78,9 +78,7 @@ public class ScienceDirect implements FulltextFetcher, CustomizableKeyFetcher {
         // This page contains the link to the PDF in some JavaScript code embedded in the web page.
         // Example page: https://www.sciencedirect.com/science/article/pii/S1674775515001079
 
-        Optional<JSONObject> pdfDownloadOptional = html
-                .getElementsByAttributeValue("type", "application/json")
-                .stream()
+        Optional<JSONObject> pdfDownloadOptional = html.getElementsByAttributeValue("type", "application/json").stream()
                 .flatMap(element -> element.getElementsByTag("script").stream())
                 // The first DOM child of the script element is the script itself (represented as HTML text)
                 .map(element -> element.childNode(0))
@@ -108,9 +106,10 @@ public class ScienceDirect implements FulltextFetcher, CustomizableKeyFetcher {
             JSONObject urlMetadata = pdfDownload.getJSONObject("urlMetadata");
             JSONObject queryParamsObject = urlMetadata.getJSONObject("queryParams");
             String queryParameters = queryParamsObject.keySet().stream()
-                                                      .map(key -> String.format("%s=%s", key, queryParamsObject.getString(key)))
-                                                      .collect(Collectors.joining("&"));
-            fullLinkToPdf = String.format("https://www.sciencedirect.com/%s/%s%s?%s",
+                    .map(key -> String.format("%s=%s", key, queryParamsObject.getString(key)))
+                    .collect(Collectors.joining("&"));
+            fullLinkToPdf = String.format(
+                    "https://www.sciencedirect.com/%s/%s%s?%s",
                     urlMetadata.getString("path"),
                     urlMetadata.getString("pii"),
                     urlMetadata.getString("pdfExtension"),
@@ -139,14 +138,16 @@ public class ScienceDirect implements FulltextFetcher, CustomizableKeyFetcher {
         try {
             String request = API_URL + doi;
             HttpResponse<JsonNode> jsonResponse = Unirest.get(request)
-                                                         .header("X-ELS-APIKey", importerPreferences.getApiKey(getName()).orElse(API_KEY))
-                                                         .queryString("httpAccept", "application/json")
-                                                         .asJson();
+                    .header(
+                            "X-ELS-APIKey",
+                            importerPreferences.getApiKey(getName()).orElse(API_KEY))
+                    .queryString("httpAccept", "application/json")
+                    .asJson();
 
             JSONObject json = jsonResponse.getBody().getObject();
             JSONArray links = json.getJSONObject("full-text-retrieval-response")
-                                  .getJSONObject("coredata")
-                                  .getJSONArray("link");
+                    .getJSONObject("coredata")
+                    .getJSONArray("link");
 
             for (int i = 0; i < links.length(); i++) {
                 JSONObject link = links.getJSONObject(i);

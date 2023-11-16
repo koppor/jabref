@@ -26,17 +26,35 @@ import jakarta.inject.Inject;
 
 public class DocumentViewerView extends BaseDialog<Void> {
 
-    @FXML private ScrollBar scrollBar;
-    @FXML private ComboBox<LinkedFile> fileChoice;
-    @FXML private BorderPane mainPane;
-    @FXML private ToggleButton modeLive;
-    @FXML private ToggleButton modeLock;
-    @FXML private TextField currentPage;
-    @FXML private Label maxPages;
+    @FXML
+    private ScrollBar scrollBar;
 
-    @Inject private StateManager stateManager;
-    @Inject private TaskExecutor taskExecutor;
-    @Inject private PreferencesService preferencesService;
+    @FXML
+    private ComboBox<LinkedFile> fileChoice;
+
+    @FXML
+    private BorderPane mainPane;
+
+    @FXML
+    private ToggleButton modeLive;
+
+    @FXML
+    private ToggleButton modeLock;
+
+    @FXML
+    private TextField currentPage;
+
+    @FXML
+    private Label maxPages;
+
+    @Inject
+    private StateManager stateManager;
+
+    @Inject
+    private TaskExecutor taskExecutor;
+
+    @Inject
+    private PreferencesService preferencesService;
 
     private DocumentViewerControl viewer;
     private DocumentViewerViewModel viewModel;
@@ -45,11 +63,10 @@ public class DocumentViewerView extends BaseDialog<Void> {
         this.setTitle(Localization.lang("Document viewer"));
         this.initModality(Modality.NONE);
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsContent(this.getDialogPane());
+        ViewLoader.view(this).load().setAsContent(this.getDialogPane());
 
-        // Remove button bar at bottom, but add close button to keep the dialog closable by clicking the "x" window symbol
+        // Remove button bar at bottom, but add close button to keep the dialog closable by clicking the "x" window
+        // symbol
         getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
         getDialogPane().getChildren().removeIf(ButtonBar.class::isInstance);
     }
@@ -83,16 +100,19 @@ public class DocumentViewerView extends BaseDialog<Void> {
     }
 
     private void setupFileChoice() {
-        ViewModelListCellFactory<LinkedFile> cellFactory = new ViewModelListCellFactory<LinkedFile>()
-                .withText(LinkedFile::getLink);
+        ViewModelListCellFactory<LinkedFile> cellFactory =
+                new ViewModelListCellFactory<LinkedFile>().withText(LinkedFile::getLink);
         fileChoice.setButtonCell(cellFactory.call(null));
         fileChoice.setCellFactory(cellFactory);
-        fileChoice.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> viewModel.switchToFile(newValue));
+        fileChoice
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> viewModel.switchToFile(newValue));
         // We always want that the first item is selected after a change
         // This also automatically selects the first file on the initial load
-        fileChoice.itemsProperty().addListener(
-                (observable, oldValue, newValue) -> fileChoice.getSelectionModel().selectFirst());
+        fileChoice.itemsProperty().addListener((observable, oldValue, newValue) -> fileChoice
+                .getSelectionModel()
+                .selectFirst());
         fileChoice.itemsProperty().bind(viewModel.filesProperty());
     }
 

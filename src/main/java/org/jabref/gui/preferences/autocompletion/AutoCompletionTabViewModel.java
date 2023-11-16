@@ -82,7 +82,9 @@ public class AutoCompletionTabViewModel implements PreferenceTabViewModel {
         }
 
         autoCompletePreferences.getCompleteFields().clear();
-        autoCompletePreferences.getCompleteFields().addAll(FieldFactory.parseFieldList(autoCompleteFieldsProperty.getValue()));
+        autoCompletePreferences
+                .getCompleteFields()
+                .addAll(FieldFactory.parseFieldList(autoCompleteFieldsProperty.getValue()));
     }
 
     @Override

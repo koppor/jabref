@@ -14,9 +14,7 @@ public class UnknownEntryType implements EntryType {
 
     @Override
     public String toString() {
-        return "UnknownEntryType{" +
-                "name='" + name + '\'' +
-                '}';
+        return "UnknownEntryType{" + "name='" + name + '\'' + '}';
     }
 
     @Override

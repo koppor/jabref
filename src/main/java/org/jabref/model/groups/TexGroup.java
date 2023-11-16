@@ -33,7 +33,14 @@ public class TexGroup extends AbstractGroup implements FileUpdateListener {
     private final MetaData metaData;
     private final String user;
 
-    TexGroup(String name, GroupHierarchyType context, Path filePath, AuxParser auxParser, FileUpdateMonitor fileMonitor, MetaData metaData, String user) {
+    TexGroup(
+            String name,
+            GroupHierarchyType context,
+            Path filePath,
+            AuxParser auxParser,
+            FileUpdateMonitor fileMonitor,
+            MetaData metaData,
+            String user) {
         super(name, context);
         this.metaData = metaData;
         this.user = user;
@@ -42,18 +49,43 @@ public class TexGroup extends AbstractGroup implements FileUpdateListener {
         this.fileMonitor = fileMonitor;
     }
 
-    TexGroup(String name, GroupHierarchyType context, Path filePath, AuxParser auxParser, FileUpdateMonitor fileMonitor, MetaData metaData) throws IOException {
-        this(name, context, filePath, auxParser, fileMonitor, metaData, System.getProperty("user.name") + '-' + InetAddress.getLocalHost().getHostName());
+    TexGroup(
+            String name,
+            GroupHierarchyType context,
+            Path filePath,
+            AuxParser auxParser,
+            FileUpdateMonitor fileMonitor,
+            MetaData metaData)
+            throws IOException {
+        this(
+                name,
+                context,
+                filePath,
+                auxParser,
+                fileMonitor,
+                metaData,
+                System.getProperty("user.name")
+                        + '-'
+                        + InetAddress.getLocalHost().getHostName());
     }
 
-    public static TexGroup create(String name, GroupHierarchyType context, Path filePath, AuxParser auxParser, FileUpdateMonitor fileMonitor, MetaData metaData) throws IOException {
+    public static TexGroup create(
+            String name,
+            GroupHierarchyType context,
+            Path filePath,
+            AuxParser auxParser,
+            FileUpdateMonitor fileMonitor,
+            MetaData metaData)
+            throws IOException {
         TexGroup group = new TexGroup(name, context, filePath, auxParser, fileMonitor, metaData);
         fileMonitor.addListenerForFile(group.getFilePathResolved(), group);
         return group;
     }
 
     // without FileUpdateMonitor
-    public static TexGroup create(String name, GroupHierarchyType context, Path filePath, AuxParser auxParser, MetaData metaData) throws IOException {
+    public static TexGroup create(
+            String name, GroupHierarchyType context, Path filePath, AuxParser auxParser, MetaData metaData)
+            throws IOException {
         return new TexGroup(name, context, filePath, auxParser, new DummyFileUpdateMonitor(), metaData);
     }
 
@@ -104,12 +136,12 @@ public class TexGroup extends AbstractGroup implements FileUpdateListener {
 
     @Override
     public String toString() {
-        return "TexGroup{" +
-                "filePath=" + filePath +
-                ", keysUsedInAux=" + keysUsedInAux +
-                ", auxParser=" + auxParser +
-                ", fileMonitor=" + fileMonitor +
-                "} " + super.toString();
+        return "TexGroup{" + "filePath="
+                + filePath + ", keysUsedInAux="
+                + keysUsedInAux + ", auxParser="
+                + auxParser + ", fileMonitor="
+                + fileMonitor + "} "
+                + super.toString();
     }
 
     @Override
@@ -139,8 +171,6 @@ public class TexGroup extends AbstractGroup implements FileUpdateListener {
     }
 
     private List<Path> getFileDirectoriesAsPaths() {
-        return metaData.getLatexFileDirectory(user)
-                       .map(List::of)
-                       .orElse(Collections.emptyList());
+        return metaData.getLatexFileDirectory(user).map(List::of).orElse(Collections.emptyList());
     }
 }

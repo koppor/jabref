@@ -31,17 +31,26 @@ public class EprintIdentifierEditorViewModel extends BaseIdentifierEditorViewMod
         }
     };
 
-    public EprintIdentifierEditorViewModel(SuggestionProvider<?> suggestionProvider,
-                                           FieldCheckers fieldCheckers,
-                                           DialogService dialogService,
-                                           TaskExecutor taskExecutor,
-                                           PreferencesService preferences,
-                                           UndoManager undoManager) {
-        super(StandardField.EPRINT, suggestionProvider, fieldCheckers, dialogService, taskExecutor, preferences, undoManager);
+    public EprintIdentifierEditorViewModel(
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            DialogService dialogService,
+            TaskExecutor taskExecutor,
+            PreferencesService preferences,
+            UndoManager undoManager) {
+        super(
+                StandardField.EPRINT,
+                suggestionProvider,
+                fieldCheckers,
+                dialogService,
+                taskExecutor,
+                preferences,
+                undoManager);
         configure(false, false);
         EasyBind.subscribe(identifier, newIdentifier -> {
             newIdentifier.ifPresent(id -> {
-                // TODO: We already have a common superclass between ArXivIdentifier and ARK. This could be refactored further.
+                // TODO: We already have a common superclass between ArXivIdentifier and ARK. This could be refactored
+                // further.
                 if (id instanceof ArXivIdentifier) {
                     configure(true, false);
                 } else if (id instanceof ARK) {
@@ -55,7 +64,8 @@ public class EprintIdentifierEditorViewModel extends BaseIdentifierEditorViewMod
     public void bindToEntry(BibEntry entry) {
         super.bindToEntry(entry);
         // Unlike other identifiers (they only depend on their own field value), eprint  depends on eprinttype thus
-        // its identity changes whenever the eprinttype field changes .e.g. If eprinttype equals 'arxiv' then the eprint identity
+        // its identity changes whenever the eprinttype field changes .e.g. If eprinttype equals 'arxiv' then the eprint
+        // identity
         // will be of type ArXivIdentifier and if it equals 'ark' then it switches to type ARK.
         entry.getFieldsObservable().addListener(new WeakMapChangeListener<>(eprintTypeFieldListener));
     }

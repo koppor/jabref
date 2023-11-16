@@ -17,8 +17,7 @@ public class UnoSelection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UnoSelection.class);
 
-    private UnoSelection() {
-    }
+    private UnoSelection() {}
 
     private static Optional<XSelectionSupplier> getSelectionSupplier(XTextDocument doc) {
         if (doc == null) {

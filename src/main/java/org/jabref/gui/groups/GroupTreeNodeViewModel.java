@@ -72,17 +72,22 @@ public class GroupTreeNodeViewModel {
     }
 
     public boolean canAddEntries(List<BibEntry> entries) {
-        return (getNode().getGroup() instanceof GroupEntryChanger) && !getNode().getGroup().containsAll(entries);
+        return (getNode().getGroup() instanceof GroupEntryChanger)
+                && !getNode().getGroup().containsAll(entries);
     }
 
     public boolean canRemoveEntries(List<BibEntry> entries) {
-        return (getNode().getGroup() instanceof GroupEntryChanger) && getNode().getGroup().containsAny(entries);
+        return (getNode().getGroup() instanceof GroupEntryChanger)
+                && getNode().getGroup().containsAny(entries);
     }
 
     public void sortChildrenByName(boolean recursive) {
-        getNode().sortChildren(
-                (node1, node2) -> node1.getGroup().getName().compareToIgnoreCase(node2.getGroup().getName()),
-                recursive);
+        getNode()
+                .sortChildren(
+                        (node1, node2) -> node1.getGroup()
+                                .getName()
+                                .compareToIgnoreCase(node2.getGroup().getName()),
+                        recursive);
     }
 
     @Override
@@ -112,13 +117,11 @@ public class GroupTreeNodeViewModel {
     }
 
     public boolean canMoveUp() {
-        return (getNode().getPreviousSibling() != null)
-                && !(getNode().getGroup() instanceof AllEntriesGroup);
+        return (getNode().getPreviousSibling() != null) && !(getNode().getGroup() instanceof AllEntriesGroup);
     }
 
     public boolean canMoveDown() {
-        return (getNode().getNextSibling() != null)
-                && !(getNode().getGroup() instanceof AllEntriesGroup);
+        return (getNode().getNextSibling() != null) && !(getNode().getGroup() instanceof AllEntriesGroup);
     }
 
     public boolean canMoveLeft() {
@@ -128,8 +131,7 @@ public class GroupTreeNodeViewModel {
     }
 
     public boolean canMoveRight() {
-        return (getNode().getPreviousSibling() != null)
-                && !(getNode().getGroup() instanceof AllEntriesGroup);
+        return (getNode().getPreviousSibling() != null) && !(getNode().getGroup() instanceof AllEntriesGroup);
     }
 
     public void changeEntriesTo(List<BibEntry> entries, UndoManager undoManager) {
@@ -187,9 +189,7 @@ public class GroupTreeNodeViewModel {
         this.getNode().addChild(newNode);
 
         UndoableAddOrRemoveGroup undo = new UndoableAddOrRemoveGroup(
-                this,
-                new GroupTreeNodeViewModel(newNode),
-                UndoableAddOrRemoveGroup.ADD_NODE);
+                this, new GroupTreeNodeViewModel(newNode), UndoableAddOrRemoveGroup.ADD_NODE);
         undoManager.addEdit(undo);
     }
 

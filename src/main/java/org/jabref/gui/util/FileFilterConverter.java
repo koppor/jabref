@@ -21,10 +21,10 @@ import org.jabref.model.strings.StringUtil;
 
 public class FileFilterConverter {
 
-    public static FileChooser.ExtensionFilter ANY_FILE = new FileChooser.ExtensionFilter(Localization.lang("Any file"), "*.*");
+    public static FileChooser.ExtensionFilter ANY_FILE =
+            new FileChooser.ExtensionFilter(Localization.lang("Any file"), "*.*");
 
-    private FileFilterConverter() {
-    }
+    private FileFilterConverter() {}
 
     public static FileChooser.ExtensionFilter toExtensionFilter(FileType fileType) {
         String fileList = String.join(", ", fileType.getExtensionsWithAsteriskAndDot());
@@ -36,33 +36,39 @@ public class FileFilterConverter {
         return new FileChooser.ExtensionFilter(description, fileType.getExtensionsWithAsteriskAndDot());
     }
 
-    public static Optional<Importer> getImporter(FileChooser.ExtensionFilter extensionFilter, Collection<Importer> importers) {
-        return importers.stream().filter(importer -> importer.getName().equals(extensionFilter.getDescription())).findFirst();
+    public static Optional<Importer> getImporter(
+            FileChooser.ExtensionFilter extensionFilter, Collection<Importer> importers) {
+        return importers.stream()
+                .filter(importer -> importer.getName().equals(extensionFilter.getDescription()))
+                .findFirst();
     }
 
-    public static Optional<Exporter> getExporter(FileChooser.ExtensionFilter extensionFilter, Collection<Exporter> exporters) {
-        return exporters.stream().filter(exporter -> exporter.getName().equals(extensionFilter.getDescription())).findFirst();
+    public static Optional<Exporter> getExporter(
+            FileChooser.ExtensionFilter extensionFilter, Collection<Exporter> exporters) {
+        return exporters.stream()
+                .filter(exporter -> exporter.getName().equals(extensionFilter.getDescription()))
+                .findFirst();
     }
 
     public static FileChooser.ExtensionFilter forAllImporters(SortedSet<Importer> importers) {
         List<FileType> fileTypes = importers.stream().map(Importer::getFileType).collect(Collectors.toList());
         List<String> flatExtensions = fileTypes.stream()
-                                               .flatMap(type -> type.getExtensionsWithAsteriskAndDot().stream())
-                                               .collect(Collectors.toList());
+                .flatMap(type -> type.getExtensionsWithAsteriskAndDot().stream())
+                .collect(Collectors.toList());
 
         return new FileChooser.ExtensionFilter(Localization.lang("Available import formats"), flatExtensions);
     }
 
     public static List<FileChooser.ExtensionFilter> importerToExtensionFilter(Collection<Importer> importers) {
         return importers.stream()
-                        .map(importer -> toExtensionFilter(importer.getName(), importer.getFileType()))
-                        .collect(Collectors.toList());
+                .map(importer -> toExtensionFilter(importer.getName(), importer.getFileType()))
+                .collect(Collectors.toList());
     }
 
     public static List<FileChooser.ExtensionFilter> exporterToExtensionFilter(Collection<Exporter> exporters) {
         return exporters.stream()
-                        .map(exporter -> toExtensionFilter(exporter.getName(), exporter.getFileType()))
-                        .collect(Collectors.toList());
+                .map(exporter -> toExtensionFilter(exporter.getName(), exporter.getFileType()))
+                .collect(Collectors.toList());
     }
 
     public static FileFilter toFileFilter(FileChooser.ExtensionFilter extensionFilter) {
@@ -82,16 +88,16 @@ public class FileFilterConverter {
 
     public static Filter<Path> toDirFilter(List<String> extensions) {
         List<String> extensionsCleaned = extensions.stream()
-                                                   .map(extension -> extension.replace(".", "").replace("*", ""))
-                                                   .filter(StringUtil::isNotBlank)
-                                                   .collect(Collectors.toList());
+                .map(extension -> extension.replace(".", "").replace("*", ""))
+                .filter(StringUtil::isNotBlank)
+                .collect(Collectors.toList());
         if (extensionsCleaned.isEmpty()) {
             // Except every file
             return path -> true;
         } else {
             return path -> FileUtil.getFileExtension(path)
-                                       .map(extensionsCleaned::contains)
-                                       .orElse(false);
+                    .map(extensionsCleaned::contains)
+                    .orElse(false);
         }
     }
 }

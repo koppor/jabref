@@ -62,20 +62,24 @@ public class FieldFormatterCleanups {
                 new FieldFormatterCleanup(StandardField.PAGES, new NormalizePagesFormatter()),
                 new FieldFormatterCleanup(StandardField.DATE, new NormalizeDateFormatter()),
                 new FieldFormatterCleanup(StandardField.MONTH, new NormalizeMonthFormatter()),
-                new FieldFormatterCleanup(InternalField.INTERNAL_ALL_TEXT_FIELDS_FIELD, new ReplaceUnicodeLigaturesFormatter()));
+                new FieldFormatterCleanup(
+                        InternalField.INTERNAL_ALL_TEXT_FIELDS_FIELD, new ReplaceUnicodeLigaturesFormatter()));
 
         List<FieldFormatterCleanup> recommendedBibtexFormatters = new ArrayList<>(DEFAULT_SAVE_ACTIONS);
         recommendedBibtexFormatters.addAll(List.of(
                 new FieldFormatterCleanup(InternalField.INTERNAL_ALL_TEXT_FIELDS_FIELD, new HtmlToLatexFormatter()),
                 new FieldFormatterCleanup(InternalField.INTERNAL_ALL_TEXT_FIELDS_FIELD, new UnicodeToLatexFormatter()),
-                new FieldFormatterCleanup(InternalField.INTERNAL_ALL_TEXT_FIELDS_FIELD, new OrdinalsToSuperscriptFormatter())));
+                new FieldFormatterCleanup(
+                        InternalField.INTERNAL_ALL_TEXT_FIELDS_FIELD, new OrdinalsToSuperscriptFormatter())));
         RECOMMEND_BIBTEX_ACTIONS = Collections.unmodifiableList(recommendedBibtexFormatters);
 
         List<FieldFormatterCleanup> recommendedBiblatexFormatters = new ArrayList<>(DEFAULT_SAVE_ACTIONS);
         recommendedBiblatexFormatters.addAll(List.of(
                 new FieldFormatterCleanup(StandardField.TITLE, new HtmlToUnicodeFormatter()),
-                new FieldFormatterCleanup(InternalField.INTERNAL_ALL_TEXT_FIELDS_FIELD, new LatexToUnicodeFormatter())));
-        // DO NOT ADD OrdinalsToSuperscriptFormatter here, because this causes issues. See https://github.com/JabRef/jabref/issues/2596.
+                new FieldFormatterCleanup(
+                        InternalField.INTERNAL_ALL_TEXT_FIELDS_FIELD, new LatexToUnicodeFormatter())));
+        // DO NOT ADD OrdinalsToSuperscriptFormatter here, because this causes issues. See
+        // https://github.com/JabRef/jabref/issues/2596.
         RECOMMEND_BIBLATEX_ACTIONS = Collections.unmodifiableList(recommendedBiblatexFormatters);
     }
 
@@ -182,9 +186,9 @@ public class FieldFormatterCleanups {
             String fieldString = matcher.group(2);
 
             List<FieldFormatterCleanup> fieldFormatterCleanups = Arrays.stream(fieldString.split(","))
-                                                                       .map(FieldFormatterCleanups::getFormatterFromString)
-                                                                       .map(formatter -> new FieldFormatterCleanup(field, formatter))
-                                                                       .toList();
+                    .map(FieldFormatterCleanups::getFormatterFromString)
+                    .map(formatter -> new FieldFormatterCleanup(field, formatter))
+                    .toList();
             result.addAll(fieldFormatterCleanups);
         }
         return result;
@@ -231,9 +235,6 @@ public class FieldFormatterCleanups {
 
     @Override
     public String toString() {
-        return "FieldFormatterCleanups{" +
-                "enabled=" + enabled + "," +
-                "actions=" + actions +
-                "}";
+        return "FieldFormatterCleanups{" + "enabled=" + enabled + "," + "actions=" + actions + "}";
     }
 }

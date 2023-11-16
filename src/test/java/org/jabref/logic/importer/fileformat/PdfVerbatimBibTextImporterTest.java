@@ -27,8 +27,10 @@ class PdfVerbatimBibTextImporterTest {
 
     @BeforeEach
     void setUp() {
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.fieldPreferences().getNonWrappableFields()).thenReturn(FXCollections.emptyObservableList());
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        when(importFormatPreferences.fieldPreferences().getNonWrappableFields())
+                .thenReturn(FXCollections.emptyObservableList());
         importer = new PdfVerbatimBibTextImporter(importFormatPreferences);
     }
 
@@ -39,20 +41,25 @@ class PdfVerbatimBibTextImporterTest {
 
     @Test
     void testGetDescription() {
-        assertEquals("PdfVerbatimBibTextImporter imports a verbatim BibTeX entry from the first page of the PDF.",
-                     importer.getDescription());
+        assertEquals(
+                "PdfVerbatimBibTextImporter imports a verbatim BibTeX entry from the first page of the PDF.",
+                importer.getDescription());
     }
 
     @Test
     void doesNotHandleEncryptedPdfs() throws Exception {
-        Path file = Path.of(PdfVerbatimBibTextImporter.class.getResource("/pdfs/encrypted.pdf").toURI());
+        Path file = Path.of(PdfVerbatimBibTextImporter.class
+                .getResource("/pdfs/encrypted.pdf")
+                .toURI());
         List<BibEntry> result = importer.importDatabase(file).getDatabase().getEntries();
         assertEquals(Collections.emptyList(), result);
     }
 
     @Test
     void importTwiceWorksAsExpected() throws Exception {
-        Path file = Path.of(PdfVerbatimBibTextImporterTest.class.getResource("mixedMetadata.pdf").toURI());
+        Path file = Path.of(PdfVerbatimBibTextImporterTest.class
+                .getResource("mixedMetadata.pdf")
+                .toURI());
         List<BibEntry> result = importer.importDatabase(file).getDatabase().getEntries();
 
         BibEntry expected = new BibEntry(StandardEntryType.Article);
@@ -65,7 +72,8 @@ class PdfVerbatimBibTextImporterTest {
         expected.setField(StandardField.ISBN, "0134685997");
         expected.setFiles(Collections.singletonList(new LinkedFile("", file.toAbsolutePath(), "PDF")));
 
-        List<BibEntry> resultSecondImport = importer.importDatabase(file).getDatabase().getEntries();
+        List<BibEntry> resultSecondImport =
+                importer.importDatabase(file).getDatabase().getEntries();
         assertEquals(Collections.singletonList(expected), result);
         assertEquals(Collections.singletonList(expected), resultSecondImport);
     }

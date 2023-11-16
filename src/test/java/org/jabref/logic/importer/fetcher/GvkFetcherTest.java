@@ -42,7 +42,9 @@ public class GvkFetcherTest {
                 .withField(StandardField.SERIES, "The Java series ... from the source")
                 .withField(StandardField.ADDRESS, "Upper Saddle River, NJ")
                 .withField(StandardField.EDITION, "2. ed., 5. print.")
-                .withField(StandardField.NOTE, "Includes bibliographical references and index. - Previous ed.: 2001. - Hier auch später erschienene, unveränderte Nachdrucke")
+                .withField(
+                        StandardField.NOTE,
+                        "Includes bibliographical references and index. - Previous ed.: 2001. - Hier auch später erschienene, unveränderte Nachdrucke")
                 .withField(StandardField.ISBN, "9780321356680")
                 .withField(StandardField.PAGETOTAL, "346")
                 .withField(new UnknownField("ppn_gvk"), "591166003")
@@ -70,7 +72,9 @@ public class GvkFetcherTest {
         String query = "java jdk";
         QueryNode luceneQuery = new StandardSyntaxParser().parse(query, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         URL url = fetcher.getURLForQuery(luceneQuery);
-        assertEquals("https://sru.k10plus.de/opac-de-627?version=1.1&operation=searchRetrieve&query=pica.all%3Djava+and+pica.all%3Djdk&maximumRecords=50&recordSchema=picaxml&sortKeys=Year%2C%2C1", url.toString());
+        assertEquals(
+                "https://sru.k10plus.de/opac-de-627?version=1.1&operation=searchRetrieve&query=pica.all%3Djava+and+pica.all%3Djdk&maximumRecords=50&recordSchema=picaxml&sortKeys=Year%2C%2C1",
+                url.toString());
     }
 
     @Test
@@ -78,7 +82,9 @@ public class GvkFetcherTest {
         String query = "kon:java tit:jdk";
         QueryNode luceneQuery = new StandardSyntaxParser().parse(query, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         URL url = fetcher.getURLForQuery(luceneQuery);
-        assertEquals("https://sru.k10plus.de/opac-de-627?version=1.1&operation=searchRetrieve&query=pica.kon%3Djava+and+pica.tit%3Djdk&maximumRecords=50&recordSchema=picaxml&sortKeys=Year%2C%2C1", url.toString());
+        assertEquals(
+                "https://sru.k10plus.de/opac-de-627?version=1.1&operation=searchRetrieve&query=pica.kon%3Djava+and+pica.tit%3Djdk&maximumRecords=50&recordSchema=picaxml&sortKeys=Year%2C%2C1",
+                url.toString());
     }
 
     @Test

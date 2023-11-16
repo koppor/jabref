@@ -20,7 +20,9 @@ class BibtexBiblatexRoundtripTest {
                 .withField(StandardField.AUTHOR, "Frame, J. S. and Robinson, G. de B. and Thrall, R. M.")
                 .withField(StandardField.TITLE, "The hook graphs of the symmetric groups")
                 .withField(StandardField.JOURNAL, "Canadian J. Math.")
-                .withField(new UnknownField("fjournal"), "Canadian Journal of Mathematics. Journal Canadien de Math\\'ematiques")
+                .withField(
+                        new UnknownField("fjournal"),
+                        "Canadian Journal of Mathematics. Journal Canadien de Math\\'ematiques")
                 .withField(StandardField.VOLUME, "6")
                 .withField(StandardField.YEAR, "1954")
                 .withField(StandardField.PAGES, "316--324")
@@ -33,7 +35,9 @@ class BibtexBiblatexRoundtripTest {
                 .withField(StandardField.AUTHOR, "Frame, J. S. and Robinson, G. de B. and Thrall, R. M.")
                 .withField(StandardField.TITLE, "The hook graphs of the symmetric groups")
                 .withField(StandardField.JOURNALTITLE, "Canadian J. Math.")
-                .withField(new UnknownField("fjournal"), "Canadian Journal of Mathematics. Journal Canadien de Math\\'ematiques")
+                .withField(
+                        new UnknownField("fjournal"),
+                        "Canadian Journal of Mathematics. Journal Canadien de Math\\'ematiques")
                 .withField(StandardField.VOLUME, "6")
                 .withField(StandardField.DATE, "1954")
                 .withField(StandardField.PAGES, "316--324")

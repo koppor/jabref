@@ -18,14 +18,22 @@ public class ISBNIdentifierEditorViewModel extends BaseIdentifierEditorViewModel
     private final UndoManager undoManager;
     private final StateManager stateManager;
 
-    public ISBNIdentifierEditorViewModel(SuggestionProvider<?> suggestionProvider,
-                                         FieldCheckers fieldCheckers,
-                                         DialogService dialogService,
-                                         TaskExecutor taskExecutor,
-                                         PreferencesService preferences,
-                                         UndoManager undoManager,
-                                         StateManager stateManager) {
-        super(StandardField.ISBN, suggestionProvider, fieldCheckers, dialogService, taskExecutor, preferences, undoManager);
+    public ISBNIdentifierEditorViewModel(
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            DialogService dialogService,
+            TaskExecutor taskExecutor,
+            PreferencesService preferences,
+            UndoManager undoManager,
+            StateManager stateManager) {
+        super(
+                StandardField.ISBN,
+                suggestionProvider,
+                fieldCheckers,
+                dialogService,
+                taskExecutor,
+                preferences,
+                undoManager);
         this.undoManager = undoManager;
         this.stateManager = stateManager;
         configure(true, false);
@@ -33,10 +41,12 @@ public class ISBNIdentifierEditorViewModel extends BaseIdentifierEditorViewModel
 
     @Override
     public void fetchBibliographyInformation(BibEntry bibEntry) {
-        stateManager.getActiveDatabase().ifPresentOrElse(
-                databaseContext -> new FetchAndMergeEntry(databaseContext, taskExecutor, preferences, dialogService, undoManager)
-                        .fetchAndMerge(entry, field),
-                () -> dialogService.notify(Localization.lang("No library selected"))
-        );
+        stateManager
+                .getActiveDatabase()
+                .ifPresentOrElse(
+                        databaseContext -> new FetchAndMergeEntry(
+                                        databaseContext, taskExecutor, preferences, dialogService, undoManager)
+                                .fetchAndMerge(entry, field),
+                        () -> dialogService.notify(Localization.lang("No library selected")));
     }
 }

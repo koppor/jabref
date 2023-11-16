@@ -16,12 +16,18 @@ import org.jabref.preferences.FilePreferences;
 
 public class NewVersionDialog extends BaseDialog<Boolean> {
 
-    public NewVersionDialog(Version currentVersion, Version latestVersion, DialogService dialogService, FilePreferences filePreferences) {
+    public NewVersionDialog(
+            Version currentVersion,
+            Version latestVersion,
+            DialogService dialogService,
+            FilePreferences filePreferences) {
         this.setTitle(Localization.lang("New version available"));
 
-        ButtonType btnIgnoreUpdate = new ButtonType(Localization.lang("Ignore this update"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType btnIgnoreUpdate =
+                new ButtonType(Localization.lang("Ignore this update"), ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType btnDownloadUpdate = new ButtonType(Localization.lang("Download update"), ButtonBar.ButtonData.APPLY);
-        ButtonType btnRemindMeLater = new ButtonType(Localization.lang("Remind me later"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType btnRemindMeLater =
+                new ButtonType(Localization.lang("Remind me later"), ButtonBar.ButtonData.CANCEL_CLOSE);
         this.getDialogPane().getButtonTypes().addAll(btnIgnoreUpdate, btnDownloadUpdate, btnRemindMeLater);
         this.setResultConverter(button -> {
             if (button == btnIgnoreUpdate) {
@@ -36,15 +42,13 @@ public class NewVersionDialog extends BaseDialog<Boolean> {
 
         Hyperlink lblMoreInformation = new Hyperlink(Localization.lang("To see what is new view the changelog."));
         lblMoreInformation.setOnAction(event ->
-                JabRefDesktop.openBrowserShowPopup(latestVersion.getChangelogUrl(), dialogService, filePreferences)
-        );
+                JabRefDesktop.openBrowserShowPopup(latestVersion.getChangelogUrl(), dialogService, filePreferences));
 
         VBox container = new VBox(
                 new Label(Localization.lang("A new version of JabRef has been released.")),
                 new Label(Localization.lang("Installed version") + ": " + currentVersion.getFullVersion()),
                 new Label(Localization.lang("Latest version") + ": " + latestVersion.getFullVersion()),
-                lblMoreInformation
-        );
+                lblMoreInformation);
         getDialogPane().setContent(container);
         getDialogPane().setPrefWidth(450);
     }

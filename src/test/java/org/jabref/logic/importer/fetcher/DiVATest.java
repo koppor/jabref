@@ -39,14 +39,17 @@ public class DiVATest {
         entry.setCitationKey("Gustafsson260746");
         entry.setField(StandardField.AUTHOR, "Gustafsson, Oscar");
         entry.setField(StandardField.INSTITUTION, "The Institute of Technology");
-        entry.setField(StandardField.JOURNAL,
+        entry.setField(
+                StandardField.JOURNAL,
                 "IEEE transactions on circuits and systems. 2, Analog and digital signal processing (Print)");
         entry.setField(StandardField.NUMBER, "11");
         entry.setField(StandardField.PAGES, "974--978");
         entry.setField(StandardField.TITLE, "Lower bounds for constant multiplication problems");
         entry.setField(StandardField.VOLUME, "54");
         entry.setField(StandardField.YEAR, "2007");
-        entry.setField(StandardField.ABSTRACT, "Lower bounds for problems related to realizing multiplication by constants with shifts, adders, and subtracters are presented. These lower bounds are straightforwardly calculated and have applications in proving the optimality of solutions obtained by heuristics. ");
+        entry.setField(
+                StandardField.ABSTRACT,
+                "Lower bounds for problems related to realizing multiplication by constants with shifts, adders, and subtracters are presented. These lower bounds are straightforwardly calculated and have applications in proving the optimality of solutions obtained by heuristics. ");
         entry.setField(StandardField.DOI, "10.1109/TCSII.2007.903212");
 
         assertEquals(Optional.of(entry), fetcher.performSearchById("diva2:260746"));

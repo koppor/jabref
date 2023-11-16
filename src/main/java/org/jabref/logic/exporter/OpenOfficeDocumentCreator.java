@@ -58,8 +58,8 @@ public class OpenOfficeDocumentCreator extends Exporter {
             // resource/openoffice directory, and are copied verbatim into the zip file.
             OpenOfficeDocumentCreator.addResourceFile("meta.xml", "/resource/openoffice/meta.xml", out);
             OpenOfficeDocumentCreator.addResourceFile("mimetype", "/resource/openoffice/mimetype", out);
-            OpenOfficeDocumentCreator.addResourceFile("META-INF/manifest.xml", "/resource/openoffice/manifest.xml",
-                    out);
+            OpenOfficeDocumentCreator.addResourceFile(
+                    "META-INF/manifest.xml", "/resource/openoffice/manifest.xml", out);
         }
     }
 
@@ -80,8 +80,8 @@ public class OpenOfficeDocumentCreator extends Exporter {
     }
 
     @Override
-    public void export(final BibDatabaseContext databaseContext, final Path file,
-                       List<BibEntry> entries) throws Exception {
+    public void export(final BibDatabaseContext databaseContext, final Path file, List<BibEntry> entries)
+            throws Exception {
         Objects.requireNonNull(databaseContext);
         Objects.requireNonNull(entries);
         if (!entries.isEmpty()) { // Do not export if no entries

@@ -120,8 +120,7 @@ public class MSBibMapping {
         BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "productioncompany"), "ProductionCompany");
     }
 
-    private MSBibMapping() {
-    }
+    private MSBibMapping() {}
 
     public static EntryType getBiblatexEntryType(String msbibType) {
         Map<String, EntryType> entryTypeMapping = new HashMap<>();

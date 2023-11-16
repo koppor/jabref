@@ -119,7 +119,9 @@ public class BiodiversityLibrary implements SearchBasedParserFetcher, Customizab
                 entry.setField(StandardField.PUBLISHER, itemsDetails.optString("HoldingInstitution", ""));
                 entry.setField(StandardField.LANGUAGE, itemsDetails.optString("Language", ""));
                 entry.setField(StandardField.URL, itemsDetails.optString("ItemUrl", ""));
-                if (itemsDetails.has("Date") && !entry.hasField(StandardField.DATE) && !entry.hasField(StandardField.YEAR)) {
+                if (itemsDetails.has("Date")
+                        && !entry.hasField(StandardField.DATE)
+                        && !entry.hasField(StandardField.YEAR)) {
                     entry.setField(StandardField.DATE, itemsDetails.getString("Date"));
                 }
             }
@@ -159,11 +161,10 @@ public class BiodiversityLibrary implements SearchBasedParserFetcher, Customizab
 
         // input: list of { "Name": "Author name,"}
         return IntStream.range(0, authors.length())
-                        .mapToObj(authors::getJSONObject)
-                        .map(author -> new Author(
-                                author.optString("Name", ""), "", "", "", ""))
-                        .collect(AuthorList.collect())
-                        .getAsFirstLastNamesWithAnd();
+                .mapToObj(authors::getJSONObject)
+                .map(author -> new Author(author.optString("Name", ""), "", "", "", ""))
+                .collect(AuthorList.collect())
+                .getAsFirstLastNamesWithAnd();
     }
 
     @Override
@@ -186,10 +187,7 @@ public class BiodiversityLibrary implements SearchBasedParserFetcher, Customizab
                 BibEntry entry = jsonResultToBibEntry(item);
                 try {
                     entry = parseBibJSONtoBibtex(item, entry);
-                } catch (
-                        JSONException |
-                        IOException |
-                        URISyntaxException exception) {
+                } catch (JSONException | IOException | URISyntaxException exception) {
                     throw new ParseException("Error when parsing entry", exception);
                 }
                 entries.add(entry);
@@ -200,12 +198,14 @@ public class BiodiversityLibrary implements SearchBasedParserFetcher, Customizab
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(QueryNode luceneQuery)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder(getBaseURL().toURI());
         BiodiversityLibraryTransformer transformer = new BiodiversityLibraryTransformer();
         uriBuilder.addParameter("op", "PublicationSearch");
         uriBuilder.addParameter("searchtype", "C");
-        uriBuilder.addParameter("searchterm", transformer.transformLuceneQuery(luceneQuery).orElse(""));
+        uriBuilder.addParameter(
+                "searchterm", transformer.transformLuceneQuery(luceneQuery).orElse(""));
         return uriBuilder.build().toURL();
     }
 }

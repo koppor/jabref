@@ -27,12 +27,15 @@ class SuggestionProvidersTest {
     public void initializeSuggestionProviders() {
         BibDatabase database = new BibDatabase();
         JournalAbbreviationRepository abbreviationRepository = mock(JournalAbbreviationRepository.class);
-        Set<Field> completeFields = Set.of(StandardField.AUTHOR, StandardField.XREF, StandardField.XDATA, StandardField.JOURNAL, StandardField.PUBLISHER, SpecialField.PRINTED);
+        Set<Field> completeFields = Set.of(
+                StandardField.AUTHOR,
+                StandardField.XREF,
+                StandardField.XDATA,
+                StandardField.JOURNAL,
+                StandardField.PUBLISHER,
+                SpecialField.PRINTED);
         AutoCompletePreferences autoCompletePreferences = new AutoCompletePreferences(
-                true,
-                AutoCompleteFirstNameMode.BOTH,
-                AutoCompletePreferences.NameFormat.BOTH,
-                completeFields);
+                true, AutoCompleteFirstNameMode.BOTH, AutoCompletePreferences.NameFormat.BOTH, completeFields);
         this.suggestionProviders = new SuggestionProviders(database, abbreviationRepository, autoCompletePreferences);
     }
 
@@ -51,8 +54,7 @@ class SuggestionProvidersTest {
                 Arguments.of(JournalsSuggestionProvider.class, StandardField.PUBLISHER),
 
                 // TODO: Auto completion should be aware of possible values of special fields
-                Arguments.of(WordSuggestionProvider.class, SpecialField.PRINTED)
-        );
+                Arguments.of(WordSuggestionProvider.class, SpecialField.PRINTED));
     }
 
     @ParameterizedTest
@@ -64,6 +66,8 @@ class SuggestionProvidersTest {
     @Test
     void emptySuggestionProviderReturnedForEmptySuggestionProviderList() {
         SuggestionProviders empty = new SuggestionProviders();
-        assertEquals(EmptySuggestionProvider.class, empty.getForField(StandardField.AUTHOR).getClass());
+        assertEquals(
+                EmptySuggestionProvider.class,
+                empty.getForField(StandardField.AUTHOR).getClass());
     }
 }

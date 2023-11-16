@@ -26,8 +26,7 @@ public class UpdateCitationMarkers {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateCitationMarkers.class);
 
-    private UpdateCitationMarkers() {
-    }
+    private UpdateCitationMarkers() {}
 
     /**
      * Visit each reference mark in referenceMarkNames, overwrite its text content.
@@ -37,10 +36,7 @@ public class UpdateCitationMarkers {
      * @param style    Bibliography style to use.
      */
     public static void applyNewCitationMarkers(XTextDocument doc, OOFrontend frontend, OOBibStyle style)
-            throws
-            NoDocumentException,
-            CreationException,
-            WrappedTargetException {
+            throws NoDocumentException, CreationException, WrappedTargetException {
 
         CitationGroups citationGroups = frontend.citationGroups;
 
@@ -49,8 +45,7 @@ public class UpdateCitationMarkers {
             Optional<OOText> marker = group.getCitationMarker();
 
             if (marker.isEmpty()) {
-                LOGGER.warn("applyNewCitationMarkers: no marker for {}",
-                        group.groupId.citationGroupIdAsString());
+                LOGGER.warn("applyNewCitationMarkers: no marker for {}", group.groupId.citationGroupIdAsString());
                 continue;
             }
 
@@ -62,15 +57,9 @@ public class UpdateCitationMarkers {
         }
     }
 
-    public static void fillCitationMarkInCursor(XTextDocument doc,
-                                                XTextCursor cursor,
-                                                OOText citationText,
-                                                boolean withText,
-                                                OOBibStyle style)
-            throws
-            WrappedTargetException,
-            CreationException,
-            IllegalArgumentException {
+    public static void fillCitationMarkInCursor(
+            XTextDocument doc, XTextCursor cursor, OOText citationText, boolean withText, OOBibStyle style)
+            throws WrappedTargetException, CreationException, IllegalArgumentException {
 
         Objects.requireNonNull(cursor);
         Objects.requireNonNull(citationText);
@@ -95,34 +84,25 @@ public class UpdateCitationMarkers {
      * @param position         Location to insert at.
      * @param insertSpaceAfter A space inserted after the reference mark makes it easier to separate from the text coming after. But is not wanted when we recreate a reference mark.
      */
-    public static void createAndFillCitationGroup(OOFrontend frontend,
-                                                  XTextDocument doc,
-                                                  List<String> citationKeys,
-                                                  List<Optional<OOText>> pageInfos,
-                                                  CitationType citationType,
-                                                  OOText citationText,
-                                                  XTextCursor position,
-                                                  OOBibStyle style,
-                                                  boolean insertSpaceAfter)
-            throws
-            NotRemoveableException,
-            WrappedTargetException,
-            PropertyVetoException,
-            IllegalArgumentException,
-            CreationException,
-            NoDocumentException,
-            IllegalTypeException {
+    public static void createAndFillCitationGroup(
+            OOFrontend frontend,
+            XTextDocument doc,
+            List<String> citationKeys,
+            List<Optional<OOText>> pageInfos,
+            CitationType citationType,
+            OOText citationText,
+            XTextCursor position,
+            OOBibStyle style,
+            boolean insertSpaceAfter)
+            throws NotRemoveableException, WrappedTargetException, PropertyVetoException, IllegalArgumentException,
+                    CreationException, NoDocumentException, IllegalTypeException {
 
         Objects.requireNonNull(pageInfos);
         if (pageInfos.size() != citationKeys.size()) {
             throw new IllegalArgumentException("pageInfos.size != citationKeys.size");
         }
-        CitationGroup group = frontend.createCitationGroup(doc,
-                citationKeys,
-                pageInfos,
-                citationType,
-                position,
-                insertSpaceAfter);
+        CitationGroup group =
+                frontend.createCitationGroup(doc, citationKeys, pageInfos, citationType, position, insertSpaceAfter);
 
         final boolean withText = citationType.withText();
 

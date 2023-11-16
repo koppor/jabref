@@ -47,9 +47,9 @@ public class LatexBibEntriesResolverResult {
 
     @Override
     public String toString() {
-        return String.format("TexBibEntriesResolverResult{texParserResult=%s, newEntries=%s}",
-                this.latexParserResult,
-                this.newEntries);
+        return String.format(
+                "TexBibEntriesResolverResult{texParserResult=%s, newEntries=%s}",
+                this.latexParserResult, this.newEntries);
     }
 
     @Override
@@ -64,8 +64,7 @@ public class LatexBibEntriesResolverResult {
 
         LatexBibEntriesResolverResult that = (LatexBibEntriesResolverResult) obj;
 
-        return Objects.equals(latexParserResult, that.latexParserResult)
-                && Objects.equals(newEntries, that.newEntries);
+        return Objects.equals(latexParserResult, that.latexParserResult) && Objects.equals(newEntries, that.newEntries);
     }
 
     @Override

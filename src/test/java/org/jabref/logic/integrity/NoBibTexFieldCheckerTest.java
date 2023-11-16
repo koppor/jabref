@@ -33,8 +33,7 @@ class NoBibTexFieldCheckerTest {
                 StandardField.INSTITUTION,
                 StandardField.JOURNAL,
                 StandardField.KEYWORDS,
-                StandardField.REVIEW
-        );
+                StandardField.REVIEW);
     }
 
     @ParameterizedTest()
@@ -45,11 +44,7 @@ class NoBibTexFieldCheckerTest {
     }
 
     @ParameterizedTest(name = "field={0}")
-    @CsvSource({
-            "AFTERWORD",
-            "JOURNALTITLE",
-            "LOCATION"
-    })
+    @CsvSource({"AFTERWORD", "JOURNALTITLE", "LOCATION"})
     void biblatexOnlyField(StandardField field) {
         BibEntry entry = new BibEntry().withField(field, "test");
         IntegrityMessage message = new IntegrityMessage("biblatex field only", entry, field);

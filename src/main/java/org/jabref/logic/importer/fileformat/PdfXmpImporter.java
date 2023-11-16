@@ -37,17 +37,15 @@ public class PdfXmpImporter extends Importer {
     @Override
     public ParserResult importDatabase(BufferedReader reader) throws IOException {
         Objects.requireNonNull(reader);
-        throw new UnsupportedOperationException(
-                "PdfXmpImporter does not support importDatabase(BufferedReader reader)."
-                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException("PdfXmpImporter does not support importDatabase(BufferedReader reader)."
+                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override
     public ParserResult importDatabase(String data) throws IOException {
         Objects.requireNonNull(data);
-        throw new UnsupportedOperationException(
-                "PdfXmpImporter does not support importDatabase(String data)."
-                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException("PdfXmpImporter does not support importDatabase(String data)."
+                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override

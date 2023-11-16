@@ -51,9 +51,10 @@ public class ImportFormatReader {
     private final ImportFormatPreferences importFormatPreferences;
     private final FileUpdateMonitor fileUpdateMonitor;
 
-    public ImportFormatReader(ImporterPreferences importerPreferences,
-                              ImportFormatPreferences importFormatPreferences,
-                              FileUpdateMonitor fileUpdateMonitor) {
+    public ImportFormatReader(
+            ImporterPreferences importerPreferences,
+            ImportFormatPreferences importFormatPreferences,
+            FileUpdateMonitor fileUpdateMonitor) {
         this.importerPreferences = importerPreferences;
         this.importFormatPreferences = importFormatPreferences;
         this.fileUpdateMonitor = fileUpdateMonitor;
@@ -135,8 +136,7 @@ public class ImportFormatReader {
         return new TreeSet<>(this.formats);
     }
 
-    public record UnknownFormatImport(String format, ParserResult parserResult) {
-    }
+    public record UnknownFormatImport(String format, ParserResult parserResult) {}
 
     /**
      * Tries to import a file by iterating through the available import filters,
@@ -146,18 +146,21 @@ public class ImportFormatReader {
      *
      * @throws ImportException if the import fails (for example, if no suitable importer is found)
      */
-    public UnknownFormatImport importUnknownFormat(Path filePath, FileUpdateMonitor fileMonitor) throws ImportException {
+    public UnknownFormatImport importUnknownFormat(Path filePath, FileUpdateMonitor fileMonitor)
+            throws ImportException {
         Objects.requireNonNull(filePath);
 
         try {
-            UnknownFormatImport unknownFormatImport = importUnknownFormat(importer -> importer.importDatabase(filePath), importer -> importer.isRecognizedFormat(filePath));
+            UnknownFormatImport unknownFormatImport = importUnknownFormat(
+                    importer -> importer.importDatabase(filePath), importer -> importer.isRecognizedFormat(filePath));
             unknownFormatImport.parserResult.setPath(filePath);
             return unknownFormatImport;
         } catch (ImportException e) {
             // If all importers fail, try to read the file as BibTeX
             try {
                 ParserResult parserResult = OpenDatabase.loadDatabase(filePath, importFormatPreferences, fileMonitor);
-                if (parserResult.getDatabase().hasEntries() || !parserResult.getDatabase().hasNoStrings()) {
+                if (parserResult.getDatabase().hasEntries()
+                        || !parserResult.getDatabase().hasNoStrings()) {
                     parserResult.setPath(filePath);
                     return new UnknownFormatImport(ImportFormatReader.BIBTEX_FORMAT, parserResult);
                 } else {
@@ -179,7 +182,10 @@ public class ImportFormatReader {
      * @return an UnknownFormatImport with the imported entries and metadata
      * @throws ImportException if the import fails (for example, if no suitable importer is found)
      */
-    private UnknownFormatImport importUnknownFormat(CheckedFunction<Importer, ParserResult> importDatabase, CheckedFunction<Importer, Boolean> isRecognizedFormat) throws ImportException {
+    private UnknownFormatImport importUnknownFormat(
+            CheckedFunction<Importer, ParserResult> importDatabase,
+            CheckedFunction<Importer, Boolean> isRecognizedFormat)
+            throws ImportException {
         // stores ref to best result, gets updated at the next loop
         List<BibEntry> bestResult = null;
         int bestResultCount = 0;
@@ -234,6 +240,7 @@ public class ImportFormatReader {
     public UnknownFormatImport importUnknownFormat(String data) throws ImportException {
         Objects.requireNonNull(data);
 
-        return importUnknownFormat(importer -> importer.importDatabase(data), importer -> importer.isRecognizedFormat(data));
+        return importUnknownFormat(
+                importer -> importer.importDatabase(data), importer -> importer.isRecognizedFormat(data));
     }
 }

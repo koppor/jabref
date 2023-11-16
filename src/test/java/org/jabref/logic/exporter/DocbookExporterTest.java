@@ -46,7 +46,8 @@ public class DocbookExporterTest {
         Path tmpFile = testFolder.resolve("testBraces");
 
         BibEntry entry = new BibEntry();
-        entry.setField(StandardField.TITLE, "Peptidomics of the larval {{{D}rosophila melanogaster}} central nervous system.");
+        entry.setField(
+                StandardField.TITLE, "Peptidomics of the larval {{{D}rosophila melanogaster}} central nervous system.");
 
         List<BibEntry> entries = Arrays.asList(entry);
 
@@ -54,7 +55,9 @@ public class DocbookExporterTest {
 
         List<String> lines = Files.readAllLines(tmpFile);
         assertEquals(20, lines.size());
-        assertEquals("   <citetitle pubwork=\"article\">Peptidomics of the larval Drosophila melanogaster central nervous system.</citetitle>", lines.get(9));
+        assertEquals(
+                "   <citetitle pubwork=\"article\">Peptidomics of the larval Drosophila melanogaster central nervous system.</citetitle>",
+                lines.get(9));
     }
 
     @Test
@@ -62,7 +65,9 @@ public class DocbookExporterTest {
         Path tmpFile = testFolder.resolve("testBraces");
 
         BibEntry entry = new BibEntry();
-        entry.setField(StandardField.TITLE, "Insect neuropeptide bursicon homodimers induce innate immune and stress genes during molting by activating the {NF}-$\\kappa$B transcription factor Relish.");
+        entry.setField(
+                StandardField.TITLE,
+                "Insect neuropeptide bursicon homodimers induce innate immune and stress genes during molting by activating the {NF}-$\\kappa$B transcription factor Relish.");
 
         List<BibEntry> entries = Arrays.asList(entry);
 
@@ -70,6 +75,8 @@ public class DocbookExporterTest {
 
         List<String> lines = Files.readAllLines(tmpFile);
         assertEquals(20, lines.size());
-        assertEquals("   <citetitle pubwork=\"article\">Insect neuropeptide bursicon homodimers induce innate immune and stress genes during molting by activating the NF&#45;&#954;B transcription factor Relish.</citetitle>", lines.get(9));
+        assertEquals(
+                "   <citetitle pubwork=\"article\">Insect neuropeptide bursicon homodimers induce innate immune and stress genes during molting by activating the NF&#45;&#954;B transcription factor Relish.</citetitle>",
+                lines.get(9));
     }
 }

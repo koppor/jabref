@@ -150,7 +150,8 @@ public class PdfContentImporter extends Importer {
                         } else {
                             res = res.concat(" and ");
                         }
-                        if ("et".equalsIgnoreCase(splitNames[i]) && (splitNames.length > (i + 1))
+                        if ("et".equalsIgnoreCase(splitNames[i])
+                                && (splitNames.length > (i + 1))
                                 && "al.".equalsIgnoreCase(splitNames[i + 1])) {
                             res = res.concat("others");
                             break;
@@ -158,7 +159,7 @@ public class PdfContentImporter extends Importer {
                             res = res.concat(splitNames[i]).concat(" ");
                             workedOnFirstOrMiddle = true;
                         }
-                    }  // do nothing, just increment i at the end of this iteration
+                    } // do nothing, just increment i at the end of this iteration
                 }
                 i++;
             } while (i < splitNames.length);
@@ -178,8 +179,9 @@ public class PdfContentImporter extends Importer {
     @Override
     public ParserResult importDatabase(BufferedReader reader) throws IOException {
         Objects.requireNonNull(reader);
-        throw new UnsupportedOperationException("PdfContentImporter does not support importDatabase(BufferedReader reader)."
-                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException(
+                "PdfContentImporter does not support importDatabase(BufferedReader reader)."
+                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override
@@ -286,7 +288,7 @@ public class PdfContentImporter extends Importer {
             } else {
                 if (!"".equals(curString)) {
                     author = author.concat(" and ").concat(curString);
-                }  // if lines[i] is "and" then "" is returned by streamlineNames -> do nothing
+                } // if lines[i] is "and" then "" is returned by streamlineNames -> do nothing
             }
             lineIndex++;
         }
@@ -296,12 +298,14 @@ public class PdfContentImporter extends Importer {
         // then, abstract and keywords follow
         while (lineIndex < lines.length) {
             curString = lines[lineIndex];
-            if ((curString.length() >= "Abstract".length()) && "Abstract".equalsIgnoreCase(curString.substring(0, "Abstract".length()))) {
+            if ((curString.length() >= "Abstract".length())
+                    && "Abstract".equalsIgnoreCase(curString.substring(0, "Abstract".length()))) {
                 if (curString.length() == "Abstract".length()) {
                     // only word "abstract" found -- skip line
                     curString = "";
                 } else {
-                    curString = curString.substring("Abstract".length() + 1).trim().concat(System.lineSeparator());
+                    curString =
+                            curString.substring("Abstract".length() + 1).trim().concat(System.lineSeparator());
                 }
                 lineIndex++;
                 // fillCurStringWithNonEmptyLines() cannot be used as that uses " " as line separator
@@ -312,7 +316,8 @@ public class PdfContentImporter extends Importer {
                 }
                 abstractT = curString.trim();
                 lineIndex++;
-            } else if ((curString.length() >= "Keywords".length()) && "Keywords".equalsIgnoreCase(curString.substring(0, "Keywords".length()))) {
+            } else if ((curString.length() >= "Keywords".length())
+                    && "Keywords".equalsIgnoreCase(curString.substring(0, "Keywords".length()))) {
                 if (curString.length() == "Keywords".length()) {
                     // only word "Keywords" found -- skip line
                     curString = "";
@@ -364,7 +369,8 @@ public class PdfContentImporter extends Importer {
                 int edslength = "(Eds.)".length();
                 int posWithEditor = pos + edslength + 2; // +2 because of ":" after (Eds.) and the subsequent space
                 if (posWithEditor > curString.length()) {
-                    curString = curString.substring(posWithEditor - 2); // we don't have any spaces after Eds so we substract the 2
+                    curString = curString.substring(
+                            posWithEditor - 2); // we don't have any spaces after Eds so we substract the 2
                 } else {
                     curString = curString.substring(posWithEditor);
                 }

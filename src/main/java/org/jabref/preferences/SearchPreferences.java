@@ -23,7 +23,15 @@ public class SearchPreferences {
     private final DoubleProperty searchWindowHeight = new SimpleDoubleProperty();
     private final DoubleProperty searchWindowWidth = new SimpleDoubleProperty();
 
-    public SearchPreferences(SearchDisplayMode searchDisplayMode, boolean isCaseSensitive, boolean isRegularExpression, boolean isFulltext, boolean isKeepSearchString, boolean keepWindowOnTop, double searchWindowHeight, double searchWindowWidth) {
+    public SearchPreferences(
+            SearchDisplayMode searchDisplayMode,
+            boolean isCaseSensitive,
+            boolean isRegularExpression,
+            boolean isFulltext,
+            boolean isKeepSearchString,
+            boolean keepWindowOnTop,
+            double searchWindowHeight,
+            double searchWindowWidth) {
         this.searchDisplayMode = new SimpleObjectProperty<>(searchDisplayMode);
         this.keepWindowOnTop = new SimpleBooleanProperty(keepWindowOnTop);
 
@@ -45,7 +53,8 @@ public class SearchPreferences {
         this.setSearchWindowWidth(searchWindowWidth);
     }
 
-    public SearchPreferences(SearchDisplayMode searchDisplayMode, EnumSet<SearchFlags> searchFlags, boolean keepWindowOnTop) {
+    public SearchPreferences(
+            SearchDisplayMode searchDisplayMode, EnumSet<SearchFlags> searchFlags, boolean keepWindowOnTop) {
         this.searchDisplayMode = new SimpleObjectProperty<>(searchDisplayMode);
         this.keepWindowOnTop = new SimpleBooleanProperty(keepWindowOnTop);
 

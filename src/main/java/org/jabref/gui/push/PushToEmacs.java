@@ -48,7 +48,8 @@ public class PushToEmacs extends AbstractPushToApplication {
         couldNotCall = false;
         notDefined = false;
 
-        PushToApplicationPreferences pushToApplicationPreferences = preferencesService.getPushToApplicationPreferences();
+        PushToApplicationPreferences pushToApplicationPreferences =
+                preferencesService.getPushToApplicationPreferences();
 
         commandPath = pushToApplicationPreferences.getCommandPaths().get(this.getDisplayName());
 
@@ -76,27 +77,29 @@ public class PushToEmacs extends AbstractPushToApplication {
                 // so emacs receives: (insert "\cite{Blah2001}")
 
                 com[com.length - 1] = prefix.concat("\""
-                                                    + getCitePrefix().replace("\\", "\\\\")
-                                                    + keys
-                                                    + getCiteSuffix().replace("\\", "\\\\")
-                                                    + "\"").concat(suffix)
-                                            .replace("\"", "\\\"");
+                                + getCitePrefix().replace("\\", "\\\\")
+                                + keys
+                                + getCiteSuffix().replace("\\", "\\\\")
+                                + "\"")
+                        .concat(suffix)
+                        .replace("\"", "\\\"");
             } else {
                 // Linux gnuclient/emacslient escaping:
                 // java string: "(insert \"\\\\cite{Blah2001}\")"
                 // so sh receives: (insert "\\cite{Blah2001}")
                 // so emacs receives: (insert "\cite{Blah2001}")
                 com[com.length - 1] = prefix.concat("\""
-                                                    + getCitePrefix().replace("\\", "\\\\")
-                                                    + keys
-                                                    + getCiteSuffix().replace("\\", "\\\\")
-                                                    + "\"").concat(suffix);
+                                + getCitePrefix().replace("\\", "\\\\")
+                                + keys
+                                + getCiteSuffix().replace("\\", "\\\\")
+                                + "\"")
+                        .concat(suffix);
             }
 
             LOGGER.atDebug()
-                  .setMessage("Executing command {}")
-                  .addArgument(() -> Arrays.toString(com))
-                  .log();
+                    .setMessage("Executing command {}")
+                    .addArgument(() -> Arrays.toString(com))
+                    .log();
 
             final Process p = Runtime.getRuntime().exec(com);
 
@@ -129,11 +132,12 @@ public class PushToEmacs extends AbstractPushToApplication {
     @Override
     public void onOperationCompleted() {
         if (couldNotPush) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"),
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error pushing entries"),
                     Localization.lang("Could not push to a running emacs daemon."));
         } else if (couldNotCall) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"),
-                    Localization.lang("Could not run the emacs client."));
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error pushing entries"), Localization.lang("Could not run the emacs client."));
         } else {
             super.onOperationCompleted();
         }
@@ -145,7 +149,9 @@ public class PushToEmacs extends AbstractPushToApplication {
     }
 
     @Override
-    public PushToApplicationSettings getSettings(PushToApplication application, PushToApplicationPreferences preferences) {
-        return new PushToEmacsSettings(application, dialogService, preferencesService.getFilePreferences(), preferences);
+    public PushToApplicationSettings getSettings(
+            PushToApplication application, PushToApplicationPreferences preferences) {
+        return new PushToEmacsSettings(
+                application, dialogService, preferencesService.getFilePreferences(), preferences);
     }
 }

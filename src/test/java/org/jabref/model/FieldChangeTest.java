@@ -11,8 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FieldChangeTest {
 
-    private BibEntry entry = new BibEntry()
-            .withField(StandardField.DOI, "foo");
+    private BibEntry entry = new BibEntry().withField(StandardField.DOI, "foo");
     private BibEntry entryOther = new BibEntry();
     private FieldChange fc = new FieldChange(entry, StandardField.DOI, "foo", "bar");
 

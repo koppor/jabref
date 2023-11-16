@@ -30,7 +30,8 @@ public class HtmlExportFormatTest {
 
     @BeforeEach
     public void setUp() {
-        exportFormat = new TemplateExporter("HTML",
+        exportFormat = new TemplateExporter(
+                "HTML",
                 "html",
                 "html",
                 null,

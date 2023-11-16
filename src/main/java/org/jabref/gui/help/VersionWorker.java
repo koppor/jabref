@@ -40,10 +40,11 @@ public class VersionWorker {
     private final InternalPreferences internalPreferences;
     private final FilePreferences filePreferences;
 
-    public VersionWorker(Version installedVersion,
-                         DialogService dialogService,
-                         TaskExecutor taskExecutor,
-                         PreferencesService preferencesService) {
+    public VersionWorker(
+            Version installedVersion,
+            DialogService dialogService,
+            TaskExecutor taskExecutor,
+            PreferencesService preferencesService) {
         this.installedVersion = Objects.requireNonNull(installedVersion);
         this.dialogService = Objects.requireNonNull(dialogService);
         this.taskExecutor = Objects.requireNonNull(taskExecutor);
@@ -66,9 +67,9 @@ public class VersionWorker {
         }
 
         BackgroundTask.wrap(this::getNewVersion)
-                      .onSuccess(version -> showUpdateInfo(version, true))
-                      .onFailure(exception -> showConnectionError(exception, true))
-                      .executeWith(taskExecutor);
+                .onSuccess(version -> showUpdateInfo(version, true))
+                .onFailure(exception -> showConnectionError(exception, true))
+                .executeWith(taskExecutor);
     }
 
     public void checkForNewVersionDelayed() {
@@ -77,9 +78,9 @@ public class VersionWorker {
         }
 
         BackgroundTask.wrap(this::getNewVersion)
-                      .onSuccess(version -> showUpdateInfo(version, false))
-                      .onFailure(exception -> showConnectionError(exception, false))
-                      .scheduleWith(taskExecutor, 30, TimeUnit.SECONDS);
+                .onSuccess(version -> showUpdateInfo(version, false))
+                .onFailure(exception -> showConnectionError(exception, false))
+                .scheduleWith(taskExecutor, 30, TimeUnit.SECONDS);
     }
 
     /**
@@ -89,7 +90,8 @@ public class VersionWorker {
         if (manualExecution) {
             String couldNotConnect = Localization.lang("Could not connect to the update server.");
             String tryLater = Localization.lang("Please try again later and/or check your network connection.");
-            dialogService.showErrorDialogAndWait(Localization.lang("Error"), couldNotConnect + "\n" + tryLater, exception);
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error"), couldNotConnect + "\n" + tryLater, exception);
         }
         LOGGER.debug("Could not connect to the update server.", exception);
     }
@@ -100,14 +102,17 @@ public class VersionWorker {
      */
     private void showUpdateInfo(Optional<Version> newerVersion, boolean manualExecution) {
         // no new version could be found, only respect the ignored version on automated version checks
-        if (newerVersion.isEmpty() || (newerVersion.get().equals(internalPreferences.getIgnoredVersion()) && !manualExecution)) {
+        if (newerVersion.isEmpty()
+                || (newerVersion.get().equals(internalPreferences.getIgnoredVersion()) && !manualExecution)) {
             if (manualExecution) {
                 dialogService.notify(Localization.lang("JabRef is up-to-date."));
             }
         } else {
             // notify the user about a newer version
-            if (dialogService.showCustomDialogAndWait(new NewVersionDialog(installedVersion, newerVersion.get(), dialogService, filePreferences))
-                             .orElse(true)) {
+            if (dialogService
+                    .showCustomDialogAndWait(
+                            new NewVersionDialog(installedVersion, newerVersion.get(), dialogService, filePreferences))
+                    .orElse(true)) {
                 internalPreferences.setIgnoredVersion(newerVersion.get());
             }
         }

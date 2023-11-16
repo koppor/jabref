@@ -13,16 +13,14 @@ import org.jabref.model.openoffice.util.OOListUtil;
 class OOBibStyleGetNumCitationMarker {
 
     // The number encoding "this entry is unresolved"
-    public final static int UNRESOLVED_ENTRY_NUMBER = 0;
+    public static final int UNRESOLVED_ENTRY_NUMBER = 0;
 
-    private OOBibStyleGetNumCitationMarker() {
-    }
+    private OOBibStyleGetNumCitationMarker() {}
 
     /**
      * Defines sort order for CitationMarkerNumericEntry.
      */
-    private static int compareCitationMarkerNumericEntry(CitationMarkerNumericEntry a,
-                                                         CitationMarkerNumericEntry b) {
+    private static int compareCitationMarkerNumericEntry(CitationMarkerNumericEntry a, CitationMarkerNumericEntry b) {
         int na = a.getNumber().orElse(UNRESOLVED_ENTRY_NUMBER);
         int nb = b.getNumber().orElse(UNRESOLVED_ENTRY_NUMBER);
         int res = Integer.compare(na, nb);
@@ -45,8 +43,7 @@ class OOBibStyleGetNumCitationMarker {
      *       "]" stands for BRACKET_AFTER_IN_LIST (with fallback BRACKET_AFTER)
      *       "${number}" stands for the formatted number.
      */
-    public static OOText getNumCitationMarkerForBibliography(OOBibStyle style,
-                                                             CitationMarkerNumericBibEntry entry) {
+    public static OOText getNumCitationMarkerForBibliography(OOBibStyle style, CitationMarkerNumericBibEntry entry) {
         // prefer BRACKET_BEFORE_IN_LIST and BRACKET_AFTER_IN_LIST
         String bracketBefore = style.getBracketBeforeInListWithFallBack();
         String bracketAfter = style.getBracketAfterInListWithFallBack();
@@ -54,9 +51,10 @@ class OOBibStyleGetNumCitationMarker {
         stringBuilder.append(style.getCitationGroupMarkupBefore());
         stringBuilder.append(bracketBefore);
         final Optional<Integer> current = entry.getNumber();
-        stringBuilder.append(current.isPresent()
-                  ? String.valueOf(current.get())
-                  : (OOBibStyle.UNDEFINED_CITATION_MARKER + entry.getCitationKey()));
+        stringBuilder.append(
+                current.isPresent()
+                        ? String.valueOf(current.get())
+                        : (OOBibStyle.UNDEFINED_CITATION_MARKER + entry.getCitationKey()));
         stringBuilder.append(bracketAfter);
         stringBuilder.append(style.getCitationGroupMarkupAfter());
         return OOText.fromString(stringBuilder.toString());
@@ -85,10 +83,11 @@ class OOBibStyleGetNumCitationMarker {
      *     without repetition.
      *
      */
-    private static void emitBlock(List<CitationMarkerNumericEntry> block,
-                                  OOBibStyle style,
-                                  int minGroupingCount,
-                                  StringBuilder stringBuilder) {
+    private static void emitBlock(
+            List<CitationMarkerNumericEntry> block,
+            OOBibStyle style,
+            int minGroupingCount,
+            StringBuilder stringBuilder) {
 
         final int blockSize = block.size();
         if (blockSize == 0) {
@@ -99,9 +98,10 @@ class OOBibStyleGetNumCitationMarker {
             // Add single entry:
             CitationMarkerNumericEntry entry = block.get(0);
             final Optional<Integer> num = entry.getNumber();
-            stringBuilder.append(num.isEmpty()
-                                 ? (OOBibStyle.UNDEFINED_CITATION_MARKER + entry.getCitationKey())
-                                 : String.valueOf(num.get()));
+            stringBuilder.append(
+                    num.isEmpty()
+                            ? (OOBibStyle.UNDEFINED_CITATION_MARKER + entry.getCitationKey())
+                            : String.valueOf(num.get()));
             // Emit pageInfo
             Optional<OOText> pageInfo = entry.getPageInfo();
             if (pageInfo.isPresent()) {
@@ -125,7 +125,9 @@ class OOBibStyleGetNumCitationMarker {
             }
 
             for (int j = 1; j < blockSize; j++) {
-                if ((block.get(j).getNumber().get() - block.get(j - 1).getNumber().get()) != 1) {
+                if ((block.get(j).getNumber().get()
+                                - block.get(j - 1).getNumber().get())
+                        != 1) {
                     throw new IllegalArgumentException("Numbers are not consecutive");
                 }
             }
@@ -181,9 +183,8 @@ class OOBibStyleGetNumCitationMarker {
      * @return The text for the citation.
      *
      */
-    public static OOText getNumCitationMarker2(OOBibStyle style,
-                                               List<CitationMarkerNumericEntry> entries,
-                                               int minGroupingCount) {
+    public static OOText getNumCitationMarker2(
+            OOBibStyle style, List<CitationMarkerNumericEntry> entries, int minGroupingCount) {
 
         final boolean joinIsDisabled = minGroupingCount <= 0;
         final int nCitations = entries.size();
@@ -231,8 +232,8 @@ class OOBibStyleGetNumCitationMarker {
                 } else if (compareCitationMarkerNumericEntry(current, prev) == 0) {
                     // Same as prev, just forget it.
                 } else if ((current.getNumber().get() == (prev.getNumber().get() + 1))
-                           && (prev.getPageInfo().isEmpty())
-                           && (current.getPageInfo().isEmpty())) {
+                        && (prev.getPageInfo().isEmpty())
+                        && (current.getPageInfo().isEmpty())) {
                     // Just two consecutive numbers without pageInfo: join
                     currentBlock.add(current);
                 } else {

@@ -26,6 +26,7 @@ public class EditFieldContentTabView extends AbstractAutomaticFieldEditorTabView
     public Button appendValueButton;
     public Button clearFieldButton;
     public Button setValueButton;
+
     @FXML
     private ComboBox<Field> fieldComboBox;
 
@@ -49,9 +50,7 @@ public class EditFieldContentTabView extends AbstractAutomaticFieldEditorTabView
         this.database = database;
         this.stateManager = stateManager;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @FXML
@@ -71,9 +70,15 @@ public class EditFieldContentTabView extends AbstractAutomaticFieldEditorTabView
         overwriteFieldContentCheckBox.selectedProperty().bindBidirectional(viewModel.overwriteFieldContentProperty());
 
         appendValueButton.disableProperty().bind(viewModel.canAppendProperty().not());
-        setValueButton.disableProperty().bind(viewModel.fieldValidationStatus().validProperty().not());
-        clearFieldButton.disableProperty().bind(viewModel.fieldValidationStatus().validProperty().not());
-        overwriteFieldContentCheckBox.disableProperty().bind(viewModel.fieldValidationStatus().validProperty().not());
+        setValueButton
+                .disableProperty()
+                .bind(viewModel.fieldValidationStatus().validProperty().not());
+        clearFieldButton
+                .disableProperty()
+                .bind(viewModel.fieldValidationStatus().validProperty().not());
+        overwriteFieldContentCheckBox
+                .disableProperty()
+                .bind(viewModel.fieldValidationStatus().validProperty().not());
 
         Platform.runLater(() -> visualizer.initVisualization(viewModel.fieldValidationStatus(), fieldComboBox, true));
     }

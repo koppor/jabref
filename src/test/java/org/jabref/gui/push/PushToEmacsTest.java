@@ -34,7 +34,8 @@ class PushToEmacsTest {
         String emacsClient = OS.WINDOWS ? "\"C:\\tools\\emacs\\bin\\emacsclientw.exe\"" : "emacsclient";
         Map<String, String> emacsConfig = Map.of("Emacs", emacsClient);
         ObservableMap<String, String> emacsConfigObservableMap = FXCollections.observableMap(emacsConfig);
-        when(pushToApplicationPreferences.getCommandPaths()).thenReturn(new SimpleMapProperty<>(emacsConfigObservableMap));
+        when(pushToApplicationPreferences.getCommandPaths())
+                .thenReturn(new SimpleMapProperty<>(emacsConfigObservableMap));
 
         when(pushToApplicationPreferences.getEmacsArguments()).thenReturn("-n -e");
 

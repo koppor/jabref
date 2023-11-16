@@ -27,7 +27,11 @@ public class OpenConsoleAction extends SimpleCommand {
      * {@link #OpenConsoleAction(StateManager, PreferencesService)} if not supplying
      * another database.
      */
-    public OpenConsoleAction(Supplier<BibDatabaseContext> databaseContext, StateManager stateManager, PreferencesService preferencesService, DialogService dialogService) {
+    public OpenConsoleAction(
+            Supplier<BibDatabaseContext> databaseContext,
+            StateManager stateManager,
+            PreferencesService preferencesService,
+            DialogService dialogService) {
         this.databaseContext = databaseContext;
         this.stateManager = stateManager;
         this.preferencesService = preferencesService;
@@ -39,18 +43,22 @@ public class OpenConsoleAction extends SimpleCommand {
     /**
      * Using this constructor will result in executing the command on the active database.
      */
-    public OpenConsoleAction(StateManager stateManager, PreferencesService preferencesService, DialogService dialogService) {
+    public OpenConsoleAction(
+            StateManager stateManager, PreferencesService preferencesService, DialogService dialogService) {
         this(() -> null, stateManager, preferencesService, dialogService);
     }
 
     @Override
     public void execute() {
-        Optional.ofNullable(databaseContext.get()).or(stateManager::getActiveDatabase).flatMap(BibDatabaseContext::getDatabasePath).ifPresent(path -> {
-            try {
-                JabRefDesktop.openConsole(path, preferencesService, dialogService);
-            } catch (IOException e) {
-                LOGGER.info("Could not open console", e);
-            }
-        });
+        Optional.ofNullable(databaseContext.get())
+                .or(stateManager::getActiveDatabase)
+                .flatMap(BibDatabaseContext::getDatabasePath)
+                .ifPresent(path -> {
+                    try {
+                        JabRefDesktop.openConsole(path, preferencesService, dialogService);
+                    } catch (IOException e) {
+                        LOGGER.info("Could not open console", e);
+                    }
+                });
     }
 }

@@ -23,8 +23,7 @@ public class SentenceCaseFormatter extends Formatter {
      */
     @Override
     public String format(String input) {
-        return StringUtil.getStringAsSentences(input)
-                .stream()
+        return StringUtil.getStringAsSentences(input).stream()
                 .map(new LowerCaseFormatter()::format)
                 .map(Title::new)
                 .map(title -> {
@@ -37,8 +36,7 @@ public class SentenceCaseFormatter extends Formatter {
 
     @Override
     public String getDescription() {
-        return Localization.lang(
-                "Capitalize the first word, changes other words to lower case.");
+        return Localization.lang("Capitalize the first word, changes other words to lower case.");
     }
 
     @Override

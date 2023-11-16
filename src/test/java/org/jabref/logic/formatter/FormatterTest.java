@@ -28,9 +28,11 @@ class FormatterTest {
 
     @BeforeAll
     static void setUp() {
-        protectedTermsLoader = new ProtectedTermsLoader(
-                new ProtectedTermsPreferences(ProtectedTermsLoader.getInternalLists(), Collections.emptyList(),
-                        Collections.emptyList(), Collections.emptyList()));
+        protectedTermsLoader = new ProtectedTermsLoader(new ProtectedTermsPreferences(
+                ProtectedTermsLoader.getInternalLists(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList()));
     }
 
     /**
@@ -40,14 +42,15 @@ class FormatterTest {
     @Test
     public void allFormatterKeysAreUnique() {
         // idea for uniqueness checking by https://stackoverflow.com/a/44032568/873282
-        assertEquals(Collections.emptyList(),
-                getFormatters().collect(Collectors.groupingBy(
-                                       Formatter::getKey,
-                        Collectors.counting()))
-                               .entrySet().stream()
-                               .filter(e -> e.getValue() > 1)
-                               .map(Map.Entry::getKey)
-                               .collect(Collectors.toList()));
+        assertEquals(
+                Collections.emptyList(),
+                getFormatters()
+                        .collect(Collectors.groupingBy(Formatter::getKey, Collectors.counting()))
+                        .entrySet()
+                        .stream()
+                        .filter(e -> e.getValue() > 1)
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toList()));
     }
 
     @ParameterizedTest

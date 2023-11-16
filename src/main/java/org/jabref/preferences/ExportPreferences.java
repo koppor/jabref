@@ -20,10 +20,11 @@ public class ExportPreferences {
     private final ObjectProperty<SaveOrder> exportSaveOrder;
     private final ObservableList<TemplateExporter> customExporters;
 
-    public ExportPreferences(String lastExportExtension,
-                             Path exportWorkingDirectory,
-                             SaveOrder exportSaveOrder,
-                             List<TemplateExporter> customExporters) {
+    public ExportPreferences(
+            String lastExportExtension,
+            Path exportWorkingDirectory,
+            SaveOrder exportSaveOrder,
+            List<TemplateExporter> customExporters) {
         this.lastExportExtension = new SimpleStringProperty(lastExportExtension);
         this.exportWorkingDirectory = new SimpleObjectProperty<>(exportWorkingDirectory);
         this.exportSaveOrder = new SimpleObjectProperty<>(exportSaveOrder);

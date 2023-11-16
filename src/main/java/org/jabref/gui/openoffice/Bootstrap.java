@@ -50,25 +50,25 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /** Bootstrap offers functionality to obtain a context or simply
-  * a service manager.
-  * The service manager can create a few basic services, whose implementations  are:
-  * <ul>
-  * <li>com.sun.star.comp.loader.JavaLoader</li>
-  * <li>com.sun.star.comp.urlresolver.UrlResolver</li>
-  * <li>com.sun.star.comp.bridgefactory.BridgeFactory</li>
-  * <li>com.sun.star.comp.connections.Connector</li>
-  * <li>com.sun.star.comp.connections.Acceptor</li>
-  * <li>com.sun.star.comp.servicemanager.ServiceManager</li>
-  * </ul>
-  *
-  * Other services can be inserted into the service manager by
-  * using its XSet interface:
-  * <pre>
-  *     XSet xSet = UnoRuntime.queryInterface( XSet.class, aMultiComponentFactory );
-  *     // insert the service manager
-  *     xSet.insert( aSingleComponentFactory );
-  * </pre>
-*/
+ * a service manager.
+ * The service manager can create a few basic services, whose implementations  are:
+ * <ul>
+ * <li>com.sun.star.comp.loader.JavaLoader</li>
+ * <li>com.sun.star.comp.urlresolver.UrlResolver</li>
+ * <li>com.sun.star.comp.bridgefactory.BridgeFactory</li>
+ * <li>com.sun.star.comp.connections.Connector</li>
+ * <li>com.sun.star.comp.connections.Acceptor</li>
+ * <li>com.sun.star.comp.servicemanager.ServiceManager</li>
+ * </ul>
+ *
+ * Other services can be inserted into the service manager by
+ * using its XSet interface:
+ * <pre>
+ *     XSet xSet = UnoRuntime.queryInterface( XSet.class, aMultiComponentFactory );
+ *     // insert the service manager
+ *     xSet.insert( aSingleComponentFactory );
+ * </pre>
+ */
 public class Bootstrap {
 
     private static final Random RANDOM_PIPE_NAME = new Random();
@@ -119,7 +119,8 @@ public class Bootstrap {
      * @return a new context.
      * @throws Exception if things go awry.
      */
-    public static XComponentContext createInitialComponentContext(Hashtable<String, Object> context_entries) throws Exception {
+    public static XComponentContext createInitialComponentContext(Hashtable<String, Object> context_entries)
+            throws Exception {
         return createInitialComponentContext((Map<String, Object>) context_entries);
     }
 
@@ -130,7 +131,8 @@ public class Bootstrap {
      * @return a new context.
      * @throws Exception if things go awry.
      */
-    public static XComponentContext createInitialComponentContext(Map<String, Object> context_entries) throws Exception {
+    public static XComponentContext createInitialComponentContext(Map<String, Object> context_entries)
+            throws Exception {
         ServiceManager xSMgr = new ServiceManager();
 
         XImplementationLoader xImpLoader = UnoRuntime.queryInterface(XImplementationLoader.class, new JavaLoader());
@@ -165,7 +167,9 @@ public class Bootstrap {
      * @throws Exception if things go awry.
      */
     public static XMultiServiceFactory createSimpleServiceManager() throws Exception {
-        return UnoRuntime.queryInterface(XMultiServiceFactory.class, createInitialComponentContext((Map<String, Object>) null).getServiceManager());
+        return UnoRuntime.queryInterface(
+                XMultiServiceFactory.class,
+                createInitialComponentContext((Map<String, Object>) null).getServiceManager());
     }
 
     /**
@@ -189,7 +193,8 @@ public class Bootstrap {
      * @return a freshly bootstrapped component context.
      * @throws Exception if things go awry.
      */
-    public static XComponentContext defaultBootstrap_InitialComponentContext(String ini_file, Hashtable<String, String> bootstrap_parameters) throws Exception {
+    public static XComponentContext defaultBootstrap_InitialComponentContext(
+            String ini_file, Hashtable<String, String> bootstrap_parameters) throws Exception {
         return defaultBootstrap_InitialComponentContext(ini_file, (Map<String, String>) bootstrap_parameters);
     }
 
@@ -204,7 +209,8 @@ public class Bootstrap {
      * @return a freshly bootstrapped component context.
      * @throws Exception if things go awry.
      */
-    public static XComponentContext defaultBootstrap_InitialComponentContext(String ini_file, Map<String, String> bootstrap_parameters) throws Exception {
+    public static XComponentContext defaultBootstrap_InitialComponentContext(
+            String ini_file, Map<String, String> bootstrap_parameters) throws Exception {
         // jni convenience: easier to iterate over array than calling Hashtable
         String pairs[] = null;
         if (null != bootstrap_parameters) {
@@ -242,10 +248,12 @@ public class Bootstrap {
             }
             M_LOADED_JUH = true;
         }
-        return UnoRuntime.queryInterface(XComponentContext.class, cppuhelper_bootstrap(ini_file, pairs, Bootstrap.class.getClassLoader()));
+        return UnoRuntime.queryInterface(
+                XComponentContext.class, cppuhelper_bootstrap(ini_file, pairs, Bootstrap.class.getClassLoader()));
     }
 
-    private static native Object cppuhelper_bootstrap(String ini_file, String bootstrap_parameters[], ClassLoader loader) throws Exception;
+    private static native Object cppuhelper_bootstrap(
+            String ini_file, String bootstrap_parameters[], ClassLoader loader) throws Exception;
 
     /**
      * Bootstraps the component context from a UNO installation.

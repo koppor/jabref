@@ -41,11 +41,14 @@ public class InfoButton extends Button {
         setMaxHeight(Double.MAX_VALUE);
         setFocusTraversable(false);
 
-        actionFactory.configureIconButton(mergeAction, new SimpleCommand() {
-            @Override
-            public void execute() {
-                // The info button is not meant to be clickable that's why this is empty
-            }
-        }, this);
+        actionFactory.configureIconButton(
+                mergeAction,
+                new SimpleCommand() {
+                    @Override
+                    public void execute() {
+                        // The info button is not meant to be clickable that's why this is empty
+                    }
+                },
+                this);
     }
 }

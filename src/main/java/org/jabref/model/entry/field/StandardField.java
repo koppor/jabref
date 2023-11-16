@@ -13,7 +13,6 @@ import org.jabref.gui.fieldeditors.FieldNameLabel;
  * See {@link FieldNameLabel#getDescription(org.jabref.model.entry.field.Field)} for a description of each field.
  */
 public enum StandardField implements Field {
-
     ABSTRACT("abstract", FieldProperty.MULTILINE_TEXT),
     ADDENDUM("addendum"),
     ADDRESS("address"),
@@ -170,8 +169,8 @@ public enum StandardField implements Field {
 
     public static Optional<StandardField> fromName(String name) {
         return Arrays.stream(StandardField.values())
-                     .filter(field -> field.getName().equalsIgnoreCase(name))
-                     .findAny();
+                .filter(field -> field.getName().equalsIgnoreCase(name))
+                .findAny();
     }
 
     @Override

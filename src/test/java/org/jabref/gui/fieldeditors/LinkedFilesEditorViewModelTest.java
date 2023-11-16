@@ -40,17 +40,26 @@ class LinkedFilesEditorViewModelTest {
     @Test
     void urlFieldShouldDownloadFile(@TempDir Path tempDir) {
         when(preferencesService.getFilePreferences()).thenReturn(filePreferences);
-        when(filePreferences.getExternalFileTypes()).thenReturn(FXCollections.observableSet(StandardExternalFileType.values()));
+        when(filePreferences.getExternalFileTypes())
+                .thenReturn(FXCollections.observableSet(StandardExternalFileType.values()));
         when(filePreferences.getFileNamePattern()).thenReturn("[bibtexkey]");
         when(filePreferences.getFileDirectoryPattern()).thenReturn("");
         when(bibDatabaseContext.getFirstExistingFileDir(any())).thenReturn(Optional.of(tempDir));
 
-        viewModel = new LinkedFilesEditorViewModel(StandardField.FILE, new EmptySuggestionProvider(), mock(DialogService.class), bibDatabaseContext,
-                           new CurrentThreadTaskExecutor(), mock(FieldCheckers.class), preferencesService, undoManager);
+        viewModel = new LinkedFilesEditorViewModel(
+                StandardField.FILE,
+                new EmptySuggestionProvider(),
+                mock(DialogService.class),
+                bibDatabaseContext,
+                new CurrentThreadTaskExecutor(),
+                mock(FieldCheckers.class),
+                preferencesService,
+                undoManager);
 
-        BibEntry entry = new BibEntry().withCitationKey("test")
-            .withField(StandardField.URL, "https://ceur-ws.org/Vol-847/paper6.pdf");
-                viewModel.entry = entry;
+        BibEntry entry = new BibEntry()
+                .withCitationKey("test")
+                .withField(StandardField.URL, "https://ceur-ws.org/Vol-847/paper6.pdf");
+        viewModel.entry = entry;
         viewModel.fetchFulltext();
 
         assertTrue(Files.exists(tempDir.resolve("test.pdf")));

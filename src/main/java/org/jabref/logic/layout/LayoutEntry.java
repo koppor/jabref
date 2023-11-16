@@ -112,33 +112,32 @@ class LayoutEntry {
     private final LayoutFormatterPreferences preferences;
     private final JournalAbbreviationRepository abbreviationRepository;
 
-    public LayoutEntry(StringInt si,
-                       List<Path> fileDirForDatabase,
-                       LayoutFormatterPreferences preferences,
-                       JournalAbbreviationRepository abbreviationRepository) {
+    public LayoutEntry(
+            StringInt si,
+            List<Path> fileDirForDatabase,
+            LayoutFormatterPreferences preferences,
+            JournalAbbreviationRepository abbreviationRepository) {
         this.preferences = preferences;
         this.abbreviationRepository = abbreviationRepository;
         this.fileDirForDatabase = Objects.requireNonNullElse(fileDirForDatabase, Collections.emptyList());
 
         type = si.i;
         switch (type) {
-            case LayoutHelper.IS_LAYOUT_TEXT ->
-                    text = si.s;
-            case LayoutHelper.IS_SIMPLE_COMMAND ->
-                    text = si.s.trim();
-            case LayoutHelper.IS_OPTION_FIELD ->
-                    doOptionField(si.s);
+            case LayoutHelper.IS_LAYOUT_TEXT -> text = si.s;
+            case LayoutHelper.IS_SIMPLE_COMMAND -> text = si.s.trim();
+            case LayoutHelper.IS_OPTION_FIELD -> doOptionField(si.s);
             default -> {
                 // IS_FIELD_START and IS_FIELD_END
             }
         }
     }
 
-    public LayoutEntry(List<StringInt> parsedEntries,
-                       int layoutType,
-                       List<Path> fileDirForDatabase,
-                       LayoutFormatterPreferences preferences,
-                       JournalAbbreviationRepository abbreviationRepository) {
+    public LayoutEntry(
+            List<StringInt> parsedEntries,
+            int layoutType,
+            List<Path> fileDirForDatabase,
+            LayoutFormatterPreferences preferences,
+            JournalAbbreviationRepository abbreviationRepository) {
         this.preferences = preferences;
         this.abbreviationRepository = abbreviationRepository;
         this.fileDirForDatabase = Objects.requireNonNullElse(fileDirForDatabase, Collections.emptyList());
@@ -165,9 +164,11 @@ class LayoutEntry {
                 case LayoutHelper.IS_GROUP_END:
                     if (blockStart.equals(parsedEntry.s)) {
                         blockEntries.add(parsedEntry);
-                        int groupType = parsedEntry.i == LayoutHelper.IS_GROUP_END ? LayoutHelper.IS_GROUP_START :
-                                LayoutHelper.IS_FIELD_START;
-                        LayoutEntry le = new LayoutEntry(blockEntries, groupType, fileDirForDatabase, preferences, abbreviationRepository);
+                        int groupType = parsedEntry.i == LayoutHelper.IS_GROUP_END
+                                ? LayoutHelper.IS_GROUP_START
+                                : LayoutHelper.IS_FIELD_START;
+                        LayoutEntry le = new LayoutEntry(
+                                blockEntries, groupType, fileDirForDatabase, preferences, abbreviationRepository);
                         tmpEntries.add(le);
                         blockEntries = null;
                     } else {
@@ -205,7 +206,8 @@ class LayoutEntry {
             case LayoutHelper.IS_LAYOUT_TEXT:
                 return text;
             case LayoutHelper.IS_SIMPLE_COMMAND:
-                String value = bibtex.getResolvedFieldOrAlias(FieldFactory.parseField(text), database).orElse("");
+                String value = bibtex.getResolvedFieldOrAlias(FieldFactory.parseField(text), database)
+                        .orElse("");
 
                 // If a post formatter has been set, call it:
                 if (postFormatter != null) {
@@ -224,7 +226,8 @@ class LayoutEntry {
                 // Printing the encoding name is not supported in entry layouts, only
                 // in begin/end layouts. This prevents breakage if some users depend
                 // on a field called "encoding". We simply return this field instead:
-                return bibtex.getResolvedFieldOrAlias(new UnknownField("encoding"), database).orElse(null);
+                return bibtex.getResolvedFieldOrAlias(new UnknownField("encoding"), database)
+                        .orElse(null);
             default:
                 return "";
         }
@@ -243,9 +246,10 @@ class LayoutEntry {
         } else {
             // changed section begin - arudert
             // resolve field (recognized by leading backslash) or text
-            fieldEntry = text.startsWith("\\") ? bibtex
-                    .getResolvedFieldOrAlias(FieldFactory.parseField(text.substring(1)), database)
-                    .orElse("") : BibDatabase.getText(text, database);
+            fieldEntry = text.startsWith("\\")
+                    ? bibtex.getResolvedFieldOrAlias(FieldFactory.parseField(text.substring(1)), database)
+                            .orElse("")
+                    : BibDatabase.getText(text, database);
             // changed section end - arudert
         }
 
@@ -274,7 +278,8 @@ class LayoutEntry {
             field = Optional.empty();
             for (String part : parts) {
                 negated = part.startsWith("!");
-                field = bibtex.getResolvedFieldOrAlias(FieldFactory.parseField(negated ? part.substring(1).trim() : part), database);
+                field = bibtex.getResolvedFieldOrAlias(
+                        FieldFactory.parseField(negated ? part.substring(1).trim() : part), database);
                 if (field.isPresent() == negated) {
                     break;
                 }
@@ -285,15 +290,17 @@ class LayoutEntry {
             field = Optional.empty();
             for (String part : parts) {
                 negated = part.startsWith("!");
-                field = bibtex.getResolvedFieldOrAlias(FieldFactory.parseField(negated ? part.substring(1).trim() : part), database);
+                field = bibtex.getResolvedFieldOrAlias(
+                        FieldFactory.parseField(negated ? part.substring(1).trim() : part), database);
                 if (field.isPresent() ^ negated) {
                     break;
                 }
             }
         }
 
-        if ((field.isPresent() == negated) || ((type == LayoutHelper.IS_GROUP_START)
-                && field.get().equalsIgnoreCase(LayoutHelper.getCurrentGroup()))) {
+        if ((field.isPresent() == negated)
+                || ((type == LayoutHelper.IS_GROUP_START)
+                        && field.get().equalsIgnoreCase(LayoutHelper.getCurrentGroup()))) {
             return null;
         } else {
             if (type == LayoutHelper.IS_GROUP_START) {
@@ -308,7 +315,11 @@ class LayoutEntry {
 
                 if (fieldText == null) {
                     if ((i + 1) < layoutEntries.size()) {
-                        if (layoutEntries.get(i + 1).doLayout(bibtex, database).trim().isEmpty()) {
+                        if (layoutEntries
+                                .get(i + 1)
+                                .doLayout(bibtex, database)
+                                .trim()
+                                .isEmpty()) {
                             i++;
                             previousSkipped = true;
                             continue;
@@ -380,7 +391,11 @@ class LayoutEntry {
 
             case LayoutHelper.IS_FILENAME:
             case LayoutHelper.IS_FILEPATH:
-                return databaseContext.getDatabasePath().map(Path::toAbsolutePath).map(Path::toString).orElse("");
+                return databaseContext
+                        .getDatabasePath()
+                        .map(Path::toAbsolutePath)
+                        .map(Path::toString)
+                        .orElse("");
 
             default:
                 break;
@@ -410,9 +425,9 @@ class LayoutEntry {
 
     private LayoutFormatter getLayoutFormatterByName(String name) {
         return switch (name) {
-            // For backward compatibility
+                // For backward compatibility
             case "HTMLToLatexFormatter", "HtmlToLatex" -> new HtmlToLatexFormatter();
-            // For backward compatibility
+                // For backward compatibility
             case "UnicodeToLatexFormatter", "UnicodeToLatex" -> new UnicodeToLatexFormatter();
             case "OOPreFormatter" -> new OOPreFormatter();
             case "AuthorAbbreviator" -> new AuthorAbbreviator();
@@ -456,7 +471,7 @@ class LayoutEntry {
             case "Iso690NamesAuthors" -> new Iso690NamesAuthors();
             case "JournalAbbreviator" -> new JournalAbbreviator(abbreviationRepository);
             case "LastPage" -> new LastPage();
-// For backward compatibility
+                // For backward compatibility
             case "FormatChars", "LatexToUnicode" -> new LatexToUnicodeFormatter();
             case "NameFormatter" -> new NameFormatter();
             case "NoSpaceBetweenAbbreviations" -> new NoSpaceBetweenAbbreviations();
@@ -496,7 +511,8 @@ class LayoutEntry {
     private List<LayoutFormatter> getOptionalLayout(String formatterName) {
         List<List<String>> formatterStrings = parseMethodsCalls(formatterName);
         List<LayoutFormatter> results = new ArrayList<>(formatterStrings.size());
-        Map<String, String> userNameFormatter = NameFormatter.getNameFormatters(preferences.getNameFormatterPreferences());
+        Map<String, String> userNameFormatter =
+                NameFormatter.getNameFormatters(preferences.getNameFormatterPreferences());
         for (List<String> strings : formatterStrings) {
             String nameFormatterName = strings.get(0).trim();
 

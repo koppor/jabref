@@ -25,8 +25,17 @@ public class IEEETranEntryTypeDefinitions {
      */
     private static final BibEntryType ELECTRONIC = new BibEntryTypeBuilder()
             .withType(IEEETranEntryType.Electronic)
-            .withImportantFields(StandardField.AUTHOR, StandardField.MONTH, StandardField.YEAR, StandardField.TITLE, StandardField.LANGUAGE,
-                    StandardField.HOWPUBLISHED, StandardField.ORGANIZATION, StandardField.ADDRESS, StandardField.NOTE, StandardField.URL)
+            .withImportantFields(
+                    StandardField.AUTHOR,
+                    StandardField.MONTH,
+                    StandardField.YEAR,
+                    StandardField.TITLE,
+                    StandardField.LANGUAGE,
+                    StandardField.HOWPUBLISHED,
+                    StandardField.ORGANIZATION,
+                    StandardField.ADDRESS,
+                    StandardField.NOTE,
+                    StandardField.URL)
             .build();
 
     /**
@@ -34,10 +43,19 @@ public class IEEETranEntryTypeDefinitions {
      */
     private static final BibEntryType IEEETRANBSTCTL = new BibEntryTypeBuilder()
             .withType(IEEETranEntryType.IEEEtranBSTCTL)
-            .withImportantFields(IEEEField.CTLUSE_ARTICLE_NUMBER, IEEEField.CTLUSE_PAPER, IEEEField.CTLUSE_FORCED_ETAL,
-                    IEEEField.CTLUSE_URL, IEEEField.CTLMAX_NAMES_FORCED_ETAL, IEEEField.CTLNAMES_SHOW_ETAL,
-                    IEEEField.CTLUSE_ALT_SPACING, IEEEField.CTLALT_STRETCH_FACTOR, IEEEField.CTLDASH_REPEATED_NAMES,
-                    IEEEField.CTLNAME_FORMAT_STRING, IEEEField.CTLNAME_LATEX_CMD, IEEEField.CTLNAME_URL_PREFIX)
+            .withImportantFields(
+                    IEEEField.CTLUSE_ARTICLE_NUMBER,
+                    IEEEField.CTLUSE_PAPER,
+                    IEEEField.CTLUSE_FORCED_ETAL,
+                    IEEEField.CTLUSE_URL,
+                    IEEEField.CTLMAX_NAMES_FORCED_ETAL,
+                    IEEEField.CTLNAMES_SHOW_ETAL,
+                    IEEEField.CTLUSE_ALT_SPACING,
+                    IEEEField.CTLALT_STRETCH_FACTOR,
+                    IEEEField.CTLDASH_REPEATED_NAMES,
+                    IEEEField.CTLNAME_FORMAT_STRING,
+                    IEEEField.CTLNAME_LATEX_CMD,
+                    IEEEField.CTLNAME_URL_PREFIX)
             .build();
 
     /**
@@ -49,7 +67,16 @@ public class IEEETranEntryTypeDefinitions {
     private static final BibEntryType PERIODICAL = new BibEntryTypeBuilder()
             .withType(IEEETranEntryType.Periodical)
             .withRequiredFields(StandardField.TITLE, StandardField.YEAR)
-            .withImportantFields(StandardField.EDITOR, StandardField.LANGUAGE, StandardField.SERIES, StandardField.VOLUME, StandardField.NUMBER, StandardField.ORGANIZATION, StandardField.MONTH, StandardField.NOTE, StandardField.URL)
+            .withImportantFields(
+                    StandardField.EDITOR,
+                    StandardField.LANGUAGE,
+                    StandardField.SERIES,
+                    StandardField.VOLUME,
+                    StandardField.NUMBER,
+                    StandardField.ORGANIZATION,
+                    StandardField.MONTH,
+                    StandardField.NOTE,
+                    StandardField.URL)
             .build();
 
     /**
@@ -60,10 +87,24 @@ public class IEEETranEntryTypeDefinitions {
      */
     private static final BibEntryType PATENT = new BibEntryTypeBuilder()
             .withType(IEEETranEntryType.Patent)
-            .withRequiredFields(new OrFields(StandardField.YEAR, StandardField.YEARFILED), StandardField.NATIONALITY, StandardField.NUMBER)
-            .withImportantFields(StandardField.AUTHOR, StandardField.TITLE, StandardField.LANGUAGE, StandardField.ASSIGNEE, StandardField.ADDRESS,
-                    StandardField.TYPE, StandardField.NUMBER, StandardField.DAY, StandardField.DAYFILED, StandardField.MONTH,
-                    StandardField.MONTHFILED, StandardField.NOTE, StandardField.URL)
+            .withRequiredFields(
+                    new OrFields(StandardField.YEAR, StandardField.YEARFILED),
+                    StandardField.NATIONALITY,
+                    StandardField.NUMBER)
+            .withImportantFields(
+                    StandardField.AUTHOR,
+                    StandardField.TITLE,
+                    StandardField.LANGUAGE,
+                    StandardField.ASSIGNEE,
+                    StandardField.ADDRESS,
+                    StandardField.TYPE,
+                    StandardField.NUMBER,
+                    StandardField.DAY,
+                    StandardField.DAYFILED,
+                    StandardField.MONTH,
+                    StandardField.MONTHFILED,
+                    StandardField.NOTE,
+                    StandardField.URL)
             .build();
 
     /**
@@ -74,14 +115,24 @@ public class IEEETranEntryTypeDefinitions {
      */
     private static final BibEntryType STANDARD = new BibEntryTypeBuilder()
             .withType(IEEETranEntryType.Standard)
-            .withRequiredFields(new OrFields(StandardField.ORGANIZATION, StandardField.INSTITUTION), StandardField.TITLE)
-            .withImportantFields(StandardField.AUTHOR, StandardField.LANGUAGE, StandardField.HOWPUBLISHED, StandardField.TYPE,
-                    StandardField.NUMBER, StandardField.REVISION, StandardField.ADDRESS, StandardField.MONTH, StandardField.YEAR,
-                    StandardField.NOTE, StandardField.URL)
+            .withRequiredFields(
+                    new OrFields(StandardField.ORGANIZATION, StandardField.INSTITUTION), StandardField.TITLE)
+            .withImportantFields(
+                    StandardField.AUTHOR,
+                    StandardField.LANGUAGE,
+                    StandardField.HOWPUBLISHED,
+                    StandardField.TYPE,
+                    StandardField.NUMBER,
+                    StandardField.REVISION,
+                    StandardField.ADDRESS,
+                    StandardField.MONTH,
+                    StandardField.YEAR,
+                    StandardField.NOTE,
+                    StandardField.URL)
             .build();
 
-    public static final List<BibEntryType> ALL = Arrays.asList(ELECTRONIC, IEEETRANBSTCTL, PERIODICAL, PATENT, STANDARD);
+    public static final List<BibEntryType> ALL =
+            Arrays.asList(ELECTRONIC, IEEETRANBSTCTL, PERIODICAL, PATENT, STANDARD);
 
-    private IEEETranEntryTypeDefinitions() {
-    }
+    private IEEETranEntryTypeDefinitions() {}
 }

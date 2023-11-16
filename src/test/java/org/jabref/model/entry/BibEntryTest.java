@@ -67,7 +67,9 @@ class BibEntryTest {
     @Test
     void getFieldWorksWithBibFieldAsWell() throws Exception {
         entry.setField(StandardField.AUTHOR, "value");
-        assertEquals(Optional.of("value"), entry.getField(new BibField(StandardField.AUTHOR, FieldPriority.IMPORTANT).field()));
+        assertEquals(
+                Optional.of("value"),
+                entry.getField(new BibField(StandardField.AUTHOR, FieldPriority.IMPORTANT).field()));
     }
 
     @Test
@@ -220,13 +222,16 @@ class BibEntryTest {
     @Test
     void getFieldOrAliasLatexFreeAlreadyFreeValueIsUnchanged() {
         entry.setField(StandardField.TITLE, "A Title Without any LaTeX commands");
-        assertEquals(Optional.of("A Title Without any LaTeX commands"), entry.getFieldOrAliasLatexFree(StandardField.TITLE));
+        assertEquals(
+                Optional.of("A Title Without any LaTeX commands"), entry.getFieldOrAliasLatexFree(StandardField.TITLE));
     }
 
     @Test
     void getFieldOrAliasLatexFreeAlreadyFreeAliasValueIsUnchanged() {
         entry.setField(StandardField.JOURNAL, "A Title Without any LaTeX commands");
-        assertEquals(Optional.of("A Title Without any LaTeX commands"), entry.getFieldOrAliasLatexFree(StandardField.JOURNALTITLE));
+        assertEquals(
+                Optional.of("A Title Without any LaTeX commands"),
+                entry.getFieldOrAliasLatexFree(StandardField.JOURNALTITLE));
     }
 
     @Test
@@ -238,7 +243,8 @@ class BibEntryTest {
     @Test
     void getFieldOrAliasLatexFreeBracesAreRemovedFromAlias() {
         entry.setField(StandardField.JOURNAL, "{A Title with some {B}ra{C}es}");
-        assertEquals(Optional.of("A Title with some BraCes"), entry.getFieldOrAliasLatexFree(StandardField.JOURNALTITLE));
+        assertEquals(
+                Optional.of("A Title with some BraCes"), entry.getFieldOrAliasLatexFree(StandardField.JOURNALTITLE));
     }
 
     @Test
@@ -543,8 +549,7 @@ class BibEntryTest {
     void changeKeywordsReturnsChange() {
         entry.setField(StandardField.KEYWORDS, "Foo, Bar");
         Optional<FieldChange> change = entry.putKeywords(Arrays.asList("Test", "FooTest"), ',');
-        assertEquals(Optional.of(new FieldChange(entry, StandardField.KEYWORDS, "Foo, Bar", "Test, FooTest")),
-                change);
+        assertEquals(Optional.of(new FieldChange(entry, StandardField.KEYWORDS, "Foo, Bar", "Test, FooTest")), change);
     }
 
     @Test
@@ -681,8 +686,7 @@ class BibEntryTest {
 
         otherEntry.setField(Map.of(
                 StandardField.EPRINT, "1234.56789",
-                StandardField.DATE, "1970-01-01"
-        ));
+                StandardField.DATE, "1970-01-01"));
 
         copyEntry.mergeWith(otherEntry);
         assertEquals(expected.getFields(), copyEntry.getFields());
@@ -704,8 +708,7 @@ class BibEntryTest {
 
         otherEntry.setField(Map.of(
                 StandardField.AUTHOR, "Another Test Author",
-                StandardField.DATE, "1970-01-01"
-        ));
+                StandardField.DATE, "1970-01-01"));
 
         copyEntry.mergeWith(otherEntry);
         assertEquals(expected.getFields(), copyEntry.getFields());
@@ -728,8 +731,7 @@ class BibEntryTest {
 
         otherEntry.setField(Map.of(
                 StandardField.EPRINT, "1234.56789",
-                StandardField.DATE, "1970-01-01"
-        ));
+                StandardField.DATE, "1970-01-01"));
 
         Set<Field> otherPrioritizedFields = Set.of(StandardField.VOLUME, StandardField.KEYWORDS);
 
@@ -754,8 +756,7 @@ class BibEntryTest {
 
         otherEntry.setField(Map.of(
                 StandardField.EPRINT, "1234.56789",
-                StandardField.DATE, "1970-01-01"
-        ));
+                StandardField.DATE, "1970-01-01"));
 
         Set<Field> otherPrioritizedFields = Set.of(StandardField.AUTHOR, StandardField.EPRINT);
 
@@ -779,8 +780,7 @@ class BibEntryTest {
 
         otherEntry.setField(Map.of(
                 StandardField.AUTHOR, "Another Test Author",
-                StandardField.DATE, "1970-01-01"
-        ));
+                StandardField.DATE, "1970-01-01"));
 
         Set<Field> otherPrioritizedFields = Set.of(StandardField.TITLE, StandardField.DATE);
 
@@ -804,8 +804,7 @@ class BibEntryTest {
 
         otherEntry.setField(Map.of(
                 StandardField.AUTHOR, "Another Test Author",
-                StandardField.DATE, "1970-01-01"
-        ));
+                StandardField.DATE, "1970-01-01"));
 
         Set<Field> otherPrioritizedFields = Set.of(StandardField.AUTHOR, StandardField.DATE);
 
@@ -819,9 +818,7 @@ class BibEntryTest {
                 new BibEntry(StandardEntryType.Book),
                 new BibEntry().withField(StandardField.OWNER, "test"),
                 new BibEntry().withField(StandardField.CREATIONDATE, "test"),
-                new BibEntry()
-                        .withField(StandardField.OWNER, "test")
-                        .withField(StandardField.CREATIONDATE, "test"),
+                new BibEntry().withField(StandardField.OWNER, "test").withField(StandardField.CREATIONDATE, "test"),
                 // source: https://github.com/JabRef/jabref/issues/8645
                 new BibEntry()
                         .withField(StandardField.OWNER, "mlep")
@@ -836,9 +833,7 @@ class BibEntryTest {
 
     public static Stream<BibEntry> isNotEmpty() {
         return Stream.of(
-                new BibEntry().withCitationKey("test"),
-                new BibEntry().withField(StandardField.AUTHOR, "test")
-        );
+                new BibEntry().withCitationKey("test"), new BibEntry().withField(StandardField.AUTHOR, "test"));
     }
 
     @ParameterizedTest

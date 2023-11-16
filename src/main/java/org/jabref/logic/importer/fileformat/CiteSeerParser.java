@@ -56,7 +56,9 @@ public class CiteSeerParser {
         JSONArray authorsArray = authorsOpt.get();
         StringBuilder authorsStringBuilder = new StringBuilder();
         for (int i = 0; i < authorsArray.length() - 1; i++) {
-            authorsStringBuilder.append(StringUtil.shaveString(authorsArray.getString(i))).append(separator);
+            authorsStringBuilder
+                    .append(StringUtil.shaveString(authorsArray.getString(i)))
+                    .append(separator);
         }
         authorsStringBuilder.append(authorsArray.getString(authorsArray.length() - 1));
         return new AuthorListParser().parse(authorsStringBuilder.toString()).getAsLastFirstNamesWithAnd(false);

@@ -27,7 +27,8 @@ public class EntryAnnotationImporterTest {
     @BeforeEach
     public void setUp() {
         entry = new BibEntry();
-        when(databaseContext.getFileDirectories(any())).thenReturn(Collections.singletonList(Path.of("src/test/resources/pdfs/")));
+        when(databaseContext.getFileDirectories(any()))
+                .thenReturn(Collections.singletonList(Path.of("src/test/resources/pdfs/")));
     }
 
     @Test
@@ -37,7 +38,8 @@ public class EntryAnnotationImporterTest {
         EntryAnnotationImporter entryAnnotationImporter = new EntryAnnotationImporter(entry);
 
         // when
-        Map<Path, List<FileAnnotation>> annotations = entryAnnotationImporter.importAnnotationsFromFiles(databaseContext, mock(FilePreferences.class));
+        Map<Path, List<FileAnnotation>> annotations =
+                entryAnnotationImporter.importAnnotationsFromFiles(databaseContext, mock(FilePreferences.class));
 
         // then
         int fileCounter = 0;

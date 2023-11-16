@@ -127,7 +127,9 @@ public class DefaultTaskExecutor implements TaskExecutor {
      */
     @Override
     public void shutdown() {
-        stateManager.getBackgroundTasks().stream().filter(task -> !task.isDone()).forEach(Task::cancel);
+        stateManager.getBackgroundTasks().stream()
+                .filter(task -> !task.isDone())
+                .forEach(Task::cancel);
         executor.shutdownNow();
         scheduledExecutor.shutdownNow();
         throttlers.forEach((throttler, aVoid) -> throttler.shutdown());
@@ -145,7 +147,8 @@ public class DefaultTaskExecutor implements TaskExecutor {
             {
                 this.updateMessage(task.messageProperty().get());
                 this.updateTitle(task.titleProperty().get());
-                BindingsHelper.subscribeFuture(task.progressProperty(), progress -> updateProgress(progress.getWorkDone(), progress.getMax()));
+                BindingsHelper.subscribeFuture(
+                        task.progressProperty(), progress -> updateProgress(progress.getWorkDone(), progress.getMax()));
                 BindingsHelper.subscribeFuture(task.messageProperty(), this::updateMessage);
                 BindingsHelper.subscribeFuture(task.titleProperty(), this::updateTitle);
                 BindingsHelper.subscribeFuture(task.isCanceledProperty(), cancelled -> {

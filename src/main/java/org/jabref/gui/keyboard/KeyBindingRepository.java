@@ -95,7 +95,9 @@ public class KeyBindingRepository {
     }
 
     private Optional<KeyBinding> getKeyBinding(String key) {
-        return Arrays.stream(KeyBinding.values()).filter(b -> b.getConstant().equals(key)).findFirst();
+        return Arrays.stream(KeyBinding.values())
+                .filter(b -> b.getConstant().equals(key))
+                .findFirst();
     }
 
     public void resetToDefault(String key) {
@@ -138,8 +140,9 @@ public class KeyBindingRepository {
      * @return true if matching, else false
      */
     public boolean checkKeyCombinationEquality(KeyBinding binding, KeyEvent keyEvent) {
-        return getKeyCombination(binding).filter(combination -> checkKeyCombinationEquality(combination, keyEvent))
-                                         .isPresent();
+        return getKeyCombination(binding)
+                .filter(combination -> checkKeyCombinationEquality(combination, keyEvent))
+                .isPresent();
     }
 
     public List<String> getBindNames() {

@@ -122,8 +122,8 @@ public class MSBibDatabase {
 
             Element rootNode = document.createElementNS(NAMESPACE, PREFIX + "Sources");
             rootNode.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", NAMESPACE);
-            rootNode.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:" + PREFIX.substring(0, PREFIX.length() - 1), NAMESPACE);
+            rootNode.setAttributeNS(
+                    "http://www.w3.org/2000/xmlns/", "xmlns:" + PREFIX.substring(0, PREFIX.length() - 1), NAMESPACE);
             rootNode.setAttribute("SelectedStyle", "");
 
             for (MSBibEntry entry : entries) {

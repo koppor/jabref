@@ -32,75 +32,67 @@ class ManageStudyDefinitionViewModelTest {
 
     @Test
     public void emptyStudyConstructorFillsDatabasesCorrectly() {
-        ManageStudyDefinitionViewModel manageStudyDefinitionViewModel = new ManageStudyDefinitionViewModel(importFormatPreferences, importerPreferences, dialogService);
-        assertEquals(List.of(
-                new StudyCatalogItem("ACM Portal", true),
-                new StudyCatalogItem("ArXiv", false),
-                new StudyCatalogItem("Bibliotheksverbund Bayern (Experimental)", false),
-                new StudyCatalogItem("Biodiversity Heritage", false),
-                new StudyCatalogItem("CiteSeerX", false),
-                new StudyCatalogItem("Crossref", false),
-                new StudyCatalogItem("DBLP", true),
-                new StudyCatalogItem("DOAB", false),
-                new StudyCatalogItem("DOAJ", false),
-                new StudyCatalogItem("GVK", false),
-                new StudyCatalogItem("IEEEXplore", true),
-                new StudyCatalogItem("INSPIRE", false),
-                new StudyCatalogItem("LOBID", false),
-                new StudyCatalogItem("MathSciNet", false),
-                new StudyCatalogItem("Medline/PubMed", false),
-                new StudyCatalogItem("ResearchGate", false),
-                new StudyCatalogItem("SAO/NASA ADS", false),
-                new StudyCatalogItem("ScholarArchive", false),
-                new StudyCatalogItem("SemanticScholar", false),
-                new StudyCatalogItem("Springer", true),
-                new StudyCatalogItem("zbMATH", false)
-        ), manageStudyDefinitionViewModel.getCatalogs());
+        ManageStudyDefinitionViewModel manageStudyDefinitionViewModel =
+                new ManageStudyDefinitionViewModel(importFormatPreferences, importerPreferences, dialogService);
+        assertEquals(
+                List.of(
+                        new StudyCatalogItem("ACM Portal", true),
+                        new StudyCatalogItem("ArXiv", false),
+                        new StudyCatalogItem("Bibliotheksverbund Bayern (Experimental)", false),
+                        new StudyCatalogItem("Biodiversity Heritage", false),
+                        new StudyCatalogItem("CiteSeerX", false),
+                        new StudyCatalogItem("Crossref", false),
+                        new StudyCatalogItem("DBLP", true),
+                        new StudyCatalogItem("DOAB", false),
+                        new StudyCatalogItem("DOAJ", false),
+                        new StudyCatalogItem("GVK", false),
+                        new StudyCatalogItem("IEEEXplore", true),
+                        new StudyCatalogItem("INSPIRE", false),
+                        new StudyCatalogItem("LOBID", false),
+                        new StudyCatalogItem("MathSciNet", false),
+                        new StudyCatalogItem("Medline/PubMed", false),
+                        new StudyCatalogItem("ResearchGate", false),
+                        new StudyCatalogItem("SAO/NASA ADS", false),
+                        new StudyCatalogItem("ScholarArchive", false),
+                        new StudyCatalogItem("SemanticScholar", false),
+                        new StudyCatalogItem("Springer", true),
+                        new StudyCatalogItem("zbMATH", false)),
+                manageStudyDefinitionViewModel.getCatalogs());
     }
 
     @Test
     public void studyConstructorFillsDatabasesCorrectly(@TempDir Path tempDir) {
         ManageStudyDefinitionViewModel manageStudyDefinitionViewModel = getManageStudyDefinitionViewModel(tempDir);
-        assertEquals(List.of(
-                new StudyCatalogItem("ACM Portal", true),
-                new StudyCatalogItem("ArXiv", false),
-                new StudyCatalogItem("Bibliotheksverbund Bayern (Experimental)", false),
-                new StudyCatalogItem("Biodiversity Heritage", false),
-                new StudyCatalogItem("CiteSeerX", false),
-                new StudyCatalogItem("Crossref", false),
-                new StudyCatalogItem("DBLP", false),
-                new StudyCatalogItem("DOAB", false),
-                new StudyCatalogItem("DOAJ", false),
-                new StudyCatalogItem("GVK", false),
-                new StudyCatalogItem("IEEEXplore", false),
-                new StudyCatalogItem("INSPIRE", false),
-                new StudyCatalogItem("LOBID", false),
-                new StudyCatalogItem("MathSciNet", false),
-                new StudyCatalogItem("Medline/PubMed", false),
-                new StudyCatalogItem("ResearchGate", false),
-                new StudyCatalogItem("SAO/NASA ADS", false),
-                new StudyCatalogItem("ScholarArchive", false),
-                new StudyCatalogItem("SemanticScholar", false),
-                new StudyCatalogItem("Springer", false),
-                new StudyCatalogItem("zbMATH", false)
-        ), manageStudyDefinitionViewModel.getCatalogs());
+        assertEquals(
+                List.of(
+                        new StudyCatalogItem("ACM Portal", true),
+                        new StudyCatalogItem("ArXiv", false),
+                        new StudyCatalogItem("Bibliotheksverbund Bayern (Experimental)", false),
+                        new StudyCatalogItem("Biodiversity Heritage", false),
+                        new StudyCatalogItem("CiteSeerX", false),
+                        new StudyCatalogItem("Crossref", false),
+                        new StudyCatalogItem("DBLP", false),
+                        new StudyCatalogItem("DOAB", false),
+                        new StudyCatalogItem("DOAJ", false),
+                        new StudyCatalogItem("GVK", false),
+                        new StudyCatalogItem("IEEEXplore", false),
+                        new StudyCatalogItem("INSPIRE", false),
+                        new StudyCatalogItem("LOBID", false),
+                        new StudyCatalogItem("MathSciNet", false),
+                        new StudyCatalogItem("Medline/PubMed", false),
+                        new StudyCatalogItem("ResearchGate", false),
+                        new StudyCatalogItem("SAO/NASA ADS", false),
+                        new StudyCatalogItem("ScholarArchive", false),
+                        new StudyCatalogItem("SemanticScholar", false),
+                        new StudyCatalogItem("Springer", false),
+                        new StudyCatalogItem("zbMATH", false)),
+                manageStudyDefinitionViewModel.getCatalogs());
     }
 
     private ManageStudyDefinitionViewModel getManageStudyDefinitionViewModel(Path tempDir) {
-        List<StudyDatabase> databases = List.of(
-                new StudyDatabase("ACM Portal", true));
-        Study study = new Study(
-                List.of("Name"),
-                "title",
-                List.of("Q1"),
-                List.of(),
-                databases
-        );
+        List<StudyDatabase> databases = List.of(new StudyDatabase("ACM Portal", true));
+        Study study = new Study(List.of("Name"), "title", List.of("Q1"), List.of(), databases);
         return new ManageStudyDefinitionViewModel(
-                study,
-                tempDir,
-                importFormatPreferences,
-                importerPreferences,
-                dialogService);
+                study, tempDir, importFormatPreferences, importerPreferences, dialogService);
     }
 }

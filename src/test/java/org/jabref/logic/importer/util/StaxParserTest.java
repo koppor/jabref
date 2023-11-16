@@ -32,16 +32,19 @@ class StaxParserTest {
 
     private static Stream<Arguments> tests() {
         return Stream.of(
-                Arguments.of("<ForeName xmlns=\"\" attr=\"1\">Alan</ForeName>",
+                Arguments.of(
+                        "<ForeName xmlns=\"\" attr=\"1\">Alan</ForeName>",
                         """
                                 <ForeName attr="1">Alan</ForeName>
                                 """),
-                Arguments.of("<ForeName xmlns=\"\" attr=\"1\">Alan</ForeName>",
+                Arguments.of(
+                        "<ForeName xmlns=\"\" attr=\"1\">Alan</ForeName>",
                         """
                                 <ForeName attr="1">Alan</ForeName>
                                 <LastName attr="2">Grant</LastName>
                                 """),
-                Arguments.of("<ForeName xmlns=\"\" attr=\"1\">Alan<ForeName attr=\"5\">MiddleName</ForeName></ForeName>",
+                Arguments.of(
+                        "<ForeName xmlns=\"\" attr=\"1\">Alan<ForeName attr=\"5\">MiddleName</ForeName></ForeName>",
                         """
                                 <ForeName attr="1">
                                     Alan
@@ -49,7 +52,8 @@ class StaxParserTest {
                                 </ForeName>
                                 <LastName attr="2">Grant</LastName>
                                 """),
-                Arguments.of("<PubDate xmlns=\"\"><Year>2020</Year><Month>Jul</Month><Day>24</Day></PubDate>",
+                Arguments.of(
+                        "<PubDate xmlns=\"\"><Year>2020</Year><Month>Jul</Month><Day>24</Day></PubDate>",
                         """
                                 <PubDate>
                                     <Year>2020</Year>
@@ -57,7 +61,8 @@ class StaxParserTest {
                                     <Day>24</Day>
                                 </PubDate>
                                 """),
-                Arguments.of("<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\"><mml:mrow><mml:msubsup><mml:mi>η</mml:mi><mml:mi>p</mml:mi><mml:mn>2</mml:mn></mml:msubsup></mml:mrow></mml:math>",
+                Arguments.of(
+                        "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\"><mml:mrow><mml:msubsup><mml:mi>η</mml:mi><mml:mi>p</mml:mi><mml:mn>2</mml:mn></mml:msubsup></mml:mrow></mml:math>",
                         """
                                 <mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML">
                                     <mml:mrow>
@@ -69,7 +74,8 @@ class StaxParserTest {
                                     </mml:mrow>
                                 </mml:math>
                                 """),
-                Arguments.of("<Journal xmlns=\"\"><ISSN IssnType=\"Electronic\">1613-4516</ISSN><JournalIssue CitedMedium=\"Internet\"><Volume>17</Volume><Issue>2-3</Issue><PubDate><Year>2020</Year><Month>Jul</Month><Day>24</Day></PubDate></JournalIssue><Title>Journal of integrative bioinformatics</Title><ISOAbbreviation>J Integr Bioinform</ISOAbbreviation></Journal>",
+                Arguments.of(
+                        "<Journal xmlns=\"\"><ISSN IssnType=\"Electronic\">1613-4516</ISSN><JournalIssue CitedMedium=\"Internet\"><Volume>17</Volume><Issue>2-3</Issue><PubDate><Year>2020</Year><Month>Jul</Month><Day>24</Day></PubDate></JournalIssue><Title>Journal of integrative bioinformatics</Title><ISOAbbreviation>J Integr Bioinform</ISOAbbreviation></Journal>",
                         """
                                 <Journal>
                                     <ISSN IssnType="Electronic">1613-4516</ISSN>
@@ -85,7 +91,6 @@ class StaxParserTest {
                                     <Title>Journal of integrative bioinformatics</Title>
                                     <ISOAbbreviation>J Integr Bioinform</ISOAbbreviation>
                                 </Journal>
-                                """)
-        );
+                                """));
     }
 }

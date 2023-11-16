@@ -58,7 +58,8 @@ public class TreeNodeTest {
 
     @Test
     public void getIndexedPathFromRootComplexPath() {
-        assertEquals(Arrays.asList(2, 1, 0), TreeNodeTestData.getNodeInComplexTree().getIndexedPathFromRoot());
+        assertEquals(
+                Arrays.asList(2, 1, 0), TreeNodeTestData.getNodeInComplexTree().getIndexedPathFromRoot());
     }
 
     @Test
@@ -620,7 +621,8 @@ public class TreeNodeTest {
         TreeNodeTestData.TreeNodeMock node = childB.addChild(new TreeNodeTestData.TreeNodeMock("A"));
         TreeNodeTestData.TreeNodeMock childA = root.addChild(new TreeNodeTestData.TreeNodeMock("A"));
 
-        assertEquals(Arrays.asList(root, node, childA), root.findChildrenSatisfying(treeNode -> "A".equals(treeNode.getName())));
+        assertEquals(Arrays.asList(root, node, childA), root.findChildrenSatisfying(treeNode -> "A"
+                .equals(treeNode.getName())));
     }
 
     private static class WrongTreeNodeImplementation extends TreeNode<TreeNodeTestData.TreeNodeMock> {

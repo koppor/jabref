@@ -34,8 +34,10 @@ public class DetectOpenOfficeInstallation {
     public Optional<Path> selectInstallationPath() {
         final NativeDesktop nativeDesktop = OS.getNativeDesktop();
 
-        dialogService.showInformationDialogAndWait(Localization.lang("Could not find OpenOffice/LibreOffice installation"),
-                Localization.lang("Unable to autodetect OpenOffice/LibreOffice installation. Please choose the installation directory manually."));
+        dialogService.showInformationDialogAndWait(
+                Localization.lang("Could not find OpenOffice/LibreOffice installation"),
+                Localization.lang(
+                        "Unable to autodetect OpenOffice/LibreOffice installation. Please choose the installation directory manually."));
         DirectoryDialogConfiguration dirDialogConfiguration = new DirectoryDialogConfiguration.Builder()
                 .withInitialDirectory(nativeDesktop.getApplicationDirectory())
                 .build();

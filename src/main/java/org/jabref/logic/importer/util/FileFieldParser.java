@@ -95,7 +95,8 @@ public class FileFieldParser {
                 charactersOfCurrentElement.append(c);
                 inXmlChar = false;
             } else if (!escaped && (c == ':')) {
-                if ((linkedFileData.size() == 1) && // we already parsed the description
+                if ((linkedFileData.size() == 1)
+                        && // we already parsed the description
                         (charactersOfCurrentElement.length() == 1)) { // we parsed one character
                     // special case of Windows paths
                     // Example: ":c:\test.pdf:PDF"
@@ -176,9 +177,13 @@ public class FileFieldParser {
         }
 
         // link is the only mandatory field
-        if (field.getDescription().isEmpty() && field.getLink().isEmpty() && !field.getFileType().isEmpty()) {
+        if (field.getDescription().isEmpty()
+                && field.getLink().isEmpty()
+                && !field.getFileType().isEmpty()) {
             field = new LinkedFile("", Path.of(field.getFileType()), "");
-        } else if (!field.getDescription().isEmpty() && field.getLink().isEmpty() && field.getFileType().isEmpty()) {
+        } else if (!field.getDescription().isEmpty()
+                && field.getLink().isEmpty()
+                && field.getFileType().isEmpty()) {
             field = new LinkedFile("", Path.of(field.getDescription()), "");
         }
         entry.clear();

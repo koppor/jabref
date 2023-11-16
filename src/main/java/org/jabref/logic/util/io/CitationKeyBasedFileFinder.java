@@ -30,7 +30,8 @@ class CitationKeyBasedFileFinder implements FileFinder {
     }
 
     @Override
-    public List<Path> findAssociatedFiles(BibEntry entry, List<Path> directories, List<String> extensions) throws IOException {
+    public List<Path> findAssociatedFiles(BibEntry entry, List<Path> directories, List<String> extensions)
+            throws IOException {
         Objects.requireNonNull(directories);
         Objects.requireNonNull(entry);
 
@@ -68,7 +69,8 @@ class CitationKeyBasedFileFinder implements FileFinder {
         boolean startsWithKey = filename.startsWith(FileNameCleaner.cleanFileName(citeKey));
         if (startsWithKey) {
             // The file name starts with the key, that's already a good start
-            // However, we do not want to match "JabRefa" for "JabRef" since this is probably a file belonging to another entry published in the same time / same name
+            // However, we do not want to match "JabRefa" for "JabRef" since this is probably a file belonging to
+            // another entry published in the same time / same name
             char charAfterKey = filename.charAt(citeKey.length());
             return !CitationKeyGenerator.APPENDIX_CHARACTERS.contains(Character.toString(charAfterKey));
         }
@@ -81,13 +83,15 @@ class CitationKeyBasedFileFinder implements FileFinder {
     private Set<Path> findFilesByExtension(List<Path> directories, List<String> extensions) throws IOException {
         Objects.requireNonNull(extensions, "Extensions must not be null!");
 
-        BiPredicate<Path, BasicFileAttributes> isFileWithCorrectExtension = (path, attributes) -> !Files.isDirectory(path)
-                && extensions.contains(FileUtil.getFileExtension(path).orElse(""));
+        BiPredicate<Path, BasicFileAttributes> isFileWithCorrectExtension =
+                (path, attributes) -> !Files.isDirectory(path)
+                        && extensions.contains(FileUtil.getFileExtension(path).orElse(""));
 
         Set<Path> result = new HashSet<>();
         for (Path directory : directories) {
             if (Files.exists(directory)) {
-                try (Stream<Path> pathStream = Files.find(directory, Integer.MAX_VALUE, isFileWithCorrectExtension, FileVisitOption.FOLLOW_LINKS)) {
+                try (Stream<Path> pathStream = Files.find(
+                        directory, Integer.MAX_VALUE, isFileWithCorrectExtension, FileVisitOption.FOLLOW_LINKS)) {
                     result.addAll(pathStream.collect(Collectors.toSet()));
                 } catch (UncheckedIOException e) {
                     throw new IOException("Problem in finding files", e);

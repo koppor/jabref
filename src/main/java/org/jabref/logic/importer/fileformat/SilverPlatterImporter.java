@@ -90,21 +90,23 @@ public class SilverPlatterImporter extends Importer {
                 String f3 = field.substring(0, 2);
                 String frest = field.substring(5);
                 switch (f3) {
-                    case "TI" ->
-                            h.put(StandardField.TITLE, frest);
+                    case "TI" -> h.put(StandardField.TITLE, frest);
                     case "AU" -> {
                         if (frest.trim().endsWith("(ed)")) {
                             String ed = frest.trim();
                             ed = ed.substring(0, ed.length() - 4);
-                            h.put(StandardField.EDITOR,
-                                    AuthorList.fixAuthorLastNameFirst(ed.replace(",-", ", ").replace(";", " and ")));
+                            h.put(
+                                    StandardField.EDITOR,
+                                    AuthorList.fixAuthorLastNameFirst(
+                                            ed.replace(",-", ", ").replace(";", " and ")));
                         } else {
-                            h.put(StandardField.AUTHOR,
-                                    AuthorList.fixAuthorLastNameFirst(frest.replace(",-", ", ").replace(";", " and ")));
+                            h.put(
+                                    StandardField.AUTHOR,
+                                    AuthorList.fixAuthorLastNameFirst(
+                                            frest.replace(",-", ", ").replace(";", " and ")));
                         }
                     }
-                    case "AB" ->
-                            h.put(StandardField.ABSTRACT, frest);
+                    case "AB" -> h.put(StandardField.ABSTRACT, frest);
                     case "DE" -> {
                         String kw = frest.replace("-;", ",").toLowerCase(Locale.ROOT);
                         h.put(StandardField.KEYWORDS, kw.substring(0, kw.length() - 1));
@@ -126,8 +128,13 @@ public class SilverPlatterImporter extends Importer {
                                 if (m >= 0) {
                                     String pg = frest.substring(m + 1).trim();
                                     h.put(StandardField.PAGES, pg);
-                                    h.put(StandardField.VOLUME, frest.substring(1, issueIndex).trim());
-                                    h.put(StandardField.ISSUE, frest.substring(issueIndex + 1, endIssueIndex).trim());
+                                    h.put(
+                                            StandardField.VOLUME,
+                                            frest.substring(1, issueIndex).trim());
+                                    h.put(
+                                            StandardField.ISSUE,
+                                            frest.substring(issueIndex + 1, endIssueIndex)
+                                                    .trim());
                                 }
                             }
                         }
@@ -144,16 +151,14 @@ public class SilverPlatterImporter extends Importer {
                                 try {
                                     Integer.parseInt(yr);
                                     h.put(StandardField.YEAR, yr);
-                                } catch (
-                                        NumberFormatException ex) {
+                                } catch (NumberFormatException ex) {
                                     // Let's assume that this wasn't a number, since it
                                     // couldn't be parsed as an integer.
                                 }
                             }
                         }
                     }
-                    case "AF" ->
-                            h.put(StandardField.SCHOOL, frest.trim());
+                    case "AF" -> h.put(StandardField.SCHOOL, frest.trim());
                     case "DT" -> {
                         frest = frest.trim();
                         if ("Monograph".equals(frest)) {

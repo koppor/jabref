@@ -43,20 +43,20 @@ public class JabRefDesktop {
     private static final NativeDesktop NATIVE_DESKTOP = OS.getNativeDesktop();
     private static final Pattern REMOTE_LINK_PATTERN = Pattern.compile("[a-z]+://.*");
 
-    private JabRefDesktop() {
-    }
+    private JabRefDesktop() {}
 
     /**
      * Open a http/pdf/ps viewer for the given link string.
      *
      * Opening a PDF file at the file field is done at {@link org.jabref.gui.fieldeditors.LinkedFileViewModel#open}
      */
-    public static void openExternalViewer(BibDatabaseContext databaseContext,
-                                          PreferencesService preferencesService,
-                                          String initialLink,
-                                          Field initialField,
-                                          DialogService dialogService,
-                                          BibEntry entry)
+    public static void openExternalViewer(
+            BibDatabaseContext databaseContext,
+            PreferencesService preferencesService,
+            String initialLink,
+            Field initialField,
+            DialogService dialogService,
+            BibEntry entry)
             throws IOException {
         String link = initialLink;
         Field field = initialField;
@@ -91,18 +91,22 @@ public class JabRefDesktop {
         } else if (StandardField.EPRINT == field) {
             IdentifierParser identifierParser = new IdentifierParser(entry);
 
-            link = identifierParser.parse(StandardField.EPRINT)
-                                   .flatMap(Identifier::getExternalURI)
-                                   .map(URI::toASCIIString)
-                                   .orElse(link);
+            link = identifierParser
+                    .parse(StandardField.EPRINT)
+                    .flatMap(Identifier::getExternalURI)
+                    .map(URI::toASCIIString)
+                    .orElse(link);
 
             if (Objects.equals(link, initialLink)) {
                 Optional<String> eprintTypeOpt = entry.getField(StandardField.EPRINTTYPE);
                 Optional<String> archivePrefixOpt = entry.getField(StandardField.ARCHIVEPREFIX);
                 if (eprintTypeOpt.isEmpty() && archivePrefixOpt.isEmpty()) {
-                    dialogService.showErrorDialogAndWait(Localization.lang("Unable to open linked eprint. Please set the eprinttype field"));
+                    dialogService.showErrorDialogAndWait(
+                            Localization.lang("Unable to open linked eprint. Please set the eprinttype field"));
                 } else {
-                    dialogService.showErrorDialogAndWait(Localization.lang("Unable to open linked eprint. Please verify that the eprint field has a valid '%0' id", eprintTypeOpt.get()));
+                    dialogService.showErrorDialogAndWait(Localization.lang(
+                            "Unable to open linked eprint. Please verify that the eprint field has a valid '%0' id",
+                            eprintTypeOpt.get()));
                 }
             }
             // should be opened in browser
@@ -135,14 +139,15 @@ public class JabRefDesktop {
 
     public static void openCustomDoi(String link, PreferencesService preferences, DialogService dialogService) {
         DOI.parse(link)
-           .flatMap(doi -> doi.getExternalURIWithCustomBase(preferences.getDOIPreferences().getDefaultBaseURI()))
-           .ifPresent(uri -> {
-               try {
-                   JabRefDesktop.openBrowser(uri, preferences.getFilePreferences());
-               } catch (IOException e) {
-                   dialogService.showErrorDialogAndWait(Localization.lang("Unable to open link."), e);
-               }
-           });
+                .flatMap(doi -> doi.getExternalURIWithCustomBase(
+                        preferences.getDOIPreferences().getDefaultBaseURI()))
+                .ifPresent(uri -> {
+                    try {
+                        JabRefDesktop.openBrowser(uri, preferences.getFilePreferences());
+                    } catch (IOException e) {
+                        dialogService.showErrorDialogAndWait(Localization.lang("Unable to open link."), e);
+                    }
+                });
     }
 
     private static void openIsbn(String isbn, PreferencesService preferencesService) throws IOException {
@@ -158,10 +163,12 @@ public class JabRefDesktop {
      * @param link            The filename.
      * @return false if the link couldn't be resolved, true otherwise.
      */
-    public static boolean openExternalFileAnyFormat(final BibDatabaseContext databaseContext,
-                                                    FilePreferences filePreferences,
-                                                    String link,
-                                                    final Optional<ExternalFileType> type) throws IOException {
+    public static boolean openExternalFileAnyFormat(
+            final BibDatabaseContext databaseContext,
+            FilePreferences filePreferences,
+            String link,
+            final Optional<ExternalFileType> type)
+            throws IOException {
         if (REMOTE_LINK_PATTERN.matcher(link.toLowerCase(Locale.ROOT)).matches()) {
             openBrowser(link, filePreferences);
             return true;
@@ -179,10 +186,8 @@ public class JabRefDesktop {
         return true;
     }
 
-    private static void openExternalFilePlatformIndependent(Optional<ExternalFileType> fileType,
-                                                            String filePath,
-                                                            FilePreferences filePreferences)
-            throws IOException {
+    private static void openExternalFilePlatformIndependent(
+            Optional<ExternalFileType> fileType, String filePath, FilePreferences filePreferences) throws IOException {
         if (fileType.isPresent()) {
             String application = fileType.get().getOpenWithApplication();
 
@@ -204,9 +209,9 @@ public class JabRefDesktop {
      * @param fileLink the location of the file
      * @throws IOException if the default file browser cannot be opened
      */
-    public static void openFolderAndSelectFile(Path fileLink,
-                                               ExternalApplicationsPreferences externalApplicationsPreferences,
-                                               DialogService dialogService) throws IOException {
+    public static void openFolderAndSelectFile(
+            Path fileLink, ExternalApplicationsPreferences externalApplicationsPreferences, DialogService dialogService)
+            throws IOException {
         if (fileLink == null) {
             return;
         }
@@ -234,14 +239,16 @@ public class JabRefDesktop {
      * @param file Location the console should be opened at.
      *
      */
-    public static void openConsole(Path file, PreferencesService preferencesService, DialogService dialogService) throws IOException {
+    public static void openConsole(Path file, PreferencesService preferencesService, DialogService dialogService)
+            throws IOException {
         if (file == null) {
             return;
         }
 
         String absolutePath = file.toAbsolutePath().getParent().toString();
 
-        boolean useCustomTerminal = preferencesService.getExternalApplicationsPreferences().useCustomTerminal();
+        boolean useCustomTerminal =
+                preferencesService.getExternalApplicationsPreferences().useCustomTerminal();
         if (!useCustomTerminal) {
             NATIVE_DESKTOP.openConsole(absolutePath, dialogService);
             return;
@@ -304,7 +311,8 @@ public class JabRefDesktop {
             String openManually = Localization.lang("Please open %0 manually.", url);
             String copiedToClipboard = Localization.lang("The link has been copied to the clipboard.");
             dialogService.notify(couldNotOpenBrowser);
-            dialogService.showErrorDialogAndWait(couldNotOpenBrowser, couldNotOpenBrowser + "\n" + openManually + "\n" + copiedToClipboard);
+            dialogService.showErrorDialogAndWait(
+                    couldNotOpenBrowser, couldNotOpenBrowser + "\n" + openManually + "\n" + copiedToClipboard);
         }
     }
 }

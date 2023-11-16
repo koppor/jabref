@@ -40,7 +40,8 @@ public interface PushToApplication {
 
     Action getAction();
 
-    PushToApplicationSettings getSettings(PushToApplication application, PushToApplicationPreferences pushToApplicationPreferences);
+    PushToApplicationSettings getSettings(
+            PushToApplication application, PushToApplicationPreferences pushToApplicationPreferences);
 
     String getDelimiter();
 }

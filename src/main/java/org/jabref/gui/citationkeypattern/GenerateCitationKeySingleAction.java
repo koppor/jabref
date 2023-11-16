@@ -18,7 +18,12 @@ public class GenerateCitationKeySingleAction extends SimpleCommand {
     private final BibEntry entry;
     private final UndoManager undoManager;
 
-    public GenerateCitationKeySingleAction(BibEntry entry, BibDatabaseContext databaseContext, DialogService dialogService, PreferencesService preferencesService, UndoManager undoManager) {
+    public GenerateCitationKeySingleAction(
+            BibEntry entry,
+            BibDatabaseContext databaseContext,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            UndoManager undoManager) {
         this.entry = entry;
         this.databaseContext = databaseContext;
         this.dialogService = dialogService;
@@ -32,7 +37,8 @@ public class GenerateCitationKeySingleAction extends SimpleCommand {
 
     @Override
     public void execute() {
-        if (!entry.hasCitationKey() || GenerateCitationKeyAction.confirmOverwriteKeys(dialogService, preferencesService)) {
+        if (!entry.hasCitationKey()
+                || GenerateCitationKeyAction.confirmOverwriteKeys(dialogService, preferencesService)) {
             new CitationKeyGenerator(databaseContext, preferencesService.getCitationKeyPatternPreferences())
                     .generateAndSetKey(entry)
                     .ifPresent(change -> undoManager.addEdit(new UndoableKeyChange(change)));

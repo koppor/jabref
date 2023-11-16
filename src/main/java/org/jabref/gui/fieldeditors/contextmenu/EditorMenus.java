@@ -38,8 +38,10 @@ public class EditorMenus {
     public static Supplier<List<MenuItem>> getNameMenu(final TextInputControl textInput) {
         return () -> {
             MenuItem normalizeNames = new MenuItem(Localization.lang("Normalize to BibTeX name format"));
-            EasyBind.subscribe(textInput.textProperty(), value -> normalizeNames.setDisable(StringUtil.isNullOrEmpty(value)));
-            normalizeNames.setOnAction(event -> textInput.setText(new NormalizeNamesFormatter().format(textInput.getText())));
+            EasyBind.subscribe(
+                    textInput.textProperty(), value -> normalizeNames.setDisable(StringUtil.isNullOrEmpty(value)));
+            normalizeNames.setOnAction(
+                    event -> textInput.setText(new NormalizeNamesFormatter().format(textInput.getText())));
             List<MenuItem> menuItems = new ArrayList<>(6);
             menuItems.add(normalizeNames);
             menuItems.addAll(new DefaultMenu(textInput).get());
@@ -53,11 +55,15 @@ public class EditorMenus {
      * @param textArea text-area that this menu will be connected to
      * @return menu containing items of the default menu and an item for copying a DOI/DOI URL
      */
-    public static Supplier<List<MenuItem>> getDOIMenu(TextArea textArea, DialogService dialogService, PreferencesService preferencesService) {
+    public static Supplier<List<MenuItem>> getDOIMenu(
+            TextArea textArea, DialogService dialogService, PreferencesService preferencesService) {
         return () -> {
             ActionFactory factory = new ActionFactory(preferencesService.getKeyBindingRepository());
-            MenuItem copyDoiMenuItem = factory.createMenuItem(StandardActions.COPY_DOI, new CopyDoiUrlAction(textArea, StandardActions.COPY_DOI, dialogService));
-            MenuItem copyDoiUrlMenuItem = factory.createMenuItem(StandardActions.COPY_DOI_URL, new CopyDoiUrlAction(textArea, StandardActions.COPY_DOI_URL, dialogService));
+            MenuItem copyDoiMenuItem = factory.createMenuItem(
+                    StandardActions.COPY_DOI, new CopyDoiUrlAction(textArea, StandardActions.COPY_DOI, dialogService));
+            MenuItem copyDoiUrlMenuItem = factory.createMenuItem(
+                    StandardActions.COPY_DOI_URL,
+                    new CopyDoiUrlAction(textArea, StandardActions.COPY_DOI_URL, dialogService));
             List<MenuItem> menuItems = new ArrayList<>();
             menuItems.add(copyDoiMenuItem);
             menuItems.add(copyDoiUrlMenuItem);

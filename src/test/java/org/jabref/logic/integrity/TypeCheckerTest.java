@@ -27,6 +27,9 @@ public class TypeCheckerTest {
     void proceedingsDoesNotHavePageNumbers() {
         entry = new BibEntry(StandardEntryType.Proceedings);
         entry.setField(StandardField.PAGES, "11--15");
-        assertEquals(List.of(new IntegrityMessage("wrong entry type as proceedings has page numbers", entry, StandardField.PAGES)), checker.check(entry));
+        assertEquals(
+                List.of(new IntegrityMessage(
+                        "wrong entry type as proceedings has page numbers", entry, StandardField.PAGES)),
+                checker.check(entry));
     }
 }

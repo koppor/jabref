@@ -29,9 +29,8 @@ public class IsiImporterTest {
     private final IsiImporter importer = new IsiImporter();
 
     private static Stream<String> fileNames() throws IOException {
-        Predicate<String> fileName = name -> name.startsWith("IsiImporterTest")
-                && !name.contains("Empty")
-                && name.endsWith(FILE_ENDING);
+        Predicate<String> fileName =
+                name -> name.startsWith("IsiImporterTest") && !name.contains("Empty") && name.endsWith(FILE_ENDING);
         return ImporterTestEngine.getTestFiles(fileName).stream();
     }
 
@@ -62,8 +61,7 @@ public class IsiImporterTest {
 
     @Test
     public void testGetDescription() {
-        assertEquals("Importer for the ISI Web of Science, INSPEC and Medline format.",
-                importer.getDescription());
+        assertEquals("Importer for the ISI Web of Science, INSPEC and Medline format.", importer.getDescription());
     }
 
     @ParameterizedTest
@@ -125,12 +123,14 @@ public class IsiImporterTest {
 
     @Test
     public void testImportEntries1() throws IOException, URISyntaxException {
-        Path file = Path.of(IsiImporterTest.class.getResource("IsiImporterTest1.isi").toURI());
+        Path file = Path.of(
+                IsiImporterTest.class.getResource("IsiImporterTest1.isi").toURI());
         List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
         BibEntry entry = entries.get(0);
 
         assertEquals(1, entries.size());
-        assertEquals(Optional.of("Optical properties of MgO doped LiNbO$_3$ single crystals"),
+        assertEquals(
+                Optional.of("Optical properties of MgO doped LiNbO$_3$ single crystals"),
                 entry.getField(StandardField.TITLE));
         assertEquals(
                 Optional.of(
@@ -146,12 +146,14 @@ public class IsiImporterTest {
 
     @Test
     public void testImportEntries2() throws IOException, URISyntaxException {
-        Path file = Path.of(IsiImporterTest.class.getResource("IsiImporterTest2.isi").toURI());
+        Path file = Path.of(
+                IsiImporterTest.class.getResource("IsiImporterTest2.isi").toURI());
         List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
         BibEntry entry = entries.get(0);
 
         assertEquals(3, entries.size());
-        assertEquals(Optional.of("Optical properties of MgO doped LiNbO$_3$ single crystals"),
+        assertEquals(
+                Optional.of("Optical properties of MgO doped LiNbO$_3$ single crystals"),
                 entry.getField(StandardField.TITLE));
         assertEquals(StandardEntryType.Misc, entry.getType());
         assertEquals(Optional.of("Optical Materials"), entry.getField(StandardField.JOURNAL));
@@ -163,14 +165,16 @@ public class IsiImporterTest {
 
     @Test
     public void testImportEntriesINSPEC() throws IOException, URISyntaxException {
-        Path file = Path.of(IsiImporterTest.class.getResource("IsiImporterTestInspec.isi").toURI());
+        Path file = Path.of(
+                IsiImporterTest.class.getResource("IsiImporterTestInspec.isi").toURI());
         List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
 
         BibEntry first = entries.get(0);
         BibEntry second = entries.get(1);
 
-        if (first.getField(StandardField.TITLE).equals(
-                Optional.of("Optical and photoelectric spectroscopy of photorefractive Sn$_2$P$_2$S$_6$ crystals"))) {
+        if (first.getField(StandardField.TITLE)
+                .equals(Optional.of(
+                        "Optical and photoelectric spectroscopy of photorefractive Sn$_2$P$_2$S$_6$ crystals"))) {
             BibEntry tmp = first;
             first = second;
             second = tmp;
@@ -183,7 +187,8 @@ public class IsiImporterTest {
                 first.getField(StandardField.TITLE));
         assertEquals(StandardEntryType.Article, first.getType());
 
-        assertEquals(Optional.of("Degl'Innocenti, R. and Guarino, A. and Poberaj, G. and Gunter, P."),
+        assertEquals(
+                Optional.of("Degl'Innocenti, R. and Guarino, A. and Poberaj, G. and Gunter, P."),
                 first.getField(StandardField.AUTHOR));
         assertEquals(Optional.of("Applied Physics Letters"), first.getField(StandardField.JOURNAL));
         assertEquals(Optional.of("2006"), first.getField(StandardField.YEAR));
@@ -200,7 +205,8 @@ public class IsiImporterTest {
 
     @Test
     public void testImportEntriesWOS() throws IOException, URISyntaxException {
-        Path file = Path.of(IsiImporterTest.class.getResource("IsiImporterTestWOS.isi").toURI());
+        Path file = Path.of(
+                IsiImporterTest.class.getResource("IsiImporterTestWOS.isi").toURI());
         List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
 
         BibEntry first = entries.get(0);
@@ -208,9 +214,11 @@ public class IsiImporterTest {
 
         assertEquals(2, entries.size());
 
-        assertEquals(Optional.of("Optical and photoelectric spectroscopy of photorefractive Sn2P2S6 crystals"),
+        assertEquals(
+                Optional.of("Optical and photoelectric spectroscopy of photorefractive Sn2P2S6 crystals"),
                 first.getField(StandardField.TITLE));
-        assertEquals(Optional.of("Optical waveguides in Sn2P2S6 by low fluence MeV He+ ion implantation"),
+        assertEquals(
+                Optional.of("Optical waveguides in Sn2P2S6 by low fluence MeV He+ ion implantation"),
                 second.getField(StandardField.TITLE));
 
         assertEquals(Optional.of("Journal of Physics-Condensed Matter"), first.getField(StandardField.JOURNAL));
@@ -263,8 +271,10 @@ public class IsiImporterTest {
         assertEquals(1, entries.size());
         assertEquals(StandardEntryType.Article, entry.getType());
         assertEquals(Optional.of("Geoscience and Remote Sensing Letters, IEEE"), entry.getField(StandardField.JOURNAL));
-        assertEquals(Optional.of("Improving Urban Road Extraction in High-Resolution "
-                        + "Images Exploiting Directional Filtering, Perceptual " + "Grouping, and Simple Topological Concepts"),
+        assertEquals(
+                Optional.of("Improving Urban Road Extraction in High-Resolution "
+                        + "Images Exploiting Directional Filtering, Perceptual "
+                        + "Grouping, and Simple Topological Concepts"),
                 entry.getField(StandardField.TITLE));
         assertEquals(Optional.of("4"), entry.getField(StandardField.VOLUME));
         assertEquals(Optional.of("3"), entry.getField(StandardField.NUMBER));
@@ -272,7 +282,8 @@ public class IsiImporterTest {
         assertEquals(Optional.of("387--391"), entry.getField(StandardField.PAGES));
         assertEquals(Optional.of("Gamba, P. and Dell'Acqua, F. and Lisini, G."), entry.getField(StandardField.AUTHOR));
         assertEquals(Optional.of("2006"), entry.getField(StandardField.YEAR));
-        assertEquals(Optional.of("Perceptual grouping, street extraction, urban remote sensing"),
+        assertEquals(
+                Optional.of("Perceptual grouping, street extraction, urban remote sensing"),
                 entry.getField(StandardField.KEYWORDS));
         assertEquals(Optional.of("Lorem ipsum abstract"), entry.getField(StandardField.ABSTRACT));
     }
@@ -296,14 +307,16 @@ public class IsiImporterTest {
         assertEquals(Optional.of("387--391"), entry.getField(StandardField.PAGES));
         assertEquals(Optional.of("Gamba, P. and Dell'Acqua, F. and Lisini, G."), entry.getField(StandardField.AUTHOR));
         assertEquals(Optional.of("2006"), entry.getField(StandardField.YEAR));
-        assertEquals(Optional.of("Perceptual grouping, street extraction, urban remote sensing"),
+        assertEquals(
+                Optional.of("Perceptual grouping, street extraction, urban remote sensing"),
                 entry.getField(StandardField.KEYWORDS));
         assertEquals(Optional.of("Lorem ipsum abstract"), entry.getField(StandardField.ABSTRACT));
     }
 
     @Test
     public void testImportEntriesMedline() throws IOException, URISyntaxException {
-        Path file = Path.of(IsiImporterTest.class.getResource("IsiImporterTestMedline.isi").toURI());
+        Path file = Path.of(
+                IsiImporterTest.class.getResource("IsiImporterTestMedline.isi").toURI());
         List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
 
         BibEntry first = entries.get(0);
@@ -339,7 +352,8 @@ public class IsiImporterTest {
 
     @Test
     public void testImportEntriesEmpty() throws IOException, URISyntaxException {
-        Path file = Path.of(IsiImporterTest.class.getResource("IsiImporterTestEmpty.isi").toURI());
+        Path file = Path.of(
+                IsiImporterTest.class.getResource("IsiImporterTestEmpty.isi").toURI());
 
         List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
 

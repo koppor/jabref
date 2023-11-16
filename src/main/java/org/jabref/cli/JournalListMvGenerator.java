@@ -36,16 +36,15 @@ public class JournalListMvGenerator {
                 "journal_abbreviations_webofscience-dotless.csv",
 
                 // we currently do not have good support for BibTeX strings
-                "journal_abbreviations_ieee_strings.csv"
-                );
+                "journal_abbreviations_ieee_strings.csv");
 
         Files.createDirectories(journalListMvFile.getParent());
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(abbreviationsDirectory, "*.csv");
-             MVStore store = new MVStore.Builder().
-                fileName(journalListMvFile.toString()).
-                compressHigh().
-                open()) {
+                MVStore store = new MVStore.Builder()
+                        .fileName(journalListMvFile.toString())
+                        .compressHigh()
+                        .open()) {
             MVMap<String, Abbreviation> fullToAbbreviation = store.openMap("FullToAbbreviation");
             stream.forEach(Unchecked.consumer(path -> {
                 String fileName = path.getFileName().toString();
@@ -55,9 +54,9 @@ public class JournalListMvGenerator {
                     System.out.println(" ignored");
                 } else {
                     System.out.println("...");
-                    Collection<Abbreviation> abbreviations = JournalAbbreviationLoader.readAbbreviationsFromCsvFile(path);
-                    Map<String, Abbreviation> abbreviationMap = abbreviations
-                            .stream()
+                    Collection<Abbreviation> abbreviations =
+                            JournalAbbreviationLoader.readAbbreviationsFromCsvFile(path);
+                    Map<String, Abbreviation> abbreviationMap = abbreviations.stream()
                             .collect(Collectors.toMap(
                                     Abbreviation::getName,
                                     abbreviation -> abbreviation,

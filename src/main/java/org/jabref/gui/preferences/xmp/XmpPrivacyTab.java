@@ -26,19 +26,28 @@ import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
 
 public class XmpPrivacyTab extends AbstractPreferenceTabView<XmpPrivacyTabViewModel> implements PreferencesTab {
 
-    @FXML private CheckBox enableXmpFilter;
-    @FXML private TableView<Field> filterList;
-    @FXML private TableColumn<Field, Field> fieldColumn;
-    @FXML private TableColumn<Field, Field> actionsColumn;
-    @FXML private ComboBox<Field> addFieldName;
-    @FXML private Button addField;
+    @FXML
+    private CheckBox enableXmpFilter;
+
+    @FXML
+    private TableView<Field> filterList;
+
+    @FXML
+    private TableColumn<Field, Field> fieldColumn;
+
+    @FXML
+    private TableColumn<Field, Field> actionsColumn;
+
+    @FXML
+    private ComboBox<Field> addFieldName;
+
+    @FXML
+    private Button addField;
 
     private final ControlsFxVisualizer validationVisualizer = new ControlsFxVisualizer();
 
     public XmpPrivacyTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -67,8 +76,8 @@ public class XmpPrivacyTab extends AbstractPreferenceTabView<XmpPrivacyTabViewMo
         new ValueTableCellFactory<Field, Field>()
                 .withGraphic(item -> IconTheme.JabRefIcons.DELETE_ENTRY.getGraphicNode())
                 .withTooltip(item -> Localization.lang("Remove") + " " + item.getName())
-                .withOnMouseClickedEvent(
-                        item -> evt -> viewModel.removeFilter(filterList.getFocusModel().getFocusedItem()))
+                .withOnMouseClickedEvent(item ->
+                        evt -> viewModel.removeFilter(filterList.getFocusModel().getFocusedItem()))
                 .install(actionsColumn);
 
         filterList.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
@@ -95,7 +104,8 @@ public class XmpPrivacyTab extends AbstractPreferenceTabView<XmpPrivacyTabViewMo
         });
 
         validationVisualizer.setDecoration(new IconValidationDecorator());
-        Platform.runLater(() -> validationVisualizer.initVisualization(viewModel.xmpFilterListValidationStatus(), filterList));
+        Platform.runLater(
+                () -> validationVisualizer.initVisualization(viewModel.xmpFilterListValidationStatus(), filterList));
     }
 
     public void addField() {

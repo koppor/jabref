@@ -21,12 +21,13 @@ public class SimpleEditor extends HBox implements FieldEditorFX {
     private final SimpleEditorViewModel viewModel;
     private final TextInputControl textInput;
 
-    public SimpleEditor(final Field field,
-                        final SuggestionProvider<?> suggestionProvider,
-                        final FieldCheckers fieldCheckers,
-                        final PreferencesService preferences,
-                        final boolean isMultiLine,
-                        final UndoManager undoManager) {
+    public SimpleEditor(
+            final Field field,
+            final SuggestionProvider<?> suggestionProvider,
+            final FieldCheckers fieldCheckers,
+            final PreferencesService preferences,
+            final boolean isMultiLine,
+            final UndoManager undoManager) {
         this.viewModel = new SimpleEditorViewModel(field, suggestionProvider, fieldCheckers, undoManager);
 
         textInput = isMultiLine ? new EditorTextArea() : new EditorTextField();
@@ -37,21 +38,25 @@ public class SimpleEditor extends HBox implements FieldEditorFX {
         this.getChildren().add(textInput);
 
         if (!isMultiLine) {
-            AutoCompletionTextInputBinding<?> autoCompleter = AutoCompletionTextInputBinding.autoComplete(textInput, viewModel::complete, viewModel.getAutoCompletionStrategy());
+            AutoCompletionTextInputBinding<?> autoCompleter = AutoCompletionTextInputBinding.autoComplete(
+                    textInput, viewModel::complete, viewModel.getAutoCompletionStrategy());
             if (suggestionProvider instanceof ContentSelectorSuggestionProvider) {
-                // If content selector values are present, then we want to show the auto complete suggestions immediately on focus
+                // If content selector values are present, then we want to show the auto complete suggestions
+                // immediately on focus
                 autoCompleter.setShowOnFocus(true);
             }
         }
 
-        new EditorValidator(preferences).configureValidation(viewModel.getFieldValidator().getValidationStatus(), textInput);
+        new EditorValidator(preferences)
+                .configureValidation(viewModel.getFieldValidator().getValidationStatus(), textInput);
     }
 
-    public SimpleEditor(final Field field,
-                        final SuggestionProvider<?> suggestionProvider,
-                        final FieldCheckers fieldCheckers,
-                        final PreferencesService preferences,
-                        UndoManager undoManager) {
+    public SimpleEditor(
+            final Field field,
+            final SuggestionProvider<?> suggestionProvider,
+            final FieldCheckers fieldCheckers,
+            final PreferencesService preferences,
+            UndoManager undoManager) {
         this(field, suggestionProvider, fieldCheckers, preferences, false, undoManager);
     }
 

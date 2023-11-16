@@ -35,46 +35,88 @@ import jakarta.inject.Inject;
 
 public class GeneralTab extends AbstractPreferenceTabView<GeneralTabViewModel> implements PreferencesTab {
 
-    @FXML private ComboBox<Language> language;
-    @FXML private ComboBox<ThemeTypes> theme;
-    @FXML private CheckBox themeSyncOs;
-    @FXML private TextField customThemePath;
-    @FXML private Button customThemeBrowse;
-    @FXML private CheckBox fontOverride;
-    @FXML private Spinner<Integer> fontSize;
-    @FXML private CheckBox openLastStartup;
-    @FXML private CheckBox showAdvancedHints;
-    @FXML private CheckBox inspectionWarningDuplicate;
-    @FXML private CheckBox confirmDelete;
-    @FXML private CheckBox collectTelemetry;
-    @FXML private ComboBox<BibDatabaseMode> biblatexMode;
-    @FXML private CheckBox alwaysReformatBib;
-    @FXML private CheckBox autosaveLocalLibraries;
-    @FXML private Button autosaveLocalLibrariesHelp;
-    @FXML private CheckBox createBackup;
-    @FXML private TextField backupDirectory;
-    @FXML private CheckBox remoteServer;
-    @FXML private TextField remotePort;
-    @FXML private Button remoteHelp;
-    @Inject private FileUpdateMonitor fileUpdateMonitor;
-    @Inject private BibEntryTypesManager entryTypesManager;
+    @FXML
+    private ComboBox<Language> language;
+
+    @FXML
+    private ComboBox<ThemeTypes> theme;
+
+    @FXML
+    private CheckBox themeSyncOs;
+
+    @FXML
+    private TextField customThemePath;
+
+    @FXML
+    private Button customThemeBrowse;
+
+    @FXML
+    private CheckBox fontOverride;
+
+    @FXML
+    private Spinner<Integer> fontSize;
+
+    @FXML
+    private CheckBox openLastStartup;
+
+    @FXML
+    private CheckBox showAdvancedHints;
+
+    @FXML
+    private CheckBox inspectionWarningDuplicate;
+
+    @FXML
+    private CheckBox confirmDelete;
+
+    @FXML
+    private CheckBox collectTelemetry;
+
+    @FXML
+    private ComboBox<BibDatabaseMode> biblatexMode;
+
+    @FXML
+    private CheckBox alwaysReformatBib;
+
+    @FXML
+    private CheckBox autosaveLocalLibraries;
+
+    @FXML
+    private Button autosaveLocalLibrariesHelp;
+
+    @FXML
+    private CheckBox createBackup;
+
+    @FXML
+    private TextField backupDirectory;
+
+    @FXML
+    private CheckBox remoteServer;
+
+    @FXML
+    private TextField remotePort;
+
+    @FXML
+    private Button remoteHelp;
+
+    @Inject
+    private FileUpdateMonitor fileUpdateMonitor;
+
+    @Inject
+    private BibEntryTypesManager entryTypesManager;
 
     private final ControlsFxVisualizer validationVisualizer = new ControlsFxVisualizer();
 
     // The fontSizeFormatter formats the input given to the fontSize spinner so that non valid values cannot be entered.
-    private final TextFormatter<Integer> fontSizeFormatter = new TextFormatter<>(new IntegerStringConverter(), 9,
-            c -> {
-                if (Pattern.matches("\\d*", c.getText())) {
-                    return c;
-                }
-                c.setText("0");
-                return c;
-            });
+    private final TextFormatter<Integer> fontSizeFormatter = new TextFormatter<>(new IntegerStringConverter(), 9, c -> {
+        if (Pattern.matches("\\d*", c.getText())) {
+            return c;
+        }
+        c.setText("0");
+        return c;
+    });
 
     public GeneralTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -83,7 +125,8 @@ public class GeneralTab extends AbstractPreferenceTabView<GeneralTabViewModel> i
     }
 
     public void initialize() {
-        this.viewModel = new GeneralTabViewModel(dialogService, preferencesService, fileUpdateMonitor, entryTypesManager);
+        this.viewModel =
+                new GeneralTabViewModel(dialogService, preferencesService, fileUpdateMonitor, entryTypesManager);
 
         new ViewModelListCellFactory<Language>()
                 .withText(Language::getDisplayName)
@@ -131,8 +174,14 @@ public class GeneralTab extends AbstractPreferenceTabView<GeneralTabViewModel> i
         alwaysReformatBib.selectedProperty().bindBidirectional(viewModel.alwaysReformatBibProperty());
         autosaveLocalLibraries.selectedProperty().bindBidirectional(viewModel.autosaveLocalLibrariesProperty());
         ActionFactory actionFactory = new ActionFactory(preferencesService.getKeyBindingRepository());
-        actionFactory.configureIconButton(StandardActions.HELP, new HelpAction(HelpFile.AUTOSAVE, dialogService, preferencesService.getFilePreferences()), autosaveLocalLibrariesHelp);
-        actionFactory.configureIconButton(StandardActions.HELP, new HelpAction(HelpFile.REMOTE, dialogService, preferencesService.getFilePreferences()), remoteHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP,
+                new HelpAction(HelpFile.AUTOSAVE, dialogService, preferencesService.getFilePreferences()),
+                autosaveLocalLibrariesHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP,
+                new HelpAction(HelpFile.REMOTE, dialogService, preferencesService.getFilePreferences()),
+                remoteHelp);
 
         createBackup.selectedProperty().bindBidirectional(viewModel.createBackupProperty());
         backupDirectory.textProperty().bindBidirectional(viewModel.backupDirectoryProperty());

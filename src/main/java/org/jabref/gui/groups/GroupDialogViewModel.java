@@ -83,7 +83,8 @@ public class GroupDialogViewModel {
     private final BooleanProperty keywordGroupRegexProperty = new SimpleBooleanProperty();
 
     private final StringProperty searchGroupSearchTermProperty = new SimpleStringProperty("");
-    private final ObjectProperty<EnumSet<SearchFlags>> searchFlagsProperty = new SimpleObjectProperty<>(EnumSet.noneOf(SearchFlags.class));
+    private final ObjectProperty<EnumSet<SearchFlags>> searchFlagsProperty =
+            new SimpleObjectProperty<>(EnumSet.noneOf(SearchFlags.class));
 
     private final BooleanProperty autoGroupKeywordsOptionProperty = new SimpleBooleanProperty();
     private final StringProperty autoGroupKeywordsFieldProperty = new SimpleStringProperty("");
@@ -111,11 +112,12 @@ public class GroupDialogViewModel {
     private final AbstractGroup editedGroup;
     private final FileUpdateMonitor fileUpdateMonitor;
 
-    public GroupDialogViewModel(DialogService dialogService,
-                                BibDatabaseContext currentDatabase,
-                                PreferencesService preferencesService,
-                                AbstractGroup editedGroup,
-                                FileUpdateMonitor fileUpdateMonitor) {
+    public GroupDialogViewModel(
+            DialogService dialogService,
+            BibDatabaseContext currentDatabase,
+            PreferencesService preferencesService,
+            AbstractGroup editedGroup,
+            FileUpdateMonitor fileUpdateMonitor) {
         this.dialogService = dialogService;
         this.preferencesService = preferencesService;
         this.currentDatabase = currentDatabase;
@@ -136,19 +138,23 @@ public class GroupDialogViewModel {
 
         nameContainsDelimiterValidator = new FunctionBasedValidator<>(
                 nameProperty,
-                name -> !name.contains(Character.toString(preferencesService.getBibEntryPreferences().getKeywordSeparator())),
-                ValidationMessage.warning(
-                        Localization.lang(
-                                "The group name contains the keyword separator \"%0\" and thus probably does not work as expected.",
-                                Character.toString(preferencesService.getBibEntryPreferences().getKeywordSeparator())
-                        )));
+                name -> !name.contains(Character.toString(
+                        preferencesService.getBibEntryPreferences().getKeywordSeparator())),
+                ValidationMessage.warning(Localization.lang(
+                        "The group name contains the keyword separator \"%0\" and thus probably does not work as expected.",
+                        Character.toString(
+                                preferencesService.getBibEntryPreferences().getKeywordSeparator()))));
 
         sameNameValidator = new FunctionBasedValidator<>(
                 nameProperty,
                 name -> {
-                    Optional<GroupTreeNode> rootGroup = currentDatabase.getMetaData().getGroups();
+                    Optional<GroupTreeNode> rootGroup =
+                            currentDatabase.getMetaData().getGroups();
                     if (rootGroup.isPresent()) {
-                        int groupsWithSameName = rootGroup.get().findChildrenSatisfying(group -> group.getName().equals(name)).size();
+                        int groupsWithSameName = rootGroup
+                                .get()
+                                .findChildrenSatisfying(group -> group.getName().equals(name))
+                                .size();
                         if ((editedGroup == null) && (groupsWithSameName > 0)) {
                             // New group but there is already one group with the same name
                             return false;
@@ -159,11 +165,8 @@ public class GroupDialogViewModel {
                     }
                     return true;
                 },
-                ValidationMessage.warning(
-                    Localization.lang("There exists already a group with the same name.") + "\n" +
-                    Localization.lang("If you use it, it will inherit all entries from this other group.")
-                )
-        );
+                ValidationMessage.warning(Localization.lang("There exists already a group with the same name.") + "\n"
+                        + Localization.lang("If you use it, it will inherit all entries from this other group.")));
 
         keywordRegexValidator = new FunctionBasedValidator<>(
                 keywordGroupSearchTermProperty,
@@ -183,7 +186,8 @@ public class GroupDialogViewModel {
                         return false;
                     }
                 },
-                ValidationMessage.error(String.format("%s > %n %s %n %n %s",
+                ValidationMessage.error(String.format(
+                        "%s > %n %s %n %n %s",
                         Localization.lang("Searching for a keyword"),
                         Localization.lang("Keywords"),
                         Localization.lang("Invalid regular expression."))));
@@ -196,11 +200,11 @@ public class GroupDialogViewModel {
         keywordSearchTermEmptyValidator = new FunctionBasedValidator<>(
                 keywordGroupSearchTermProperty,
                 input -> !StringUtil.isNullOrEmpty(input),
-                ValidationMessage.error(String.format("%s > %n %s %n %n %s",
+                ValidationMessage.error(String.format(
+                        "%s > %n %s %n %n %s",
                         Localization.lang("Searching for a keyword"),
                         Localization.lang("Keywords"),
-                        Localization.lang("Search term is empty.")
-                )));
+                        Localization.lang("Search term is empty."))));
 
         searchRegexValidator = new FunctionBasedValidator<>(
                 searchGroupSearchTermProperty,
@@ -221,16 +225,17 @@ public class GroupDialogViewModel {
                         return false;
                     }
                 },
-                ValidationMessage.error(String.format("%s > %n %s",
+                ValidationMessage.error(String.format(
+                        "%s > %n %s",
                         Localization.lang("Free search expression"),
                         Localization.lang("Invalid regular expression."))));
 
         searchSearchTermEmptyValidator = new FunctionBasedValidator<>(
                 searchGroupSearchTermProperty,
                 input -> !StringUtil.isNullOrEmpty(input),
-                ValidationMessage.error(String.format("%s > %n %s",
-                        Localization.lang("Free search expression"),
-                        Localization.lang("Search term is empty."))));
+                ValidationMessage.error(String.format(
+                        "%s > %n %s",
+                        Localization.lang("Free search expression"), Localization.lang("Search term is empty."))));
 
         texGroupFilePathValidator = new FunctionBasedValidator<>(
                 texGroupFilePathProperty,
@@ -259,9 +264,11 @@ public class GroupDialogViewModel {
 
         typeKeywordsProperty.addListener((obs, _oldValue, isSelected) -> {
             if (isSelected) {
-                validator.addValidators(keywordFieldEmptyValidator, keywordRegexValidator, keywordSearchTermEmptyValidator);
+                validator.addValidators(
+                        keywordFieldEmptyValidator, keywordRegexValidator, keywordSearchTermEmptyValidator);
             } else {
-                validator.removeValidators(keywordFieldEmptyValidator, keywordRegexValidator, keywordSearchTermEmptyValidator);
+                validator.removeValidators(
+                        keywordFieldEmptyValidator, keywordRegexValidator, keywordSearchTermEmptyValidator);
             }
         });
 
@@ -273,9 +280,7 @@ public class GroupDialogViewModel {
             }
         });
 
-        validator.addValidators(nameValidator,
-                nameContainsDelimiterValidator,
-                sameNameValidator);
+        validator.addValidators(nameValidator, nameContainsDelimiterValidator, sameNameValidator);
     }
 
     /**
@@ -285,14 +290,17 @@ public class GroupDialogViewModel {
      * @return an absolute path if LatexFileDirectory exists; otherwise, returns input
      */
     private Path getAbsoluteTexGroupPath(String input) {
-        Optional<Path> latexFileDirectory = currentDatabase.getMetaData().getLatexFileDirectory(preferencesService.getFilePreferences().getUserAndHost());
+        Optional<Path> latexFileDirectory = currentDatabase
+                .getMetaData()
+                .getLatexFileDirectory(preferencesService.getFilePreferences().getUserAndHost());
         return latexFileDirectory.map(path -> path.resolve(input)).orElse(Path.of(input));
     }
 
     public void validationHandler(Event event) {
         ValidationStatus validationStatus = validator.getValidationStatus();
         if (validationStatus.getHighestMessage().isPresent()) {
-            dialogService.showErrorDialogAndWait(validationStatus.getHighestMessage().get().getMessage());
+            dialogService.showErrorDialogAndWait(
+                    validationStatus.getHighestMessage().get().getMessage());
             // consume the event to prevent the dialog to close
             event.consume();
         }
@@ -316,14 +324,16 @@ public class GroupDialogViewModel {
                     resultingGroup = new RegexKeywordGroup(
                             groupName,
                             groupHierarchySelectedProperty.getValue(),
-                            FieldFactory.parseField(keywordGroupSearchFieldProperty.getValue().trim()),
+                            FieldFactory.parseField(
+                                    keywordGroupSearchFieldProperty.getValue().trim()),
                             keywordGroupSearchTermProperty.getValue().trim(),
                             keywordGroupCaseSensitiveProperty.getValue());
                 } else {
                     resultingGroup = new WordKeywordGroup(
                             groupName,
                             groupHierarchySelectedProperty.getValue(),
-                            FieldFactory.parseField(keywordGroupSearchFieldProperty.getValue().trim()),
+                            FieldFactory.parseField(
+                                    keywordGroupSearchFieldProperty.getValue().trim()),
                             keywordGroupSearchTermProperty.getValue().trim(),
                             keywordGroupCaseSensitiveProperty.getValue(),
                             preferencesService.getBibEntryPreferences().getKeywordSeparator(),
@@ -343,22 +353,29 @@ public class GroupDialogViewModel {
                     autoGroupKeywordsOptionProperty.setValue(Boolean.TRUE);
                     // Modify values for delimiters if user provided customized values
                     if (!autoGroupKeywordsDelimiterProperty.getValue().isEmpty()) {
-                        delimiter = autoGroupKeywordsDelimiterProperty.getValue().charAt(0);
+                        delimiter =
+                                autoGroupKeywordsDelimiterProperty.getValue().charAt(0);
                     }
-                    if (!autoGroupKeywordsHierarchicalDelimiterProperty.getValue().isEmpty()) {
-                        hierarDelimiter = autoGroupKeywordsHierarchicalDelimiterProperty.getValue().charAt(0);
+                    if (!autoGroupKeywordsHierarchicalDelimiterProperty
+                            .getValue()
+                            .isEmpty()) {
+                        hierarDelimiter = autoGroupKeywordsHierarchicalDelimiterProperty
+                                .getValue()
+                                .charAt(0);
                     }
                     resultingGroup = new AutomaticKeywordGroup(
                             groupName,
                             groupHierarchySelectedProperty.getValue(),
-                            FieldFactory.parseField(autoGroupKeywordsFieldProperty.getValue().trim()),
+                            FieldFactory.parseField(
+                                    autoGroupKeywordsFieldProperty.getValue().trim()),
                             delimiter,
                             hierarDelimiter);
                 } else {
                     resultingGroup = new AutomaticPersonsGroup(
                             groupName,
                             groupHierarchySelectedProperty.getValue(),
-                            FieldFactory.parseField(autoGroupPersonsFieldProperty.getValue().trim()));
+                            FieldFactory.parseField(
+                                    autoGroupPersonsFieldProperty.getValue().trim()));
                 }
             } else if (typeTexProperty.getValue()) {
                 resultingGroup = TexGroup.create(
@@ -371,7 +388,9 @@ public class GroupDialogViewModel {
             }
 
             if (resultingGroup != null) {
-                preferencesService.getGroupsPreferences().setDefaultHierarchicalContext(groupHierarchySelectedProperty.getValue());
+                preferencesService
+                        .getGroupsPreferences()
+                        .setDefaultHierarchicalContext(groupHierarchySelectedProperty.getValue());
 
                 resultingGroup.setColor(colorProperty.getValue());
                 resultingGroup.setDescription(descriptionProperty.getValue());
@@ -393,7 +412,8 @@ public class GroupDialogViewModel {
             // creating new group -> defaults!
             colorProperty.setValue(IconTheme.getDefaultGroupColor());
             typeExplicitProperty.setValue(true);
-            groupHierarchySelectedProperty.setValue(preferencesService.getGroupsPreferences().getDefaultHierarchicalContext());
+            groupHierarchySelectedProperty.setValue(
+                    preferencesService.getGroupsPreferences().getDefaultHierarchicalContext());
             autoGroupKeywordsOptionProperty.setValue(Boolean.TRUE);
         } else {
             nameProperty.setValue(editedGroup.getName());
@@ -432,8 +452,10 @@ public class GroupDialogViewModel {
                 if (editedGroup.getClass() == AutomaticKeywordGroup.class) {
                     AutomaticKeywordGroup group = (AutomaticKeywordGroup) editedGroup;
                     autoGroupKeywordsOptionProperty.setValue(Boolean.TRUE);
-                    autoGroupKeywordsDelimiterProperty.setValue(group.getKeywordDelimiter().toString());
-                    autoGroupKeywordsHierarchicalDelimiterProperty.setValue(group.getKeywordHierarchicalDelimiter().toString());
+                    autoGroupKeywordsDelimiterProperty.setValue(
+                            group.getKeywordDelimiter().toString());
+                    autoGroupKeywordsHierarchicalDelimiterProperty.setValue(
+                            group.getKeywordHierarchicalDelimiter().toString());
                     autoGroupKeywordsFieldProperty.setValue(group.getField().getName());
                 } else if (editedGroup.getClass() == AutomaticPersonsGroup.class) {
                     AutomaticPersonsGroup group = (AutomaticPersonsGroup) editedGroup;
@@ -453,13 +475,19 @@ public class GroupDialogViewModel {
         FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
                 .addExtensionFilter(StandardFileType.AUX)
                 .withDefaultExtension(StandardFileType.AUX)
-                .withInitialDirectory(currentDatabase.getMetaData()
-                                                     .getLatexFileDirectory(preferencesService.getFilePreferences().getUserAndHost())
-                                                     .orElse(FileUtil.getInitialDirectory(currentDatabase, preferencesService.getFilePreferences().getWorkingDirectory()))).build();
-        dialogService.showFileOpenDialog(fileDialogConfiguration)
-                     .ifPresent(file -> texGroupFilePathProperty.setValue(
-                             FileUtil.relativize(file.toAbsolutePath(), getFileDirectoriesAsPaths()).toString()
-                     ));
+                .withInitialDirectory(currentDatabase
+                        .getMetaData()
+                        .getLatexFileDirectory(
+                                preferencesService.getFilePreferences().getUserAndHost())
+                        .orElse(FileUtil.getInitialDirectory(
+                                currentDatabase,
+                                preferencesService.getFilePreferences().getWorkingDirectory())))
+                .build();
+        dialogService
+                .showFileOpenDialog(fileDialogConfiguration)
+                .ifPresent(file -> texGroupFilePathProperty.setValue(
+                        FileUtil.relativize(file.toAbsolutePath(), getFileDirectoriesAsPaths())
+                                .toString()));
     }
 
     public void openHelpPage() {
@@ -469,7 +497,8 @@ public class GroupDialogViewModel {
     private List<Path> getFileDirectoriesAsPaths() {
         List<Path> fileDirs = new ArrayList<>();
         MetaData metaData = currentDatabase.getMetaData();
-        metaData.getLatexFileDirectory(preferencesService.getFilePreferences().getUserAndHost()).ifPresent(fileDirs::add);
+        metaData.getLatexFileDirectory(preferencesService.getFilePreferences().getUserAndHost())
+                .ifPresent(fileDirs::add);
 
         return fileDirs;
     }

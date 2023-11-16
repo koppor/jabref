@@ -38,8 +38,7 @@ public class PreferencesMigrations {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreferencesMigrations.class);
 
-    private PreferencesMigrations() {
-    }
+    private PreferencesMigrations() {}
 
     /**
      * Perform checks and changes for users with a preference set from an older JabRef version.
@@ -170,17 +169,16 @@ public class PreferencesMigrations {
     /**
      * Migrate all customized entry types from versions <=3.7
      */
-    private static void upgradeStoredBibEntryTypes(JabRefPreferences prefs, Preferences mainPrefsNode, BibEntryTypesManager entryTypesManager) {
+    private static void upgradeStoredBibEntryTypes(
+            JabRefPreferences prefs, Preferences mainPrefsNode, BibEntryTypesManager entryTypesManager) {
         try {
-            if (mainPrefsNode.nodeExists(JabRefPreferences.CUSTOMIZED_BIBTEX_TYPES) ||
-                    mainPrefsNode.nodeExists(JabRefPreferences.CUSTOMIZED_BIBLATEX_TYPES)) {
+            if (mainPrefsNode.nodeExists(JabRefPreferences.CUSTOMIZED_BIBTEX_TYPES)
+                    || mainPrefsNode.nodeExists(JabRefPreferences.CUSTOMIZED_BIBLATEX_TYPES)) {
                 // skip further processing as prefs already have been migrated
             } else {
                 LOGGER.info("Migrating old custom entry types.");
                 CustomEntryTypePreferenceMigration.upgradeStoredBibEntryTypes(
-                        prefs.getLibraryPreferences().getDefaultBibDatabaseMode(),
-                        prefs,
-                        entryTypesManager);
+                        prefs.getLibraryPreferences().getDefaultBibDatabaseMode(), prefs, entryTypesManager);
             }
         } catch (BackingStoreException ex) {
             LOGGER.error("Migrating old custom entry types failed.", ex);
@@ -231,26 +229,25 @@ public class PreferencesMigrations {
     /**
      * Migrate Import File Name and Directory name Patterns from versions <=4.0 to new BracketedPatterns
      */
-    private static void migrateFileImportPattern(String oldStylePattern, String newStylePattern,
-                                                 JabRefPreferences prefs, Preferences mainPrefsNode) {
+    private static void migrateFileImportPattern(
+            String oldStylePattern, String newStylePattern, JabRefPreferences prefs, Preferences mainPrefsNode) {
         String preferenceFileNamePattern = mainPrefsNode.get(JabRefPreferences.IMPORT_FILENAMEPATTERN, null);
 
-        if ((preferenceFileNamePattern != null) &&
-                oldStylePattern.equals(preferenceFileNamePattern)) {
+        if ((preferenceFileNamePattern != null) && oldStylePattern.equals(preferenceFileNamePattern)) {
             // Upgrade the old-style File Name pattern to new one:
             mainPrefsNode.put(JabRefPreferences.IMPORT_FILENAMEPATTERN, newStylePattern);
-            LOGGER.info("migrated old style " + JabRefPreferences.IMPORT_FILENAMEPATTERN +
-                    " value \"" + oldStylePattern + "\" to new value \"" +
-                    newStylePattern + "\" in the preference file");
+            LOGGER.info("migrated old style " + JabRefPreferences.IMPORT_FILENAMEPATTERN + " value \""
+                    + oldStylePattern + "\" to new value \"" + newStylePattern
+                    + "\" in the preference file");
 
             if (prefs.hasKey(JabRefPreferences.IMPORT_FILENAMEPATTERN)) {
                 // Update also the key in the current application settings, if necessary:
                 String fileNamePattern = prefs.get(JabRefPreferences.IMPORT_FILENAMEPATTERN);
                 if (oldStylePattern.equals(fileNamePattern)) {
                     prefs.put(JabRefPreferences.IMPORT_FILENAMEPATTERN, newStylePattern);
-                    LOGGER.info("migrated old style " + JabRefPreferences.IMPORT_FILENAMEPATTERN +
-                            " value \"" + oldStylePattern + "\" to new value \"" +
-                            newStylePattern + "\" in the running application");
+                    LOGGER.info("migrated old style " + JabRefPreferences.IMPORT_FILENAMEPATTERN + " value \""
+                            + oldStylePattern + "\" to new value \"" + newStylePattern
+                            + "\" in the running application");
                 }
             }
         }
@@ -260,13 +257,12 @@ public class PreferencesMigrations {
         // Migrate Import patterns
         // Check for prefs node for Version <= 4.0
         if (mainPrefsNode.get(JabRefPreferences.IMPORT_FILENAMEPATTERN, null) != null) {
-            String[] oldStylePatterns = new String[]{
-                    "\\bibtexkey",
-                    "\\bibtexkey\\begin{title} - \\format[RemoveBrackets]{\\title}\\end{title}"};
-            String[] newStylePatterns = new String[]{"[citationkey]",
-                    "[citationkey] - [title]"};
+            String[] oldStylePatterns = new String[] {
+                "\\bibtexkey", "\\bibtexkey\\begin{title} - \\format[RemoveBrackets]{\\title}\\end{title}"
+            };
+            String[] newStylePatterns = new String[] {"[citationkey]", "[citationkey] - [title]"};
 
-            String[] oldDisplayStylePattern = new String[]{"bibtexkey", "bibtexkey - title"};
+            String[] oldDisplayStylePattern = new String[] {"bibtexkey", "bibtexkey - title"};
 
             for (int i = 0; i < oldStylePatterns.length; i++) {
                 migrateFileImportPattern(oldStylePatterns[i], newStylePatterns[i], prefs, mainPrefsNode);
@@ -307,8 +303,8 @@ public class PreferencesMigrations {
             throws BackingStoreException {
         LOGGER.info("Found old Bibtex Key patterns which will be migrated to new version.");
 
-        GlobalCitationKeyPattern keyPattern = GlobalCitationKeyPattern.fromPattern(
-                prefs.get(JabRefPreferences.DEFAULT_CITATION_KEY_PATTERN));
+        GlobalCitationKeyPattern keyPattern =
+                GlobalCitationKeyPattern.fromPattern(prefs.get(JabRefPreferences.DEFAULT_CITATION_KEY_PATTERN));
         for (String key : oldPatternPrefs.keys()) {
             keyPattern.addCitationKeyPattern(EntryTypeFactory.parse(key), oldPatternPrefs.get(key, null));
         }
@@ -326,10 +322,15 @@ public class PreferencesMigrations {
      */
     protected static void upgradePreviewStyle(JabRefPreferences prefs) {
         String currentPreviewStyle = prefs.get(JabRefPreferences.PREVIEW_STYLE);
-        String migratedStyle = currentPreviewStyle.replace("\\begin{review}<BR><BR><b>Review: </b> \\format[HTMLChars]{\\review} \\end{review}", "\\begin{comment}<BR><BR><b>Comment: </b> \\format[HTMLChars]{\\comment} \\end{comment}")
-                                                  .replace("\\format[HTMLChars]{\\comment}", "\\format[Markdown,HTMLChars]{\\comment}")
-                                                  .replace("<b><i>\\bibtextype</i><a name=\"\\bibtexkey\">\\begin{bibtexkey} (\\bibtexkey)</a>", "<b><i>\\bibtextype</i><a name=\"\\citationkey\">\\begin{citationkey} (\\citationkey)</a>")
-                                                  .replace("\\end{bibtexkey}</b><br>__NEWLINE__", "\\end{citationkey}</b><br>__NEWLINE__");
+        String migratedStyle = currentPreviewStyle
+                .replace(
+                        "\\begin{review}<BR><BR><b>Review: </b> \\format[HTMLChars]{\\review} \\end{review}",
+                        "\\begin{comment}<BR><BR><b>Comment: </b> \\format[HTMLChars]{\\comment} \\end{comment}")
+                .replace("\\format[HTMLChars]{\\comment}", "\\format[Markdown,HTMLChars]{\\comment}")
+                .replace(
+                        "<b><i>\\bibtextype</i><a name=\"\\bibtexkey\">\\begin{bibtexkey} (\\bibtexkey)</a>",
+                        "<b><i>\\bibtextype</i><a name=\"\\citationkey\">\\begin{citationkey} (\\citationkey)</a>")
+                .replace("\\end{bibtexkey}</b><br>__NEWLINE__", "\\end{citationkey}</b><br>__NEWLINE__");
         prefs.put(JabRefPreferences.PREVIEW_STYLE, migratedStyle);
     }
 
@@ -348,18 +349,19 @@ public class PreferencesMigrations {
      */
     static void upgradeColumnPreferences(JabRefPreferences preferences) {
         List<String> columnNames = preferences.getStringList(JabRefPreferences.COLUMN_NAMES);
-        List<Double> columnWidths = preferences.getStringList(JabRefPreferences.COLUMN_WIDTHS)
-                                               .stream()
-                                               .map(string -> {
-                                                   try {
-                                                       return Double.parseDouble(string);
-                                                   } catch (NumberFormatException e) {
-                                                       return ColumnPreferences.DEFAULT_COLUMN_WIDTH;
-                                                   }
-                                               }).toList();
+        List<Double> columnWidths = preferences.getStringList(JabRefPreferences.COLUMN_WIDTHS).stream()
+                .map(string -> {
+                    try {
+                        return Double.parseDouble(string);
+                    } catch (NumberFormatException e) {
+                        return ColumnPreferences.DEFAULT_COLUMN_WIDTH;
+                    }
+                })
+                .toList();
 
         // "field:"
-        String normalFieldTypeString = MainTableColumnModel.Type.NORMALFIELD.getName() + MainTableColumnModel.COLUMNS_QUALIFIER_DELIMITER;
+        String normalFieldTypeString =
+                MainTableColumnModel.Type.NORMALFIELD.getName() + MainTableColumnModel.COLUMNS_QUALIFIER_DELIMITER;
 
         if (!columnNames.isEmpty() && columnNames.stream().noneMatch(name -> name.contains(normalFieldTypeString))) {
             List<MainTableColumnModel> columns = new ArrayList<>();
@@ -372,8 +374,8 @@ public class PreferencesMigrations {
                 double columnWidth = ColumnPreferences.DEFAULT_COLUMN_WIDTH;
 
                 MainTableColumnModel.Type type = SpecialField.fromName(name)
-                                                             .map(field -> MainTableColumnModel.Type.SPECIALFIELD)
-                                                             .orElse(MainTableColumnModel.Type.NORMALFIELD);
+                        .map(field -> MainTableColumnModel.Type.SPECIALFIELD)
+                        .orElse(MainTableColumnModel.Type.NORMALFIELD);
 
                 if (i < columnWidths.size()) {
                     columnWidth = columnWidths.get(i);
@@ -382,24 +384,25 @@ public class PreferencesMigrations {
                 columns.add(new MainTableColumnModel(type, name, columnWidth));
             }
 
-            preferences.putStringList(JabRefPreferences.COLUMN_NAMES,
-                    columns.stream()
-                           .map(MainTableColumnModel::getName)
-                           .collect(Collectors.toList()));
+            preferences.putStringList(
+                    JabRefPreferences.COLUMN_NAMES,
+                    columns.stream().map(MainTableColumnModel::getName).collect(Collectors.toList()));
 
-            preferences.putStringList(JabRefPreferences.COLUMN_WIDTHS,
+            preferences.putStringList(
+                    JabRefPreferences.COLUMN_WIDTHS,
                     columns.stream()
-                           .map(MainTableColumnModel::getWidth)
-                           .map(Double::intValue)
-                           .map(Object::toString)
-                           .collect(Collectors.toList()));
+                            .map(MainTableColumnModel::getWidth)
+                            .map(Double::intValue)
+                            .map(Object::toString)
+                            .collect(Collectors.toList()));
 
             // ASCENDING by default
-            preferences.putStringList(JabRefPreferences.COLUMN_SORT_TYPES,
+            preferences.putStringList(
+                    JabRefPreferences.COLUMN_SORT_TYPES,
                     columns.stream()
-                           .map(MainTableColumnModel::getSortType)
-                           .map(TableColumn.SortType::toString)
-                           .collect(Collectors.toList()));
+                            .map(MainTableColumnModel::getSortType)
+                            .map(TableColumn.SortType::toString)
+                            .collect(Collectors.toList()));
         }
     }
 
@@ -434,14 +437,15 @@ public class PreferencesMigrations {
     static void restoreVariablesForBackwardCompatibility(JabRefPreferences preferences) {
         List<String> oldColumnNames = preferences.getStringList(JabRefPreferences.COLUMN_NAMES);
         List<String> fieldColumnNames = oldColumnNames.stream()
-                                                      .filter(columnName -> columnName.startsWith("field:") || columnName.startsWith("special:"))
-                                                      .map(columnName -> {
-                                                          if (columnName.startsWith("field:")) {
-                                                              return columnName.substring(6);
-                                                          } else { // special
-                                                              return columnName.substring(8);
-                                                          }
-                                                      }).collect(Collectors.toList());
+                .filter(columnName -> columnName.startsWith("field:") || columnName.startsWith("special:"))
+                .map(columnName -> {
+                    if (columnName.startsWith("field:")) {
+                        return columnName.substring(6);
+                    } else { // special
+                        return columnName.substring(8);
+                    }
+                })
+                .collect(Collectors.toList());
 
         if (!fieldColumnNames.isEmpty()) {
             preferences.putStringList("columnNames", fieldColumnNames);
@@ -511,16 +515,19 @@ public class PreferencesMigrations {
             prefs.put(V6_0_CLEANUP_JOBS, String.join(";", activeJobs));
         }
 
-        List<String> formatterCleanups = List.of(StringUtil.unifyLineBreaks(prefs.get(V5_8_CLEANUP_FIELD_FORMATTERS), "\n")
-                                                           .split("\n"));
+        List<String> formatterCleanups =
+                List.of(StringUtil.unifyLineBreaks(prefs.get(V5_8_CLEANUP_FIELD_FORMATTERS), "\n")
+                        .split("\n"));
         if (formatterCleanups.size() >= 2
                 && (formatterCleanups.get(0).equals(FieldFormatterCleanups.ENABLED)
-                || formatterCleanups.get(0).equals(FieldFormatterCleanups.DISABLED))) {
-            prefs.putBoolean(V6_0_CLEANUP_FIELD_FORMATTERS_ENABLED, formatterCleanups.get(0).equals(FieldFormatterCleanups.ENABLED)
-                    ? Boolean.TRUE
-                    : Boolean.FALSE);
+                        || formatterCleanups.get(0).equals(FieldFormatterCleanups.DISABLED))) {
+            prefs.putBoolean(
+                    V6_0_CLEANUP_FIELD_FORMATTERS_ENABLED,
+                    formatterCleanups.get(0).equals(FieldFormatterCleanups.ENABLED) ? Boolean.TRUE : Boolean.FALSE);
 
-            prefs.put(V6_0_CLEANUP_FIELD_FORMATTERS, String.join(OS.NEWLINE, formatterCleanups.subList(1, formatterCleanups.size() - 1)));
+            prefs.put(
+                    V6_0_CLEANUP_FIELD_FORMATTERS,
+                    String.join(OS.NEWLINE, formatterCleanups.subList(1, formatterCleanups.size() - 1)));
         }
     }
 
@@ -534,10 +541,13 @@ public class PreferencesMigrations {
         if (!keys.isEmpty() && names.size() == keys.size()) {
             try (final Keyring keyring = Keyring.create()) {
                 for (int i = 0; i < names.size(); i++) {
-                    keyring.setPassword("org.jabref.customapikeys", names.get(i), new Password(
-                            keys.get(i),
-                            preferences.getInternalPreferences().getUserAndHost())
-                            .encrypt());
+                    keyring.setPassword(
+                            "org.jabref.customapikeys",
+                            names.get(i),
+                            new Password(
+                                            keys.get(i),
+                                            preferences.getInternalPreferences().getUserAndHost())
+                                    .encrypt());
                 }
                 preferences.deleteKey(V5_9_FETCHER_CUSTOM_KEYS);
             } catch (Exception ex) {

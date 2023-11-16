@@ -97,7 +97,8 @@ public class JabRefItemDataProvider implements ItemDataProvider {
      * </tbody>
      * </table>
      */
-    private CSLItemData bibEntryToCSLItemData(BibEntry originalBibEntry, BibDatabaseContext bibDatabaseContext, BibEntryTypesManager entryTypesManager) {
+    private CSLItemData bibEntryToCSLItemData(
+            BibEntry originalBibEntry, BibDatabaseContext bibDatabaseContext, BibEntryTypesManager entryTypesManager) {
         // We need to make a deep copy, because we modify the entry according to the logic presented at
         // https://github.com/JabRef/jabref/issues/8372#issuecomment-1014941935
         BibEntry bibEntry = (BibEntry) originalBibEntry.clone();
@@ -117,10 +118,9 @@ public class JabRefItemDataProvider implements ItemDataProvider {
                 // Map "number" to CSL "issue", unless no number exists
                 Optional<String> numberField = bibEntry.getField(StandardField.NUMBER);
                 numberField.ifPresent(number -> {
-                            bibEntry.setField(StandardField.ISSUE, number);
-                            bibEntry.clearField(StandardField.NUMBER);
-                        }
-                );
+                    bibEntry.setField(StandardField.ISSUE, number);
+                    bibEntry.clearField(StandardField.NUMBER);
+                });
 
                 bibEntry.getField(StandardField.EID).ifPresent(eid -> {
                     if (!bibEntry.hasField(StandardField.NUMBER)) {
@@ -149,7 +149,8 @@ public class JabRefItemDataProvider implements ItemDataProvider {
             }
         }
 
-        Set<Field> fields = new LinkedHashSet<>(entryType.map(BibEntryType::getAllFields).orElse(bibEntry.getFields()));
+        Set<Field> fields =
+                new LinkedHashSet<>(entryType.map(BibEntryType::getAllFields).orElse(bibEntry.getFields()));
         fields.addAll(bibEntry.getFields());
         for (Field key : fields) {
             bibEntry.getResolvedFieldOrAlias(key, bibDatabaseContext.getDatabase())
@@ -173,7 +174,8 @@ public class JabRefItemDataProvider implements ItemDataProvider {
         this.setData(bibDatabaseContext.getEntries(), bibDatabaseContext, entryTypesManager);
     }
 
-    public void setData(List<BibEntry> data, BibDatabaseContext bibDatabaseContext, BibEntryTypesManager entryTypesManager) {
+    public void setData(
+            List<BibEntry> data, BibDatabaseContext bibDatabaseContext, BibEntryTypesManager entryTypesManager) {
         this.data.clear();
         this.data.addAll(data);
         this.bibDatabaseContext = bibDatabaseContext;
@@ -189,25 +191,24 @@ public class JabRefItemDataProvider implements ItemDataProvider {
     @Override
     public CSLItemData retrieveItem(String id) {
         return data.stream()
-                   .filter(entry -> entry.getCitationKey().orElse("").equals(id))
-                   .map(entry -> bibEntryToCSLItemData(entry, bibDatabaseContext, entryTypesManager))
-                   .findFirst().orElse(null);
+                .filter(entry -> entry.getCitationKey().orElse("").equals(id))
+                .map(entry -> bibEntryToCSLItemData(entry, bibDatabaseContext, entryTypesManager))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public Collection<String> getIds() {
-        return data.stream()
-                   .map(entry -> entry.getCitationKey().orElse(""))
-                   .toList();
+        return data.stream().map(entry -> entry.getCitationKey().orElse("")).toList();
     }
 
     public String toJson() {
         List<BibEntry> entries = bibDatabaseContext.getEntries();
         this.setData(entries, bibDatabaseContext, entryTypesManager);
         return entries.stream()
-                      .map(entry -> bibEntryToCSLItemData(entry, bibDatabaseContext, entryTypesManager))
-                      .map(item -> item.toJson(stringJsonBuilderFactory.createJsonBuilder()))
-                      .map(String.class::cast)
-                      .collect(Collectors.joining(",", "[", "]"));
+                .map(entry -> bibEntryToCSLItemData(entry, bibDatabaseContext, entryTypesManager))
+                .map(item -> item.toJson(stringJsonBuilderFactory.createJsonBuilder()))
+                .map(String.class::cast)
+                .collect(Collectors.joining(",", "[", "]"));
     }
 }

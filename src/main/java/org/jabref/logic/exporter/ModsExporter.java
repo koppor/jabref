@@ -52,7 +52,8 @@ class ModsExporter extends Exporter {
     }
 
     @Override
-    public void export(final BibDatabaseContext databaseContext, final Path file, List<BibEntry> entries) throws SaveException {
+    public void export(final BibDatabaseContext databaseContext, final Path file, List<BibEntry> entries)
+            throws SaveException {
         Objects.requireNonNull(databaseContext);
         Objects.requireNonNull(entries);
         if (entries.isEmpty()) { // Only export if entries exist
@@ -151,7 +152,8 @@ class ModsExporter extends Exporter {
         writer.writeNamespace("mods", MODS_NAMESPACE_URI);
         writer.writeNamespace("ns2", "http://www.w3.org/1999/xlink");
         writer.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", MODS_SCHEMA_LOCATION);
+        writer.writeAttribute(
+                "xsi", "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", MODS_SCHEMA_LOCATION);
         return writer;
     }
 
@@ -166,7 +168,8 @@ class ModsExporter extends Exporter {
         }
     }
 
-    private void writeOriginInformation(XMLStreamWriter writer, List<String> originItems, Map<Field, String> fieldMap) throws XMLStreamException {
+    private void writeOriginInformation(XMLStreamWriter writer, List<String> originItems, Map<Field, String> fieldMap)
+            throws XMLStreamException {
         if (originItems.isEmpty()) {
             writer.writeEmptyElement("mods", "originInfo", MODS_NAMESPACE_URI);
         } else {
@@ -180,7 +183,8 @@ class ModsExporter extends Exporter {
         }
     }
 
-    private void writeRelatedInformation(XMLStreamWriter writer, List<String> parts, Map<Field, String> fieldMap) throws XMLStreamException {
+    private void writeRelatedInformation(XMLStreamWriter writer, List<String> parts, Map<Field, String> fieldMap)
+            throws XMLStreamException {
         writer.writeStartElement("mods", "relatedItem", MODS_NAMESPACE_URI);
         writer.writeAttribute("type", "host");
 
@@ -200,7 +204,8 @@ class ModsExporter extends Exporter {
         writer.writeEndElement(); // end typeOfResource
     }
 
-    private void writePartInformation(XMLStreamWriter writer, List<String> parts, Map<Field, String> fieldMap) throws XMLStreamException {
+    private void writePartInformation(XMLStreamWriter writer, List<String> parts, Map<Field, String> fieldMap)
+            throws XMLStreamException {
         if (parts.isEmpty()) {
             writer.writeEmptyElement("mods", "part", MODS_NAMESPACE_URI);
         } else {
@@ -303,7 +308,8 @@ class ModsExporter extends Exporter {
         writer.writeEndElement();
     }
 
-    private void addJournal(XMLStreamWriter writer, String value) throws XMLStreamException { // this may also need to be called within second for loop?
+    private void addJournal(XMLStreamWriter writer, String value)
+            throws XMLStreamException { // this may also need to be called within second for loop?
         // Start TitleInfoDefinition
         writer.writeStartElement("mods", "titleInfo", MODS_NAMESPACE_URI);
 

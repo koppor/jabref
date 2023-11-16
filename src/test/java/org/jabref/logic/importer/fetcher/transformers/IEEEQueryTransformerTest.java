@@ -43,7 +43,8 @@ class IEEEQueryTransformerTest extends InfixTransformerTest<IEEEQueryTransformer
         IEEEQueryTransformer transformer = getTransformer();
 
         String queryString = "journal:Nature";
-        QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
+        QueryNode luceneQuery =
+                new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         transformer.transformLuceneQuery(luceneQuery);
 
         assertEquals(Optional.of("Nature"), transformer.getJournal());
@@ -57,7 +58,8 @@ class IEEEQueryTransformerTest extends InfixTransformerTest<IEEEQueryTransformer
         IEEEQueryTransformer transformer = getTransformer();
 
         String queryString = "year:2021";
-        QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
+        QueryNode luceneQuery =
+                new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         transformer.transformLuceneQuery(luceneQuery);
 
         assertEquals(Optional.of(2021), transformer.getStartYear());
@@ -69,7 +71,8 @@ class IEEEQueryTransformerTest extends InfixTransformerTest<IEEEQueryTransformer
         IEEEQueryTransformer transformer = getTransformer();
 
         String queryString = "year-range:2018-2021";
-        QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
+        QueryNode luceneQuery =
+                new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         transformer.transformLuceneQuery(luceneQuery);
 
         assertEquals(Optional.of(2018), transformer.getStartYear());
@@ -78,16 +81,20 @@ class IEEEQueryTransformerTest extends InfixTransformerTest<IEEEQueryTransformer
 
     private static Stream<Arguments> getTitleTestData() {
         return Stream.of(
-                Arguments.of("Overcoming AND Open AND Source AND Project AND Entry AND Barriers AND Portal AND Newcomers", "Overcoming Open Source Project Entry Barriers with a Portal for Newcomers"),
-                Arguments.of("Overcoming AND Open AND Source AND Project AND Entry AND Barriers", "Overcoming Open Source Project Entry Barriers"),
-                Arguments.of(null, "and")
-        );
+                Arguments.of(
+                        "Overcoming AND Open AND Source AND Project AND Entry AND Barriers AND Portal AND Newcomers",
+                        "Overcoming Open Source Project Entry Barriers with a Portal for Newcomers"),
+                Arguments.of(
+                        "Overcoming AND Open AND Source AND Project AND Entry AND Barriers",
+                        "Overcoming Open Source Project Entry Barriers"),
+                Arguments.of(null, "and"));
     }
 
     @ParameterizedTest
     @MethodSource("getTitleTestData")
     public void testStopWordRemoval(String expected, String queryString) throws Exception {
-        QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
+        QueryNode luceneQuery =
+                new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         Optional<String> result = getTransformer().transformLuceneQuery(luceneQuery);
         assertEquals(Optional.ofNullable(expected), result);
     }

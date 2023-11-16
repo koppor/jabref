@@ -23,8 +23,7 @@ public class RangeSortVisual {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RangeSortVisual.class);
 
-    private RangeSortVisual() {
-    }
+    private RangeSortVisual() {}
 
     /**
      * Sort the input {@code inputs} visually.
@@ -33,9 +32,8 @@ public class RangeSortVisual {
      *
      * @return The input, sorted by the elements XTextRange and getIndexInPosition.
      */
-    public static <T> List<RangeSortable<T>> visualSort(List<RangeSortable<T>> inputs,
-                                                        XTextDocument doc,
-                                                        FunctionalTextViewCursor fcursor) {
+    public static <T> List<RangeSortable<T>> visualSort(
+            List<RangeSortable<T>> inputs, XTextDocument doc, FunctionalTextViewCursor fcursor) {
 
         if (UnoScreenRefresh.hasControllersLocked(doc)) {
             final String msg = "visualSort: with ControllersLocked, viewCursor.gotoRange is probably useless";
@@ -58,9 +56,7 @@ public class RangeSortVisual {
         ArrayList<ComparableMark<RangeSortable<T>>> comparableMarks = new ArrayList<>(inputSize);
         for (int i = 0; i < inputSize; i++) {
             RangeSortable<T> input = inputs.get(i);
-            comparableMarks.add(new ComparableMark<>(positions.get(i),
-                    input.getIndexInPosition(),
-                    input));
+            comparableMarks.add(new ComparableMark<>(positions.get(i), input.getIndexInPosition(), input));
         }
         comparableMarks.sort(RangeSortVisual::compareTopToBottomLeftToRight);
 

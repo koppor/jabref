@@ -17,8 +17,7 @@ public class LocalizationKey {
         this.key = key;
         // space, #, !, = and : are not allowed in properties file keys
         // # and ! are only disallowed at the beginning of the key but easier to escape every instance
-        this.escapedPropertyKey = key
-                .replace("\n", "\\n")
+        this.escapedPropertyKey = key.replace("\n", "\\n")
                 .replace(" ", "\\ ")
                 .replace("#", "\\#")
                 .replace("!", "\\!")

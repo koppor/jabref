@@ -23,7 +23,12 @@ public class DateEditorViewModel extends AbstractEditorViewModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(DateEditorViewModel.class);
     private final DateTimeFormatter dateFormatter;
 
-    public DateEditorViewModel(Field field, SuggestionProvider<?> suggestionProvider, DateTimeFormatter dateFormatter, FieldCheckers fieldCheckers, UndoManager undoManager) {
+    public DateEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            DateTimeFormatter dateFormatter,
+            FieldCheckers fieldCheckers,
+            UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
         this.dateFormatter = dateFormatter;
     }

@@ -40,23 +40,24 @@ public class ExporterTest {
 
     private static Stream<Object[]> exportFormats() {
         PreferencesService preferencesService = mock(PreferencesService.class, Answers.RETURNS_DEEP_STUBS);
-        when(preferencesService.getExportPreferences().getExportSaveOrder()).thenReturn(SaveOrder.getDefaultSaveOrder());
-        when(preferencesService.getExportPreferences().getCustomExporters()).thenReturn(FXCollections.emptyObservableList());
+        when(preferencesService.getExportPreferences().getExportSaveOrder())
+                .thenReturn(SaveOrder.getDefaultSaveOrder());
+        when(preferencesService.getExportPreferences().getCustomExporters())
+                .thenReturn(FXCollections.emptyObservableList());
 
-        ExporterFactory exporterFactory = ExporterFactory.create(
-                preferencesService,
-                mock(BibEntryTypesManager.class));
+        ExporterFactory exporterFactory = ExporterFactory.create(preferencesService, mock(BibEntryTypesManager.class));
 
         Collection<Object[]> result = new ArrayList<>();
         for (Exporter format : exporterFactory.getExporters()) {
-            result.add(new Object[]{format, format.getName()});
+            result.add(new Object[] {format, format.getName()});
         }
         return result.stream();
     }
 
     @ParameterizedTest
     @MethodSource("exportFormats")
-    public void testExportingEmptyDatabaseYieldsEmptyFile(Exporter exportFormat, String name, @TempDir Path testFolder) throws Exception {
+    public void testExportingEmptyDatabaseYieldsEmptyFile(Exporter exportFormat, String name, @TempDir Path testFolder)
+            throws Exception {
         Path tmpFile = testFolder.resolve("ARandomlyNamedFile");
         Files.createFile(tmpFile);
         exportFormat.export(databaseContext, tmpFile, entries);

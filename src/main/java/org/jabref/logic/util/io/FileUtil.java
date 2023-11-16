@@ -39,7 +39,8 @@ import org.slf4j.LoggerFactory;
  */
 public class FileUtil {
 
-    public static final boolean IS_POSIX_COMPLIANT = FileSystems.getDefault().supportedFileAttributeViews().contains("posix");
+    public static final boolean IS_POSIX_COMPLIANT =
+            FileSystems.getDefault().supportedFileAttributeViews().contains("posix");
     public static final int MAXIMUM_FILE_NAME_LENGTH = 255;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
@@ -49,19 +50,13 @@ public class FileUtil {
      */
     // @formatter:off
     private static final int[] ILLEGAL_CHARS = {
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-            20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-            30, 31, 34,
-            42,
-            58, // ":"
-            60, 62, 63,
-            123, 124, 125
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+        30, 31, 34, 42, 58, // ":"
+        60, 62, 63, 123, 124, 125
     };
     // @formatter:on
 
-    private FileUtil() {
-    }
+    private FileUtil() {}
 
     /**
      * Returns the extension of a file name or Optional.empty() if the file does not have one (no "." in name).
@@ -112,8 +107,13 @@ public class FileUtil {
 
         if (nameWithoutExtension.length() > MAXIMUM_FILE_NAME_LENGTH) {
             Optional<String> extension = getFileExtension(fileName);
-            String shortName = nameWithoutExtension.substring(0, MAXIMUM_FILE_NAME_LENGTH - extension.map(s -> s.length() + 1).orElse(0));
-            LOGGER.info(String.format("Truncated the too long filename '%s' (%d characters) to '%s'.", fileName, fileName.length(), shortName));
+            String shortName = nameWithoutExtension.substring(
+                    0,
+                    MAXIMUM_FILE_NAME_LENGTH
+                            - extension.map(s -> s.length() + 1).orElse(0));
+            LOGGER.info(String.format(
+                    "Truncated the too long filename '%s' (%d characters) to '%s'.",
+                    fileName, fileName.length(), shortName));
             return extension.map(s -> shortName + "." + s).orElse(shortName);
         }
 
@@ -145,10 +145,11 @@ public class FileUtil {
 
         List<String> uniquePathParts = uniquePathSubstrings(paths);
         return uniquePathParts.stream()
-                              .filter(part -> comparePath.toString().contains(part)
-                                              && !part.equals(fileName) && part.contains(File.separator))
-                              .findFirst()
-                              .map(part -> part.substring(0, part.lastIndexOf(File.separator)));
+                .filter(part -> comparePath.toString().contains(part)
+                        && !part.equals(fileName)
+                        && part.contains(File.separator))
+                .findFirst()
+                .map(part -> part.substring(0, part.lastIndexOf(File.separator)));
     }
 
     /**
@@ -159,8 +160,8 @@ public class FileUtil {
      */
     public static Optional<String> getUniquePathFragment(List<String> paths, Path comparePath) {
         return uniquePathSubstrings(paths).stream()
-                                          .filter(part -> comparePath.toString().contains(part))
-                                          .max(Comparator.comparingInt(String::length));
+                .filter(part -> comparePath.toString().contains(part))
+                .max(Comparator.comparingInt(String::length));
     }
 
     /**
@@ -226,8 +227,12 @@ public class FileUtil {
         }
         try {
             // Preserve Hard Links with OpenOption defaults included for clarity
-            Files.write(pathToDestinationFile, Files.readAllBytes(pathToSourceFile),
-                        StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.write(
+                    pathToDestinationFile,
+                    Files.readAllBytes(pathToSourceFile),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.WRITE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
             return true;
         } catch (IOException e) {
             LOGGER.error("Copying Files failed.", e);
@@ -270,9 +275,9 @@ public class FileUtil {
         Objects.requireNonNull(fileDirs);
 
         return bes.stream()
-                  .flatMap(entry -> entry.getFiles().stream())
-                  .flatMap(file -> file.findIn(fileDirs).stream())
-                  .collect(Collectors.toList());
+                .flatMap(entry -> entry.getFiles().stream())
+                .flatMap(file -> file.findIn(fileDirs).stream())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -326,16 +331,17 @@ public class FileUtil {
     public static Optional<Path> findSingleFileRecursively(String filename, Path rootDirectory) {
         try (Stream<Path> pathStream = Files.walk(rootDirectory)) {
             return pathStream
-                             .filter(Files::isRegularFile)
-                             .filter(f -> f.getFileName().toString().equals(filename))
-                             .findFirst();
+                    .filter(Files::isRegularFile)
+                    .filter(f -> f.getFileName().toString().equals(filename))
+                    .findFirst();
         } catch (UncheckedIOException | IOException ex) {
             LOGGER.error("Error trying to locate the file " + filename + " inside the directory " + rootDirectory);
         }
         return Optional.empty();
     }
 
-    public static Optional<Path> find(final BibDatabaseContext databaseContext, String fileName, FilePreferences filePreferences) {
+    public static Optional<Path> find(
+            final BibDatabaseContext databaseContext, String fileName, FilePreferences filePreferences) {
         Objects.requireNonNull(fileName, "fileName");
         return find(fileName, databaseContext.getFileDirectories(filePreferences));
     }
@@ -359,8 +365,8 @@ public class FileUtil {
         }
 
         return directories.stream()
-                          .flatMap(directory -> find(fileName, directory).stream())
-                          .findFirst();
+                .flatMap(directory -> find(fileName, directory).stream())
+                .findFirst();
     }
 
     /**
@@ -380,7 +386,8 @@ public class FileUtil {
             return Optional.empty();
         }
 
-        // Explicitly check for an empty string, as File.exists returns true on that empty path, because it maps to the default jar location.
+        // Explicitly check for an empty string, as File.exists returns true on that empty path, because it maps to the
+        // default jar location.
         // If we then call toAbsoluteDir, it would always return the jar-location folder. This is not what we want here.
         if (fileName.isEmpty()) {
             return Optional.of(directory);
@@ -425,8 +432,7 @@ public class FileUtil {
      * when a path needs to be stored in the bib file or preferences.
      */
     public static String toPortableString(Path path) {
-        return path.toString()
-                   .replace('\\', '/');
+        return path.toString().replace('\\', '/');
     }
 
     /**

@@ -39,9 +39,8 @@ public class ReferenceViewModel {
 
     @Override
     public String toString() {
-        return String.format("ReferenceViewModel{entry='%s', highlighted=%s, citationList=%s}",
-                this.entry,
-                this.highlighted,
-                this.citationList);
+        return String.format(
+                "ReferenceViewModel{entry='%s', highlighted=%s, citationList=%s}",
+                this.entry, this.highlighted, this.citationList);
     }
 }

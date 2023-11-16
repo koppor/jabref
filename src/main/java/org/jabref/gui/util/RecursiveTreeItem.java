@@ -30,7 +30,11 @@ public class RecursiveTreeItem<T> extends CheckBoxTreeItem<T> {
         this(value, func, null, null);
     }
 
-    public RecursiveTreeItem(final T value, Callback<T, ObservableList<T>> func, Callback<T, BooleanProperty> expandedProperty, ObservableValue<Predicate<T>> filter) {
+    public RecursiveTreeItem(
+            final T value,
+            Callback<T, ObservableList<T>> func,
+            Callback<T, BooleanProperty> expandedProperty,
+            ObservableValue<Predicate<T>> filter) {
         this(value, null, func, expandedProperty, filter);
     }
 
@@ -38,7 +42,12 @@ public class RecursiveTreeItem<T> extends CheckBoxTreeItem<T> {
         this(value, null, func, null, filter);
     }
 
-    private RecursiveTreeItem(final T value, Node graphic, Callback<T, ObservableList<T>> func, Callback<T, BooleanProperty> expandedProperty, ObservableValue<Predicate<T>> filter) {
+    private RecursiveTreeItem(
+            final T value,
+            Node graphic,
+            Callback<T, ObservableList<T>> func,
+            Callback<T, BooleanProperty> expandedProperty,
+            ObservableValue<Predicate<T>> filter) {
         super(value, graphic);
 
         this.childrenFactory = func;
@@ -67,8 +76,11 @@ public class RecursiveTreeItem<T> extends CheckBoxTreeItem<T> {
     }
 
     private void addChildrenListener(T value) {
-        children = EasyBind.mapBacked(childrenFactory.call(value), child -> new RecursiveTreeItem<>(child, getGraphic(), childrenFactory, expandedProperty, filter))
-                           .filtered(Bindings.createObjectBinding(() -> this::showNode, filter));
+        children = EasyBind.mapBacked(
+                        childrenFactory.call(value),
+                        child ->
+                                new RecursiveTreeItem<>(child, getGraphic(), childrenFactory, expandedProperty, filter))
+                .filtered(Bindings.createObjectBinding(() -> this::showNode, filter));
 
         Bindings.bindContent(getChildren(), children);
     }

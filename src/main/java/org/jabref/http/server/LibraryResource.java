@@ -44,9 +44,13 @@ public class LibraryResource {
     public String getJson(@PathParam("id") String id) {
         ParserResult parserResult = getParserResult(id);
         List<BibEntryDTO> list = parserResult.getDatabase().getEntries().stream()
-                                             .peek(bibEntry -> bibEntry.getSharedBibEntryData().setSharedID(Objects.hash(bibEntry)))
-                                             .map(entry -> new BibEntryDTO(entry, parserResult.getDatabaseContext().getMode(), preferences.getFieldPreferences(), Globals.entryTypesManager))
-                                             .toList();
+                .peek(bibEntry -> bibEntry.getSharedBibEntryData().setSharedID(Objects.hash(bibEntry)))
+                .map(entry -> new BibEntryDTO(
+                        entry,
+                        parserResult.getDatabaseContext().getMode(),
+                        preferences.getFieldPreferences(),
+                        Globals.entryTypesManager))
+                .toList();
         return gson.toJson(list);
     }
 
@@ -63,7 +67,8 @@ public class LibraryResource {
         java.nio.file.Path library = getLibraryPath(id);
         ParserResult parserResult;
         try {
-            parserResult = new BibtexImporter(preferences.getImportFormatPreferences(), new DummyFileUpdateMonitor()).importDatabase(library);
+            parserResult = new BibtexImporter(preferences.getImportFormatPreferences(), new DummyFileUpdateMonitor())
+                    .importDatabase(library);
         } catch (IOException e) {
             LOGGER.warn("Could not find open library file {}", library, e);
             throw new InternalServerErrorException("Could not parse library", e);
@@ -82,17 +87,14 @@ public class LibraryResource {
             LOGGER.error("Could not read library {}", library, e);
             throw new InternalServerErrorException("Could not read library " + library, e);
         }
-        return Response.ok()
-                .entity(libraryAsString)
-                .build();
+        return Response.ok().entity(libraryAsString).build();
     }
 
     private java.nio.file.Path getLibraryPath(String id) {
-        return preferences.getGuiPreferences().getLastFilesOpened()
-                          .stream()
-                          .map(java.nio.file.Path::of)
-                          .filter(p -> (p.getFileName() + "-" + BackupFileUtil.getUniqueFilePrefix(p)).equals(id))
-                          .findAny()
-                          .orElseThrow(NotFoundException::new);
+        return preferences.getGuiPreferences().getLastFilesOpened().stream()
+                .map(java.nio.file.Path::of)
+                .filter(p -> (p.getFileName() + "-" + BackupFileUtil.getUniqueFilePrefix(p)).equals(id))
+                .findAny()
+                .orElseThrow(NotFoundException::new);
     }
 }

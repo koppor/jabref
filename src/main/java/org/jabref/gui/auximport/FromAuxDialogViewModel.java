@@ -37,7 +37,8 @@ public class FromAuxDialogViewModel {
     private final StringProperty auxFileProperty = new SimpleStringProperty();
     private final StringProperty statusTextProperty = new SimpleStringProperty();
     private final ListProperty<String> notFoundList = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ListProperty<BibDatabaseContext> librariesProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<BibDatabaseContext> librariesProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
     private final ObjectProperty<BibDatabaseContext> selectedLibraryProperty = new SimpleObjectProperty<>();
 
     private final LibraryTabContainer tabContainer;
@@ -47,10 +48,11 @@ public class FromAuxDialogViewModel {
 
     private AuxParserResult auxParserResult;
 
-    public FromAuxDialogViewModel(LibraryTabContainer tabContainer,
-                                  DialogService dialogService,
-                                  PreferencesService preferencesService,
-                                  StateManager stateManager) {
+    public FromAuxDialogViewModel(
+            LibraryTabContainer tabContainer,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            StateManager stateManager) {
         this.tabContainer = tabContainer;
         this.dialogService = dialogService;
         this.preferencesService = preferencesService;
@@ -68,7 +70,9 @@ public class FromAuxDialogViewModel {
     public String getDatabaseName(BibDatabaseContext databaseContext) {
         Optional<String> dbOpt = Optional.empty();
         if (databaseContext.getDatabasePath().isPresent()) {
-            dbOpt = FileUtil.getUniquePathFragment(stateManager.collectAllDatabasePaths(), databaseContext.getDatabasePath().get());
+            dbOpt = FileUtil.getUniquePathFragment(
+                    stateManager.collectAllDatabasePaths(),
+                    databaseContext.getDatabasePath().get());
         }
         if (databaseContext.getLocation() == DatabaseLocation.SHARED) {
             return databaseContext.getDBMSSynchronizer().getDBName() + " [" + Localization.lang("shared") + "]";
@@ -81,8 +85,12 @@ public class FromAuxDialogViewModel {
         FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
                 .addExtensionFilter(StandardFileType.AUX)
                 .withDefaultExtension(StandardFileType.AUX)
-                .withInitialDirectory(preferencesService.getFilePreferences().getWorkingDirectory()).build();
-        dialogService.showFileOpenDialog(fileDialogConfiguration).ifPresent(file -> auxFileProperty.setValue(file.toAbsolutePath().toString()));
+                .withInitialDirectory(preferencesService.getFilePreferences().getWorkingDirectory())
+                .build();
+        dialogService
+                .showFileOpenDialog(fileDialogConfiguration)
+                .ifPresent(
+                        file -> auxFileProperty.setValue(file.toAbsolutePath().toString()));
     }
 
     public void parse() {

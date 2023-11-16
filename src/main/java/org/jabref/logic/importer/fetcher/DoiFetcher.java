@@ -47,7 +47,8 @@ public class DoiFetcher implements IdBasedFetcher, EntryBasedFetcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoiFetcher.class);
 
-    // 1000 request per 5 minutes. See https://support.datacite.org/docs/is-there-a-rate-limit-for-making-requests-against-the-datacite-apis
+    // 1000 request per 5 minutes. See
+    // https://support.datacite.org/docs/is-there-a-rate-limit-for-making-requests-against-the-datacite-apis
     private static final RateLimiter DATA_CITE_DCN_RATE_LIMITER = RateLimiter.create(3.33);
 
     /*
@@ -90,7 +91,8 @@ public class DoiFetcher implements IdBasedFetcher, EntryBasedFetcher {
                     waitingTime = CROSSREF_DCN_RATE_LIMITER.acquire();
                 } // mEDRA does not explicit an API rating
 
-                LOGGER.trace(String.format("Thread %s, searching for DOI '%s', waited %.2fs because of API rate limiter",
+                LOGGER.trace(String.format(
+                        "Thread %s, searching for DOI '%s', waited %.2fs because of API rate limiter",
                         Thread.currentThread().threadId(), identifier, waitingTime));
             }
         } catch (IOException e) {
@@ -134,7 +136,8 @@ public class DoiFetcher implements IdBasedFetcher, EntryBasedFetcher {
                     openConnection = download.openConnection();
                     bibtexString = URLDownload.asString(openConnection);
                 } catch (IOException e) {
-                    // an IOException with a nested FetcherException will be thrown when you encounter a 400x or 500x http status code
+                    // an IOException with a nested FetcherException will be thrown when you encounter a 400x or 500x
+                    // http status code
                     if (e.getCause() instanceof FetcherException fe) {
                         throw fe;
                     }
@@ -150,11 +153,14 @@ public class DoiFetcher implements IdBasedFetcher, EntryBasedFetcher {
                     updateCrossrefAPIRate(openConnection);
                 }
 
-                // Check if the entry is an APS journal and add the article id as the page count if page field is missing
+                // Check if the entry is an APS journal and add the article id as the page count if page field is
+                // missing
                 if (fetchedEntry.isPresent() && fetchedEntry.get().hasField(StandardField.DOI)) {
                     BibEntry entry = fetchedEntry.get();
-                    if (isAPSJournal(entry, entry.getField(StandardField.DOI).get()) && !entry.hasField(StandardField.PAGES)) {
-                        setPageCountToArticleId(entry, entry.getField(StandardField.DOI).get());
+                    if (isAPSJournal(entry, entry.getField(StandardField.DOI).get())
+                            && !entry.hasField(StandardField.PAGES)) {
+                        setPageCountToArticleId(
+                                entry, entry.getField(StandardField.DOI).get());
                     }
                 }
 
@@ -182,7 +188,8 @@ public class DoiFetcher implements IdBasedFetcher, EntryBasedFetcher {
     private void updateCrossrefAPIRate(URLConnection existingConnection) {
         try {
             // Assuming this field is given in seconds
-            String xRateLimitInterval = existingConnection.getHeaderField("X-Rate-Limit-Interval").replaceAll("[^\\.0123456789]", "");
+            String xRateLimitInterval =
+                    existingConnection.getHeaderField("X-Rate-Limit-Interval").replaceAll("[^\\.0123456789]", "");
             String xRateLimit = existingConnection.getHeaderField("X-Rate-Limit-Limit");
 
             double newRate = Double.parseDouble(xRateLimit) / Double.parseDouble(xRateLimitInterval);
@@ -241,6 +248,7 @@ public class DoiFetcher implements IdBasedFetcher, EntryBasedFetcher {
         }
         String suffix = doiAsString.substring(doiAsString.lastIndexOf('/') + 1);
         String organizationId = doiAsString.substring(doiAsString.indexOf('.') + 1, doiAsString.indexOf('/'));
-        return organizationId.equals(APS_JOURNAL_ORG_DOI_ID) && APS_SUFFIX_PATTERN.matcher(suffix).matches();
+        return organizationId.equals(APS_JOURNAL_ORG_DOI_ID)
+                && APS_SUFFIX_PATTERN.matcher(suffix).matches();
     }
 }

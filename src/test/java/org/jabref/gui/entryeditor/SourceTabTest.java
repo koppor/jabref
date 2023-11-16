@@ -50,9 +50,12 @@ class SourceTabTest {
         area.appendText("some example\n text to go here\n across a couple of \n lines....");
         StateManager stateManager = mock(StateManager.class);
         when(stateManager.activeSearchQueryProperty()).thenReturn(OptionalObjectProperty.empty());
-        KeyBindingRepository keyBindingRepository = new KeyBindingRepository(Collections.emptyList(), Collections.emptyList());
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
+        KeyBindingRepository keyBindingRepository =
+                new KeyBindingRepository(Collections.emptyList(), Collections.emptyList());
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator())
+                .thenReturn(',');
         FieldPreferences fieldPreferences = mock(FieldPreferences.class);
         when(fieldPreferences.getNonWrappableFields()).thenReturn(FXCollections.emptyObservableList());
 
@@ -66,11 +69,7 @@ class SourceTabTest {
                 stateManager,
                 mock(BibEntryTypesManager.class),
                 keyBindingRepository);
-        pane = new TabPane(
-                new Tab("main area", area),
-                new Tab("other tab", new Label("some text")),
-                sourceTab
-        );
+        pane = new TabPane(new Tab("main area", area), new Tab("other tab", new Label("some text")), sourceTab);
         scene = new Scene(pane);
         this.stage = stage;
 

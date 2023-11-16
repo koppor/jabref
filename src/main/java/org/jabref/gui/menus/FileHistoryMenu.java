@@ -20,7 +20,8 @@ public class FileHistoryMenu extends Menu {
     private final DialogService dialogService;
     private final OpenDatabaseAction openDatabaseAction;
 
-    public FileHistoryMenu(FileHistory fileHistory, DialogService dialogService, OpenDatabaseAction openDatabaseAction) {
+    public FileHistoryMenu(
+            FileHistory fileHistory, DialogService dialogService, OpenDatabaseAction openDatabaseAction) {
         setText(Localization.lang("Recent libraries"));
 
         this.clearRecentLibraries = new MenuItem();
@@ -71,10 +72,7 @@ public class FileHistoryMenu extends Menu {
         for (int index = 0; index < history.size(); index++) {
             addItem(history.get(index), index + 1);
         }
-        getItems().addAll(
-                new SeparatorMenuItem(),
-                clearRecentLibraries
-        );
+        getItems().addAll(new SeparatorMenuItem(), clearRecentLibraries);
     }
 
     private void addItem(Path file, int num) {
@@ -93,8 +91,7 @@ public class FileHistoryMenu extends Menu {
     public void openFile(Path file) {
         if (!Files.exists(file)) {
             this.dialogService.showErrorDialogAndWait(
-                    Localization.lang("File not found"),
-                    Localization.lang("File not found") + ": " + file);
+                    Localization.lang("File not found"), Localization.lang("File not found") + ": " + file);
             history.removeItem(file);
             setItems();
             return;

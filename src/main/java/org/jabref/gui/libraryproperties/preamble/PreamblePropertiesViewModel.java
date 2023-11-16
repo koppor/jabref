@@ -29,7 +29,10 @@ public class PreamblePropertiesViewModel implements PropertiesTabViewModel {
     public void storeSettings() {
         String newPreamble = preambleProperty.getValue();
         if (!databaseContext.getDatabase().getPreamble().orElse("").equals(newPreamble)) {
-            undoManager.addEdit(new UndoablePreambleChange(databaseContext.getDatabase(), databaseContext.getDatabase().getPreamble().orElse(null), newPreamble));
+            undoManager.addEdit(new UndoablePreambleChange(
+                    databaseContext.getDatabase(),
+                    databaseContext.getDatabase().getPreamble().orElse(null),
+                    newPreamble));
             databaseContext.getDatabase().setPreamble(newPreamble);
         }
     }

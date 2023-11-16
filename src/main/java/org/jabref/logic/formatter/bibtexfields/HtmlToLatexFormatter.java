@@ -67,7 +67,8 @@ public class HtmlToLatexFormatter extends Formatter implements LayoutFormatter {
         while (m.find()) {
             int num = Integer.decode(m.group(1).replace("x", "#") + m.group(3));
             if (HTMLUnicodeConversionMaps.NUMERICAL_LATEX_CONVERSION_MAP.containsKey(num)) {
-                result = result.replace("&#" + m.group(1) + m.group(2) + m.group(3) + ";",
+                result = result.replace(
+                        "&#" + m.group(1) + m.group(2) + m.group(3) + ";",
                         HTMLUnicodeConversionMaps.NUMERICAL_LATEX_CONVERSION_MAP.get(num));
             }
         }
@@ -78,13 +79,16 @@ public class HtmlToLatexFormatter extends Formatter implements LayoutFormatter {
             int num = Integer.decode(m.group(2).replace("x", "#") + m.group(4));
             if (HTMLUnicodeConversionMaps.ESCAPED_ACCENTS.containsKey(num)) {
                 if ("i".equals(m.group(1))) {
-                    result = result.replace(m.group(1) + "&#" + m.group(2) + m.group(3) + m.group(4) + ";",
+                    result = result.replace(
+                            m.group(1) + "&#" + m.group(2) + m.group(3) + m.group(4) + ";",
                             "{\\" + HTMLUnicodeConversionMaps.ESCAPED_ACCENTS.get(num) + "{\\i}}");
                 } else if ("j".equals(m.group(1))) {
-                    result = result.replace(m.group(1) + "&#" + m.group(2) + m.group(3) + m.group(4) + ";",
+                    result = result.replace(
+                            m.group(1) + "&#" + m.group(2) + m.group(3) + m.group(4) + ";",
                             "{\\" + HTMLUnicodeConversionMaps.ESCAPED_ACCENTS.get(num) + "{\\j}}");
                 } else {
-                    result = result.replace(m.group(1) + "&#" + m.group(2) + m.group(3) + m.group(4) + ";",
+                    result = result.replace(
+                            m.group(1) + "&#" + m.group(2) + m.group(3) + m.group(4) + ";",
                             "{\\" + HTMLUnicodeConversionMaps.ESCAPED_ACCENTS.get(num) + "{" + m.group(1) + "}}");
                 }
             }

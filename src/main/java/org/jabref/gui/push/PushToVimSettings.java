@@ -12,10 +12,11 @@ public class PushToVimSettings extends PushToApplicationSettings {
 
     private final TextField vimServer = new TextField();
 
-    public PushToVimSettings(PushToApplication application,
-                             DialogService dialogService,
-                             FilePreferences filePreferences,
-                             PushToApplicationPreferences preferences) {
+    public PushToVimSettings(
+            PushToApplication application,
+            DialogService dialogService,
+            FilePreferences filePreferences,
+            PushToApplicationPreferences preferences) {
         super(application, dialogService, filePreferences, preferences);
 
         settingsPane.add(new Label(Localization.lang("Vim server name") + ":"), 0, 1);

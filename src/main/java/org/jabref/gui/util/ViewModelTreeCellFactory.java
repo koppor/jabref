@@ -47,7 +47,8 @@ public class ViewModelTreeCellFactory<T> implements Callback<TreeView<T>, TreeCe
         return this;
     }
 
-    public ViewModelTreeCellFactory<T> withOnMouseClickedEvent(Callback<T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
+    public ViewModelTreeCellFactory<T> withOnMouseClickedEvent(
+            Callback<T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
         this.toOnMouseClickedEvent = toOnMouseClickedEvent;
         return this;
     }
@@ -58,19 +59,19 @@ public class ViewModelTreeCellFactory<T> implements Callback<TreeView<T>, TreeCe
 
     @Override
     public TreeCell<T> call(TreeView<T> tree) {
-        Callback<TreeItem<T>, ObservableValue<Boolean>> getSelectedProperty =
-                item -> {
-                    if (item instanceof CheckBoxTreeItem<?>) {
-                        return ((CheckBoxTreeItem<?>) item).selectedProperty();
-                    }
-                    return null;
-                };
+        Callback<TreeItem<T>, ObservableValue<Boolean>> getSelectedProperty = item -> {
+            if (item instanceof CheckBoxTreeItem<?>) {
+                return ((CheckBoxTreeItem<?>) item).selectedProperty();
+            }
+            return null;
+        };
 
         StringConverter<TreeItem<T>> converter = new StringConverter<TreeItem<T>>() {
             @Override
             public String toString(TreeItem<T> treeItem) {
-                return treeItem == null || treeItem.getValue() == null || toText == null ?
-                        "" : toText.call(treeItem.getValue());
+                return treeItem == null || treeItem.getValue() == null || toText == null
+                        ? ""
+                        : toText.call(treeItem.getValue());
             }
 
             @Override

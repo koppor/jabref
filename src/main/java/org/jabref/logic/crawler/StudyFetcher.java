@@ -38,9 +38,7 @@ class StudyFetcher {
      * If any library API is not available, its corresponding entry is missing from the internal map.
      */
     public List<QueryResult> crawl() {
-        return searchQueries.parallelStream()
-                            .map(this::getQueryResult)
-                            .collect(Collectors.toList());
+        return searchQueries.parallelStream().map(this::getQueryResult).collect(Collectors.toList());
     }
 
     private QueryResult getQueryResult(String searchQuery) {
@@ -55,9 +53,9 @@ class StudyFetcher {
      */
     private List<FetchResult> performSearchOnQuery(String searchQuery) {
         return activeFetchers.parallelStream()
-                             .map(fetcher -> performSearchOnQueryForFetcher(searchQuery, fetcher))
-                             .filter(Objects::nonNull)
-                             .collect(Collectors.toList());
+                .map(fetcher -> performSearchOnQueryForFetcher(searchQuery, fetcher))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     private FetchResult performSearchOnQueryForFetcher(String searchQuery, SearchBasedFetcher fetcher) {
@@ -66,7 +64,8 @@ class StudyFetcher {
             if (fetcher instanceof PagedSearchBasedFetcher basedFetcher) {
                 int pages = (int) Math.ceil(((double) MAX_AMOUNT_OF_RESULTS_PER_FETCHER) / basedFetcher.getPageSize());
                 for (int page = 0; page < pages; page++) {
-                    fetchResult.addAll(basedFetcher.performSearchPaged(searchQuery, page).getContent());
+                    fetchResult.addAll(
+                            basedFetcher.performSearchPaged(searchQuery, page).getContent());
                 }
             } else {
                 fetchResult = fetcher.performSearch(searchQuery);

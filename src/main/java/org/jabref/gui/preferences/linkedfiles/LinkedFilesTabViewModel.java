@@ -51,30 +51,27 @@ public class LinkedFilesTabViewModel implements PreferenceTabViewModel {
         this.filePreferences = preferences.getFilePreferences();
         this.autoLinkPreferences = preferences.getAutoLinkPreferences();
 
-        mainFileDirValidator = new FunctionBasedValidator<>(
-                mainFileDirectoryProperty,
-                mainDirectoryPath -> {
-                    ValidationMessage error = ValidationMessage.error(
-                            Localization.lang("Main file directory '%0' not found.\nCheck the tab \"Linked files\".", mainDirectoryPath)
-                    );
-                    try {
-                        Path path = Path.of(mainDirectoryPath);
-                        if (!(Files.exists(path) && Files.isDirectory(path))) {
-                            return error;
-                        }
-                    } catch (InvalidPathException ex) {
-                        return error;
-                    }
-                    // main directory is valid
-                    return null;
+        mainFileDirValidator = new FunctionBasedValidator<>(mainFileDirectoryProperty, mainDirectoryPath -> {
+            ValidationMessage error = ValidationMessage.error(Localization.lang(
+                    "Main file directory '%0' not found.\nCheck the tab \"Linked files\".", mainDirectoryPath));
+            try {
+                Path path = Path.of(mainDirectoryPath);
+                if (!(Files.exists(path) && Files.isDirectory(path))) {
+                    return error;
                 }
-        );
+            } catch (InvalidPathException ex) {
+                return error;
+            }
+            // main directory is valid
+            return null;
+        });
     }
 
     @Override
     public void setValues() {
         // External files preferences / Attached files preferences / File preferences
-        mainFileDirectoryProperty.setValue(filePreferences.getMainFileDirectory().orElse(Path.of("")).toString());
+        mainFileDirectoryProperty.setValue(
+                filePreferences.getMainFileDirectory().orElse(Path.of("")).toString());
         useMainFileDirectoryProperty.setValue(!filePreferences.shouldStoreFilesRelativeToBibFile());
         useBibLocationAsPrimaryProperty.setValue(filePreferences.shouldStoreFilesRelativeToBibFile());
         fulltextIndex.setValue(filePreferences.shouldFulltextIndexLinkedFiles());
@@ -120,18 +117,21 @@ public class LinkedFilesTabViewModel implements PreferenceTabViewModel {
     public boolean validateSettings() {
         ValidationStatus validationStatus = mainFileDirValidationStatus();
         if (!validationStatus.isValid() && useMainFileDirectoryProperty().get()) {
-            validationStatus.getHighestMessage().ifPresent(message ->
-                    dialogService.showErrorDialogAndWait(message.getMessage()));
+            validationStatus
+                    .getHighestMessage()
+                    .ifPresent(message -> dialogService.showErrorDialogAndWait(message.getMessage()));
             return false;
         }
         return true;
     }
 
     public void mainFileDirBrowse() {
-        DirectoryDialogConfiguration dirDialogConfiguration =
-                new DirectoryDialogConfiguration.Builder().withInitialDirectory(Path.of(mainFileDirectoryProperty.getValue())).build();
-        dialogService.showDirectorySelectionDialog(dirDialogConfiguration)
-                     .ifPresent(f -> mainFileDirectoryProperty.setValue(f.toString()));
+        DirectoryDialogConfiguration dirDialogConfiguration = new DirectoryDialogConfiguration.Builder()
+                .withInitialDirectory(Path.of(mainFileDirectoryProperty.getValue()))
+                .build();
+        dialogService
+                .showDirectorySelectionDialog(dirDialogConfiguration)
+                .ifPresent(f -> mainFileDirectoryProperty.setValue(f.toString()));
     }
 
     // External file links
@@ -179,4 +179,3 @@ public class LinkedFilesTabViewModel implements PreferenceTabViewModel {
         return useMainFileDirectoryProperty;
     }
 }
-

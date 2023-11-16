@@ -21,8 +21,10 @@ public class BibDatabaseDiff {
     private final List<BibStringDiff> bibStringDiffs;
     private final List<BibEntryDiff> entryDiffs;
 
-    private BibDatabaseDiff(BibDatabaseContext originalDatabase, BibDatabaseContext newDatabase, boolean includeEmptyEntries) {
-        metaDataDiff = MetaDataDiff.compare(originalDatabase.getMetaData(), newDatabase.getMetaData()).orElse(null);
+    private BibDatabaseDiff(
+            BibDatabaseContext originalDatabase, BibDatabaseContext newDatabase, boolean includeEmptyEntries) {
+        metaDataDiff = MetaDataDiff.compare(originalDatabase.getMetaData(), newDatabase.getMetaData())
+                .orElse(null);
         preambleDiff = PreambleDiff.compare(originalDatabase, newDatabase).orElse(null);
         bibStringDiffs = BibStringDiff.compare(originalDatabase.getDatabase(), newDatabase.getDatabase());
 
@@ -46,7 +48,8 @@ public class BibDatabaseDiff {
         return comparator;
     }
 
-    private static List<BibEntryDiff> compareEntries(List<BibEntry> originalEntries, List<BibEntry> newEntries, BibDatabaseMode mode) {
+    private static List<BibEntryDiff> compareEntries(
+            List<BibEntry> originalEntries, List<BibEntry> newEntries, BibDatabaseMode mode) {
         List<BibEntryDiff> differences = new ArrayList<>();
 
         // Create a HashSet where we can put references to entries in the new
@@ -111,7 +114,9 @@ public class BibDatabaseDiff {
     }
 
     private static boolean hasEqualCitationKey(BibEntry oneEntry, BibEntry twoEntry) {
-        return oneEntry.hasCitationKey() && twoEntry.hasCitationKey() && oneEntry.getCitationKey().equals(twoEntry.getCitationKey());
+        return oneEntry.hasCitationKey()
+                && twoEntry.hasCitationKey()
+                && oneEntry.getCitationKey().equals(twoEntry.getCitationKey());
     }
 
     public static BibDatabaseDiff compare(BibDatabaseContext base, BibDatabaseContext changed) {

@@ -99,15 +99,16 @@ public class SourceTab extends EntryEditorTab {
         }
     }
 
-    public SourceTab(BibDatabaseContext bibDatabaseContext,
-                     CountingUndoManager undoManager,
-                     FieldPreferences fieldPreferences,
-                     ImportFormatPreferences importFormatPreferences,
-                     FileUpdateMonitor fileMonitor,
-                     DialogService dialogService,
-                     StateManager stateManager,
-                     BibEntryTypesManager entryTypesManager,
-                     KeyBindingRepository keyBindingRepository) {
+    public SourceTab(
+            BibDatabaseContext bibDatabaseContext,
+            CountingUndoManager undoManager,
+            FieldPreferences fieldPreferences,
+            ImportFormatPreferences importFormatPreferences,
+            FileUpdateMonitor fileMonitor,
+            DialogService dialogService,
+            StateManager stateManager,
+            BibEntryTypesManager entryTypesManager,
+            KeyBindingRepository keyBindingRepository) {
         this.mode = bibDatabaseContext.getMode();
         this.setText(Localization.lang("%0 source", mode.getFormattedName()));
         this.setTooltip(new Tooltip(Localization.lang("Show/edit %0 source", mode.getFormattedName())));
@@ -139,7 +140,8 @@ public class SourceTab extends EntryEditorTab {
         }
     }
 
-    private String getSourceString(BibEntry entry, BibDatabaseMode type, FieldPreferences fieldPreferences) throws IOException {
+    private String getSourceString(BibEntry entry, BibDatabaseMode type, FieldPreferences fieldPreferences)
+            throws IOException {
         StringWriter writer = new StringWriter();
         BibWriter bibWriter = new BibWriter(writer, OS.NEWLINE);
         FieldWriter fieldWriter = FieldWriter.buildIgnoreHashes(fieldPreferences);
@@ -184,17 +186,19 @@ public class SourceTab extends EntryEditorTab {
             }
         });
         codeArea.setId("bibtexSourceCodeArea");
-        codeArea.addEventFilter(KeyEvent.KEY_PRESSED, event -> CodeAreaKeyBindings.call(codeArea, event, keyBindingRepository));
+        codeArea.addEventFilter(
+                KeyEvent.KEY_PRESSED, event -> CodeAreaKeyBindings.call(codeArea, event, keyBindingRepository));
         codeArea.addEventFilter(KeyEvent.KEY_PRESSED, this::listenForSaveKeybinding);
 
         ActionFactory factory = new ActionFactory(keyBindingRepository);
         ContextMenu contextMenu = new ContextMenu();
-        contextMenu.getItems().addAll(
-                factory.createMenuItem(StandardActions.CUT, new EditAction(StandardActions.CUT)),
-                factory.createMenuItem(StandardActions.COPY, new EditAction(StandardActions.COPY)),
-                factory.createMenuItem(StandardActions.PASTE, new EditAction(StandardActions.PASTE)),
-                factory.createMenuItem(StandardActions.SELECT_ALL, new EditAction(StandardActions.SELECT_ALL))
-        );
+        contextMenu
+                .getItems()
+                .addAll(
+                        factory.createMenuItem(StandardActions.CUT, new EditAction(StandardActions.CUT)),
+                        factory.createMenuItem(StandardActions.COPY, new EditAction(StandardActions.COPY)),
+                        factory.createMenuItem(StandardActions.PASTE, new EditAction(StandardActions.PASTE)),
+                        factory.createMenuItem(StandardActions.SELECT_ALL, new EditAction(StandardActions.SELECT_ALL)));
 
         contextMenu.getStyleClass().add("context-menu");
         codeArea.setContextMenu(contextMenu);
@@ -205,9 +209,10 @@ public class SourceTab extends EntryEditorTab {
             ValidationStatus sourceValidationStatus = sourceValidator.getValidationStatus();
             if (!sourceValidationStatus.isValid()) {
                 sourceValidationStatus.getHighestMessage().ifPresent(message -> {
-                    String content = Localization.lang("User input via entry-editor in `{}bibtex source` tab led to failure.")
-                            + "\n" + Localization.lang("Please check your library file for wrong syntax.")
-                            + "\n\n" + message.getMessage();
+                    String content =
+                            Localization.lang("User input via entry-editor in `{}bibtex source` tab led to failure.")
+                                    + "\n" + Localization.lang("Please check your library file for wrong syntax.")
+                                    + "\n\n" + message.getMessage();
                     dialogService.showWarningDialogAndWait(Localization.lang("SourceTab error"), content);
                 });
             }
@@ -240,8 +245,8 @@ public class SourceTab extends EntryEditorTab {
                 highlightSearchPattern();
             } catch (IOException ex) {
                 codeArea.setEditable(false);
-                codeArea.appendText(ex.getMessage() + "\n\n" +
-                        Localization.lang("Correct the entry, and reopen editor to display/edit source."));
+                codeArea.appendText(ex.getMessage() + "\n\n"
+                        + Localization.lang("Correct the entry, and reopen editor to display/edit source."));
                 LOGGER.debug("Incorrect entry", ex);
             }
         });
@@ -325,7 +330,8 @@ public class SourceTab extends EntryEditorTab {
 
             // See if the user has changed the entry type:
             if (!Objects.equals(newEntry.getType(), outOfFocusEntry.getType())) {
-                compound.addEdit(new UndoableChangeType(outOfFocusEntry, outOfFocusEntry.getType(), newEntry.getType()));
+                compound.addEdit(
+                        new UndoableChangeType(outOfFocusEntry, outOfFocusEntry.getType(), newEntry.getType()));
                 outOfFocusEntry.setType(newEntry.getType());
             }
             compound.end();
@@ -333,14 +339,14 @@ public class SourceTab extends EntryEditorTab {
 
             sourceIsValid.setValue(null);
         } catch (InvalidFieldValueException | IllegalStateException | IOException ex) {
-            sourceIsValid.setValue(ValidationMessage.error(Localization.lang("Problem with parsing entry") + ": " + ex.getMessage()));
+            sourceIsValid.setValue(
+                    ValidationMessage.error(Localization.lang("Problem with parsing entry") + ": " + ex.getMessage()));
             LOGGER.debug("Incorrect source", ex);
         }
     }
 
     private void listenForSaveKeybinding(KeyEvent event) {
         keyBindingRepository.mapToKeyBinding(event).ifPresent(binding -> {
-
             switch (binding) {
                 case SAVE_DATABASE, SAVE_ALL, SAVE_DATABASE_AS -> {
                     storeSource(currentEntry, codeArea.textProperty().getValue());

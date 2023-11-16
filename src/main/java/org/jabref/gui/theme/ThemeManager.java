@@ -52,9 +52,10 @@ public class ThemeManager {
     private final Set<WebEngine> webEngines = Collections.newSetFromMap(new WeakHashMap<>());
     private final OsThemeDetector detector = OsThemeDetector.getDetector();
 
-    public ThemeManager(WorkspacePreferences workspacePreferences,
-                        FileUpdateMonitor fileUpdateMonitor,
-                        Consumer<Runnable> updateRunner) {
+    public ThemeManager(
+            WorkspacePreferences workspacePreferences,
+            FileUpdateMonitor fileUpdateMonitor,
+            Consumer<Runnable> updateRunner) {
         this.workspacePreferences = Objects.requireNonNull(workspacePreferences);
         this.fileUpdateMonitor = Objects.requireNonNull(fileUpdateMonitor);
         this.updateRunner = Objects.requireNonNull(updateRunner);
@@ -69,7 +70,8 @@ public class ThemeManager {
 
         EasyBind.subscribe(workspacePreferences.themeProperty(), theme -> updateThemeSettings());
         EasyBind.subscribe(workspacePreferences.themeSyncOsProperty(), theme -> updateThemeSettings());
-        EasyBind.subscribe(workspacePreferences.shouldOverrideDefaultFontSizeProperty(), should -> updateFontSettings());
+        EasyBind.subscribe(
+                workspacePreferences.shouldOverrideDefaultFontSizeProperty(), should -> updateFontSettings());
         EasyBind.subscribe(workspacePreferences.mainFontSizeProperty(), size -> updateFontSettings());
         detector.registerListener(isDark -> updateThemeSettings());
     }
@@ -94,14 +96,16 @@ public class ThemeManager {
         this.theme = newTheme;
         LOGGER.info("Theme set to {} with base css {}", newTheme, baseStyleSheet);
 
-        this.theme.getAdditionalStylesheet().ifPresent(
-                styleSheet -> addStylesheetToWatchlist(styleSheet, this::additionalCssLiveUpdate));
+        this.theme
+                .getAdditionalStylesheet()
+                .ifPresent(styleSheet -> addStylesheetToWatchlist(styleSheet, this::additionalCssLiveUpdate));
 
         additionalCssLiveUpdate();
     }
 
     private void updateFontSettings() {
-        DefaultTaskExecutor.runInJavaFXThread(() -> updateRunner.accept(() -> getMainWindowScene().ifPresent(this::updateFontStyle)));
+        DefaultTaskExecutor.runInJavaFXThread(
+                () -> updateRunner.accept(() -> getMainWindowScene().ifPresent(this::updateFontStyle)));
     }
 
     private void removeStylesheetFromWatchList(StyleSheet styleSheet) {
@@ -136,26 +140,27 @@ public class ThemeManager {
     }
 
     private void additionalCssLiveUpdate() {
-        final String newStyleSheetLocation = this.theme.getAdditionalStylesheet().map(styleSheet -> {
-            styleSheet.reload();
-            return styleSheet.getWebEngineStylesheet();
-        }).orElse("");
+        final String newStyleSheetLocation = this.theme
+                .getAdditionalStylesheet()
+                .map(styleSheet -> {
+                    styleSheet.reload();
+                    return styleSheet.getWebEngineStylesheet();
+                })
+                .orElse("");
 
         LOGGER.debug("Updating additional CSS for main window scene and {} web engines", webEngines.size());
 
-        DefaultTaskExecutor.runInJavaFXThread(() ->
-                updateRunner.accept(() -> {
-                    updateAdditionalCss();
+        DefaultTaskExecutor.runInJavaFXThread(() -> updateRunner.accept(() -> {
+            updateAdditionalCss();
 
-                    webEngines.forEach(webEngine -> {
-                        // force refresh by unloading style sheet, if the location hasn't changed
-                        if (newStyleSheetLocation.equals(webEngine.getUserStyleSheetLocation())) {
-                            webEngine.setUserStyleSheetLocation(null);
-                        }
-                        webEngine.setUserStyleSheetLocation(newStyleSheetLocation);
-                    });
-                })
-        );
+            webEngines.forEach(webEngine -> {
+                // force refresh by unloading style sheet, if the location hasn't changed
+                if (newStyleSheetLocation.equals(webEngine.getUserStyleSheetLocation())) {
+                    webEngine.setUserStyleSheetLocation(null);
+                }
+                webEngine.setUserStyleSheetLocation(newStyleSheetLocation);
+            });
+        }));
     }
 
     private void updateBaseCss() {
@@ -170,18 +175,19 @@ public class ThemeManager {
     }
 
     private void updateAdditionalCss() {
-        getMainWindowScene().ifPresent(scene -> scene.getStylesheets().setAll(List.of(
-                baseStyleSheet.getSceneStylesheet().toExternalForm(),
-                theme.getAdditionalStylesheet().map(styleSheet -> {
-                         URL stylesheetUrl = styleSheet.getSceneStylesheet();
-                         if (stylesheetUrl != null) {
-                             return stylesheetUrl.toExternalForm();
-                         } else {
-                             return "";
-                         }
-                     })
-                     .orElse("")
-        )));
+        getMainWindowScene().ifPresent(scene -> scene.getStylesheets()
+                .setAll(List.of(
+                        baseStyleSheet.getSceneStylesheet().toExternalForm(),
+                        theme.getAdditionalStylesheet()
+                                .map(styleSheet -> {
+                                    URL stylesheetUrl = styleSheet.getSceneStylesheet();
+                                    if (stylesheetUrl != null) {
+                                        return stylesheetUrl.toExternalForm();
+                                    } else {
+                                        return "";
+                                    }
+                                })
+                                .orElse(""))));
     }
 
     /**
@@ -208,8 +214,10 @@ public class ThemeManager {
     public void installCss(WebEngine webEngine) {
         updateRunner.accept(() -> {
             if (this.webEngines.add(webEngine)) {
-                webEngine.setUserStyleSheetLocation(this.theme.getAdditionalStylesheet().isPresent() ?
-                        this.theme.getAdditionalStylesheet().get().getWebEngineStylesheet() : "");
+                webEngine.setUserStyleSheetLocation(
+                        this.theme.getAdditionalStylesheet().isPresent()
+                                ? this.theme.getAdditionalStylesheet().get().getWebEngineStylesheet()
+                                : "");
             }
         });
     }

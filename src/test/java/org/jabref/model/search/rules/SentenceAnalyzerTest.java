@@ -22,8 +22,7 @@ public class SentenceAnalyzerTest {
                 Arguments.of(List.of("b "), "\"b \" "),
 
                 // Escaped characters and leading spaces.
-                Arguments.of(List.of(" a"), " \\ a")
-        );
+                Arguments.of(List.of(" a"), " \\ a"));
     }
 
     @ParameterizedTest

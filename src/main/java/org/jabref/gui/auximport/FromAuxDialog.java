@@ -26,16 +26,32 @@ import jakarta.inject.Inject;
  * A wizard dialog for generating a new sub database from existing TeX AUX file
  */
 public class FromAuxDialog extends BaseDialog<Void> {
-    @FXML private ButtonType generateButtonType;
-    @FXML private TextField auxFileField;
-    @FXML private ListView<String> notFoundList;
-    @FXML private TextArea statusInfos;
-    @FXML private ComboBox<BibDatabaseContext> libraryListView;
+    @FXML
+    private ButtonType generateButtonType;
 
-    @Inject private PreferencesService preferences;
-    @Inject private DialogService dialogService;
-    @Inject private ThemeManager themeManager;
-    @Inject private StateManager stateManager;
+    @FXML
+    private TextField auxFileField;
+
+    @FXML
+    private ListView<String> notFoundList;
+
+    @FXML
+    private TextArea statusInfos;
+
+    @FXML
+    private ComboBox<BibDatabaseContext> libraryListView;
+
+    @Inject
+    private PreferencesService preferences;
+
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private ThemeManager themeManager;
+
+    @Inject
+    private StateManager stateManager;
 
     private final LibraryTabContainer tabContainer;
     private FromAuxDialogViewModel viewModel;
@@ -44,13 +60,17 @@ public class FromAuxDialog extends BaseDialog<Void> {
         this.tabContainer = tabContainer;
         this.setTitle(Localization.lang("AUX file import"));
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         Button generateButton = (Button) this.getDialogPane().lookupButton(generateButtonType);
-        generateButton.disableProperty().bind(viewModel.parseFailedProperty().or(viewModel.notFoundList().emptyProperty().not()));
-        generateButton.defaultButtonProperty().bind(generateButton.disableProperty().not());
+        generateButton
+                .disableProperty()
+                .bind(viewModel
+                        .parseFailedProperty()
+                        .or(viewModel.notFoundList().emptyProperty().not()));
+        generateButton
+                .defaultButtonProperty()
+                .bind(generateButton.disableProperty().not());
         setResultConverter(button -> {
             if (button == generateButtonType) {
                 viewModel.addResultToTabContainer();
@@ -75,7 +95,9 @@ public class FromAuxDialog extends BaseDialog<Void> {
         new ViewModelListCellFactory<BibDatabaseContext>()
                 .withText(viewModel::getDatabaseName)
                 .install(libraryListView);
-        EasyBind.listen(libraryListView.getSelectionModel().selectedItemProperty(), (obs, oldValue, newValue) -> parseActionPerformed());
+        EasyBind.listen(
+                libraryListView.getSelectionModel().selectedItemProperty(),
+                (obs, oldValue, newValue) -> parseActionPerformed());
     }
 
     @FXML

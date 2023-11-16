@@ -34,7 +34,11 @@ public class NewEntryAction extends SimpleCommand {
 
     private final PreferencesService preferences;
 
-    public NewEntryAction(JabRefFrame jabRefFrame, DialogService dialogService, PreferencesService preferences, StateManager stateManager) {
+    public NewEntryAction(
+            JabRefFrame jabRefFrame,
+            DialogService dialogService,
+            PreferencesService preferences,
+            StateManager stateManager) {
         this.jabRefFrame = jabRefFrame;
         this.dialogService = dialogService;
         this.preferences = preferences;
@@ -44,7 +48,12 @@ public class NewEntryAction extends SimpleCommand {
         this.executable.bind(needsDatabase(stateManager));
     }
 
-    public NewEntryAction(JabRefFrame jabRefFrame, EntryType type, DialogService dialogService, PreferencesService preferences, StateManager stateManager) {
+    public NewEntryAction(
+            JabRefFrame jabRefFrame,
+            EntryType type,
+            DialogService dialogService,
+            PreferencesService preferences,
+            StateManager stateManager) {
         this(jabRefFrame, dialogService, preferences, stateManager);
         this.type = Optional.of(type);
     }
@@ -59,8 +68,10 @@ public class NewEntryAction extends SimpleCommand {
         if (type.isPresent()) {
             jabRefFrame.getCurrentLibraryTab().insertEntry(new BibEntry(type.get()));
         } else {
-            EntryTypeView typeChoiceDialog = new EntryTypeView(jabRefFrame.getCurrentLibraryTab(), dialogService, preferences);
-            EntryType selectedType = dialogService.showCustomDialogAndWait(typeChoiceDialog).orElse(null);
+            EntryTypeView typeChoiceDialog =
+                    new EntryTypeView(jabRefFrame.getCurrentLibraryTab(), dialogService, preferences);
+            EntryType selectedType =
+                    dialogService.showCustomDialogAndWait(typeChoiceDialog).orElse(null);
             if (selectedType == null) {
                 return;
             }

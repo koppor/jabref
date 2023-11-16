@@ -110,7 +110,8 @@ public class BibEntry implements Cloneable {
     /**
      * Cache that stores the field as keyword lists (format &lt;Field, Separator, Keyword list>)
      */
-    private final MultiKeyMap<StandardField, Character, KeywordList> fieldsAsKeywords = new MultiKeyMap<>(StandardField.class);
+    private final MultiKeyMap<StandardField, Character, KeywordList> fieldsAsKeywords =
+            new MultiKeyMap<>(StandardField.class);
 
     private final EventBus eventBus = new EventBus();
 
@@ -177,22 +178,22 @@ public class BibEntry implements Cloneable {
      */
     private Optional<Field> getSourceField(Field targetField, EntryType targetEntry, EntryType sourceEntry) {
         //// 1. Sort out forbidden fields
-        if ((targetField == StandardField.IDS) ||
-                (targetField == StandardField.CROSSREF) ||
-                (targetField == StandardField.XREF) ||
-                (targetField == StandardField.ENTRYSET) ||
-                (targetField == StandardField.RELATED) ||
-                (targetField == StandardField.SORTKEY)) {
+        if ((targetField == StandardField.IDS)
+                || (targetField == StandardField.CROSSREF)
+                || (targetField == StandardField.XREF)
+                || (targetField == StandardField.ENTRYSET)
+                || (targetField == StandardField.RELATED)
+                || (targetField == StandardField.SORTKEY)) {
             return Optional.empty();
         }
 
         //// 2. Handle special field mappings
-        if (((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.InBook)) ||
-                ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.BookInBook)) ||
-                ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.SuppBook)) ||
-                ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.InBook)) ||
-                ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.BookInBook)) ||
-                ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.SuppBook))) {
+        if (((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.InBook))
+                || ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.BookInBook))
+                || ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.SuppBook))
+                || ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.InBook))
+                || ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.BookInBook))
+                || ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.SuppBook))) {
             if (targetField == StandardField.AUTHOR) {
                 return Optional.of(StandardField.AUTHOR);
             }
@@ -201,17 +202,19 @@ public class BibEntry implements Cloneable {
             }
         }
 
-        if (((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.Book)) ||
-                ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.InBook)) ||
-                ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.BookInBook)) ||
-                ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.SuppBook)) ||
-                ((sourceEntry == StandardEntryType.MvCollection) && (targetEntry == StandardEntryType.Collection)) ||
-                ((sourceEntry == StandardEntryType.MvCollection) && (targetEntry == StandardEntryType.InCollection)) ||
-                ((sourceEntry == StandardEntryType.MvCollection) && (targetEntry == StandardEntryType.SuppCollection)) ||
-                ((sourceEntry == StandardEntryType.MvProceedings) && (targetEntry == StandardEntryType.Proceedings)) ||
-                ((sourceEntry == StandardEntryType.MvProceedings) && (targetEntry == StandardEntryType.InProceedings)) ||
-                ((sourceEntry == StandardEntryType.MvReference) && (targetEntry == StandardEntryType.Reference)) ||
-                ((sourceEntry == StandardEntryType.MvReference) && (targetEntry == StandardEntryType.InReference))) {
+        if (((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.Book))
+                || ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.InBook))
+                || ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.BookInBook))
+                || ((sourceEntry == StandardEntryType.MvBook) && (targetEntry == StandardEntryType.SuppBook))
+                || ((sourceEntry == StandardEntryType.MvCollection) && (targetEntry == StandardEntryType.Collection))
+                || ((sourceEntry == StandardEntryType.MvCollection) && (targetEntry == StandardEntryType.InCollection))
+                || ((sourceEntry == StandardEntryType.MvCollection)
+                        && (targetEntry == StandardEntryType.SuppCollection))
+                || ((sourceEntry == StandardEntryType.MvProceedings) && (targetEntry == StandardEntryType.Proceedings))
+                || ((sourceEntry == StandardEntryType.MvProceedings)
+                        && (targetEntry == StandardEntryType.InProceedings))
+                || ((sourceEntry == StandardEntryType.MvReference) && (targetEntry == StandardEntryType.Reference))
+                || ((sourceEntry == StandardEntryType.MvReference) && (targetEntry == StandardEntryType.InReference))) {
             if (targetField == StandardField.MAINTITLE) {
                 return Optional.of(StandardField.TITLE);
             }
@@ -223,9 +226,9 @@ public class BibEntry implements Cloneable {
             }
 
             // those fields are no more available for the same-name inheritance strategy
-            if ((targetField == StandardField.TITLE) ||
-                    (targetField == StandardField.SUBTITLE) ||
-                    (targetField == StandardField.TITLEADDON)) {
+            if ((targetField == StandardField.TITLE)
+                    || (targetField == StandardField.SUBTITLE)
+                    || (targetField == StandardField.TITLEADDON)) {
                 return Optional.empty();
             }
 
@@ -235,13 +238,14 @@ public class BibEntry implements Cloneable {
             }
         }
 
-        if (((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.InBook)) ||
-                ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.BookInBook)) ||
-                ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.SuppBook)) ||
-                ((sourceEntry == StandardEntryType.Collection) && (targetEntry == StandardEntryType.InCollection)) ||
-                ((sourceEntry == StandardEntryType.Collection) && (targetEntry == StandardEntryType.SuppCollection)) ||
-                ((sourceEntry == StandardEntryType.Reference) && (targetEntry == StandardEntryType.InReference)) ||
-                ((sourceEntry == StandardEntryType.Proceedings) && (targetEntry == StandardEntryType.InProceedings))) {
+        if (((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.InBook))
+                || ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.BookInBook))
+                || ((sourceEntry == StandardEntryType.Book) && (targetEntry == StandardEntryType.SuppBook))
+                || ((sourceEntry == StandardEntryType.Collection) && (targetEntry == StandardEntryType.InCollection))
+                || ((sourceEntry == StandardEntryType.Collection) && (targetEntry == StandardEntryType.SuppCollection))
+                || ((sourceEntry == StandardEntryType.Reference) && (targetEntry == StandardEntryType.InReference))
+                || ((sourceEntry == StandardEntryType.Proceedings)
+                        && (targetEntry == StandardEntryType.InProceedings))) {
             if (targetField == StandardField.BOOKTITLE) {
                 return Optional.of(StandardField.TITLE);
             }
@@ -253,9 +257,9 @@ public class BibEntry implements Cloneable {
             }
 
             // those fields are no more available for the same-name inheritance strategy
-            if ((targetField == StandardField.TITLE) ||
-                    (targetField == StandardField.SUBTITLE) ||
-                    (targetField == StandardField.TITLEADDON)) {
+            if ((targetField == StandardField.TITLE)
+                    || (targetField == StandardField.SUBTITLE)
+                    || (targetField == StandardField.TITLEADDON)) {
                 return Optional.empty();
             }
 
@@ -265,8 +269,9 @@ public class BibEntry implements Cloneable {
             }
         }
 
-        if (((sourceEntry == IEEETranEntryType.Periodical) && (targetEntry == StandardEntryType.Article)) ||
-                ((sourceEntry == IEEETranEntryType.Periodical) && (targetEntry == StandardEntryType.SuppPeriodical))) {
+        if (((sourceEntry == IEEETranEntryType.Periodical) && (targetEntry == StandardEntryType.Article))
+                || ((sourceEntry == IEEETranEntryType.Periodical)
+                        && (targetEntry == StandardEntryType.SuppPeriodical))) {
             if (targetField == StandardField.JOURNALTITLE) {
                 return Optional.of(StandardField.TITLE);
             }
@@ -275,8 +280,7 @@ public class BibEntry implements Cloneable {
             }
 
             // those fields are no more available for the same-name inheritance strategy
-            if ((targetField == StandardField.TITLE) ||
-                    (targetField == StandardField.SUBTITLE)) {
+            if ((targetField == StandardField.TITLE) || (targetField == StandardField.SUBTITLE)) {
                 return Optional.empty();
             }
 
@@ -312,7 +316,8 @@ public class BibEntry implements Cloneable {
         return genericGetResolvedFieldOrAlias(field, database, BibEntry::getFieldOrAliasLatexFree);
     }
 
-    private Optional<String> genericGetResolvedFieldOrAlias(Field field, BibDatabase database, BiFunction<BibEntry, Field, Optional<String>> getFieldOrAlias) {
+    private Optional<String> genericGetResolvedFieldOrAlias(
+            Field field, BibDatabase database, BiFunction<BibEntry, Field, Optional<String>> getFieldOrAlias) {
         if ((InternalField.TYPE_HEADER == field) || (InternalField.OBSOLETE_TYPE_HEADER == field)) {
             return Optional.of(type.get().getDisplayName());
         }
@@ -337,9 +342,7 @@ public class BibEntry implements Cloneable {
             }
         }
 
-        return (database == null) || result.isEmpty() ?
-                result :
-                Optional.of(database.resolveForStrings(result.get()));
+        return (database == null) || result.isEmpty() ? result : Optional.of(database.resolveForStrings(result.get()));
     }
 
     /**
@@ -460,7 +463,8 @@ public class BibEntry implements Cloneable {
         } else {
             Optional<String> fieldValue = getField(field);
             if (fieldValue.isPresent()) {
-                String latexFreeValue = LatexToUnicodeAdapter.format(fieldValue.get()).intern();
+                String latexFreeValue =
+                        LatexToUnicodeAdapter.format(fieldValue.get()).intern();
                 latexFreeFields.put(field, latexFreeValue);
                 return Optional.of(latexFreeValue);
             } else {
@@ -485,7 +489,8 @@ public class BibEntry implements Cloneable {
      * @param getFieldValue the method to get the value of a given field in a given entry
      * @return determined field value
      */
-    private Optional<String> genericGetFieldOrAlias(Field field, BiFunction<BibEntry, Field, Optional<String>> getFieldValue) {
+    private Optional<String> genericGetFieldOrAlias(
+            Field field, BiFunction<BibEntry, Field, Optional<String>> getFieldValue) {
         Optional<String> fieldValue = getFieldValue.apply(this, field);
 
         if (fieldValue.isPresent() && !fieldValue.get().isEmpty()) {
@@ -674,7 +679,8 @@ public class BibEntry implements Cloneable {
      * @return true if all fields are set or could be resolved, false otherwise.
      */
     public boolean allFieldsPresent(Collection<OrFields> fields, BibDatabase database) {
-        return fields.stream().allMatch(field -> this.getResolvedFieldOrAlias(field, database).isPresent());
+        return fields.stream()
+                .allMatch(field -> this.getResolvedFieldOrAlias(field, database).isPresent());
     }
 
     /**
@@ -711,8 +717,11 @@ public class BibEntry implements Cloneable {
      * Author1, Author2: Title (Year)
      */
     public String getAuthorTitleYear(int maxCharacters) {
-        String[] s = new String[]{getField(StandardField.AUTHOR).orElse("N/A"), getField(StandardField.TITLE).orElse("N/A"),
-                getField(StandardField.YEAR).orElse("N/A")};
+        String[] s = new String[] {
+            getField(StandardField.AUTHOR).orElse("N/A"),
+            getField(StandardField.TITLE).orElse("N/A"),
+            getField(StandardField.YEAR).orElse("N/A")
+        };
 
         String text = s[0] + ": \"" + s[1] + "\" (" + s[2] + ')';
         if ((maxCharacters <= 0) || (text.length() <= maxCharacters)) {
@@ -838,7 +847,9 @@ public class BibEntry implements Cloneable {
 
     public KeywordList getResolvedKeywords(Character delimiter, BibDatabase database) {
         Optional<String> keywordsContent = getResolvedFieldOrAlias(StandardField.KEYWORDS, database);
-        return keywordsContent.map(content -> KeywordList.parse(content, delimiter)).orElse(new KeywordList());
+        return keywordsContent
+                .map(content -> KeywordList.parse(content, delimiter))
+                .orElse(new KeywordList());
     }
 
     public Optional<FieldChange> removeKeywords(KeywordList keywordsToRemove, Character keywordDelimiter) {
@@ -846,7 +857,8 @@ public class BibEntry implements Cloneable {
 
         // We need to fix "file has changed on disk" for duplicate keywords
         // The input of the set may contain duplicate keywords (which are present as single keyword in the set)
-        // Even if no "keywordsToRemove" is contained, the method "putKeywords" will return a change, because the duplicate keywords will have been removed
+        // Even if no "keywordsToRemove" is contained, the method "putKeywords" will return a change, because the
+        // duplicate keywords will have been removed
         int oldSize = keywordList.size();
         keywordList.removeAll(keywordsToRemove);
         // claim 1: The size of a set is the same, if no element is removed
@@ -859,9 +871,8 @@ public class BibEntry implements Cloneable {
         }
     }
 
-    public Optional<FieldChange> replaceKeywords(KeywordList keywordsToReplace,
-                                                 Keyword newValue,
-                                                 Character keywordDelimiter) {
+    public Optional<FieldChange> replaceKeywords(
+            KeywordList keywordsToReplace, Keyword newValue, Character keywordDelimiter) {
         KeywordList keywordList = getKeywords(keywordDelimiter);
         keywordList.replaceAll(keywordsToReplace, newValue);
 
@@ -973,8 +984,9 @@ public class BibEntry implements Cloneable {
     }
 
     public List<ParsedEntryLink> getEntryLinkList(Field field, BibDatabase database) {
-        return getField(field).map(fieldValue -> EntryLinkList.parse(fieldValue, database))
-                              .orElse(Collections.emptyList());
+        return getField(field)
+                .map(fieldValue -> EntryLinkList.parse(fieldValue, database))
+                .orElse(Collections.emptyList());
     }
 
     public Optional<FieldChange> setEntryLinkList(Field field, List<ParsedEntryLink> list) {
@@ -1156,12 +1168,13 @@ public class BibEntry implements Cloneable {
 
         // At the moment, "Field" interface does not provide explicit equality, so using their names instead.
         Set<String> thisFieldsNames = thisFields.stream().map(Field::getName).collect(Collectors.toSet());
-        Set<String> otherPrioritizedFieldsNames = otherPrioritizedFields.stream().map(Field::getName).collect(Collectors.toSet());
+        Set<String> otherPrioritizedFieldsNames =
+                otherPrioritizedFields.stream().map(Field::getName).collect(Collectors.toSet());
 
         for (Field otherField : otherFields) {
             Optional<String> otherFieldValue = other.getField(otherField);
-            if (!thisFieldsNames.contains(otherField.getName()) ||
-                    otherPrioritizedFieldsNames.contains(otherField.getName())) {
+            if (!thisFieldsNames.contains(otherField.getName())
+                    || otherPrioritizedFieldsNames.contains(otherField.getName())) {
                 // As iterator only goes through non-null fields from OTHER, otherFieldValue can never be empty
                 otherFieldValue.ifPresent(s -> this.setField(otherField, s));
             }

@@ -31,11 +31,12 @@ public class CleanupAction extends SimpleCommand {
     private boolean isCanceled;
     private int modifiedEntriesCount;
 
-    public CleanupAction(JabRefFrame frame,
-                         PreferencesService preferences,
-                         DialogService dialogService,
-                         StateManager stateManager,
-                         TaskExecutor taskExecutor) {
+    public CleanupAction(
+            JabRefFrame frame,
+            PreferencesService preferences,
+            DialogService dialogService,
+            StateManager stateManager,
+            TaskExecutor taskExecutor) {
         this.frame = frame;
         this.preferences = preferences;
         this.dialogService = dialogService;
@@ -52,11 +53,13 @@ public class CleanupAction extends SimpleCommand {
         }
 
         if (stateManager.getSelectedEntries().isEmpty()) { // None selected. Inform the user to select entries first.
-            dialogService.showInformationDialogAndWait(Localization.lang("Cleanup entry"), Localization.lang("First select entries to clean up."));
+            dialogService.showInformationDialogAndWait(
+                    Localization.lang("Cleanup entry"), Localization.lang("First select entries to clean up."));
             return;
         }
 
-        dialogService.notify(Localization.lang("Doing a cleanup for %0 entries...",
+        dialogService.notify(Localization.lang(
+                "Doing a cleanup for %0 entries...",
                 Integer.toString(stateManager.getSelectedEntries().size())));
 
         isCanceled = false;
@@ -65,14 +68,15 @@ public class CleanupAction extends SimpleCommand {
         CleanupDialog cleanupDialog = new CleanupDialog(
                 stateManager.getActiveDatabase().get(),
                 preferences.getCleanupPreferences(),
-                preferences.getFilePreferences()
-        );
+                preferences.getFilePreferences());
 
         Optional<CleanupPreferences> chosenPreset = dialogService.showCustomDialogAndWait(cleanupDialog);
 
         chosenPreset.ifPresent(preset -> {
-            if (preset.isActive(CleanupPreferences.CleanupStep.RENAME_PDF) && preferences.getAutoLinkPreferences().shouldAskAutoNamingPdfs()) {
-                boolean confirmed = dialogService.showConfirmationDialogWithOptOutAndWait(Localization.lang("Autogenerate PDF Names"),
+            if (preset.isActive(CleanupPreferences.CleanupStep.RENAME_PDF)
+                    && preferences.getAutoLinkPreferences().shouldAskAutoNamingPdfs()) {
+                boolean confirmed = dialogService.showConfirmationDialogWithOptOutAndWait(
+                        Localization.lang("Autogenerate PDF Names"),
                         Localization.lang("Auto-generating PDF-Names does not support undo. Continue?"),
                         Localization.lang("Autogenerate PDF Names"),
                         Localization.lang("Cancel"),
@@ -88,21 +92,20 @@ public class CleanupAction extends SimpleCommand {
             preferences.getCleanupPreferences().setFieldFormatterCleanups(preset.getFieldFormatterCleanups());
 
             BackgroundTask.wrap(() -> cleanup(stateManager.getActiveDatabase().get(), preset))
-                          .onSuccess(result -> showResults())
-                          .onFailure(dialogService::showErrorDialogAndWait)
-                          .executeWith(taskExecutor);
+                    .onSuccess(result -> showResults())
+                    .onFailure(dialogService::showErrorDialogAndWait)
+                    .executeWith(taskExecutor);
         });
     }
 
     /**
      * Runs the cleanup on the entry and records the change.
      */
-    private void doCleanup(BibDatabaseContext databaseContext, CleanupPreferences preset, BibEntry entry, NamedCompound ce) {
+    private void doCleanup(
+            BibDatabaseContext databaseContext, CleanupPreferences preset, BibEntry entry, NamedCompound ce) {
         // Create and run cleaner
         CleanupWorker cleaner = new CleanupWorker(
-                databaseContext,
-                preferences.getFilePreferences(),
-                preferences.getTimestampPreferences());
+                databaseContext, preferences.getFilePreferences(), preferences.getTimestampPreferences());
 
         List<FieldChange> changes = cleaner.cleanup(preset, entry);
 
@@ -127,7 +130,8 @@ public class CleanupAction extends SimpleCommand {
         } else if (modifiedEntriesCount == 1) {
             dialogService.notify(Localization.lang("One entry needed a clean up"));
         } else {
-            dialogService.notify(Localization.lang("%0 entries needed a clean up", Integer.toString(modifiedEntriesCount)));
+            dialogService.notify(
+                    Localization.lang("%0 entries needed a clean up", Integer.toString(modifiedEntriesCount)));
         }
     }
 

@@ -41,10 +41,11 @@ public abstract class SendAsEMailAction extends SimpleCommand {
     private final StateManager stateManager;
     private final TaskExecutor taskExecutor;
 
-    public SendAsEMailAction(DialogService dialogService,
-                             PreferencesService preferencesService,
-                             StateManager stateManager,
-                             TaskExecutor taskExecutor) {
+    public SendAsEMailAction(
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            StateManager stateManager,
+            TaskExecutor taskExecutor) {
         this.dialogService = dialogService;
         this.preferencesService = preferencesService;
         this.stateManager = stateManager;
@@ -54,13 +55,13 @@ public abstract class SendAsEMailAction extends SimpleCommand {
     @Override
     public void execute() {
         BackgroundTask.wrap(this::sendEmail)
-                      .onSuccess(dialogService::notify)
-                      .onFailure(e -> {
-                          String message = Localization.lang("Error creating email");
-                          LOGGER.warn(message, e);
-                          dialogService.notify(message);
-                      })
-                      .executeWith(taskExecutor);
+                .onSuccess(dialogService::notify)
+                .onFailure(e -> {
+                    String message = Localization.lang("Error creating email");
+                    LOGGER.warn(message, e);
+                    dialogService.notify(message);
+                })
+                .executeWith(taskExecutor);
     }
 
     private String sendEmail() throws Exception {
@@ -100,17 +101,22 @@ public abstract class SendAsEMailAction extends SimpleCommand {
     private List<String> getAttachments(List<BibEntry> entries) {
         // open folders is needed to indirectly support email programs, which cannot handle
         //   the unofficial "mailto:attachment" property
-        boolean openFolders = preferencesService.getExternalApplicationsPreferences().shouldAutoOpenEmailAttachmentsFolder();
+        boolean openFolders =
+                preferencesService.getExternalApplicationsPreferences().shouldAutoOpenEmailAttachmentsFolder();
 
         BibDatabaseContext databaseContext = stateManager.getActiveDatabase().get();
-        List<Path> fileList = FileUtil.getListOfLinkedFiles(entries, databaseContext.getFileDirectories(preferencesService.getFilePreferences()));
+        List<Path> fileList = FileUtil.getListOfLinkedFiles(
+                entries, databaseContext.getFileDirectories(preferencesService.getFilePreferences()));
 
         List<String> attachments = new ArrayList<>();
         for (Path path : fileList) {
             attachments.add(path.toAbsolutePath().toString());
             if (openFolders) {
                 try {
-                    JabRefDesktop.openFolderAndSelectFile(path.toAbsolutePath(), preferencesService.getExternalApplicationsPreferences(), dialogService);
+                    JabRefDesktop.openFolderAndSelectFile(
+                            path.toAbsolutePath(),
+                            preferencesService.getExternalApplicationsPreferences(),
+                            dialogService);
                 } catch (IOException e) {
                     LOGGER.debug("Cannot open file", e);
                 }

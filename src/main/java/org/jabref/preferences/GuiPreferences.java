@@ -40,22 +40,23 @@ public class GuiPreferences {
     private final BooleanProperty mergeShowChangedFieldsOnly;
     private final DoubleProperty sidePaneWidth;
 
-    public GuiPreferences(double positionX,
-                          double positionY,
-                          double sizeX,
-                          double sizeY,
-                          boolean windowMaximised,
-                          boolean windowFullScreen,
-                          List<String> lastFilesOpened,
-                          Path lastFocusedFile,
-                          FileHistory fileHistory,
-                          String lastSelectedIdBasedFetcher,
-                          DiffMode mergeDiffMode,
-                          boolean mergeShouldShowDiff,
-                          boolean mergeShouldShowUnifiedDiff,
-                          boolean mergeHighlightWords,
-                          double sidePaneWidth,
-                          boolean mergeShowChangedFieldsOnly) {
+    public GuiPreferences(
+            double positionX,
+            double positionY,
+            double sizeX,
+            double sizeY,
+            boolean windowMaximised,
+            boolean windowFullScreen,
+            List<String> lastFilesOpened,
+            Path lastFocusedFile,
+            FileHistory fileHistory,
+            String lastSelectedIdBasedFetcher,
+            DiffMode mergeDiffMode,
+            boolean mergeShouldShowDiff,
+            boolean mergeShouldShowUnifiedDiff,
+            boolean mergeHighlightWords,
+            double sidePaneWidth,
+            boolean mergeShowChangedFieldsOnly) {
         this.positionX = new SimpleDoubleProperty(positionX);
         this.positionY = new SimpleDoubleProperty(positionY);
         this.sizeX = new SimpleDoubleProperty(sizeX);

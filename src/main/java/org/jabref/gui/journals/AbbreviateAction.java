@@ -45,13 +45,14 @@ public class AbbreviateAction extends SimpleCommand {
 
     private AbbreviationType abbreviationType;
 
-    public AbbreviateAction(StandardActions action,
-                            JabRefFrame frame,
-                            DialogService dialogService,
-                            StateManager stateManager,
-                            JournalAbbreviationPreferences abbreviationPreferences,
-                            JournalAbbreviationRepository abbreviationRepository,
-                            TaskExecutor taskExecutor) {
+    public AbbreviateAction(
+            StandardActions action,
+            JabRefFrame frame,
+            DialogService dialogService,
+            StateManager stateManager,
+            JournalAbbreviationPreferences abbreviationPreferences,
+            JournalAbbreviationRepository abbreviationRepository,
+            TaskExecutor taskExecutor) {
         this.action = action;
         this.frame = frame;
         this.dialogService = dialogService;
@@ -76,16 +77,16 @@ public class AbbreviateAction extends SimpleCommand {
                 || (action == StandardActions.ABBREVIATE_DOTLESS)
                 || (action == StandardActions.ABBREVIATE_SHORTEST_UNIQUE)) {
             dialogService.notify(Localization.lang("Abbreviating..."));
-            stateManager.getActiveDatabase().ifPresent(databaseContext ->
-                    BackgroundTask.wrap(() -> abbreviate(stateManager.getActiveDatabase().get(), stateManager.getSelectedEntries()))
-                                  .onSuccess(dialogService::notify)
-                                  .executeWith(taskExecutor));
+            stateManager.getActiveDatabase().ifPresent(databaseContext -> BackgroundTask.wrap(
+                            () -> abbreviate(stateManager.getActiveDatabase().get(), stateManager.getSelectedEntries()))
+                    .onSuccess(dialogService::notify)
+                    .executeWith(taskExecutor));
         } else if (action == StandardActions.UNABBREVIATE) {
             dialogService.notify(Localization.lang("Unabbreviating..."));
-            stateManager.getActiveDatabase().ifPresent(databaseContext ->
-                    BackgroundTask.wrap(() -> unabbreviate(stateManager.getActiveDatabase().get(), stateManager.getSelectedEntries()))
-                                  .onSuccess(dialogService::notify)
-                                  .executeWith(taskExecutor));
+            stateManager.getActiveDatabase().ifPresent(databaseContext -> BackgroundTask.wrap(() ->
+                            unabbreviate(stateManager.getActiveDatabase().get(), stateManager.getSelectedEntries()))
+                    .onSuccess(dialogService::notify)
+                    .executeWith(taskExecutor));
         } else {
             LOGGER.debug("Unknown action: " + action.name());
         }
@@ -93,30 +94,31 @@ public class AbbreviateAction extends SimpleCommand {
 
     private String abbreviate(BibDatabaseContext databaseContext, List<BibEntry> entries) {
         UndoableAbbreviator undoableAbbreviator = new UndoableAbbreviator(
-                abbreviationRepository,
-                abbreviationType,
-                journalAbbreviationPreferences.shouldUseFJournalField());
+                abbreviationRepository, abbreviationType, journalAbbreviationPreferences.shouldUseFJournalField());
 
         NamedCompound ce = new NamedCompound(Localization.lang("Abbreviate journal names"));
 
         // Collect all callables to execute in one collection.
-        Set<Callable<Boolean>> tasks = entries.stream().<Callable<Boolean>>map(entry -> () ->
-                FieldFactory.getJournalNameFields().stream().anyMatch(journalField ->
-                        undoableAbbreviator.abbreviate(databaseContext.getDatabase(), entry, journalField, ce)))
+        Set<Callable<Boolean>> tasks = entries.stream()
+                .<Callable<Boolean>>map(entry -> () -> FieldFactory.getJournalNameFields().stream()
+                        .anyMatch(journalField ->
+                                undoableAbbreviator.abbreviate(databaseContext.getDatabase(), entry, journalField, ce)))
                 .collect(Collectors.toSet());
 
         // Execute the callables and wait for the results.
         List<Future<Boolean>> futures = JabRefExecutorService.INSTANCE.executeAll(tasks);
 
         // Evaluate the results of the callables.
-        long count = futures.stream().filter(future -> {
-            try {
-                return future.get();
-            } catch (InterruptedException | ExecutionException exception) {
-                LOGGER.error("Unable to retrieve value.", exception);
-                return false;
-            }
-        }).count();
+        long count = futures.stream()
+                .filter(future -> {
+                    try {
+                        return future.get();
+                    } catch (InterruptedException | ExecutionException exception) {
+                        LOGGER.error("Unable to retrieve value.", exception);
+                        return false;
+                    }
+                })
+                .count();
 
         if (count == 0) {
             return Localization.lang("No journal names could be abbreviated.");
@@ -132,9 +134,12 @@ public class AbbreviateAction extends SimpleCommand {
         UndoableUnabbreviator undoableAbbreviator = new UndoableUnabbreviator(Globals.journalAbbreviationRepository);
 
         NamedCompound ce = new NamedCompound(Localization.lang("Unabbreviate journal names"));
-        int count = entries.stream().mapToInt(entry ->
-                (int) FieldFactory.getJournalNameFields().stream().filter(journalField ->
-                        undoableAbbreviator.unabbreviate(databaseContext.getDatabase(), entry, journalField, ce)).count()).sum();
+        int count = entries.stream()
+                .mapToInt(entry -> (int) FieldFactory.getJournalNameFields().stream()
+                        .filter(journalField -> undoableAbbreviator.unabbreviate(
+                                databaseContext.getDatabase(), entry, journalField, ce))
+                        .count())
+                .sum();
         if (count == 0) {
             return Localization.lang("No journal names could be unabbreviated.");
         }

@@ -140,7 +140,8 @@ public class StringManipulatorTest {
 
     @ParameterizedTest
     @MethodSource("wordBoundaryTestData")
-    void testGetNextWordBoundary(String text, int caretPosition, int expectedPosition, StringManipulator.Direction direction) {
+    void testGetNextWordBoundary(
+            String text, int caretPosition, int expectedPosition, StringManipulator.Direction direction) {
         int result = StringManipulator.getNextWordBoundary(caretPosition, text, direction);
         assertEquals(expectedPosition, result);
     }

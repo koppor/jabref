@@ -41,8 +41,13 @@ public class XmpExporterTest {
         entry.setField(StandardField.AUTHOR, "Alan Turing");
 
         exporter.export(databaseContext, file, Collections.singletonList(entry));
-        String actual = String.join("\n", Files.readAllLines(file)); // we are using \n to join, so we need it in the expected string as well, \r\n would fail
-        String expected = """
+        String actual = String.join(
+                "\n",
+                Files.readAllLines(
+                        file)); // we are using \n to join, so we need it in the expected string as well, \r\n would
+                                // fail
+        String expected =
+                """
                   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
                     <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
                       <dc:creator>
@@ -58,7 +63,8 @@ public class XmpExporterTest {
                       </dc:type>
                     </rdf:Description>
                   </rdf:RDF>
-                """.stripTrailing();
+                """
+                        .stripTrailing();
         assertEquals(expected, actual);
     }
 
@@ -76,9 +82,14 @@ public class XmpExporterTest {
 
         exporter.export(databaseContext, file, Arrays.asList(entryTuring, entryArmbrust));
 
-        String actual = String.join("\n", Files.readAllLines(file)); // we are using \n to join, so we need it in the expected string as well, \r\n would fail
+        String actual = String.join(
+                "\n",
+                Files.readAllLines(
+                        file)); // we are using \n to join, so we need it in the expected string as well, \r\n would
+                                // fail
 
-        String expected = """
+        String expected =
+                """
                     <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
                       <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
                         <dc:creator>
@@ -112,7 +123,8 @@ public class XmpExporterTest {
                         </dc:type>
                       </rdf:Description>
                     </rdf:RDF>
-                  """.stripTrailing();
+                  """
+                        .stripTrailing();
         assertEquals(expected, actual);
     }
 
@@ -122,8 +134,7 @@ public class XmpExporterTest {
         Path file = testFolder.resolve(XmpExporter.XMP_SPLIT_DIRECTORY_INDICATOR);
         Files.createFile(file);
 
-        BibEntry entryTuring = new BibEntry()
-                .withField(StandardField.AUTHOR, "Alan Turing");
+        BibEntry entryTuring = new BibEntry().withField(StandardField.AUTHOR, "Alan Turing");
         BibEntry entryArmbrust = new BibEntry()
                 .withField(StandardField.AUTHOR, "Michael Armbrust")
                 .withCitationKey("Armbrust2010");
@@ -138,7 +149,8 @@ public class XmpExporterTest {
         Path fileTuring = Path.of(file.getParent().toString(), entryTuring.getId() + "_null.xmp");
         // we are using \n to join, so we need it in the expected string as well, \r\n would fail
         String actualTuring = String.join("\n", Files.readAllLines(fileTuring));
-        String expectedTuring = """
+        String expectedTuring =
+                """
                 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
                   <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
                     <dc:creator>
@@ -154,14 +166,16 @@ public class XmpExporterTest {
                     </dc:type>
                   </rdf:Description>
                 </rdf:RDF>
-              """.stripTrailing();
+              """
+                        .stripTrailing();
         assertEquals(expectedTuring, actualTuring);
 
         // armbrust contains the armbrust entry only
         Path fileArmbrust = Path.of(file.getParent().toString(), entryArmbrust.getId() + "_Armbrust2010.xmp");
         // we are using \n to join, so we need it in the expected string as well, \r\n would fail
         String actualArmbrust = String.join("\n", Files.readAllLines(fileArmbrust));
-        String expectedArmbrust = """
+        String expectedArmbrust =
+                """
                   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
                     <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
                       <dc:creator>
@@ -182,25 +196,27 @@ public class XmpExporterTest {
                       </dc:type>
                     </rdf:Description>
                   </rdf:RDF>
-                """.stripTrailing();
+                """
+                        .stripTrailing();
         assertEquals(expectedArmbrust, actualArmbrust);
     }
 
     @Test
     public void exportSingleEntryWithPrivacyFilter(@TempDir Path testFolder) throws Exception {
-        when(xmpPreferences.getXmpPrivacyFilter()).thenReturn(FXCollections.observableSet(Collections.singleton(StandardField.AUTHOR)));
+        when(xmpPreferences.getXmpPrivacyFilter())
+                .thenReturn(FXCollections.observableSet(Collections.singleton(StandardField.AUTHOR)));
         when(xmpPreferences.shouldUseXmpPrivacyFilter()).thenReturn(true);
 
         Path file = testFolder.resolve("ThisIsARandomlyNamedFile");
         Files.createFile(file);
 
-        BibEntry entry = new BibEntry()
-                .withField(StandardField.AUTHOR, "Alan Turing");
+        BibEntry entry = new BibEntry().withField(StandardField.AUTHOR, "Alan Turing");
 
         exporter.export(databaseContext, file, Collections.singletonList(entry));
 
         String actual = String.join("\n", Files.readAllLines(file));
-        String expected = """
+        String expected =
+                """
                   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
                     <rdf:Description xmlns:dc="http://purl.org/dc/elements/1.1/" rdf:about="">
                       <dc:format>application/pdf</dc:format>
@@ -211,7 +227,8 @@ public class XmpExporterTest {
                       </dc:type>
                     </rdf:Description>
                   </rdf:RDF>
-                """.stripTrailing();
+                """
+                        .stripTrailing();
 
         assertEquals(expected, actual);
     }

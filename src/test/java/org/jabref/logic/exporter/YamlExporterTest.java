@@ -108,11 +108,11 @@ public class YamlExporterTest {
     @Test
     void passesModifiedCharset(@TempDir Path tempFile) throws Exception {
         BibEntry entry = new BibEntry(StandardEntryType.Article)
-            .withCitationKey("test")
-            .withField(StandardField.AUTHOR, "谷崎 潤一郎")
-            .withField(StandardField.TITLE, "細雪")
-            .withField(StandardField.URL, "http://example.com")
-            .withField(StandardField.DATE, "2020-10-14");
+                .withCitationKey("test")
+                .withField(StandardField.AUTHOR, "谷崎 潤一郎")
+                .withField(StandardField.TITLE, "細雪")
+                .withField(StandardField.URL, "http://example.com")
+                .withField(StandardField.DATE, "2020-10-14");
 
         Path file = tempFile.resolve("RandomFileName");
         Files.createFile(file);
@@ -136,11 +136,11 @@ public class YamlExporterTest {
     @Test
     void passesModifiedCharsetNull(@TempDir Path tempFile) throws Exception {
         BibEntry entry = new BibEntry(StandardEntryType.Article)
-            .withCitationKey("test")
-            .withField(StandardField.AUTHOR, "谷崎 潤一郎")
-            .withField(StandardField.TITLE, "細雪")
-            .withField(StandardField.URL, "http://example.com")
-            .withField(StandardField.DATE, "2020-10-14");
+                .withCitationKey("test")
+                .withField(StandardField.AUTHOR, "谷崎 潤一郎")
+                .withField(StandardField.TITLE, "細雪")
+                .withField(StandardField.URL, "http://example.com")
+                .withField(StandardField.DATE, "2020-10-14");
 
         Path file = tempFile.resolve("RandomFileName");
         Files.createFile(file);

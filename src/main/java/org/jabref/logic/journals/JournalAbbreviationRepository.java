@@ -31,16 +31,15 @@ public class JournalAbbreviationRepository {
      */
     public JournalAbbreviationRepository(Path journalList) {
         MVMap<String, Abbreviation> mvFullToAbbreviationObject;
-        try (MVStore store = new MVStore.Builder().readOnly().fileName(journalList.toAbsolutePath().toString()).open()) {
+        try (MVStore store = new MVStore.Builder()
+                .readOnly()
+                .fileName(journalList.toAbsolutePath().toString())
+                .open()) {
             mvFullToAbbreviationObject = store.openMap("FullToAbbreviation");
             mvFullToAbbreviationObject.forEach((name, abbreviation) -> {
                 String abbrevationString = abbreviation.getAbbreviation();
                 String shortestUniqueAbbreviation = abbreviation.getShortestUniqueAbbreviation();
-                Abbreviation newAbbreviation = new Abbreviation(
-                        name,
-                        abbrevationString,
-                        shortestUniqueAbbreviation
-                );
+                Abbreviation newAbbreviation = new Abbreviation(name, abbrevationString, shortestUniqueAbbreviation);
                 fullToAbbreviationObject.put(name, newAbbreviation);
                 abbreviationToAbbreviationObject.put(abbrevationString, newAbbreviation);
                 dotlessToAbbreviationObject.put(newAbbreviation.getDotlessAbbreviation(), newAbbreviation);
@@ -53,11 +52,7 @@ public class JournalAbbreviationRepository {
      * Initializes the repository with demonstration data. Used if no abbreviation file is found.
      */
     public JournalAbbreviationRepository() {
-        Abbreviation newAbbreviation = new Abbreviation(
-                "Demonstration",
-                "Demo",
-                "Dem"
-        );
+        Abbreviation newAbbreviation = new Abbreviation("Demonstration", "Demo", "Dem");
         fullToAbbreviationObject.put("Demonstration", newAbbreviation);
         abbreviationToAbbreviationObject.put("Demo", newAbbreviation);
         dotlessToAbbreviationObject.put("Demo", newAbbreviation);
@@ -122,8 +117,8 @@ public class JournalAbbreviationRepository {
         String journal = input.trim().replaceAll(Matcher.quoteReplacement("\\&"), "&");
 
         Optional<Abbreviation> customAbbreviation = customAbbreviations.stream()
-                                                                       .filter(abbreviation -> isMatched(journal, abbreviation))
-                                                                       .findFirst();
+                .filter(abbreviation -> isMatched(journal, abbreviation))
+                .findFirst();
         if (customAbbreviation.isPresent()) {
             return customAbbreviation;
         }
@@ -139,7 +134,8 @@ public class JournalAbbreviationRepository {
 
         // We do NOT want to keep duplicates
         // The set automatically "removes" duplicates
-        // What is a duplicate? An abbreviation is NOT the same if any field is NOT equal (e.g., if the shortest unique differs, the abbreviation is NOT the same)
+        // What is a duplicate? An abbreviation is NOT the same if any field is NOT equal (e.g., if the shortest unique
+        // differs, the abbreviation is NOT the same)
         customAbbreviations.add(abbreviation);
     }
 

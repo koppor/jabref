@@ -26,7 +26,6 @@ public class FirstPageTest {
                 Arguments.of("", null),
                 Arguments.of("345", "345"),
                 Arguments.of("345", "345-350"),
-                Arguments.of("345", "345--350")
-        );
+                Arguments.of("345", "345--350"));
     }
 }

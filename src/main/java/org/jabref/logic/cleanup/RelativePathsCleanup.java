@@ -38,13 +38,14 @@ public class RelativePathsCleanup implements CleanupJob {
                 newFileName = oldFileName;
             } else {
                 // only try to transform local file path to relative one
-                newFileName = FileUtil
-                        .relativize(Path.of(oldFileName), databaseContext.getFileDirectories(filePreferences))
+                newFileName = FileUtil.relativize(
+                                Path.of(oldFileName), databaseContext.getFileDirectories(filePreferences))
                         .toString();
             }
             LinkedFile newFileEntry = fileEntry;
             if (!oldFileName.equals(newFileName)) {
-                newFileEntry = new LinkedFile(fileEntry.getDescription(), Path.of(newFileName), fileEntry.getFileType());
+                newFileEntry =
+                        new LinkedFile(fileEntry.getDescription(), Path.of(newFileName), fileEntry.getFileType());
                 changed = true;
             }
             newFileList.add(newFileEntry);

@@ -23,26 +23,46 @@ import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
 
 public class ExternalTab extends AbstractPreferenceTabView<ExternalTabViewModel> implements PreferencesTab {
 
-    @FXML private TextField eMailReferenceSubject;
-    @FXML private CheckBox autoOpenAttachedFolders;
-    @FXML private ComboBox<PushToApplication> pushToApplicationCombo;
-    @FXML private TextField citeCommand;
-    @FXML private Button autolinkExternalHelp;
+    @FXML
+    private TextField eMailReferenceSubject;
 
-    @FXML private CheckBox useCustomTerminal;
-    @FXML private TextField customTerminalCommand;
-    @FXML private Button customTerminalBrowse;
-    @FXML private CheckBox useCustomFileBrowser;
-    @FXML private TextField customFileBrowserCommand;
-    @FXML private Button customFileBrowserBrowse;
-    @FXML private TextField kindleEmail;
+    @FXML
+    private CheckBox autoOpenAttachedFolders;
+
+    @FXML
+    private ComboBox<PushToApplication> pushToApplicationCombo;
+
+    @FXML
+    private TextField citeCommand;
+
+    @FXML
+    private Button autolinkExternalHelp;
+
+    @FXML
+    private CheckBox useCustomTerminal;
+
+    @FXML
+    private TextField customTerminalCommand;
+
+    @FXML
+    private Button customTerminalBrowse;
+
+    @FXML
+    private CheckBox useCustomFileBrowser;
+
+    @FXML
+    private TextField customFileBrowserCommand;
+
+    @FXML
+    private Button customFileBrowserBrowse;
+
+    @FXML
+    private TextField kindleEmail;
 
     private final ControlsFxVisualizer validationVisualizer = new ControlsFxVisualizer();
 
     public ExternalTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -67,24 +87,36 @@ public class ExternalTab extends AbstractPreferenceTabView<ExternalTabViewModel>
 
         useCustomTerminal.selectedProperty().bindBidirectional(viewModel.useCustomTerminalProperty());
         customTerminalCommand.textProperty().bindBidirectional(viewModel.customTerminalCommandProperty());
-        customTerminalCommand.disableProperty().bind(useCustomTerminal.selectedProperty().not());
-        customTerminalBrowse.disableProperty().bind(useCustomTerminal.selectedProperty().not());
+        customTerminalCommand
+                .disableProperty()
+                .bind(useCustomTerminal.selectedProperty().not());
+        customTerminalBrowse
+                .disableProperty()
+                .bind(useCustomTerminal.selectedProperty().not());
 
         useCustomFileBrowser.selectedProperty().bindBidirectional(viewModel.useCustomFileBrowserProperty());
         customFileBrowserCommand.textProperty().bindBidirectional(viewModel.customFileBrowserCommandProperty());
-        customFileBrowserCommand.disableProperty().bind(useCustomFileBrowser.selectedProperty().not());
-        customFileBrowserBrowse.disableProperty().bind(useCustomFileBrowser.selectedProperty().not());
+        customFileBrowserCommand
+                .disableProperty()
+                .bind(useCustomFileBrowser.selectedProperty().not());
+        customFileBrowserBrowse
+                .disableProperty()
+                .bind(useCustomFileBrowser.selectedProperty().not());
 
         kindleEmail.textProperty().bindBidirectional(viewModel.kindleEmailProperty());
 
         validationVisualizer.setDecoration(new IconValidationDecorator());
         Platform.runLater(() -> {
             validationVisualizer.initVisualization(viewModel.terminalCommandValidationStatus(), customTerminalCommand);
-            validationVisualizer.initVisualization(viewModel.fileBrowserCommandValidationStatus(), customFileBrowserCommand);
+            validationVisualizer.initVisualization(
+                    viewModel.fileBrowserCommandValidationStatus(), customFileBrowserCommand);
         });
 
         ActionFactory actionFactory = new ActionFactory(preferencesService.getKeyBindingRepository());
-        actionFactory.configureIconButton(StandardActions.HELP_PUSH_TO_APPLICATION, new HelpAction(HelpFile.PUSH_TO_APPLICATION, dialogService, preferencesService.getFilePreferences()), autolinkExternalHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP_PUSH_TO_APPLICATION,
+                new HelpAction(HelpFile.PUSH_TO_APPLICATION, dialogService, preferencesService.getFilePreferences()),
+                autolinkExternalHelp);
     }
 
     @FXML

@@ -24,22 +24,31 @@ import jakarta.inject.Inject;
 
 public class CitationKeyEditor extends HBox implements FieldEditorFX {
 
-    @FXML private final CitationKeyEditorViewModel viewModel;
-    @FXML private Button generateCitationKeyButton;
-    @FXML private EditorTextField textField;
+    @FXML
+    private final CitationKeyEditorViewModel viewModel;
 
-    @Inject private PreferencesService preferencesService;
-    @Inject private DialogService dialogService;
-    @Inject private UndoManager undoManager;
+    @FXML
+    private Button generateCitationKeyButton;
 
-    public CitationKeyEditor(Field field,
-                             SuggestionProvider<?> suggestionProvider,
-                             FieldCheckers fieldCheckers,
-                             BibDatabaseContext databaseContext) {
+    @FXML
+    private EditorTextField textField;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+    @Inject
+    private PreferencesService preferencesService;
+
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private UndoManager undoManager;
+
+    public CitationKeyEditor(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            BibDatabaseContext databaseContext) {
+
+        ViewLoader.view(this).root(this).load();
 
         this.viewModel = new CitationKeyEditorViewModel(
                 field,
@@ -54,7 +63,8 @@ public class CitationKeyEditor extends HBox implements FieldEditorFX {
 
         textField.initContextMenu(Collections::emptyList);
 
-        new EditorValidator(preferencesService).configureValidation(viewModel.getFieldValidator().getValidationStatus(), textField);
+        new EditorValidator(preferencesService)
+                .configureValidation(viewModel.getFieldValidator().getValidationStatus(), textField);
     }
 
     public CitationKeyEditorViewModel getViewModel() {

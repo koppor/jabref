@@ -19,11 +19,12 @@ public class InternalPreferences {
     private final StringProperty userAndHost;
     private final BooleanProperty memoryStickMode;
 
-    public InternalPreferences(Version ignoredVersion,
-                               boolean versionCheck,
-                               Path exportPath,
-                               String userAndHost,
-                               boolean memoryStickMode) {
+    public InternalPreferences(
+            Version ignoredVersion,
+            boolean versionCheck,
+            Path exportPath,
+            String userAndHost,
+            boolean memoryStickMode) {
         this.ignoredVersion = new SimpleObjectProperty<>(ignoredVersion);
         this.versionCheckEnabled = new SimpleBooleanProperty(versionCheck);
         this.lastPreferencesExportPath = new SimpleObjectProperty<>(exportPath);

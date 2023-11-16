@@ -22,10 +22,10 @@ public class SpecialFieldsToSeparateFields implements PostOpenMigration {
     public SpecialFieldsToSeparateFields(Character keywordDelimiter) {
         List<SpecialFieldValue> specialFieldValues = Arrays.asList(SpecialFieldValue.values());
         possibleKeywordsToMigrate = new KeywordList(specialFieldValues.stream()
-                                                                      .map(SpecialFieldValue::getKeyword)
-                                                                      .filter(Optional::isPresent)
-                                                                      .map(Optional::get)
-                                                                      .collect(Collectors.toList()));
+                .map(SpecialFieldValue::getKeyword)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList()));
         this.keywordDelimiter = keywordDelimiter;
     }
 

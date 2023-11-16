@@ -26,8 +26,10 @@ class PdfEmbeddedBibFileImporterTest {
 
     @BeforeEach
     void setUp() {
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.fieldPreferences().getNonWrappableFields()).thenReturn(FXCollections.emptyObservableList());
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        when(importFormatPreferences.fieldPreferences().getNonWrappableFields())
+                .thenReturn(FXCollections.emptyObservableList());
         importer = new PdfEmbeddedBibFileImporter(importFormatPreferences);
     }
 
@@ -38,20 +40,24 @@ class PdfEmbeddedBibFileImporterTest {
 
     @Test
     void testGetDescription() {
-        assertEquals("PdfEmbeddedBibFileImporter imports an embedded Bib-File from the PDF.",
-                     importer.getDescription());
+        assertEquals(
+                "PdfEmbeddedBibFileImporter imports an embedded Bib-File from the PDF.", importer.getDescription());
     }
 
     @Test
     void doesNotHandleEncryptedPdfs() throws Exception {
-        Path file = Path.of(PdfEmbeddedBibFileImporter.class.getResource("/pdfs/encrypted.pdf").toURI());
+        Path file = Path.of(PdfEmbeddedBibFileImporter.class
+                .getResource("/pdfs/encrypted.pdf")
+                .toURI());
         List<BibEntry> result = importer.importDatabase(file).getDatabase().getEntries();
         assertEquals(Collections.emptyList(), result);
     }
 
     @Test
     void importWorksAsExpected() throws Exception {
-        Path file = Path.of(PdfEmbeddedBibFileImporterTest.class.getResource("mixedMetadata.pdf").toURI());
+        Path file = Path.of(PdfEmbeddedBibFileImporterTest.class
+                .getResource("mixedMetadata.pdf")
+                .toURI());
         List<BibEntry> result = importer.importDatabase(file).getDatabase().getEntries();
 
         BibEntry expected = new BibEntry(StandardEntryType.Misc);

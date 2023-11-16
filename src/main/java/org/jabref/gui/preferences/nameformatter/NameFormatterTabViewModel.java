@@ -15,7 +15,8 @@ import org.jabref.model.strings.StringUtil;
 
 public class NameFormatterTabViewModel implements PreferenceTabViewModel {
 
-    private final ListProperty<NameFormatterItemModel> formatterListProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<NameFormatterItemModel> formatterListProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
     private final StringProperty addFormatterNameProperty = new SimpleStringProperty();
     private final StringProperty addFormatterStringProperty = new SimpleStringProperty();
 
@@ -56,8 +57,8 @@ public class NameFormatterTabViewModel implements PreferenceTabViewModel {
     }
 
     public void addFormatter() {
-        if (!StringUtil.isNullOrEmpty(addFormatterNameProperty.getValue()) &&
-                !StringUtil.isNullOrEmpty(addFormatterStringProperty.getValue())) {
+        if (!StringUtil.isNullOrEmpty(addFormatterNameProperty.getValue())
+                && !StringUtil.isNullOrEmpty(addFormatterStringProperty.getValue())) {
             formatterListProperty.add(new NameFormatterItemModel(
                     addFormatterNameProperty.getValue(), addFormatterStringProperty.getValue()));
 

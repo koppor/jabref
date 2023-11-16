@@ -35,7 +35,8 @@ class PersonNameSuggestionProviderTest {
 
     @Test
     void initAutoCompleterWithNullFieldThrowsException() {
-        assertThrows(NullPointerException.class, () -> new PersonNameSuggestionProvider((Field) null, new BibDatabase()));
+        assertThrows(
+                NullPointerException.class, () -> new PersonNameSuggestionProvider((Field) null, new BibDatabase()));
     }
 
     @Test

@@ -37,7 +37,13 @@ public class UnlinkedFilesCrawler extends BackgroundTask<FileNodeViewModel> {
     private final BibDatabaseContext databaseContext;
     private final FilePreferences filePreferences;
 
-    public UnlinkedFilesCrawler(Path directory, Filter<Path> fileFilter, DateRange dateFilter, ExternalFileSorter sorter, BibDatabaseContext databaseContext, FilePreferences filePreferences) {
+    public UnlinkedFilesCrawler(
+            Path directory,
+            Filter<Path> fileFilter,
+            DateRange dateFilter,
+            ExternalFileSorter sorter,
+            BibDatabaseContext databaseContext,
+            FilePreferences filePreferences) {
         this.directory = directory;
         this.fileFilter = fileFilter;
         this.dateFilter = dateFilter;
@@ -48,7 +54,8 @@ public class UnlinkedFilesCrawler extends BackgroundTask<FileNodeViewModel> {
 
     @Override
     protected FileNodeViewModel call() throws IOException {
-        UnlinkedPDFFileFilter unlinkedPDFFileFilter = new UnlinkedPDFFileFilter(fileFilter, databaseContext, filePreferences);
+        UnlinkedPDFFileFilter unlinkedPDFFileFilter =
+                new UnlinkedPDFFileFilter(fileFilter, databaseContext, filePreferences);
         return searchDirectory(directory, unlinkedPDFFileFilter);
     }
 
@@ -89,7 +96,8 @@ public class UnlinkedFilesCrawler extends BackgroundTask<FileNodeViewModel> {
         //   2. GitIgnoreFilter
         ChainedFilters filters = new ChainedFilters(unlinkedPDFFileFilter, new GitIgnoreFileFilter(directory));
         Map<Boolean, List<Path>> directoryAndFilePartition;
-        try (Stream<Path> filesStream = StreamSupport.stream(Files.newDirectoryStream(directory, filters).spliterator(), false)) {
+        try (Stream<Path> filesStream = StreamSupport.stream(
+                Files.newDirectoryStream(directory, filters).spliterator(), false)) {
             directoryAndFilePartition = filesStream.collect(Collectors.partitioningBy(Files::isDirectory));
         } catch (IOException e) {
             LOGGER.error("Error while searching files", e);
@@ -117,7 +125,8 @@ public class UnlinkedFilesCrawler extends BackgroundTask<FileNodeViewModel> {
         // now we handle the files in the current directory
 
         // filter files according to last edited date.
-        // Note that we do not use the "StreamSupport.stream" filtering functionality, because refactoring the code to that would lead to more code
+        // Note that we do not use the "StreamSupport.stream" filtering functionality, because refactoring the code to
+        // that would lead to more code
         List<Path> resultingFiles = new ArrayList<>();
         for (Path path : files) {
             if (FileFilterUtils.filterByDate(path, dateFilter)) {
@@ -128,13 +137,14 @@ public class UnlinkedFilesCrawler extends BackgroundTask<FileNodeViewModel> {
         // sort files according to last edited date.
         resultingFiles = FileFilterUtils.sortByDate(resultingFiles, sorter);
 
-        // the count of all files is the count of the found files in current directory plus the count of all files in the subdirectories
+        // the count of all files is the count of the found files in current directory plus the count of all files in
+        // the subdirectories
         fileNodeViewModelForCurrentDirectory.setFileCount(resultingFiles.size() + fileCountOfSubdirectories);
 
         // create and add FileNodeViewModel to the FileNodeViewModel for the current directory
-        fileNodeViewModelForCurrentDirectory.getChildren().addAll(resultingFiles.stream()
-                .map(FileNodeViewModel::new)
-                .collect(Collectors.toList()));
+        fileNodeViewModelForCurrentDirectory
+                .getChildren()
+                .addAll(resultingFiles.stream().map(FileNodeViewModel::new).collect(Collectors.toList()));
 
         return fileNodeViewModelForCurrentDirectory;
     }

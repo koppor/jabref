@@ -19,8 +19,7 @@ public class BackupFileUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BackupFileUtil.class);
 
-    private BackupFileUtil() {
-    }
+    private BackupFileUtil() {}
 
     /**
      * Determines the path of the backup file (using the given extension)
@@ -38,8 +37,8 @@ public class BackupFileUtil {
      *     (and configured in the preferences as "make backups")
      * </p>
      */
-
-    public static Path getPathForNewBackupFileAndCreateDirectory(Path targetFile, BackupFileType fileType, Path backupDir) {
+    public static Path getPathForNewBackupFileAndCreateDirectory(
+            Path targetFile, BackupFileType fileType, Path backupDir) {
         String extension = "." + fileType.getExtensions().get(0);
         String timeSuffix = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd--HH.mm.ss"));
 
@@ -57,7 +56,8 @@ public class BackupFileUtil {
         return directory.resolve(fileName);
     }
 
-    public static Optional<Path> getPathOfLatestExistingBackupFile(Path targetFile, BackupFileType fileType, Path backupDir) {
+    public static Optional<Path> getPathOfLatestExistingBackupFile(
+            Path targetFile, BackupFileType fileType, Path backupDir) {
         // The code is similar to "getPathForNewBackupFileAndCreateDirectory"
 
         String extension = "." + fileType.getExtensions().get(0);
@@ -77,10 +77,10 @@ public class BackupFileUtil {
         Optional<Path> mostRecentFile;
         try {
             mostRecentFile = Files.list(backupDir)
-                                  // just list the .sav belonging to the given targetFile
-                                  .filter(p -> p.getFileName().toString().startsWith(prefix))
-                                  .sorted()
-                                  .reduce((first, second) -> second);
+                    // just list the .sav belonging to the given targetFile
+                    .filter(p -> p.getFileName().toString().startsWith(prefix))
+                    .sorted()
+                    .reduce((first, second) -> second);
         } catch (IOException e) {
             LOGGER.error("Could not determine most recent file", e);
             return Optional.empty();

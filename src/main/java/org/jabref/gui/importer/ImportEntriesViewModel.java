@@ -55,15 +55,16 @@ public class ImportEntriesViewModel extends AbstractViewModel {
      * @param databaseContext the database to import into
      * @param task            the task executed for parsing the selected files(s).
      */
-    public ImportEntriesViewModel(BackgroundTask<ParserResult> task,
-                                  TaskExecutor taskExecutor,
-                                  BibDatabaseContext databaseContext,
-                                  DialogService dialogService,
-                                  UndoManager undoManager,
-                                  PreferencesService preferences,
-                                  StateManager stateManager,
-                                  BibEntryTypesManager entryTypesManager,
-                                  FileUpdateMonitor fileUpdateMonitor) {
+    public ImportEntriesViewModel(
+            BackgroundTask<ParserResult> task,
+            TaskExecutor taskExecutor,
+            BibDatabaseContext databaseContext,
+            DialogService dialogService,
+            UndoManager undoManager,
+            PreferencesService preferences,
+            StateManager stateManager,
+            BibEntryTypesManager entryTypesManager,
+            FileUpdateMonitor fileUpdateMonitor) {
         this.taskExecutor = taskExecutor;
         this.databaseContext = databaseContext;
         this.dialogService = dialogService;
@@ -78,17 +79,19 @@ public class ImportEntriesViewModel extends AbstractViewModel {
         this.selectedDb = new SimpleObjectProperty<>();
 
         task.onSuccess(parserResult -> {
-            // store the complete parser result (to import groups, ... later on)
-            this.parserResult = parserResult;
-            // fill in the list for the user, where one can select the entries to import
-            entries.addAll(parserResult.getDatabase().getEntries());
-            if (entries.isEmpty()) {
-               task.updateMessage(Localization.lang("No entries corresponding to given query"));
-            }
-        }).onFailure(ex -> {
-            LOGGER.error("Error importing", ex);
-            dialogService.showErrorDialogAndWait(ex);
-        }).executeWith(taskExecutor);
+                    // store the complete parser result (to import groups, ... later on)
+                    this.parserResult = parserResult;
+                    // fill in the list for the user, where one can select the entries to import
+                    entries.addAll(parserResult.getDatabase().getEntries());
+                    if (entries.isEmpty()) {
+                        task.updateMessage(Localization.lang("No entries corresponding to given query"));
+                    }
+                })
+                .onFailure(ex -> {
+                    LOGGER.error("Error importing", ex);
+                    dialogService.showErrorDialogAndWait(ex);
+                })
+                .executeWith(taskExecutor);
     }
 
     public String getMessage() {
@@ -112,9 +115,13 @@ public class ImportEntriesViewModel extends AbstractViewModel {
     }
 
     public boolean hasDuplicate(BibEntry entry) {
-        return findInternalDuplicate(entry).isPresent() ||
-                new DuplicateCheck(entryTypesManager)
-                .containsDuplicate(selectedDb.getValue().getDatabase(), entry, selectedDb.getValue().getMode()).isPresent();
+        return findInternalDuplicate(entry).isPresent()
+                || new DuplicateCheck(entryTypesManager)
+                        .containsDuplicate(
+                                selectedDb.getValue().getDatabase(),
+                                entry,
+                                selectedDb.getValue().getMode())
+                        .isPresent();
     }
 
     /**
@@ -126,25 +133,30 @@ public class ImportEntriesViewModel extends AbstractViewModel {
         // Check if we are supposed to warn about duplicates.
         // If so, then see if there are duplicates, and warn if yes.
         if (preferences.getImporterPreferences().shouldWarnAboutDuplicatesOnImport()) {
-            BackgroundTask.wrap(() -> entriesToImport.stream()
-                                                     .anyMatch(this::hasDuplicate)).onSuccess(duplicateFound -> {
-                if (duplicateFound) {
-                    boolean continueImport = dialogService.showConfirmationDialogWithOptOutAndWait(Localization.lang("Duplicates found"),
-                            Localization.lang("There are possible duplicates that haven't been resolved. Continue?"),
-                            Localization.lang("Continue with import"),
-                            Localization.lang("Cancel import"),
-                            Localization.lang("Do not ask again"),
-                            optOut -> preferences.getImporterPreferences().setWarnAboutDuplicatesOnImport(!optOut));
+            BackgroundTask.wrap(() -> entriesToImport.stream().anyMatch(this::hasDuplicate))
+                    .onSuccess(duplicateFound -> {
+                        if (duplicateFound) {
+                            boolean continueImport = dialogService.showConfirmationDialogWithOptOutAndWait(
+                                    Localization.lang("Duplicates found"),
+                                    Localization.lang(
+                                            "There are possible duplicates that haven't been resolved. Continue?"),
+                                    Localization.lang("Continue with import"),
+                                    Localization.lang("Cancel import"),
+                                    Localization.lang("Do not ask again"),
+                                    optOut -> preferences
+                                            .getImporterPreferences()
+                                            .setWarnAboutDuplicatesOnImport(!optOut));
 
-                    if (!continueImport) {
-                        dialogService.notify(Localization.lang("Import canceled"));
-                    } else {
-                        buildImportHandlerThenImportEntries(entriesToImport);
-                    }
-                } else {
-                    buildImportHandlerThenImportEntries(entriesToImport);
-                }
-            }).executeWith(taskExecutor);
+                            if (!continueImport) {
+                                dialogService.notify(Localization.lang("Import canceled"));
+                            } else {
+                                buildImportHandlerThenImportEntries(entriesToImport);
+                            }
+                        } else {
+                            buildImportHandlerThenImportEntries(entriesToImport);
+                        }
+                    })
+                    .executeWith(taskExecutor);
         } else {
             buildImportHandlerThenImportEntries(entriesToImport);
         }
@@ -154,27 +166,27 @@ public class ImportEntriesViewModel extends AbstractViewModel {
 
         if (shouldDownloadFiles) {
             for (BibEntry bibEntry : entriesToImport) {
-                bibEntry.getFiles().stream().filter(LinkedFile::isOnlineLink).forEach(linkedFile ->
-                        new LinkedFileViewModel(
-                                linkedFile,
-                                bibEntry,
-                                databaseContext,
-                                taskExecutor,
-                                dialogService,
-                                preferences).download());
+                bibEntry.getFiles().stream()
+                        .filter(LinkedFile::isOnlineLink)
+                        .forEach(linkedFile -> new LinkedFileViewModel(
+                                        linkedFile, bibEntry, databaseContext, taskExecutor, dialogService, preferences)
+                                .download());
             }
         }
 
-        new DatabaseMerger(preferences.getBibEntryPreferences().getKeywordSeparator()).mergeStrings(
-                databaseContext.getDatabase(),
-                parserResult.getDatabase());
-        new DatabaseMerger(preferences.getBibEntryPreferences().getKeywordSeparator()).mergeMetaData(
-                databaseContext.getMetaData(),
-                parserResult.getMetaData(),
-                parserResult.getPath().map(path -> path.getFileName().toString()).orElse("unknown"),
-                parserResult.getDatabase().getEntries());
+        new DatabaseMerger(preferences.getBibEntryPreferences().getKeywordSeparator())
+                .mergeStrings(databaseContext.getDatabase(), parserResult.getDatabase());
+        new DatabaseMerger(preferences.getBibEntryPreferences().getKeywordSeparator())
+                .mergeMetaData(
+                        databaseContext.getMetaData(),
+                        parserResult.getMetaData(),
+                        parserResult
+                                .getPath()
+                                .map(path -> path.getFileName().toString())
+                                .orElse("unknown"),
+                        parserResult.getDatabase().getEntries());
 
-//        JabRefGUI.getMainFrame().getCurrentLibraryTab().markBaseChanged();
+        //        JabRefGUI.getMainFrame().getCurrentLibraryTab().markBaseChanged();
     }
 
     private void buildImportHandlerThenImportEntries(List<BibEntry> entriesToImport) {
@@ -187,7 +199,8 @@ public class ImportEntriesViewModel extends AbstractViewModel {
                 dialogService,
                 taskExecutor);
         importHandler.importEntries(entriesToImport);
-        dialogService.notify(Localization.lang("Number of entries successfully imported") + ": " + entriesToImport.size());
+        dialogService.notify(
+                Localization.lang("Number of entries successfully imported") + ": " + entriesToImport.size());
     }
 
     /**
@@ -210,13 +223,21 @@ public class ImportEntriesViewModel extends AbstractViewModel {
 
     public void resolveDuplicate(BibEntry entry) {
         // First, try to find duplicate in the existing library
-        Optional<BibEntry> other = new DuplicateCheck(entryTypesManager).containsDuplicate(databaseContext.getDatabase(), entry, databaseContext.getMode());
+        Optional<BibEntry> other = new DuplicateCheck(entryTypesManager)
+                .containsDuplicate(databaseContext.getDatabase(), entry, databaseContext.getMode());
         if (other.isPresent()) {
-            DuplicateResolverDialog dialog = new DuplicateResolverDialog(other.get(),
-                    entry, DuplicateResolverDialog.DuplicateResolverType.IMPORT_CHECK, databaseContext, stateManager, dialogService, preferences);
+            DuplicateResolverDialog dialog = new DuplicateResolverDialog(
+                    other.get(),
+                    entry,
+                    DuplicateResolverDialog.DuplicateResolverType.IMPORT_CHECK,
+                    databaseContext,
+                    stateManager,
+                    dialogService,
+                    preferences);
 
-            DuplicateResolverDialog.DuplicateResolverResult result = dialogService.showCustomDialogAndWait(dialog)
-                                                                                  .orElse(DuplicateResolverDialog.DuplicateResolverResult.BREAK);
+            DuplicateResolverDialog.DuplicateResolverResult result = dialogService
+                    .showCustomDialogAndWait(dialog)
+                    .orElse(DuplicateResolverDialog.DuplicateResolverResult.BREAK);
 
             if (result == DuplicateResolverDialog.DuplicateResolverResult.KEEP_LEFT) {
                 // TODO: Remove old entry. Or... add it to a list of entries
@@ -243,11 +264,18 @@ public class ImportEntriesViewModel extends AbstractViewModel {
         // Second, check if the duplicate is of another entry in the import:
         other = findInternalDuplicate(entry);
         if (other.isPresent()) {
-            DuplicateResolverDialog diag = new DuplicateResolverDialog(entry,
-                    other.get(), DuplicateResolverDialog.DuplicateResolverType.DUPLICATE_SEARCH, databaseContext, stateManager, dialogService, preferences);
+            DuplicateResolverDialog diag = new DuplicateResolverDialog(
+                    entry,
+                    other.get(),
+                    DuplicateResolverDialog.DuplicateResolverType.DUPLICATE_SEARCH,
+                    databaseContext,
+                    stateManager,
+                    dialogService,
+                    preferences);
 
-            DuplicateResolverDialog.DuplicateResolverResult answer = dialogService.showCustomDialogAndWait(diag)
-                                                                                  .orElse(DuplicateResolverDialog.DuplicateResolverResult.BREAK);
+            DuplicateResolverDialog.DuplicateResolverResult answer = dialogService
+                    .showCustomDialogAndWait(diag)
+                    .orElse(DuplicateResolverDialog.DuplicateResolverResult.BREAK);
             if (answer == DuplicateResolverDialog.DuplicateResolverResult.KEEP_LEFT) {
                 // Remove other entry
                 entries.remove(other.get());

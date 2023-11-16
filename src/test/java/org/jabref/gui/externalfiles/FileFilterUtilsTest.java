@@ -116,41 +116,33 @@ public class FileFilterUtilsTest {
 
         @Test
         public void sortByDateAscendingPositiveTest() {
-            List<String> sortedPaths = fileFilterUtils
-                .sortByDateAscending(files)
-                .stream()
-                .map(Path::toString)
-                .collect(Collectors.toList());
+            List<String> sortedPaths = fileFilterUtils.sortByDateAscending(files).stream()
+                    .map(Path::toString)
+                    .collect(Collectors.toList());
             assertEquals(sortedPaths, expectedSortByDateAscending);
         }
 
         @Test
         public void sortByDateAscendingNegativeTest() {
-            List<String> sortedPaths = fileFilterUtils
-                .sortByDateAscending(files)
-                .stream()
-                .map(Path::toString)
-                .collect(Collectors.toList());
+            List<String> sortedPaths = fileFilterUtils.sortByDateAscending(files).stream()
+                    .map(Path::toString)
+                    .collect(Collectors.toList());
             assertNotEquals(sortedPaths, wrongOrder);
         }
 
         @Test
         public void sortByDateDescendingPositiveTest() {
-            List<String> sortedPaths = fileFilterUtils
-                .sortByDateDescending(files)
-                .stream()
-                .map(Path::toString)
-                .collect(Collectors.toList());
+            List<String> sortedPaths = fileFilterUtils.sortByDateDescending(files).stream()
+                    .map(Path::toString)
+                    .collect(Collectors.toList());
             assertEquals(sortedPaths, expectedSortByDateDescending);
         }
 
         @Test
         public void testSortByDateDescendingNegativeTest() {
-            List<String> sortedPaths = fileFilterUtils
-                .sortByDateDescending(files)
-                .stream()
-                .map(Path::toString)
-                .collect(Collectors.toList());
+            List<String> sortedPaths = fileFilterUtils.sortByDateDescending(files).stream()
+                    .map(Path::toString)
+                    .collect(Collectors.toList());
             assertNotEquals(sortedPaths, wrongOrder);
         }
     }

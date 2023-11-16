@@ -35,7 +35,8 @@ class ContainsAndRegexBasedSearchRuleDescriberTest {
                 TooltipTextUtil.createText("This search contains entries in which any field contains the term "),
                 TooltipTextUtil.createText("test", TooltipTextUtil.TextType.BOLD),
                 TooltipTextUtil.createText(" (case insensitive). "));
-        TextFlow description = new ContainsAndRegexBasedSearchRuleDescriber(EnumSet.noneOf(SearchFlags.class), query).getDescription();
+        TextFlow description =
+                new ContainsAndRegexBasedSearchRuleDescriber(EnumSet.noneOf(SearchFlags.class), query).getDescription();
 
         TextFlowEqualityHelper.assertEquals(expectedTexts, description);
     }
@@ -49,7 +50,8 @@ class ContainsAndRegexBasedSearchRuleDescriberTest {
                 TooltipTextUtil.createText(" and "),
                 TooltipTextUtil.createText("b", TooltipTextUtil.TextType.BOLD),
                 TooltipTextUtil.createText(" (case insensitive). "));
-        TextFlow description = new ContainsAndRegexBasedSearchRuleDescriber(EnumSet.noneOf(SearchFlags.class), query).getDescription();
+        TextFlow description =
+                new ContainsAndRegexBasedSearchRuleDescriber(EnumSet.noneOf(SearchFlags.class), query).getDescription();
 
         TextFlowEqualityHelper.assertEquals(expectedTexts, description);
     }
@@ -58,12 +60,15 @@ class ContainsAndRegexBasedSearchRuleDescriberTest {
     void testNoAstRegex() {
         String query = "a b";
         List<Text> expectedTexts = List.of(
-                TooltipTextUtil.createText("This search contains entries in which any field contains the regular expression "),
+                TooltipTextUtil.createText(
+                        "This search contains entries in which any field contains the regular expression "),
                 TooltipTextUtil.createText("a", TooltipTextUtil.TextType.BOLD),
                 TooltipTextUtil.createText(" and "),
                 TooltipTextUtil.createText("b", TooltipTextUtil.TextType.BOLD),
                 TooltipTextUtil.createText(" (case insensitive). "));
-        TextFlow description = new ContainsAndRegexBasedSearchRuleDescriber(EnumSet.of(SearchRules.SearchFlags.REGULAR_EXPRESSION), query).getDescription();
+        TextFlow description = new ContainsAndRegexBasedSearchRuleDescriber(
+                        EnumSet.of(SearchRules.SearchFlags.REGULAR_EXPRESSION), query)
+                .getDescription();
 
         TextFlowEqualityHelper.assertEquals(expectedTexts, description);
     }
@@ -72,12 +77,16 @@ class ContainsAndRegexBasedSearchRuleDescriberTest {
     void testNoAstRegexCaseSensitive() {
         String query = "a b";
         List<Text> expectedTexts = List.of(
-                TooltipTextUtil.createText("This search contains entries in which any field contains the regular expression "),
+                TooltipTextUtil.createText(
+                        "This search contains entries in which any field contains the regular expression "),
                 TooltipTextUtil.createText("a", TooltipTextUtil.TextType.BOLD),
                 TooltipTextUtil.createText(" and "),
                 TooltipTextUtil.createText("b", TooltipTextUtil.TextType.BOLD),
                 TooltipTextUtil.createText(" (case sensitive). "));
-        TextFlow description = new ContainsAndRegexBasedSearchRuleDescriber(EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION), query).getDescription();
+        TextFlow description = new ContainsAndRegexBasedSearchRuleDescriber(
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION),
+                        query)
+                .getDescription();
 
         TextFlowEqualityHelper.assertEquals(expectedTexts, description);
     }
@@ -91,7 +100,9 @@ class ContainsAndRegexBasedSearchRuleDescriberTest {
                 TooltipTextUtil.createText(" and "),
                 TooltipTextUtil.createText("b", TooltipTextUtil.TextType.BOLD),
                 TooltipTextUtil.createText(" (case sensitive). "));
-        TextFlow description = new ContainsAndRegexBasedSearchRuleDescriber(EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE), query).getDescription();
+        TextFlow description = new ContainsAndRegexBasedSearchRuleDescriber(
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE), query)
+                .getDescription();
 
         TextFlowEqualityHelper.assertEquals(expectedTexts, description);
     }

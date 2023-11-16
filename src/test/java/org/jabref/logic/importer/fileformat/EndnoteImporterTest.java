@@ -47,8 +47,10 @@ public class EndnoteImporterTest {
 
     @Test
     public void testGetDescription() {
-        assertEquals("Importer for the Refer/Endnote format."
-                + " Modified to use article number for pages if pages are missing.", importer.getDescription());
+        assertEquals(
+                "Importer for the Refer/Endnote format."
+                        + " Modified to use article number for pages if pages are missing.",
+                importer.getDescription());
     }
 
     @Test
@@ -63,9 +65,16 @@ public class EndnoteImporterTest {
 
     @Test
     public void testIsRecognizedFormatReject() throws IOException, URISyntaxException {
-        List<String> list = Arrays.asList("IEEEImport1.txt", "IsiImporterTest1.isi", "IsiImporterTestInspec.isi",
-                "IsiImporterTestWOS.isi", "IsiImporterTestMedline.isi", "RisImporterTest1.ris",
-                "Endnote.pattern.no_enw", "empty.pdf", "annotated.pdf");
+        List<String> list = Arrays.asList(
+                "IEEEImport1.txt",
+                "IsiImporterTest1.isi",
+                "IsiImporterTestInspec.isi",
+                "IsiImporterTestWOS.isi",
+                "IsiImporterTestMedline.isi",
+                "RisImporterTest1.ris",
+                "Endnote.pattern.no_enw",
+                "empty.pdf",
+                "annotated.pdf");
 
         for (String string : list) {
             Path file = Path.of(EndnoteImporterTest.class.getResource(string).toURI());
@@ -75,7 +84,8 @@ public class EndnoteImporterTest {
 
     @Test
     public void testImportEntries0() throws IOException, URISyntaxException {
-        Path file = Path.of(EndnoteImporterTest.class.getResource("Endnote.entries.enw").toURI());
+        Path file = Path.of(
+                EndnoteImporterTest.class.getResource("Endnote.entries.enw").toURI());
         List<BibEntry> bibEntries = importer.importDatabase(file).getDatabase().getEntries();
 
         assertEquals(5, bibEntries.size());
@@ -121,8 +131,9 @@ public class EndnoteImporterTest {
     @Test
     public void testImportEntries1() throws IOException {
         String medlineString = "%O Artn\\\\s testO\n%A testA,\n%E testE0, testE1";
-        List<BibEntry> bibEntries = importer.importDatabase(new BufferedReader(new StringReader(medlineString))).getDatabase()
-                                            .getEntries();
+        List<BibEntry> bibEntries = importer.importDatabase(new BufferedReader(new StringReader(medlineString)))
+                .getDatabase()
+                .getEntries();
 
         BibEntry entry = bibEntries.get(0);
 
@@ -135,7 +146,9 @@ public class EndnoteImporterTest {
 
     @Test
     public void testImportEntriesBookExample() throws IOException, URISyntaxException {
-        Path file = Path.of(EndnoteImporterTest.class.getResource("Endnote.book.example.enw").toURI());
+        Path file = Path.of(EndnoteImporterTest.class
+                .getResource("Endnote.book.example.enw")
+                .toURI());
         List<BibEntry> bibEntries = importer.importDatabase(file).getDatabase().getEntries();
 
         BibEntry entry = bibEntries.get(0);
@@ -148,7 +161,8 @@ public class EndnoteImporterTest {
         assertEquals(Optional.of("Versionsverwaltung"), entry.getField(StandardField.KEYWORDS));
         assertEquals(Optional.of("XX, 327"), entry.getField(StandardField.PAGES));
         assertEquals(Optional.of("dpunkt.verlag"), entry.getField(StandardField.PUBLISHER));
-        assertEquals(Optional.of("Git : dezentrale Versionsverwaltung im Team : Grundlagen und Workflows"),
+        assertEquals(
+                Optional.of("Git : dezentrale Versionsverwaltung im Team : Grundlagen und Workflows"),
                 entry.getField(StandardField.TITLE));
         assertEquals(Optional.of("http://d-nb.info/107601965X"), entry.getField(StandardField.URL));
         assertEquals(Optional.of("2016"), entry.getField(StandardField.YEAR));

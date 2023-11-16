@@ -29,12 +29,14 @@ public class BibEntryTypeBuilder {
     }
 
     public BibEntryTypeBuilder withImportantFields(Set<BibField> newFields) {
-        return withImportantFields(newFields.stream().map(BibField::field).collect(Collectors.toCollection(LinkedHashSet::new)));
+        return withImportantFields(
+                newFields.stream().map(BibField::field).collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
     public BibEntryTypeBuilder withImportantFields(Collection<Field> newFields) {
-        this.fields = Streams.concat(fields.stream(), newFields.stream().map(field -> new BibField(field, FieldPriority.IMPORTANT)))
-                             .collect(Collectors.toCollection(LinkedHashSet::new));
+        this.fields = Streams.concat(
+                        fields.stream(), newFields.stream().map(field -> new BibField(field, FieldPriority.IMPORTANT)))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         return this;
     }
 
@@ -43,8 +45,9 @@ public class BibEntryTypeBuilder {
     }
 
     public BibEntryTypeBuilder withDetailFields(Collection<Field> newFields) {
-        this.fields = Streams.concat(fields.stream(), newFields.stream().map(field -> new BibField(field, FieldPriority.DETAIL)))
-                             .collect(Collectors.toCollection(LinkedHashSet::new));
+        this.fields = Streams.concat(
+                        fields.stream(), newFields.stream().map(field -> new BibField(field, FieldPriority.DETAIL)))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         return this;
     }
 
@@ -58,17 +61,22 @@ public class BibEntryTypeBuilder {
     }
 
     public BibEntryTypeBuilder withRequiredFields(Field... requiredFields) {
-        this.requiredFields = Arrays.stream(requiredFields).map(OrFields::new).collect(Collectors.toCollection(LinkedHashSet::new));
+        this.requiredFields =
+                Arrays.stream(requiredFields).map(OrFields::new).collect(Collectors.toCollection(LinkedHashSet::new));
         return this;
     }
 
     public BibEntryTypeBuilder withRequiredFields(OrFields first, Field... requiredFields) {
-        this.requiredFields = Stream.concat(Stream.of(first), Arrays.stream(requiredFields).map(OrFields::new)).collect(Collectors.toCollection(LinkedHashSet::new));
+        this.requiredFields = Stream.concat(
+                        Stream.of(first), Arrays.stream(requiredFields).map(OrFields::new))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         return this;
     }
 
     public BibEntryTypeBuilder withRequiredFields(List<OrFields> first, Field... requiredFields) {
-        this.requiredFields = Stream.concat(first.stream(), Arrays.stream(requiredFields).map(OrFields::new)).collect(Collectors.toCollection(LinkedHashSet::new));
+        this.requiredFields = Stream.concat(
+                        first.stream(), Arrays.stream(requiredFields).map(OrFields::new))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         return this;
     }
 
@@ -78,7 +86,8 @@ public class BibEntryTypeBuilder {
                 .map(OrFields::getFields)
                 .flatMap(Set::stream)
                 .map(field -> new BibField(field, FieldPriority.IMPORTANT));
-        Set<BibField> allFields = Stream.concat(fields.stream(), requiredAsImportant).collect(Collectors.toCollection(LinkedHashSet::new));
+        Set<BibField> allFields = Stream.concat(fields.stream(), requiredAsImportant)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         return new BibEntryType(type, allFields, requiredFields);
     }
 }

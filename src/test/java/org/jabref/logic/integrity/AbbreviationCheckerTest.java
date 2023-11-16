@@ -55,13 +55,17 @@ class AbbreviationCheckerTest {
 
     @Test
     void checkEntryWorksForLaTeXField() {
-        entry.setField(StandardField.BOOKTITLE, "Reducing Complexity and Power of Digital Multibit Error-Feedback $\\Delta$$\\Sigma$ Modulators");
+        entry.setField(
+                StandardField.BOOKTITLE,
+                "Reducing Complexity and Power of Digital Multibit Error-Feedback $\\Delta$$\\Sigma$ Modulators");
         assertEquals(Collections.emptyList(), checker.check(entry));
     }
 
     @Test
     void checkEntryWorksForLaTeXFieldStilContainingIllegalChars() {
-        entry.setField(StandardField.BOOKTITLE, "Proceedings of the 5\\({}^{\\mbox{th}}\\) Central-European Workshop on Services and their Composition, Rostock, Germany, February 21-22, 2013");
+        entry.setField(
+                StandardField.BOOKTITLE,
+                "Proceedings of the 5\\({}^{\\mbox{th}}\\) Central-European Workshop on Services and their Composition, Rostock, Germany, February 21-22, 2013");
         assertEquals(Collections.emptyList(), checker.check(entry));
     }
 }

@@ -10,9 +10,7 @@ public class TelemetryPreferences {
     private final BooleanProperty askToCollectTelemetry;
     private final StringProperty userId;
 
-    public TelemetryPreferences(boolean shouldCollectTelemetry,
-                                boolean shouldAskToCollectTelemetry,
-                                String userId) {
+    public TelemetryPreferences(boolean shouldCollectTelemetry, boolean shouldAskToCollectTelemetry, String userId) {
         this.collectTelemetry = new SimpleBooleanProperty(shouldCollectTelemetry);
         this.askToCollectTelemetry = new SimpleBooleanProperty(shouldAskToCollectTelemetry);
         this.userId = new SimpleStringProperty(userId);

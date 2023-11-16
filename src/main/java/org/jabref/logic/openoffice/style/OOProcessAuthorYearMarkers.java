@@ -21,8 +21,7 @@ import org.jabref.model.openoffice.util.OOListUtil;
 
 class OOProcessAuthorYearMarkers {
 
-    private OOProcessAuthorYearMarkers() {
-    }
+    private OOProcessAuthorYearMarkers() {}
 
     /**
      *  Fills {@code sortedCitedKeys//normCitMarker}
@@ -57,7 +56,8 @@ class OOProcessAuthorYearMarkers {
         //
         Map<String, List<String>> normCitMarkerToClachingKeys = new HashMap<>();
         for (CitedKey citedKey : sortedCitedKeys.values()) {
-            String normCitMarker = OOText.toString(citedKey.getNormalizedCitationMarker().get());
+            String normCitMarker =
+                    OOText.toString(citedKey.getNormalizedCitationMarker().get());
             String citationKey = citedKey.citationKey;
 
             List<String> clashingKeys = normCitMarkerToClachingKeys.putIfAbsent(normCitMarker, new ArrayList<>(1));
@@ -146,9 +146,7 @@ class OOProcessAuthorYearMarkers {
 
             List<Citation> cits = group.getCitationsInLocalOrder();
             List<CitationMarkerEntry> citationMarkerEntries = OOListUtil.map(cits, e -> e);
-            OOText citMarker = style.createCitationMarker(citationMarkerEntries,
-                                                          inParenthesis,
-                                                          strictlyUnique);
+            OOText citMarker = style.createCitationMarker(citationMarkerEntries, inParenthesis, strictlyUnique);
             group.setCitationMarker(Optional.of(citMarker));
         }
     }

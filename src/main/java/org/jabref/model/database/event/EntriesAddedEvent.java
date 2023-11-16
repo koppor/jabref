@@ -20,7 +20,6 @@ public class EntriesAddedEvent extends EntriesEvent {
      * @param bibEntries the entries which are being added
      * @param firstEntry the first entry being added
      */
-
     public EntriesAddedEvent(List<BibEntry> bibEntries, BibEntry firstEntry, EntriesEventSource location) {
         super(bibEntries, location);
         this.firstEntry = firstEntry;

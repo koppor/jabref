@@ -17,7 +17,8 @@ import org.fxmisc.richtext.StyleClassedTextArea;
  */
 public final class UnifiedDiffHighlighter extends DiffHighlighter {
 
-    public UnifiedDiffHighlighter(StyleClassedTextArea sourceTextview, StyleClassedTextArea targetTextview, DiffMethod diffMethod) {
+    public UnifiedDiffHighlighter(
+            StyleClassedTextArea sourceTextview, StyleClassedTextArea targetTextview, DiffMethod diffMethod) {
         super(sourceTextview, targetTextview, diffMethod);
     }
 
@@ -33,7 +34,8 @@ public final class UnifiedDiffHighlighter extends DiffHighlighter {
         List<String> targetWords = splitString(targetContent);
         List<String> unifiedWords = new ArrayList<>(targetWords);
 
-        List<AbstractDelta<String>> deltaList = DiffUtils.diff(sourceWords, targetWords).getDeltas();
+        List<AbstractDelta<String>> deltaList =
+                DiffUtils.diff(sourceWords, targetWords).getDeltas();
 
         List<Change> changeList = new ArrayList<>();
 
@@ -62,7 +64,8 @@ public final class UnifiedDiffHighlighter extends DiffHighlighter {
                 }
                 case INSERT -> {
                     int insertionPoint = delta.getTarget().getPosition() + deletionCount;
-                    changeList.add(new Change(insertionPoint, delta.getTarget().getLines().size(), ChangeType.ADDITION));
+                    changeList.add(new Change(
+                            insertionPoint, delta.getTarget().getLines().size(), ChangeType.ADDITION));
                 }
             }
         }
@@ -76,7 +79,8 @@ public final class UnifiedDiffHighlighter extends DiffHighlighter {
                 appendToTextArea(targetTextview, getSeparator() + word, "unchanged");
             } else {
                 Change change = changeAtPosition.get();
-                List<String> changeWords = unifiedWords.subList(change.position(), change.position() + change.spanSize());
+                List<String> changeWords =
+                        unifiedWords.subList(change.position(), change.position() + change.spanSize());
 
                 if (change.type() == ChangeType.DELETION) {
                     appendToTextArea(targetTextview, getSeparator() + join(changeWords), "deletion");
@@ -114,6 +118,8 @@ public final class UnifiedDiffHighlighter extends DiffHighlighter {
     }
 
     private Optional<Change> findChange(int position, List<Change> changeList) {
-        return changeList.stream().filter(change -> change.position() == position).findAny();
+        return changeList.stream()
+                .filter(change -> change.position() == position)
+                .findAny();
     }
 }

@@ -39,7 +39,8 @@ public class DoiFetcherTest {
             .withField(StandardField.YEAR, "2007")
             .withField(StandardField.DOI, "10.1109/icws.2007.59");
     private final BibEntry bibEntryIannarelli2019 = new BibEntry(StandardEntryType.Article)
-            .withField(StandardField.AUTHOR,
+            .withField(
+                    StandardField.AUTHOR,
                     ""
                             + "Iannarelli Riccardo  and "
                             + "Novello Anna  and "
@@ -49,7 +50,9 @@ public class DoiFetcherTest {
                             + "Telib Haysam  and "
                             + "Meyer Thierry ")
             .withField(StandardField.PUBLISHER, "AIDIC: Italian Association of Chemical Engineering")
-            .withField(StandardField.TITLE, "Safety in research institutions: how to better communicate the risks using numerical simulations")
+            .withField(
+                    StandardField.TITLE,
+                    "Safety in research institutions: how to better communicate the risks using numerical simulations")
             .withField(StandardField.YEAR, "2019")
             .withField(StandardField.DOI, "10.3303/CET1977146")
             .withField(StandardField.JOURNAL, "Chemical Engineering Transactions")
@@ -57,9 +60,12 @@ public class DoiFetcherTest {
             .withField(StandardField.VOLUME, "77");
     private final BibEntry bibEntryStenzel2020 = new BibEntry(StandardEntryType.Article)
             .withCitationKey("Stenzel_2020")
-            .withField(StandardField.AUTHOR, "L. Stenzel and A. L. C. Hayward and U. Schollwöck and F. Heidrich-Meisner")
+            .withField(
+                    StandardField.AUTHOR, "L. Stenzel and A. L. C. Hayward and U. Schollwöck and F. Heidrich-Meisner")
             .withField(StandardField.JOURNAL, "Physical Review A")
-            .withField(StandardField.TITLE, "Topological phases in the Fermi-Hofstadter-Hubbard model on hybrid-space ladders")
+            .withField(
+                    StandardField.TITLE,
+                    "Topological phases in the Fermi-Hofstadter-Hubbard model on hybrid-space ladders")
             .withField(StandardField.YEAR, "2020")
             .withField(StandardField.MONTH, "aug")
             .withField(StandardField.VOLUME, "102")

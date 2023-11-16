@@ -28,8 +28,11 @@ public class DoiDuplicationCheckerTest {
     public void testOnePairDuplicateDOI() {
         List<BibEntry> entries = List.of(doiA_entry1, doiA_entry2, doiC_entry1);
         BibDatabase database = new BibDatabase(entries);
-        List<IntegrityMessage> results = List.of(new IntegrityMessage(Localization.lang("Same DOI used in multiple entries"), doiA_entry1, StandardField.DOI),
-        new IntegrityMessage(Localization.lang("Same DOI used in multiple entries"), doiA_entry2, StandardField.DOI));
+        List<IntegrityMessage> results = List.of(
+                new IntegrityMessage(
+                        Localization.lang("Same DOI used in multiple entries"), doiA_entry1, StandardField.DOI),
+                new IntegrityMessage(
+                        Localization.lang("Same DOI used in multiple entries"), doiA_entry2, StandardField.DOI));
         assertEquals(results, checker.check(database));
     }
 
@@ -37,10 +40,15 @@ public class DoiDuplicationCheckerTest {
     public void testMultiPairsDuplicateDOI() {
         List<BibEntry> entries = List.of(doiA_entry1, doiA_entry2, doiB_entry1, doiB_entry2, doiC_entry1);
         BibDatabase database = new BibDatabase(entries);
-        List<IntegrityMessage> results = List.of(new IntegrityMessage(Localization.lang("Same DOI used in multiple entries"), doiA_entry1, StandardField.DOI),
-                new IntegrityMessage(Localization.lang("Same DOI used in multiple entries"), doiA_entry2, StandardField.DOI),
-                new IntegrityMessage(Localization.lang("Same DOI used in multiple entries"), doiB_entry1, StandardField.DOI),
-                new IntegrityMessage(Localization.lang("Same DOI used in multiple entries"), doiB_entry2, StandardField.DOI));
+        List<IntegrityMessage> results = List.of(
+                new IntegrityMessage(
+                        Localization.lang("Same DOI used in multiple entries"), doiA_entry1, StandardField.DOI),
+                new IntegrityMessage(
+                        Localization.lang("Same DOI used in multiple entries"), doiA_entry2, StandardField.DOI),
+                new IntegrityMessage(
+                        Localization.lang("Same DOI used in multiple entries"), doiB_entry1, StandardField.DOI),
+                new IntegrityMessage(
+                        Localization.lang("Same DOI used in multiple entries"), doiB_entry2, StandardField.DOI));
         assertEquals(results, checker.check(database));
     }
 

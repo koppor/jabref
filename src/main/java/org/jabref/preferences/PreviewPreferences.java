@@ -24,11 +24,12 @@ public class PreviewPreferences {
     private final StringProperty defaultCustomPreviewLayout;
     private final BooleanProperty showPreviewAsExtraTab;
 
-    public PreviewPreferences(List<PreviewLayout> layoutCycle,
-                              int layoutCyclePosition,
-                              TextBasedPreviewLayout customPreviewLayout,
-                              String defaultCustomPreviewLayout,
-                              boolean showPreviewAsExtraTab) {
+    public PreviewPreferences(
+            List<PreviewLayout> layoutCycle,
+            int layoutCyclePosition,
+            TextBasedPreviewLayout customPreviewLayout,
+            String defaultCustomPreviewLayout,
+            boolean showPreviewAsExtraTab) {
         this.layoutCycle = FXCollections.observableArrayList(layoutCycle);
         this.layoutCyclePosition = new SimpleIntegerProperty(layoutCyclePosition);
         this.customPreviewLayout = new SimpleObjectProperty<>(customPreviewLayout);

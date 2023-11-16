@@ -14,7 +14,11 @@ public class GenderEditorViewModel extends MapBasedEditorViewModel<String> {
 
     private final BiMap<String, String> itemMap = HashBiMap.create(7);
 
-    public GenderEditorViewModel(Field field, SuggestionProvider<?> suggestionProvider, FieldCheckers fieldCheckers, UndoManager undoManager) {
+    public GenderEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
 
         itemMap.put("sf", Localization.lang("Female name"));

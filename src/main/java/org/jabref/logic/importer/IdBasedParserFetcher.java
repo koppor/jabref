@@ -61,7 +61,8 @@ public interface IdBasedParserFetcher extends IdBasedFetcher {
             return Optional.empty();
         }
 
-        try (InputStream stream = getUrlDownload(getUrlForIdentifier(identifier)).asInputStream()) {
+        try (InputStream stream =
+                getUrlDownload(getUrlForIdentifier(identifier)).asInputStream()) {
             List<BibEntry> fetchedEntries = getParser().parseEntries(stream);
 
             if (fetchedEntries.isEmpty()) {
@@ -69,7 +70,10 @@ public interface IdBasedParserFetcher extends IdBasedFetcher {
             }
 
             if (fetchedEntries.size() > 1) {
-                LOGGER.info("Fetcher {} found more than one result for identifier {}. We will use the first entry.", getName(), identifier);
+                LOGGER.info(
+                        "Fetcher {} found more than one result for identifier {}. We will use the first entry.",
+                        getName(),
+                        identifier);
             }
 
             BibEntry entry = fetchedEntries.get(0);

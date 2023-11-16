@@ -30,17 +30,18 @@ public class PersistenceVisualStateTable {
 
     public void addListeners() {
         table.getColumns().addListener((InvalidationListener) obs -> updateColumns());
-        table.getSortOrder().addListener((ListChangeListener<? super TableColumn<BibEntryTableViewModel, ?>>) obs -> updateSortOrder());
+        table.getSortOrder().addListener((ListChangeListener<? super TableColumn<BibEntryTableViewModel, ?>>)
+                obs -> updateSortOrder());
 
         // As we store the ColumnModels of the MainTable, we need to add the listener to the ColumnModel properties,
         // since the value is bound to the model after the listener to the column itself is called.
 
         table.getColumns().stream()
-             .map(col -> ((MainTableColumn<?>) col).getModel())
-             .forEach(model -> {
-                 model.widthProperty().addListener(obs -> updateColumns());
-                 model.sortTypeProperty().addListener(obs -> updateColumns());
-             });
+                .map(col -> ((MainTableColumn<?>) col).getModel())
+                .forEach(model -> {
+                    model.widthProperty().addListener(obs -> updateColumns());
+                    model.sortTypeProperty().addListener(obs -> updateColumns());
+                });
     }
 
     /**

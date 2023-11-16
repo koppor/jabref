@@ -28,22 +28,26 @@ public class CitationKeyDeviationCheckerTest {
     private final MetaData metaData = mock(MetaData.class);
     private final AbstractCitationKeyPattern abstractCitationKeyPattern = mock(AbstractCitationKeyPattern.class);
     private final GlobalCitationKeyPattern globalCitationKeyPattern = mock(GlobalCitationKeyPattern.class);
-    private final CitationKeyPatternPreferences citationKeyPatternPreferences = mock(CitationKeyPatternPreferences.class);
-    private final CitationKeyDeviationChecker checker = new CitationKeyDeviationChecker(bibDatabaseContext, citationKeyPatternPreferences);
+    private final CitationKeyPatternPreferences citationKeyPatternPreferences =
+            mock(CitationKeyPatternPreferences.class);
+    private final CitationKeyDeviationChecker checker =
+            new CitationKeyDeviationChecker(bibDatabaseContext, citationKeyPatternPreferences);
 
     @BeforeEach
     void setUp() {
         when(bibDatabaseContext.getMetaData()).thenReturn(metaData);
         when(citationKeyPatternPreferences.getKeyPattern()).thenReturn(globalCitationKeyPattern);
-        when(metaData.getCiteKeyPattern(citationKeyPatternPreferences.getKeyPattern())).thenReturn(abstractCitationKeyPattern);
+        when(metaData.getCiteKeyPattern(citationKeyPatternPreferences.getKeyPattern()))
+                .thenReturn(abstractCitationKeyPattern);
         when(bibDatabaseContext.getDatabase()).thenReturn(bibDatabase);
     }
 
     @Test
     void citationKeyDeviatesFromGeneratedKey() {
-        BibEntry entry = new BibEntry().withField(InternalField.KEY_FIELD, "Knuth2014")
-                                       .withField(StandardField.AUTHOR, "Knuth")
-                                       .withField(StandardField.YEAR, "2014");
+        BibEntry entry = new BibEntry()
+                .withField(InternalField.KEY_FIELD, "Knuth2014")
+                .withField(StandardField.AUTHOR, "Knuth")
+                .withField(StandardField.YEAR, "2014");
         List<IntegrityMessage> expected = Collections.singletonList(new IntegrityMessage(
                 Localization.lang("Citation key deviates from generated key"), entry, InternalField.KEY_FIELD));
         assertEquals(expected, checker.check(entry));

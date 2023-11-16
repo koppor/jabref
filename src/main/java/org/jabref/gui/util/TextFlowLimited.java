@@ -69,7 +69,8 @@ public class TextFlowLimited extends TextFlow {
             }
             layoutInArea(moreLink, 0, 0, getWidth(), getHeight(), getBaselineOffset(), HPos.RIGHT, VPos.BOTTOM);
 
-            // Clip content if it expands above pref height (no idea why this is needed, but otherwise sometimes the text is still visible)
+            // Clip content if it expands above pref height (no idea why this is needed, but otherwise sometimes the
+            // text is still visible)
             clip.setHeight(computePrefHeight(this.getWidth()));
             clip.setWidth(this.getWidth());
             this.setClip(clip);

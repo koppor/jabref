@@ -86,7 +86,10 @@ public class EditAction extends SimpleCommand {
                             frame.getUndoManager().redo();
                         }
                     }
-                    default -> LOGGER.debug("Only cut/copy/paste/deleteEntry supported but got: {} and focus owner {}", action, focusOwner);
+                    default -> LOGGER.debug(
+                            "Only cut/copy/paste/deleteEntry supported but got: {} and focus owner {}",
+                            action,
+                            focusOwner);
                 }
             }
         });

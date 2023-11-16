@@ -37,8 +37,8 @@ public class BibEntrySuggestionProvider extends SuggestionProvider<BibEntry> {
     protected boolean isMatch(BibEntry entry, AutoCompletionBinding.ISuggestionRequest request) {
         String userText = request.getUserText();
         return entry.getCitationKey()
-                    .map(key -> StringUtil.containsIgnoreCase(key, userText))
-                    .orElse(false);
+                .map(key -> StringUtil.containsIgnoreCase(key, userText))
+                .orElse(false);
     }
 
     @Override

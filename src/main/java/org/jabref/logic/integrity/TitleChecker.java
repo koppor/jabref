@@ -12,7 +12,8 @@ public class TitleChecker implements ValueChecker {
 
     private static final Pattern INSIDE_CURLY_BRAKETS = Pattern.compile("\\{[^}\\{]*\\}");
     private static final Pattern DELIMITERS = Pattern.compile("\\.|\\!|\\?|\\;|\\:|\\[");
-    private static final Predicate<String> HAS_CAPITAL_LETTERS = Pattern.compile("[\\p{Lu}\\p{Lt}]").asPredicate();
+    private static final Predicate<String> HAS_CAPITAL_LETTERS =
+            Pattern.compile("[\\p{Lu}\\p{Lt}]").asPredicate();
 
     private final BibDatabaseContext databaseContext;
 
@@ -40,7 +41,8 @@ public class TitleChecker implements ValueChecker {
             return Optional.empty();
         }
 
-        String valueOnlySpacesWithinCurlyBraces = INSIDE_CURLY_BRAKETS.matcher(value).replaceAll("");
+        String valueOnlySpacesWithinCurlyBraces =
+                INSIDE_CURLY_BRAKETS.matcher(value).replaceAll("");
 
         String[] splitTitle = DELIMITERS.split(valueOnlySpacesWithinCurlyBraces);
         for (String subTitle : splitTitle) {

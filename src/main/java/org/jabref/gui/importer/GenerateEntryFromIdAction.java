@@ -35,14 +35,15 @@ public class GenerateEntryFromIdAction extends SimpleCommand {
     private final StateManager stateManager;
     private final FileUpdateMonitor fileUpdateMonitor;
 
-    public GenerateEntryFromIdAction(LibraryTab libraryTab,
-                                     DialogService dialogService,
-                                     PreferencesService preferencesService,
-                                     TaskExecutor taskExecutor,
-                                     PopOver entryFromIdPopOver,
-                                     String identifier,
-                                     StateManager stateManager,
-                                     FileUpdateMonitor fileUpdateMonitor) {
+    public GenerateEntryFromIdAction(
+            LibraryTab libraryTab,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            TaskExecutor taskExecutor,
+            PopOver entryFromIdPopOver,
+            String identifier,
+            StateManager stateManager,
+            FileUpdateMonitor fileUpdateMonitor) {
         this.libraryTab = libraryTab;
         this.dialogService = dialogService;
         this.preferencesService = preferencesService;
@@ -67,19 +68,29 @@ public class GenerateEntryFromIdAction extends SimpleCommand {
 
             String msg;
             if (exception instanceof FetcherClientException) {
-                msg = Localization.lang("Bibliographic data not found. Cause is likely the client side. Please check connection and identifier for correctness.") + "\n" + fetcherExceptionMessage;
+                msg = Localization.lang(
+                                "Bibliographic data not found. Cause is likely the client side. Please check connection and identifier for correctness.")
+                        + "\n" + fetcherExceptionMessage;
             } else if (exception instanceof FetcherServerException) {
-                msg = Localization.lang("Bibliographic data not found. Cause is likely the server side. Please try again later.") + "\n" + fetcherExceptionMessage;
+                msg = Localization.lang(
+                                "Bibliographic data not found. Cause is likely the server side. Please try again later.")
+                        + "\n" + fetcherExceptionMessage;
             } else {
                 msg = Localization.lang("Error message %0", fetcherExceptionMessage);
             }
 
             LOGGER.info(fetcherExceptionMessage, exception);
 
-            if (dialogService.showConfirmationDialogAndWait(Localization.lang("Failed to import by ID"), msg, Localization.lang("Add entry manually"))) {
+            if (dialogService.showConfirmationDialogAndWait(
+                    Localization.lang("Failed to import by ID"), msg, Localization.lang("Add entry manually"))) {
                 // add entry manually
-                new NewEntryAction(libraryTab.frame(), StandardEntryType.Article, dialogService,
-                                   preferencesService, stateManager).execute();
+                new NewEntryAction(
+                                libraryTab.frame(),
+                                StandardEntryType.Article,
+                                dialogService,
+                                preferencesService,
+                                stateManager)
+                        .execute();
             }
         });
         backgroundTask.onSuccess(bibEntry -> {
@@ -110,7 +121,8 @@ public class GenerateEntryFromIdAction extends SimpleCommand {
                     return Optional.empty();
                 }
                 updateMessage(Localization.lang("Searching..."));
-                return new CompositeIdFetcher(preferencesService.getImportFormatPreferences()).performSearchById(identifier);
+                return new CompositeIdFetcher(preferencesService.getImportFormatPreferences())
+                        .performSearchById(identifier);
             }
         };
     }

@@ -63,9 +63,9 @@ public class DoiResolution implements FulltextFetcher {
         if (doiPreferences.isUseCustom()) {
             base = new URL(doiPreferences.getDefaultBaseURI());
             doiLink = doi.get()
-                         .getExternalURIWithCustomBase(base.toString())
-                         .map(URI::toASCIIString)
-                         .orElse("");
+                    .getExternalURIWithCustomBase(base.toString())
+                    .map(URI::toASCIIString)
+                    .orElse("");
         } else {
             base = DOI.RESOLVER.toURL();
             doiLink = doi.get().getURIAsASCIIString();
@@ -109,7 +109,8 @@ public class DoiResolution implements FulltextFetcher {
                 // ACM uses tokens without PDF inside the link
                 // See https://github.com/lehner/LocalCopy for more scrape ideas
                 // link with "PDF" in title tag
-                if (element.attr("title").toLowerCase(Locale.ENGLISH).contains("pdf") && new URLDownload(href).isPdf()) {
+                if (element.attr("title").toLowerCase(Locale.ENGLISH).contains("pdf")
+                        && new URLDownload(href).isPdf()) {
                     return Optional.of(new URL(href));
                 }
 
@@ -144,7 +145,8 @@ public class DoiResolution implements FulltextFetcher {
      */
     private Optional<URL> citationMetaTag(Document html) {
         Elements citationPdfUrlElement = html.head().select("meta[name='citation_pdf_url']");
-        Optional<String> citationPdfUrl = citationPdfUrlElement.stream().map(e -> e.attr("content")).findFirst();
+        Optional<String> citationPdfUrl =
+                citationPdfUrlElement.stream().map(e -> e.attr("content")).findFirst();
 
         if (citationPdfUrl.isPresent()) {
             try {
@@ -158,9 +160,7 @@ public class DoiResolution implements FulltextFetcher {
 
     private Optional<URL> findEmbeddedLink(Document html, URL base) {
         Elements embedElement = html.body().select("embed[id='pdf']");
-        Optional<String> pdfUrl = embedElement
-                .stream()
-                .map(e -> e.attr("src")).findFirst();
+        Optional<String> pdfUrl = embedElement.stream().map(e -> e.attr("src")).findFirst();
 
         if (pdfUrl.isPresent()) {
             try {

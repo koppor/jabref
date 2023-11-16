@@ -34,7 +34,8 @@ public class AuxCommandLineTest {
     public void test() throws URISyntaxException, IOException {
         InputStream originalStream = AuxCommandLineTest.class.getResourceAsStream("origin.bib");
 
-        File auxFile = Path.of(AuxCommandLineTest.class.getResource("paper.aux").toURI()).toFile();
+        File auxFile = Path.of(AuxCommandLineTest.class.getResource("paper.aux").toURI())
+                .toFile();
         try (InputStreamReader originalReader = new InputStreamReader(originalStream, StandardCharsets.UTF_8)) {
             ParserResult result = new BibtexParser(importFormatPreferences).parse(originalReader);
 

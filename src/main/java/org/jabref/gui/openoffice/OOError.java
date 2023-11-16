@@ -40,10 +40,7 @@ class OOError extends JabRefException {
      */
 
     public static OOError from(JabRefException err) {
-        return new OOError(
-                Localization.lang("JabRefException"),
-                err.getLocalizedMessage(),
-                err);
+        return new OOError(Localization.lang("JabRefException"), err.getLocalizedMessage(), err);
     }
 
     // For DisposedException
@@ -79,10 +76,7 @@ class OOError extends JabRefException {
     }
 
     public static OOError fromMisc(Exception err) {
-        return new OOError(
-                "Exception",
-                err.getMessage(),
-                err);
+        return new OOError("Exception", err.getMessage(), err);
     }
 
     /*
@@ -122,18 +116,20 @@ class OOError extends JabRefException {
 
     // noValidStyleSelected
     public static OOError noValidStyleSelected() {
-        return new OOError(Localization.lang("No valid style file defined"),
+        return new OOError(
+                Localization.lang("No valid style file defined"),
                 Localization.lang("No bibliography style is selected for citation.")
                         + "\n"
                         + Localization.lang("Select one before citing.")
                         + "\n"
-                        + Localization.lang("You must select either a valid style file,"
-                        + " or use one of the default styles."));
+                        + Localization.lang(
+                                "You must select either a valid style file," + " or use one of the default styles."));
     }
 
     // noEntriesSelectedForCitation
     public static OOError noEntriesSelectedForCitation() {
-        return new OOError(Localization.lang("No entries selected for citation"),
+        return new OOError(
+                Localization.lang("No entries selected for citation"),
                 Localization.lang("No bibliography entries are selected for citation.")
                         + "\n"
                         + Localization.lang("Select some before citing."));

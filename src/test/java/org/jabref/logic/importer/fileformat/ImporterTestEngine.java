@@ -32,8 +32,7 @@ public class ImporterTestEngine {
      */
     public static Collection<String> getTestFiles(Predicate<String> fileNamePredicate) throws IOException {
         try (Stream<Path> stream = Files.list(Path.of(TEST_RESOURCES))) {
-            return stream
-                    .map(path -> path.getFileName().toString())
+            return stream.map(path -> path.getFileName().toString())
                     .filter(fileNamePredicate)
                     .collect(Collectors.toList());
         }
@@ -47,13 +46,13 @@ public class ImporterTestEngine {
         Assertions.assertFalse(importer.isRecognizedFormat(getPath(fileName)));
     }
 
-    public static void testImportEntries(Importer importer, String fileName, String fileType) throws IOException, ImportException {
+    public static void testImportEntries(Importer importer, String fileName, String fileType)
+            throws IOException, ImportException {
         ParserResult parserResult = importer.importDatabase(getPath(fileName));
         if (parserResult.isInvalid()) {
             throw new ImportException(parserResult.getErrorMessage());
         }
-        List<BibEntry> entries = parserResult.getDatabase()
-                                             .getEntries();
+        List<BibEntry> entries = parserResult.getDatabase().getEntries();
         BibEntryAssert.assertEquals(ImporterTestEngine.class, fileName.replaceAll(fileType, ".bib"), entries);
     }
 
@@ -66,8 +65,8 @@ public class ImporterTestEngine {
     }
 
     public static void testImportMalformedFiles(Importer importer, String fileName) throws IOException {
-        List<BibEntry> entries = importer.importDatabase(getPath(fileName)).getDatabase()
-                                         .getEntries();
+        List<BibEntry> entries =
+                importer.importDatabase(getPath(fileName)).getDatabase().getEntries();
         assertEquals(entries, new ArrayList<BibEntry>());
     }
 }

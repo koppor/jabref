@@ -19,9 +19,11 @@ public class ProtectTermsFormatterTest {
 
     @BeforeEach
     public void setUp() {
-        formatter = new ProtectTermsFormatter(
-                new ProtectedTermsLoader(new ProtectedTermsPreferences(ProtectedTermsLoader.getInternalLists(),
-                        Collections.emptyList(), Collections.emptyList(), Collections.emptyList())));
+        formatter = new ProtectTermsFormatter(new ProtectedTermsLoader(new ProtectedTermsPreferences(
+                ProtectedTermsLoader.getInternalLists(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList())));
     }
 
     @Test
@@ -53,7 +55,8 @@ public class ProtectTermsFormatterTest {
     public void test() {
         assertEquals("{VLSI} {VLSI}", formatter.format("VLSI {VLSI}"));
         assertEquals("{BPEL}", formatter.format("{BPEL}"));
-        assertEquals("{Testing {BPEL} Engine Performance: A Survey}",
+        assertEquals(
+                "{Testing {BPEL} Engine Performance: A Survey}",
                 formatter.format("{Testing BPEL Engine Performance: A Survey}"));
     }
 }

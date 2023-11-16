@@ -59,8 +59,9 @@ public class PdfMergeMetadataImporter extends Importer {
     @Override
     public ParserResult importDatabase(BufferedReader reader) throws IOException {
         Objects.requireNonNull(reader);
-        throw new UnsupportedOperationException("PdfMergeMetadataImporter does not support importDatabase(BufferedReader reader)."
-                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException(
+                "PdfMergeMetadataImporter does not support importDatabase(BufferedReader reader)."
+                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override
@@ -75,7 +76,8 @@ public class PdfMergeMetadataImporter extends Importer {
         List<BibEntry> candidates = new ArrayList<>();
 
         for (Importer metadataImporter : metadataImporters) {
-            List<BibEntry> extractedEntries = metadataImporter.importDatabase(filePath).getDatabase().getEntries();
+            List<BibEntry> extractedEntries =
+                    metadataImporter.importDatabase(filePath).getDatabase().getEntries();
             if (extractedEntries.isEmpty()) {
                 continue;
             }
@@ -88,9 +90,15 @@ public class PdfMergeMetadataImporter extends Importer {
         for (BibEntry candidate : candidates) {
             if (candidate.hasField(StandardField.DOI)) {
                 try {
-                    new DoiFetcher(importFormatPreferences).performSearchById(candidate.getField(StandardField.DOI).get()).ifPresent(fetchedCandidates::add);
+                    new DoiFetcher(importFormatPreferences)
+                            .performSearchById(
+                                    candidate.getField(StandardField.DOI).get())
+                            .ifPresent(fetchedCandidates::add);
                 } catch (FetcherException e) {
-                    LOGGER.error("Fetching failed for DOI \"{}\".", candidate.getField(StandardField.DOI).get(), e);
+                    LOGGER.error(
+                            "Fetching failed for DOI \"{}\".",
+                            candidate.getField(StandardField.DOI).get(),
+                            e);
                 }
             }
             if (candidate.hasField(StandardField.ISBN)) {
@@ -98,9 +106,14 @@ public class PdfMergeMetadataImporter extends Importer {
                     new IsbnFetcher(importFormatPreferences)
                             // .addRetryFetcher(new EbookDeIsbnFetcher(importFormatPreferences))
                             // .addRetryFetcher(new DoiToBibtexConverterComIsbnFetcher(importFormatPreferences))
-                            .performSearchById(candidate.getField(StandardField.ISBN).get()).ifPresent(fetchedCandidates::add);
+                            .performSearchById(
+                                    candidate.getField(StandardField.ISBN).get())
+                            .ifPresent(fetchedCandidates::add);
                 } catch (FetcherException e) {
-                    LOGGER.error("Fetching failed for ISBN \"{}\".", candidate.getField(StandardField.ISBN).get(), e);
+                    LOGGER.error(
+                            "Fetching failed for ISBN \"{}\".",
+                            candidate.getField(StandardField.ISBN).get(),
+                            e);
                 }
             }
         }
@@ -114,8 +127,8 @@ public class PdfMergeMetadataImporter extends Importer {
             for (Map.Entry<Field, String> fieldEntry : candidate.getFieldMap().entrySet()) {
                 // Don't merge FILE fields that point to a stored file as we set that to filePath anyway.
                 // Nevertheless, retain online links.
-                if (StandardField.FILE == fieldEntry.getKey() &&
-                        FileFieldParser.parse(fieldEntry.getValue()).stream().noneMatch(LinkedFile::isOnlineLink)) {
+                if (StandardField.FILE == fieldEntry.getKey()
+                        && FileFieldParser.parse(fieldEntry.getValue()).stream().noneMatch(LinkedFile::isOnlineLink)) {
                     continue;
                 }
                 // Only overwrite non-present fields
@@ -150,7 +163,10 @@ public class PdfMergeMetadataImporter extends Importer {
         private final FilePreferences filePreferences;
         private final BibDatabaseContext databaseContext;
 
-        public EntryBasedFetcherWrapper(ImportFormatPreferences importFormatPreferences, FilePreferences filePreferences, BibDatabaseContext context) {
+        public EntryBasedFetcherWrapper(
+                ImportFormatPreferences importFormatPreferences,
+                FilePreferences filePreferences,
+                BibDatabaseContext context) {
             super(importFormatPreferences);
             this.filePreferences = filePreferences;
             this.databaseContext = context;

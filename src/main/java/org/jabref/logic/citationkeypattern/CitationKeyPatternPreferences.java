@@ -13,9 +13,9 @@ import com.google.common.annotations.VisibleForTesting;
 public class CitationKeyPatternPreferences {
 
     public enum KeySuffix {
-        ALWAYS,         // CiteKeyA, CiteKeyB, CiteKeyC ...
-        SECOND_WITH_A,  // CiteKey, CiteKeyA, CiteKeyB ...
-        SECOND_WITH_B   // CiteKey, CiteKeyB, CiteKeyC ...
+        ALWAYS, // CiteKeyA, CiteKeyB, CiteKeyC ...
+        SECOND_WITH_A, // CiteKey, CiteKeyA, CiteKeyB ...
+        SECOND_WITH_B // CiteKey, CiteKeyB, CiteKeyC ...
     }
 
     private final BooleanProperty shouldAvoidOverwriteCiteKey = new SimpleBooleanProperty();
@@ -29,16 +29,17 @@ public class CitationKeyPatternPreferences {
     private final String defaultPattern;
     private final ReadOnlyObjectProperty<Character> keywordDelimiter;
 
-    public CitationKeyPatternPreferences(boolean shouldAvoidOverwriteCiteKey,
-                                         boolean shouldWarnBeforeOverwriteCiteKey,
-                                         boolean shouldGenerateCiteKeysBeforeSaving,
-                                         KeySuffix keySuffix,
-                                         String keyPatternRegex,
-                                         String keyPatternReplacement,
-                                         String unwantedCharacters,
-                                         GlobalCitationKeyPattern keyPattern,
-                                         String defaultPattern,
-                                         ReadOnlyObjectProperty<Character> keywordDelimiter) {
+    public CitationKeyPatternPreferences(
+            boolean shouldAvoidOverwriteCiteKey,
+            boolean shouldWarnBeforeOverwriteCiteKey,
+            boolean shouldGenerateCiteKeysBeforeSaving,
+            KeySuffix keySuffix,
+            String keyPatternRegex,
+            String keyPatternReplacement,
+            String unwantedCharacters,
+            GlobalCitationKeyPattern keyPattern,
+            String defaultPattern,
+            ReadOnlyObjectProperty<Character> keywordDelimiter) {
 
         this.shouldAvoidOverwriteCiteKey.set(shouldAvoidOverwriteCiteKey);
         this.shouldWarnBeforeOverwriteCiteKey.set(shouldWarnBeforeOverwriteCiteKey);
@@ -54,18 +55,20 @@ public class CitationKeyPatternPreferences {
     }
 
     @VisibleForTesting
-    public CitationKeyPatternPreferences(boolean shouldAvoidOverwriteCiteKey,
-                                         boolean shouldWarnBeforeOverwriteCiteKey,
-                                         boolean shouldGenerateCiteKeysBeforeSaving,
-                                         KeySuffix keySuffix,
-                                         String keyPatternRegex,
-                                         String keyPatternReplacement,
-                                         String unwantedCharacters,
-                                         GlobalCitationKeyPattern keyPattern,
-                                         String defaultPattern,
-                                         Character keywordDelimiter) {
+    public CitationKeyPatternPreferences(
+            boolean shouldAvoidOverwriteCiteKey,
+            boolean shouldWarnBeforeOverwriteCiteKey,
+            boolean shouldGenerateCiteKeysBeforeSaving,
+            KeySuffix keySuffix,
+            String keyPatternRegex,
+            String keyPatternReplacement,
+            String unwantedCharacters,
+            GlobalCitationKeyPattern keyPattern,
+            String defaultPattern,
+            Character keywordDelimiter) {
 
-        this(shouldAvoidOverwriteCiteKey,
+        this(
+                shouldAvoidOverwriteCiteKey,
                 shouldWarnBeforeOverwriteCiteKey,
                 shouldGenerateCiteKeysBeforeSaving,
                 keySuffix,

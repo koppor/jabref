@@ -10,8 +10,7 @@ public class EntryLinkList {
 
     private static String SEPARATOR = ",";
 
-    private EntryLinkList() {
-    }
+    private EntryLinkList() {}
 
     public static List<ParsedEntryLink> parse(String fieldValue, BibDatabase database) {
         List<ParsedEntryLink> result = new ArrayList<>();

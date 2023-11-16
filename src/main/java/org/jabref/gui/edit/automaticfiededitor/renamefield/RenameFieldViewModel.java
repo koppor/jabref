@@ -42,7 +42,9 @@ public class RenameFieldViewModel extends AbstractAutomaticFieldEditorTabViewMod
         super(database, stateManager);
         this.selectedEntries = selectedEntries;
 
-        fieldValidator = new FunctionBasedValidator<>(selectedField, field -> StringUtil.isNotBlank(field.getName()),
+        fieldValidator = new FunctionBasedValidator<>(
+                selectedField,
+                field -> StringUtil.isNotBlank(field.getName()),
                 ValidationMessage.error("Field cannot be empty"));
         fieldNameValidator = new FunctionBasedValidator<>(newFieldName, fieldName -> {
             if (StringUtil.isBlank(fieldName)) {
@@ -53,7 +55,9 @@ public class RenameFieldViewModel extends AbstractAutomaticFieldEditorTabViewMod
             return null;
         });
 
-        canRename = Bindings.and(fieldValidationStatus().validProperty(), fieldNameValidationStatus().validProperty());
+        canRename = Bindings.and(
+                fieldValidationStatus().validProperty(),
+                fieldNameValidationStatus().validProperty());
     }
 
     public ValidationStatus fieldValidationStatus() {
@@ -96,19 +100,20 @@ public class RenameFieldViewModel extends AbstractAutomaticFieldEditorTabViewMod
         NamedCompound renameEdit = new NamedCompound("RENAME_EDIT");
         int affectedEntriesCount = 0;
         if (fieldNameValidationStatus().isValid()) {
-            affectedEntriesCount = new MoveFieldValueAction(selectedField.get(),
-                    FieldFactory.parseField(newFieldName.get()),
-                    selectedEntries,
-                    renameEdit,
-                    false).executeAndGetAffectedEntriesCount();
+            affectedEntriesCount = new MoveFieldValueAction(
+                            selectedField.get(),
+                            FieldFactory.parseField(newFieldName.get()),
+                            selectedEntries,
+                            renameEdit,
+                            false)
+                    .executeAndGetAffectedEntriesCount();
 
             if (renameEdit.hasEdits()) {
                 renameEdit.end();
             }
         }
 
-        stateManager.setLastAutomaticFieldEditorEdit(new LastAutomaticFieldEditorEdit(
-                affectedEntriesCount, TAB_INDEX, renameEdit
-        ));
+        stateManager.setLastAutomaticFieldEditorEdit(
+                new LastAutomaticFieldEditorEdit(affectedEntriesCount, TAB_INDEX, renameEdit));
     }
 }

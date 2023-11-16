@@ -53,7 +53,9 @@ public class DocBook5ExporterTest {
 
         LocalDate myDate = LocalDate.of(2018, 1, 1);
 
-        xmlFile = Path.of(DocBook5ExporterTest.class.getResource("Docbook5ExportFormat.xml").toURI());
+        xmlFile = Path.of(DocBook5ExporterTest.class
+                .getResource("Docbook5ExportFormat.xml")
+                .toURI());
         databaseContext = new BibDatabaseContext();
         charset = StandardCharsets.UTF_8;
         BibEntry entry = new BibEntry(StandardEntryType.Book)
@@ -74,8 +76,11 @@ public class DocBook5ExporterTest {
         Builder control = Input.from(Files.newInputStream(xmlFile));
         Builder test = Input.from(Files.newInputStream(path));
 
-        assertThat(test, CompareMatcher.isSimilarTo(control)
-                                       .normalizeWhitespace()
-                                       .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)).throwComparisonFailure());
+        assertThat(
+                test,
+                CompareMatcher.isSimilarTo(control)
+                        .normalizeWhitespace()
+                        .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+                        .throwComparisonFailure());
     }
 }

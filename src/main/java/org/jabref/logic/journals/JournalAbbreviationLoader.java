@@ -31,11 +31,13 @@ public class JournalAbbreviationLoader {
         return parser.getAbbreviations();
     }
 
-    public static JournalAbbreviationRepository loadRepository(JournalAbbreviationPreferences journalAbbreviationPreferences) {
+    public static JournalAbbreviationRepository loadRepository(
+            JournalAbbreviationPreferences journalAbbreviationPreferences) {
         JournalAbbreviationRepository repository;
 
         // Initialize with built-in list
-        try (InputStream resourceAsStream = JournalAbbreviationRepository.class.getResourceAsStream("/journals/journal-list.mv")) {
+        try (InputStream resourceAsStream =
+                JournalAbbreviationRepository.class.getResourceAsStream("/journals/journal-list.mv")) {
             if (resourceAsStream == null) {
                 LOGGER.warn("There is no journal-list.mv. We use a default journal list");
                 repository = new JournalAbbreviationRepository();

@@ -39,18 +39,20 @@ public class OtherFieldsTab extends FieldsEditorTab {
     private final List<Field> customTabFieldNames;
     private final BibEntryTypesManager entryTypesManager;
 
-    public OtherFieldsTab(BibDatabaseContext databaseContext,
-                          SuggestionProviders suggestionProviders,
-                          UndoManager undoManager,
-                          DialogService dialogService,
-                          PreferencesService preferences,
-                          StateManager stateManager,
-                          ThemeManager themeManager,
-                          IndexingTaskManager indexingTaskManager,
-                          BibEntryTypesManager entryTypesManager,
-                          TaskExecutor taskExecutor,
-                          JournalAbbreviationRepository journalAbbreviationRepository) {
-        super(false,
+    public OtherFieldsTab(
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            DialogService dialogService,
+            PreferencesService preferences,
+            StateManager stateManager,
+            ThemeManager themeManager,
+            IndexingTaskManager indexingTaskManager,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository) {
+        super(
+                false,
                 databaseContext,
                 suggestionProviders,
                 undoManager,
@@ -64,7 +66,11 @@ public class OtherFieldsTab extends FieldsEditorTab {
 
         this.entryTypesManager = entryTypesManager;
         this.customTabFieldNames = new ArrayList<>();
-        preferences.getEntryEditorPreferences().getDefaultEntryEditorTabs().values().forEach(customTabFieldNames::addAll);
+        preferences
+                .getEntryEditorPreferences()
+                .getDefaultEntryEditorTabs()
+                .values()
+                .forEach(customTabFieldNames::addAll);
 
         setText(Localization.lang("Other fields"));
         setTooltip(new Tooltip(Localization.lang("Show remaining fields")));
@@ -78,11 +84,13 @@ public class OtherFieldsTab extends FieldsEditorTab {
         if (entryType.isPresent()) {
             Set<Field> allKnownFields = entryType.get().getAllFields();
             Set<Field> otherFields = entry.getFields().stream()
-                                          .filter(field -> !allKnownFields.contains(field) &&
-                                                  !(field.equals(StandardField.COMMENT) || field instanceof UserSpecificCommentField))
-                                          .collect(Collectors.toCollection(LinkedHashSet::new));
+                    .filter(field -> !allKnownFields.contains(field)
+                            && !(field.equals(StandardField.COMMENT) || field instanceof UserSpecificCommentField))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
             otherFields.removeAll(entryType.get().getDeprecatedFields(mode));
-            otherFields.removeAll(entryType.get().getOptionalFields().stream().map(BibField::field).collect(Collectors.toSet()));
+            otherFields.removeAll(entryType.get().getOptionalFields().stream()
+                    .map(BibField::field)
+                    .collect(Collectors.toSet()));
             otherFields.remove(InternalField.KEY_FIELD);
             customTabFieldNames.forEach(otherFields::remove);
             return otherFields;

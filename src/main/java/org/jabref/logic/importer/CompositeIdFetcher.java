@@ -22,11 +22,13 @@ public class CompositeIdFetcher {
     public Optional<BibEntry> performSearchById(String identifier) throws FetcherException {
         Optional<DOI> doi = DOI.findInText(identifier);
         if (doi.isPresent()) {
-            return new DoiFetcher(importFormatPreferences).performSearchById(doi.get().getNormalized());
+            return new DoiFetcher(importFormatPreferences)
+                    .performSearchById(doi.get().getNormalized());
         }
         Optional<ArXivIdentifier> arXivIdentifier = ArXivIdentifier.parse(identifier);
         if (arXivIdentifier.isPresent()) {
-            return new ArXivFetcher(importFormatPreferences).performSearchById(arXivIdentifier.get().getNormalized());
+            return new ArXivFetcher(importFormatPreferences)
+                    .performSearchById(arXivIdentifier.get().getNormalized());
         }
         Optional<ISBN> isbn = ISBN.parse(identifier);
         if (isbn.isPresent()) {

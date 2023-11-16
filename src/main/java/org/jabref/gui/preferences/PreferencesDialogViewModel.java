@@ -84,8 +84,7 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
                 new XmpPrivacyTab(),
                 new CustomImporterTab(),
                 new CustomExporterTab(),
-                new NetworkTab()
-        );
+                new NetworkTab());
     }
 
     public ObservableList<PreferencesTab> getPreferenceTabs() {
@@ -96,21 +95,22 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
         FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
                 .addExtensionFilter(StandardFileType.XML)
                 .withDefaultExtension(StandardFileType.XML)
-                .withInitialDirectory(preferences.getInternalPreferences().getLastPreferencesExportPath()).build();
+                .withInitialDirectory(preferences.getInternalPreferences().getLastPreferencesExportPath())
+                .build();
 
-        dialogService.showFileOpenDialog(fileDialogConfiguration)
-                     .ifPresent(file -> {
-                         try {
-                             preferences.importPreferences(file);
-                             updateAfterPreferenceChanges();
+        dialogService.showFileOpenDialog(fileDialogConfiguration).ifPresent(file -> {
+            try {
+                preferences.importPreferences(file);
+                updateAfterPreferenceChanges();
 
-                             dialogService.showWarningDialogAndWait(Localization.lang("Import preferences"),
-                                     Localization.lang("You must restart JabRef for this to come into effect."));
-                         } catch (JabRefException ex) {
-                             LOGGER.error("Error while importing preferences", ex);
-                             dialogService.showErrorDialogAndWait(Localization.lang("Import preferences"), ex);
-                         }
-                     });
+                dialogService.showWarningDialogAndWait(
+                        Localization.lang("Import preferences"),
+                        Localization.lang("You must restart JabRef for this to come into effect."));
+            } catch (JabRefException ex) {
+                LOGGER.error("Error while importing preferences", ex);
+                dialogService.showErrorDialogAndWait(Localization.lang("Import preferences"), ex);
+            }
+        });
     }
 
     public void exportPreferences() {
@@ -120,17 +120,16 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
                 .withInitialDirectory(preferences.getInternalPreferences().getLastPreferencesExportPath())
                 .build();
 
-        dialogService.showFileSaveDialog(fileDialogConfiguration)
-                     .ifPresent(exportFile -> {
-                         try {
-                             storeAllSettings();
-                             preferences.exportPreferences(exportFile);
-                             preferences.getInternalPreferences().setLastPreferencesExportPath(exportFile);
-                         } catch (JabRefException ex) {
-                             LOGGER.warn(ex.getMessage(), ex);
-                             dialogService.showErrorDialogAndWait(Localization.lang("Export preferences"), ex);
-                         }
-                     });
+        dialogService.showFileSaveDialog(fileDialogConfiguration).ifPresent(exportFile -> {
+            try {
+                storeAllSettings();
+                preferences.exportPreferences(exportFile);
+                preferences.getInternalPreferences().setLastPreferencesExportPath(exportFile);
+            } catch (JabRefException ex) {
+                LOGGER.warn(ex.getMessage(), ex);
+                dialogService.showErrorDialogAndWait(Localization.lang("Export preferences"), ex);
+            }
+        });
     }
 
     public void showPreferences() {
@@ -147,7 +146,8 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
             try {
                 preferences.clear();
 
-                dialogService.showWarningDialogAndWait(Localization.lang("Reset preferences"),
+                dialogService.showWarningDialogAndWait(
+                        Localization.lang("Reset preferences"),
                         Localization.lang("You must restart JabRef for this to come into effect."));
             } catch (BackingStoreException ex) {
                 LOGGER.error("Error while resetting preferences", ex);
@@ -164,7 +164,8 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
     private void updateAfterPreferenceChanges() {
         setValues();
 
-        frame.getLibraryTabs().forEach(panel -> panel.getMainTable().getTableModel().refresh());
+        frame.getLibraryTabs()
+                .forEach(panel -> panel.getMainTable().getTableModel().refresh());
     }
 
     /**
@@ -197,7 +198,8 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
         preferences.flush();
 
         if (!restartWarnings.isEmpty()) {
-            dialogService.showWarningDialogAndWait(Localization.lang("Restart required"),
+            dialogService.showWarningDialogAndWait(
+                    Localization.lang("Restart required"),
                     String.join(",\n", restartWarnings)
                             + "\n\n"
                             + Localization.lang("You must restart JabRef for this to come into effect."));

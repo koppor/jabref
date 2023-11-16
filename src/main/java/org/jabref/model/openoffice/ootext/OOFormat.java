@@ -9,8 +9,7 @@ import org.jabref.model.strings.StringUtil;
  */
 public class OOFormat {
 
-    private OOFormat() {
-    }
+    private OOFormat() {}
 
     /**
      * Mark {@code ootext} as using a character locale known to OO.
@@ -42,9 +41,8 @@ public class OOFormat {
      * @param charStyle Name of a character style known to OO. May be empty for "Standard", which in turn means do not override any properties.
      */
     public static OOText setCharStyle(OOText ootext, String charStyle) {
-        return OOText.fromString(String.format("<span oo:CharStyleName=\"%s\">", charStyle)
-                + ootext.toString()
-                + "</span>");
+        return OOText.fromString(
+                String.format("<span oo:CharStyleName=\"%s\">", charStyle) + ootext.toString() + "</span>");
     }
 
     /**

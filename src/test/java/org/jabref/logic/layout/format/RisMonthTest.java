@@ -20,18 +20,18 @@ public class RisMonthTest {
 
     @ParameterizedTest(name = "input={0}, formattedStr={1}")
     @CsvSource({
-            "jan, 01", // jan
-            "feb, 02", // feb
-            "mar, 03", // mar
-            "apr, 04", // apr
-            "may, 05", // may
-            "jun, 06", // jun
-            "jul, 07", // jul
-            "aug, 08", // aug
-            "sep, 09", // sep
-            "oct, 10", // oct
-            "nov, 11", // nov
-            "dec, 12", // dec
+        "jan, 01", // jan
+        "feb, 02", // feb
+        "mar, 03", // mar
+        "apr, 04", // apr
+        "may, 05", // may
+        "jun, 06", // jun
+        "jul, 07", // jul
+        "aug, 08", // aug
+        "sep, 09", // sep
+        "oct, 10", // oct
+        "nov, 11", // nov
+        "dec, 12", // dec
     })
     public void testValidMonth(String input, String expectedResult) {
         String formattedStr = new RisMonth().format(input);

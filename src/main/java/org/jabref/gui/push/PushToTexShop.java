@@ -43,7 +43,10 @@ public class PushToTexShop extends AbstractPushToApplication {
         couldNotCall = false;
         notDefined = false;
 
-        commandPath = preferencesService.getPushToApplicationPreferences().getCommandPaths().get(this.getDisplayName());
+        commandPath = preferencesService
+                .getPushToApplicationPreferences()
+                .getCommandPaths()
+                .get(this.getDisplayName());
 
         try {
             LOGGER.debug("TexShop string: {}", String.join(" ", getCommandLine(keyString)));
@@ -69,16 +72,18 @@ public class PushToTexShop extends AbstractPushToApplication {
             citeCommand = "\"\\" + getCitePrefix();
         }
 
-        String osascriptTexShop = "osascript -e 'tell application \"TeXShop\"\n" +
-                "activate\n" +
-                "set TheString to " + citeCommand + keyString + getCiteSuffix() + "\"\n" +
-                "set content of selection of front document to TheString\n" +
-                "end tell'";
+        String osascriptTexShop = "osascript -e 'tell application \"TeXShop\"\n" + "activate\n"
+                + "set TheString to "
+                + citeCommand + keyString + getCiteSuffix() + "\"\n"
+                + "set content of selection of front document to TheString\n"
+                + "end tell'";
 
         if (OS.OS_X) {
             return new String[] {"sh", "-c", osascriptTexShop};
         } else {
-            dialogService.showInformationDialogAndWait(Localization.lang("Push to application"), Localization.lang("Pushing citations to TeXShop is only possible on macOS!"));
+            dialogService.showInformationDialogAndWait(
+                    Localization.lang("Push to application"),
+                    Localization.lang("Pushing citations to TeXShop is only possible on macOS!"));
             return new String[] {};
         }
     }

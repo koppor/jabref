@@ -22,10 +22,11 @@ public class Layout {
 
     private final List<String> missingFormatters = new ArrayList<>();
 
-    public Layout(List<StringInt> parsedEntries,
-                  List<Path> fileDirForDatabase,
-                  LayoutFormatterPreferences layoutPreferences,
-                  JournalAbbreviationRepository abbreviationRepository) {
+    public Layout(
+            List<StringInt> parsedEntries,
+            List<Path> fileDirForDatabase,
+            LayoutFormatterPreferences layoutPreferences,
+            JournalAbbreviationRepository abbreviationRepository) {
         List<LayoutEntry> tmpEntries = new ArrayList<>(parsedEntries.size());
 
         List<StringInt> blockEntries = null;
@@ -49,8 +50,11 @@ public class Layout {
                     if ((blockStart != null) && (blockEntries != null)) {
                         if (blockStart.equals(parsedEntry.s)) {
                             blockEntries.add(parsedEntry);
-                            le = new LayoutEntry(blockEntries,
-                                    parsedEntry.i == LayoutHelper.IS_FIELD_END ? LayoutHelper.IS_FIELD_START : LayoutHelper.IS_GROUP_START,
+                            le = new LayoutEntry(
+                                    blockEntries,
+                                    parsedEntry.i == LayoutHelper.IS_FIELD_END
+                                            ? LayoutHelper.IS_FIELD_START
+                                            : LayoutHelper.IS_GROUP_START,
                                     fileDirForDatabase,
                                     layoutPreferences,
                                     abbreviationRepository);
@@ -68,7 +72,8 @@ public class Layout {
             }
 
             if (blockEntries == null) {
-                tmpEntries.add(new LayoutEntry(parsedEntry, fileDirForDatabase, layoutPreferences, abbreviationRepository));
+                tmpEntries.add(
+                        new LayoutEntry(parsedEntry, fileDirForDatabase, layoutPreferences, abbreviationRepository));
             } else {
                 blockEntries.add(parsedEntry);
             }

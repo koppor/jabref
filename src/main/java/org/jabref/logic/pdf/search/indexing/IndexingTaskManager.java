@@ -55,7 +55,9 @@ public class IndexingTaskManager extends BackgroundTask<Void> {
 
     private void updateProgress() {
         DefaultTaskExecutor.runInJavaFXThread(() -> {
-            updateMessage(Localization.lang("%0 of %1 linked files added to the index", numOfIndexedFiles, numOfIndexedFiles + taskQueue.size()));
+            updateMessage(Localization.lang(
+                    "%0 of %1 linked files added to the index",
+                    numOfIndexedFiles, numOfIndexedFiles + taskQueue.size()));
             updateProgress(numOfIndexedFiles, numOfIndexedFiles + taskQueue.size());
         });
     }
@@ -106,7 +108,8 @@ public class IndexingTaskManager extends BackgroundTask<Void> {
         addToIndex(indexer, entry, entry.getFiles(), databaseContext);
     }
 
-    public void addToIndex(PdfIndexer indexer, BibEntry entry, List<LinkedFile> linkedFiles, BibDatabaseContext databaseContext) {
+    public void addToIndex(
+            PdfIndexer indexer, BibEntry entry, List<LinkedFile> linkedFiles, BibDatabaseContext databaseContext) {
         for (LinkedFile file : linkedFiles) {
             enqueueTask(() -> indexer.addToIndex(entry, file, databaseContext));
         }
@@ -123,6 +126,7 @@ public class IndexingTaskManager extends BackgroundTask<Void> {
     }
 
     public void updateDatabaseName(String name) {
-        DefaultTaskExecutor.runInJavaFXThread(() -> this.titleProperty().set(Localization.lang("Indexing for %0", name)));
+        DefaultTaskExecutor.runInJavaFXThread(
+                () -> this.titleProperty().set(Localization.lang("Indexing for %0", name)));
     }
 }

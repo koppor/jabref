@@ -16,13 +16,15 @@ public class DiffHighlighting {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DiffHighlighting.class);
 
-    private DiffHighlighting() {
-    }
+    private DiffHighlighting() {}
 
     public static List<Text> generateDiffHighlighting(String baseString, String modifiedString, String separator) {
         List<String> stringList = Arrays.asList(baseString.split(separator));
-        List<Text> result = stringList.stream().map(text -> forUnchanged(text + separator)).collect(Collectors.toList());
-        List<AbstractDelta<String>> deltaList = DiffUtils.diff(stringList, Arrays.asList(modifiedString.split(separator))).getDeltas();
+        List<Text> result =
+                stringList.stream().map(text -> forUnchanged(text + separator)).collect(Collectors.toList());
+        List<AbstractDelta<String>> deltaList = DiffUtils.diff(
+                        stringList, Arrays.asList(modifiedString.split(separator)))
+                .getDeltas();
         Collections.reverse(deltaList);
         for (AbstractDelta<String> delta : deltaList) {
             int startPos = delta.getSource().getPosition();
@@ -35,7 +37,9 @@ public class DiffHighlighting {
                         offset++;
                     }
                     result.set(startPos + offset - 1, forRemoved(stringList.get((startPos + offset) - 1) + separator));
-                    result.add(startPos + offset, forAdded(String.join(separator, delta.getTarget().getLines())));
+                    result.add(
+                            startPos + offset,
+                            forAdded(String.join(separator, delta.getTarget().getLines())));
                     break;
                 case DELETE:
                     for (String line : lines) {
@@ -44,7 +48,9 @@ public class DiffHighlighting {
                     }
                     break;
                 case INSERT:
-                    result.add(delta.getSource().getPosition(), forAdded(String.join(separator, delta.getTarget().getLines())));
+                    result.add(
+                            delta.getSource().getPosition(),
+                            forAdded(String.join(separator, delta.getTarget().getLines())));
                     break;
                 default:
                     break;
@@ -79,8 +85,12 @@ public class DiffHighlighting {
 
     public static List<Text> generateSymmetricHighlighting(String baseString, String modifiedString, String separator) {
         List<String> stringList = Arrays.asList(baseString.split(separator));
-        List<Text> result = stringList.stream().map(text -> DiffHighlighting.forUnchanged(text + separator)).collect(Collectors.toList());
-        List<AbstractDelta<String>> deltaList = DiffUtils.diff(stringList, Arrays.asList(modifiedString.split(separator))).getDeltas();
+        List<Text> result = stringList.stream()
+                .map(text -> DiffHighlighting.forUnchanged(text + separator))
+                .collect(Collectors.toList());
+        List<AbstractDelta<String>> deltaList = DiffUtils.diff(
+                        stringList, Arrays.asList(modifiedString.split(separator)))
+                .getDeltas();
         Collections.reverse(deltaList);
         for (AbstractDelta<String> delta : deltaList) {
             int startPos = delta.getSource().getPosition();

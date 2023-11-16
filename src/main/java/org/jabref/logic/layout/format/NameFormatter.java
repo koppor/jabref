@@ -74,7 +74,8 @@ import org.jabref.model.entry.AuthorList;
  */
 public class NameFormatter implements LayoutFormatter {
 
-    public static final String DEFAULT_FORMAT = "1@*@{ff }{vv }{ll}{, jj}@@*@1@{ff }{vv }{ll}{, jj}@*@, {ff }{vv }{ll}{, jj}";
+    public static final String DEFAULT_FORMAT =
+            "1@*@{ff }{vv }{ll}{, jj}@@*@1@{ff }{vv }{ll}{, jj}@*@, {ff }{vv }{ll}{, jj}";
 
     private String parameter = NameFormatter.DEFAULT_FORMAT;
 

@@ -24,25 +24,27 @@ import org.jabref.preferences.PreferencesService;
 
 public class SearchResultsTable extends TableView<BibEntryTableViewModel> {
 
-    public SearchResultsTable(SearchResultsTableDataModel model,
-                              BibDatabaseContext database,
-                              PreferencesService preferencesService,
-                              UndoManager undoManager,
-                              DialogService dialogService,
-                              StateManager stateManager,
-                              TaskExecutor taskExecutor) {
+    public SearchResultsTable(
+            SearchResultsTableDataModel model,
+            BibDatabaseContext database,
+            PreferencesService preferencesService,
+            UndoManager undoManager,
+            DialogService dialogService,
+            StateManager stateManager,
+            TaskExecutor taskExecutor) {
         super();
 
         MainTablePreferences mainTablePreferences = preferencesService.getMainTablePreferences();
 
         List<TableColumn<BibEntryTableViewModel, ?>> allCols = new MainTableColumnFactory(
-                database,
-                preferencesService,
-                preferencesService.getSearchDialogColumnPreferences(),
-                undoManager,
-                dialogService,
-                stateManager,
-                taskExecutor).createColumns();
+                        database,
+                        preferencesService,
+                        preferencesService.getSearchDialogColumnPreferences(),
+                        undoManager,
+                        dialogService,
+                        stateManager,
+                        taskExecutor)
+                .createColumns();
 
         if (allCols.stream().noneMatch(LibraryColumn.class::isInstance)) {
             allCols.add(0, new LibraryColumn());
@@ -50,12 +52,14 @@ public class SearchResultsTable extends TableView<BibEntryTableViewModel> {
         this.getColumns().addAll(allCols);
 
         this.getSortOrder().clear();
-        preferencesService.getSearchDialogColumnPreferences().getColumnSortOrder().forEach(columnModel ->
-                this.getColumns().stream()
-                    .map(column -> (MainTableColumn<?>) column)
-                    .filter(column -> column.getModel().equals(columnModel))
-                    .findFirst()
-                    .ifPresent(column -> this.getSortOrder().add(column)));
+        preferencesService
+                .getSearchDialogColumnPreferences()
+                .getColumnSortOrder()
+                .forEach(columnModel -> this.getColumns().stream()
+                        .map(column -> (MainTableColumn<?>) column)
+                        .filter(column -> column.getModel().equals(columnModel))
+                        .findFirst()
+                        .ifPresent(column -> this.getSortOrder().add(column)));
 
         if (mainTablePreferences.getResizeColumnsToFit()) {
             this.setColumnResizePolicy(new SmartConstrainedResizePolicy());
@@ -74,4 +78,3 @@ public class SearchResultsTable extends TableView<BibEntryTableViewModel> {
         database.getDatabase().registerListener(this);
     }
 }
-

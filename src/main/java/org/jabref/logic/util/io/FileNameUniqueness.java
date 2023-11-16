@@ -40,9 +40,7 @@ public class FileNameUniqueness {
 
         int counter = 1;
         while (Files.exists(targetDirectory.resolve(newFileName))) {
-            newFileName = fileNameWithoutExtension +
-                    " (" + counter + ")" +
-                    extensionSuffix;
+            newFileName = fileNameWithoutExtension + " (" + counter + ")" + extensionSuffix;
             counter++;
         }
 
@@ -60,7 +58,8 @@ public class FileNameUniqueness {
      *         false when there is no "similar" file name or the content is different from that of files with "similar" name
      * @throws IOException Fail when the file is not exist or something wrong when reading the file
      */
-    public static boolean isDuplicatedFile(Path directory, Path fileName, DialogService dialogService) throws IOException {
+    public static boolean isDuplicatedFile(Path directory, Path fileName, DialogService dialogService)
+            throws IOException {
 
         Objects.requireNonNull(directory);
         Objects.requireNonNull(fileName);
@@ -84,16 +83,17 @@ public class FileNameUniqueness {
         while (Files.exists(originalFile)) {
             if (com.google.common.io.Files.equal(originalFile.toFile(), duplicateFile.toFile())) {
                 if (duplicateFile.toFile().delete()) {
-                    dialogService.notify(Localization.lang("File '%1' is a duplicate of '%0'. Keeping '%0'", originalFileName, fileName));
+                    dialogService.notify(Localization.lang(
+                            "File '%1' is a duplicate of '%0'. Keeping '%0'", originalFileName, fileName));
                 } else {
-                    dialogService.notify(Localization.lang("File '%1' is a duplicate of '%0'. Keeping both due to deletion error", originalFileName, fileName));
+                    dialogService.notify(Localization.lang(
+                            "File '%1' is a duplicate of '%0'. Keeping both due to deletion error",
+                            originalFileName, fileName));
                 }
                 return true;
             }
 
-            originalFileName = fileNameWithoutDuplicated +
-                    " (" + counter + ")"
-                    + extensionSuffix;
+            originalFileName = fileNameWithoutDuplicated + " (" + counter + ")" + extensionSuffix;
             counter++;
 
             if (newFilename.equals(originalFileName)) {

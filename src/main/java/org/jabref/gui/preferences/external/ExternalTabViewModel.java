@@ -72,7 +72,8 @@ public class ExternalTabViewModel implements PreferenceTabViewModel {
         terminalCommandValidator = new FunctionBasedValidator<>(
                 customTerminalCommandProperty,
                 input -> !StringUtil.isNullOrEmpty(input),
-                ValidationMessage.error(String.format("%s > %s %n %n %s",
+                ValidationMessage.error(String.format(
+                        "%s > %s %n %n %s",
                         Localization.lang("External programs"),
                         Localization.lang("Custom applications"),
                         Localization.lang("Please specify a terminal application."))));
@@ -80,7 +81,8 @@ public class ExternalTabViewModel implements PreferenceTabViewModel {
         fileBrowserCommandValidator = new FunctionBasedValidator<>(
                 customFileBrowserCommandProperty,
                 input -> !StringUtil.isNullOrEmpty(input),
-                ValidationMessage.error(String.format("%s > %s %n %n %s",
+                ValidationMessage.error(String.format(
+                        "%s > %s %n %n %s",
                         Localization.lang("External programs"),
                         Localization.lang("Custom applications"),
                         Localization.lang("Please specify a file browser."))));
@@ -89,13 +91,14 @@ public class ExternalTabViewModel implements PreferenceTabViewModel {
     @Override
     public void setValues() {
         eMailReferenceSubjectProperty.setValue(initialExternalApplicationPreferences.getEmailSubject());
-        autoOpenAttachedFoldersProperty.setValue(initialExternalApplicationPreferences.shouldAutoOpenEmailAttachmentsFolder());
+        autoOpenAttachedFoldersProperty.setValue(
+                initialExternalApplicationPreferences.shouldAutoOpenEmailAttachmentsFolder());
 
         pushToApplicationsListProperty.setValue(
                 FXCollections.observableArrayList(PushToApplications.getAllApplications(dialogService, preferences)));
-        selectedPushToApplicationProperty.setValue(
-                PushToApplications.getApplicationByName(initialPushToApplicationPreferences.getActiveApplicationName(), dialogService, preferences)
-                                  .orElse(new PushToEmacs(dialogService, preferences)));
+        selectedPushToApplicationProperty.setValue(PushToApplications.getApplicationByName(
+                        initialPushToApplicationPreferences.getActiveApplicationName(), dialogService, preferences)
+                .orElse(new PushToEmacs(dialogService, preferences)));
 
         citeCommandProperty.setValue(initialExternalApplicationPreferences.getCiteCommand());
         useCustomTerminalProperty.setValue(initialExternalApplicationPreferences.useCustomTerminal());
@@ -118,7 +121,8 @@ public class ExternalTabViewModel implements PreferenceTabViewModel {
         externalPreferences.setKindleEmail(kindleEmailProperty.getValue());
 
         PushToApplicationPreferences pushPreferences = preferences.getPushToApplicationPreferences();
-        pushPreferences.setActiveApplicationName(selectedPushToApplicationProperty.getValue().getDisplayName());
+        pushPreferences.setActiveApplicationName(
+                selectedPushToApplicationProperty.getValue().getDisplayName());
         pushPreferences.setCommandPaths(workingPushToApplicationPreferences.getCommandPaths());
         pushPreferences.setEmacsArguments(workingPushToApplicationPreferences.getEmacsArguments());
         pushPreferences.setVimServer(workingPushToApplicationPreferences.getVimServer());
@@ -146,8 +150,9 @@ public class ExternalTabViewModel implements PreferenceTabViewModel {
 
         ValidationStatus validationStatus = validator.getValidationStatus();
         if (!validationStatus.isValid()) {
-            validationStatus.getHighestMessage().ifPresent(message ->
-                    dialogService.showErrorDialogAndWait(message.getMessage()));
+            validationStatus
+                    .getHighestMessage()
+                    .ifPresent(message -> dialogService.showErrorDialogAndWait(message.getMessage()));
             return false;
         }
         return true;
@@ -155,31 +160,34 @@ public class ExternalTabViewModel implements PreferenceTabViewModel {
 
     public void pushToApplicationSettings() {
         PushToApplication selectedApplication = selectedPushToApplicationProperty.getValue();
-        PushToApplicationSettings settings = selectedApplication.getSettings(selectedApplication, workingPushToApplicationPreferences);
+        PushToApplicationSettings settings =
+                selectedApplication.getSettings(selectedApplication, workingPushToApplicationPreferences);
 
         DialogPane dialogPane = new DialogPane();
         dialogPane.setContent(settings.getSettingsPane());
 
-        dialogService.showCustomDialogAndWait(
-                Localization.lang("Application settings"),
-                dialogPane,
-                ButtonType.OK, ButtonType.CANCEL)
-                     .ifPresent(btn -> {
-                                 if (btn == ButtonType.OK) {
-                                     settings.storeSettings();
-                                 }
-                             }
-                     );
+        dialogService
+                .showCustomDialogAndWait(
+                        Localization.lang("Application settings"), dialogPane, ButtonType.OK, ButtonType.CANCEL)
+                .ifPresent(btn -> {
+                    if (btn == ButtonType.OK) {
+                        settings.storeSettings();
+                    }
+                });
     }
 
     public void customTerminalBrowse() {
-        dialogService.showFileOpenDialog(fileDialogConfiguration)
-                     .ifPresent(file -> customTerminalCommandProperty.setValue(file.toAbsolutePath().toString()));
+        dialogService
+                .showFileOpenDialog(fileDialogConfiguration)
+                .ifPresent(file -> customTerminalCommandProperty.setValue(
+                        file.toAbsolutePath().toString()));
     }
 
     public void customFileBrowserBrowse() {
-        dialogService.showFileOpenDialog(fileDialogConfiguration)
-                     .ifPresent(file -> customFileBrowserCommandProperty.setValue(file.toAbsolutePath().toString()));
+        dialogService
+                .showFileOpenDialog(fileDialogConfiguration)
+                .ifPresent(file -> customFileBrowserCommandProperty.setValue(
+                        file.toAbsolutePath().toString()));
     }
 
     // EMail
@@ -229,6 +237,7 @@ public class ExternalTabViewModel implements PreferenceTabViewModel {
     }
 
     public void resetCiteCommandToDefault() {
-        this.citeCommandProperty.setValue(preferences.getExternalApplicationsPreferences().getDefaultCiteCommand());
+        this.citeCommandProperty.setValue(
+                preferences.getExternalApplicationsPreferences().getDefaultCiteCommand());
     }
 }

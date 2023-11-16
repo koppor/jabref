@@ -25,7 +25,8 @@ public class PagesCheckerBibtexTest {
     }
 
     public static Stream<String> bibtexAccepts() {
-        return Stream.of("",
+        return Stream.of(
+                "",
                 // double dash
                 "1--2",
                 // one page number
@@ -35,8 +36,7 @@ public class PagesCheckerBibtexTest {
                 // bibTexAcceptsNoSimpleRangeOfNumbers
                 "43+",
                 // bibTexAcceptsMorePageNumbersWithRangeOfNumbers
-                "7+,41--43,73"
-                );
+                "7+,41--43,73");
     }
 
     @ParameterizedTest
@@ -54,8 +54,7 @@ public class PagesCheckerBibtexTest {
                 // bibTexDoesNotAcceptMorePageNumbersWithoutComma
                 "1 2",
                 // bibTexDoesNotAcceptBrackets
-                "{1}-{2}"
-                );
+                "{1}-{2}");
     }
 
     @ParameterizedTest

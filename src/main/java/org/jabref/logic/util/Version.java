@@ -26,8 +26,9 @@ public class Version {
 
     private static final Version UNKNOWN_VERSION = new Version();
 
-    private final static Pattern VERSION_PATTERN = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+))?(\\.(?<patch>\\d+))?(?<stage>-alpha|-beta)?(?<num>\\d+)?(?<dev>-?dev)?.*");
-    private final static Pattern CI_SUFFIX_PATTERN = Pattern.compile("-ci\\.\\d+");
+    private static final Pattern VERSION_PATTERN = Pattern.compile(
+            "(?<major>\\d+)(\\.(?<minor>\\d+))?(\\.(?<patch>\\d+))?(?<stage>-alpha|-beta)?(?<num>\\d+)?(?<dev>-?dev)?.*");
+    private static final Pattern CI_SUFFIX_PATTERN = Pattern.compile("-ci\\.\\d+");
 
     private static final String JABREF_GITHUB_RELEASES = "https://api.github.com/repos/JabRef/JabRef/releases";
 
@@ -42,8 +43,7 @@ public class Version {
     /**
      * Dummy constructor to create a local object (and  {@link Version#UNKNOWN_VERSION})
      */
-    private Version() {
-    }
+    private Version() {}
 
     /**
      * Tinylog does not allow for altering existing loging configuraitons after the logger was initialized .
@@ -58,7 +58,9 @@ public class Version {
      * @return the parsed version or {@link Version#UNKNOWN_VERSION} if an error occurred
      */
     public static Version parse(String version) {
-        if ((version == null) || "".equals(version) || version.equals(BuildInfo.UNKNOWN_VERSION)
+        if ((version == null)
+                || "".equals(version)
+                || version.equals(BuildInfo.UNKNOWN_VERSION)
                 || "${version}".equals(version)) {
             return UNKNOWN_VERSION;
         }
@@ -82,7 +84,9 @@ public class Version {
                 parsedVersion.patch = patchString == null ? 0 : Integer.parseInt(patchString);
 
                 String versionStageString = matcher.group("stage");
-                parsedVersion.developmentStage = versionStageString == null ? DevelopmentStage.STABLE : DevelopmentStage.parse(versionStageString);
+                parsedVersion.developmentStage = versionStageString == null
+                        ? DevelopmentStage.STABLE
+                        : DevelopmentStage.parse(versionStageString);
 
                 String stageNumString = matcher.group("num");
                 parsedVersion.developmentNum = stageNumString == null ? 0 : Integer.parseInt(stageNumString);
@@ -234,17 +238,13 @@ public class Version {
                     .append(this.getMinor());
 
             if (this.getPatch() != 0) {
-                changelogLink
-                        .append(".")
-                        .append(this.getPatch());
+                changelogLink.append(".").append(this.getPatch());
             }
 
-            changelogLink
-                    .append(this.developmentStage.stage);
+            changelogLink.append(this.developmentStage.stage);
 
             if (this.getDevelopmentNum() != 0) {
-                changelogLink
-                        .append(this.getDevelopmentNum());
+                changelogLink.append(this.getDevelopmentNum());
             }
 
             changelogLink.append("/CHANGELOG.md");
@@ -286,6 +286,7 @@ public class Version {
          * describes how stable this stage is, the higher the better
          */
         private final int stability;
+
         private final String stage;
 
         DevelopmentStage(String stage, int stability) {

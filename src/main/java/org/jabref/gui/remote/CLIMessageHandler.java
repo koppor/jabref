@@ -23,7 +23,10 @@ public class CLIMessageHandler implements RemoteMessageHandler {
     private final FileUpdateMonitor fileUpdateMonitor;
     private final BibEntryTypesManager entryTypesManager;
 
-    public CLIMessageHandler(PreferencesService preferencesService, FileUpdateMonitor fileUpdateMonitor, BibEntryTypesManager entryTypesManager) {
+    public CLIMessageHandler(
+            PreferencesService preferencesService,
+            FileUpdateMonitor fileUpdateMonitor,
+            BibEntryTypesManager entryTypesManager) {
         this.preferencesService = preferencesService;
         this.fileUpdateMonitor = fileUpdateMonitor;
         this.entryTypesManager = entryTypesManager;
@@ -45,8 +48,7 @@ public class CLIMessageHandler implements RemoteMessageHandler {
                 boolean focusPanel = i == 0;
                 Platform.runLater(() ->
                         // Need to run this on the JavaFX thread
-                        JabRefGUI.getMainFrame().addTab(pr, focusPanel)
-                );
+                        JabRefGUI.getMainFrame().addTab(pr, focusPanel));
             }
         } catch (ParseException e) {
             LOGGER.error("Error when parsing CLI args", e);

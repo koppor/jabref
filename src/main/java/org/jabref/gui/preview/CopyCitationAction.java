@@ -49,13 +49,14 @@ public class CopyCitationAction extends SimpleCommand {
     private final PreferencesService preferencesService;
     private final JournalAbbreviationRepository abbreviationRepository;
 
-    public CopyCitationAction(CitationStyleOutputFormat outputFormat,
-                              DialogService dialogService,
-                              StateManager stateManager,
-                              ClipBoardManager clipBoardManager,
-                              TaskExecutor taskExecutor,
-                              PreferencesService preferencesService,
-                              JournalAbbreviationRepository abbreviationRepository) {
+    public CopyCitationAction(
+            CitationStyleOutputFormat outputFormat,
+            DialogService dialogService,
+            StateManager stateManager,
+            ClipBoardManager clipBoardManager,
+            TaskExecutor taskExecutor,
+            PreferencesService preferencesService,
+            JournalAbbreviationRepository abbreviationRepository) {
         this.outputFormat = outputFormat;
         this.dialogService = dialogService;
         this.stateManager = stateManager;
@@ -71,9 +72,9 @@ public class CopyCitationAction extends SimpleCommand {
     @Override
     public void execute() {
         BackgroundTask.wrap(this::generateCitations)
-                      .onFailure(ex -> LOGGER.error("Error while copying citations to the clipboard", ex))
-                      .onSuccess(this::setClipBoardContent)
-                      .executeWith(taskExecutor);
+                .onFailure(ex -> LOGGER.error("Error while copying citations to the clipboard", ex))
+                .onSuccess(this::setClipBoardContent)
+                .executeWith(taskExecutor);
     }
 
     private List<String> generateCitations() throws IOException {
@@ -87,7 +88,12 @@ public class CopyCitationAction extends SimpleCommand {
         }
 
         if (styleSource != null) {
-            return CitationStyleGenerator.generateCitations(selectedEntries, styleSource, outputFormat, stateManager.getActiveDatabase().get(), Globals.entryTypesManager);
+            return CitationStyleGenerator.generateCitations(
+                    selectedEntries,
+                    styleSource,
+                    outputFormat,
+                    stateManager.getActiveDatabase().get(),
+                    Globals.entryTypesManager);
         } else {
             return generateTextBasedPreviewLayoutCitations();
         }
@@ -98,14 +104,18 @@ public class CopyCitationAction extends SimpleCommand {
             return Collections.emptyList();
         }
 
-        TextBasedPreviewLayout customPreviewLayout = preferencesService.getPreviewPreferences().getCustomPreviewLayout();
-        StringReader customLayoutReader = new StringReader(customPreviewLayout.getText().replace("__NEWLINE__", "\n"));
-        Layout layout = new LayoutHelper(customLayoutReader, preferencesService.getLayoutFormatterPreferences(), abbreviationRepository)
+        TextBasedPreviewLayout customPreviewLayout =
+                preferencesService.getPreviewPreferences().getCustomPreviewLayout();
+        StringReader customLayoutReader =
+                new StringReader(customPreviewLayout.getText().replace("__NEWLINE__", "\n"));
+        Layout layout = new LayoutHelper(
+                        customLayoutReader, preferencesService.getLayoutFormatterPreferences(), abbreviationRepository)
                 .getLayoutFromText();
 
         List<String> citations = new ArrayList<>(selectedEntries.size());
         for (BibEntry entry : selectedEntries) {
-            citations.add(layout.doLayout(entry, stateManager.getActiveDatabase().get().getDatabase()));
+            citations.add(layout.doLayout(
+                    entry, stateManager.getActiveDatabase().get().getDatabase()));
         }
         return citations;
     }
@@ -133,17 +143,15 @@ public class CopyCitationAction extends SimpleCommand {
      * Inserts each citation into a HTML body and copies it to the clipboard
      */
     protected static ClipboardContent processHtml(List<String> citations) {
-        String result = "<!DOCTYPE html>" + OS.NEWLINE +
-                "<html>" + OS.NEWLINE +
-                "   <head>" + OS.NEWLINE +
-                "      <meta charset=\"utf-8\">" + OS.NEWLINE +
-                "   </head>" + OS.NEWLINE +
-                "   <body>" + OS.NEWLINE + OS.NEWLINE;
+        String result = "<!DOCTYPE html>" + OS.NEWLINE + "<html>"
+                + OS.NEWLINE + "   <head>"
+                + OS.NEWLINE + "      <meta charset=\"utf-8\">"
+                + OS.NEWLINE + "   </head>"
+                + OS.NEWLINE + "   <body>"
+                + OS.NEWLINE + OS.NEWLINE;
 
         result += String.join(CitationStyleOutputFormat.HTML.getLineSeparator(), citations);
-        result += OS.NEWLINE +
-                "   </body>" + OS.NEWLINE +
-                "</html>" + OS.NEWLINE;
+        result += OS.NEWLINE + "   </body>" + OS.NEWLINE + "</html>" + OS.NEWLINE;
 
         ClipboardContent content = new ClipboardContent();
         content.putString(result);

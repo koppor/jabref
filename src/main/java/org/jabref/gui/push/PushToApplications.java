@@ -20,10 +20,10 @@ public class PushToApplications {
 
     private static final List<PushToApplication> APPLICATIONS = new ArrayList<>();
 
-    private PushToApplications() {
-    }
+    private PushToApplications() {}
 
-    public static List<PushToApplication> getAllApplications(DialogService dialogService, PreferencesService preferencesService) {
+    public static List<PushToApplication> getAllApplications(
+            DialogService dialogService, PreferencesService preferencesService) {
         if (!APPLICATIONS.isEmpty()) {
             return APPLICATIONS;
         }
@@ -41,9 +41,10 @@ public class PushToApplications {
         return APPLICATIONS;
     }
 
-    public static Optional<PushToApplication> getApplicationByName(String applicationName, DialogService dialogService, PreferencesService preferencesService) {
+    public static Optional<PushToApplication> getApplicationByName(
+            String applicationName, DialogService dialogService, PreferencesService preferencesService) {
         return getAllApplications(dialogService, preferencesService).stream()
-                                                                    .filter(application -> application.getDisplayName().equals(applicationName))
-                                                                    .findAny();
+                .filter(application -> application.getDisplayName().equals(applicationName))
+                .findAny();
     }
 }

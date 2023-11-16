@@ -32,8 +32,7 @@ public class ChangeEntryTypeAction extends SimpleCommand {
     @Override
     public void execute() {
         NamedCompound compound = new NamedCompound(Localization.lang("Change entry type"));
-        entries.forEach(e -> e.setType(type)
-                              .ifPresent(change -> compound.addEdit(new UndoableChangeType(change))));
+        entries.forEach(e -> e.setType(type).ifPresent(change -> compound.addEdit(new UndoableChangeType(change))));
         undoManager.addEdit(compound);
     }
 

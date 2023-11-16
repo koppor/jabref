@@ -56,7 +56,8 @@ public class EditFieldContentViewModel extends AbstractAutomaticFieldEditorTabVi
             return null;
         });
 
-        canAppend = Bindings.and(overwriteFieldContentProperty(), fieldValidationStatus().validProperty());
+        canAppend = Bindings.and(
+                overwriteFieldContentProperty(), fieldValidationStatus().validProperty());
     }
 
     public ValidationStatus fieldValidationStatus() {
@@ -82,11 +83,8 @@ public class EditFieldContentViewModel extends AbstractAutomaticFieldEditorTabVi
         if (clearFieldEdit.hasEdits()) {
             clearFieldEdit.end();
         }
-        stateManager.setLastAutomaticFieldEditorEdit(new LastAutomaticFieldEditorEdit(
-                affectedEntriesCount,
-                TAB_INDEX,
-                clearFieldEdit
-        ));
+        stateManager.setLastAutomaticFieldEditorEdit(
+                new LastAutomaticFieldEditorEdit(affectedEntriesCount, TAB_INDEX, clearFieldEdit));
     }
 
     public void setFieldValue() {
@@ -97,7 +95,7 @@ public class EditFieldContentViewModel extends AbstractAutomaticFieldEditorTabVi
             Optional<String> oldFieldValue = entry.getField(selectedField.get());
             if (oldFieldValue.isEmpty() || overwriteFieldContent.get()) {
                 entry.setField(selectedField.get(), toSetFieldValue)
-                     .ifPresent(fieldChange -> setFieldEdit.addEdit(new UndoableFieldChange(fieldChange)));
+                        .ifPresent(fieldChange -> setFieldEdit.addEdit(new UndoableFieldChange(fieldChange)));
                 fieldValue.set("");
                 // TODO: increment affected entries only when UndoableFieldChange.isPresent()
                 affectedEntriesCount++;
@@ -107,11 +105,8 @@ public class EditFieldContentViewModel extends AbstractAutomaticFieldEditorTabVi
         if (setFieldEdit.hasEdits()) {
             setFieldEdit.end();
         }
-        stateManager.setLastAutomaticFieldEditorEdit(new LastAutomaticFieldEditorEdit(
-                affectedEntriesCount,
-                TAB_INDEX,
-                setFieldEdit
-        ));
+        stateManager.setLastAutomaticFieldEditorEdit(
+                new LastAutomaticFieldEditorEdit(affectedEntriesCount, TAB_INDEX, setFieldEdit));
     }
 
     public void appendToFieldValue() {
@@ -135,11 +130,8 @@ public class EditFieldContentViewModel extends AbstractAutomaticFieldEditorTabVi
         if (appendToFieldEdit.hasEdits()) {
             appendToFieldEdit.end();
         }
-        stateManager.setLastAutomaticFieldEditorEdit(new LastAutomaticFieldEditorEdit(
-                affectedEntriesCount,
-                TAB_INDEX,
-                appendToFieldEdit
-        ));
+        stateManager.setLastAutomaticFieldEditorEdit(
+                new LastAutomaticFieldEditorEdit(affectedEntriesCount, TAB_INDEX, appendToFieldEdit));
     }
 
     public ObjectProperty<Field> selectedFieldProperty() {

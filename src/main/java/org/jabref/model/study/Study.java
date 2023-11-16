@@ -31,7 +31,12 @@ public class Study {
 
     private List<StudyDatabase> databases;
 
-    public Study(List<String> authors, String title, List<String> researchQuestions, List<StudyQuery> queryEntries, List<StudyDatabase> databases) {
+    public Study(
+            List<String> authors,
+            String title,
+            List<String> researchQuestions,
+            List<StudyQuery> queryEntries,
+            List<StudyDatabase> databases) {
         this.authors = authors;
         this.title = title;
         this.researchQuestions = researchQuestions;
@@ -42,8 +47,7 @@ public class Study {
     /**
      * Used for Jackson deserialization
      */
-    private Study() {
-    }
+    private Study() {}
 
     public List<String> getAuthors() {
         return authors;
@@ -87,13 +91,12 @@ public class Study {
 
     @Override
     public String toString() {
-        return "Study{" +
-                "authors=" + authors +
-                ", studyName='" + title + '\'' +
-                ", researchQuestions=" + researchQuestions +
-                ", queries=" + queries +
-                ", libraries=" + databases +
-                '}';
+        return "Study{" + "authors="
+                + authors + ", studyName='"
+                + title + '\'' + ", researchQuestions="
+                + researchQuestions + ", queries="
+                + queries + ", libraries="
+                + databases + '}';
     }
 
     @Override
@@ -107,11 +110,11 @@ public class Study {
 
         Study otherStudy = (Study) other;
 
-        return Objects.equals(authors, otherStudy.authors) &&
-                Objects.equals(title, otherStudy.title) &&
-                Objects.equals(researchQuestions, otherStudy.researchQuestions) &&
-                Objects.equals(queries, otherStudy.queries) &&
-                Objects.equals(databases, otherStudy.databases);
+        return Objects.equals(authors, otherStudy.authors)
+                && Objects.equals(title, otherStudy.title)
+                && Objects.equals(researchQuestions, otherStudy.researchQuestions)
+                && Objects.equals(queries, otherStudy.queries)
+                && Objects.equals(databases, otherStudy.databases);
     }
 
     @Override
@@ -119,4 +122,3 @@ public class Study {
         return Objects.hashCode(this);
     }
 }
-

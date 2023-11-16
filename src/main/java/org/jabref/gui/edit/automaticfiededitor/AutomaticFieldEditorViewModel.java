@@ -23,13 +23,13 @@ public class AutomaticFieldEditorViewModel extends AbstractViewModel {
 
     private final UndoManager undoManager;
 
-    public AutomaticFieldEditorViewModel(List<BibEntry> selectedEntries, BibDatabase database, UndoManager undoManager, StateManager stateManager) {
+    public AutomaticFieldEditorViewModel(
+            List<BibEntry> selectedEntries, BibDatabase database, UndoManager undoManager, StateManager stateManager) {
         this.undoManager = undoManager;
         fieldEditorTabs.addAll(
                 new EditFieldContentTabView(database, stateManager),
                 new CopyOrMoveFieldContentTabView(database, stateManager),
-                new RenameFieldTabView(database, stateManager)
-        );
+                new RenameFieldTabView(database, stateManager));
     }
 
     public NamedCompound getDialogEdits() {

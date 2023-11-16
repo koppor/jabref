@@ -57,8 +57,7 @@ public class CffImporter extends Importer {
         @JsonProperty("identifiers")
         private List<CffIdentifier> ids;
 
-        public CffFormat() {
-        }
+        public CffFormat() {}
 
         @JsonAnySetter
         private void setValues(String key, String value) {
@@ -69,8 +68,7 @@ public class CffImporter extends Importer {
     private static class CffAuthor {
         private final HashMap<String, String> values = new HashMap<>();
 
-        public CffAuthor() {
-        }
+        public CffAuthor() {}
 
         @JsonAnySetter
         private void setValues(String key, String value) {
@@ -81,11 +79,11 @@ public class CffImporter extends Importer {
     private static class CffIdentifier {
         @JsonProperty("type")
         private String type;
+
         @JsonProperty("value")
         private String value;
 
-        public CffIdentifier() {
-        }
+        public CffIdentifier() {}
     }
 
     @Override
@@ -111,20 +109,23 @@ public class CffImporter extends Importer {
 
         // Translate CFF author format to JabRef author format
         String authorStr = citation.authors.stream()
-                        .map(author -> author.values)
-                        .map(vals -> vals.get("name") != null ?
-                                new Author(vals.get("name"), "", "", "", "") :
-                                new Author(vals.get("given-names"), null, vals.get("name-particle"),
-                                        vals.get("family-names"), vals.get("name-suffix")))
-                        .collect(AuthorList.collect())
-                        .getAsFirstLastNamesWithAnd();
+                .map(author -> author.values)
+                .map(vals -> vals.get("name") != null
+                        ? new Author(vals.get("name"), "", "", "", "")
+                        : new Author(
+                                vals.get("given-names"),
+                                null,
+                                vals.get("name-particle"),
+                                vals.get("family-names"),
+                                vals.get("name-suffix")))
+                .collect(AuthorList.collect())
+                .getAsFirstLastNamesWithAnd();
         entryMap.put(StandardField.AUTHOR, authorStr);
 
         // Select DOI to keep
         if ((entryMap.get(StandardField.DOI) == null) && (citation.ids != null)) {
-            List<CffIdentifier> doiIds = citation.ids.stream()
-                            .filter(id -> "doi".equals(id.type))
-                            .collect(Collectors.toList());
+            List<CffIdentifier> doiIds =
+                    citation.ids.stream().filter(id -> "doi".equals(id.type)).collect(Collectors.toList());
             if (doiIds.size() == 1) {
                 entryMap.put(StandardField.DOI, doiIds.get(0).value);
             }
@@ -133,17 +134,17 @@ public class CffImporter extends Importer {
         // Select SWHID to keep
         if (citation.ids != null) {
             List<String> swhIds = citation.ids.stream()
-                                           .filter(id -> "swh".equals(id.type))
-                                           .map(id -> id.value)
-                                           .collect(Collectors.toList());
+                    .filter(id -> "swh".equals(id.type))
+                    .map(id -> id.value)
+                    .collect(Collectors.toList());
 
             if (swhIds.size() == 1) {
                 entryMap.put(BiblatexSoftwareField.SWHID, swhIds.get(0));
             } else if (swhIds.size() > 1) {
                 List<String> relSwhIds = swhIds.stream()
-                                               .filter(id -> id.split(":").length > 3) // quick filter for invalid swhids
-                                               .filter(id -> "rel".equals(id.split(":")[2]))
-                                               .collect(Collectors.toList());
+                        .filter(id -> id.split(":").length > 3) // quick filter for invalid swhids
+                        .filter(id -> "rel".equals(id.split(":")[2]))
+                        .collect(Collectors.toList());
                 if (relSwhIds.size() == 1) {
                     entryMap.put(BiblatexSoftwareField.SWHID, relSwhIds.get(0));
                 }

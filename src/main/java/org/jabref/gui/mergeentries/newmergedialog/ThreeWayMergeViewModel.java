@@ -42,9 +42,8 @@ public class ThreeWayMergeViewModel extends AbstractViewModel {
 
         mergedEntry.set(new BibEntry());
 
-        setVisibleFields(Stream.concat(
-                leftEntry.getFields().stream(),
-                rightEntry.getFields().stream()).collect(Collectors.toSet()));
+        setVisibleFields(Stream.concat(leftEntry.getFields().stream(), rightEntry.getFields().stream())
+                .collect(Collectors.toSet()));
     }
 
     public StringProperty leftHeaderProperty() {

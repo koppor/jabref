@@ -20,8 +20,7 @@ public class XmpUtilShared {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmpUtilShared.class);
 
-    private XmpUtilShared() {
-    }
+    private XmpUtilShared() {}
 
     protected static XMPMetadata parseXmpMetadata(InputStream is) throws IOException {
         XMPMetadata meta;
@@ -30,7 +29,8 @@ public class XmpUtilShared {
             meta = parser.parse(is);
             return meta;
         } catch (Exception e) {
-            // bad style to catch Exception but as this is called in a loop we do not want to break here when any schema encounters an error
+            // bad style to catch Exception but as this is called in a loop we do not want to break here when any schema
+            // encounters an error
             throw new IOException(e);
         }
     }

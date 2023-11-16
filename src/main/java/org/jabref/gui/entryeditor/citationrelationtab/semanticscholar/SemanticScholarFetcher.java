@@ -20,21 +20,25 @@ public class SemanticScholarFetcher implements CitationFetcher {
         if (entry.getDOI().isPresent()) {
             StringBuilder urlBuilder = new StringBuilder(SEMANTIC_SCHOLAR_API)
                     .append("paper/")
-                    .append("DOI:").append(entry.getDOI().get().getDOI())
+                    .append("DOI:")
+                    .append(entry.getDOI().get().getDOI())
                     .append("/citations")
-                    .append("?fields=").append("title,authors,year,citationCount,referenceCount")
+                    .append("?fields=")
+                    .append("title,authors,year,citationCount,referenceCount")
                     .append("&limit=1000");
 
             try {
                 URL citationsUrl = URI.create(urlBuilder.toString()).toURL();
 
                 URLDownload urlDownload = new URLDownload(citationsUrl);
-                CitationsResponse citationsResponse = new Gson()
-                        .fromJson(urlDownload.asString(), CitationsResponse.class);
+                CitationsResponse citationsResponse =
+                        new Gson().fromJson(urlDownload.asString(), CitationsResponse.class);
 
-                return citationsResponse.getData()
-                            .stream().filter(citationDataItem -> citationDataItem.getCitingPaper() != null)
-                            .map(citationDataItem -> citationDataItem.getCitingPaper().toBibEntry()).toList();
+                return citationsResponse.getData().stream()
+                        .filter(citationDataItem -> citationDataItem.getCitingPaper() != null)
+                        .map(citationDataItem ->
+                                citationDataItem.getCitingPaper().toBibEntry())
+                        .toList();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -48,21 +52,24 @@ public class SemanticScholarFetcher implements CitationFetcher {
         if (entry.getDOI().isPresent()) {
             StringBuilder urlBuilder = new StringBuilder(SEMANTIC_SCHOLAR_API)
                     .append("paper/")
-                    .append("DOI:").append(entry.getDOI().get().getDOI())
+                    .append("DOI:")
+                    .append(entry.getDOI().get().getDOI())
                     .append("/references")
-                    .append("?fields=").append("title,authors,year,citationCount,referenceCount")
+                    .append("?fields=")
+                    .append("title,authors,year,citationCount,referenceCount")
                     .append("&limit=1000");
             try {
                 URL referencesUrl = URI.create(urlBuilder.toString()).toURL();
 
                 URLDownload urlDownload = new URLDownload(referencesUrl);
-                ReferencesResponse referencesResponse = new Gson()
-                        .fromJson(urlDownload.asString(), ReferencesResponse.class);
+                ReferencesResponse referencesResponse =
+                        new Gson().fromJson(urlDownload.asString(), ReferencesResponse.class);
 
-                return referencesResponse.getData()
-                             .stream()
-                             .filter(citationDataItem -> citationDataItem.getCitedPaper() != null)
-                             .map(referenceDataItem -> referenceDataItem.getCitedPaper().toBibEntry()).toList();
+                return referencesResponse.getData().stream()
+                        .filter(citationDataItem -> citationDataItem.getCitedPaper() != null)
+                        .map(referenceDataItem ->
+                                referenceDataItem.getCitedPaper().toBibEntry())
+                        .toList();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

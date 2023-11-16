@@ -40,7 +40,10 @@ public class LinkedFile implements Serializable {
     private transient StringProperty fileType = new SimpleStringProperty();
 
     public LinkedFile(String description, Path link, String fileType) {
-        this(Objects.requireNonNull(description), Objects.requireNonNull(link).toString(), Objects.requireNonNull(fileType));
+        this(
+                Objects.requireNonNull(description),
+                Objects.requireNonNull(link).toString(),
+                Objects.requireNonNull(fileType));
     }
 
     /**
@@ -154,11 +157,10 @@ public class LinkedFile implements Serializable {
 
     @Override
     public String toString() {
-        return "ParsedFileField{" +
-                "description='" + description.get() + '\'' +
-                ", link='" + link.get() + '\'' +
-                ", fileType='" + fileType.get() + '\'' +
-                '}';
+        return "ParsedFileField{" + "description='"
+                + description.get() + '\'' + ", link='"
+                + link.get() + '\'' + ", fileType='"
+                + fileType.get() + '\'' + '}';
     }
 
     public boolean isEmpty() {

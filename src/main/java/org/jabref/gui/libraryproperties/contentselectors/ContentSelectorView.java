@@ -22,22 +22,30 @@ import jakarta.inject.Inject;
 
 public class ContentSelectorView extends AbstractPropertiesTabView<ContentSelectorViewModel> {
 
-    @FXML private Button removeFieldNameButton;
-    @FXML private Button addKeywordButton;
-    @FXML private Button removeKeywordButton;
-    @FXML private ListView<Field> fieldsListView;
-    @FXML private ListView<String> keywordsListView;
+    @FXML
+    private Button removeFieldNameButton;
 
-    @Inject private DialogService dialogService;
+    @FXML
+    private Button addKeywordButton;
+
+    @FXML
+    private Button removeKeywordButton;
+
+    @FXML
+    private ListView<Field> fieldsListView;
+
+    @FXML
+    private ListView<String> keywordsListView;
+
+    @Inject
+    private DialogService dialogService;
 
     private final BibDatabaseContext databaseContext;
 
     public ContentSelectorView(BibDatabaseContext databaseContext) {
         this.databaseContext = databaseContext;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -55,17 +63,19 @@ public class ContentSelectorView extends AbstractPropertiesTabView<ContentSelect
 
     private void initFieldNameComponents() {
         initListView(fieldsListView, viewModel::getFieldNamesBackingList);
-        viewModel.selectedFieldProperty().bind(fieldsListView.getSelectionModel().selectedItemProperty());
-        new ViewModelListCellFactory<Field>()
-                .withText(Field::getDisplayName)
-                .install(fieldsListView);
+        viewModel
+                .selectedFieldProperty()
+                .bind(fieldsListView.getSelectionModel().selectedItemProperty());
+        new ViewModelListCellFactory<Field>().withText(Field::getDisplayName).install(fieldsListView);
         removeFieldNameButton.disableProperty().bind(viewModel.isNoFieldNameSelected());
         EasyBind.subscribe(viewModel.selectedFieldProperty(), viewModel::populateKeywords);
     }
 
     private void initKeywordsComponents() {
         initListView(keywordsListView, viewModel::getKeywordsBackingList);
-        viewModel.selectedKeywordProperty().bind(keywordsListView.getSelectionModel().selectedItemProperty());
+        viewModel
+                .selectedKeywordProperty()
+                .bind(keywordsListView.getSelectionModel().selectedItemProperty());
         addKeywordButton.disableProperty().bind(viewModel.isFieldNameListEmpty());
         removeKeywordButton.disableProperty().bind(viewModel.isNoKeywordSelected());
     }

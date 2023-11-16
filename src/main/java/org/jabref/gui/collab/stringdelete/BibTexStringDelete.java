@@ -16,7 +16,10 @@ public final class BibTexStringDelete extends DatabaseChange {
 
     private final BibtexString deletedString;
 
-    public BibTexStringDelete(BibtexString deletedString, BibDatabaseContext databaseContext, DatabaseChangeResolverFactory databaseChangeResolverFactory) {
+    public BibTexStringDelete(
+            BibtexString deletedString,
+            BibDatabaseContext databaseContext,
+            DatabaseChangeResolverFactory databaseChangeResolverFactory) {
         super(databaseContext, databaseChangeResolverFactory);
         this.deletedString = deletedString;
         setChangeName(Localization.lang("Deleted string: '%0'", deletedString.getName()));

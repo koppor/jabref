@@ -37,8 +37,8 @@ public class MathSciNetTab extends EntryEditorTab {
         root.getChildren().addAll(browser, progress);
 
         Optional<MathSciNetId> mathSciNetId = getMathSciNetId(entry);
-        mathSciNetId.flatMap(MathSciNetId::getExternalURI)
-                    .ifPresent(url -> browser.getEngine().load(url.toASCIIString()));
+        mathSciNetId.flatMap(MathSciNetId::getExternalURI).ifPresent(url -> browser.getEngine()
+                .load(url.toASCIIString()));
 
         // Hide progress indicator if finished (over 70% loaded)
         browser.getEngine().getLoadWorker().progressProperty().addListener((observable, oldValue, newValue) -> {

@@ -38,7 +38,9 @@ public class OpenOfficeDocumentCreatorTest {
 
     @BeforeEach
     void setUp() throws URISyntaxException {
-        xmlFile = Path.of(OpenOfficeDocumentCreatorTest.class.getResource("OldOpenOfficeCalcExportFormatContentSingleEntry.xml").toURI());
+        xmlFile = Path.of(OpenOfficeDocumentCreatorTest.class
+                .getResource("OldOpenOfficeCalcExportFormatContentSingleEntry.xml")
+                .toURI());
 
         exporter = new OpenOfficeDocumentCreator();
 
@@ -47,7 +49,8 @@ public class OpenOfficeDocumentCreatorTest {
 
         BibEntry entry = new BibEntry(StandardEntryType.Article);
         entry.setField(StandardField.ADDRESS, "New York, NY, USA");
-        entry.setField(StandardField.TITLE, "Design and usability in security systems: daily life as a context of use?");
+        entry.setField(
+                StandardField.TITLE, "Design and usability in security systems: daily life as a context of use?");
         entry.setField(StandardField.AUTHOR, "Tony Clear");
         entry.setField(StandardField.ISSN, "0097-8418");
         entry.setField(StandardField.DOI, "http://doi.acm.org/10.1145/820127.820136");
@@ -75,12 +78,15 @@ public class OpenOfficeDocumentCreatorTest {
         Input.Builder test = Input.from(Files.newInputStream(contentXmlPath));
 
         // for debugging purposes
-       // Path testPath = xmlFile.resolveSibling("test.xml");
-       // Files.copy(Files.newInputStream(contentXmlPath), testPath, StandardCopyOption.REPLACE_EXISTING);
+        // Path testPath = xmlFile.resolveSibling("test.xml");
+        // Files.copy(Files.newInputStream(contentXmlPath), testPath, StandardCopyOption.REPLACE_EXISTING);
 
-        assertThat(test, CompareMatcher.isSimilarTo(control)
-                                       .normalizeWhitespace()
-                                       .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)).throwComparisonFailure());
+        assertThat(
+                test,
+                CompareMatcher.isSimilarTo(control)
+                        .normalizeWhitespace()
+                        .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+                        .throwComparisonFailure());
     }
 
     private static void unzipContentXml(Path zipFile, Path unzipFolder) throws IOException {

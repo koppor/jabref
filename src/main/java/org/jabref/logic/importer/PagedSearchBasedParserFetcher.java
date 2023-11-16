@@ -44,10 +44,12 @@ public interface PagedSearchBasedParserFetcher extends SearchBasedParserFetcher,
      * @param luceneQuery the search query
      * @param pageNumber  the number of the page indexed from 0
      */
-    URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException;
+    URL getURLForQuery(QueryNode luceneQuery, int pageNumber)
+            throws URISyntaxException, MalformedURLException, FetcherException;
 
     @Override
-    default URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException, FetcherException {
+    default URL getURLForQuery(QueryNode luceneQuery)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         return getURLForQuery(luceneQuery, 0);
     }
 

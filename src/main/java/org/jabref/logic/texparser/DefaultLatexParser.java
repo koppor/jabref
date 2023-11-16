@@ -32,22 +32,24 @@ public class DefaultLatexParser implements LatexParser {
      * "[cC]ite(author|title|year|t|p)?".
      */
     private static final String[] CITE_COMMANDS = {
-            "[cC]ite(alt|alp|author|authorfull|date|num|p|t|text|title|url|year|yearpar)?",
-            "([aA]|[aA]uto|fnote|foot|footfull|full|no|[nN]ote|[pP]aren|[pP]note|[tT]ext|[sS]mart|super)cite([s*]?)",
-            "footcitetext", "(block|text)cquote"
+        "[cC]ite(alt|alp|author|authorfull|date|num|p|t|text|title|url|year|yearpar)?",
+        "([aA]|[aA]uto|fnote|foot|footfull|full|no|[nN]ote|[pP]aren|[pP]note|[tT]ext|[sS]mart|super)cite([s*]?)",
+        "footcitetext",
+        "(block|text)cquote"
     };
+
     private static final String CITE_GROUP = "key";
-    private static final Pattern CITE_PATTERN = Pattern.compile(
-            String.format("\\\\(%s)\\*?(?:\\[(?:[^\\]]*)\\]){0,2}\\{(?<%s>[^\\}]*)\\}(?:\\{[^\\}]*\\})?",
-                    String.join("|", CITE_COMMANDS), CITE_GROUP));
+    private static final Pattern CITE_PATTERN = Pattern.compile(String.format(
+            "\\\\(%s)\\*?(?:\\[(?:[^\\]]*)\\]){0,2}\\{(?<%s>[^\\}]*)\\}(?:\\{[^\\}]*\\})?",
+            String.join("|", CITE_COMMANDS), CITE_GROUP));
 
     private static final String BIBLIOGRAPHY_GROUP = "bib";
     private static final Pattern BIBLIOGRAPHY_PATTERN = Pattern.compile(
             String.format("\\\\(?:bibliography|addbibresource)\\{(?<%s>[^\\}]*)\\}", BIBLIOGRAPHY_GROUP));
 
     private static final String INCLUDE_GROUP = "file";
-    private static final Pattern INCLUDE_PATTERN = Pattern.compile(
-            String.format("\\\\(?:include|input)\\{(?<%s>[^\\}]*)\\}", INCLUDE_GROUP));
+    private static final Pattern INCLUDE_PATTERN =
+            Pattern.compile(String.format("\\\\(?:include|input)\\{(?<%s>[^\\}]*)\\}", INCLUDE_GROUP));
 
     private final LatexParserResult latexParserResult;
 
@@ -81,8 +83,7 @@ public class DefaultLatexParser implements LatexParser {
                 continue;
             }
 
-            try (
-                    InputStream inputStream = Files.newInputStream(file);
+            try (InputStream inputStream = Files.newInputStream(file);
                     Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                     LineNumberReader lineNumberReader = new LineNumberReader(reader)) {
                 for (String line = lineNumberReader.readLine(); line != null; line = lineNumberReader.readLine()) {
@@ -136,10 +137,8 @@ public class DefaultLatexParser implements LatexParser {
         while (bibliographyMatch.find()) {
             for (String bibString : bibliographyMatch.group(BIBLIOGRAPHY_GROUP).split(",")) {
                 bibString = bibString.trim();
-                Path bibFile = file.getParent().resolve(
-                        bibString.endsWith(BIB_EXT)
-                                ? bibString
-                                : String.format("%s%s", bibString, BIB_EXT));
+                Path bibFile = file.getParent()
+                        .resolve(bibString.endsWith(BIB_EXT) ? bibString : String.format("%s%s", bibString, BIB_EXT));
 
                 if (bibFile.toFile().exists()) {
                     latexParserResult.addBibFile(file, bibFile);

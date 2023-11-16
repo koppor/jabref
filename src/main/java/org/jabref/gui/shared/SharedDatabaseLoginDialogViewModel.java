@@ -95,14 +95,15 @@ public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
     private final Validator keystoreValidator;
     private final CompositeValidator formValidator;
 
-    public SharedDatabaseLoginDialogViewModel(JabRefFrame frame,
-                                              DialogService dialogService,
-                                              PreferencesService preferencesService,
-                                              StateManager stateManager,
-                                              BibEntryTypesManager entryTypesManager,
-                                              FileUpdateMonitor fileUpdateMonitor,
-                                              UndoManager undoManager,
-                                              TaskExecutor taskExecutor) {
+    public SharedDatabaseLoginDialogViewModel(
+            JabRefFrame frame,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            StateManager stateManager,
+            BibEntryTypesManager entryTypesManager,
+            FileUpdateMonitor fileUpdateMonitor,
+            UndoManager undoManager,
+            TaskExecutor taskExecutor) {
         this.frame = frame;
         this.dialogService = dialogService;
         this.preferencesService = preferencesService;
@@ -118,12 +119,34 @@ public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
         Predicate<String> fileExists = input -> Files.exists(Path.of(input));
         Predicate<String> notEmptyAndfilesExist = notEmpty.and(fileExists);
 
-        databaseValidator = new FunctionBasedValidator<>(database, notEmpty, ValidationMessage.error(Localization.lang("Required field \"%0\" is empty.", Localization.lang("Library"))));
-        hostValidator = new FunctionBasedValidator<>(host, notEmpty, ValidationMessage.error(Localization.lang("Required field \"%0\" is empty.", Localization.lang("Port"))));
-        portValidator = new FunctionBasedValidator<>(port, notEmpty, ValidationMessage.error(Localization.lang("Required field \"%0\" is empty.", Localization.lang("Host"))));
-        userValidator = new FunctionBasedValidator<>(user, notEmpty, ValidationMessage.error(Localization.lang("Required field \"%0\" is empty.", Localization.lang("User"))));
-        folderValidator = new FunctionBasedValidator<>(folder, notEmptyAndfilesExist, ValidationMessage.error(Localization.lang("Please enter a valid file path.")));
-        keystoreValidator = new FunctionBasedValidator<>(keystore, notEmptyAndfilesExist, ValidationMessage.error(Localization.lang("Please enter a valid file path.")));
+        databaseValidator = new FunctionBasedValidator<>(
+                database,
+                notEmpty,
+                ValidationMessage.error(
+                        Localization.lang("Required field \"%0\" is empty.", Localization.lang("Library"))));
+        hostValidator = new FunctionBasedValidator<>(
+                host,
+                notEmpty,
+                ValidationMessage.error(
+                        Localization.lang("Required field \"%0\" is empty.", Localization.lang("Port"))));
+        portValidator = new FunctionBasedValidator<>(
+                port,
+                notEmpty,
+                ValidationMessage.error(
+                        Localization.lang("Required field \"%0\" is empty.", Localization.lang("Host"))));
+        userValidator = new FunctionBasedValidator<>(
+                user,
+                notEmpty,
+                ValidationMessage.error(
+                        Localization.lang("Required field \"%0\" is empty.", Localization.lang("User"))));
+        folderValidator = new FunctionBasedValidator<>(
+                folder,
+                notEmptyAndfilesExist,
+                ValidationMessage.error(Localization.lang("Please enter a valid file path.")));
+        keystoreValidator = new FunctionBasedValidator<>(
+                keystore,
+                notEmptyAndfilesExist,
+                ValidationMessage.error(Localization.lang("Please enter a valid file path.")));
 
         formValidator = new CompositeValidator();
         formValidator.addValidators(databaseValidator, hostValidator, portValidator, userValidator);
@@ -140,7 +163,8 @@ public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
                 .setUser(user.getValue())
                 .setPassword(password.getValue())
                 .setUseSSL(useSSL.getValue())
-                // Authorize client to retrieve RSA server public key when serverRsaPublicKeyFile is not set (for sha256_password and caching_sha2_password authentication password)
+                // Authorize client to retrieve RSA server public key when serverRsaPublicKeyFile is not set (for
+                // sha256_password and caching_sha2_password authentication password)
                 .setAllowPublicKeyRetrieval(true)
                 .setKeyStore(keystore.getValue())
                 .setServerTimezone(serverTimezone.getValue())
@@ -158,7 +182,8 @@ public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
 
     private boolean openSharedDatabase(DBMSConnectionProperties connectionProperties) {
         if (isSharedDatabaseAlreadyPresent(connectionProperties)) {
-            dialogService.showWarningDialogAndWait(Localization.lang("Shared database connection"),
+            dialogService.showWarningDialogAndWait(
+                    Localization.lang("Shared database connection"),
                     Localization.lang("You are already connected to a database using entered connection details."));
             return true;
         }
@@ -167,8 +192,11 @@ public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
             Path localFilePath = Path.of(folder.getValue());
 
             if (Files.exists(localFilePath) && !Files.isDirectory(localFilePath)) {
-                boolean overwriteFilePressed = dialogService.showConfirmationDialogAndWait(Localization.lang("Existing file"),
-                        Localization.lang("'%0' exists. Overwrite file?", localFilePath.getFileName().toString()),
+                boolean overwriteFilePressed = dialogService.showConfirmationDialogAndWait(
+                        Localization.lang("Existing file"),
+                        Localization.lang(
+                                "'%0' exists. Overwrite file?",
+                                localFilePath.getFileName().toString()),
                         Localization.lang("Overwrite file"),
                         Localization.lang("Cancel"));
                 if (!overwriteFilePressed) {
@@ -194,7 +222,8 @@ public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
 
             if (!folder.getValue().isEmpty() && autosave.get()) {
                 try {
-                    new SaveDatabaseAction(libraryTab, dialogService, preferencesService, Globals.entryTypesManager).saveAs(Path.of(folder.getValue()));
+                    new SaveDatabaseAction(libraryTab, dialogService, preferencesService, Globals.entryTypesManager)
+                            .saveAs(Path.of(folder.getValue()));
                 } catch (Throwable e) {
                     LOGGER.error("Error while saving the database", e);
                 }
@@ -206,16 +235,19 @@ public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
         } catch (DatabaseNotSupportedException exception) {
             ButtonType openHelp = new ButtonType("Open Help", ButtonData.OTHER);
 
-            Optional<ButtonType> result = dialogService.showCustomButtonDialogAndWait(AlertType.INFORMATION,
+            Optional<ButtonType> result = dialogService.showCustomButtonDialogAndWait(
+                    AlertType.INFORMATION,
                     Localization.lang("Migration help information"),
                     Localization.lang("Entered database has obsolete structure and is no longer supported.")
-                            + "\n" +
-                            Localization.lang("Click help to learn about the migration of pre-3.6 databases.")
-                            + "\n" +
-                            Localization.lang("However, a new database was created alongside the pre-3.6 one."),
-                    ButtonType.OK, openHelp);
+                            + "\n" + Localization.lang("Click help to learn about the migration of pre-3.6 databases.")
+                            + "\n"
+                            + Localization.lang("However, a new database was created alongside the pre-3.6 one."),
+                    ButtonType.OK,
+                    openHelp);
 
-            result.filter(btn -> btn.equals(openHelp)).ifPresent(btn -> new HelpAction(HelpFile.SQL_DATABASE_MIGRATION, dialogService, preferencesService.getFilePreferences()).execute());
+            result.filter(btn -> btn.equals(openHelp)).ifPresent(btn -> new HelpAction(
+                            HelpFile.SQL_DATABASE_MIGRATION, dialogService, preferencesService.getFilePreferences())
+                    .execute());
             result.filter(btn -> btn.equals(ButtonType.OK)).ifPresent(btn -> openSharedDatabase(connectionProperties));
         }
         loading.set(false);
@@ -277,7 +309,8 @@ public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
 
         if (sharedDatabasePassword.isPresent() && sharedDatabaseUser.isPresent()) {
             try {
-                password.setValue(new Password(sharedDatabasePassword.get().toCharArray(), sharedDatabaseUser.get()).decrypt());
+                password.setValue(
+                        new Password(sharedDatabasePassword.get().toCharArray(), sharedDatabaseUser.get()).decrypt());
             } catch (GeneralSecurityException | UnsupportedEncodingException e) {
                 LOGGER.error("Could not read the password due to decryption problems.", e);
             }
@@ -294,8 +327,8 @@ public class SharedDatabaseLoginDialogViewModel extends AbstractViewModel {
         return libraryTabs.parallelStream().anyMatch(panel -> {
             BibDatabaseContext context = panel.getBibDatabaseContext();
 
-            return (context.getLocation() == DatabaseLocation.SHARED) &&
-                    connectionProperties.equals(context.getDBMSSynchronizer().getConnectionProperties());
+            return (context.getLocation() == DatabaseLocation.SHARED)
+                    && connectionProperties.equals(context.getDBMSSynchronizer().getConnectionProperties());
         });
     }
 

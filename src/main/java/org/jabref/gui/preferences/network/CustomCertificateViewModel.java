@@ -23,7 +23,14 @@ public class CustomCertificateViewModel extends AbstractViewModel {
     private final StringProperty thumbprintProperty = new SimpleStringProperty("");
     private final StringProperty pathProperty = new SimpleStringProperty("");
 
-    public CustomCertificateViewModel(String thumbprint, String serialNumber, String issuer, LocalDate validFrom, LocalDate validTo, String sigAlgorithm, String version) {
+    public CustomCertificateViewModel(
+            String thumbprint,
+            String serialNumber,
+            String issuer,
+            LocalDate validFrom,
+            LocalDate validTo,
+            String sigAlgorithm,
+            String version) {
         serialNumberProperty.setValue(serialNumber);
         issuerProperty.setValue(issuer);
         validFromProperty.setValue(validFrom);

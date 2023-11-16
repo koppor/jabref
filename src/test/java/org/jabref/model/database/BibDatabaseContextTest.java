@@ -46,7 +46,9 @@ class BibDatabaseContextTest {
 
         BibDatabaseContext database = new BibDatabaseContext();
         database.setDatabasePath(file);
-        assertEquals(Collections.singletonList(currentWorkingDir.resolve(file.getParent())), database.getFileDirectories(fileDirPrefs));
+        assertEquals(
+                Collections.singletonList(currentWorkingDir.resolve(file.getParent())),
+                database.getFileDirectories(fileDirPrefs));
     }
 
     @Test
@@ -55,7 +57,9 @@ class BibDatabaseContextTest {
 
         BibDatabaseContext database = new BibDatabaseContext();
         database.setDatabasePath(file);
-        assertEquals(Collections.singletonList(currentWorkingDir.resolve(file.getParent())), database.getFileDirectories(fileDirPrefs));
+        assertEquals(
+                Collections.singletonList(currentWorkingDir.resolve(file.getParent())),
+                database.getFileDirectories(fileDirPrefs));
     }
 
     @Test
@@ -64,7 +68,9 @@ class BibDatabaseContextTest {
 
         BibDatabaseContext database = new BibDatabaseContext();
         database.setDatabasePath(file);
-        assertEquals(Collections.singletonList(currentWorkingDir.resolve(file.getParent())), database.getFileDirectories(fileDirPrefs));
+        assertEquals(
+                Collections.singletonList(currentWorkingDir.resolve(file.getParent())),
+                database.getFileDirectories(fileDirPrefs));
     }
 
     @Test
@@ -75,9 +81,10 @@ class BibDatabaseContextTest {
         database.setDatabasePath(file);
         database.getMetaData().setDefaultFileDirectory("../Literature");
         // first directory is the metadata
-        // the bib file location is not included, because only the library-configured directories should be searched and the fallback should be the global directory.
-        assertEquals(List.of(Path.of("/absolute/Literature").toAbsolutePath()),
-                database.getFileDirectories(fileDirPrefs));
+        // the bib file location is not included, because only the library-configured directories should be searched and
+        // the fallback should be the global directory.
+        assertEquals(
+                List.of(Path.of("/absolute/Literature").toAbsolutePath()), database.getFileDirectories(fileDirPrefs));
     }
 
     @Test
@@ -88,8 +95,10 @@ class BibDatabaseContextTest {
         database.setDatabasePath(file);
         database.getMetaData().setDefaultFileDirectory("Literature");
         // first directory is the metadata
-        // the bib file location is not included, because only the library-configured directories should be searched and the fallback should be the global directory.
-        assertEquals(List.of(Path.of("/absolute/subdir/Literature").toAbsolutePath()),
+        // the bib file location is not included, because only the library-configured directories should be searched and
+        // the fallback should be the global directory.
+        assertEquals(
+                List.of(Path.of("/absolute/subdir/Literature").toAbsolutePath()),
                 database.getFileDirectories(fileDirPrefs));
     }
 
@@ -137,7 +146,8 @@ class BibDatabaseContextTest {
         BibDatabaseContext bibDatabaseContext = new BibDatabaseContext();
         bibDatabaseContext.setDatabasePath(null);
 
-        Path expectedPath = OS.getNativeDesktop().getFulltextIndexBaseDirectory().resolve("unsaved");
+        Path expectedPath =
+                OS.getNativeDesktop().getFulltextIndexBaseDirectory().resolve("unsaved");
         Path actualPath = bibDatabaseContext.getFulltextIndexPath();
 
         assertEquals(expectedPath, actualPath);
@@ -150,7 +160,8 @@ class BibDatabaseContextTest {
         BibDatabaseContext bibDatabaseContext = new BibDatabaseContext();
         bibDatabaseContext.setDatabasePath(existingPath);
 
-        Path expectedPath = OS.getNativeDesktop().getFulltextIndexBaseDirectory().resolve(existingPath.hashCode() + "");
+        Path expectedPath =
+                OS.getNativeDesktop().getFulltextIndexBaseDirectory().resolve(existingPath.hashCode() + "");
         Path actualPath = bibDatabaseContext.getFulltextIndexPath();
 
         assertEquals(expectedPath, actualPath);

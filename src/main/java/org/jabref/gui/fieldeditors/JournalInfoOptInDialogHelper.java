@@ -17,25 +17,29 @@ public class JournalInfoOptInDialogHelper {
         if (preferences.shouldEnableJournalPopup() == EntryEditorPreferences.JournalPopupEnabled.DISABLED) {
             boolean enableJournalPopup = dialogService.showConfirmationDialogAndWait(
                     Localization.lang("Enable Journal Information Fetching?"),
-                    Localization.lang("Would you like to enable fetching of journal information? This can be changed later in %0 > %1.",
-                            Localization.lang("Preferences"),
-                            Localization.lang("Entry editor")), Localization.lang("Enable"), Localization.lang("Keep disabled")
-            );
+                    Localization.lang(
+                            "Would you like to enable fetching of journal information? This can be changed later in %0 > %1.",
+                            Localization.lang("Preferences"), Localization.lang("Entry editor")),
+                    Localization.lang("Enable"),
+                    Localization.lang("Keep disabled"));
 
-            preferences.setEnableJournalPopup(enableJournalPopup
-                    ? EntryEditorPreferences.JournalPopupEnabled.ENABLED
-                    : EntryEditorPreferences.JournalPopupEnabled.DISABLED);
+            preferences.setEnableJournalPopup(
+                    enableJournalPopup
+                            ? EntryEditorPreferences.JournalPopupEnabled.ENABLED
+                            : EntryEditorPreferences.JournalPopupEnabled.DISABLED);
 
             return enableJournalPopup;
         }
 
         boolean journalInfoEnabled = dialogService.showConfirmationDialogAndWait(
                 Localization.lang("Remote services"),
-                Localization.lang("Allow sending ISSN to a JabRef online service (SCimago) for fetching journal information"));
+                Localization.lang(
+                        "Allow sending ISSN to a JabRef online service (SCimago) for fetching journal information"));
 
-        preferences.setEnableJournalPopup(journalInfoEnabled
-                ? EntryEditorPreferences.JournalPopupEnabled.ENABLED
-                : EntryEditorPreferences.JournalPopupEnabled.DISABLED);
+        preferences.setEnableJournalPopup(
+                journalInfoEnabled
+                        ? EntryEditorPreferences.JournalPopupEnabled.ENABLED
+                        : EntryEditorPreferences.JournalPopupEnabled.DISABLED);
         return journalInfoEnabled;
     }
 }

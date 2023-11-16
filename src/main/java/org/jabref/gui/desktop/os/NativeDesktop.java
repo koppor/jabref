@@ -59,13 +59,13 @@ public abstract class NativeDesktop {
      * @return The path to the directory
      */
     public Path getDefaultFileChooserDirectory() {
-         Path userDirectory = getUserDirectory();
-         Path documents = userDirectory.resolve("Documents");
-         if (!Files.exists(documents)) {
-             return userDirectory;
-         }
-         return documents;
-     }
+        Path userDirectory = getUserDirectory();
+        Path documents = userDirectory.resolve("Documents");
+        if (!Files.exists(documents)) {
+            return userDirectory;
+        }
+        return documents;
+    }
 
     /**
      * Returns the path to the system's user directory.
@@ -77,39 +77,31 @@ public abstract class NativeDesktop {
     }
 
     public Path getLogDirectory() {
-        return Path.of(AppDirsFactory.getInstance()
-                                     .getUserDataDir(
-                                             OS.APP_DIR_APP_NAME,
-                                             "logs",
-                                             OS.APP_DIR_APP_AUTHOR))
-                   .resolve(new BuildInfo().version.toString());
+        return Path.of(AppDirsFactory.getInstance().getUserDataDir(OS.APP_DIR_APP_NAME, "logs", OS.APP_DIR_APP_AUTHOR))
+                .resolve(new BuildInfo().version.toString());
     }
 
     public Path getBackupDirectory() {
-        return Path.of(AppDirsFactory.getInstance()
-                                     .getUserDataDir(
-                                             OS.APP_DIR_APP_NAME,
-                                             "backups",
-                                             OS.APP_DIR_APP_AUTHOR));
+        return Path.of(
+                AppDirsFactory.getInstance().getUserDataDir(OS.APP_DIR_APP_NAME, "backups", OS.APP_DIR_APP_AUTHOR));
     }
 
     public Path getFulltextIndexBaseDirectory() {
         return Path.of(AppDirsFactory.getInstance()
-                                     .getUserDataDir(OS.APP_DIR_APP_NAME,
-                                             "lucene" + File.separator + SearchFieldConstants.VERSION,
-                                             OS.APP_DIR_APP_AUTHOR));
+                .getUserDataDir(
+                        OS.APP_DIR_APP_NAME,
+                        "lucene" + File.separator + SearchFieldConstants.VERSION,
+                        OS.APP_DIR_APP_AUTHOR));
     }
 
     public Path getSslDirectory() {
-        return Path.of(AppDirsFactory.getInstance()
-                                     .getUserDataDir(OS.APP_DIR_APP_NAME,
-                                             "ssl",
-                                             OS.APP_DIR_APP_AUTHOR));
+        return Path.of(AppDirsFactory.getInstance().getUserDataDir(OS.APP_DIR_APP_NAME, "ssl", OS.APP_DIR_APP_AUTHOR));
     }
 
     public String getHostName() {
         String hostName;
-        // Following code inspired by https://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/SystemUtils.html#getHostName--
+        // Following code inspired by
+        // https://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/SystemUtils.html#getHostName--
         // See also https://stackoverflow.com/a/20793241/873282
         hostName = System.getenv("HOSTNAME");
         if (StringUtil.isBlank(hostName)) {

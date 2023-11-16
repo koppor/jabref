@@ -46,7 +46,8 @@ public class SpringerFetcher implements PagedSearchBasedParserFetcher, Customiza
     private static final String API_URL = "https://api.springernature.com/meta/v1/json";
     private static final String API_KEY = new BuildInfo().springerNatureAPIKey;
     // Springer query using the parameter 'q=doi:10.1007/s11276-008-0131-4s=1' will respond faster
-    private static final String TEST_URL_WITHOUT_API_KEY = "https://api.springernature.com/meta/v1/json?q=doi:10.1007/s11276-008-0131-4s=1&p=1&api_key=";
+    private static final String TEST_URL_WITHOUT_API_KEY =
+            "https://api.springernature.com/meta/v1/json?q=doi:10.1007/s11276-008-0131-4s=1&p=1&api_key=";
 
     private final ImporterPreferences importerPreferences;
 
@@ -62,8 +63,15 @@ public class SpringerFetcher implements PagedSearchBasedParserFetcher, Customiza
      */
     public static BibEntry parseSpringerJSONtoBibtex(JSONObject springerJsonEntry) {
         // Fields that are directly accessible at the top level Json object
-        Field[] singleFieldStrings = {StandardField.ISSN, StandardField.VOLUME, StandardField.ABSTRACT, StandardField.DOI, StandardField.TITLE, StandardField.NUMBER,
-                StandardField.PUBLISHER};
+        Field[] singleFieldStrings = {
+            StandardField.ISSN,
+            StandardField.VOLUME,
+            StandardField.ABSTRACT,
+            StandardField.DOI,
+            StandardField.TITLE,
+            StandardField.NUMBER,
+            StandardField.PUBLISHER
+        };
 
         BibEntry entry = new BibEntry();
         Field nametype;
@@ -108,9 +116,12 @@ public class SpringerFetcher implements PagedSearchBasedParserFetcher, Customiza
         }
 
         // Page numbers
-        if (springerJsonEntry.has("startingPage") && !(springerJsonEntry.getString("startingPage").isEmpty())) {
-            if (springerJsonEntry.has("endingPage") && !(springerJsonEntry.getString("endingPage").isEmpty())) {
-                entry.setField(StandardField.PAGES,
+        if (springerJsonEntry.has("startingPage")
+                && !(springerJsonEntry.getString("startingPage").isEmpty())) {
+            if (springerJsonEntry.has("endingPage")
+                    && !(springerJsonEntry.getString("endingPage").isEmpty())) {
+                entry.setField(
+                        StandardField.PAGES,
                         springerJsonEntry.getString("startingPage") + "--" + springerJsonEntry.getString("endingPage"));
             } else {
                 entry.setField(StandardField.PAGES, springerJsonEntry.getString("startingPage"));
@@ -184,12 +195,17 @@ public class SpringerFetcher implements PagedSearchBasedParserFetcher, Customiza
      * @return URL
      */
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber)
+            throws URISyntaxException, MalformedURLException, FetcherException {
 
         URIBuilder uriBuilder = new URIBuilder(API_URL);
-        uriBuilder.addParameter("q", new SpringerQueryTransformer().transformLuceneQuery(luceneQuery).orElse("")); // Search query
-        uriBuilder.addParameter("api_key", importerPreferences.getApiKey(getName()).orElse(API_KEY)); // API key
-        uriBuilder.addParameter("s", String.valueOf(getPageSize() * pageNumber + 1)); // Start entry, starts indexing at 1
+        uriBuilder.addParameter(
+                "q",
+                new SpringerQueryTransformer().transformLuceneQuery(luceneQuery).orElse("")); // Search query
+        uriBuilder.addParameter(
+                "api_key", importerPreferences.getApiKey(getName()).orElse(API_KEY)); // API key
+        uriBuilder.addParameter(
+                "s", String.valueOf(getPageSize() * pageNumber + 1)); // Start entry, starts indexing at 1
         uriBuilder.addParameter("p", String.valueOf(getPageSize())); // Page size
         return uriBuilder.build().toURL();
     }
@@ -199,7 +215,8 @@ public class SpringerFetcher implements PagedSearchBasedParserFetcher, Customiza
         complexSearchQuery.getAuthors().forEach(author -> searchTerms.add("name:" + author));
         complexSearchQuery.getTitlePhrases().forEach(title -> searchTerms.add("title:" + title));
         complexSearchQuery.getJournal().ifPresent(journal -> searchTerms.add("journal:" + journal));
-        // Since Springer API does not support year range search, we ignore formYear and toYear and use "singleYear" only
+        // Since Springer API does not support year range search, we ignore formYear and toYear and use "singleYear"
+        // only
         complexSearchQuery.getSingleYear().ifPresent(year -> searchTerms.add("date:" + year + "*"));
         searchTerms.addAll(complexSearchQuery.getDefaultFieldPhrases());
         return String.join(" AND ", searchTerms);
@@ -208,7 +225,9 @@ public class SpringerFetcher implements PagedSearchBasedParserFetcher, Customiza
     @Override
     public Parser getParser() {
         return inputStream -> {
-            String response = new BufferedReader(new InputStreamReader(inputStream)).lines().collect(Collectors.joining(OS.NEWLINE));
+            String response = new BufferedReader(new InputStreamReader(inputStream))
+                    .lines()
+                    .collect(Collectors.joining(OS.NEWLINE));
             JSONObject jsonObject = new JSONObject(response);
 
             List<BibEntry> entries = new ArrayList<>();

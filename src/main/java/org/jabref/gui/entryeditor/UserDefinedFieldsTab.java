@@ -21,19 +21,31 @@ import org.jabref.preferences.PreferencesService;
 public class UserDefinedFieldsTab extends FieldsEditorTab {
     private final LinkedHashSet<Field> fields;
 
-    public UserDefinedFieldsTab(String name,
-                                Set<Field> fields,
-                                BibDatabaseContext databaseContext,
-                                SuggestionProviders suggestionProviders,
-                                UndoManager undoManager,
-                                DialogService dialogService,
-                                PreferencesService preferences,
-                                StateManager stateManager,
-                                ThemeManager themeManager,
-                                IndexingTaskManager indexingTaskManager,
-                                TaskExecutor taskExecutor,
-                                JournalAbbreviationRepository journalAbbreviationRepository) {
-        super(false, databaseContext, suggestionProviders, undoManager, dialogService, preferences, stateManager, themeManager, taskExecutor, journalAbbreviationRepository, indexingTaskManager);
+    public UserDefinedFieldsTab(
+            String name,
+            Set<Field> fields,
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            DialogService dialogService,
+            PreferencesService preferences,
+            StateManager stateManager,
+            ThemeManager themeManager,
+            IndexingTaskManager indexingTaskManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository) {
+        super(
+                false,
+                databaseContext,
+                suggestionProviders,
+                undoManager,
+                dialogService,
+                preferences,
+                stateManager,
+                themeManager,
+                taskExecutor,
+                journalAbbreviationRepository,
+                indexingTaskManager);
 
         this.fields = new LinkedHashSet<>(fields);
 

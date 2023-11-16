@@ -33,24 +33,39 @@ public class DeprecatedFieldsTab extends FieldsEditorTab {
     public static final String NAME = "Deprecated fields";
     private final BibEntryTypesManager entryTypesManager;
 
-    public DeprecatedFieldsTab(BibDatabaseContext databaseContext,
-                               SuggestionProviders suggestionProviders,
-                               UndoManager undoManager,
-                               DialogService dialogService,
-                               PreferencesService preferences,
-                               StateManager stateManager,
-                               ThemeManager themeManager,
-                               IndexingTaskManager indexingTaskManager,
-                               BibEntryTypesManager entryTypesManager,
-                               TaskExecutor taskExecutor,
-                               JournalAbbreviationRepository journalAbbreviationRepository) {
-        super(false, databaseContext, suggestionProviders, undoManager, dialogService, preferences, stateManager, themeManager, taskExecutor, journalAbbreviationRepository, indexingTaskManager);
+    public DeprecatedFieldsTab(
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            DialogService dialogService,
+            PreferencesService preferences,
+            StateManager stateManager,
+            ThemeManager themeManager,
+            IndexingTaskManager indexingTaskManager,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository) {
+        super(
+                false,
+                databaseContext,
+                suggestionProviders,
+                undoManager,
+                dialogService,
+                preferences,
+                stateManager,
+                themeManager,
+                taskExecutor,
+                journalAbbreviationRepository,
+                indexingTaskManager);
         this.entryTypesManager = entryTypesManager;
 
         setText(Localization.lang("Deprecated fields"));
         EasyBind.subscribe(preferences.getWorkspacePreferences().showAdvancedHintsProperty(), advancedHints -> {
             if (advancedHints) {
-                setTooltip(new Tooltip(Localization.lang("Shows fields having a successor in biblatex.\nFor instance, the publication month should be part of the date field.\nUse the Cleanup Entries functionality to convert the entry to biblatex.")));
+                setTooltip(
+                        new Tooltip(
+                                Localization.lang(
+                                        "Shows fields having a successor in biblatex.\nFor instance, the publication month should be part of the date field.\nUse the Cleanup Entries functionality to convert the entry to biblatex.")));
             } else {
                 setTooltip(new Tooltip(Localization.lang("Shows fields having a successor in biblatex.")));
             }
@@ -63,7 +78,9 @@ public class DeprecatedFieldsTab extends FieldsEditorTab {
         BibDatabaseMode mode = databaseContext.getMode();
         Optional<BibEntryType> entryType = entryTypesManager.enrich(entry.getType(), mode);
         if (entryType.isPresent()) {
-            return entryType.get().getDeprecatedFields(mode).stream().filter(field -> !entry.getField(field).isEmpty()).collect(Collectors.toSet());
+            return entryType.get().getDeprecatedFields(mode).stream()
+                    .filter(field -> !entry.getField(field).isEmpty())
+                    .collect(Collectors.toSet());
         } else {
             // Entry type unknown -> treat all fields as required
             return Collections.emptySet();

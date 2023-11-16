@@ -65,23 +65,26 @@ public class FulltextFetchers {
             findDoiForEntry(clonedEntry);
         }
 
-        List<Future<Optional<FetcherResult>>> result = JabRefExecutorService.INSTANCE.executeAll(getCallables(clonedEntry, finders), FETCHER_TIMEOUT, TimeUnit.SECONDS);
+        List<Future<Optional<FetcherResult>>> result = JabRefExecutorService.INSTANCE.executeAll(
+                getCallables(clonedEntry, finders), FETCHER_TIMEOUT, TimeUnit.SECONDS);
 
         return result.stream()
-                     .map(FulltextFetchers::getResults)
-                     .filter(Optional::isPresent)
-                     .map(Optional::get)
-                     .filter(res -> Objects.nonNull(res.getSource()))
-                     .sorted(Comparator.comparingInt((FetcherResult res) -> res.getTrust().getTrustScore()).reversed())
-                     .map(FetcherResult::getSource)
-                     .findFirst();
+                .map(FulltextFetchers::getResults)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(res -> Objects.nonNull(res.getSource()))
+                .sorted(Comparator.comparingInt(
+                                (FetcherResult res) -> res.getTrust().getTrustScore())
+                        .reversed())
+                .map(FetcherResult::getSource)
+                .findFirst();
     }
 
     private void findDoiForEntry(BibEntry clonedEntry) {
         try {
             WebFetchers.getIdFetcherForIdentifier(DOI.class)
-                       .findIdentifier(clonedEntry)
-                       .ifPresent(e -> clonedEntry.setField(StandardField.DOI, e.getDOI()));
+                    .findIdentifier(clonedEntry)
+                    .ifPresent(e -> clonedEntry.setField(StandardField.DOI, e.getDOI()));
         } catch (FetcherException e) {
             LOGGER.debug("Failed to find DOI", e);
         }
@@ -102,8 +105,8 @@ public class FulltextFetchers {
         return () -> {
             try {
                 return fetcher.findFullText(entry)
-                              .filter(url -> isPDF.test(url.toString()))
-                              .map(url -> new FetcherResult(fetcher.getTrustLevel(), url));
+                        .filter(url -> isPDF.test(url.toString()))
+                        .map(url -> new FetcherResult(fetcher.getTrustLevel(), url));
             } catch (IOException | FetcherException e) {
                 LOGGER.debug("Failed to find fulltext PDF at given URL", e);
             }
@@ -112,8 +115,6 @@ public class FulltextFetchers {
     }
 
     private List<Callable<Optional<FetcherResult>>> getCallables(BibEntry entry, Set<FulltextFetcher> fetchers) {
-        return fetchers.stream()
-                       .map(f -> getCallable(entry, f))
-                       .collect(Collectors.toList());
+        return fetchers.stream().map(f -> getCallable(entry, f)).collect(Collectors.toList());
     }
 }

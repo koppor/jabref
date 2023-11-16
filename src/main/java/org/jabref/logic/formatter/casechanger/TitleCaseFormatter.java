@@ -25,8 +25,7 @@ public class TitleCaseFormatter extends Formatter {
      */
     @Override
     public String format(String input) {
-        return StringUtil.getStringAsSentences(input)
-                .stream()
+        return StringUtil.getStringAsSentences(input).stream()
                 .map(sentence -> {
                     Title title = new Title(sentence);
 

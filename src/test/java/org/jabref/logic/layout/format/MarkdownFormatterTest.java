@@ -23,7 +23,9 @@ class MarkdownFormatterTest {
 
     @Test
     void formatWhenFormattingComplexMarkupThenReturnsOnlyOneLine() {
-        assertFalse(markdownFormatter.format("Markup\n\n* list item one\n* list item 2\n\n rest").contains("\n"));
+        assertFalse(markdownFormatter
+                .format("Markup\n\n* list item one\n* list item 2\n\n rest")
+                .contains("\n"));
     }
 
     @Test

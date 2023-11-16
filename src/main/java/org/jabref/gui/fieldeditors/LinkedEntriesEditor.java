@@ -42,34 +42,50 @@ public class LinkedEntriesEditor extends HBox implements FieldEditorFX {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkedEntriesEditor.class);
 
-    @FXML public TagsField<ParsedEntryLink> entryLinkField;
+    @FXML
+    public TagsField<ParsedEntryLink> entryLinkField;
 
-    @Inject private DialogService dialogService;
-    @Inject private ClipBoardManager clipBoardManager;
-    @Inject private KeyBindingRepository keyBindingRepository;
-    @Inject private UndoManager undoManager;
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private ClipBoardManager clipBoardManager;
+
+    @Inject
+    private KeyBindingRepository keyBindingRepository;
+
+    @Inject
+    private UndoManager undoManager;
 
     private final LinkedEntriesEditorViewModel viewModel;
 
-    public LinkedEntriesEditor(Field field, BibDatabaseContext databaseContext, SuggestionProvider<BibEntry> suggestionProvider, FieldCheckers fieldCheckers) {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+    public LinkedEntriesEditor(
+            Field field,
+            BibDatabaseContext databaseContext,
+            SuggestionProvider<BibEntry> suggestionProvider,
+            FieldCheckers fieldCheckers) {
+        ViewLoader.view(this).root(this).load();
 
-        this.viewModel = new LinkedEntriesEditorViewModel(field, suggestionProvider, databaseContext, fieldCheckers, undoManager);
+        this.viewModel = new LinkedEntriesEditorViewModel(
+                field, suggestionProvider, databaseContext, fieldCheckers, undoManager);
 
-        entryLinkField.setCellFactory(new ViewModelListCellFactory<ParsedEntryLink>().withText(ParsedEntryLink::getKey));
+        entryLinkField.setCellFactory(
+                new ViewModelListCellFactory<ParsedEntryLink>().withText(ParsedEntryLink::getKey));
         // Mind the .collect(Collectors.toList()) as the list needs to be mutable
-        entryLinkField.setSuggestionProvider(request ->
-                suggestionProvider.getPossibleSuggestions().stream()
-                                  .filter(suggestion -> suggestion.getCitationKey().orElse("").toLowerCase()
-                                                                  .contains(request.getUserText().toLowerCase()))
-                                  .map(ParsedEntryLink::new)
-                                  .collect(Collectors.toList()));
+        entryLinkField.setSuggestionProvider(request -> suggestionProvider.getPossibleSuggestions().stream()
+                .filter(suggestion -> suggestion
+                        .getCitationKey()
+                        .orElse("")
+                        .toLowerCase()
+                        .contains(request.getUserText().toLowerCase()))
+                .map(ParsedEntryLink::new)
+                .collect(Collectors.toList()));
         entryLinkField.setTagViewFactory(this::createTag);
         entryLinkField.setConverter(viewModel.getStringConverter());
-        entryLinkField.setNewItemProducer(searchText -> viewModel.getStringConverter().fromString(searchText));
-        entryLinkField.setMatcher((entryLink, searchText) -> entryLink.getKey().toLowerCase().startsWith(searchText.toLowerCase()));
+        entryLinkField.setNewItemProducer(
+                searchText -> viewModel.getStringConverter().fromString(searchText));
+        entryLinkField.setMatcher(
+                (entryLink, searchText) -> entryLink.getKey().toLowerCase().startsWith(searchText.toLowerCase()));
         entryLinkField.setComparator(Comparator.comparing(ParsedEntryLink::getKey));
         entryLinkField.setShowSearchIcon(false);
         entryLinkField.getEditor().getStyleClass().clear();
@@ -92,11 +108,15 @@ public class LinkedEntriesEditor extends HBox implements FieldEditorFX {
 
         ContextMenu contextMenu = new ContextMenu();
         ActionFactory factory = new ActionFactory(keyBindingRepository);
-        contextMenu.getItems().addAll(
-                factory.createMenuItem(StandardActions.COPY, new TagContextAction(StandardActions.COPY, entryLink)),
-                factory.createMenuItem(StandardActions.CUT, new TagContextAction(StandardActions.CUT, entryLink)),
-                factory.createMenuItem(StandardActions.DELETE, new TagContextAction(StandardActions.DELETE, entryLink))
-        );
+        contextMenu
+                .getItems()
+                .addAll(
+                        factory.createMenuItem(
+                                StandardActions.COPY, new TagContextAction(StandardActions.COPY, entryLink)),
+                        factory.createMenuItem(
+                                StandardActions.CUT, new TagContextAction(StandardActions.CUT, entryLink)),
+                        factory.createMenuItem(
+                                StandardActions.DELETE, new TagContextAction(StandardActions.DELETE, entryLink)));
         tagLabel.setContextMenu(contextMenu);
         return tagLabel;
     }
@@ -129,19 +149,17 @@ public class LinkedEntriesEditor extends HBox implements FieldEditorFX {
             switch (command) {
                 case COPY -> {
                     clipBoardManager.setContent(entryLink.getKey());
-                    dialogService.notify(Localization.lang("Copied '%0' to clipboard.",
-                            JabRefDialogService.shortenDialogMessage(entryLink.getKey())));
+                    dialogService.notify(Localization.lang(
+                            "Copied '%0' to clipboard.", JabRefDialogService.shortenDialogMessage(entryLink.getKey())));
                 }
                 case CUT -> {
                     clipBoardManager.setContent(entryLink.getKey());
-                    dialogService.notify(Localization.lang("Copied '%0' to clipboard.",
-                            JabRefDialogService.shortenDialogMessage(entryLink.getKey())));
+                    dialogService.notify(Localization.lang(
+                            "Copied '%0' to clipboard.", JabRefDialogService.shortenDialogMessage(entryLink.getKey())));
                     entryLinkField.removeTags(entryLink);
                 }
-                case DELETE ->
-                        entryLinkField.removeTags(entryLink);
-                default ->
-                        LOGGER.info("Action {} not defined", command.getText());
+                case DELETE -> entryLinkField.removeTags(entryLink);
+                default -> LOGGER.info("Action {} not defined", command.getText());
             }
         }
     }

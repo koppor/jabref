@@ -38,15 +38,16 @@ public class SidePaneViewModel extends AbstractViewModel {
     private final SidePaneContentFactory sidePaneContentFactory;
     private final DialogService dialogService;
 
-    public SidePaneViewModel(LibraryTabContainer tabContainer,
-                             PreferencesService preferencesService,
-                             JournalAbbreviationRepository abbreviationRepository,
-                             StateManager stateManager,
-                             TaskExecutor taskExecutor,
-                             DialogService dialogService,
-                             FileUpdateMonitor fileUpdateMonitor,
-                             BibEntryTypesManager entryTypesManager,
-                             UndoManager undoManager) {
+    public SidePaneViewModel(
+            LibraryTabContainer tabContainer,
+            PreferencesService preferencesService,
+            JournalAbbreviationRepository abbreviationRepository,
+            StateManager stateManager,
+            TaskExecutor taskExecutor,
+            DialogService dialogService,
+            FileUpdateMonitor fileUpdateMonitor,
+            BibEntryTypesManager entryTypesManager,
+            UndoManager undoManager) {
         this.preferencesService = preferencesService;
         this.stateManager = stateManager;
         this.dialogService = dialogService;
@@ -65,9 +66,15 @@ public class SidePaneViewModel extends AbstractViewModel {
         getPanes().addListener((ListChangeListener<? super SidePaneType>) change -> {
             while (change.next()) {
                 if (change.wasAdded()) {
-                    preferencesService.getSidePanePreferences().visiblePanes().add(change.getAddedSubList().get(0));
+                    preferencesService
+                            .getSidePanePreferences()
+                            .visiblePanes()
+                            .add(change.getAddedSubList().get(0));
                 } else if (change.wasRemoved()) {
-                    preferencesService.getSidePanePreferences().visiblePanes().remove(change.getRemoved().get(0));
+                    preferencesService
+                            .getSidePanePreferences()
+                            .visiblePanes()
+                            .remove(change.getRemoved().get(0));
                 }
             }
         });
@@ -84,12 +91,12 @@ public class SidePaneViewModel extends AbstractViewModel {
                         sidePaneContentFactory,
                         preferencesService.getGroupsPreferences(),
                         dialogService);
-                case WEB_SEARCH, OPEN_OFFICE -> new SidePaneComponent(pane,
+                case WEB_SEARCH, OPEN_OFFICE -> new SidePaneComponent(
+                        pane,
                         new ClosePaneAction(pane),
                         new MoveUpAction(pane),
                         new MoveDownAction(pane),
-                        sidePaneContentFactory);
-            };
+                        sidePaneContentFactory);};
             sidePaneComponentLookup.put(pane, sidePaneComponent);
         }
         return sidePaneComponent;
@@ -100,9 +107,10 @@ public class SidePaneViewModel extends AbstractViewModel {
      * position next time.
      */
     private void updatePreferredPositions() {
-        Map<SidePaneType, Integer> preferredPositions = new HashMap<>(preferencesService.getSidePanePreferences()
-                                                                                        .getPreferredPositions());
-        IntStream.range(0, getPanes().size()).forEach(i -> preferredPositions.put(getPanes().get(i), i));
+        Map<SidePaneType, Integer> preferredPositions =
+                new HashMap<>(preferencesService.getSidePanePreferences().getPreferredPositions());
+        IntStream.range(0, getPanes().size())
+                .forEach(i -> preferredPositions.put(getPanes().get(i), i));
         preferencesService.getSidePanePreferences().setPreferredPositions(preferredPositions);
     }
 

@@ -17,8 +17,10 @@ import org.jabref.preferences.PreferencesService;
 
 public class CustomExporterTabViewModel implements PreferenceTabViewModel {
 
-    private final ListProperty<ExporterViewModel> exporters = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ListProperty<ExporterViewModel> selectedExporters = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<ExporterViewModel> exporters =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<ExporterViewModel> selectedExporters =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
 
     private final PreferencesService preferences;
     private final DialogService dialogService;
@@ -30,7 +32,8 @@ public class CustomExporterTabViewModel implements PreferenceTabViewModel {
 
     @Override
     public void setValues() {
-        List<TemplateExporter> exportersLogic = preferences.getExportPreferences().getCustomExporters();
+        List<TemplateExporter> exportersLogic =
+                preferences.getExportPreferences().getCustomExporters();
         exporters.clear();
         for (TemplateExporter exporter : exportersLogic) {
             exporters.add(new ExporterViewModel(exporter));
@@ -39,9 +42,8 @@ public class CustomExporterTabViewModel implements PreferenceTabViewModel {
 
     @Override
     public void storeSettings() {
-        List<TemplateExporter> exportersLogic = exporters.stream()
-                                                         .map(ExporterViewModel::getLogic)
-                                                         .collect(Collectors.toList());
+        List<TemplateExporter> exportersLogic =
+                exporters.stream().map(ExporterViewModel::getLogic).collect(Collectors.toList());
         preferences.getExportPreferences().setCustomExporters(exportersLogic);
     }
 

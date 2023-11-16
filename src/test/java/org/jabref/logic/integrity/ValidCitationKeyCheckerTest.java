@@ -25,7 +25,6 @@ public class ValidCitationKeyCheckerTest {
         return Stream.of(
                 Arguments.of(Optional.of(Localization.lang("empty citation key")), ""),
                 Arguments.of(Optional.empty(), "Seaver2019"),
-                Arguments.of(Optional.of(Localization.lang("Invalid citation key")), "Seaver_2019}")
-        );
+                Arguments.of(Optional.of(Localization.lang("Invalid citation key")), "Seaver_2019}"));
     }
 }

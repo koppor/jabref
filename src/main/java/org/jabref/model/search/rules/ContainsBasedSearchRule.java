@@ -36,7 +36,8 @@ public class ContainsBasedSearchRule extends FullTextSearchRule {
         List<String> unmatchedWords = new SentenceAnalyzer(searchString).getWords();
 
         for (Field fieldKey : bibEntry.getFields()) {
-            String formattedFieldContent = StringUtil.stripAccents(bibEntry.getFieldLatexFree(fieldKey).get());
+            String formattedFieldContent =
+                    StringUtil.stripAccents(bibEntry.getFieldLatexFree(fieldKey).get());
             if (!searchFlags.contains(SearchRules.SearchFlags.CASE_SENSITIVE)) {
                 formattedFieldContent = formattedFieldContent.toLowerCase(Locale.ROOT);
             }

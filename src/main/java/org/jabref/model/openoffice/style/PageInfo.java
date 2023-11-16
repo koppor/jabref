@@ -6,8 +6,7 @@ import org.jabref.model.openoffice.ootext.OOText;
 
 public class PageInfo {
 
-    private PageInfo() {
-    }
+    private PageInfo() {}
 
     /*
      * pageInfo normalization

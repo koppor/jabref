@@ -39,13 +39,15 @@ public class SpecialFieldColumn extends MainTableColumn<Optional<SpecialFieldVal
     private final PreferencesService preferencesService;
     private final UndoManager undoManager;
 
-    public SpecialFieldColumn(MainTableColumnModel model, PreferencesService preferencesService, UndoManager undoManager) {
+    public SpecialFieldColumn(
+            MainTableColumnModel model, PreferencesService preferencesService, UndoManager undoManager) {
         super(model);
         this.preferencesService = preferencesService;
         this.undoManager = undoManager;
 
         SpecialField specialField = (SpecialField) FieldFactory.parseField(model.getQualifier());
-        SpecialFieldViewModel specialFieldViewModel = new SpecialFieldViewModel(specialField, preferencesService, undoManager);
+        SpecialFieldViewModel specialFieldViewModel =
+                new SpecialFieldViewModel(specialField, preferencesService, undoManager);
 
         Node headerGraphic = specialFieldViewModel.getIcon().getGraphicNode();
         Tooltip.install(headerGraphic, new Tooltip(specialFieldViewModel.getLocalization()));
@@ -108,9 +110,9 @@ public class SpecialFieldColumn extends MainTableColumn<Optional<SpecialFieldVal
             }
         });
 
-        EasyBind.subscribe(ranking.ratingProperty(), rating ->
-                new SpecialFieldViewModel(SpecialField.RANKING, preferencesService, undoManager)
-                        .setSpecialFieldValue(entry.getEntry(), SpecialFieldValue.getRating(rating.intValue())));
+        EasyBind.subscribe(ranking.ratingProperty(), rating -> new SpecialFieldViewModel(
+                        SpecialField.RANKING, preferencesService, undoManager)
+                .setSpecialFieldValue(entry.getEntry(), SpecialFieldValue.getRating(rating.intValue())));
 
         return ranking;
     }
@@ -119,7 +121,9 @@ public class SpecialFieldColumn extends MainTableColumn<Optional<SpecialFieldVal
         ContextMenu contextMenu = new ContextMenu();
 
         for (SpecialFieldValueViewModel value : specialField.getValues()) {
-            MenuItem menuItem = new MenuItem(value.getMenuString(), value.getIcon().map(JabRefIcon::getGraphicNode).orElse(null));
+            MenuItem menuItem = new MenuItem(
+                    value.getMenuString(),
+                    value.getIcon().map(JabRefIcon::getGraphicNode).orElse(null));
             menuItem.setOnAction(event -> specialField.setSpecialFieldValue(entry, value.getValue()));
             contextMenu.getItems().add(menuItem);
         }
@@ -127,13 +131,15 @@ public class SpecialFieldColumn extends MainTableColumn<Optional<SpecialFieldVal
         return contextMenu;
     }
 
-    private Node createSpecialFieldIcon(Optional<SpecialFieldValueViewModel> fieldValue, SpecialFieldViewModel specialField) {
-        return fieldValue.flatMap(SpecialFieldValueViewModel::getIcon)
-                         .map(JabRefIcon::getGraphicNode)
-                         .orElseGet(() -> {
-                             Node node = specialField.getEmptyIcon().getGraphicNode();
-                             node.getStyleClass().add("empty-special-field");
-                             return node;
-                         });
+    private Node createSpecialFieldIcon(
+            Optional<SpecialFieldValueViewModel> fieldValue, SpecialFieldViewModel specialField) {
+        return fieldValue
+                .flatMap(SpecialFieldValueViewModel::getIcon)
+                .map(JabRefIcon::getGraphicNode)
+                .orElseGet(() -> {
+                    Node node = specialField.getEmptyIcon().getGraphicNode();
+                    node.getStyleClass().add("empty-special-field");
+                    return node;
+                });
     }
 }

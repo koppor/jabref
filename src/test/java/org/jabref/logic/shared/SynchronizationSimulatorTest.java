@@ -35,9 +35,12 @@ public class SynchronizationSimulatorTest {
 
     private BibEntry getBibEntryExample(int index) {
         return new BibEntry(StandardEntryType.InProceedings)
-                .withField(StandardField.AUTHOR, "Wirthlin, Michael J and Hutchings, Brad L and Gilson, Kent L " + index)
+                .withField(
+                        StandardField.AUTHOR, "Wirthlin, Michael J and Hutchings, Brad L and Gilson, Kent L " + index)
                 .withField(StandardField.TITLE, "The nano processor: a low resource reconfigurable processor " + index)
-                .withField(StandardField.BOOKTITLE, "FPGAs for Custom Computing Machines, 1994. Proceedings. IEEE Workshop on " + index)
+                .withField(
+                        StandardField.BOOKTITLE,
+                        "FPGAs for Custom Computing Machines, 1994. Proceedings. IEEE Workshop on " + index)
                 .withField(StandardField.YEAR, "199" + index)
                 .withCitationKey("nanoproc199" + index);
     }
@@ -48,15 +51,19 @@ public class SynchronizationSimulatorTest {
         TestManager.clearTables(dbmsConnection);
 
         clientContextA = new BibDatabaseContext();
-        DBMSSynchronizer synchronizerA = new DBMSSynchronizer(clientContextA, ',', pattern, new DummyFileUpdateMonitor());
+        DBMSSynchronizer synchronizerA =
+                new DBMSSynchronizer(clientContextA, ',', pattern, new DummyFileUpdateMonitor());
         clientContextA.convertToSharedDatabase(synchronizerA);
         clientContextA.getDBMSSynchronizer().openSharedDatabase(dbmsConnection);
 
         clientContextB = new BibDatabaseContext();
-        DBMSSynchronizer synchronizerB = new DBMSSynchronizer(clientContextB, ',', pattern, new DummyFileUpdateMonitor());
+        DBMSSynchronizer synchronizerB =
+                new DBMSSynchronizer(clientContextB, ',', pattern, new DummyFileUpdateMonitor());
         clientContextB.convertToSharedDatabase(synchronizerB);
         // use a second connection, because this is another client (typically on another machine)
-        clientContextB.getDBMSSynchronizer().openSharedDatabase(ConnectorTest.getTestDBMSConnection(TestManager.getDBMSTypeTestParameter()));
+        clientContextB
+                .getDBMSSynchronizer()
+                .openSharedDatabase(ConnectorTest.getTestDBMSConnection(TestManager.getDBMSTypeTestParameter()));
         eventListenerB = new SynchronizationEventListenerTest();
         clientContextB.getDBMSSynchronizer().registerListener(eventListenerB);
     }
@@ -76,7 +83,9 @@ public class SynchronizationSimulatorTest {
         // client B pulls the changes
         clientContextB.getDBMSSynchronizer().pullChanges();
 
-        assertEquals(clientContextA.getDatabase().getEntries(), clientContextB.getDatabase().getEntries());
+        assertEquals(
+                clientContextA.getDatabase().getEntries(),
+                clientContextB.getDatabase().getEntries());
     }
 
     @Test
@@ -91,7 +100,9 @@ public class SynchronizationSimulatorTest {
 
         clientContextB.getDBMSSynchronizer().pullChanges();
 
-        assertEquals(clientContextA.getDatabase().getEntries(), clientContextB.getDatabase().getEntries());
+        assertEquals(
+                clientContextA.getDatabase().getEntries(),
+                clientContextB.getDatabase().getEntries());
     }
 
     @Test
@@ -104,7 +115,9 @@ public class SynchronizationSimulatorTest {
 
         assertFalse(clientContextA.getDatabase().getEntries().isEmpty());
         assertFalse(clientContextB.getDatabase().getEntries().isEmpty());
-        assertEquals(clientContextA.getDatabase().getEntries(), clientContextB.getDatabase().getEntries());
+        assertEquals(
+                clientContextA.getDatabase().getEntries(),
+                clientContextB.getDatabase().getEntries());
 
         // client A removes the entry
         clientContextA.getDatabase().removeEntry(bibEntry);
@@ -125,7 +138,9 @@ public class SynchronizationSimulatorTest {
 
         assertFalse(clientContextA.getDatabase().getEntries().isEmpty());
         assertFalse(clientContextB.getDatabase().getEntries().isEmpty());
-        assertEquals(clientContextA.getDatabase().getEntries(), clientContextB.getDatabase().getEntries());
+        assertEquals(
+                clientContextA.getDatabase().getEntries(),
+                clientContextB.getDatabase().getEntries());
 
         // client A removes the entry
         clientContextA.getDatabase().removeEntry(bibEntryOfClientA);
@@ -138,7 +153,9 @@ public class SynchronizationSimulatorTest {
 
         // here a new SharedEntryNotPresentEvent has been thrown. In this case the user B would get an pop-up window.
         assertNotNull(eventListenerB.getSharedEntriesNotPresentEvent());
-        assertEquals(List.of(bibEntryOfClientB), eventListenerB.getSharedEntriesNotPresentEvent().getBibEntries());
+        assertEquals(
+                List.of(bibEntryOfClientB),
+                eventListenerB.getSharedEntriesNotPresentEvent().getBibEntries());
     }
 
     @Test

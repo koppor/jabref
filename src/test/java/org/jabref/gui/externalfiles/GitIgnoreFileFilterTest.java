@@ -31,7 +31,8 @@ class GitIgnoreFileFilterTest {
 
     @Test
     public void checkSimpleGitIgnoreWithOverwritingDefs(@TempDir Path dir) throws Exception {
-        Files.writeString(dir.resolve(".gitignore"), """
+        Files.writeString(
+                dir.resolve(".gitignore"), """
                 !*.png
                 *.png
                 """);

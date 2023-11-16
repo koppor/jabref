@@ -16,8 +16,7 @@ public class URLUtil {
     // Detect Google search URL
     private static final String GOOGLE_SEARCH_EXP = "^https?://(?:www\\.)?google\\.[\\.a-z]+?/url.*";
 
-    private URLUtil() {
-    }
+    private URLUtil() {}
 
     /**
      * Cleans URLs returned by Google search.

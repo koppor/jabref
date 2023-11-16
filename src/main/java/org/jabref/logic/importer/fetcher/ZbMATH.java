@@ -63,16 +63,17 @@ public class ZbMATH implements SearchBasedParserFetcher, IdBasedParserFetcher, E
         entry.getFieldOrAlias(StandardField.JOURNAL).ifPresent(journal -> uriBuilder.addParameter("j", journal));
         entry.getFieldOrAlias(StandardField.YEAR).ifPresent(year -> uriBuilder.addParameter("y", year));
         entry.getFieldOrAlias(StandardField.PAGINATION)
-             .ifPresent(pagination -> uriBuilder.addParameter("p", pagination));
+                .ifPresent(pagination -> uriBuilder.addParameter("p", pagination));
         entry.getFieldOrAlias(StandardField.VOLUME).ifPresent(volume -> uriBuilder.addParameter("v", volume));
         entry.getFieldOrAlias(StandardField.ISSUE).ifPresent(issue -> uriBuilder.addParameter("i", issue));
 
         if (entry.getFieldOrAlias(StandardField.AUTHOR).isPresent()) {
             // replace "and" by ";" as citation matching API uses ";" for separation
-            AuthorList authors = AuthorList.parse(entry.getFieldOrAlias(StandardField.AUTHOR).get());
+            AuthorList authors =
+                    AuthorList.parse(entry.getFieldOrAlias(StandardField.AUTHOR).get());
             String authorsWithSemicolon = authors.getAuthors().stream()
-                                                 .map(author -> author.getLastFirst(false))
-                                                 .collect(Collectors.joining(";"));
+                    .map(author -> author.getLastFirst(false))
+                    .collect(Collectors.joining(";"));
             uriBuilder.addParameter("a", authorsWithSemicolon);
         }
 
@@ -82,17 +83,12 @@ public class ZbMATH implements SearchBasedParserFetcher, IdBasedParserFetcher, E
         to get the bibtex data.
          */
         String urlString = uriBuilder.build().toString();
-        HttpResponse<JsonNode> response = Unirest.get(urlString)
-                                                 .asJson();
+        HttpResponse<JsonNode> response = Unirest.get(urlString).asJson();
         String zblid = null;
         if (response.getStatus() == 200) {
-            JSONArray result = response.getBody()
-                                       .getObject()
-                                       .getJSONArray("results");
+            JSONArray result = response.getBody().getObject().getJSONArray("results");
             if (!result.isEmpty()) {
-                zblid = result.getJSONObject(0)
-                              .get("zbl_id")
-                              .toString();
+                zblid = result.getJSONObject(0).get("zbl_id").toString();
             }
         }
         if (zblid == null) {
@@ -104,16 +100,20 @@ public class ZbMATH implements SearchBasedParserFetcher, IdBasedParserFetcher, E
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(QueryNode luceneQuery)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder("https://zbmath.org/bibtexoutput/");
-        uriBuilder.addParameter("q", new ZbMathQueryTransformer().transformLuceneQuery(luceneQuery).orElse("")); // search all fields
+        uriBuilder.addParameter(
+                "q",
+                new ZbMathQueryTransformer().transformLuceneQuery(luceneQuery).orElse("")); // search all fields
         uriBuilder.addParameter("start", "0"); // start index
         uriBuilder.addParameter("count", "200"); // should return up to 200 items (instead of default 100)
         return uriBuilder.build().toURL();
     }
 
     @Override
-    public URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getUrlForIdentifier(String identifier)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder("https://zbmath.org/bibtexoutput/");
         String query = "an:".concat(identifier); // use an: to search for a zbMATH identifier
         uriBuilder.addParameter("q", query);

@@ -14,17 +14,15 @@ import com.sun.star.text.XTextRange;
 
 public class UnoBookmark {
 
-    private UnoBookmark() {
-    }
+    private UnoBookmark() {}
 
     /**
      * Provides access to bookmarks by name.
      */
-    public static XNameAccess getNameAccess(XTextDocument doc)
-            throws
-            NoDocumentException {
+    public static XNameAccess getNameAccess(XTextDocument doc) throws NoDocumentException {
 
-        XBookmarksSupplier supplier = UnoCast.cast(XBookmarksSupplier.class, doc).get();
+        XBookmarksSupplier supplier =
+                UnoCast.cast(XBookmarksSupplier.class, doc).get();
         try {
             return supplier.getBookmarks();
         } catch (DisposedException ex) {
@@ -39,9 +37,7 @@ public class UnoBookmark {
      * @return The XTextRange for the bookmark, or Optional.empty().
      */
     public static Optional<XTextRange> getAnchor(XTextDocument doc, String name)
-            throws
-            WrappedTargetException,
-            NoDocumentException {
+            throws WrappedTargetException, NoDocumentException {
 
         XNameAccess nameAccess = getNameAccess(doc);
         return UnoNameAccess.getTextContentByName(nameAccess, name).map(XTextContent::getAnchor);
@@ -59,8 +55,7 @@ public class UnoBookmark {
      * result.getName() should be checked by the caller, because its name may differ from the one requested.
      */
     public static XNamed create(XTextDocument doc, String name, XTextRange range, boolean absorb)
-            throws
-            CreationException {
+            throws CreationException {
         return UnoNamed.insertNamedTextContent(doc, "com.sun.star.text.Bookmark", name, range, absorb);
     }
 
@@ -68,9 +63,7 @@ public class UnoBookmark {
      * Remove the named bookmark if it exists.
      */
     public static void removeIfExists(XTextDocument doc, String name)
-            throws
-            NoDocumentException,
-            WrappedTargetException {
+            throws NoDocumentException, WrappedTargetException {
 
         XNameAccess marks = UnoBookmark.getNameAccess(doc);
 

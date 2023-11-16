@@ -32,7 +32,12 @@ public class AutoLinkFilesAction extends SimpleCommand {
     private final UndoManager undoManager;
     private final TaskExecutor taskExecutor;
 
-    public AutoLinkFilesAction(DialogService dialogService, PreferencesService preferences, StateManager stateManager, UndoManager undoManager, TaskExecutor taskExecutor) {
+    public AutoLinkFilesAction(
+            DialogService dialogService,
+            PreferencesService preferences,
+            StateManager stateManager,
+            UndoManager undoManager,
+            TaskExecutor taskExecutor) {
         this.dialogService = dialogService;
         this.preferences = preferences;
         this.stateManager = stateManager;
@@ -40,17 +45,17 @@ public class AutoLinkFilesAction extends SimpleCommand {
         this.taskExecutor = taskExecutor;
 
         this.executable.bind(needsDatabase(this.stateManager).and(needsEntriesSelected(stateManager)));
-        this.statusMessage.bind(BindingsHelper.ifThenElse(executable, "", Localization.lang("This operation requires one or more entries to be selected.")));
+        this.statusMessage.bind(BindingsHelper.ifThenElse(
+                executable, "", Localization.lang("This operation requires one or more entries to be selected.")));
     }
 
     @Override
     public void execute() {
-        final BibDatabaseContext database = stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
+        final BibDatabaseContext database =
+                stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
         final List<BibEntry> entries = stateManager.getSelectedEntries();
         final AutoSetFileLinksUtil util = new AutoSetFileLinksUtil(
-                database,
-                preferences.getFilePreferences(),
-                preferences.getAutoLinkPreferences());
+                database, preferences.getFilePreferences(), preferences.getAutoLinkPreferences());
         final NamedCompound nc = new NamedCompound(Localization.lang("Automatically set file links"));
 
         Task<AutoSetFileLinksUtil.LinkFilesResult> linkFilesTask = new Task<>() {
@@ -71,7 +76,8 @@ public class AutoLinkFilesAction extends SimpleCommand {
                 }
 
                 if (result.getChangedEntries().isEmpty()) {
-                    dialogService.showWarningDialogAndWait("Automatically set file links",
+                    dialogService.showWarningDialogAndWait(
+                            "Automatically set file links",
                             Localization.lang("Finished automatically setting external links.") + "\n"
                                     + Localization.lang("No files found."));
                     return;
@@ -83,7 +89,9 @@ public class AutoLinkFilesAction extends SimpleCommand {
                 }
 
                 dialogService.notify(Localization.lang("Finished automatically setting external links.") + " "
-                        + Localization.lang("Changed %0 entries.", String.valueOf(result.getChangedEntries().size())));
+                        + Localization.lang(
+                                "Changed %0 entries.",
+                                String.valueOf(result.getChangedEntries().size())));
             }
         };
 

@@ -34,7 +34,6 @@ public class RemoveTildeTest {
                 Arguments.of(" \\~ ", "~\\~~"),
                 Arguments.of("\\\\ ", "\\\\~"),
                 Arguments.of("Doe Joe and Jane, M. and Kamp, J. A.", "Doe Joe and Jane, M. and Kamp, J.~A."),
-                Arguments.of("T\\~olkien, J. R. R.", "T\\~olkien, J.~R.~R.")
-        );
+                Arguments.of("T\\~olkien, J. R. R.", "T\\~olkien, J.~R.~R."));
     }
 }

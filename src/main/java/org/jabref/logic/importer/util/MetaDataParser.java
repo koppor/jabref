@@ -63,7 +63,8 @@ public class MetaDataParser {
         BibEntryTypeBuilder entryTypeBuilder = new BibEntryTypeBuilder()
                 .withType(type)
                 .withRequiredFields(FieldFactory.parseOrFieldsList(reqFields))
-                // Important fields are optional fields, but displayed first. Thus, they do not need to be separated by "/".
+                // Important fields are optional fields, but displayed first. Thus, they do not need to be separated by
+                // "/".
                 // See org.jabref.model.entry.field.FieldPriority for details on important optional fields.
                 .withImportantFields(FieldFactory.parseFieldList(optFields));
         return Optional.of(entryTypeBuilder.build());
@@ -79,11 +80,13 @@ public class MetaDataParser {
     /**
      * Parses the data map and changes the given {@link MetaData} instance respectively.
      */
-    public MetaData parse(MetaData metaData, Map<String, String> data, Character keywordSeparator) throws ParseException {
+    public MetaData parse(MetaData metaData, Map<String, String> data, Character keywordSeparator)
+            throws ParseException {
         List<String> defaultCiteKeyPattern = new ArrayList<>();
         Map<EntryType, List<String>> nonDefaultCiteKeyPatterns = new HashMap<>();
 
-        // process groups (GROUPSTREE and GROUPSTREE_LEGACY) at the very end (otherwise it can happen that not all dependent data are set)
+        // process groups (GROUPSTREE and GROUPSTREE_LEGACY) at the very end (otherwise it can happen that not all
+        // dependent data are set)
         List<Map.Entry<String, String>> entryList = new ArrayList<>(data.entrySet());
         entryList.sort(groupsLast());
 
@@ -91,11 +94,15 @@ public class MetaDataParser {
             List<String> values = getAsList(entry.getValue());
 
             if (entry.getKey().startsWith(MetaData.PREFIX_KEYPATTERN)) {
-                EntryType entryType = EntryTypeFactory.parse(entry.getKey().substring(MetaData.PREFIX_KEYPATTERN.length()));
+                EntryType entryType =
+                        EntryTypeFactory.parse(entry.getKey().substring(MetaData.PREFIX_KEYPATTERN.length()));
                 nonDefaultCiteKeyPatterns.put(entryType, Collections.singletonList(getSingleItem(values)));
             } else if (entry.getKey().startsWith(MetaData.SELECTOR_META_PREFIX)) {
-                // edge case, it might be one special field e.g. article from biblatex-apa, but we can't distinguish this from any other field and rather prefer to handle it as UnknownField
-                metaData.addContentSelector(ContentSelectors.parse(FieldFactory.parseField(entry.getKey().substring(MetaData.SELECTOR_META_PREFIX.length())), StringUtil.unquote(entry.getValue(), MetaData.ESCAPE_CHARACTER)));
+                // edge case, it might be one special field e.g. article from biblatex-apa, but we can't distinguish
+                // this from any other field and rather prefer to handle it as UnknownField
+                metaData.addContentSelector(ContentSelectors.parse(
+                        FieldFactory.parseField(entry.getKey().substring(MetaData.SELECTOR_META_PREFIX.length())),
+                        StringUtil.unquote(entry.getValue(), MetaData.ESCAPE_CHARACTER)));
             } else if (entry.getKey().equals(MetaData.FILE_DIRECTORY)) {
                 metaData.setDefaultFileDirectory(parseDirectory(entry.getValue()));
             } else if (entry.getKey().startsWith(MetaData.FILE_DIRECTORY + '-')) {
@@ -121,7 +128,8 @@ public class MetaDataParser {
                 }
             } else if (entry.getKey().equals(MetaData.SAVE_ORDER_CONFIG)) {
                 metaData.setSaveOrder(SaveOrder.parse(values));
-            } else if (entry.getKey().equals(MetaData.GROUPSTREE) || entry.getKey().equals(MetaData.GROUPSTREE_LEGACY)) {
+            } else if (entry.getKey().equals(MetaData.GROUPSTREE)
+                    || entry.getKey().equals(MetaData.GROUPSTREE_LEGACY)) {
                 metaData.setGroups(GroupsParser.importGroups(values, keywordSeparator, fileMonitor, metaData));
             } else if (entry.getKey().equals(MetaData.VERSION_DB_STRUCT)) {
                 metaData.setVersionDBStructure(getSingleItem(values));
@@ -163,8 +171,9 @@ public class MetaDataParser {
     }
 
     private static Comparator<? super Map.Entry<String, String>> groupsLast() {
-        return (s1, s2) -> MetaData.GROUPSTREE.equals(s1.getKey()) || MetaData.GROUPSTREE_LEGACY.equals(s1.getKey()) ? 1 :
-                MetaData.GROUPSTREE.equals(s2.getKey()) || MetaData.GROUPSTREE_LEGACY.equals(s2.getKey()) ? -1 : 0;
+        return (s1, s2) -> MetaData.GROUPSTREE.equals(s1.getKey()) || MetaData.GROUPSTREE_LEGACY.equals(s1.getKey())
+                ? 1
+                : MetaData.GROUPSTREE.equals(s2.getKey()) || MetaData.GROUPSTREE_LEGACY.equals(s2.getKey()) ? -1 : 0;
     }
 
     /**
@@ -205,7 +214,8 @@ public class MetaDataParser {
         StringBuilder res = new StringBuilder();
         while ((c = reader.read()) != -1) {
             if (escape) {
-                // at org.jabref.logic.exporter.MetaDataSerializer.serializeMetaData, only MetaData.SEPARATOR_CHARACTER, MetaData.ESCAPE_CHARACTER are quoted
+                // at org.jabref.logic.exporter.MetaDataSerializer.serializeMetaData, only MetaData.SEPARATOR_CHARACTER,
+                // MetaData.ESCAPE_CHARACTER are quoted
                 // That means ; and \\
                 char character = (char) c;
                 if (character != MetaData.SEPARATOR_CHARACTER && character != MetaData.ESCAPE_CHARACTER) {

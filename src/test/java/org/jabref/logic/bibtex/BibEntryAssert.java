@@ -33,8 +33,7 @@ public class BibEntryAssert {
      * @param resourceName the resource to read
      * @param entry        the entry to compare with
      */
-    public static void assertEquals(Class<?> clazz, String resourceName, BibEntry entry)
-            throws IOException {
+    public static void assertEquals(Class<?> clazz, String resourceName, BibEntry entry) throws IOException {
         assertNotNull(clazz);
         assertNotNull(resourceName);
         assertNotNull(entry);
@@ -79,8 +78,7 @@ public class BibEntryAssert {
      * @param expectedInputStream the inputStream reading the entry from
      * @param actualEntries       a list containing a single entry to compare with
      */
-    public static void assertEquals(InputStream expectedInputStream, List<BibEntry> actualEntries)
-            throws IOException {
+    public static void assertEquals(InputStream expectedInputStream, List<BibEntry> actualEntries) throws IOException {
         assertNotNull(expectedInputStream);
         assertNotNull(actualEntries);
         // explicit reference of Assertions is needed here to disambiguate from the methods defined by this class
@@ -88,8 +86,7 @@ public class BibEntryAssert {
         Assertions.assertEquals(expectedEntries, actualEntries);
     }
 
-    public static void assertEquals(List<BibEntry> expectedEntries, InputStream actualInputStream)
-            throws IOException {
+    public static void assertEquals(List<BibEntry> expectedEntries, InputStream actualInputStream) throws IOException {
         assertNotNull(actualInputStream);
         assertNotNull(expectedEntries);
         // explicit reference of Assertions is needed here to disambiguate from the methods defined by this class
@@ -103,8 +100,7 @@ public class BibEntryAssert {
      * @param expected the inputStream reading the entry from
      * @param actual   the entry to compare with
      */
-    public static void assertEquals(InputStream expected, BibEntry actual)
-            throws IOException {
+    public static void assertEquals(InputStream expected, BibEntry actual) throws IOException {
         assertEquals(expected, Collections.singletonList(actual));
     }
 
@@ -117,8 +113,7 @@ public class BibEntryAssert {
      * @param importer     The fileformat you want to use to read the passed file to get the list of expected
      *                     BibEntries
      */
-    public static void assertEquals(InputStream expectedIs, Path fileToImport, Importer importer)
-            throws IOException {
+    public static void assertEquals(InputStream expectedIs, Path fileToImport, Importer importer) throws IOException {
         assertEquals(getListFromInputStream(expectedIs), fileToImport, importer);
     }
 
@@ -136,10 +131,9 @@ public class BibEntryAssert {
      * @param importer     The fileformat you want to use to read the passed file to get the list of expected
      *                     BibEntries
      */
-    public static void assertEquals(List<BibEntry> expected, Path fileToImport, Importer importer)
-            throws IOException {
-        List<BibEntry> actualEntries = importer.importDatabase(fileToImport)
-                                               .getDatabase().getEntries();
+    public static void assertEquals(List<BibEntry> expected, Path fileToImport, Importer importer) throws IOException {
+        List<BibEntry> actualEntries =
+                importer.importDatabase(fileToImport).getDatabase().getEntries();
         // explicit reference of Assertions is needed here to disambiguate from the methods defined by this class
         Assertions.assertEquals(expected, actualEntries);
     }

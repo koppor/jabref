@@ -24,7 +24,10 @@ public class TextBasedPreviewLayout implements PreviewLayout {
     private LayoutFormatterPreferences layoutFormatterPreferences;
     private JournalAbbreviationRepository abbreviationRepository;
 
-    public TextBasedPreviewLayout(String text, LayoutFormatterPreferences layoutFormatterPreferences, JournalAbbreviationRepository abbreviationRepository) {
+    public TextBasedPreviewLayout(
+            String text,
+            LayoutFormatterPreferences layoutFormatterPreferences,
+            JournalAbbreviationRepository abbreviationRepository) {
         this.layoutFormatterPreferences = layoutFormatterPreferences;
         this.abbreviationRepository = abbreviationRepository;
         setText(text);

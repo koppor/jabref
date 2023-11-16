@@ -87,7 +87,11 @@ public class StaxParser {
         }
 
         for (int i = 0; i < reader.getAttributeCount(); i++) {
-            startTag.append(" ").append(reader.getAttributeLocalName(i)).append("=\"").append(reader.getAttributeValue(i)).append("\"");
+            startTag.append(" ")
+                    .append(reader.getAttributeLocalName(i))
+                    .append("=\"")
+                    .append(reader.getAttributeValue(i))
+                    .append("\"");
         }
 
         if (reader.isEndElement()) {
@@ -103,9 +107,9 @@ public class StaxParser {
         String prefix = reader.getPrefix();
 
         endTag.append("</")
-              .append(prefix != null && !prefix.isBlank() ? prefix + ":" : "")
-              .append(reader.getName().getLocalPart())
-              .append(">");
+                .append(prefix != null && !prefix.isBlank() ? prefix + ":" : "")
+                .append(reader.getName().getLocalPart())
+                .append(">");
 
         return endTag.toString();
     }

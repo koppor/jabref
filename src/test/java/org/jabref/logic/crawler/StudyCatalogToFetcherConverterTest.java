@@ -32,6 +32,7 @@ class StudyCatalogToFetcherConverterTest {
     PreferencesService preferencesService;
     BibEntryTypesManager entryTypesManager;
     SlrGitHandler gitHandler;
+
     @TempDir
     Path tempRepositoryDirectory;
 
@@ -66,8 +67,7 @@ class StudyCatalogToFetcherConverterTest {
 
         Assertions.assertEquals(
                 List.of("Springer", "ArXiv", "Medline/PubMed"),
-                result.stream().map(SearchBasedFetcher::getName).collect(Collectors.toList())
-        );
+                result.stream().map(SearchBasedFetcher::getName).collect(Collectors.toList()));
     }
 
     private void copyTestStudyDefinitionFileIntoDirectory(Path destination) throws Exception {

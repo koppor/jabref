@@ -17,8 +17,7 @@ import com.sun.star.text.XTextRangeCompare;
  */
 public class RangeSort {
 
-    private RangeSort() {
-    }
+    private RangeSort() {}
 
     /**
      * Compare two RangeHolders (using RangeHolder.getRange()) within an XText.
@@ -30,8 +29,7 @@ public class RangeSort {
         private final XTextRangeCompare cmp;
 
         HolderComparatorWithinPartition(XText text) {
-            cmp = UnoCast.cast(XTextRangeCompare.class, text)
-                          .orElseThrow(java.lang.IllegalArgumentException::new);
+            cmp = UnoCast.cast(XTextRangeCompare.class, text).orElseThrow(java.lang.IllegalArgumentException::new);
         }
 
         /**

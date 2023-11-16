@@ -40,11 +40,12 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
     /**
      * Creates a joined column for all the linked files.
      */
-    public FileColumn(MainTableColumnModel model,
-                      BibDatabaseContext database,
-                      DialogService dialogService,
-                      PreferencesService preferencesService,
-                      TaskExecutor taskExecutor) {
+    public FileColumn(
+            MainTableColumnModel model,
+            BibDatabaseContext database,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            TaskExecutor taskExecutor) {
         super(model);
         this.database = Objects.requireNonNull(database);
         this.dialogService = dialogService;
@@ -64,7 +65,8 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
                 .withOnMouseClickedEvent((entry, linkedFiles) -> event -> {
                     if ((event.getButton() == MouseButton.PRIMARY) && (linkedFiles.size() == 1)) {
                         // Only one linked file -> open directly
-                        LinkedFileViewModel linkedFileViewModel = new LinkedFileViewModel(linkedFiles.get(0),
+                        LinkedFileViewModel linkedFileViewModel = new LinkedFileViewModel(
+                                linkedFiles.get(0),
                                 entry.getEntry(),
                                 database,
                                 taskExecutor,
@@ -79,12 +81,13 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
     /**
      * Creates a column for all the linked files of a single file type.
      */
-    public FileColumn(MainTableColumnModel model,
-                      BibDatabaseContext database,
-                      DialogService dialogService,
-                      PreferencesService preferencesService,
-                      String fileType,
-                      TaskExecutor taskExecutor) {
+    public FileColumn(
+            MainTableColumnModel model,
+            BibDatabaseContext database,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            String fileType,
+            TaskExecutor taskExecutor) {
         super(model);
         this.database = Objects.requireNonNull(database);
         this.dialogService = dialogService;
@@ -94,12 +97,14 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
         setCommonSettings();
 
         this.setGraphic(ExternalFileTypes.getExternalFileTypeByName(fileType, preferencesService.getFilePreferences())
-                                         .map(ExternalFileType::getIcon).orElse(IconTheme.JabRefIcons.FILE)
-                                         .getGraphicNode());
+                .map(ExternalFileType::getIcon)
+                .orElse(IconTheme.JabRefIcons.FILE)
+                .getGraphicNode());
 
         new ValueTableCellFactory<BibEntryTableViewModel, List<LinkedFile>>()
-                .withGraphic(linkedFiles -> createFileIcon(linkedFiles.stream().filter(linkedFile ->
-                                linkedFile.getFileType().equalsIgnoreCase(fileType)).collect(Collectors.toList())))
+                .withGraphic(linkedFiles -> createFileIcon(linkedFiles.stream()
+                        .filter(linkedFile -> linkedFile.getFileType().equalsIgnoreCase(fileType))
+                        .collect(Collectors.toList())))
                 .install(this);
     }
 
@@ -125,14 +130,11 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
         ContextMenu contextMenu = new ContextMenu();
 
         for (LinkedFile linkedFile : linkedFiles) {
-            LinkedFileViewModel linkedFileViewModel = new LinkedFileViewModel(linkedFile,
-                    entry.getEntry(),
-                    database,
-                    taskExecutor,
-                    dialogService,
-                    preferencesService);
+            LinkedFileViewModel linkedFileViewModel = new LinkedFileViewModel(
+                    linkedFile, entry.getEntry(), database, taskExecutor, dialogService, preferencesService);
 
-            MenuItem menuItem = new MenuItem(linkedFileViewModel.getTruncatedDescriptionAndLink(),
+            MenuItem menuItem = new MenuItem(
+                    linkedFileViewModel.getTruncatedDescriptionAndLink(),
                     linkedFileViewModel.getTypeIcon().getGraphicNode());
             menuItem.setOnAction(event -> linkedFileViewModel.open());
             contextMenu.getItems().add(menuItem);
@@ -145,10 +147,11 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
         if (linkedFiles.size() > 1) {
             return IconTheme.JabRefIcons.FILE_MULTIPLE.getGraphicNode();
         } else if (linkedFiles.size() == 1) {
-            return ExternalFileTypes.getExternalFileTypeByLinkedFile(linkedFiles.get(0), true, preferencesService.getFilePreferences())
-                                    .map(ExternalFileType::getIcon)
-                                    .orElse(IconTheme.JabRefIcons.FILE)
-                                    .getGraphicNode();
+            return ExternalFileTypes.getExternalFileTypeByLinkedFile(
+                            linkedFiles.get(0), true, preferencesService.getFilePreferences())
+                    .map(ExternalFileType::getIcon)
+                    .orElse(IconTheme.JabRefIcons.FILE)
+                    .getGraphicNode();
         } else {
             return null;
         }

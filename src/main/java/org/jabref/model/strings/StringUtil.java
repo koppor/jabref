@@ -179,7 +179,8 @@ public class StringUtil {
     public static String wrap(String in, int wrapAmount, String newline) {
         String[] lines = in.split("\n");
         StringBuilder result = new StringBuilder();
-        // remove all whitespace at the end of the string, this especially includes \r created when the field content has \r\n as line separator
+        // remove all whitespace at the end of the string, this especially includes \r created when the field content
+        // has \r\n as line separator
         addWrappedLine(result, CharMatcher.whitespace().trimTrailingFrom(lines[0]), wrapAmount, newline);
         for (int i = 1; i < lines.length; i++) {
             if (lines[i].trim().isEmpty()) {
@@ -190,7 +191,8 @@ public class StringUtil {
                 result.append('\t');
                 result.append(newline);
                 result.append('\t');
-                // remove all whitespace at the end of the string, this especially includes \r created when the field content has \r\n as line separator
+                // remove all whitespace at the end of the string, this especially includes \r created when the field
+                // content has \r\n as line separator
                 String line = CharMatcher.whitespace().trimTrailingFrom(lines[i]);
                 addWrappedLine(result, line, wrapAmount, newline);
             }
@@ -312,7 +314,10 @@ public class StringUtil {
             }
 
             // See if we should start bracing:
-            if ((inBrace == 0) && !isBracing && !inString && Character.isLetter((char) c)
+            if ((inBrace == 0)
+                    && !isBracing
+                    && !inString
+                    && Character.isLetter((char) c)
                     && Character.isUpperCase((char) c)) {
                 buf.append('{');
                 isBracing = true;
@@ -453,7 +458,10 @@ public class StringUtil {
         boolean sign = false;
         char ch;
 
-        if ((str == null) || ((end = str.length()) == 0) || ((((ch = str.charAt(0)) < '0') || (ch > '9')) && (!(sign = ch == '-') || (++idx == end) || ((ch = str.charAt(idx)) < '0') || (ch > '9')))) {
+        if ((str == null)
+                || ((end = str.length()) == 0)
+                || ((((ch = str.charAt(0)) < '0') || (ch > '9'))
+                        && (!(sign = ch == '-') || (++idx == end) || ((ch = str.charAt(idx)) < '0') || (ch > '9')))) {
             throw new NumberFormatException(str);
         }
 
@@ -483,7 +491,10 @@ public class StringUtil {
         boolean sign = false;
         char ch;
 
-        if ((str == null) || ((end = str.length()) == 0) || ((((ch = str.charAt(0)) < '0') || (ch > '9')) && (!(sign = ch == '-') || (++idx == end) || ((ch = str.charAt(idx)) < '0') || (ch > '9')))) {
+        if ((str == null)
+                || ((end = str.length()) == 0)
+                || ((((ch = str.charAt(0)) < '0') || (ch > '9'))
+                        && (!(sign = ch == '-') || (++idx == end) || ((ch = str.charAt(idx)) < '0') || (ch > '9')))) {
             return Optional.empty();
         }
 
@@ -521,7 +532,10 @@ public class StringUtil {
 
         for (int i = 0; i < in.length(); i++) {
             current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not happen.
-            if ((current == 0x9) || (current == 0xA) || (current == 0xD) || ((current >= 0x20) && (current <= 0xD7FF))
+            if ((current == 0x9)
+                    || (current == 0xA)
+                    || (current == 0xD)
+                    || ((current >= 0x20) && (current <= 0xD7FF))
                     || ((current >= 0xE000) && (current <= 0xFFFD))) {
                 out.append(current);
             }
@@ -672,7 +686,8 @@ public class StringUtil {
         return result.toString();
     }
 
-    @ApacheCommonsLang3Allowed("No Guava equivalent existing - see https://stackoverflow.com/q/3322152/873282 for a list of other implementations")
+    @ApacheCommonsLang3Allowed(
+            "No Guava equivalent existing - see https://stackoverflow.com/q/3322152/873282 for a list of other implementations")
     public static String stripAccents(String searchQuery) {
         return StringUtils.stripAccents(searchQuery);
     }
@@ -704,8 +719,10 @@ public class StringUtil {
      * Returns a list of sentences contained in the given text.
      */
     public static List<String> getStringAsSentences(String text) {
-        // A sentence ends with a .?!;, but not in the case of "Mr.", "Ms.", "Mrs.", "Dr.", "st.", "jr.", "co.", "inc.", and "ltd."
-        Pattern splitTextPattern = Pattern.compile("(?<=[\\.!;\\?])(?<![Mm](([Rr]|[Rr][Ss])|[Ss])\\.|[Dd][Rr]\\.|[Ss][Tt]\\.|[Jj][Rr]\\.|[Cc][Oo]\\.|[Ii][Nn][Cc]\\.|[Ll][Tt][Dd]\\.)\\s+");
+        // A sentence ends with a .?!;, but not in the case of "Mr.", "Ms.", "Mrs.", "Dr.", "st.", "jr.", "co.", "inc.",
+        // and "ltd."
+        Pattern splitTextPattern = Pattern.compile(
+                "(?<=[\\.!;\\?])(?<![Mm](([Rr]|[Rr][Ss])|[Ss])\\.|[Dd][Rr]\\.|[Ss][Tt]\\.|[Jj][Rr]\\.|[Cc][Oo]\\.|[Ii][Nn][Cc]\\.|[Ll][Tt][Dd]\\.)\\s+");
         return Arrays.asList(splitTextPattern.split(text));
     }
 

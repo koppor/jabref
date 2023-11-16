@@ -63,7 +63,7 @@ public class BibtexImporter extends Importer {
         decoder.onMalformedInput(CodingErrorAction.REPLACE);
 
         try (InputStreamReader inputStreamReader = new InputStreamReader(Files.newInputStream(filePath), decoder);
-             BufferedReader reader = new BufferedReader(inputStreamReader)) {
+                BufferedReader reader = new BufferedReader(inputStreamReader)) {
             ParserResult parserResult = this.importDatabase(reader);
             parserResult.getMetaData().setEncoding(result.encoding());
             parserResult.getMetaData().setEncodingExplicitlySupplied(result.encodingExplicitlySupplied());
@@ -115,8 +115,7 @@ public class BibtexImporter extends Importer {
         return result;
     }
 
-    private record EncodingResult(Charset encoding, boolean encodingExplicitlySupplied) {
-    }
+    private record EncodingResult(Charset encoding, boolean encodingExplicitlySupplied) {}
 
     /**
      * This method does not set the metadata encoding information. The caller needs to set the encoding of the supplied

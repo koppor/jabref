@@ -108,7 +108,11 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
     private final BibEntryTypesManager entryTypesManager;
     private TrustStoreManager trustStoreManager;
 
-    public GeneralTabViewModel(DialogService dialogService, PreferencesService preferences, FileUpdateMonitor fileUpdateMonitor, BibEntryTypesManager entryTypesManager) {
+    public GeneralTabViewModel(
+            DialogService dialogService,
+            PreferencesService preferences,
+            FileUpdateMonitor fileUpdateMonitor,
+            BibEntryTypesManager entryTypesManager) {
         this.dialogService = dialogService;
         this.preferences = preferences;
         this.workspacePreferences = preferences.getWorkspacePreferences();
@@ -130,7 +134,8 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
                         return false;
                     }
                 },
-                ValidationMessage.error(String.format("%s > %s %n %n %s",
+                ValidationMessage.error(String.format(
+                        "%s > %s %n %n %s",
                         Localization.lang("General"),
                         Localization.lang("Font settings"),
                         Localization.lang("You must enter an integer value higher than 8."))));
@@ -138,7 +143,8 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
         customPathToThemeValidator = new FunctionBasedValidator<>(
                 customPathToThemeProperty,
                 input -> !StringUtil.isNullOrEmpty(input),
-                ValidationMessage.error(String.format("%s > %s %n %n %s",
+                ValidationMessage.error(String.format(
+                        "%s > %s %n %n %s",
                         Localization.lang("General"),
                         Localization.lang("Visual theme"),
                         Localization.lang("Please specify a css theme file."))));
@@ -153,12 +159,14 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
                         return false;
                     }
                 },
-                ValidationMessage.error(String.format("%s > %s %n %n %s",
+                ValidationMessage.error(String.format(
+                        "%s > %s %n %n %s",
                         Localization.lang("Network"),
                         Localization.lang("Remote operation"),
                         Localization.lang("You must enter an integer value in the interval 1025-65535"))));
 
-        this.trustStoreManager = new TrustStoreManager(Path.of(preferences.getSSLPreferences().getTruststorePath()));
+        this.trustStoreManager =
+                new TrustStoreManager(Path.of(preferences.getSSLPreferences().getTruststorePath()));
     }
 
     public ValidationStatus remotePortValidationStatus() {
@@ -172,13 +180,12 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
         // The light theme is in fact the absence of any theme modifying 'base.css'. Another embedded theme like
         // 'dark.css', stored in the classpath, can be introduced in {@link org.jabref.gui.theme.Theme}.
         switch (workspacePreferences.getTheme().getType()) {
-            case DEFAULT ->
-                    selectedThemeProperty.setValue(ThemeTypes.LIGHT);
-            case EMBEDDED ->
-                    selectedThemeProperty.setValue(ThemeTypes.DARK);
+            case DEFAULT -> selectedThemeProperty.setValue(ThemeTypes.LIGHT);
+            case EMBEDDED -> selectedThemeProperty.setValue(ThemeTypes.DARK);
             case CUSTOM -> {
                 selectedThemeProperty.setValue(ThemeTypes.CUSTOM);
-                customPathToThemeProperty.setValue(workspacePreferences.getTheme().getName());
+                customPathToThemeProperty.setValue(
+                        workspacePreferences.getTheme().getName());
             }
         }
         themeSyncOsProperty.setValue(workspacePreferences.shouldThemeSyncOs());
@@ -219,10 +226,8 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
         workspacePreferences.setMainFontSize(Integer.parseInt(fontSizeProperty.getValue()));
 
         switch (selectedThemeProperty.get()) {
-            case LIGHT ->
-                    workspacePreferences.setTheme(Theme.light());
-            case DARK ->
-                    workspacePreferences.setTheme(Theme.dark());
+            case LIGHT -> workspacePreferences.setTheme(Theme.light());
+            case DARK -> workspacePreferences.setTheme(Theme.dark());
             case CUSTOM -> workspacePreferences.setTheme(Theme.custom(customPathToThemeProperty.getValue()));
         }
         workspacePreferences.setThemeSyncOs(themeSyncOsProperty.getValue());
@@ -258,7 +263,9 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
 
         if (remoteServerProperty.getValue()) {
             remotePreferences.setUseRemoteServer(true);
-            Globals.REMOTE_LISTENER.openAndStart(new CLIMessageHandler(preferences, fileUpdateMonitor, entryTypesManager), remotePreferences.getPort());
+            Globals.REMOTE_LISTENER.openAndStart(
+                    new CLIMessageHandler(preferences, fileUpdateMonitor, entryTypesManager),
+                    remotePreferences.getPort());
         } else {
             remotePreferences.setUseRemoteServer(false);
             Globals.REMOTE_LISTENER.stop();
@@ -267,7 +274,9 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
 
         if (remoteServerProperty.getValue()) {
             remotePreferences.setUseRemoteServer(true);
-            Globals.REMOTE_LISTENER.openAndStart(new CLIMessageHandler(preferences, fileUpdateMonitor, entryTypesManager), remotePreferences.getPort());
+            Globals.REMOTE_LISTENER.openAndStart(
+                    new CLIMessageHandler(preferences, fileUpdateMonitor, entryTypesManager),
+                    remotePreferences.getPort());
         } else {
             remotePreferences.setUseRemoteServer(false);
             Globals.REMOTE_LISTENER.stop();
@@ -301,8 +310,9 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
 
         ValidationStatus validationStatus = validator.getValidationStatus();
         if (!validationStatus.isValid()) {
-            validationStatus.getHighestMessage().ifPresent(message ->
-                    dialogService.showErrorDialogAndWait(message.getMessage()));
+            validationStatus
+                    .getHighestMessage()
+                    .ifPresent(message -> dialogService.showErrorDialogAndWait(message.getMessage()));
             return false;
         }
         return true;
@@ -341,10 +351,13 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
         FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
                 .addExtensionFilter(StandardFileType.CSS)
                 .withDefaultExtension(StandardFileType.CSS)
-                .withInitialDirectory(preferences.getInternalPreferences().getLastPreferencesExportPath()).build();
+                .withInitialDirectory(preferences.getInternalPreferences().getLastPreferencesExportPath())
+                .build();
 
-        dialogService.showFileOpenDialog(fileDialogConfiguration).ifPresent(file ->
-                customPathToThemeProperty.setValue(file.toAbsolutePath().toString()));
+        dialogService
+                .showFileOpenDialog(fileDialogConfiguration)
+                .ifPresent(file ->
+                        customPathToThemeProperty.setValue(file.toAbsolutePath().toString()));
     }
 
     public BooleanProperty fontOverrideProperty() {
@@ -400,10 +413,12 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
     }
 
     public void backupFileDirBrowse() {
-        DirectoryDialogConfiguration dirDialogConfiguration =
-                new DirectoryDialogConfiguration.Builder().withInitialDirectory(Path.of(backupDirectoryProperty().getValue())).build();
-        dialogService.showDirectorySelectionDialog(dirDialogConfiguration)
-                     .ifPresent(dir -> backupDirectoryProperty.setValue(dir.toString()));
+        DirectoryDialogConfiguration dirDialogConfiguration = new DirectoryDialogConfiguration.Builder()
+                .withInitialDirectory(Path.of(backupDirectoryProperty().getValue()))
+                .build();
+        dialogService
+                .showDirectorySelectionDialog(dirDialogConfiguration)
+                .ifPresent(dir -> backupDirectoryProperty.setValue(dir.toString()));
     }
 
     public BooleanProperty remoteServerProperty() {

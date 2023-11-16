@@ -11,8 +11,7 @@ import org.jabref.model.FieldChange;
 
 public class UndoableChangeEntriesOfGroup {
 
-    private UndoableChangeEntriesOfGroup() {
-    }
+    private UndoableChangeEntriesOfGroup() {}
 
     public static AbstractUndoableEdit getUndoableEdit(GroupTreeNodeViewModel node, List<FieldChange> changes) {
         boolean hasEntryChanges = false;

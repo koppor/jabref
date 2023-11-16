@@ -24,7 +24,6 @@ public class ToUpperCaseTest {
                 Arguments.of(null, null),
                 Arguments.of("ABCD EFG", "abcd efg"),
                 Arguments.of("ABCD EFG", "ABCD EFG"),
-                Arguments.of("ABCD EFG", "abCD eFg")
-        );
+                Arguments.of("ABCD EFG", "abCD eFg"));
     }
 }

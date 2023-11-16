@@ -26,8 +26,11 @@ public class ModsExportFormatTest {
     public void setUp() throws Exception {
         databaseContext = new BibDatabaseContext();
         modsExportFormat = new ModsExporter();
-        new BibtexImporter(mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS), new DummyFileUpdateMonitor());
-        Path.of(ModsExportFormatTest.class.getResource("ModsExportFormatTestAllFields.bib").toURI());
+        new BibtexImporter(
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS), new DummyFileUpdateMonitor());
+        Path.of(ModsExportFormatTest.class
+                .getResource("ModsExportFormatTestAllFields.bib")
+                .toURI());
     }
 
     @Test

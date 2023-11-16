@@ -37,19 +37,41 @@ public class StyleSelectDialogView extends BaseDialog<OOBibStyle> {
     private final MenuItem reload = new MenuItem(Localization.lang("Reload"));
     private final StyleLoader loader;
 
-    @FXML private TableColumn<StyleSelectItemViewModel, String> colName;
-    @FXML private TableView<StyleSelectItemViewModel> tvStyles;
-    @FXML private TableColumn<StyleSelectItemViewModel, String> colJournals;
-    @FXML private TableColumn<StyleSelectItemViewModel, String> colFile;
-    @FXML private TableColumn<StyleSelectItemViewModel, Boolean> colDeleteIcon;
-    @FXML private Button add;
-    @FXML private VBox vbox;
+    @FXML
+    private TableColumn<StyleSelectItemViewModel, String> colName;
 
-    @Inject private PreferencesService preferencesService;
-    @Inject private DialogService dialogService;
-    @Inject private StateManager stateManager;
-    @Inject private ThemeManager themeManager;
-    @Inject private TaskExecutor taskExecutor;
+    @FXML
+    private TableView<StyleSelectItemViewModel> tvStyles;
+
+    @FXML
+    private TableColumn<StyleSelectItemViewModel, String> colJournals;
+
+    @FXML
+    private TableColumn<StyleSelectItemViewModel, String> colFile;
+
+    @FXML
+    private TableColumn<StyleSelectItemViewModel, Boolean> colDeleteIcon;
+
+    @FXML
+    private Button add;
+
+    @FXML
+    private VBox vbox;
+
+    @Inject
+    private PreferencesService preferencesService;
+
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private StateManager stateManager;
+
+    @Inject
+    private ThemeManager themeManager;
+
+    @Inject
+    private TaskExecutor taskExecutor;
 
     private StyleSelectDialogViewModel viewModel;
     private PreviewViewer previewArticle;
@@ -58,9 +80,7 @@ public class StyleSelectDialogView extends BaseDialog<OOBibStyle> {
     public StyleSelectDialogView(StyleLoader loader) {
         this.loader = loader;
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         setResultConverter(button -> {
             if (button == ButtonType.OK) {
@@ -76,11 +96,13 @@ public class StyleSelectDialogView extends BaseDialog<OOBibStyle> {
     private void initialize() {
         viewModel = new StyleSelectDialogViewModel(dialogService, loader, preferencesService);
 
-        previewArticle = new PreviewViewer(new BibDatabaseContext(), dialogService, preferencesService, stateManager, themeManager, taskExecutor);
+        previewArticle = new PreviewViewer(
+                new BibDatabaseContext(), dialogService, preferencesService, stateManager, themeManager, taskExecutor);
         previewArticle.setEntry(TestEntry.getTestEntry());
         vbox.getChildren().add(previewArticle);
 
-        previewBook = new PreviewViewer(new BibDatabaseContext(), dialogService, preferencesService, stateManager, themeManager, taskExecutor);
+        previewBook = new PreviewViewer(
+                new BibDatabaseContext(), dialogService, preferencesService, stateManager, themeManager, taskExecutor);
         previewBook.setEntry(TestEntry.getTestEntryBook());
         vbox.getChildren().add(previewBook);
 
@@ -125,8 +147,10 @@ public class StyleSelectDialogView extends BaseDialog<OOBibStyle> {
 
         EasyBind.subscribe(viewModel.selectedItemProperty(), style -> {
             tvStyles.getSelectionModel().select(style);
-            previewArticle.setLayout(new TextBasedPreviewLayout(style.getStyle().getReferenceFormat(StandardEntryType.Article)));
-            previewBook.setLayout(new TextBasedPreviewLayout(style.getStyle().getReferenceFormat(StandardEntryType.Book)));
+            previewArticle.setLayout(
+                    new TextBasedPreviewLayout(style.getStyle().getReferenceFormat(StandardEntryType.Article)));
+            previewBook.setLayout(
+                    new TextBasedPreviewLayout(style.getStyle().getReferenceFormat(StandardEntryType.Book)));
         });
     }
 

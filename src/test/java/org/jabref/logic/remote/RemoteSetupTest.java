@@ -36,7 +36,7 @@ class RemoteSetupTest {
     @Test
     void testGoodCase() {
         final int port = 34567;
-        final String[] message = new String[]{"MYMESSAGE"};
+        final String[] message = new String[] {"MYMESSAGE"};
 
         try (RemoteListenerServerManager server = new RemoteListenerServerManager()) {
             assertFalse(server.isOpen());
@@ -52,7 +52,7 @@ class RemoteSetupTest {
     @Test
     void testGoodCaseWithAllLifecycleMethods() {
         final int port = 34567;
-        final String[] message = new String[]{"MYMESSAGE"};
+        final String[] message = new String[] {"MYMESSAGE"};
 
         try (RemoteListenerServerManager server = new RemoteListenerServerManager()) {
             assertFalse(server.isOpen());
@@ -98,7 +98,7 @@ class RemoteSetupTest {
         final int port = 34567;
         final String message = "MYMESSAGE";
 
-        assertFalse(new RemoteClient(port).sendCommandLineArguments(new String[]{message}));
+        assertFalse(new RemoteClient(port).sendCommandLineArguments(new String[] {message}));
     }
 
     @Test
@@ -108,12 +108,14 @@ class RemoteSetupTest {
         try (ServerSocket socket = new ServerSocket(port)) {
             // Setup dummy server always answering "whatever"
             new Thread(() -> {
-                try (Socket message = socket.accept(); OutputStream os = message.getOutputStream()) {
-                    os.write("whatever".getBytes(StandardCharsets.UTF_8));
-                } catch (IOException e) {
-                    // Ignored
-                }
-            }).start();
+                        try (Socket message = socket.accept();
+                                OutputStream os = message.getOutputStream()) {
+                            os.write("whatever".getBytes(StandardCharsets.UTF_8));
+                        } catch (IOException e) {
+                            // Ignored
+                        }
+                    })
+                    .start();
             Thread.sleep(100);
 
             assertFalse(new RemoteClient(port).ping());

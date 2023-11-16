@@ -48,15 +48,17 @@ public class PdfEmbeddedBibFileImporter extends Importer {
     @Override
     public ParserResult importDatabase(BufferedReader reader) throws IOException {
         Objects.requireNonNull(reader);
-        throw new UnsupportedOperationException("PdfEmbeddedBibFileImporter does not support importDatabase(BufferedReader reader)."
-                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException(
+                "PdfEmbeddedBibFileImporter does not support importDatabase(BufferedReader reader)."
+                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override
     public ParserResult importDatabase(String data) throws IOException {
         Objects.requireNonNull(data);
-        throw new UnsupportedOperationException("PdfEmbeddedBibFileImporter does not support importDatabase(String data)."
-                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException(
+                "PdfEmbeddedBibFileImporter does not support importDatabase(String data)."
+                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override
@@ -74,7 +76,6 @@ public class PdfEmbeddedBibFileImporter extends Importer {
      * Extraction of embedded files in pdfs adapted from:
      * Adapted from <a href="https://svn.apache.org/repos/asf/pdfbox/trunk/examples/src/main/java/org/apache/pdfbox/examples/pdmodel/ExtractEmbeddedFiles.javaj">...</a>
      */
-
     private List<BibEntry> getEmbeddedBibFileEntries(PDDocument document) throws IOException, ParseException {
         List<BibEntry> allParsedEntries = new ArrayList<>();
         PDDocumentNameDictionary nameDictionary = document.getDocumentCatalog().getNames();
@@ -99,7 +100,8 @@ public class PdfEmbeddedBibFileImporter extends Importer {
         for (PDPage page : document.getPages()) {
             for (PDAnnotation annotation : page.getAnnotations()) {
                 if (annotation instanceof PDAnnotationFileAttachment annotationFileAttachment) {
-                    PDComplexFileSpecification fileSpec = (PDComplexFileSpecification) annotationFileAttachment.getFile();
+                    PDComplexFileSpecification fileSpec =
+                            (PDComplexFileSpecification) annotationFileAttachment.getFile();
                     allParsedEntries.addAll(extractAndParseFile(getEmbeddedFile(fileSpec)));
                 }
             }
@@ -107,7 +109,8 @@ public class PdfEmbeddedBibFileImporter extends Importer {
         return allParsedEntries;
     }
 
-    private List<BibEntry> extractAndParseFiles(Map<String, PDComplexFileSpecification> names) throws IOException, ParseException {
+    private List<BibEntry> extractAndParseFiles(Map<String, PDComplexFileSpecification> names)
+            throws IOException, ParseException {
         List<BibEntry> allParsedEntries = new ArrayList<>();
         for (Map.Entry<String, PDComplexFileSpecification> entry : names.entrySet()) {
             String filename = entry.getKey();

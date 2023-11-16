@@ -53,10 +53,12 @@ public class BstPreviewLayout implements PreviewLayout {
         // Remove all comments
         result = result.replaceAll("%.*", "");
         // Remove all LaTeX comments
-        // The RemoveLatexCommandsFormatter keeps the words inside latex environments. Therefore, we remove them manually
+        // The RemoveLatexCommandsFormatter keeps the words inside latex environments. Therefore, we remove them
+        // manually
         result = result.replace("\\begin{thebibliography}{1}", "");
         result = result.replace("\\end{thebibliography}", "");
-        // The RemoveLatexCommandsFormatter keeps the word inside the latex command, but we want to remove that completely
+        // The RemoveLatexCommandsFormatter keeps the word inside the latex command, but we want to remove that
+        // completely
         result = result.replaceAll("\\\\bibitem[{].*[}]", "");
         // We want to replace \newblock by a space instead of completely removing it
         result = result.replace("\\newblock", " ");

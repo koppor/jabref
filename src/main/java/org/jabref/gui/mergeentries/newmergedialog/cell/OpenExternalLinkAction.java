@@ -32,11 +32,10 @@ public class OpenExternalLinkAction extends SimpleCommand {
             if (DOI.isValid(urlOrDoi)) {
                 JabRefDesktop.openBrowser(
                         DOI.parse(urlOrDoi)
-                           .flatMap(DOI::getExternalURI)
-                           .map(URI::toString)
-                           .orElse(""),
-                        filePreferences
-                );
+                                .flatMap(DOI::getExternalURI)
+                                .map(URI::toString)
+                                .orElse(""),
+                        filePreferences);
             } else {
                 JabRefDesktop.openBrowser(urlOrDoi, filePreferences);
             }

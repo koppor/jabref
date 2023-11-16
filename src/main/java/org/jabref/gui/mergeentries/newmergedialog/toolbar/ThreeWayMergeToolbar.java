@@ -59,14 +59,13 @@ public class ThreeWayMergeToolbar extends AnchorPane {
     private EasyBinding<Boolean> showDiff;
 
     public ThreeWayMergeToolbar() {
-        ViewLoader.view(this)
-                .root(this)
-                .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @FXML
     public void initialize() {
-        showDiff = EasyBind.map(plainTextOrDiffComboBox.valueProperty(), plainTextOrDiff -> plainTextOrDiff == PlainTextOrDiff.Diff);
+        showDiff = EasyBind.map(
+                plainTextOrDiffComboBox.valueProperty(), plainTextOrDiff -> plainTextOrDiff == PlainTextOrDiff.Diff);
         plainTextOrDiffComboBox.getItems().addAll(PlainTextOrDiff.values());
 
         plainTextOrDiffComboBox.setConverter(new StringConverter<>() {
@@ -107,7 +106,9 @@ public class ThreeWayMergeToolbar extends AnchorPane {
             }
         }));
 
-        onlyShowChangedFieldsCheck.selectedProperty().bindBidirectional(preferencesService.getGuiPreferences().mergeShowChangedFieldOnlyProperty());
+        onlyShowChangedFieldsCheck
+                .selectedProperty()
+                .bindBidirectional(preferencesService.getGuiPreferences().mergeShowChangedFieldOnlyProperty());
         onlyShowChangedFields.bind(onlyShowChangedFieldsCheck.selectedProperty());
 
         loadSavedConfiguration();
@@ -116,20 +117,28 @@ public class ThreeWayMergeToolbar extends AnchorPane {
     private void loadSavedConfiguration() {
         GuiPreferences guiPreferences = preferencesService.getGuiPreferences();
 
-        PlainTextOrDiff plainTextOrDiffPreference = guiPreferences.getMergeShouldShowDiff() ? PlainTextOrDiff.Diff : PlainTextOrDiff.PLAIN_TEXT;
+        PlainTextOrDiff plainTextOrDiffPreference =
+                guiPreferences.getMergeShouldShowDiff() ? PlainTextOrDiff.Diff : PlainTextOrDiff.PLAIN_TEXT;
         plainTextOrDiffComboBox.getSelectionModel().select(plainTextOrDiffPreference);
 
-        DiffView diffViewPreference = guiPreferences.getMergeShouldShowUnifiedDiff() ? DiffView.UNIFIED : DiffView.SPLIT;
+        DiffView diffViewPreference =
+                guiPreferences.getMergeShouldShowUnifiedDiff() ? DiffView.UNIFIED : DiffView.SPLIT;
         diffViewComboBox.getSelectionModel().select(diffViewPreference);
 
-        diffHighlightingMethodToggleGroup.selectToggle(guiPreferences.getMergeHighlightWords() ? highlightWordsRadioButton : highlightCharactersRadioButtons);
+        diffHighlightingMethodToggleGroup.selectToggle(
+                guiPreferences.getMergeHighlightWords() ? highlightWordsRadioButton : highlightCharactersRadioButtons);
     }
 
     public void saveToolbarConfiguration() {
-        preferencesService.getGuiPreferences().setMergeShouldShowDiff(plainTextOrDiffComboBox.getValue() == PlainTextOrDiff.Diff);
-        preferencesService.getGuiPreferences().setMergeShouldShowUnifiedDiff(diffViewComboBox.getValue() == DiffView.UNIFIED);
+        preferencesService
+                .getGuiPreferences()
+                .setMergeShouldShowDiff(plainTextOrDiffComboBox.getValue() == PlainTextOrDiff.Diff);
+        preferencesService
+                .getGuiPreferences()
+                .setMergeShouldShowUnifiedDiff(diffViewComboBox.getValue() == DiffView.UNIFIED);
 
-        boolean highlightWordsRadioButtonValue = diffHighlightingMethodToggleGroup.getSelectedToggle().equals(highlightWordsRadioButton);
+        boolean highlightWordsRadioButtonValue =
+                diffHighlightingMethodToggleGroup.getSelectedToggle().equals(highlightWordsRadioButton);
         preferencesService.getGuiPreferences().setMergeHighlightWords(highlightWordsRadioButtonValue);
     }
 
@@ -198,7 +207,8 @@ public class ThreeWayMergeToolbar extends AnchorPane {
     }
 
     public enum PlainTextOrDiff {
-        PLAIN_TEXT(Localization.lang("Plain Text")), Diff(Localization.lang("Show Diff"));
+        PLAIN_TEXT(Localization.lang("Plain Text")),
+        Diff(Localization.lang("Show Diff"));
 
         private final String value;
 

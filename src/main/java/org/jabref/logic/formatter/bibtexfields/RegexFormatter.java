@@ -23,6 +23,7 @@ public class RegexFormatter extends Formatter {
      * replaced.
      */
     private static final Pattern ENCLOSED_IN_CURLY_BRACES = Pattern.compile("\\{.*?}");
+
     private static final String REGEX_CAPTURING_GROUP = "regex";
     private static final String REPLACEMENT_CAPTURING_GROUP = "replacement";
     /**
@@ -79,7 +80,8 @@ public class RegexFormatter extends Formatter {
         try {
             workingString = workingString.replaceAll(regex, replacement);
         } catch (PatternSyntaxException e) {
-            LOGGER.warn("There is a syntax error in the regular expression \"{}\" used by the regex modifier", regex, e);
+            LOGGER.warn(
+                    "There is a syntax error in the regular expression \"{}\" used by the regex modifier", regex, e);
             return input;
         }
 

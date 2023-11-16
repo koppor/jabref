@@ -22,8 +22,7 @@ import org.jabref.model.strings.StringUtil;
 
 class OOBibStyleGetCitationMarker {
 
-    private OOBibStyleGetCitationMarker() {
-    }
+    private OOBibStyleGetCitationMarker() {}
 
     /**
      * Look up the nth author and return the "proper" last name for
@@ -55,9 +54,7 @@ class OOBibStyleGetCitationMarker {
     }
 
     private static String markupAuthorName(OOBibStyle style, String name) {
-        return style.getAuthorNameMarkupBefore()
-                + name
-                + style.getAuthorNameMarkupAfter();
+        return style.getAuthorNameMarkupBefore() + name + style.getAuthorNameMarkupAfter();
     }
 
     /**
@@ -86,10 +83,7 @@ class OOBibStyleGetCitationMarker {
      *          - OXFORD_COMMA is only emitted if nAuthors is at least 3.
      *          - andString  is only emitted if nAuthors is at least 2.
      */
-    private static String formatAuthorList(OOBibStyle style,
-                                           AuthorList authorList,
-                                           int maxAuthors,
-                                           String andString) {
+    private static String formatAuthorList(OOBibStyle style, AuthorList authorList, int maxAuthors, String andString) {
 
         Objects.requireNonNull(authorList);
 
@@ -142,10 +136,10 @@ class OOBibStyleGetCitationMarker {
         boolean emitAllAuthors = (nAuthors <= maxAuthors) || (maxAuthors == -1);
 
         int nAuthorsToEmit = emitAllAuthors
-                              ? nAuthors
-                              // If we use "et al." maxAuthorsBeforeEtAl also limits the
-                              // number of authors emitted.
-                              : Math.min(maxAuthorsBeforeEtAl, nAuthors);
+                ? nAuthors
+                // If we use "et al." maxAuthorsBeforeEtAl also limits the
+                // number of authors emitted.
+                : Math.min(maxAuthorsBeforeEtAl, nAuthors);
 
         if (nAuthorsToEmit >= 1) {
             stringBuilder.append(style.getAuthorsPartMarkupBefore());
@@ -213,6 +207,7 @@ class OOBibStyleGetCitationMarker {
     private static class FieldAndContent {
         Field field;
         String content;
+
         FieldAndContent(Field field, String content) {
             this.field = field;
             this.content = content;
@@ -224,16 +219,15 @@ class OOBibStyleGetCitationMarker {
      * field (or alias) from {@code fields} found in {@code entry}.
      * Return {@code Optional.empty()} if found nothing.
      */
-    private static Optional<FieldAndContent> getRawCitationMarkerField(BibEntry entry,
-                                                                       BibDatabase database,
-                                                                       OrFields fields) {
+    private static Optional<FieldAndContent> getRawCitationMarkerField(
+            BibEntry entry, BibDatabase database, OrFields fields) {
         Objects.requireNonNull(entry, "Entry cannot be null");
         Objects.requireNonNull(database, "database cannot be null");
 
         for (Field field : fields.getFields() /* FieldFactory.parseOrFields(fields)*/) {
             Optional<String> optionalContent = entry.getResolvedFieldOrAlias(field, database);
-            final boolean foundSomething = optionalContent.isPresent()
-                                            && !optionalContent.get().trim().isEmpty();
+            final boolean foundSomething =
+                    optionalContent.isPresent() && !optionalContent.get().trim().isEmpty();
             if (foundSomething) {
                 return Optional.of(new FieldAndContent(field, optionalContent.get()));
             }
@@ -263,13 +257,10 @@ class OOBibStyleGetCitationMarker {
      *
      *
      */
-    private static String getCitationMarkerField(OOBibStyle style,
-                                                 CitationLookupResult db,
-                                                 OrFields fields) {
+    private static String getCitationMarkerField(OOBibStyle style, CitationLookupResult db, OrFields fields) {
         Objects.requireNonNull(db);
 
-        Optional<FieldAndContent> optionalFieldAndContent =
-            getRawCitationMarkerField(db.entry, db.database, fields);
+        Optional<FieldAndContent> optionalFieldAndContent = getRawCitationMarkerField(db.entry, db.database, fields);
 
         if (optionalFieldAndContent.isEmpty()) {
             // No luck? Return an empty string:
@@ -317,9 +308,7 @@ class OOBibStyleGetCitationMarker {
             return 0;
         }
 
-        int maxAuthors = entry.getIsFirstAppearanceOfSource()
-                          ? style.getMaxAuthorsFirst()
-                          : style.getMaxAuthors();
+        int maxAuthors = entry.getIsFirstAppearanceOfSource() ? style.getMaxAuthorsFirst() : style.getMaxAuthors();
 
         AuthorList authorList = getAuthorList(style, entry.getLookupResult().get());
         int nAuthors = authorList.getNumberOfAuthors();
@@ -367,19 +356,18 @@ class OOBibStyleGetCitationMarker {
      * @return The formatted citation.
      *
      */
-    private static OOText getAuthorYearParenthesisMarker2(OOBibStyle style,
-                                                          AuthorYearMarkerPurpose purpose,
-                                                          List<CitationMarkerEntry> entries,
-                                                          boolean[] startsNewGroup,
-                                                          Optional<Integer> maxAuthorsOverride) {
+    private static OOText getAuthorYearParenthesisMarker2(
+            OOBibStyle style,
+            AuthorYearMarkerPurpose purpose,
+            List<CitationMarkerEntry> entries,
+            boolean[] startsNewGroup,
+            Optional<Integer> maxAuthorsOverride) {
 
-        boolean inParenthesis = purpose == AuthorYearMarkerPurpose.IN_PARENTHESIS
-                                 || purpose == AuthorYearMarkerPurpose.NORMALIZED;
+        boolean inParenthesis =
+                purpose == AuthorYearMarkerPurpose.IN_PARENTHESIS || purpose == AuthorYearMarkerPurpose.NORMALIZED;
 
         // The String to separate authors from year, e.g. "; ".
-        String yearSep = inParenthesis
-                          ? style.getYearSeparator()
-                          : style.getYearSeparatorInText();
+        String yearSep = inParenthesis ? style.getYearSeparator() : style.getYearSeparatorInText();
 
         // The opening parenthesis.
         String startBrace = style.getBracketBefore();
@@ -394,9 +382,8 @@ class OOBibStyleGetCitationMarker {
         OrFields yearFieldNames = style.getYearFieldNames();
 
         // The String to add between the two last author names, e.g. " & ".
-        String andString = inParenthesis
-                            ? style.getAuthorLastSeparator()
-                            : style.getAuthorLastSeparatorInTextWithFallBack();
+        String andString =
+                inParenthesis ? style.getAuthorLastSeparator() : style.getAuthorLastSeparatorInTextWithFallBack();
 
         String pageInfoSeparator = style.getPageInfoSeparator();
         String uniquefierSeparator = style.getUniquefierSeparator();
@@ -434,8 +421,7 @@ class OOBibStyleGetCitationMarker {
 
             StringBuilder pageInfoPart = new StringBuilder("");
             if (purpose != AuthorYearMarkerPurpose.NORMALIZED) {
-                Optional<OOText> pageInfo =
-                    PageInfo.normalizePageInfo(entry.getPageInfo());
+                Optional<OOText> pageInfo = PageInfo.normalizePageInfo(entry.getPageInfo());
                 if (pageInfo.isPresent()) {
                     pageInfoPart.append(pageInfoSeparator);
                     pageInfoPart.append(OOText.toString(pageInfo.get()));
@@ -452,8 +438,8 @@ class OOBibStyleGetCitationMarker {
                 CitationLookupResult db = entry.getLookupResult().get();
 
                 int maxAuthors = purpose == AuthorYearMarkerPurpose.NORMALIZED
-                                  ? style.getMaxAuthors()
-                                  : calculateNAuthorsToEmit(style, entry);
+                        ? style.getMaxAuthors()
+                        : calculateNAuthorsToEmit(style, entry);
 
                 if (maxAuthorsOverride.isPresent()) {
                     maxAuthors = maxAuthorsOverride.get();
@@ -485,7 +471,7 @@ class OOBibStyleGetCitationMarker {
                 }
 
                 if (!inParenthesis && endingAGroup) {
-                    stringBuilder.append(endBrace);  // parenthesis after year
+                    stringBuilder.append(endBrace); // parenthesis after year
                 }
             }
         } // for j
@@ -544,28 +530,24 @@ class OOBibStyleGetCitationMarker {
      *
      * Note: now includes some markup.
      */
-    static OOText getNormalizedCitationMarker(OOBibStyle style,
-                                              CitationMarkerNormEntry normEntry,
-                                              Optional<Integer> maxAuthorsOverride) {
+    static OOText getNormalizedCitationMarker(
+            OOBibStyle style, CitationMarkerNormEntry normEntry, Optional<Integer> maxAuthorsOverride) {
         boolean[] startsNewGroup = {true};
         CitationMarkerEntry entry = new CitationMarkerNormEntryWrap(normEntry);
-        return getAuthorYearParenthesisMarker2(style,
-                                               AuthorYearMarkerPurpose.NORMALIZED,
-                                               Collections.singletonList(entry),
-                                               startsNewGroup,
-                                               maxAuthorsOverride);
+        return getAuthorYearParenthesisMarker2(
+                style,
+                AuthorYearMarkerPurpose.NORMALIZED,
+                Collections.singletonList(entry),
+                startsNewGroup,
+                maxAuthorsOverride);
     }
 
-    private static List<OOText>
-    getNormalizedCitationMarkers(OOBibStyle style,
-                                 List<CitationMarkerEntry> citationMarkerEntries,
-                                 Optional<Integer> maxAuthorsOverride) {
+    private static List<OOText> getNormalizedCitationMarkers(
+            OOBibStyle style, List<CitationMarkerEntry> citationMarkerEntries, Optional<Integer> maxAuthorsOverride) {
 
         List<OOText> normalizedMarkers = new ArrayList<>(citationMarkerEntries.size());
         for (CitationMarkerEntry citationMarkerEntry : citationMarkerEntries) {
-            OOText normalized = getNormalizedCitationMarker(style,
-                                                            citationMarkerEntry,
-                                                            maxAuthorsOverride);
+            OOText normalized = getNormalizedCitationMarker(style, citationMarkerEntry, maxAuthorsOverride);
             normalizedMarkers.add(normalized);
         }
         return normalizedMarkers;
@@ -600,11 +582,11 @@ class OOBibStyleGetCitationMarker {
      *             Note: only consecutive citations are checked.
      *
      */
-    public static OOText
-    createCitationMarker(OOBibStyle style,
-                         List<CitationMarkerEntry> citationMarkerEntries,
-                         boolean inParenthesis,
-                         NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
+    public static OOText createCitationMarker(
+            OOBibStyle style,
+            List<CitationMarkerEntry> citationMarkerEntries,
+            boolean inParenthesis,
+            NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
 
         final int nEntries = citationMarkerEntries.size();
 
@@ -623,9 +605,7 @@ class OOBibStyleGetCitationMarker {
         // We also assume, that identical entries have the same uniqueLetters.
         //
 
-        List<OOText> normalizedMarkers = getNormalizedCitationMarkers(style,
-                                                                      citationMarkerEntries,
-                                                                      Optional.empty());
+        List<OOText> normalizedMarkers = getNormalizedCitationMarkers(style, citationMarkerEntries, Optional.empty());
 
         // How many authors would be emitted without grouping.
         int[] nAuthorsToEmit = new int[nEntries];
@@ -677,9 +657,7 @@ class OOBibStyleGetCitationMarker {
 
                     // nAuthorsToEmitRevised[i-1] may have been indirectly increased,
                     // we have to check that too.
-                    if (!isFirst1 &&
-                        !isFirst2 &&
-                        (nAuthorsToEmitRevised[i - 1] == nAuthorsToEmit[i - 1])) {
+                    if (!isFirst1 && !isFirst2 && (nAuthorsToEmitRevised[i - 1] == nAuthorsToEmit[i - 1])) {
                         // we can rely on normalizedMarkers
                         nAuthorsShownInhibitsJoin = false;
                     } else if (style.getMaxAuthors() == style.getMaxAuthorsFirst()) {
@@ -696,10 +674,8 @@ class OOBibStyleGetCitationMarker {
                         } else {
                             // prevShown >= need
                             // Check with extended normalizedMarkers.
-                            OOText nmx1 =
-                                getNormalizedCitationMarker(style, ce1, Optional.of(prevShown));
-                            OOText nmx2 =
-                                getNormalizedCitationMarker(style, ce2, Optional.of(prevShown));
+                            OOText nmx1 = getNormalizedCitationMarker(style, ce1, Optional.of(prevShown));
+                            OOText nmx2 = getNormalizedCitationMarker(style, ce2, Optional.of(prevShown));
                             boolean extendedMarkersDiffer = !nmx2.equals(nmx1);
                             nAuthorsShownInhibitsJoin = extendedMarkersDiffer;
                         }
@@ -719,35 +695,30 @@ class OOBibStyleGetCitationMarker {
                 final boolean uniqueLetterPresenceChanged = ul2.isPresent() != ul1.isPresent();
                 final boolean uniqueLettersDiffer = !ul2.equals(ul1);
 
-                final boolean uniqueLetterDoesNotMakeUnique = citationKeysDiffer
-                                                               && !normalizedMarkersDiffer
-                                                               && !uniqueLettersDiffer;
+                final boolean uniqueLetterDoesNotMakeUnique =
+                        citationKeysDiffer && !normalizedMarkersDiffer && !uniqueLettersDiffer;
 
-                if (uniqueLetterDoesNotMakeUnique &&
-                        nonUniqueCitationMarkerHandling == NonUniqueCitationMarker.THROWS) {
-                    throw new IllegalArgumentException("different citation keys,"
-                                                       + " but same normalizedMarker and uniqueLetter");
+                if (uniqueLetterDoesNotMakeUnique
+                        && nonUniqueCitationMarkerHandling == NonUniqueCitationMarker.THROWS) {
+                    throw new IllegalArgumentException(
+                            "different citation keys," + " but same normalizedMarker and uniqueLetter");
                 }
 
-                final boolean pageInfoInhibitsJoin = bothPageInfosAreEmpty
-                                                      ? false
-                                                      : (citationKeysDiffer || pageInfosDiffer);
+                final boolean pageInfoInhibitsJoin =
+                        bothPageInfosAreEmpty ? false : (citationKeysDiffer || pageInfosDiffer);
 
                 startingNewGroup = normalizedMarkersDiffer
-                                    || nAuthorsShownInhibitsJoin
-                                    || pageInfoInhibitsJoin
-                                    || uniqueLetterPresenceChanged
-                                    || uniqueLetterDoesNotMakeUnique;
+                        || nAuthorsShownInhibitsJoin
+                        || pageInfoInhibitsJoin
+                        || uniqueLetterPresenceChanged
+                        || uniqueLetterDoesNotMakeUnique;
 
                 if (!startingNewGroup) {
                     // inherit from first of group. Used at next i.
                     nAuthorsToEmitRevised[i] = nAuthorsToEmitRevised[i - 1];
                 }
 
-                sameAsPrev = !startingNewGroup
-                              && !uniqueLettersDiffer
-                              && !citationKeysDiffer
-                              && !pageInfosDiffer;
+                sameAsPrev = !startingNewGroup && !uniqueLettersDiffer && !citationKeysDiffer && !pageInfosDiffer;
             }
 
             if (!sameAsPrev) {
@@ -757,12 +728,11 @@ class OOBibStyleGetCitationMarker {
             }
         }
 
-        return getAuthorYearParenthesisMarker2(style,
-                                               (inParenthesis
-                                               ? AuthorYearMarkerPurpose.IN_PARENTHESIS
-                                               : AuthorYearMarkerPurpose.IN_TEXT),
-                                              filteredCitationMarkerEntries,
-                                              startsNewGroup,
-                                              Optional.empty());
+        return getAuthorYearParenthesisMarker2(
+                style,
+                (inParenthesis ? AuthorYearMarkerPurpose.IN_PARENTHESIS : AuthorYearMarkerPurpose.IN_TEXT),
+                filteredCitationMarkerEntries,
+                startsNewGroup,
+                Optional.empty());
     }
 }

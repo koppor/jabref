@@ -48,26 +48,37 @@ class CommentsTabTest {
 
     @Mock
     private BibEntryTypesManager entryTypesManager;
+
     @Mock
     private BibDatabaseContext databaseContext;
+
     @Mock
     private SuggestionProviders suggestionProviders;
+
     @Mock
     private UndoManager undoManager;
+
     @Mock
     private DialogService dialogService;
+
     @Mock
     private PreferencesService preferences;
+
     @Mock
     private StateManager stateManager;
+
     @Mock
     private ThemeManager themeManager;
+
     @Mock
     private TaskExecutor taskExecutor;
+
     @Mock
     private JournalAbbreviationRepository journalAbbreviationRepository;
+
     @Mock
     private IndexingTaskManager indexingTaskManager;
+
     @Mock
     private OwnerPreferences ownerPreferences;
 
@@ -91,8 +102,7 @@ class CommentsTabTest {
                 themeManager,
                 indexingTaskManager,
                 taskExecutor,
-                journalAbbreviationRepository
-        );
+                journalAbbreviationRepository);
     }
 
     @Test
@@ -127,6 +137,9 @@ class CommentsTabTest {
     public void testDifferentiateCaseInUserName() {
         UserSpecificCommentField field1 = new UserSpecificCommentField("USER");
         UserSpecificCommentField field2 = new UserSpecificCommentField("user");
-        assertNotEquals(field1, field2, "Two UserSpecificCommentField instances with usernames that differ only by case should be considered different");
+        assertNotEquals(
+                field1,
+                field2,
+                "Two UserSpecificCommentField instances with usernames that differ only by case should be considered different");
     }
 }

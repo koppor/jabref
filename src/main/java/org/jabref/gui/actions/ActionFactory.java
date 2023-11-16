@@ -58,7 +58,8 @@ public class ActionFactory {
      * should not be used since it's marked as deprecated.
      */
     private static Label getAssociatedNode(MenuItem menuItem) {
-        ContextMenuContent.MenuItemContainer container = (ContextMenuContent.MenuItemContainer) menuItem.getStyleableNode();
+        ContextMenuContent.MenuItemContainer container =
+                (ContextMenuContent.MenuItemContainer) menuItem.getStyleableNode();
 
         if (container == null) {
             return null;
@@ -68,7 +69,10 @@ public class ActionFactory {
                 Method getLabel = ContextMenuContent.MenuItemContainer.class.getDeclaredMethod("getLabel");
                 getLabel.setAccessible(true);
                 return (Label) getLabel.invoke(container);
-            } catch (InaccessibleObjectException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (InaccessibleObjectException
+                    | IllegalAccessException
+                    | InvocationTargetException
+                    | NoSuchMethodException e) {
                 LOGGER.warn("Could not get label of menu item", e);
             }
         }
@@ -76,25 +80,23 @@ public class ActionFactory {
     }
 
     public MenuItem configureMenuItem(Action action, Command command, MenuItem menuItem) {
-        ActionUtils.configureMenuItem(new JabRefAction(action, command, keyBindingRepository, Sources.FromMenu), menuItem);
+        ActionUtils.configureMenuItem(
+                new JabRefAction(action, command, keyBindingRepository, Sources.FromMenu), menuItem);
         setGraphic(menuItem, action);
 
         // Show tooltips
         if (command instanceof SimpleCommand simpleCommand) {
-            EasyBind.subscribe(
-                    simpleCommand.statusMessageProperty(),
-                    message -> {
-                        Label label = getAssociatedNode(menuItem);
-                        if (label != null) {
-                            label.setMouseTransparent(false);
-                            if (StringUtil.isBlank(message)) {
-                                label.setTooltip(null);
-                            } else {
-                                label.setTooltip(new Tooltip(message));
-                            }
-                        }
+            EasyBind.subscribe(simpleCommand.statusMessageProperty(), message -> {
+                Label label = getAssociatedNode(menuItem);
+                if (label != null) {
+                    label.setMouseTransparent(false);
+                    if (StringUtil.isBlank(message)) {
+                        label.setTooltip(null);
+                    } else {
+                        label.setTooltip(new Tooltip(message));
                     }
-            );
+                }
+            });
         }
 
         return menuItem;
@@ -107,7 +109,8 @@ public class ActionFactory {
     }
 
     public CheckMenuItem createCheckMenuItem(Action action, Command command, boolean selected) {
-        CheckMenuItem checkMenuItem = ActionUtils.createCheckMenuItem(new JabRefAction(action, command, keyBindingRepository, Sources.FromMenu));
+        CheckMenuItem checkMenuItem = ActionUtils.createCheckMenuItem(
+                new JabRefAction(action, command, keyBindingRepository, Sources.FromMenu));
         checkMenuItem.setSelected(selected);
         setGraphic(checkMenuItem, action);
 
@@ -115,7 +118,8 @@ public class ActionFactory {
     }
 
     public CheckMenuItem createCheckMenuItem(Action action, Command command, BooleanExpression selectedBinding) {
-        CheckMenuItem checkMenuItem = ActionUtils.createCheckMenuItem(new JabRefAction(action, command, keyBindingRepository, Sources.FromMenu));
+        CheckMenuItem checkMenuItem = ActionUtils.createCheckMenuItem(
+                new JabRefAction(action, command, keyBindingRepository, Sources.FromMenu));
         EasyBind.subscribe(selectedBinding, checkMenuItem::setSelected);
         setGraphic(checkMenuItem, action);
 
@@ -137,7 +141,9 @@ public class ActionFactory {
     }
 
     public Button createIconButton(Action action, Command command) {
-        Button button = ActionUtils.createButton(new JabRefAction(action, command, keyBindingRepository, Sources.FromButton), ActionUtils.ActionTextBehavior.HIDE);
+        Button button = ActionUtils.createButton(
+                new JabRefAction(action, command, keyBindingRepository, Sources.FromButton),
+                ActionUtils.ActionTextBehavior.HIDE);
 
         button.getStyleClass().setAll("icon-button");
 

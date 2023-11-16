@@ -31,19 +31,22 @@ public class BibStringCheckerTest {
         return Stream.of(
                 Arguments.of(Collections.emptyList(), StandardField.TITLE, "Not a single hash mark"),
                 Arguments.of(Collections.emptyList(), StandardField.MONTH, "#jan#"),
-                Arguments.of(Collections.emptyList(), StandardField.AUTHOR, "#einstein# and #newton#")
-        );
+                Arguments.of(Collections.emptyList(), StandardField.AUTHOR, "#einstein# and #newton#"));
     }
 
     @Test
     void monthDoesNotAcceptOddNumberOfHashMarks() {
         entry.setField(StandardField.MONTH, "#jan");
-        assertEquals(List.of(new IntegrityMessage("odd number of unescaped '#'", entry, StandardField.MONTH)), checker.check(entry));
+        assertEquals(
+                List.of(new IntegrityMessage("odd number of unescaped '#'", entry, StandardField.MONTH)),
+                checker.check(entry));
     }
 
     @Test
     void authorDoesNotAcceptOddNumberOfHashMarks() {
         entry.setField(StandardField.AUTHOR, "#einstein# #amp; #newton#");
-        assertEquals(List.of(new IntegrityMessage("odd number of unescaped '#'", entry, StandardField.AUTHOR)), checker.check(entry));
+        assertEquals(
+                List.of(new IntegrityMessage("odd number of unescaped '#'", entry, StandardField.AUTHOR)),
+                checker.check(entry));
     }
 }

@@ -42,20 +42,29 @@ public class ModsExportFormatFilesTest {
     private Path importFile;
 
     public static Stream<String> fileNames() throws Exception {
-        resourceDir = Path.of(MSBibExportFormatFilesTest.class.getResource("ModsExportFormatTestAllFields.bib").toURI()).getParent();
+        resourceDir = Path.of(MSBibExportFormatFilesTest.class
+                        .getResource("ModsExportFormatTestAllFields.bib")
+                        .toURI())
+                .getParent();
         LOGGER.debug("Mods export resouce dir {}", resourceDir);
 
         try (Stream<Path> stream = Files.list(resourceDir)) {
-            return stream.map(n -> n.getFileName().toString()).filter(n -> n.endsWith(".bib"))
-                         .filter(n -> n.startsWith("Mods")).toList().stream();
+            return stream
+                    .map(n -> n.getFileName().toString())
+                    .filter(n -> n.endsWith(".bib"))
+                    .filter(n -> n.startsWith("Mods"))
+                    .toList()
+                    .stream();
         }
     }
 
     @BeforeEach
     public void setUp(@TempDir Path testFolder) throws Exception {
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(importFormatPreferences.bibEntryPreferences()).thenReturn(mock(BibEntryPreferences.class));
-        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
+        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator())
+                .thenReturn(',');
 
         databaseContext = new BibDatabaseContext();
         charset = StandardCharsets.UTF_8;
@@ -71,10 +80,13 @@ public class ModsExportFormatFilesTest {
     @ParameterizedTest
     @MethodSource("fileNames")
     public final void testPerformExport(String filename) throws Exception {
-        importFile = Path.of(ModsExportFormatFilesTest.class.getResource(filename).toURI());
+        importFile =
+                Path.of(ModsExportFormatFilesTest.class.getResource(filename).toURI());
         String xmlFileName = filename.replace(".bib", ".xml");
-        List<BibEntry> entries = bibtexImporter.importDatabase(importFile).getDatabase().getEntries();
-        Path expectedFile = Path.of(ModsExportFormatFilesTest.class.getResource(xmlFileName).toURI());
+        List<BibEntry> entries =
+                bibtexImporter.importDatabase(importFile).getDatabase().getEntries();
+        Path expectedFile =
+                Path.of(ModsExportFormatFilesTest.class.getResource(xmlFileName).toURI());
 
         exporter.export(databaseContext, exportedFile, entries);
 
@@ -86,8 +98,10 @@ public class ModsExportFormatFilesTest {
     @ParameterizedTest
     @MethodSource("fileNames")
     public final void testExportAsModsAndThenImportAsMods(String filename) throws Exception {
-        importFile = Path.of(ModsExportFormatFilesTest.class.getResource(filename).toURI());
-        List<BibEntry> entries = bibtexImporter.importDatabase(importFile).getDatabase().getEntries();
+        importFile =
+                Path.of(ModsExportFormatFilesTest.class.getResource(filename).toURI());
+        List<BibEntry> entries =
+                bibtexImporter.importDatabase(importFile).getDatabase().getEntries();
 
         exporter.export(databaseContext, exportedFile, entries);
         BibEntryAssert.assertEquals(entries, exportedFile, modsImporter);
@@ -96,16 +110,18 @@ public class ModsExportFormatFilesTest {
     @ParameterizedTest
     @MethodSource("fileNames")
     public final void testImportAsModsAndExportAsMods(String filename) throws Exception {
-        importFile = Path.of(ModsExportFormatFilesTest.class.getResource(filename).toURI());
+        importFile =
+                Path.of(ModsExportFormatFilesTest.class.getResource(filename).toURI());
         String xmlFileName = filename.replace(".bib", ".xml");
-        Path xmlFile = Path.of(ModsExportFormatFilesTest.class.getResource(xmlFileName).toURI());
+        Path xmlFile =
+                Path.of(ModsExportFormatFilesTest.class.getResource(xmlFileName).toURI());
 
-        List<BibEntry> entries = modsImporter.importDatabase(xmlFile).getDatabase().getEntries();
+        List<BibEntry> entries =
+                modsImporter.importDatabase(xmlFile).getDatabase().getEntries();
 
         exporter.export(databaseContext, exportedFile, entries);
 
         assertEquals(
-                String.join("\n", Files.readAllLines(xmlFile)),
-                String.join("\n", Files.readAllLines(exportedFile)));
+                String.join("\n", Files.readAllLines(xmlFile)), String.join("\n", Files.readAllLines(exportedFile)));
     }
 }

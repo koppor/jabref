@@ -30,9 +30,11 @@ public class CitationKeyPatternTabViewModel implements PreferenceTabViewModel {
 
     // The list and the default properties are being overwritten by the bound properties of the tableView, but to
     // prevent an NPE on storing the preferences before lazy-loading of the setValues, they need to be initialized.
-    private final ListProperty<CitationKeyPatternPanelItemModel> patternListProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ObjectProperty<CitationKeyPatternPanelItemModel> defaultKeyPatternProperty = new SimpleObjectProperty<>(
-            new CitationKeyPatternPanelItemModel(new CitationKeyPatternPanelViewModel.DefaultEntryType(), ""));
+    private final ListProperty<CitationKeyPatternPanelItemModel> patternListProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ObjectProperty<CitationKeyPatternPanelItemModel> defaultKeyPatternProperty =
+            new SimpleObjectProperty<>(
+                    new CitationKeyPatternPanelItemModel(new CitationKeyPatternPanelViewModel.DefaultEntryType(), ""));
 
     private final CitationKeyPatternPreferences keyPatternPreferences;
 
@@ -46,13 +48,11 @@ public class CitationKeyPatternTabViewModel implements PreferenceTabViewModel {
         overwriteWarningProperty.setValue(keyPatternPreferences.shouldWarnBeforeOverwriteCiteKey());
         generateOnSaveProperty.setValue(keyPatternPreferences.shouldGenerateCiteKeysBeforeSaving());
 
-        if (keyPatternPreferences.getKeySuffix()
-                == CitationKeyPatternPreferences.KeySuffix.ALWAYS) {
+        if (keyPatternPreferences.getKeySuffix() == CitationKeyPatternPreferences.KeySuffix.ALWAYS) {
             letterAlwaysAddProperty.setValue(true);
             letterStartAProperty.setValue(false);
             letterStartBProperty.setValue(false);
-        } else if (keyPatternPreferences.getKeySuffix()
-                == CitationKeyPatternPreferences.KeySuffix.SECOND_WITH_A) {
+        } else if (keyPatternPreferences.getKeySuffix() == CitationKeyPatternPreferences.KeySuffix.SECOND_WITH_A) {
             letterAlwaysAddProperty.setValue(false);
             letterStartAProperty.setValue(true);
             letterStartBProperty.setValue(false);
@@ -69,8 +69,8 @@ public class CitationKeyPatternTabViewModel implements PreferenceTabViewModel {
 
     @Override
     public void storeSettings() {
-        GlobalCitationKeyPattern newKeyPattern =
-                new GlobalCitationKeyPattern(keyPatternPreferences.getKeyPattern().getDefaultValue());
+        GlobalCitationKeyPattern newKeyPattern = new GlobalCitationKeyPattern(
+                keyPatternPreferences.getKeyPattern().getDefaultValue());
         patternListProperty.forEach(item -> {
             String patternString = item.getPattern();
             if (!item.getEntryType().getName().equals("default")) {

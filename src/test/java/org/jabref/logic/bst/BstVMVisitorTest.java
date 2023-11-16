@@ -52,7 +52,8 @@ class BstVMVisitorTest {
 
     @Test
     void testVisitFunctionCommand() {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 FUNCTION { test.func } { #1 'test.var := }
                 EXECUTE { test.func }
                 """);
@@ -66,7 +67,8 @@ class BstVMVisitorTest {
 
     @Test
     void testVisitMacroCommand() {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 MACRO { jan } { "January" }
                 EXECUTE { jan }
                 """);
@@ -99,7 +101,8 @@ class BstVMVisitorTest {
 
     @Test
     void testVisitReadCommand() {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 ENTRY { author title booktitle year owner timestamp url } { } { }
                 READ
                 """);
@@ -119,7 +122,8 @@ class BstVMVisitorTest {
 
     @Test
     public void testVisitExecuteCommand() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 INTEGERS { variable.a }
                 FUNCTION { init.state.consts } { #5 'variable.a := }
                 EXECUTE { init.state.consts }
@@ -132,16 +136,15 @@ class BstVMVisitorTest {
 
     @Test
     public void testVisitIterateCommand() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 ENTRY { } { } { }
                 FUNCTION { test } { cite$ }
                 READ
                 ITERATE { test }
                 """);
-        List<BibEntry> testEntries = List.of(
-                BstVMTest.defaultTestEntry(),
-                new BibEntry(StandardEntryType.Article)
-                        .withCitationKey("test"));
+        List<BibEntry> testEntries =
+                List.of(BstVMTest.defaultTestEntry(), new BibEntry(StandardEntryType.Article).withCitationKey("test"));
 
         vm.render(testEntries);
 
@@ -152,16 +155,15 @@ class BstVMVisitorTest {
 
     @Test
     public void testVisitReverseCommand() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 ENTRY { } { } { }
                 FUNCTION { test } { cite$ }
                 READ
                 REVERSE { test }
                 """);
-        List<BibEntry> testEntries = List.of(
-                BstVMTest.defaultTestEntry(),
-                new BibEntry(StandardEntryType.Article)
-                        .withCitationKey("test"));
+        List<BibEntry> testEntries =
+                List.of(BstVMTest.defaultTestEntry(), new BibEntry(StandardEntryType.Article).withCitationKey("test"));
 
         vm.render(testEntries);
 
@@ -172,7 +174,8 @@ class BstVMVisitorTest {
 
     @Test
     public void testVisitSortCommand() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 ENTRY { } { } { }
                 FUNCTION { presort } { cite$ 'sort.key$ := }
                 ITERATE { presort }
@@ -195,7 +198,8 @@ class BstVMVisitorTest {
 
     @Test
     void testVisitIdentifier() {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 ENTRY { } { local.variable } { local.label }
                 READ
                 STRINGS { label }
@@ -223,7 +227,8 @@ class BstVMVisitorTest {
 
     @Test
     void testVisitStackitem() {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 STRINGS { t }
                 FUNCTION { test2 } { #3 }
                 FUNCTION { test } {

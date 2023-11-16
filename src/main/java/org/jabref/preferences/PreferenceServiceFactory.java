@@ -9,6 +9,5 @@ public class PreferenceServiceFactory implements Factory<PreferencesService> {
     }
 
     @Override
-    public void dispose(PreferencesService instance) {
-    }
+    public void dispose(PreferencesService instance) {}
 }

@@ -24,13 +24,16 @@ class ImportFormatReaderParameterlessTest {
     void setUp() {
         ImporterPreferences importerPreferences = mock(ImporterPreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(importerPreferences.getCustomImporters()).thenReturn(FXCollections.emptyObservableSet());
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
         reader = new ImportFormatReader(importerPreferences, importFormatPreferences, fileMonitor);
     }
 
     @Test
     void importUnknownFormatThrowsExceptionIfNoMatchingImporterWasFound() throws Exception {
-        Path file = Path.of(ImportFormatReaderParameterlessTest.class.getResource("fileformat/emptyFile.xml").toURI());
+        Path file = Path.of(ImportFormatReaderParameterlessTest.class
+                .getResource("fileformat/emptyFile.xml")
+                .toURI());
         assertThrows(ImportException.class, () -> reader.importUnknownFormat(file, fileMonitor));
     }
 

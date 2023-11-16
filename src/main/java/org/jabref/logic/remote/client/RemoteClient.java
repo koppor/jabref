@@ -34,7 +34,9 @@ public class RemoteClient {
                 return true;
             } else {
                 String port = String.valueOf(this.port);
-                String errorMessage = Localization.lang("Cannot use port %0 for remote operation; another application may be using it. Try specifying another port.", port);
+                String errorMessage = Localization.lang(
+                        "Cannot use port %0 for remote operation; another application may be using it. Try specifying another port.",
+                        port);
                 LOGGER.error(errorMessage);
                 return false;
             }

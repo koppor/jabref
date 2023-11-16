@@ -13,19 +13,32 @@ import com.airhacks.afterburner.views.ViewLoader;
 
 public class AutoCompletionTab extends AbstractPreferenceTabView<AutoCompletionTabViewModel> implements PreferencesTab {
 
-    @FXML private CheckBox enableAutoComplete;
-    @FXML private TextField autoCompleteFields;
-    @FXML private RadioButton autoCompleteFirstLast;
-    @FXML private RadioButton autoCompleteLastFirst;
-    @FXML private RadioButton autoCompleteBoth;
-    @FXML private RadioButton firstNameModeAbbreviated;
-    @FXML private RadioButton firstNameModeFull;
-    @FXML private RadioButton firstNameModeBoth;
+    @FXML
+    private CheckBox enableAutoComplete;
+
+    @FXML
+    private TextField autoCompleteFields;
+
+    @FXML
+    private RadioButton autoCompleteFirstLast;
+
+    @FXML
+    private RadioButton autoCompleteLastFirst;
+
+    @FXML
+    private RadioButton autoCompleteBoth;
+
+    @FXML
+    private RadioButton firstNameModeAbbreviated;
+
+    @FXML
+    private RadioButton firstNameModeFull;
+
+    @FXML
+    private RadioButton firstNameModeBoth;
 
     public AutoCompletionTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override

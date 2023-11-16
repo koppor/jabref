@@ -35,12 +35,13 @@ public class CopyMoreAction extends SimpleCommand {
     private final PreferencesService preferencesService;
     private final JournalAbbreviationRepository abbreviationRepository;
 
-    public CopyMoreAction(StandardActions action,
-                          DialogService dialogService,
-                          StateManager stateManager,
-                          ClipBoardManager clipBoardManager,
-                          PreferencesService preferencesService,
-                          JournalAbbreviationRepository abbreviationRepository) {
+    public CopyMoreAction(
+            StandardActions action,
+            DialogService dialogService,
+            StateManager stateManager,
+            ClipBoardManager clipBoardManager,
+            PreferencesService preferencesService,
+            JournalAbbreviationRepository abbreviationRepository) {
         this.action = action;
         this.dialogService = dialogService;
         this.stateManager = stateManager;
@@ -53,7 +54,8 @@ public class CopyMoreAction extends SimpleCommand {
 
     @Override
     public void execute() {
-        if (stateManager.getActiveDatabase().isEmpty() || stateManager.getSelectedEntries().isEmpty()) {
+        if (stateManager.getActiveDatabase().isEmpty()
+                || stateManager.getSelectedEntries().isEmpty()) {
             return;
         }
 
@@ -72,9 +74,9 @@ public class CopyMoreAction extends SimpleCommand {
         List<BibEntry> selectedBibEntries = stateManager.getSelectedEntries();
 
         List<String> titles = selectedBibEntries.stream()
-                                                .filter(bibEntry -> bibEntry.getTitle().isPresent())
-                                                .map(bibEntry -> bibEntry.getTitle().get())
-                                                .collect(Collectors.toList());
+                .filter(bibEntry -> bibEntry.getTitle().isPresent())
+                .map(bibEntry -> bibEntry.getTitle().get())
+                .collect(Collectors.toList());
 
         if (titles.isEmpty()) {
             dialogService.notify(Localization.lang("None of the selected entries have titles."));
@@ -86,11 +88,13 @@ public class CopyMoreAction extends SimpleCommand {
 
         if (titles.size() == selectedBibEntries.size()) {
             // All entries had titles.
-            dialogService.notify(Localization.lang("Copied '%0' to clipboard.",
-                    JabRefDialogService.shortenDialogMessage(copiedTitles)));
+            dialogService.notify(Localization.lang(
+                    "Copied '%0' to clipboard.", JabRefDialogService.shortenDialogMessage(copiedTitles)));
         } else {
-            dialogService.notify(Localization.lang("Warning: %0 out of %1 entries have undefined title.",
-                    Integer.toString(selectedBibEntries.size() - titles.size()), Integer.toString(selectedBibEntries.size())));
+            dialogService.notify(Localization.lang(
+                    "Warning: %0 out of %1 entries have undefined title.",
+                    Integer.toString(selectedBibEntries.size() - titles.size()),
+                    Integer.toString(selectedBibEntries.size())));
         }
     }
 
@@ -99,9 +103,9 @@ public class CopyMoreAction extends SimpleCommand {
 
         // Collect all non-null keys.
         List<String> keys = entries.stream()
-                                   .filter(entry -> entry.getCitationKey().isPresent())
-                                   .map(entry -> entry.getCitationKey().get())
-                                   .collect(Collectors.toList());
+                .filter(entry -> entry.getCitationKey().isPresent())
+                .map(entry -> entry.getCitationKey().get())
+                .collect(Collectors.toList());
 
         if (keys.isEmpty()) {
             dialogService.notify(Localization.lang("None of the selected entries have citation keys."));
@@ -113,10 +117,11 @@ public class CopyMoreAction extends SimpleCommand {
 
         if (keys.size() == entries.size()) {
             // All entries had keys.
-            dialogService.notify(Localization.lang("Copied '%0' to clipboard.",
-                    JabRefDialogService.shortenDialogMessage(copiedKeys)));
+            dialogService.notify(Localization.lang(
+                    "Copied '%0' to clipboard.", JabRefDialogService.shortenDialogMessage(copiedKeys)));
         } else {
-            dialogService.notify(Localization.lang("Warning: %0 out of %1 entries have undefined citation key.",
+            dialogService.notify(Localization.lang(
+                    "Warning: %0 out of %1 entries have undefined citation key.",
                     Integer.toString(entries.size() - keys.size()), Integer.toString(entries.size())));
         }
     }
@@ -126,15 +131,19 @@ public class CopyMoreAction extends SimpleCommand {
 
         // Collect all non-null DOI or DOI urls
         if (action == StandardActions.COPY_DOI_URL) {
-            copyDoiList(entries.stream()
-                    .filter(entry -> entry.getDOI().isPresent())
-                    .map(entry -> entry.getDOI().get().getURIAsASCIIString())
-                    .collect(Collectors.toList()), entries.size());
+            copyDoiList(
+                    entries.stream()
+                            .filter(entry -> entry.getDOI().isPresent())
+                            .map(entry -> entry.getDOI().get().getURIAsASCIIString())
+                            .collect(Collectors.toList()),
+                    entries.size());
         } else {
-            copyDoiList(entries.stream()
-                    .filter(entry -> entry.getDOI().isPresent())
-                    .map(entry -> entry.getDOI().get().getDOI())
-                    .collect(Collectors.toList()), entries.size());
+            copyDoiList(
+                    entries.stream()
+                            .filter(entry -> entry.getDOI().isPresent())
+                            .map(entry -> entry.getDOI().get().getDOI())
+                            .collect(Collectors.toList()),
+                    entries.size());
         }
     }
 
@@ -149,10 +158,11 @@ public class CopyMoreAction extends SimpleCommand {
 
         if (dois.size() == size) {
             // All entries had DOIs.
-            dialogService.notify(Localization.lang("Copied '%0' to clipboard.",
-                    JabRefDialogService.shortenDialogMessage(copiedDois)));
+            dialogService.notify(Localization.lang(
+                    "Copied '%0' to clipboard.", JabRefDialogService.shortenDialogMessage(copiedDois)));
         } else {
-            dialogService.notify(Localization.lang("Warning: %0 out of %1 entries have undefined DOIs.",
+            dialogService.notify(Localization.lang(
+                    "Warning: %0 out of %1 entries have undefined DOIs.",
                     Integer.toString(size - dois.size()), Integer.toString(size)));
         }
     }
@@ -162,28 +172,30 @@ public class CopyMoreAction extends SimpleCommand {
 
         // Collect all non-null keys.
         List<String> keys = entries.stream()
-                                   .filter(entry -> entry.getCitationKey().isPresent())
-                                   .map(entry -> entry.getCitationKey().get())
-                                   .collect(Collectors.toList());
+                .filter(entry -> entry.getCitationKey().isPresent())
+                .map(entry -> entry.getCitationKey().get())
+                .collect(Collectors.toList());
 
         if (keys.isEmpty()) {
             dialogService.notify(Localization.lang("None of the selected entries have citation keys."));
             return;
         }
 
-        String citeCommand = Optional.ofNullable(preferencesService.getExternalApplicationsPreferences().getCiteCommand())
-                                     .filter(cite -> cite.contains("\\")) // must contain \
-                                     .orElse("\\cite");
+        String citeCommand = Optional.ofNullable(
+                        preferencesService.getExternalApplicationsPreferences().getCiteCommand())
+                .filter(cite -> cite.contains("\\")) // must contain \
+                .orElse("\\cite");
 
         final String copiedCiteCommand = citeCommand + "{" + String.join(",", keys) + '}';
         clipBoardManager.setContent(copiedCiteCommand);
 
         if (keys.size() == entries.size()) {
             // All entries had keys.
-            dialogService.notify(Localization.lang("Copied '%0' to clipboard.",
-                    JabRefDialogService.shortenDialogMessage(copiedCiteCommand)));
+            dialogService.notify(Localization.lang(
+                    "Copied '%0' to clipboard.", JabRefDialogService.shortenDialogMessage(copiedCiteCommand)));
         } else {
-            dialogService.notify(Localization.lang("Warning: %0 out of %1 entries have undefined citation key.",
+            dialogService.notify(Localization.lang(
+                    "Warning: %0 out of %1 entries have undefined citation key.",
                     Integer.toString(entries.size() - keys.size()), Integer.toString(entries.size())));
         }
     }
@@ -192,10 +204,13 @@ public class CopyMoreAction extends SimpleCommand {
         List<BibEntry> entries = stateManager.getSelectedEntries();
 
         // ToDo: this string should be configurable to allow arbitrary exports
-        StringReader layoutString = new StringReader("\\citationkey - \\begin{title}\\format[RemoveBrackets]{\\title}\\end{title}\n");
+        StringReader layoutString =
+                new StringReader("\\citationkey - \\begin{title}\\format[RemoveBrackets]{\\title}\\end{title}\n");
         Layout layout;
         try {
-            layout = new LayoutHelper(layoutString, preferencesService.getLayoutFormatterPreferences(), abbreviationRepository).getLayoutFromText();
+            layout = new LayoutHelper(
+                            layoutString, preferencesService.getLayoutFormatterPreferences(), abbreviationRepository)
+                    .getLayoutFromText();
         } catch (IOException e) {
             LOGGER.info("Could not get layout.", e);
             return;
@@ -208,7 +223,8 @@ public class CopyMoreAction extends SimpleCommand {
         for (BibEntry entry : entries) {
             if (entry.hasCitationKey()) {
                 entriesWithKeys++;
-                keyAndTitle.append(layout.doLayout(entry, stateManager.getActiveDatabase().get().getDatabase()));
+                keyAndTitle.append(layout.doLayout(
+                        entry, stateManager.getActiveDatabase().get().getDatabase()));
             }
         }
 
@@ -221,10 +237,11 @@ public class CopyMoreAction extends SimpleCommand {
 
         if (entriesWithKeys == entries.size()) {
             // All entries had keys.
-            dialogService.notify(Localization.lang("Copied '%0' to clipboard.",
-                    JabRefDialogService.shortenDialogMessage(keyAndTitle.toString())));
+            dialogService.notify(Localization.lang(
+                    "Copied '%0' to clipboard.", JabRefDialogService.shortenDialogMessage(keyAndTitle.toString())));
         } else {
-            dialogService.notify(Localization.lang("Warning: %0 out of %1 entries have undefined citation key.",
+            dialogService.notify(Localization.lang(
+                    "Warning: %0 out of %1 entries have undefined citation key.",
                     Integer.toString(entries.size() - entriesWithKeys), Integer.toString(entries.size())));
         }
     }
@@ -240,9 +257,8 @@ public class CopyMoreAction extends SimpleCommand {
         StringBuilder keyAndLink = new StringBuilder();
         StringBuilder fallbackString = new StringBuilder();
 
-        List<BibEntry> entriesWithKey = entries.stream()
-                                               .filter(BibEntry::hasCitationKey)
-                                               .collect(Collectors.toList());
+        List<BibEntry> entriesWithKey =
+                entries.stream().filter(BibEntry::hasCitationKey).collect(Collectors.toList());
 
         if (entriesWithKey.isEmpty()) {
             dialogService.notify(Localization.lang("None of the selected entries have citation keys."));
@@ -262,10 +278,11 @@ public class CopyMoreAction extends SimpleCommand {
 
         if (entriesWithKey.size() == entries.size()) {
             // All entries had keys.
-            dialogService.notify(Localization.lang("Copied '%0' to clipboard.",
-                    JabRefDialogService.shortenDialogMessage(keyAndLink.toString())));
+            dialogService.notify(Localization.lang(
+                    "Copied '%0' to clipboard.", JabRefDialogService.shortenDialogMessage(keyAndLink.toString())));
         } else {
-            dialogService.notify(Localization.lang("Warning: %0 out of %1 entries have undefined citation key.",
+            dialogService.notify(Localization.lang(
+                    "Warning: %0 out of %1 entries have undefined citation key.",
                     Long.toString(entries.size() - entriesWithKey.size()), Integer.toString(entries.size())));
         }
     }

@@ -24,9 +24,11 @@ class StringUtilTest {
         Path path = Path.of("src", "main", "java", StringUtil.class.getName().replace('.', '/') + ".java");
         int lineCount = Files.readAllLines(path, StandardCharsets.UTF_8).size();
 
-        assertTrue(lineCount <= 774, "StringUtil increased in size to " + lineCount + ". "
-                + "We try to keep this class as small as possible. "
-                + "Thus think twice if you add something to StringUtil.");
+        assertTrue(
+                lineCount <= 774,
+                "StringUtil increased in size to " + lineCount + ". "
+                        + "We try to keep this class as small as possible. "
+                        + "Thus think twice if you add something to StringUtil.");
     }
 
     @Test
@@ -130,7 +132,7 @@ class StringUtilTest {
 
         assertEquals("", StringUtil.join(s, "\\", 3, s.length));
 
-        assertEquals("", StringUtil.join(new String[]{}, "\\", 0, 0));
+        assertEquals("", StringUtil.join(new String[] {}, "\\", 0, 0));
     }
 
     @Test
@@ -165,27 +167,30 @@ class StringUtilTest {
     @Test
     void testWrap() {
         String newline = "newline";
-        assertEquals("aaaaa" + newline + "\tbbbbb" + newline + "\tccccc",
-                StringUtil.wrap("aaaaa bbbbb ccccc", 5, newline));
+        assertEquals(
+                "aaaaa" + newline + "\tbbbbb" + newline + "\tccccc", StringUtil.wrap("aaaaa bbbbb ccccc", 5, newline));
         assertEquals("aaaaa bbbbb" + newline + "\tccccc", StringUtil.wrap("aaaaa bbbbb ccccc", 8, newline));
         assertEquals("aaaaa bbbbb" + newline + "\tccccc", StringUtil.wrap("aaaaa bbbbb ccccc", 11, newline));
         assertEquals("aaaaa bbbbb ccccc", StringUtil.wrap("aaaaa bbbbb ccccc", 12, newline));
-        assertEquals("aaaaa" + newline + "\t" + newline + "\tbbbbb" + newline + "\t" + newline + "\tccccc",
+        assertEquals(
+                "aaaaa" + newline + "\t" + newline + "\tbbbbb" + newline + "\t" + newline + "\tccccc",
                 StringUtil.wrap("aaaaa\nbbbbb\nccccc", 12, newline));
         assertEquals(
                 "aaaaa" + newline + "\t" + newline + "\t" + newline + "\tbbbbb" + newline + "\t" + newline + "\tccccc",
                 StringUtil.wrap("aaaaa\n\nbbbbb\nccccc", 12, newline));
-        assertEquals("aaaaa" + newline + "\t" + newline + "\tbbbbb" + newline + "\t" + newline + "\tccccc",
+        assertEquals(
+                "aaaaa" + newline + "\t" + newline + "\tbbbbb" + newline + "\t" + newline + "\tccccc",
                 StringUtil.wrap("aaaaa\r\nbbbbb\r\nccccc", 12, newline));
     }
 
     @Test
     void testDecodeStringDoubleArray() {
-        assertArrayEquals(new String[][]{{"a", "b"}, {"c", "d"}}, StringUtil.decodeStringDoubleArray("a:b;c:d"));
-        assertArrayEquals(new String[][]{{"a", ""}, {"c", "d"}}, StringUtil.decodeStringDoubleArray("a:;c:d"));
+        assertArrayEquals(new String[][] {{"a", "b"}, {"c", "d"}}, StringUtil.decodeStringDoubleArray("a:b;c:d"));
+        assertArrayEquals(new String[][] {{"a", ""}, {"c", "d"}}, StringUtil.decodeStringDoubleArray("a:;c:d"));
         // arrays first differed at element [0][1]; expected: null<null> but was: java.lang.String<null>
         // assertArrayEquals(stringArray2res, StringUtil.decodeStringDoubleArray(encStringArray2));
-        assertArrayEquals(new String[][]{{"a", ":b"}, {"c;", "d"}}, StringUtil.decodeStringDoubleArray("a:\\:b;c\\;:d"));
+        assertArrayEquals(
+                new String[][] {{"a", ":b"}, {"c;", "d"}}, StringUtil.decodeStringDoubleArray("a:\\:b;c\\;:d"));
     }
 
     @Test
@@ -295,7 +300,8 @@ class StringUtilTest {
     @Test
     void testLimitStringLengthLimiting() {
         assertEquals("TestTes...", StringUtil.limitStringLength("TestTestTestTestTest", 10));
-        assertEquals(10, StringUtil.limitStringLength("TestTestTestTestTest", 10).length());
+        assertEquals(
+                10, StringUtil.limitStringLength("TestTestTestTestTest", 10).length());
     }
 
     @Test
@@ -315,12 +321,7 @@ class StringUtilTest {
     }
 
     static Stream<Arguments> testRepeatSpacesData() {
-        return Stream.of(
-                Arguments.of("", -1),
-                Arguments.of("", 0),
-                Arguments.of(" ", 1),
-                Arguments.of("       ", 7)
-        );
+        return Stream.of(Arguments.of("", -1), Arguments.of("", 0), Arguments.of(" ", 1), Arguments.of("       ", 7));
     }
 
     @ParameterizedTest
@@ -371,8 +372,7 @@ class StringUtilTest {
                 Arguments.of("", ""),
                 Arguments.of("\" \"", " "),
                 Arguments.of("world", "world"),
-                Arguments.of("\"hello world\"", "hello world")
-        );
+                Arguments.of("\"hello world\"", "hello world"));
     }
 
     @ParameterizedTest
@@ -397,7 +397,6 @@ class StringUtilTest {
                 Arguments.of(true, "file_url "),
                 Arguments.of(true, "file url\n"),
                 Arguments.of(true, " "),
-
                 Arguments.of(false, "file_url"),
                 Arguments.of(false, "PascalCase"),
                 Arguments.of(false, ""));

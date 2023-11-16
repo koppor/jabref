@@ -27,11 +27,12 @@ public class OpenOfficePreferences {
     private final ObservableList<String> externalStyles;
     private final StringProperty currentStyle;
 
-    public OpenOfficePreferences(String executablePath,
-                                 boolean useAllDatabases,
-                                 boolean syncWhenCiting,
-                                 List<String> externalStyles,
-                                 String currentStyle) {
+    public OpenOfficePreferences(
+            String executablePath,
+            boolean useAllDatabases,
+            boolean syncWhenCiting,
+            List<String> externalStyles,
+            String currentStyle) {
         this.executablePath = new SimpleStringProperty(executablePath);
         this.useAllDatabases = new SimpleBooleanProperty(useAllDatabases);
         this.syncWhenCiting = new SimpleBooleanProperty(syncWhenCiting);

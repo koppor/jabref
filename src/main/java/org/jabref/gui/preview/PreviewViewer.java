@@ -48,7 +48,8 @@ public class PreviewViewer extends ScrollPane implements InvalidationListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(PreviewViewer.class);
 
     // https://stackoverflow.com/questions/5669448/get-selected-texts-html-in-div/5670825#5670825
-    private static final String JS_GET_SELECTION_HTML_SCRIPT = """
+    private static final String JS_GET_SELECTION_HTML_SCRIPT =
+            """
                                                                    function getSelectionHtml() {
                                                                    var html = "";
                                                                    if (typeof window.getSelection != "undefined") {
@@ -104,14 +105,16 @@ public class PreviewViewer extends ScrollPane implements InvalidationListener {
                        </script>
 
                     </head>""";
-    // This is a string format, and it takes a variable name as an argument to pass to the markInstance.markRegExp() Javascript method.
+    // This is a string format, and it takes a variable name as an argument to pass to the markInstance.markRegExp()
+    // Javascript method.
     private static final String JS_MARK_REG_EXP_CALLBACK =
             """
             {done: function(){
                 markInstance.markRegExp(%s);}
             }""";
 
-    // This is a string format, and it takes a variable name as an argument to pass to the markInstance.unmark() Javascript method.
+    // This is a string format, and it takes a variable name as an argument to pass to the markInstance.unmark()
+    // Javascript method.
     private static final String JS_UNMARK_WITH_CALLBACK =
             """
             var markInstance = new Mark(document.getElementById("content"));
@@ -130,6 +133,7 @@ public class PreviewViewer extends ScrollPane implements InvalidationListener {
      * The entry currently shown
      */
     private Optional<BibEntry> entry = Optional.empty();
+
     private Optional<Pattern> searchHighlightPattern = Optional.empty();
 
     private final BibDatabaseContext database;
@@ -143,12 +147,13 @@ public class PreviewViewer extends ScrollPane implements InvalidationListener {
     /**
      * @param database Used for resolving strings and pdf directories for links.
      */
-    public PreviewViewer(BibDatabaseContext database,
-                         DialogService dialogService,
-                         PreferencesService preferencesService,
-                         StateManager stateManager,
-                         ThemeManager themeManager,
-                         TaskExecutor taskExecutor) {
+    public PreviewViewer(
+            BibDatabaseContext database,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            StateManager stateManager,
+            ThemeManager themeManager,
+            TaskExecutor taskExecutor) {
         this.database = Objects.requireNonNull(database);
         this.dialogService = dialogService;
         this.preferencesService = preferencesService;
@@ -162,7 +167,6 @@ public class PreviewViewer extends ScrollPane implements InvalidationListener {
         previewView.setContextMenuEnabled(false);
 
         previewView.getEngine().getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
-
             if (newValue != Worker.State.SUCCEEDED) {
                 return;
             }
@@ -177,21 +181,24 @@ public class PreviewViewer extends ScrollPane implements InvalidationListener {
             for (int i = 0; i < anchorList.getLength(); i++) {
                 Node node = anchorList.item(i);
                 EventTarget eventTarget = (EventTarget) node;
-                eventTarget.addEventListener("click", evt -> {
-                    EventTarget target = evt.getCurrentTarget();
-                    HTMLAnchorElement anchorElement = (HTMLAnchorElement) target;
-                    String href = anchorElement.getHref();
-                    if (href != null) {
-                        try {
-                            JabRefDesktop.openBrowser(href, preferencesService.getFilePreferences());
-                        } catch (MalformedURLException exception) {
-                            LOGGER.error("Invalid URL", exception);
-                        } catch (IOException exception) {
-                            LOGGER.error("Invalid URL Input", exception);
-                        }
-                    }
-                    evt.preventDefault();
-                }, false);
+                eventTarget.addEventListener(
+                        "click",
+                        evt -> {
+                            EventTarget target = evt.getCurrentTarget();
+                            HTMLAnchorElement anchorElement = (HTMLAnchorElement) target;
+                            String href = anchorElement.getHref();
+                            if (href != null) {
+                                try {
+                                    JabRefDesktop.openBrowser(href, preferencesService.getFilePreferences());
+                                } catch (MalformedURLException exception) {
+                                    LOGGER.error("Invalid URL", exception);
+                                } catch (IOException exception) {
+                                    LOGGER.error("Invalid URL Input", exception);
+                                }
+                            }
+                            evt.preventDefault();
+                        },
+                        false);
             }
         });
 
@@ -216,14 +223,16 @@ public class PreviewViewer extends ScrollPane implements InvalidationListener {
      */
     private static String createJavaScriptRegex(Pattern regex) {
         String pattern = regex.pattern();
-        // Create a JavaScript regular expression literal (https://ecma-international.org/ecma-262/10.0/index.html#sec-literals-regular-expression-literals)
+        // Create a JavaScript regular expression literal
+        // (https://ecma-international.org/ecma-262/10.0/index.html#sec-literals-regular-expression-literals)
         // Forward slashes are reserved to delimit the regular expression body. Hence, they must be escaped.
         pattern = UNESCAPED_FORWARD_SLASH.matcher(pattern).replaceAll("\\\\/");
         return "/" + pattern + "/gmi";
     }
 
     public void setLayout(PreviewLayout newLayout) {
-        // Change listeners might set the layout to null while the update method is executing, therefore we need to prevent this here
+        // Change listeners might set the layout to null while the update method is executing, therefore we need to
+        // prevent this here
         if (newLayout == null) {
             return;
         }
@@ -257,9 +266,10 @@ public class PreviewViewer extends ScrollPane implements InvalidationListener {
 
         Number.serialExportNumber = 1; // Set entry number in case that is included in the preview layout.
 
-        BackgroundTask
-                .wrap(() -> layout.generatePreview(entry.get(), database))
-                .onRunning(() -> setPreviewText("<i>" + Localization.lang("Processing %0", Localization.lang("Citation Style")) + ": " + layout.getDisplayName() + " ..." + "</i>"))
+        BackgroundTask.wrap(() -> layout.generatePreview(entry.get(), database))
+                .onRunning(() ->
+                        setPreviewText("<i>" + Localization.lang("Processing %0", Localization.lang("Citation Style"))
+                                + ": " + layout.getDisplayName() + " ..." + "</i>"))
                 .onSuccess(this::setPreviewText)
                 .onFailure(exception -> {
                     LOGGER.error("Error while generating citation style", exception);
@@ -269,14 +279,16 @@ public class PreviewViewer extends ScrollPane implements InvalidationListener {
     }
 
     private void setPreviewText(String text) {
-        String myText = String.format("""
+        String myText = String.format(
+                """
                 <html>
                     %s
                     <body id="previewBody">
                         <div id="content"> %s </div>
                     </body>
                 </html>
-                """, JS_HIGHLIGHT_FUNCTION, text);
+                """,
+                JS_HIGHLIGHT_FUNCTION, text);
         previewView.getEngine().setJavaScriptEnabled(true);
         previewView.getEngine().loadContent(myText);
 
@@ -290,13 +302,14 @@ public class PreviewViewer extends ScrollPane implements InvalidationListener {
             return;
         }
 
-        BackgroundTask
-                .wrap(() -> {
-                    job.getJobSettings().setJobName(entry.flatMap(BibEntry::getCitationKey).orElse("NO ENTRY"));
+        BackgroundTask.wrap(() -> {
+                    job.getJobSettings()
+                            .setJobName(entry.flatMap(BibEntry::getCitationKey).orElse("NO ENTRY"));
                     previewView.getEngine().print(job);
                     job.endJob();
                 })
-                .onFailure(exception -> dialogService.showErrorDialogAndWait(Localization.lang("Could not print preview"), exception))
+                .onFailure(exception ->
+                        dialogService.showErrorDialogAndWait(Localization.lang("Could not print preview"), exception))
                 .executeWith(taskExecutor);
     }
 

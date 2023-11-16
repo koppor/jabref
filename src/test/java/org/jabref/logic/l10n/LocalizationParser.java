@@ -32,9 +32,8 @@ public class LocalizationParser {
 
     public static SortedSet<LocalizationEntry> findMissingKeys(LocalizationBundleForTest type) throws IOException {
         Set<LocalizationEntry> entries = findLocalizationEntriesInFiles(type);
-        Set<String> keysInJavaFiles = entries.stream()
-                                             .map(LocalizationEntry::getKey)
-                                             .collect(Collectors.toSet());
+        Set<String> keysInJavaFiles =
+                entries.stream().map(LocalizationEntry::getKey).collect(Collectors.toSet());
 
         Set<String> englishKeys;
         if (type == LocalizationBundleForTest.LANG) {
@@ -46,8 +45,8 @@ public class LocalizationParser {
         missingKeys.removeAll(englishKeys);
 
         return entries.stream()
-                      .filter(e -> missingKeys.contains(e.getKey()))
-                      .collect(Collectors.toCollection(TreeSet::new));
+                .filter(e -> missingKeys.contains(e.getKey()))
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
     public static SortedSet<String> findObsolete(LocalizationBundleForTest type) throws IOException {
@@ -57,13 +56,15 @@ public class LocalizationParser {
         } else {
             englishKeys = getKeysInPropertiesFile("/l10n/Menu_en.properties");
         }
-        Set<String> keysInSourceFiles = findLocalizationEntriesInFiles(type)
-                .stream().map(LocalizationEntry::getKey).collect(Collectors.toSet());
+        Set<String> keysInSourceFiles = findLocalizationEntriesInFiles(type).stream()
+                .map(LocalizationEntry::getKey)
+                .collect(Collectors.toSet());
         englishKeys.removeAll(keysInSourceFiles);
         return new TreeSet<>(englishKeys);
     }
 
-    private static Set<LocalizationEntry> findLocalizationEntriesInFiles(LocalizationBundleForTest type) throws IOException {
+    private static Set<LocalizationEntry> findLocalizationEntriesInFiles(LocalizationBundleForTest type)
+            throws IOException {
         if (type == LocalizationBundleForTest.MENU) {
             return findLocalizationEntriesInJavaFiles(type);
         } else {
@@ -116,20 +117,19 @@ public class LocalizationParser {
     public static SortedSet<String> getKeysInPropertiesFile(String path) {
         Properties properties = getProperties(path);
         return properties.keySet().stream()
-                         .map(Object::toString)
-                         .map(String::trim)
-                         .map(key -> key
-                                 // escape keys to make them comparable
-                                 .replace("\\", "\\\\")
-                                 .replace("\n", "\\n")
-                         )
-                         .collect(Collectors.toCollection(TreeSet::new));
+                .map(Object::toString)
+                .map(String::trim)
+                .map(key -> key
+                        // escape keys to make them comparable
+                        .replace("\\", "\\\\")
+                        .replace("\n", "\\n"))
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
     public static Properties getProperties(String path) {
         Properties properties = new Properties();
         try (InputStream is = LocalizationConsistencyTest.class.getResourceAsStream(path);
-             InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
             properties.load(reader);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -154,11 +154,12 @@ public class LocalizationParser {
         }
         String content = String.join("\n", lines);
         return JavaLocalizationEntryParser.getLanguageKeysInString(content, type).stream()
-                                          .map(key -> new LocalizationEntry(path, key, type))
-                                          .collect(Collectors.toList());
+                .map(key -> new LocalizationEntry(path, key, type))
+                .collect(Collectors.toList());
     }
 
-    private static List<LocalizationEntry> getLocalizationParametersInJavaFile(Path path, LocalizationBundleForTest type) {
+    private static List<LocalizationEntry> getLocalizationParametersInJavaFile(
+            Path path, LocalizationBundleForTest type) {
         List<String> lines;
         try {
             lines = Files.readAllLines(path, StandardCharsets.UTF_8);
@@ -167,8 +168,8 @@ public class LocalizationParser {
         }
         String content = String.join("\n", lines);
         return JavaLocalizationEntryParser.getLocalizationParameter(content, type).stream()
-                                          .map(key -> new LocalizationEntry(path, key, type))
-                                          .collect(Collectors.toList());
+                .map(key -> new LocalizationEntry(path, key, type))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -214,21 +215,26 @@ public class LocalizationParser {
         }
 
         return result.stream()
-                     .map(key -> new LocalizationEntry(path, key, type))
-                     .collect(Collectors.toList());
+                .map(key -> new LocalizationEntry(path, key, type))
+                .collect(Collectors.toList());
     }
 
     private static void setStaticLoad(FXMLLoader loader) {
         // Somebody decided to make "setStaticLoad" package-private, so let's use reflection
         //
         // Issues in JFX:
-        //   - https://bugs.openjdk.java.net/browse/JDK-8159005 "SceneBuilder needs public access to FXMLLoader setStaticLoad" --> call for "request from community users with use cases"
+        //   - https://bugs.openjdk.java.net/browse/JDK-8159005 "SceneBuilder needs public access to FXMLLoader
+        // setStaticLoad" --> call for "request from community users with use cases"
         //   - https://bugs.openjdk.java.net/browse/JDK-8127532 "FXMLLoader#setStaticLoad is deprecated"
         try {
             Method method = FXMLLoader.class.getDeclaredMethod("setStaticLoad", boolean.class);
             method.setAccessible(true);
             method.invoke(loader, true);
-        } catch (SecurityException | NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (SecurityException
+                | NoSuchMethodException
+                | IllegalAccessException
+                | IllegalArgumentException
+                | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }

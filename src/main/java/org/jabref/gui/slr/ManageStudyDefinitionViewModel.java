@@ -44,10 +44,7 @@ public class ManageStudyDefinitionViewModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(ManageStudyDefinitionViewModel.class);
 
     private static final Set<String> DEFAULT_SELECTION = Set.of(
-            ACMPortalFetcher.FETCHER_NAME,
-            IEEE.FETCHER_NAME,
-            SpringerFetcher.FETCHER_NAME,
-            DBLPFetcher.FETCHER_NAME);
+            ACMPortalFetcher.FETCHER_NAME, IEEE.FETCHER_NAME, SpringerFetcher.FETCHER_NAME, DBLPFetcher.FETCHER_NAME);
 
     private final StringProperty title = new SimpleStringProperty();
     private final ObservableList<String> authors = FXCollections.observableArrayList();
@@ -63,20 +60,21 @@ public class ManageStudyDefinitionViewModel {
     /**
      * Constructor for a new study
      */
-    public ManageStudyDefinitionViewModel(ImportFormatPreferences importFormatPreferences,
-                                          ImporterPreferences importerPreferences,
-                                          DialogService dialogService) {
-        databases.addAll(WebFetchers.getSearchBasedFetchers(importFormatPreferences, importerPreferences)
-                                    .stream()
-                                    .map(SearchBasedFetcher::getName)
-                                    // The user wants to select specific fetchers
-                                    // The fetcher summarizing ALL fetchers can be emulated by selecting ALL fetchers (which happens rarely when doing an SLR)
-                                    .filter(name -> !name.equals(CompositeSearchBasedFetcher.FETCHER_NAME))
-                                    .map(name -> {
-                                        boolean enabled = DEFAULT_SELECTION.contains(name);
-                                        return new StudyCatalogItem(name, enabled);
-                                    })
-                                    .toList());
+    public ManageStudyDefinitionViewModel(
+            ImportFormatPreferences importFormatPreferences,
+            ImporterPreferences importerPreferences,
+            DialogService dialogService) {
+        databases.addAll(WebFetchers.getSearchBasedFetchers(importFormatPreferences, importerPreferences).stream()
+                .map(SearchBasedFetcher::getName)
+                // The user wants to select specific fetchers
+                // The fetcher summarizing ALL fetchers can be emulated by selecting ALL fetchers (which happens rarely
+                // when doing an SLR)
+                .filter(name -> !name.equals(CompositeSearchBasedFetcher.FETCHER_NAME))
+                .map(name -> {
+                    boolean enabled = DEFAULT_SELECTION.contains(name);
+                    return new StudyCatalogItem(name, enabled);
+                })
+                .toList());
         this.dialogService = Objects.requireNonNull(dialogService);
     }
 
@@ -86,28 +84,29 @@ public class ManageStudyDefinitionViewModel {
      * @param study          The study to initialize the UI from
      * @param studyDirectory The path where the study resides
      */
-    public ManageStudyDefinitionViewModel(Study study,
-                                          Path studyDirectory,
-                                          ImportFormatPreferences importFormatPreferences,
-                                          ImporterPreferences importerPreferences,
-                                          DialogService dialogService) {
+    public ManageStudyDefinitionViewModel(
+            Study study,
+            Path studyDirectory,
+            ImportFormatPreferences importFormatPreferences,
+            ImporterPreferences importerPreferences,
+            DialogService dialogService) {
         // copy the content of the study object into the UI fields
         authors.addAll(Objects.requireNonNull(study).getAuthors());
         title.setValue(study.getTitle());
         researchQuestions.addAll(study.getResearchQuestions());
         queries.addAll(study.getQueries().stream().map(StudyQuery::getQuery).toList());
         List<StudyDatabase> studyDatabases = study.getDatabases();
-        databases.addAll(WebFetchers.getSearchBasedFetchers(importFormatPreferences, importerPreferences)
-                                    .stream()
-                                    .map(SearchBasedFetcher::getName)
-                                    // The user wants to select specific fetchers
-                                    // The fetcher summarizing ALL fetchers can be emulated by selecting ALL fetchers (which happens rarely when doing an SLR)
-                                    .filter(name -> !name.equals(CompositeSearchBasedFetcher.FETCHER_NAME))
-                                    .map(name -> {
-                                        boolean enabled = studyDatabases.contains(new StudyDatabase(name, true));
-                                        return new StudyCatalogItem(name, enabled);
-                                    })
-                                    .toList());
+        databases.addAll(WebFetchers.getSearchBasedFetchers(importFormatPreferences, importerPreferences).stream()
+                .map(SearchBasedFetcher::getName)
+                // The user wants to select specific fetchers
+                // The fetcher summarizing ALL fetchers can be emulated by selecting ALL fetchers (which happens rarely
+                // when doing an SLR)
+                .filter(name -> !name.equals(CompositeSearchBasedFetcher.FETCHER_NAME))
+                .map(name -> {
+                    boolean enabled = studyDatabases.contains(new StudyDatabase(name, true));
+                    return new StudyCatalogItem(name, enabled);
+                })
+                .toList());
 
         this.directory.set(Objects.requireNonNull(studyDirectory).toString());
         this.dialogService = Objects.requireNonNull(dialogService);
@@ -164,7 +163,11 @@ public class ManageStudyDefinitionViewModel {
                 title.getValueSafe(),
                 researchQuestions,
                 queries.stream().map(StudyQuery::new).collect(Collectors.toList()),
-                databases.stream().map(studyDatabaseItem -> new StudyDatabase(studyDatabaseItem.getName(), studyDatabaseItem.isEnabled())).filter(StudyDatabase::isEnabled).collect(Collectors.toList()));
+                databases.stream()
+                        .map(studyDatabaseItem ->
+                                new StudyDatabase(studyDatabaseItem.getName(), studyDatabaseItem.isEnabled()))
+                        .filter(StudyDatabase::isEnabled)
+                        .collect(Collectors.toList()));
         Path studyDirectory;
         final String studyDirectoryAsString = directory.getValueSafe();
         try {
@@ -180,8 +183,7 @@ public class ManageStudyDefinitionViewModel {
             new StudyYamlParser().writeStudyYamlFile(study, studyDefinitionFile);
         } catch (IOException e) {
             LOGGER.error("Could not write study file {}", studyDefinitionFile, e);
-            dialogService.notify(Localization.lang("Please enter a valid file path.") +
-                    ": " + studyDirectoryAsString);
+            dialogService.notify(Localization.lang("Please enter a valid file path.") + ": " + studyDirectoryAsString);
             // We do not assume another path - we return that there is an invalid object.
             return null;
         }
@@ -190,8 +192,7 @@ public class ManageStudyDefinitionViewModel {
             new GitHandler(studyDirectory).createCommitOnCurrentBranch("Update study definition", false);
         } catch (Exception e) {
             LOGGER.error("Could not commit study definition file in directory {}", studyDirectory, e);
-            dialogService.notify(Localization.lang("Please enter a valid file path.") +
-                    ": " + studyDirectory);
+            dialogService.notify(Localization.lang("Please enter a valid file path.") + ": " + studyDirectory);
             // We continue nevertheless as the directory itself could be valid
         }
 
@@ -203,7 +204,8 @@ public class ManageStudyDefinitionViewModel {
     }
 
     public void setStudyDirectory(Optional<Path> studyRepositoryRoot) {
-        getDirectory().setValue(studyRepositoryRoot.map(Path::toString).orElseGet(() -> getDirectory().getValueSafe()));
+        getDirectory().setValue(studyRepositoryRoot.map(Path::toString).orElseGet(() -> getDirectory()
+                .getValueSafe()));
     }
 
     public void deleteAuthor(String item) {

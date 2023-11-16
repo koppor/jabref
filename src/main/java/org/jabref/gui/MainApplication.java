@@ -19,11 +19,12 @@ public class MainApplication extends Application {
     private static JabRefPreferences preferences;
     private static FileUpdateMonitor fileUpdateMonitor;
 
-    public static void main(List<ParserResult> parserResults,
-                            boolean blank,
-                            JabRefPreferences preferences,
-                            FileUpdateMonitor fileUpdateMonitor,
-                            String[] args) {
+    public static void main(
+            List<ParserResult> parserResults,
+            boolean blank,
+            JabRefPreferences preferences,
+            FileUpdateMonitor fileUpdateMonitor,
+            String[] args) {
         MainApplication.parserResults = parserResults;
         MainApplication.isBlank = blank;
         MainApplication.preferences = preferences;

@@ -14,10 +14,11 @@ public class GroupsPreferences {
     private final BooleanProperty shouldDisplayGroupCount;
     private final ObjectProperty<GroupHierarchyType> defaultHierarchicalContext;
 
-    public GroupsPreferences(GroupViewMode groupViewMode,
-                             boolean shouldAutoAssignGroup,
-                             boolean shouldDisplayGroupCount,
-                             GroupHierarchyType defaultHierarchicalContext) {
+    public GroupsPreferences(
+            GroupViewMode groupViewMode,
+            boolean shouldAutoAssignGroup,
+            boolean shouldDisplayGroupCount,
+            GroupHierarchyType defaultHierarchicalContext) {
 
         this.groupViewMode = new SimpleObjectProperty<>(groupViewMode);
         this.shouldAutoAssignGroup = new SimpleBooleanProperty(shouldAutoAssignGroup);

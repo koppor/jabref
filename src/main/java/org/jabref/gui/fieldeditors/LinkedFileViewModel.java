@@ -92,16 +92,18 @@ public class LinkedFileViewModel extends AbstractViewModel {
 
     private final Validator fileExistsValidator;
 
-    public LinkedFileViewModel(LinkedFile linkedFile,
-                               BibEntry entry,
-                               BibDatabaseContext databaseContext,
-                               TaskExecutor taskExecutor,
-                               DialogService dialogService,
-                               PreferencesService preferencesService) {
+    public LinkedFileViewModel(
+            LinkedFile linkedFile,
+            BibEntry entry,
+            BibDatabaseContext databaseContext,
+            TaskExecutor taskExecutor,
+            DialogService dialogService,
+            PreferencesService preferencesService) {
 
         this.linkedFile = linkedFile;
         this.preferencesService = preferencesService;
-        this.linkedFileHandler = new LinkedFileHandler(linkedFile, entry, databaseContext, preferencesService.getFilePreferences());
+        this.linkedFileHandler =
+                new LinkedFileHandler(linkedFile, entry, databaseContext, preferencesService.getFilePreferences());
         this.databaseContext = databaseContext;
         this.entry = entry;
         this.dialogService = dialogService;
@@ -113,7 +115,8 @@ public class LinkedFileViewModel extends AbstractViewModel {
                     if (linkedFile.isOnlineLink()) {
                         return true;
                     } else {
-                        Optional<Path> path = FileUtil.find(databaseContext, link, preferencesService.getFilePreferences());
+                        Optional<Path> path =
+                                FileUtil.find(databaseContext, link, preferencesService.getFilePreferences());
                         return path.isPresent() && Files.exists(path.get());
                     }
                 },
@@ -165,13 +168,14 @@ public class LinkedFileViewModel extends AbstractViewModel {
 
     public String getTruncatedDescriptionAndLink() {
         if (StringUtil.isBlank(linkedFile.getDescription())) {
-            return ControlHelper.truncateString(linkedFile.getLink(), -1, "...",
-                    ControlHelper.EllipsisPosition.CENTER);
+            return ControlHelper.truncateString(linkedFile.getLink(), -1, "...", ControlHelper.EllipsisPosition.CENTER);
         } else {
-            return ControlHelper.truncateString(linkedFile.getDescription(), -1, "...",
-                    ControlHelper.EllipsisPosition.CENTER) + " (" +
-                    ControlHelper.truncateString(linkedFile.getLink(), -1, "...",
-                    ControlHelper.EllipsisPosition.CENTER) + ")";
+            return ControlHelper.truncateString(
+                            linkedFile.getDescription(), -1, "...", ControlHelper.EllipsisPosition.CENTER)
+                    + " ("
+                    + ControlHelper.truncateString(
+                            linkedFile.getLink(), -1, "...", ControlHelper.EllipsisPosition.CENTER)
+                    + ")";
         }
     }
 
@@ -180,14 +184,16 @@ public class LinkedFileViewModel extends AbstractViewModel {
     }
 
     public JabRefIcon getTypeIcon() {
-        return ExternalFileTypes.getExternalFileTypeByLinkedFile(linkedFile, false, preferencesService.getFilePreferences())
-                                .map(ExternalFileType::getIcon)
-                                .orElse(IconTheme.JabRefIcons.FILE);
+        return ExternalFileTypes.getExternalFileTypeByLinkedFile(
+                        linkedFile, false, preferencesService.getFilePreferences())
+                .map(ExternalFileType::getIcon)
+                .orElse(IconTheme.JabRefIcons.FILE);
     }
 
     public ObjectBinding<Node> typeIconProperty() {
         if (linkedFileIconBinding == null) {
-            linkedFileIconBinding = Bindings.createObjectBinding(() -> this.getTypeIcon().getGraphicNode(), linkedFile.fileTypeProperty());
+            linkedFileIconBinding = Bindings.createObjectBinding(
+                    () -> this.getTypeIcon().getGraphicNode(), linkedFile.fileTypeProperty());
         }
 
         return linkedFileIconBinding;
@@ -211,10 +217,14 @@ public class LinkedFileViewModel extends AbstractViewModel {
 
     public void open() {
         try {
-            Optional<ExternalFileType> type = ExternalFileTypes.getExternalFileTypeByLinkedFile(linkedFile, true, preferencesService.getFilePreferences());
-            boolean successful = JabRefDesktop.openExternalFileAnyFormat(databaseContext, preferencesService.getFilePreferences(), linkedFile.getLink(), type);
+            Optional<ExternalFileType> type = ExternalFileTypes.getExternalFileTypeByLinkedFile(
+                    linkedFile, true, preferencesService.getFilePreferences());
+            boolean successful = JabRefDesktop.openExternalFileAnyFormat(
+                    databaseContext, preferencesService.getFilePreferences(), linkedFile.getLink(), type);
             if (!successful) {
-                dialogService.showErrorDialogAndWait(Localization.lang("File not found"), Localization.lang("Could not find file '%0'.", linkedFile.getLink()));
+                dialogService.showErrorDialogAndWait(
+                        Localization.lang("File not found"),
+                        Localization.lang("Could not find file '%0'.", linkedFile.getLink()));
             }
         } catch (IOException e) {
             dialogService.showErrorDialogAndWait(Localization.lang("Error opening file '%0'", linkedFile.getLink()), e);
@@ -224,17 +234,17 @@ public class LinkedFileViewModel extends AbstractViewModel {
     public void openFolder() {
         try {
             if (!linkedFile.isOnlineLink()) {
-                Optional<Path> resolvedPath = FileUtil.find(
-                        databaseContext,
-                        linkedFile.getLink(),
-                        preferencesService.getFilePreferences());
+                Optional<Path> resolvedPath =
+                        FileUtil.find(databaseContext, linkedFile.getLink(), preferencesService.getFilePreferences());
                 if (resolvedPath.isPresent()) {
-                    JabRefDesktop.openFolderAndSelectFile(resolvedPath.get(), preferencesService.getExternalApplicationsPreferences(), dialogService);
+                    JabRefDesktop.openFolderAndSelectFile(
+                            resolvedPath.get(), preferencesService.getExternalApplicationsPreferences(), dialogService);
                 } else {
                     dialogService.showErrorDialogAndWait(Localization.lang("File not found"));
                 }
             } else {
-                dialogService.showErrorDialogAndWait(Localization.lang("Cannot open folder as the file is an online link."));
+                dialogService.showErrorDialogAndWait(
+                        Localization.lang("Cannot open folder as the file is an online link."));
             }
         } catch (IOException ex) {
             LOGGER.debug("Cannot open folder", ex);
@@ -265,7 +275,9 @@ public class LinkedFileViewModel extends AbstractViewModel {
         if (file.isPresent()) {
             performRenameWithConflictCheck(targetFileName);
         } else {
-            dialogService.showErrorDialogAndWait(Localization.lang("File not found"), Localization.lang("Could not find file '%0'.", linkedFile.getLink()));
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("File not found"),
+                    Localization.lang("Could not find file '%0'.", linkedFile.getLink()));
         }
     }
 
@@ -287,7 +299,9 @@ public class LinkedFileViewModel extends AbstractViewModel {
         try {
             linkedFileHandler.renameToName(targetFileName, overwriteFile);
         } catch (IOException e) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Rename failed"), Localization.lang("JabRef cannot access the file because it is being used by another process."));
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Rename failed"),
+                    Localization.lang("JabRef cannot access the file because it is being used by another process."));
         }
     }
 
@@ -300,7 +314,8 @@ public class LinkedFileViewModel extends AbstractViewModel {
         // Get target folder
         Optional<Path> fileDir = databaseContext.getFirstExistingFileDir(preferencesService.getFilePreferences());
         if (fileDir.isEmpty()) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Move file"), Localization.lang("File directory is not set or does not exist!"));
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Move file"), Localization.lang("File directory is not set or does not exist!"));
             return;
         }
 
@@ -312,12 +327,15 @@ public class LinkedFileViewModel extends AbstractViewModel {
             } catch (IOException exception) {
                 dialogService.showErrorDialogAndWait(
                         Localization.lang("Move file"),
-                        Localization.lang("Could not move file '%0'.", file.get().toString()),
+                        Localization.lang(
+                                "Could not move file '%0'.", file.get().toString()),
                         exception);
             }
         } else {
             // File doesn't exist, so we can't move it.
-            dialogService.showErrorDialogAndWait(Localization.lang("File not found"), Localization.lang("Could not find file '%0'.", linkedFile.getLink()));
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("File not found"),
+                    Localization.lang("Could not find file '%0'.", linkedFile.getLink()));
         }
     }
 
@@ -349,13 +367,13 @@ public class LinkedFileViewModel extends AbstractViewModel {
 
         // append File directory pattern if exits
         String targetDirectoryName = FileUtil.createDirNameFromPattern(
-                databaseContext.getDatabase(),
-                entry,
-                filePreferences.getFileDirectoryPattern());
+                databaseContext.getDatabase(), entry, filePreferences.getFileDirectoryPattern());
 
         Optional<Path> targetDir = baseDir.map(dir -> dir.resolve(targetDirectoryName));
 
-        Optional<Path> currentDir = linkedFile.findIn(databaseContext, preferencesService.getFilePreferences()).map(Path::getParent);
+        Optional<Path> currentDir = linkedFile
+                .findIn(databaseContext, preferencesService.getFilePreferences())
+                .map(Path::getParent);
         if (currentDir.isEmpty()) {
             // Could not find file
             return false;
@@ -392,10 +410,15 @@ public class LinkedFileViewModel extends AbstractViewModel {
 
         ButtonType removeFromEntry = new ButtonType(Localization.lang("Remove from entry"), ButtonData.YES);
         ButtonType deleteFromEntry = new ButtonType(Localization.lang("Delete from disk"));
-        Optional<ButtonType> buttonType = dialogService.showCustomButtonDialogAndWait(AlertType.INFORMATION,
+        Optional<ButtonType> buttonType = dialogService.showCustomButtonDialogAndWait(
+                AlertType.INFORMATION,
                 Localization.lang("Delete '%0'", file.get().getFileName().toString()),
-                Localization.lang("Delete '%0' permanently from disk, or just remove the file from the entry? Pressing Delete will delete the file permanently from disk.", file.get().toString()),
-                removeFromEntry, deleteFromEntry, ButtonType.CANCEL);
+                Localization.lang(
+                        "Delete '%0' permanently from disk, or just remove the file from the entry? Pressing Delete will delete the file permanently from disk.",
+                        file.get().toString()),
+                removeFromEntry,
+                deleteFromEntry,
+                ButtonType.CANCEL);
 
         if (buttonType.isPresent()) {
             if (buttonType.get().equals(removeFromEntry)) {
@@ -407,7 +430,8 @@ public class LinkedFileViewModel extends AbstractViewModel {
                     Files.delete(file.get());
                     return true;
                 } catch (IOException ex) {
-                    dialogService.showErrorDialogAndWait(Localization.lang("Cannot delete file"), Localization.lang("File permission error"));
+                    dialogService.showErrorDialogAndWait(
+                            Localization.lang("Cannot delete file"), Localization.lang("File permission error"));
                     LOGGER.warn("File permission error while deleting: {}", linkedFile, ex);
                 }
             }
@@ -416,7 +440,8 @@ public class LinkedFileViewModel extends AbstractViewModel {
     }
 
     public void edit() {
-        Optional<LinkedFile> editedFile = dialogService.showCustomDialogAndWait(new LinkedFileEditDialogView(this.linkedFile));
+        Optional<LinkedFile> editedFile =
+                dialogService.showCustomDialogAndWait(new LinkedFileEditDialogView(this.linkedFile));
         editedFile.ifPresent(file -> {
             this.linkedFile.setLink(file.getLink());
             this.linkedFile.setDescription(file.getDescription());
@@ -429,9 +454,12 @@ public class LinkedFileViewModel extends AbstractViewModel {
             throw new UnsupportedOperationException("In order to download the file it has to be an online link");
         }
         try {
-            Optional<Path> targetDirectory = databaseContext.getFirstExistingFileDir(preferencesService.getFilePreferences());
+            Optional<Path> targetDirectory =
+                    databaseContext.getFirstExistingFileDir(preferencesService.getFilePreferences());
             if (targetDirectory.isEmpty()) {
-                dialogService.showErrorDialogAndWait(Localization.lang("Download file"), Localization.lang("File directory is not set or does not exist!"));
+                dialogService.showErrorDialogAndWait(
+                        Localization.lang("Download file"),
+                        Localization.lang("File directory is not set or does not exist!"));
                 return;
             }
 
@@ -444,14 +472,16 @@ public class LinkedFileViewModel extends AbstractViewModel {
             downloadTask.onSuccess(destination -> {
                 boolean isDuplicate;
                 try {
-                    isDuplicate = FileNameUniqueness.isDuplicatedFile(targetDirectory.get(), destination.getFileName(), dialogService);
+                    isDuplicate = FileNameUniqueness.isDuplicatedFile(
+                            targetDirectory.get(), destination.getFileName(), dialogService);
                 } catch (IOException e) {
                     LOGGER.error("FileNameUniqueness.isDuplicatedFile failed", e);
                     return;
                 }
 
                 if (!isDuplicate) {
-                    // we need to call LinkedFileViewModel#fromFile, because we need to make the path relative to the configured directories
+                    // we need to call LinkedFileViewModel#fromFile, because we need to make the path relative to the
+                    // configured directories
                     LinkedFile newLinkedFile = LinkedFilesEditorViewModel.fromFile(
                             destination,
                             databaseContext.getFileDirectories(preferencesService.getFilePreferences()),
@@ -467,8 +497,10 @@ public class LinkedFileViewModel extends AbstractViewModel {
             });
             downloadProgress.bind(downloadTask.workDonePercentageProperty());
             downloadTask.titleProperty().set(Localization.lang("Downloading"));
-            downloadTask.messageProperty().set(
-                    Localization.lang("Fulltext for") + ": " + entry.getCitationKey().orElse(Localization.lang("New entry")));
+            downloadTask
+                    .messageProperty()
+                    .set(Localization.lang("Fulltext for") + ": "
+                            + entry.getCitationKey().orElse(Localization.lang("New entry")));
             downloadTask.showToUser(true);
             downloadTask.onFailure(ex -> {
                 LOGGER.error("Error downloading from URL: " + urlDownload, ex);
@@ -477,59 +509,83 @@ public class LinkedFileViewModel extends AbstractViewModel {
                 if (ex instanceof FetcherClientException clientException) {
                     statusCode = clientException.getStatusCode();
                     if (statusCode == 401) {
-                        dialogService.showInformationDialogAndWait(Localization.lang("Failed to download from URL"), Localization.lang("401 Unauthorized: Access Denied. You are not authorized to access this resource. Please check your credentials and try again. If you believe you should have access, please contact the administrator for assistance.\nURL: %0 \n %1", urlDownload.getSource(), fetcherExceptionMessage));
+                        dialogService.showInformationDialogAndWait(
+                                Localization.lang("Failed to download from URL"),
+                                Localization.lang(
+                                        "401 Unauthorized: Access Denied. You are not authorized to access this resource. Please check your credentials and try again. If you believe you should have access, please contact the administrator for assistance.\nURL: %0 \n %1",
+                                        urlDownload.getSource(), fetcherExceptionMessage));
                     } else if (statusCode == 403) {
-                        dialogService.showInformationDialogAndWait(Localization.lang("Failed to download from URL"), Localization.lang("403 Forbidden: Access Denied. You do not have permission to access this resource. Please contact the administrator for assistance or try a different action.\nURL: %0 \n %1", urlDownload.getSource(), fetcherExceptionMessage));
+                        dialogService.showInformationDialogAndWait(
+                                Localization.lang("Failed to download from URL"),
+                                Localization.lang(
+                                        "403 Forbidden: Access Denied. You do not have permission to access this resource. Please contact the administrator for assistance or try a different action.\nURL: %0 \n %1",
+                                        urlDownload.getSource(), fetcherExceptionMessage));
                     } else if (statusCode == 404) {
-                        dialogService.showInformationDialogAndWait(Localization.lang("Failed to download from URL"), Localization.lang("404 Not Found Error: The requested resource could not be found. It seems that the file you are trying to download is not available or has been moved. Please verify the URL and try again. If you believe this is an error, please contact the administrator for further assistance.\nURL: %0 \n %1", urlDownload.getSource(), fetcherExceptionMessage));
+                        dialogService.showInformationDialogAndWait(
+                                Localization.lang("Failed to download from URL"),
+                                Localization.lang(
+                                        "404 Not Found Error: The requested resource could not be found. It seems that the file you are trying to download is not available or has been moved. Please verify the URL and try again. If you believe this is an error, please contact the administrator for further assistance.\nURL: %0 \n %1",
+                                        urlDownload.getSource(), fetcherExceptionMessage));
                     }
                 } else if (ex instanceof FetcherServerException serverException) {
                     statusCode = serverException.getStatusCode();
-                    dialogService.showInformationDialogAndWait(Localization.lang("Failed to download from URL"),
-                                Localization.lang("Error downloading from URL. Cause is likely the server side. HTTP Error %0 \n %1 \nURL: %2 \nPlease try again later or contact the server administrator.", statusCode, fetcherExceptionMessage, urlDownload.getSource()));
-                    } else {
-                        dialogService.showErrorDialogAndWait(Localization.lang("Failed to download from URL"), Localization.lang("Error message: %0 \nURL: %1 \nPlease check the URL and try again.", fetcherExceptionMessage, urlDownload.getSource()));
-                    }
-                });
-                taskExecutor.execute(downloadTask);
-            } catch (MalformedURLException exception) {
-                dialogService.showErrorDialogAndWait(Localization.lang("Invalid URL"), exception);
-            }
-        }
-
-        public boolean checkSSLHandshake(URLDownload urlDownload) {
-            try {
-                urlDownload.canBeReached();
-            } catch (kong.unirest.UnirestException ex) {
-                if (ex.getCause() instanceof SSLHandshakeException) {
-                    if (dialogService.showConfirmationDialogAndWait(Localization.lang("Download file"),
-                            Localization.lang("Unable to find valid certification path to requested target(%0), download anyway?",
-                                    urlDownload.getSource().toString()))) {
-                        return true;
-                    } else {
-                        dialogService.notify(Localization.lang("Download operation canceled."));
-                        return false;
-                    }
+                    dialogService.showInformationDialogAndWait(
+                            Localization.lang("Failed to download from URL"),
+                            Localization.lang(
+                                    "Error downloading from URL. Cause is likely the server side. HTTP Error %0 \n %1 \nURL: %2 \nPlease try again later or contact the server administrator.",
+                                    statusCode, fetcherExceptionMessage, urlDownload.getSource()));
                 } else {
-                    LOGGER.error("Error while checking if the file can be downloaded", ex);
-                    dialogService.notify(Localization.lang("Error downloading"));
+                    dialogService.showErrorDialogAndWait(
+                            Localization.lang("Failed to download from URL"),
+                            Localization.lang(
+                                    "Error message: %0 \nURL: %1 \nPlease check the URL and try again.",
+                                    fetcherExceptionMessage, urlDownload.getSource()));
+                }
+            });
+            taskExecutor.execute(downloadTask);
+        } catch (MalformedURLException exception) {
+            dialogService.showErrorDialogAndWait(Localization.lang("Invalid URL"), exception);
+        }
+    }
+
+    public boolean checkSSLHandshake(URLDownload urlDownload) {
+        try {
+            urlDownload.canBeReached();
+        } catch (kong.unirest.UnirestException ex) {
+            if (ex.getCause() instanceof SSLHandshakeException) {
+                if (dialogService.showConfirmationDialogAndWait(
+                        Localization.lang("Download file"),
+                        Localization.lang(
+                                "Unable to find valid certification path to requested target(%0), download anyway?",
+                                urlDownload.getSource().toString()))) {
+                    return true;
+                } else {
+                    dialogService.notify(Localization.lang("Download operation canceled."));
                     return false;
                 }
+            } else {
+                LOGGER.error("Error while checking if the file can be downloaded", ex);
+                dialogService.notify(Localization.lang("Error downloading"));
+                return false;
             }
-            return true;
         }
+        return true;
+    }
 
     public BackgroundTask<Path> prepareDownloadTask(Path targetDirectory, URLDownload urlDownload) {
         SSLSocketFactory defaultSSLSocketFactory = HttpsURLConnection.getDefaultSSLSocketFactory();
         HostnameVerifier defaultHostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier();
-        return BackgroundTask
-                .wrap(() -> {
+        return BackgroundTask.wrap(() -> {
                     Optional<ExternalFileType> suggestedType = inferFileType(urlDownload);
                     ExternalFileType externalFileType = suggestedType.orElse(StandardExternalFileType.PDF);
 
                     String suggestedName = linkedFileHandler.getSuggestedFileName(externalFileType.getExtension());
-                    String fulltextDir = FileUtil.createDirNameFromPattern(databaseContext.getDatabase(), entry, preferencesService.getFilePreferences().getFileDirectoryPattern());
-                    suggestedName = FileNameUniqueness.getNonOverWritingFileName(targetDirectory.resolve(fulltextDir), suggestedName);
+                    String fulltextDir = FileUtil.createDirNameFromPattern(
+                            databaseContext.getDatabase(),
+                            entry,
+                            preferencesService.getFilePreferences().getFileDirectoryPattern());
+                    suggestedName = FileNameUniqueness.getNonOverWritingFileName(
+                            targetDirectory.resolve(fulltextDir), suggestedName);
                     return targetDirectory.resolve(fulltextDir).resolve(suggestedName);
                 })
                 .then(destination -> new FileDownloadTask(urlDownload.getSource(), destination))
@@ -560,7 +616,8 @@ public class LinkedFileViewModel extends AbstractViewModel {
 
     private Optional<ExternalFileType> inferFileTypeFromURL(String url) {
         return URLUtil.getSuffix(url, preferencesService.getFilePreferences())
-                      .flatMap(extension -> ExternalFileTypes.getExternalFileTypeByExt(extension, preferencesService.getFilePreferences()));
+                .flatMap(extension ->
+                        ExternalFileTypes.getExternalFileTypeByExt(extension, preferencesService.getFilePreferences()));
     }
 
     public LinkedFile getFile() {
@@ -572,29 +629,49 @@ public class LinkedFileViewModel extends AbstractViewModel {
     }
 
     public void parsePdfMetadataAndShowMergeDialog() {
-        linkedFile.findIn(databaseContext, preferencesService.getFilePreferences()).ifPresent(filePath -> {
-            MultiMergeEntriesView dialog = new MultiMergeEntriesView(preferencesService, taskExecutor);
-            dialog.setTitle(Localization.lang("Merge PDF metadata"));
-            dialog.addSource(Localization.lang("Entry"), entry);
-            dialog.addSource(Localization.lang("Verbatim"), wrapImporterToSupplier(new PdfVerbatimBibTextImporter(preferencesService.getImportFormatPreferences()), filePath));
-            dialog.addSource(Localization.lang("Embedded"), wrapImporterToSupplier(new PdfEmbeddedBibFileImporter(preferencesService.getImportFormatPreferences()), filePath));
-            if (preferencesService.getGrobidPreferences().isGrobidEnabled()) {
-                dialog.addSource("Grobid", wrapImporterToSupplier(new PdfGrobidImporter(preferencesService.getImportFormatPreferences()), filePath));
-            }
-            dialog.addSource(Localization.lang("XMP metadata"), wrapImporterToSupplier(new PdfXmpImporter(preferencesService.getXmpPreferences()), filePath));
-            dialog.addSource(Localization.lang("Content"), wrapImporterToSupplier(new PdfContentImporter(), filePath));
-            dialogService.showCustomDialogAndWait(dialog).ifPresent(newEntry -> {
-                databaseContext.getDatabase().removeEntry(entry);
-                databaseContext.getDatabase().insertEntry(newEntry);
-            });
-        });
+        linkedFile
+                .findIn(databaseContext, preferencesService.getFilePreferences())
+                .ifPresent(filePath -> {
+                    MultiMergeEntriesView dialog = new MultiMergeEntriesView(preferencesService, taskExecutor);
+                    dialog.setTitle(Localization.lang("Merge PDF metadata"));
+                    dialog.addSource(Localization.lang("Entry"), entry);
+                    dialog.addSource(
+                            Localization.lang("Verbatim"),
+                            wrapImporterToSupplier(
+                                    new PdfVerbatimBibTextImporter(preferencesService.getImportFormatPreferences()),
+                                    filePath));
+                    dialog.addSource(
+                            Localization.lang("Embedded"),
+                            wrapImporterToSupplier(
+                                    new PdfEmbeddedBibFileImporter(preferencesService.getImportFormatPreferences()),
+                                    filePath));
+                    if (preferencesService.getGrobidPreferences().isGrobidEnabled()) {
+                        dialog.addSource(
+                                "Grobid",
+                                wrapImporterToSupplier(
+                                        new PdfGrobidImporter(preferencesService.getImportFormatPreferences()),
+                                        filePath));
+                    }
+                    dialog.addSource(
+                            Localization.lang("XMP metadata"),
+                            wrapImporterToSupplier(
+                                    new PdfXmpImporter(preferencesService.getXmpPreferences()), filePath));
+                    dialog.addSource(
+                            Localization.lang("Content"), wrapImporterToSupplier(new PdfContentImporter(), filePath));
+                    dialogService.showCustomDialogAndWait(dialog).ifPresent(newEntry -> {
+                        databaseContext.getDatabase().removeEntry(entry);
+                        databaseContext.getDatabase().insertEntry(newEntry);
+                    });
+                });
     }
 
     private Supplier<BibEntry> wrapImporterToSupplier(Importer importer, Path filePath) {
         return () -> {
             try {
                 ParserResult parserResult = importer.importDatabase(filePath);
-                if (parserResult.isInvalid() || parserResult.isEmpty() || !parserResult.getDatabase().hasEntries()) {
+                if (parserResult.isInvalid()
+                        || parserResult.isEmpty()
+                        || !parserResult.getDatabase().hasEntries()) {
                     return null;
                 }
                 return parserResult.getDatabase().getEntries().get(0);

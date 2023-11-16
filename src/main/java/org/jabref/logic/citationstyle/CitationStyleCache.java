@@ -25,16 +25,18 @@ public class CitationStyleCache {
     private final LoadingCache<BibEntry, String> citationStyleCache;
 
     public CitationStyleCache(BibDatabaseContext databaseContext) {
-        citationStyleCache = CacheBuilder.newBuilder().maximumSize(CACHE_SIZE).build(new CacheLoader<BibEntry, String>() {
-            @Override
-            public String load(BibEntry entry) {
-                if (citationStyle != null) {
-                    return citationStyle.generatePreview(entry, databaseContext);
-                } else {
-                    return "";
-                }
-            }
-        });
+        citationStyleCache = CacheBuilder.newBuilder()
+                .maximumSize(CACHE_SIZE)
+                .build(new CacheLoader<BibEntry, String>() {
+                    @Override
+                    public String load(BibEntry entry) {
+                        if (citationStyle != null) {
+                            return citationStyle.generatePreview(entry, databaseContext);
+                        } else {
+                            return "";
+                        }
+                    }
+                });
         databaseContext.getDatabase().registerListener(new BibDatabaseEntryListener());
     }
 

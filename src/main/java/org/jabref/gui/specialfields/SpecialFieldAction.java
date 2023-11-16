@@ -40,15 +40,16 @@ public class SpecialFieldAction extends SimpleCommand {
     /**
      * @param nullFieldIfValueIsTheSame - false also causes that doneTextPattern has two place holders %0 for the value and %1 for the sum of entries
      */
-    public SpecialFieldAction(JabRefFrame frame,
-                              SpecialField specialField,
-                              String value,
-                              boolean nullFieldIfValueIsTheSame,
-                              String undoText,
-                              DialogService dialogService,
-                              PreferencesService preferencesService,
-                              UndoManager undoManager,
-                              StateManager stateManager) {
+    public SpecialFieldAction(
+            JabRefFrame frame,
+            SpecialField specialField,
+            String value,
+            boolean nullFieldIfValueIsTheSame,
+            String undoText,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            UndoManager undoManager,
+            StateManager stateManager) {
         this.frame = frame;
         this.specialField = specialField;
         this.value = value;
@@ -73,7 +74,8 @@ public class SpecialFieldAction extends SimpleCommand {
             List<BibEntry> besCopy = new ArrayList<>(bes);
             for (BibEntry bibEntry : besCopy) {
                 // if (value==null) and then call nullField has been omitted as updatefield also handles value==null
-                Optional<FieldChange> change = UpdateField.updateField(bibEntry, specialField, value, nullFieldIfValueIsTheSame);
+                Optional<FieldChange> change =
+                        UpdateField.updateField(bibEntry, specialField, value, nullFieldIfValueIsTheSame);
 
                 change.ifPresent(fieldChange -> ce.addEdit(new UndoableFieldChange(fieldChange)));
             }

@@ -36,7 +36,8 @@ public class MetaData {
 
     public static final String META_FLAG = "jabref-meta: ";
     public static final String ENTRYTYPE_FLAG = "jabref-entrytype: ";
-    public static final String SAVE_ORDER_CONFIG = "saveOrderConfig"; // ToDo: Rename in next major version to saveOrder, adapt testbibs
+    public static final String SAVE_ORDER_CONFIG =
+            "saveOrderConfig"; // ToDo: Rename in next major version to saveOrder, adapt testbibs
     public static final String SAVE_ACTIONS = "saveActions";
     public static final String PREFIX_KEYPATTERN = "keypattern_";
     public static final String KEYPATTERNDEFAULT = "keypatterndefault";
@@ -389,12 +390,31 @@ public class MetaData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(isProtected, groupsRoot.getValue(), encoding, encodingExplicitlySupplied, saveOrder, citeKeyPatterns, userFileDirectory,
-                laTexFileDirectory, defaultCiteKeyPattern, saveActions, mode, defaultFileDirectory, contentSelectors, versionDBStructure);
+        return Objects.hash(
+                isProtected,
+                groupsRoot.getValue(),
+                encoding,
+                encodingExplicitlySupplied,
+                saveOrder,
+                citeKeyPatterns,
+                userFileDirectory,
+                laTexFileDirectory,
+                defaultCiteKeyPattern,
+                saveActions,
+                mode,
+                defaultFileDirectory,
+                contentSelectors,
+                versionDBStructure);
     }
 
     @Override
     public String toString() {
-        return "MetaData [citeKeyPatterns=" + citeKeyPatterns + ", userFileDirectory=" + userFileDirectory + ", laTexFileDirectory=" + laTexFileDirectory + ", groupsRoot=" + groupsRoot + ", encoding=" + encoding + ", saveOrderConfig=" + saveOrder + ", defaultCiteKeyPattern=" + defaultCiteKeyPattern + ", saveActions=" + saveActions + ", mode=" + mode + ", isProtected=" + isProtected + ", defaultFileDirectory=" + defaultFileDirectory + ", contentSelectors=" + contentSelectors + ", encodingExplicitlySupplied=" + encodingExplicitlySupplied + ", VersionDBStructure=" + versionDBStructure + "]";
+        return "MetaData [citeKeyPatterns=" + citeKeyPatterns + ", userFileDirectory=" + userFileDirectory
+                + ", laTexFileDirectory=" + laTexFileDirectory + ", groupsRoot=" + groupsRoot + ", encoding=" + encoding
+                + ", saveOrderConfig=" + saveOrder + ", defaultCiteKeyPattern=" + defaultCiteKeyPattern
+                + ", saveActions=" + saveActions + ", mode=" + mode + ", isProtected=" + isProtected
+                + ", defaultFileDirectory=" + defaultFileDirectory + ", contentSelectors=" + contentSelectors
+                + ", encodingExplicitlySupplied=" + encodingExplicitlySupplied + ", VersionDBStructure="
+                + versionDBStructure + "]";
     }
 }

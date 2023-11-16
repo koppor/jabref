@@ -98,7 +98,8 @@ public class BibtexParser implements Parser {
      *
      * @return An {@code Optional<BibEntry>. Optional.empty()} if non was found or an error occurred.
      */
-    public static Optional<BibEntry> singleFromString(String bibtexString, ImportFormatPreferences importFormatPreferences) throws ParseException {
+    public static Optional<BibEntry> singleFromString(
+            String bibtexString, ImportFormatPreferences importFormatPreferences) throws ParseException {
         Collection<BibEntry> entries = new BibtexParser(importFormatPreferences).parseEntries(bibtexString);
         if ((entries == null) || entries.isEmpty()) {
             return Optional.empty();
@@ -211,7 +212,8 @@ public class BibtexParser implements Parser {
 
             if ("preamble".equals(entryType)) {
                 database.setPreamble(parsePreamble());
-                // Consume a new line which separates the preamble from the next part (if the file was written with JabRef)
+                // Consume a new line which separates the preamble from the next part (if the file was written with
+                // JabRef)
                 skipOneNewline();
                 // the preamble is saved verbatim anyway, so the text read so far can be dropped
                 dumpTextReadSoFarToString();
@@ -229,8 +231,7 @@ public class BibtexParser implements Parser {
 
         try {
             parserResult.setMetaData(metaDataParser.parse(
-                    meta,
-                    importFormatPreferences.bibEntryPreferences().getKeywordSeparator()));
+                    meta, importFormatPreferences.bibEntryPreferences().getKeywordSeparator()));
         } catch (ParseException exception) {
             parserResult.addException(exception);
         }
@@ -243,9 +244,11 @@ public class BibtexParser implements Parser {
     }
 
     private void checkEpilog() {
-        // This is an incomplete and inaccurate try to verify if something went wrong with previous parsing activity even though there were no warnings so far
+        // This is an incomplete and inaccurate try to verify if something went wrong with previous parsing activity
+        // even though there were no warnings so far
         // regex looks for something like 'identifier = blabla ,'
-        if (!parserResult.hasWarnings() && Pattern.compile("\\w+\\s*=.*,").matcher(database.getEpilog()).find()) {
+        if (!parserResult.hasWarnings()
+                && Pattern.compile("\\w+\\s*=.*,").matcher(database.getEpilog()).find()) {
             parserResult.addWarning("following BibTex fragment has not been parsed:\n" + database.getEpilog());
         }
     }
@@ -302,7 +305,8 @@ public class BibtexParser implements Parser {
         }
 
         String comment = buffer.toString().replaceAll("[\\x0d\\x0a]", "");
-        if (comment.substring(0, Math.min(comment.length(), MetaData.META_FLAG.length())).equals(MetaData.META_FLAG)) {
+        if (comment.substring(0, Math.min(comment.length(), MetaData.META_FLAG.length()))
+                .equals(MetaData.META_FLAG)) {
             if (comment.startsWith(MetaData.META_FLAG)) {
                 String rest = comment.substring(MetaData.META_FLAG.length());
 
@@ -320,7 +324,7 @@ public class BibtexParser implements Parser {
                 }
             }
         } else if (comment.substring(0, Math.min(comment.length(), MetaData.ENTRYTYPE_FLAG.length()))
-                          .equals(MetaData.ENTRYTYPE_FLAG)) {
+                .equals(MetaData.ENTRYTYPE_FLAG)) {
             // A custom entry type can also be stored in a
             // "@comment"
             Optional<BibEntryType> typ = MetaDataParser.parseCustomEntryType(comment);
@@ -354,7 +358,8 @@ public class BibtexParser implements Parser {
         String result = getPureTextFromFile();
         int indexOfAt = result.indexOf("@");
 
-        // if there is no entry found, simply return the content (necessary to parse text remaining after the last entry)
+        // if there is no entry found, simply return the content (necessary to parse text remaining after the last
+        // entry)
         if (indexOfAt == -1) {
             return purgeEOFCharacters(result);
         } else if (result.contains(BibtexDatabaseWriter.DATABASE_ID_PREFIX)) {
@@ -387,9 +392,8 @@ public class BibtexParser implements Parser {
             runningIndex++;
         }
         // strip empty lines
-        while ((runningIndex < indexOfAt) &&
-                ((context.charAt(runningIndex) == '\r') ||
-                        (context.charAt(runningIndex) == '\n'))) {
+        while ((runningIndex < indexOfAt)
+                && ((context.charAt(runningIndex) == '\r') || (context.charAt(runningIndex) == '\n'))) {
             runningIndex++;
         }
         return context.substring(runningIndex);
@@ -507,9 +511,7 @@ public class BibtexParser implements Parser {
         char character2 = (char) read();
         unread(character2);
         unread(character1);
-        return new char[] {
-                character1, character2
-        };
+        return new char[] {character1, character2};
     }
 
     private int read() throws IOException {
@@ -623,7 +625,9 @@ public class BibtexParser implements Parser {
                     entry.setField(field, entry.getField(field).get() + " and " + content);
                 } else if (StandardField.KEYWORDS == field) {
                     // multiple keywords fields should be combined to one
-                    entry.addKeyword(content, importFormatPreferences.bibEntryPreferences().getKeywordSeparator());
+                    entry.addKeyword(
+                            content,
+                            importFormatPreferences.bibEntryPreferences().getKeywordSeparator());
                 }
             } else {
                 entry.setField(field, content);
@@ -663,7 +667,9 @@ public class BibtexParser implements Parser {
                     throw new IOException("Error in line " + line + " or above: "
                             + "Empty text token.\nThis could be caused " + "by a missing comma between two fields.");
                 }
-                value.append(FieldWriter.BIBTEX_STRING_START_END_SYMBOL).append(textToken).append(FieldWriter.BIBTEX_STRING_START_END_SYMBOL);
+                value.append(FieldWriter.BIBTEX_STRING_START_END_SYMBOL)
+                        .append(textToken)
+                        .append(FieldWriter.BIBTEX_STRING_START_END_SYMBOL);
             }
             skipWhitespace();
         }
@@ -708,7 +714,9 @@ public class BibtexParser implements Parser {
             currentChar = (char) read();
             key.append(currentChar);
             lookaheadUsed++;
-        } while ((currentChar != ',') && (currentChar != '\n') && (currentChar != '=')
+        } while ((currentChar != ',')
+                && (currentChar != '\n')
+                && (currentChar != '=')
                 && (lookaheadUsed < BibtexParser.LOOKAHEAD));
 
         // Consumed a char too much, back into reader and remove from key:
@@ -748,20 +756,22 @@ public class BibtexParser implements Parser {
 
                         // Finished, now reverse newKey and remove whitespaces:
                         key = newKey.reverse();
-                        parserResult.addWarning(
-                                Localization.lang("Line %0: Found corrupted citation key %1.", String.valueOf(line), key.toString()));
+                        parserResult.addWarning(Localization.lang(
+                                "Line %0: Found corrupted citation key %1.", String.valueOf(line), key.toString()));
                     }
                 }
                 break;
 
             case ',':
-                parserResult.addWarning(
-                        Localization.lang("Line %0: Found corrupted citation key %1 (contains whitespaces).", String.valueOf(line), key.toString()));
+                parserResult.addWarning(Localization.lang(
+                        "Line %0: Found corrupted citation key %1 (contains whitespaces).",
+                        String.valueOf(line), key.toString()));
                 break;
 
             case '\n':
-                parserResult.addWarning(
-                        Localization.lang("Line %0: Found corrupted citation key %1 (comma missing).", String.valueOf(line), key.toString()));
+                parserResult.addWarning(Localization.lang(
+                        "Line %0: Found corrupted citation key %1 (comma missing).",
+                        String.valueOf(line), key.toString()));
                 break;
 
             default:
@@ -816,8 +826,10 @@ public class BibtexParser implements Parser {
                 return token.toString();
             }
 
-            if (!Character.isWhitespace((char) character) && (Character.isLetterOrDigit((char) character)
-                    || (character == ':') || ("#{}~,=\uFFFD".indexOf(character) == -1))) {
+            if (!Character.isWhitespace((char) character)
+                    && (Character.isLetterOrDigit((char) character)
+                            || (character == ':')
+                            || ("#{}~,=\uFFFD".indexOf(character) == -1))) {
                 token.append((char) character);
             } else {
                 if (Character.isWhitespace((char) character)) {
@@ -919,9 +931,12 @@ public class BibtexParser implements Parser {
                     // First described at https://github.com/JabRef/jabref/issues/9668
                     char[] nextTwoCharacters = peekTwoCharacters();
                     // Check for "\},\n" - Example context: `  path = {c:\temp\},\n`
-                    // On Windows, it could be "\},\r\n", thus we rely in OS.NEWLINE.charAt(0) (which returns '\r' or '\n').
-                    //   In all cases, we should check for '\n' as the file could be encoded with Linux line endings on Windows.
-                    if ((nextTwoCharacters[0] == ',') && ((nextTwoCharacters[1] == OS.NEWLINE.charAt(0)) || (nextTwoCharacters[1] == '\n'))) {
+                    // On Windows, it could be "\},\r\n", thus we rely in OS.NEWLINE.charAt(0) (which returns '\r' or
+                    // '\n').
+                    //   In all cases, we should check for '\n' as the file could be encoded with Linux line endings on
+                    // Windows.
+                    if ((nextTwoCharacters[0] == ',')
+                            && ((nextTwoCharacters[1] == OS.NEWLINE.charAt(0)) || (nextTwoCharacters[1] == '\n'))) {
                         // We hit '\}\r` or `\}\n`
                         // Heuristics: Unwanted escaping of }
                         //

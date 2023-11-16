@@ -386,7 +386,9 @@ public class DuplicateCheckTest {
     public static Stream<Arguments> twoEntriesWithDifferentSpecificFieldsAreNotDuplicates() {
         return Stream.of(
                 // twoInbooksWithDifferentChaptersAreNotDuplicates
-                Arguments.of(getSimpleInbook(), StandardField.CHAPTER,
+                Arguments.of(
+                        getSimpleInbook(),
+                        StandardField.CHAPTER,
                         "Chapter One – Down the Rabbit Hole",
                         "Chapter Two – The Pool of Tears"),
                 // twoInbooksWithDifferentPagesAreNotDuplicates
@@ -394,16 +396,13 @@ public class DuplicateCheckTest {
                 // twoIncollectionsWithDifferentChaptersAreNotDuplicates
                 Arguments.of(getSimpleIncollection(), StandardField.CHAPTER, "10", "9"),
                 // twoEntriesWithDifferentSpecificFieldsAreNotDuplicates
-                Arguments.of(getSimpleIncollection(), StandardField.PAGES, "1-20", "21-40")
-        );
+                Arguments.of(getSimpleIncollection(), StandardField.PAGES, "1-20", "21-40"));
     }
 
     @ParameterizedTest
     @MethodSource
-    private void twoEntriesWithDifferentSpecificFieldsAreNotDuplicates(final BibEntry cloneable,
-                                                                       final Field field,
-                                                                       final String firstValue,
-                                                                       final String secondValue) {
+    private void twoEntriesWithDifferentSpecificFieldsAreNotDuplicates(
+            final BibEntry cloneable, final Field field, final String firstValue, final String secondValue) {
         final BibEntry entry1 = ((BibEntry) cloneable.clone()).withField(field, firstValue);
         final BibEntry entry2 = ((BibEntry) cloneable.clone()).withField(field, secondValue);
         assertFalse(duplicateChecker.isDuplicate(entry1, entry2, BibDatabaseMode.BIBTEX));
@@ -517,7 +516,8 @@ public class DuplicateCheckTest {
         assertTrue(duplicateChecker.isDuplicate(entryOne, entryTwo, BibDatabaseMode.BIBTEX));
     }
 
-    @Disabled("Book entries can have the same ISBN due to different chapters. The Test fails as crossref identifies both entries as the same.")
+    @Disabled(
+            "Book entries can have the same ISBN due to different chapters. The Test fails as crossref identifies both entries as the same.")
     @Test
     void differentArticlesFromTheSameBookAreNotDuplicates() {
         BibEntry entryOne = new BibEntry(StandardEntryType.Article)

@@ -23,7 +23,8 @@ public class UndoRedoAction extends SimpleCommand {
     private final JabRefFrame frame;
     private DialogService dialogService;
 
-    public UndoRedoAction(StandardActions action, JabRefFrame frame, DialogService dialogService, StateManager stateManager) {
+    public UndoRedoAction(
+            StandardActions action, JabRefFrame frame, DialogService dialogService, StateManager stateManager) {
         this.action = action;
         this.frame = frame;
         this.dialogService = dialogService;

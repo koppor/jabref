@@ -37,14 +37,18 @@ public class CustomImporterTest {
 
     @Test
     public void testGetBasePath() {
-        assertEquals(Path.of("src/main/java/org/jabref/logic/importer/fileformat/CopacImporter.java"),
+        assertEquals(
+                Path.of("src/main/java/org/jabref/logic/importer/fileformat/CopacImporter.java"),
                 importer.getBasePath());
     }
 
     @Test
     public void testGetAsStringList() {
-        assertEquals(Arrays.asList("src/main/java/org/jabref/logic/importer/fileformat/CopacImporter.java",
-                "org.jabref.logic.importer.fileformat.CopacImporter"), importer.getAsStringList());
+        assertEquals(
+                Arrays.asList(
+                        "src/main/java/org/jabref/logic/importer/fileformat/CopacImporter.java",
+                        "org.jabref.logic.importer.fileformat.CopacImporter"),
+                importer.getAsStringList());
     }
 
     @Test

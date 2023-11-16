@@ -59,26 +59,20 @@ public class Citation {
         int center = (colStart + colEnd) / 2;
         int lineLength = lineText.length();
 
-        int start = Math.max(0, center + CONTEXT_WIDTH / 2 < lineLength
-                ? center - CONTEXT_WIDTH / 2
-                : lineLength - CONTEXT_WIDTH);
+        int start = Math.max(
+                0, center + CONTEXT_WIDTH / 2 < lineLength ? center - CONTEXT_WIDTH / 2 : lineLength - CONTEXT_WIDTH);
         int end = Math.min(lineLength, start + CONTEXT_WIDTH);
 
         // Add three dots when the string does not contain all the line.
-        return String.format("%s%s%s",
-                start > 0 ? "..." : "",
-                lineText.substring(start, end).trim(),
-                end < lineLength ? "..." : "");
+        return String.format(
+                "%s%s%s", start > 0 ? "..." : "", lineText.substring(start, end).trim(), end < lineLength ? "..." : "");
     }
 
     @Override
     public String toString() {
-        return String.format("Citation{path=%s, line=%s, colStart=%s, colEnd=%s, lineText='%s'}",
-                this.path,
-                this.line,
-                this.colStart,
-                this.colEnd,
-                this.lineText);
+        return String.format(
+                "Citation{path=%s, line=%s, colStart=%s, colEnd=%s, lineText='%s'}",
+                this.path, this.line, this.colStart, this.colEnd, this.lineText);
     }
 
     @Override

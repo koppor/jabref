@@ -39,7 +39,6 @@ public class ShortMonthFormatterTest {
                 Arguments.of("jan", "Januar"),
                 Arguments.of("jan", "01"),
                 Arguments.of("", "Invented Month"),
-                Arguments.of("", "")
-        );
+                Arguments.of("", ""));
     }
 }

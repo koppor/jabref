@@ -33,11 +33,12 @@ public class DeleteFileAction extends SimpleCommand {
     private final LinkedFilesEditorViewModel viewModel;
     private final ListView<LinkedFileViewModel> listView;
 
-    public DeleteFileAction(DialogService dialogService,
-                            PreferencesService preferences,
-                            BibDatabaseContext databaseContext,
-                            LinkedFilesEditorViewModel viewModel,
-                            ListView<LinkedFileViewModel> listView) {
+    public DeleteFileAction(
+            DialogService dialogService,
+            PreferencesService preferences,
+            BibDatabaseContext databaseContext,
+            LinkedFilesEditorViewModel viewModel,
+            ListView<LinkedFileViewModel> listView) {
         this.dialogService = dialogService;
         this.preferences = preferences;
         this.databaseContext = databaseContext;
@@ -47,7 +48,8 @@ public class DeleteFileAction extends SimpleCommand {
 
     @Override
     public void execute() {
-        List<LinkedFileViewModel> toBeDeleted = List.copyOf(listView.getSelectionModel().getSelectedItems());
+        List<LinkedFileViewModel> toBeDeleted =
+                List.copyOf(listView.getSelectionModel().getSelectedItems());
 
         if (toBeDeleted.isEmpty()) {
             dialogService.notify(Localization.lang("This operation requires selected linked files."));
@@ -59,25 +61,38 @@ public class DeleteFileAction extends SimpleCommand {
 
         if (toBeDeleted.size() != 1) {
             dialogTitle = Localization.lang("Delete %0 files", toBeDeleted.size());
-            dialogContent = Localization.lang("Delete %0 files permanently from disk, or just remove the files from the entry? " +
-                    "Pressing Delete will delete the files permanently from disk.", toBeDeleted.size());
+            dialogContent = Localization.lang(
+                    "Delete %0 files permanently from disk, or just remove the files from the entry? "
+                            + "Pressing Delete will delete the files permanently from disk.",
+                    toBeDeleted.size());
         } else {
-            Optional<Path> file = toBeDeleted.get(0).getFile().findIn(databaseContext, preferences.getFilePreferences());
+            Optional<Path> file =
+                    toBeDeleted.get(0).getFile().findIn(databaseContext, preferences.getFilePreferences());
 
             if (file.isPresent()) {
-                dialogTitle = Localization.lang("Delete '%0'", file.get().getFileName().toString());
-                dialogContent = Localization.lang("Delete '%0' permanently from disk, or just remove the file from the entry? " +
-                        "Pressing Delete will delete the file permanently from disk.", file.get().toString());
+                dialogTitle = Localization.lang(
+                        "Delete '%0'", file.get().getFileName().toString());
+                dialogContent = Localization.lang(
+                        "Delete '%0' permanently from disk, or just remove the file from the entry? "
+                                + "Pressing Delete will delete the file permanently from disk.",
+                        file.get().toString());
             } else {
-                dialogService.notify(Localization.lang("Error accessing file '%0'.", toBeDeleted.get(0).getFile().getLink()));
+                dialogService.notify(Localization.lang(
+                        "Error accessing file '%0'.",
+                        toBeDeleted.get(0).getFile().getLink()));
                 return;
             }
         }
 
         ButtonType removeFromEntry = new ButtonType(Localization.lang("Remove from entry"), ButtonBar.ButtonData.YES);
         ButtonType deleteFromEntry = new ButtonType(Localization.lang("Delete from disk"));
-        Optional<ButtonType> buttonType = dialogService.showCustomButtonDialogAndWait(Alert.AlertType.INFORMATION,
-                dialogTitle, dialogContent, removeFromEntry, deleteFromEntry, ButtonType.CANCEL);
+        Optional<ButtonType> buttonType = dialogService.showCustomButtonDialogAndWait(
+                Alert.AlertType.INFORMATION,
+                dialogTitle,
+                dialogContent,
+                removeFromEntry,
+                deleteFromEntry,
+                ButtonType.CANCEL);
 
         if (buttonType.isPresent()) {
             if (buttonType.get().equals(removeFromEntry)) {
@@ -126,9 +141,9 @@ public class DeleteFileAction extends SimpleCommand {
         if (file.isPresent()) {
             try {
                 Files.delete(file.get());
-            } catch (
-                    IOException ex) {
-                dialogService.showErrorDialogAndWait(Localization.lang("Cannot delete file"), Localization.lang("File permission error"));
+            } catch (IOException ex) {
+                dialogService.showErrorDialogAndWait(
+                        Localization.lang("Cannot delete file"), Localization.lang("File permission error"));
                 LOGGER.warn("File permission error while deleting: {}", linkedFile, ex);
             }
         } else {

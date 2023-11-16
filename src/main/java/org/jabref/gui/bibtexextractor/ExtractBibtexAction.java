@@ -15,7 +15,8 @@ public class ExtractBibtexAction extends SimpleCommand {
     PreferencesService preferencesService;
     DialogService dialogService;
 
-    public ExtractBibtexAction(DialogService dialogService, PreferencesService preferencesService, StateManager stateManager) {
+    public ExtractBibtexAction(
+            DialogService dialogService, PreferencesService preferencesService, StateManager stateManager) {
         this.preferencesService = preferencesService;
         this.dialogService = dialogService;
         this.executable.bind(needsDatabase(stateManager));

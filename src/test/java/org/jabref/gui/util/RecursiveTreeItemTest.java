@@ -36,23 +36,31 @@ class RecursiveTreeItemTest {
 
     @Test
     void addsAllChildrenNodes() throws Exception {
-        assertEquals(root.getChildren(), rootTreeItem.getChildren().stream().map(TreeItem::getValue).collect(Collectors.toList()));
+        assertEquals(
+                root.getChildren(),
+                rootTreeItem.getChildren().stream().map(TreeItem::getValue).collect(Collectors.toList()));
     }
 
     @Test
     void addsAllChildrenOfChildNode() throws Exception {
         assertEquals(
                 root.getChildAt(1).get().getChildren(),
-                rootTreeItem.getChildren().get(1).getChildren().stream().map(TreeItem::getValue).collect(Collectors.toList()));
+                rootTreeItem.getChildren().get(1).getChildren().stream()
+                        .map(TreeItem::getValue)
+                        .collect(Collectors.toList()));
     }
 
     @Test
     void respectsFilter() throws Exception {
         filterPredicate.setValue(item -> item.getName().contains("test"));
 
-        assertEquals(Collections.singletonList(node.getParent().get()), rootTreeItem.getChildren().stream().map(TreeItem::getValue).collect(Collectors.toList()));
+        assertEquals(
+                Collections.singletonList(node.getParent().get()),
+                rootTreeItem.getChildren().stream().map(TreeItem::getValue).collect(Collectors.toList()));
         assertEquals(
                 Collections.singletonList(node),
-                rootTreeItem.getChildren().get(0).getChildren().stream().map(TreeItem::getValue).collect(Collectors.toList()));
+                rootTreeItem.getChildren().get(0).getChildren().stream()
+                        .map(TreeItem::getValue)
+                        .collect(Collectors.toList()));
     }
 }

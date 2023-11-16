@@ -40,8 +40,12 @@ public class FieldRowViewModelTest {
     public void setup() throws ParseException {
         leftEntry = new BibEntry(StandardEntryType.Article)
                 .withCitationKey("LajnDiezScheinEtAl2012")
-                .withField(StandardField.AUTHOR, "Lajn, A and Diez, T and Schein, F and Frenzel, H and von Wenckstern, H and Grundmann, M")
-                .withField(StandardField.TITLE, "Light and temperature stability of fully transparent ZnO-based inverter circuits")
+                .withField(
+                        StandardField.AUTHOR,
+                        "Lajn, A and Diez, T and Schein, F and Frenzel, H and von Wenckstern, H and Grundmann, M")
+                .withField(
+                        StandardField.TITLE,
+                        "Light and temperature stability of fully transparent ZnO-based inverter circuits")
                 .withField(StandardField.NUMBER, "4")
                 .withField(StandardField.PAGES, "515--517")
                 .withField(StandardField.VOLUME, "32")
@@ -53,8 +57,12 @@ public class FieldRowViewModelTest {
         rightEntry = new BibEntry(StandardEntryType.Book)
                 .withCitationKey("KolbLenhardWirtz2012")
                 .withField(StandardField.AUTHOR, "Stefan Kolb and Guido Wirtz")
-                .withField(StandardField.BOOKTITLE, "Proceedings of the 5\\textsuperscript{th} {IEEE} International Conference on Service-Oriented Computing and Applications {(SOCA'12)}, Taipei, Taiwan")
-                .withField(StandardField.TITLE, "{Bridging the Heterogeneity of Orchestrations - A Petri Net-based Integration of BPEL and Windows Workflow}")
+                .withField(
+                        StandardField.BOOKTITLE,
+                        "Proceedings of the 5\\textsuperscript{th} {IEEE} International Conference on Service-Oriented Computing and Applications {(SOCA'12)}, Taipei, Taiwan")
+                .withField(
+                        StandardField.TITLE,
+                        "{Bridging the Heterogeneity of Orchestrations - A Petri Net-based Integration of BPEL and Windows Workflow}")
                 .withField(StandardField.ORGANIZATION, "IEEE")
                 .withField(StandardField.PAGES, "1--8")
                 .withField(StandardField.ADDRESS, "Oxford, United Kingdom")
@@ -66,8 +74,12 @@ public class FieldRowViewModelTest {
         extraEntry = new BibEntry(StandardEntryType.InProceedings)
                 .withCitationKey("BoopalGarridoGustafsson2013")
                 .withField(StandardField.AUTHOR, "Padma Prasad Boopal and Mario Garrido and Oscar Gustafsson")
-                .withField(StandardField.BOOKTITLE, "2013 {IEEE} International Symposium on Circuits and Systems (ISCAS2013), Beijing, China, May 19-23, 2013")
-                .withField(StandardField.TITLE, "A reconfigurable {FFT} architecture for variable-length and multi-streaming {OFDM} standards")
+                .withField(
+                        StandardField.BOOKTITLE,
+                        "2013 {IEEE} International Symposium on Circuits and Systems (ISCAS2013), Beijing, China, May 19-23, 2013")
+                .withField(
+                        StandardField.TITLE,
+                        "A reconfigurable {FFT} architecture for variable-length and multi-streaming {OFDM} standards")
                 .withField(StandardField.KEYWORDS, "b, c, a")
                 .withField(StandardField.YEAR, "2013");
 
@@ -116,7 +128,8 @@ public class FieldRowViewModelTest {
     @Test
     @Disabled("This test is kept as a reminder to implement a different comparison logic based on the given field.")
     public void hasEqualLeftAndRightValuesShouldReturnTrueIfKeywordsAreEqual() {
-        FieldRowViewModel keywordsField = new FieldRowViewModel(StandardField.KEYWORDS, rightEntry, extraEntry, mergedEntry, fieldMergerFactory);
+        FieldRowViewModel keywordsField =
+                new FieldRowViewModel(StandardField.KEYWORDS, rightEntry, extraEntry, mergedEntry, fieldMergerFactory);
         assertTrue(keywordsField.hasEqualLeftAndRightValues());
     }
 

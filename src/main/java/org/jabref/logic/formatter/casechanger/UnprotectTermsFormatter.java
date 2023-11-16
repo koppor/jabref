@@ -14,7 +14,8 @@ public class UnprotectTermsFormatter extends Formatter {
 
     @Override
     public String format(String text) {
-        // similar implementation at {@link org.jabref.logic.formatter.bibtexfields.RemoveBracesFormatter.hasNegativeBraceCount}
+        // similar implementation at {@link
+        // org.jabref.logic.formatter.bibtexfields.RemoveBracesFormatter.hasNegativeBraceCount}
         Objects.requireNonNull(text);
         if (text.isEmpty()) {
             return text;
@@ -42,8 +43,7 @@ public class UnprotectTermsFormatter extends Formatter {
 
     @Override
     public String getDescription() {
-        return Localization.lang(
-                "Removes all balanced {} braces around words.");
+        return Localization.lang("Removes all balanced {} braces around words.");
     }
 
     @Override

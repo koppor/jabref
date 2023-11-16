@@ -59,14 +59,20 @@ public class CountingUndoManager extends UndoManager {
     public void postUndoRedoEvent() {
         boolean canRedo = this.canRedo();
         boolean canUndo = this.canUndo();
-        eventBus.post(new UndoRedoEvent(canUndo, canUndo ? getUndoPresentationName() : Localization.lang("Undo"),
-                canRedo, canRedo ? getRedoPresentationName() : Localization.lang("Redo")));
+        eventBus.post(new UndoRedoEvent(
+                canUndo,
+                canUndo ? getUndoPresentationName() : Localization.lang("Undo"),
+                canRedo,
+                canRedo ? getRedoPresentationName() : Localization.lang("Redo")));
     }
 
     private void postAddUndoEvent() {
         boolean canRedo = this.canRedo();
         boolean canUndo = this.canUndo();
-        eventBus.post(new AddUndoableActionEvent(canUndo, canUndo ? getUndoPresentationName() : Localization.lang("Undo"),
-                canRedo, canRedo ? getRedoPresentationName() : Localization.lang("Redo")));
+        eventBus.post(new AddUndoableActionEvent(
+                canUndo,
+                canUndo ? getUndoPresentationName() : Localization.lang("Undo"),
+                canRedo,
+                canRedo ? getRedoPresentationName() : Localization.lang("Redo")));
     }
 }

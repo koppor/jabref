@@ -30,8 +30,7 @@ public class UndoableModifySubtree extends AbstractUndoableJabRefEdit {
     /**
      * @param subtree The root node of the subtree that was modified (this node may not be modified, it is just used as a convenience handle).
      */
-    public UndoableModifySubtree(GroupTreeNodeViewModel groupRoot,
-                                 GroupTreeNodeViewModel subtree, String name) {
+    public UndoableModifySubtree(GroupTreeNodeViewModel groupRoot, GroupTreeNodeViewModel subtree, String name) {
         m_subtreeBackup = subtree.getNode().copySubtree();
         m_groupRoot = groupRoot.getNode();
         m_subtreeRootPath = subtree.getNode().getIndexedPathFromRoot();
@@ -49,7 +48,8 @@ public class UndoableModifySubtree extends AbstractUndoableJabRefEdit {
         // remember modified children for redo
         m_modifiedSubtree.clear();
         // get node to edit
-        final GroupTreeNode subtreeRoot = m_groupRoot.getDescendant(m_subtreeRootPath).get(); // TODO: NULL
+        final GroupTreeNode subtreeRoot =
+                m_groupRoot.getDescendant(m_subtreeRootPath).get(); // TODO: NULL
         m_modifiedSubtree.addAll(subtreeRoot.getChildren());
         // keep subtree handle, but restore everything else from backup
         subtreeRoot.removeAllChildren();
@@ -61,7 +61,8 @@ public class UndoableModifySubtree extends AbstractUndoableJabRefEdit {
     @Override
     public void redo() {
         super.redo();
-        final GroupTreeNode subtreeRoot = m_groupRoot.getDescendant(m_subtreeRootPath).get(); // TODO: NULL
+        final GroupTreeNode subtreeRoot =
+                m_groupRoot.getDescendant(m_subtreeRootPath).get(); // TODO: NULL
         subtreeRoot.removeAllChildren();
         for (GroupTreeNode modifiedNode : m_modifiedSubtree) {
             modifiedNode.moveTo(subtreeRoot);

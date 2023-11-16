@@ -31,12 +31,10 @@ public class EbookDeIsbnFetcher extends AbstractIsbnFetcher {
     }
 
     @Override
-    public URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getUrlForIdentifier(String identifier)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         this.ensureThatIsbnIsValid(identifier);
-        return new URIBuilder(BASE_URL)
-                .addParameter("isbn", identifier)
-                .build()
-                .toURL();
+        return new URIBuilder(BASE_URL).addParameter("isbn", identifier).build().toURL();
     }
 
     @Override
@@ -46,8 +44,8 @@ public class EbookDeIsbnFetcher extends AbstractIsbnFetcher {
         // new FieldFormatterCleanup(StandardField.URL, new ClearFormatter()).cleanup(entry);
 
         // Fetcher returns page numbers as "30 Seiten" -> remove every non-digit character in the PAGETOTAL field
-        entry.getField(StandardField.PAGETOTAL).ifPresent(pages ->
-                entry.setField(StandardField.PAGETOTAL, pages.replaceAll("[\\D]", "")));
+        entry.getField(StandardField.PAGETOTAL)
+                .ifPresent(pages -> entry.setField(StandardField.PAGETOTAL, pages.replaceAll("[\\D]", "")));
         new FieldFormatterCleanup(StandardField.PAGETOTAL, new NormalizePagesFormatter()).cleanup(entry);
         new FieldFormatterCleanup(StandardField.AUTHOR, new NormalizeNamesFormatter()).cleanup(entry);
     }

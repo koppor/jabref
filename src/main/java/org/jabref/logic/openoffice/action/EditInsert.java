@@ -31,8 +31,7 @@ import com.sun.star.text.XTextDocument;
 
 public class EditInsert {
 
-    private EditInsert() {
-    }
+    private EditInsert() {}
 
     /**
      * In insertEntry we receive BibEntry values from the GUI.
@@ -53,21 +52,17 @@ public class EditInsert {
      * @param cursor   Where to insert.
      * @param pageInfo A single pageInfo for a list of entries. This is what we get from the GUI.
      */
-    public static void insertCitationGroup(XTextDocument doc,
-                                           OOFrontend frontend,
-                                           XTextCursor cursor,
-                                           List<BibEntry> entries,
-                                           BibDatabase database,
-                                           OOBibStyle style,
-                                           CitationType citationType,
-                                           String pageInfo)
-            throws
-            NoDocumentException,
-            NotRemoveableException,
-            WrappedTargetException,
-            PropertyVetoException,
-            CreationException,
-            IllegalTypeException {
+    public static void insertCitationGroup(
+            XTextDocument doc,
+            OOFrontend frontend,
+            XTextCursor cursor,
+            List<BibEntry> entries,
+            BibDatabase database,
+            OOBibStyle style,
+            CitationType citationType,
+            String pageInfo)
+            throws NoDocumentException, NotRemoveableException, WrappedTargetException, PropertyVetoException,
+                    CreationException, IllegalTypeException {
 
         List<String> citationKeys = OOListUtil.map(entries, EditInsert::insertEntryGetCitationKey);
 
@@ -87,9 +82,8 @@ public class EditInsert {
         if (style.isNumberEntries()) {
             citeText = OOText.fromString("[-]"); // A dash only. Only refresh later.
         } else {
-            citeText = style.createCitationMarker(citations,
-                    citationType.inParenthesis(),
-                    NonUniqueCitationMarker.FORGIVEN);
+            citeText = style.createCitationMarker(
+                    citations, citationType.inParenthesis(), NonUniqueCitationMarker.FORGIVEN);
         }
 
         if (StringUtil.isBlank(OOText.toString(citeText))) {
@@ -98,7 +92,8 @@ public class EditInsert {
 
         try {
             UnoScreenRefresh.lockControllers(doc);
-            UpdateCitationMarkers.createAndFillCitationGroup(frontend,
+            UpdateCitationMarkers.createAndFillCitationGroup(
+                    frontend,
                     doc,
                     citationKeys,
                     pageInfos,

@@ -22,8 +22,8 @@ public class GroupSearchQuery implements SearchMatcher {
 
     @Override
     public String toString() {
-        return String.format("\"%s\" (%s, %s)", query, getCaseSensitiveDescription(),
-                getRegularExpressionDescription());
+        return String.format(
+                "\"%s\" (%s, %s)", query, getCaseSensitiveDescription(), getRegularExpressionDescription());
     }
 
     @Override

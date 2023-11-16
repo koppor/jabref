@@ -32,15 +32,29 @@ import org.controlsfx.control.textfield.CustomTextField;
  */
 public class PreferencesDialogView extends BaseDialog<PreferencesDialogViewModel> {
 
-    @FXML private CustomTextField searchBox;
-    @FXML private ListView<PreferencesTab> preferenceTabList;
-    @FXML private ScrollPane preferencesContainer;
-    @FXML private ButtonType saveButton;
-    @FXML private ToggleButton memoryStickMode;
+    @FXML
+    private CustomTextField searchBox;
 
-    @Inject private DialogService dialogService;
-    @Inject private PreferencesService preferencesService;
-    @Inject private ThemeManager themeManager;
+    @FXML
+    private ListView<PreferencesTab> preferenceTabList;
+
+    @FXML
+    private ScrollPane preferencesContainer;
+
+    @FXML
+    private ButtonType saveButton;
+
+    @FXML
+    private ToggleButton memoryStickMode;
+
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private PreferencesService preferencesService;
+
+    @Inject
+    private ThemeManager themeManager;
 
     private final JabRefFrame frame;
     private PreferencesDialogViewModel viewModel;
@@ -49,9 +63,7 @@ public class PreferencesDialogView extends BaseDialog<PreferencesDialogViewModel
         this.frame = frame;
         this.setTitle(Localization.lang("JabRef preferences"));
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         ControlHelper.setAction(saveButton, getDialogPane(), event -> savePreferencesAndCloseDialog());
 
@@ -95,7 +107,9 @@ public class PreferencesDialogView extends BaseDialog<PreferencesDialogViewModel
         EasyBind.subscribe(preferenceTabList.getSelectionModel().selectedItemProperty(), tab -> {
             if (tab instanceof AbstractPreferenceTabView<?> preferencesTab) {
                 preferencesContainer.setContent(preferencesTab.getBuilder());
-                preferencesTab.prefWidthProperty().bind(preferencesContainer.widthProperty().subtract(10d));
+                preferencesTab
+                        .prefWidthProperty()
+                        .bind(preferencesContainer.widthProperty().subtract(10d));
                 preferencesTab.getStyleClass().add("preferencesTab");
             } else {
                 preferencesContainer.setContent(null);

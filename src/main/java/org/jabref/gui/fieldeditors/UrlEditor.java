@@ -26,30 +26,37 @@ import jakarta.inject.Inject;
 
 public class UrlEditor extends HBox implements FieldEditorFX {
 
-    @FXML private final UrlEditorViewModel viewModel;
-    @FXML private EditorTextArea textArea;
+    @FXML
+    private final UrlEditorViewModel viewModel;
 
-    @Inject private DialogService dialogService;
-    @Inject private PreferencesService preferencesService;
-    @Inject private UndoManager undoManager;
+    @FXML
+    private EditorTextArea textArea;
 
-    public UrlEditor(Field field,
-                     SuggestionProvider<?> suggestionProvider,
-                     FieldCheckers fieldCheckers) {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+    @Inject
+    private DialogService dialogService;
 
-        this.viewModel = new UrlEditorViewModel(field, suggestionProvider, dialogService, preferencesService, fieldCheckers, undoManager);
+    @Inject
+    private PreferencesService preferencesService;
+
+    @Inject
+    private UndoManager undoManager;
+
+    public UrlEditor(Field field, SuggestionProvider<?> suggestionProvider, FieldCheckers fieldCheckers) {
+        ViewLoader.view(this).root(this).load();
+
+        this.viewModel = new UrlEditorViewModel(
+                field, suggestionProvider, dialogService, preferencesService, fieldCheckers, undoManager);
 
         textArea.textProperty().bindBidirectional(viewModel.textProperty());
         Supplier<List<MenuItem>> contextMenuSupplier = EditorMenus.getCleanupUrlMenu(textArea);
         textArea.initContextMenu(contextMenuSupplier);
 
         // init paste handler for UrlEditor to format pasted url link in textArea
-        textArea.setPasteActionHandler(() -> textArea.setText(new CleanupUrlFormatter().format(new TrimWhitespaceFormatter().format(textArea.getText()))));
+        textArea.setPasteActionHandler(() -> textArea.setText(
+                new CleanupUrlFormatter().format(new TrimWhitespaceFormatter().format(textArea.getText()))));
 
-        new EditorValidator(preferencesService).configureValidation(viewModel.getFieldValidator().getValidationStatus(), textArea);
+        new EditorValidator(preferencesService)
+                .configureValidation(viewModel.getFieldValidator().getValidationStatus(), textArea);
     }
 
     public UrlEditorViewModel getViewModel() {

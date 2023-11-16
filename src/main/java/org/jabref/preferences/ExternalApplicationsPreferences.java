@@ -19,15 +19,16 @@ public class ExternalApplicationsPreferences {
     private final StringProperty customFileBrowserCommand;
     private final StringProperty kindleEmail;
 
-    public ExternalApplicationsPreferences(String eMailSubject,
-                                           boolean shouldAutoOpenEmailAttachmentsFolder,
-                                           String citeCommand,
-                                           String defaultCiteCommand,
-                                           boolean useCustomTerminal,
-                                           String customTerminalCommand,
-                                           boolean useCustomFileBrowser,
-                                           String customFileBrowserCommand,
-                                           String kindleEmail) {
+    public ExternalApplicationsPreferences(
+            String eMailSubject,
+            boolean shouldAutoOpenEmailAttachmentsFolder,
+            String citeCommand,
+            String defaultCiteCommand,
+            boolean useCustomTerminal,
+            String customTerminalCommand,
+            boolean useCustomFileBrowser,
+            String customFileBrowserCommand,
+            String kindleEmail) {
 
         this.eMailSubject = new SimpleStringProperty(eMailSubject);
         this.shouldAutoOpenEmailAttachmentsFolder = new SimpleBooleanProperty(shouldAutoOpenEmailAttachmentsFolder);

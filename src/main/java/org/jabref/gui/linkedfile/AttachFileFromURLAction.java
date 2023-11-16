@@ -25,10 +25,11 @@ public class AttachFileFromURLAction extends SimpleCommand {
     private final PreferencesService preferencesService;
     private final TaskExecutor taskExecutor;
 
-    public AttachFileFromURLAction(DialogService dialogService,
-                                   StateManager stateManager,
-                                   TaskExecutor taskExecutor,
-                                   PreferencesService preferencesService) {
+    public AttachFileFromURLAction(
+            DialogService dialogService,
+            StateManager stateManager,
+            TaskExecutor taskExecutor,
+            PreferencesService preferencesService) {
         this.stateManager = stateManager;
         this.dialogService = dialogService;
         this.taskExecutor = taskExecutor;
@@ -62,12 +63,7 @@ public class AttachFileFromURLAction extends SimpleCommand {
         try {
             URL url = new URL(urlforDownload.get());
             LinkedFileViewModel onlineFile = new LinkedFileViewModel(
-                             new LinkedFile(url, ""),
-                             entry,
-                             databaseContext,
-                             taskExecutor,
-                             dialogService,
-                             preferencesService);
+                    new LinkedFile(url, ""), entry, databaseContext, taskExecutor, dialogService, preferencesService);
             onlineFile.download();
         } catch (MalformedURLException exception) {
             dialogService.showErrorDialogAndWait(Localization.lang("Invalid URL"), exception);

@@ -23,8 +23,8 @@ public class StyleLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(StyleLoader.class);
 
     // All internal styles
-    private final List<String> internalStyleFiles = Arrays.asList(DEFAULT_AUTHORYEAR_STYLE_PATH,
-            DEFAULT_NUMERICAL_STYLE_PATH);
+    private final List<String> internalStyleFiles =
+            Arrays.asList(DEFAULT_AUTHORYEAR_STYLE_PATH, DEFAULT_NUMERICAL_STYLE_PATH);
 
     private final OpenOfficePreferences openOfficePreferences;
     private final LayoutFormatterPreferences layoutFormatterPreferences;
@@ -35,9 +35,10 @@ public class StyleLoader {
     private final List<OOBibStyle> internalStyles = new ArrayList<>();
     private final List<OOBibStyle> externalStyles = new ArrayList<>();
 
-    public StyleLoader(OpenOfficePreferences openOfficePreferences,
-                       LayoutFormatterPreferences formatterPreferences,
-                       JournalAbbreviationRepository abbreviationRepository) {
+    public StyleLoader(
+            OpenOfficePreferences openOfficePreferences,
+            LayoutFormatterPreferences formatterPreferences,
+            JournalAbbreviationRepository abbreviationRepository) {
         this.openOfficePreferences = Objects.requireNonNull(openOfficePreferences);
         this.layoutFormatterPreferences = Objects.requireNonNull(formatterPreferences);
         this.abbreviationRepository = Objects.requireNonNull(abbreviationRepository);
@@ -85,7 +86,8 @@ public class StyleLoader {
         List<String> lists = openOfficePreferences.getExternalStyles();
         for (String filename : lists) {
             try {
-                OOBibStyle style = new OOBibStyle(Path.of(filename), layoutFormatterPreferences, abbreviationRepository);
+                OOBibStyle style =
+                        new OOBibStyle(Path.of(filename), layoutFormatterPreferences, abbreviationRepository);
                 if (style.isValid()) { // Problem!
                     externalStyles.add(style);
                 } else {

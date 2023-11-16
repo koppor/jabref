@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class GitHandlerTest {
     @TempDir
     Path repositoryPath;
+
     private GitHandler gitHandler;
 
     @BeforeEach
@@ -43,9 +44,7 @@ class GitHandlerTest {
             gitHandler.createCommitOnCurrentBranch("TestCommit", false);
 
             AnyObjectId head = git.getRepository().resolve(Constants.HEAD);
-            Iterator<RevCommit> log = git.log()
-                                         .add(head)
-                                         .call().iterator();
+            Iterator<RevCommit> log = git.log().add(head).call().iterator();
             assertEquals("TestCommit", log.next().getFullMessage());
             assertEquals("Initial commit", log.next().getFullMessage());
         }

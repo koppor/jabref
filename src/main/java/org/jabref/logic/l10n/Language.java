@@ -49,7 +49,8 @@ public enum Language {
     public static Optional<Locale> convertToSupportedLocale(Language language) {
         Objects.requireNonNull(language);
 
-        // Very important to split languages like pt_BR into two parts, because otherwise the country would be treated lowercase and create problems in loading
+        // Very important to split languages like pt_BR into two parts, because otherwise the country would be treated
+        // lowercase and create problems in loading
         String[] languageParts = language.getId().split("_");
         Locale locale;
         if (languageParts.length == 1) {

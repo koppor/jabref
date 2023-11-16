@@ -75,16 +75,16 @@ public class SciteTabViewModel extends AbstractViewModel {
         }
 
         searchTask = BackgroundTask.wrap(() -> fetchTallies(entry.getDOI().get()))
-                                   .onRunning(() -> status.set(SciteStatus.IN_PROGRESS))
-                                   .onSuccess(result -> {
-                                       currentResult = Optional.of(result);
-                                       status.set(SciteStatus.FOUND);
-                                   })
-                                   .onFailure(error -> {
-                                       searchError.set(error.getMessage());
-                                       status.set(SciteStatus.ERROR);
-                                   })
-                                   .executeWith(taskExecutor);
+                .onRunning(() -> status.set(SciteStatus.IN_PROGRESS))
+                .onSuccess(result -> {
+                    currentResult = Optional.of(result);
+                    status.set(SciteStatus.FOUND);
+                })
+                .onFailure(error -> {
+                    searchError.set(error.getMessage());
+                    status.set(SciteStatus.ERROR);
+                })
+                .executeWith(taskExecutor);
     }
 
     private void cancelSearch() {

@@ -15,18 +15,16 @@ public class DBMSConnectionTest {
     @ParameterizedTest
     @EnumSource(DBMSType.class)
     public void getConnectionFailsWhenconnectingToInvalidHost(DBMSType dbmsType) {
-        assertThrows(SQLException.class,
-                () -> new DBMSConnection(
-                        new DBMSConnectionPropertiesBuilder()
-                                .setType(dbmsType)
-                                .setHost("XXXX")
-                                .setPort(33778)
-                                .setDatabase("XXXX")
-                                .setUser("XXXX")
-                                .setPassword("XXXX")
-                                .setUseSSL(false)
-                                .setServerTimezone("XXXX")
-                                .createDBMSConnectionProperties())
-                        .getConnection());
+        assertThrows(SQLException.class, () -> new DBMSConnection(new DBMSConnectionPropertiesBuilder()
+                        .setType(dbmsType)
+                        .setHost("XXXX")
+                        .setPort(33778)
+                        .setDatabase("XXXX")
+                        .setUser("XXXX")
+                        .setPassword("XXXX")
+                        .setUseSSL(false)
+                        .setServerTimezone("XXXX")
+                        .createDBMSConnectionProperties())
+                .getConnection());
     }
 }

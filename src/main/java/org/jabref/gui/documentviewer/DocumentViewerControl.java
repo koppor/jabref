@@ -70,12 +70,15 @@ public class DocumentViewerControl extends StackPane {
     public void show(DocumentViewModel document) {
         flow = VirtualFlow.createVertical(document.getPages(), DocumentViewerPage::new);
         getChildren().setAll(flow);
-        flow.visibleCells().addListener((ListChangeListener<? super DocumentViewerPage>) c -> updateCurrentPage(flow.visibleCells()));
+        flow.visibleCells().addListener((ListChangeListener<? super DocumentViewerPage>)
+                c -> updateCurrentPage(flow.visibleCells()));
 
         // (Bidirectional) binding does not work, so use listeners instead
         flow.estimatedScrollYProperty().addListener((observable, oldValue, newValue) -> scrollY.setValue(newValue));
-        scrollY.addListener((observable, oldValue, newValue) -> flow.estimatedScrollYProperty().setValue((double) newValue));
-        flow.totalLengthEstimateProperty().addListener((observable, oldValue, newValue) -> scrollYMax.setValue(newValue));
+        scrollY.addListener((observable, oldValue, newValue) ->
+                flow.estimatedScrollYProperty().setValue((double) newValue));
+        flow.totalLengthEstimateProperty()
+                .addListener((observable, oldValue, newValue) -> scrollYMax.setValue(newValue));
     }
 
     private void updateCurrentPage(ObservableList<DocumentViewerPage> visiblePages) {
@@ -100,8 +103,10 @@ public class DocumentViewerControl extends StackPane {
             currentPage.set(inMiddleOfViewport.get().getPageNumber());
         } else {
             // Heuristic missed, so try to get page number from first shown page
-            currentPage.set(
-                    visiblePages.stream().findFirst().map(DocumentViewerPage::getPageNumber).orElse(1));
+            currentPage.set(visiblePages.stream()
+                    .findFirst()
+                    .map(DocumentViewerPage::getPageNumber)
+                    .orElse(1));
         }
     }
 
@@ -156,8 +161,7 @@ public class DocumentViewerControl extends StackPane {
             background = new Rectangle(getDesiredWidth(), getDesiredHeight());
             background.setStyle("-fx-fill: WHITE");
             // imageView.setImage(new WritableImage(getDesiredWidth(), getDesiredHeight()));
-            BackgroundTask<Image> generateImage = BackgroundTask
-                    .wrap(() -> renderPage(initialPage))
+            BackgroundTask<Image> generateImage = BackgroundTask.wrap(() -> renderPage(initialPage))
                     .onSuccess(image -> {
                         imageView.setImage(image);
                         progress.setVisible(false);
@@ -196,8 +200,7 @@ public class DocumentViewerControl extends StackPane {
             background.setVisible(true);
             imageView.setOpacity(0);
 
-            BackgroundTask<Image> generateImage = BackgroundTask
-                    .wrap(() -> renderPage(page))
+            BackgroundTask<Image> generateImage = BackgroundTask.wrap(() -> renderPage(page))
                     .onSuccess(image -> {
                         imageView.setImage(image);
 

@@ -27,32 +27,59 @@ import com.tobiasdiez.easybind.EasyBind;
 
 public class WebSearchTab extends AbstractPreferenceTabView<WebSearchTabViewModel> implements PreferencesTab {
 
-    @FXML private CheckBox enableWebSearch;
-    @FXML private CheckBox generateNewKeyOnImport;
-    @FXML private CheckBox warnAboutDuplicatesOnImport;
-    @FXML private CheckBox downloadLinkedOnlineFiles;
+    @FXML
+    private CheckBox enableWebSearch;
 
-    @FXML private CheckBox useCustomDOI;
-    @FXML private TextField useCustomDOIName;
+    @FXML
+    private CheckBox generateNewKeyOnImport;
 
-    @FXML private CheckBox grobidEnabled;
-    @FXML private TextField grobidURL;
+    @FXML
+    private CheckBox warnAboutDuplicatesOnImport;
 
-    @FXML private ComboBox<FetcherApiKey> apiKeySelector;
-    @FXML private TextField customApiKey;
-    @FXML private CheckBox useCustomApiKey;
-    @FXML private Button testCustomApiKey;
+    @FXML
+    private CheckBox downloadLinkedOnlineFiles;
 
-    @FXML private CheckBox persistApiKeys;
-    @FXML private SplitPane persistentTooltipWrapper; // The disabled persistApiKeys control does not show tooltips
-    @FXML private TableView<StudyCatalogItem> catalogTable;
-    @FXML private TableColumn<StudyCatalogItem, Boolean> catalogEnabledColumn;
-    @FXML private TableColumn<StudyCatalogItem, String> catalogColumn;
+    @FXML
+    private CheckBox useCustomDOI;
+
+    @FXML
+    private TextField useCustomDOIName;
+
+    @FXML
+    private CheckBox grobidEnabled;
+
+    @FXML
+    private TextField grobidURL;
+
+    @FXML
+    private ComboBox<FetcherApiKey> apiKeySelector;
+
+    @FXML
+    private TextField customApiKey;
+
+    @FXML
+    private CheckBox useCustomApiKey;
+
+    @FXML
+    private Button testCustomApiKey;
+
+    @FXML
+    private CheckBox persistApiKeys;
+
+    @FXML
+    private SplitPane persistentTooltipWrapper; // The disabled persistApiKeys control does not show tooltips
+
+    @FXML
+    private TableView<StudyCatalogItem> catalogTable;
+
+    @FXML
+    private TableColumn<StudyCatalogItem, Boolean> catalogEnabledColumn;
+
+    @FXML
+    private TableColumn<StudyCatalogItem, String> catalogColumn;
 
     public WebSearchTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -65,7 +92,9 @@ public class WebSearchTab extends AbstractPreferenceTabView<WebSearchTabViewMode
 
         enableWebSearch.selectedProperty().bindBidirectional(viewModel.enableWebSearchProperty());
         generateNewKeyOnImport.selectedProperty().bindBidirectional(viewModel.generateKeyOnImportProperty());
-        warnAboutDuplicatesOnImport.selectedProperty().bindBidirectional(viewModel.warnAboutDuplicatesOnImportProperty());
+        warnAboutDuplicatesOnImport
+                .selectedProperty()
+                .bindBidirectional(viewModel.warnAboutDuplicatesOnImportProperty());
         downloadLinkedOnlineFiles.selectedProperty().bindBidirectional(viewModel.shouldDownloadLinkedOnlineFiles());
 
         grobidEnabled.selectedProperty().bindBidirectional(viewModel.grobidEnabledProperty());
@@ -108,10 +137,15 @@ public class WebSearchTab extends AbstractPreferenceTabView<WebSearchTabViewMode
                 customApiKey.setText(newValue.getKey());
             }
         });
-        customApiKey.textProperty().addListener(listener -> updateFetcherApiKey(apiKeySelector.valueProperty().get()));
+        customApiKey
+                .textProperty()
+                .addListener(listener ->
+                        updateFetcherApiKey(apiKeySelector.valueProperty().get()));
 
         customApiKey.disableProperty().bind(useCustomApiKey.selectedProperty().not());
-        testCustomApiKey.disableProperty().bind(useCustomApiKey.selectedProperty().not());
+        testCustomApiKey
+                .disableProperty()
+                .bind(useCustomApiKey.selectedProperty().not());
 
         persistApiKeys.selectedProperty().bindBidirectional(viewModel.getApikeyPersistProperty());
         persistApiKeys.disableProperty().bind(viewModel.apiKeyPersistAvailable().not());
@@ -127,7 +161,8 @@ public class WebSearchTab extends AbstractPreferenceTabView<WebSearchTabViewMode
         viewModel.selectedApiKeyProperty().bind(apiKeySelector.valueProperty());
 
         // Content is set later
-        viewModel.fetcherApiKeys().addListener((InvalidationListener) change -> apiKeySelector.getSelectionModel().selectFirst());
+        viewModel.fetcherApiKeys().addListener((InvalidationListener)
+                change -> apiKeySelector.getSelectionModel().selectFirst());
     }
 
     private void updateFetcherApiKey(FetcherApiKey apiKey) {

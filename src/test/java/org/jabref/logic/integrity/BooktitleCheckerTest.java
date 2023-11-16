@@ -13,12 +13,18 @@ public class BooktitleCheckerTest {
 
     @Test
     void booktitleAcceptsIfItDoesNotEndWithConferenceOn() {
-        assertEquals(Optional.empty(), checker.checkValue("2014 Fourth International Conference on Digital Information and Communication Technology and it's Applications (DICTAP)"));
+        assertEquals(
+                Optional.empty(),
+                checker.checkValue(
+                        "2014 Fourth International Conference on Digital Information and Communication Technology and it's Applications (DICTAP)"));
     }
 
     @Test
     void booktitleDoesNotAcceptsIfItEndsWithConferenceOn() {
-        assertNotEquals(Optional.empty(), checker.checkValue("Digital Information and Communication Technology and it's Applications (DICTAP), 2014 Fourth International Conference on"));
+        assertNotEquals(
+                Optional.empty(),
+                checker.checkValue(
+                        "Digital Information and Communication Technology and it's Applications (DICTAP), 2014 Fourth International Conference on"));
     }
 
     @Test

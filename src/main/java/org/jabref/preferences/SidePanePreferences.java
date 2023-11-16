@@ -16,9 +16,10 @@ public class SidePanePreferences {
     private final ObservableMap<SidePaneType, Integer> preferredPositions;
     private final IntegerProperty webSearchFetcherSelected;
 
-    public SidePanePreferences(Set<SidePaneType> visiblePanes,
-                               Map<SidePaneType, Integer> preferredPositions,
-                               int webSearchFetcherSelected) {
+    public SidePanePreferences(
+            Set<SidePaneType> visiblePanes,
+            Map<SidePaneType, Integer> preferredPositions,
+            int webSearchFetcherSelected) {
         this.visiblePanes = FXCollections.observableSet(visiblePanes);
         this.preferredPositions = FXCollections.observableMap(preferredPositions);
         this.webSearchFetcherSelected = new SimpleIntegerProperty(webSearchFetcherSelected);

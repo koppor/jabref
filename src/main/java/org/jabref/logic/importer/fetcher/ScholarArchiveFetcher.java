@@ -46,9 +46,14 @@ public class ScholarArchiveFetcher implements PagedSearchBasedParserFetcher {
      * @return URL
      */
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder(API_URL);
-        uriBuilder.addParameter("q", new ScholarArchiveQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
+        uriBuilder.addParameter(
+                "q",
+                new ScholarArchiveQueryTransformer()
+                        .transformLuceneQuery(luceneQuery)
+                        .orElse(""));
         uriBuilder.addParameter("from", String.valueOf(getPageSize() * pageNumber));
         uriBuilder.addParameter("size", String.valueOf(getPageSize()));
         uriBuilder.addParameter("format", "json");
@@ -100,11 +105,14 @@ public class ScholarArchiveFetcher implements PagedSearchBasedParserFetcher {
 
             JSONArray abstracts = jsonEntry.getJSONArray("abstracts");
             String foundAbstract = IntStream.range(0, abstracts.length())
-                                            .mapToObj(abstracts::getJSONObject)
-                                            .map(object -> object.optString("body"))
-                                            .findFirst().orElse("");
+                    .mapToObj(abstracts::getJSONObject)
+                    .map(object -> object.optString("body"))
+                    .findFirst()
+                    .orElse("");
 
-            String url = Optional.ofNullable(jsonEntry.optJSONObject("fulltext")).map(fullText -> fullText.optString("access_url")).orElse("");
+            String url = Optional.ofNullable(jsonEntry.optJSONObject("fulltext"))
+                    .map(fullText -> fullText.optString("access_url"))
+                    .orElse("");
 
             // publication type
             String type = biblio.optString("release_type");

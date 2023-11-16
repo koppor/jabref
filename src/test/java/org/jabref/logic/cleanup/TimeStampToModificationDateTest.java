@@ -33,17 +33,13 @@ class TimeStampToModificationDateTest {
         return Stream.of(
                 Arguments.of(
                         new BibEntry().withField(StandardField.MODIFICATIONDATE, "2018-09-10T00:00:00"),
-                        new BibEntry().withField(StandardField.TIMESTAMP, "2018-09-10")
-                ),
+                        new BibEntry().withField(StandardField.TIMESTAMP, "2018-09-10")),
                 Arguments.of(
                         new BibEntry().withField(StandardField.MODIFICATIONDATE, "2020-12-24T00:00:00"),
-                        new BibEntry().withField(StandardField.TIMESTAMP, "2020-12-24")
-                ),
+                        new BibEntry().withField(StandardField.TIMESTAMP, "2020-12-24")),
                 Arguments.of(
                         new BibEntry().withField(StandardField.MODIFICATIONDATE, "2020-12-31T00:00:00"),
-                        new BibEntry().withField(StandardField.TIMESTAMP, "2020-12-31")
-                )
-        );
+                        new BibEntry().withField(StandardField.TIMESTAMP, "2020-12-31")));
     }
 
     /**
@@ -62,17 +58,13 @@ class TimeStampToModificationDateTest {
         return Stream.of(
                 Arguments.of(
                         new BibEntry().withField(StandardField.MODIFICATIONDATE, "2018-09-10T00:00:00"),
-                        new BibEntry().withField(customTimeStampField, "2018-09-10")
-                ),
+                        new BibEntry().withField(customTimeStampField, "2018-09-10")),
                 Arguments.of(
                         new BibEntry().withField(StandardField.MODIFICATIONDATE, "2020-12-24T00:00:00"),
-                        new BibEntry().withField(customTimeStampField, "2020-12-24")
-                ),
+                        new BibEntry().withField(customTimeStampField, "2020-12-24")),
                 Arguments.of(
                         new BibEntry().withField(StandardField.MODIFICATIONDATE, "2020-12-31T00:00:00"),
-                        new BibEntry().withField(customTimeStampField, "2020-12-31")
-                )
-        );
+                        new BibEntry().withField(customTimeStampField, "2020-12-31")));
     }
 
     /**

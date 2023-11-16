@@ -12,11 +12,10 @@ public interface FieldEditorFX {
     Parent getNode();
 
     default void focus() {
-        getNode().getChildrenUnmodifiable()
-                 .stream()
-                 .findFirst()
-                 .orElse(getNode())
-                 .requestFocus();
+        getNode().getChildrenUnmodifiable().stream()
+                .findFirst()
+                .orElse(getNode())
+                .requestFocus();
     }
 
     default boolean childIsFocused() {

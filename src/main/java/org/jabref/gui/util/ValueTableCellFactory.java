@@ -59,12 +59,14 @@ public class ValueTableCellFactory<S, T> implements Callback<TableColumn<S, T>, 
         return this;
     }
 
-    public ValueTableCellFactory<S, T> withOnMouseClickedEvent(BiFunction<S, T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
+    public ValueTableCellFactory<S, T> withOnMouseClickedEvent(
+            BiFunction<S, T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
         this.toOnMouseClickedEvent = toOnMouseClickedEvent;
         return this;
     }
 
-    public ValueTableCellFactory<S, T> withOnMouseClickedEvent(Function<T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
+    public ValueTableCellFactory<S, T> withOnMouseClickedEvent(
+            Function<T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
         this.toOnMouseClickedEvent = (rowItem, value) -> toOnMouseClickedEvent.apply(value);
         return this;
     }
@@ -96,7 +98,10 @@ public class ValueTableCellFactory<S, T> implements Callback<TableColumn<S, T>, 
             protected void updateItem(T item, boolean empty) {
                 super.updateItem(item, empty);
 
-                if (empty || (item == null) || (getTableRow() == null) || (getTableRow().getItem() == null)) {
+                if (empty
+                        || (item == null)
+                        || (getTableRow() == null)
+                        || (getTableRow().getItem() == null)) {
                     setText(null);
                     setGraphic(null);
                     setOnMouseClicked(null);

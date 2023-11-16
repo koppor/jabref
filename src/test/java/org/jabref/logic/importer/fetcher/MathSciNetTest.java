@@ -28,16 +28,22 @@ class MathSciNetTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator())
+                .thenReturn(',');
 
         fetcher = new MathSciNet(importFormatPreferences);
 
         ratiuEntry = new BibEntry();
         ratiuEntry.setType(StandardEntryType.Article);
         ratiuEntry.setCitationKey("MR3537908");
-        ratiuEntry.setField(StandardField.AUTHOR, "Chechkin, Gregory A. and Ratiu, Tudor S. and Romanov, Maxim S. and Samokhin, Vyacheslav N.");
-        ratiuEntry.setField(StandardField.TITLE, "Existence and uniqueness theorems for the two-dimensional {E}ricksen-{L}eslie system");
+        ratiuEntry.setField(
+                StandardField.AUTHOR,
+                "Chechkin, Gregory A. and Ratiu, Tudor S. and Romanov, Maxim S. and Samokhin, Vyacheslav N.");
+        ratiuEntry.setField(
+                StandardField.TITLE,
+                "Existence and uniqueness theorems for the two-dimensional {E}ricksen-{L}eslie system");
         ratiuEntry.setField(StandardField.JOURNAL, "Journal of Mathematical Fluid Mechanics");
         ratiuEntry.setField(StandardField.VOLUME, "18");
         ratiuEntry.setField(StandardField.YEAR, "2016");
@@ -73,7 +79,8 @@ class MathSciNetTest {
     @Test
     @DisabledOnCIServer("CI server has no subscription to MathSciNet and thus gets 401 response")
     void searchByQueryFindsEntry() throws Exception {
-        List<BibEntry> fetchedEntries = fetcher.performSearch("Existence and uniqueness theorems Two-Dimensional Ericksen Leslie System");
+        List<BibEntry> fetchedEntries =
+                fetcher.performSearch("Existence and uniqueness theorems Two-Dimensional Ericksen Leslie System");
         assertFalse(fetchedEntries.isEmpty());
         assertEquals(ratiuEntry, fetchedEntries.get(1));
     }

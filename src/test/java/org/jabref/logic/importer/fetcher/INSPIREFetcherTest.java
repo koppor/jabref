@@ -24,7 +24,8 @@ class INSPIREFetcherTest {
 
     @BeforeEach
     void setUp() {
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
         fetcher = new INSPIREFetcher(importFormatPreferences);
     }
 
@@ -33,7 +34,9 @@ class INSPIREFetcherTest {
         BibEntry master = new BibEntry(StandardEntryType.MastersThesis)
                 .withCitationKey("Diez:2013fdp")
                 .withField(StandardField.AUTHOR, "Diez, Tobias")
-                .withField(StandardField.TITLE, "Slice theorem for Fréchet group actions and covariant symplectic field theory")
+                .withField(
+                        StandardField.TITLE,
+                        "Slice theorem for Fréchet group actions and covariant symplectic field theory")
                 .withField(StandardField.SCHOOL, "Leipzig U.")
                 .withField(StandardField.YEAR, "2013")
                 .withField(StandardField.EPRINT, "1405.2249")

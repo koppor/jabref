@@ -25,14 +25,14 @@ public class DOICheckTest {
                 Arguments.of("", ""),
                 Arguments.of(null, null),
                 Arguments.of("https://doi.org/10.1000/ISBN1-900512-44-0", "10.1000/ISBN1-900512-44-0"),
-                Arguments.of("https://doi.org/10.1000/ISBN1-900512-44-0", "http://dx.doi.org/10.1000/ISBN1-900512-44-0"),
-                Arguments.of("https://doi.org/10.1000/ISBN1-900512-44-0", "http://doi.acm.org/10.1000/ISBN1-900512-44-0"),
+                Arguments.of(
+                        "https://doi.org/10.1000/ISBN1-900512-44-0", "http://dx.doi.org/10.1000/ISBN1-900512-44-0"),
+                Arguments.of(
+                        "https://doi.org/10.1000/ISBN1-900512-44-0", "http://doi.acm.org/10.1000/ISBN1-900512-44-0"),
                 Arguments.of("https://doi.org/10.1145/354401.354407", "http://doi.acm.org/10.1145/354401.354407"),
                 Arguments.of("https://doi.org/10.1145/354401.354407", "10.1145/354401.354407"),
                 Arguments.of("https://doi.org/10.1145/354401.354407", "/10.1145/354401.354407"),
                 Arguments.of("10", "10"),
-                Arguments.of("1", "1")
-
-        );
+                Arguments.of("1", "1"));
     }
 }

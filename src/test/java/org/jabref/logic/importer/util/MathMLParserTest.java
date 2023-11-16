@@ -32,7 +32,8 @@ class MathMLParserTest {
 
     private static Stream<Arguments> tests() {
         return Stream.of(
-                Arguments.of("$\\begin{pmatrix}0 & 1 & 0\\\\ 0 & 0 & 1\\\\ 1 & 0 & 0\\end{pmatrix}$",
+                Arguments.of(
+                        "$\\begin{pmatrix}0 & 1 & 0\\\\ 0 & 0 & 1\\\\ 1 & 0 & 0\\end{pmatrix}$",
                         """
                                 <math xmlns="http://www.w3.org/1998/Math/MathML">
                                     <matrix>
@@ -48,7 +49,8 @@ class MathMLParserTest {
                                     </matrix>
                                 </math>
                                 """),
-                Arguments.of("${\\eta }_{p}^{2}$",
+                Arguments.of(
+                        "${\\eta }_{p}^{2}$",
                         """
                                 <mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML">
                                     <mml:mrow>
@@ -60,7 +62,8 @@ class MathMLParserTest {
                                     </mml:mrow>
                                 </mml:math>
                                 """),
-                Arguments.of("<Unsupported MathML expression>",
+                Arguments.of(
+                        "<Unsupported MathML expression>",
                         """
                                 <mml:math xmlns=http://www.w3.org/1998/Math/MathML>
                                     <mml:mrow>
@@ -70,7 +73,8 @@ class MathMLParserTest {
                                     </mml:mrow>
                                 </mml:math>
                                 """),
-                Arguments.of("$\\underset{a}{\\overset{b}{\\int }}\\left(5x+2\\mathrm{sin}\\left(x\\right)\\right)\\mathrm{dx}$",
+                Arguments.of(
+                        "$\\underset{a}{\\overset{b}{\\int }}\\left(5x+2\\mathrm{sin}\\left(x\\right)\\right)\\mathrm{dx}$",
                         """
                                 <math xmlns="http://www.w3.org/1998/Math/MathML">
                                     <munderover>
@@ -91,7 +95,8 @@ class MathMLParserTest {
                                     <mi>dx</mi>
                                 </math>
                                 """),
-                Arguments.of("$\\stackrel{\\to }{v}=\\left({v}_{1},{v}_{2},{v}_{3}\\right)$",
+                Arguments.of(
+                        "$\\stackrel{\\to }{v}=\\left({v}_{1},{v}_{2},{v}_{3}\\right)$",
                         """
                                 <math xmlns="http://www.w3.org/1998/Math/MathML">
                                     <mover>
@@ -114,7 +119,6 @@ class MathMLParserTest {
                                         </msub>
                                     </mfenced>
                                 </math>
-                                """)
-        );
+                                """));
     }
 }

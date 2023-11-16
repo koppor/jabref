@@ -18,17 +18,16 @@ public class IntegrityCheck {
     private final FieldCheckers fieldCheckers;
     private final List<EntryChecker> entryCheckers;
 
-    public IntegrityCheck(BibDatabaseContext bibDatabaseContext,
-                          FilePreferences filePreferences,
-                          CitationKeyPatternPreferences citationKeyPatternPreferences,
-                          JournalAbbreviationRepository journalAbbreviationRepository,
-                          boolean allowIntegerEdition) {
+    public IntegrityCheck(
+            BibDatabaseContext bibDatabaseContext,
+            FilePreferences filePreferences,
+            CitationKeyPatternPreferences citationKeyPatternPreferences,
+            JournalAbbreviationRepository journalAbbreviationRepository,
+            boolean allowIntegerEdition) {
         this.bibDatabaseContext = bibDatabaseContext;
 
-        fieldCheckers = new FieldCheckers(bibDatabaseContext,
-                filePreferences,
-                journalAbbreviationRepository,
-                allowIntegerEdition);
+        fieldCheckers = new FieldCheckers(
+                bibDatabaseContext, filePreferences, journalAbbreviationRepository, allowIntegerEdition);
 
         entryCheckers = new ArrayList<>(List.of(
                 new CitationKeyChecker(),
@@ -40,16 +39,13 @@ public class IntegrityCheck {
                 new CitationKeyDuplicationChecker(bibDatabaseContext.getDatabase()),
                 new AmpersandChecker(),
                 new LatexIntegrityChecker(),
-                new JournalInAbbreviationListChecker(StandardField.JOURNAL, journalAbbreviationRepository)
-                ));
+                new JournalInAbbreviationListChecker(StandardField.JOURNAL, journalAbbreviationRepository)));
         if (bibDatabaseContext.isBiblatexMode()) {
-            entryCheckers.add(new UTF8Checker(bibDatabaseContext.getMetaData().getEncoding().orElse(StandardCharsets.UTF_8)));
+            entryCheckers.add(new UTF8Checker(
+                    bibDatabaseContext.getMetaData().getEncoding().orElse(StandardCharsets.UTF_8)));
         } else {
-            entryCheckers.addAll(List.of(
-                    new ASCIICharacterChecker(),
-                    new NoBibtexFieldChecker(),
-                    new BibTeXEntryTypeChecker())
-            );
+            entryCheckers.addAll(
+                    List.of(new ASCIICharacterChecker(), new NoBibtexFieldChecker(), new BibTeXEntryTypeChecker()));
         }
     }
 

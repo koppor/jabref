@@ -31,30 +31,74 @@ import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
 import jakarta.inject.Inject;
 
 public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
-    @FXML private ComboBox<DBMSType> databaseType;
-    @FXML private TextField host;
-    @FXML private TextField database;
-    @FXML private TextField port;
-    @FXML private TextField user;
-    @FXML private PasswordField password;
-    @FXML private CheckBox rememberPassword;
-    @FXML private TextField folder;
-    @FXML private Button browseButton;
-    @FXML private CheckBox autosave;
-    @FXML private ButtonType connectButton;
-    @FXML private CheckBox useSSL;
-    @FXML private TextField fileKeystore;
-    @FXML private PasswordField passwordKeystore;
-    @FXML private Button browseKeystore;
-    @FXML private TextField serverTimezone;
+    @FXML
+    private ComboBox<DBMSType> databaseType;
 
-    @Inject private DialogService dialogService;
-    @Inject private PreferencesService preferencesService;
-    @Inject private StateManager stateManager;
-    @Inject private BibEntryTypesManager entryTypesManager;
-    @Inject private FileUpdateMonitor fileUpdateMonitor;
-    @Inject private UndoManager undoManager;
-    @Inject private TaskExecutor taskExecutor;
+    @FXML
+    private TextField host;
+
+    @FXML
+    private TextField database;
+
+    @FXML
+    private TextField port;
+
+    @FXML
+    private TextField user;
+
+    @FXML
+    private PasswordField password;
+
+    @FXML
+    private CheckBox rememberPassword;
+
+    @FXML
+    private TextField folder;
+
+    @FXML
+    private Button browseButton;
+
+    @FXML
+    private CheckBox autosave;
+
+    @FXML
+    private ButtonType connectButton;
+
+    @FXML
+    private CheckBox useSSL;
+
+    @FXML
+    private TextField fileKeystore;
+
+    @FXML
+    private PasswordField passwordKeystore;
+
+    @FXML
+    private Button browseKeystore;
+
+    @FXML
+    private TextField serverTimezone;
+
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private PreferencesService preferencesService;
+
+    @Inject
+    private StateManager stateManager;
+
+    @Inject
+    private BibEntryTypesManager entryTypesManager;
+
+    @Inject
+    private FileUpdateMonitor fileUpdateMonitor;
+
+    @Inject
+    private UndoManager undoManager;
+
+    @Inject
+    private TaskExecutor taskExecutor;
 
     private final JabRefFrame frame;
     private SharedDatabaseLoginDialogViewModel viewModel;
@@ -64,15 +108,19 @@ public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
         this.frame = frame;
         this.setTitle(Localization.lang("Connect to shared database"));
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         ControlHelper.setAction(connectButton, this.getDialogPane(), event -> openDatabase());
         Button btnConnect = (Button) this.getDialogPane().lookupButton(connectButton);
         // must be set here, because in initialize the button is still null
-        btnConnect.disableProperty().bind(viewModel.formValidation().validProperty().not());
-        btnConnect.textProperty().bind(EasyBind.map(viewModel.loadingProperty(), loading -> loading ? Localization.lang("Connecting...") : Localization.lang("Connect")));
+        btnConnect
+                .disableProperty()
+                .bind(viewModel.formValidation().validProperty().not());
+        btnConnect
+                .textProperty()
+                .bind(EasyBind.map(
+                        viewModel.loadingProperty(),
+                        loading -> loading ? Localization.lang("Connecting...") : Localization.lang("Connect")));
     }
 
     @FXML
@@ -129,11 +177,13 @@ public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
             visualizer.initVisualization(viewModel.portValidation(), port, true);
             visualizer.initVisualization(viewModel.userValidation(), user, true);
 
-            EasyBind.subscribe(autosave.selectedProperty(), selected ->
-                    visualizer.initVisualization(viewModel.folderValidation(), folder, true));
+            EasyBind.subscribe(
+                    autosave.selectedProperty(),
+                    selected -> visualizer.initVisualization(viewModel.folderValidation(), folder, true));
 
-            EasyBind.subscribe(useSSL.selectedProperty(), selected ->
-                    visualizer.initVisualization(viewModel.keystoreValidation(), fileKeystore, true));
+            EasyBind.subscribe(
+                    useSSL.selectedProperty(),
+                    selected -> visualizer.initVisualization(viewModel.keystoreValidation(), fileKeystore, true));
         });
     }
 

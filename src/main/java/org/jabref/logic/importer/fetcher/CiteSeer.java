@@ -32,8 +32,7 @@ public class CiteSeer implements SearchBasedFetcher, FulltextFetcher {
 
     private CiteSeerQueryTransformer transformer;
 
-    public CiteSeer() {
-    }
+    public CiteSeer() {}
 
     @Override
     public String getName() {
@@ -51,18 +50,19 @@ public class CiteSeer implements SearchBasedFetcher, FulltextFetcher {
         try {
             JSONElement payload = getPayloadJSON(luceneQuery);
             JsonNode requestResponse = Unirest.post(API_URL)
-                                              .header("authority", BASE_URL)
-                                              .header("accept", "application/json, text/plain, */*")
-                                              .header("content-type", "application/json;charset=UTF-8")
-                                              .header("origin", "https://" + BASE_URL)
-                                              .body(payload)
-                                              .asJson().getBody();
+                    .header("authority", BASE_URL)
+                    .header("accept", "application/json, text/plain, */*")
+                    .header("content-type", "application/json;charset=UTF-8")
+                    .header("origin", "https://" + BASE_URL)
+                    .body(payload)
+                    .asJson()
+                    .getBody();
 
             Optional<JSONArray> jsonResponse = Optional.of(requestResponse)
-                                                    .map(JsonNode::getObject)
-                                                    .filter(Objects::nonNull)
-                                                    .map(response -> response.optJSONArray("response"))
-                                                    .filter(Objects::nonNull);
+                    .map(JsonNode::getObject)
+                    .filter(Objects::nonNull)
+                    .map(response -> response.optJSONArray("response"))
+                    .filter(Objects::nonNull);
 
             if (!jsonResponse.isPresent()) {
                 return List.of();

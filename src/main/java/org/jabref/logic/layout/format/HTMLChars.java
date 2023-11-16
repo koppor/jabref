@@ -18,10 +18,10 @@ public class HTMLChars implements LayoutFormatter {
     public String format(String inField) {
         int i;
         String field = inField.replaceAll("&|\\\\&", "&amp;") // Replace & and \& with &amp;
-                              .replaceAll("[\\n]{2,}", "<p>") // Replace double line breaks with <p>
-                              .replace("\n", "<br>") // Replace single line breaks with <br>
-                              .replace("\\$", "&dollar;") // Replace \$ with &dollar;
-                              .replaceAll("\\$([^$]*)\\$", "\\{$1\\}"); // Replace $...$ with {...} to simplify conversion
+                .replaceAll("[\\n]{2,}", "<p>") // Replace double line breaks with <p>
+                .replace("\n", "<br>") // Replace single line breaks with <br>
+                .replace("\\$", "&dollar;") // Replace \$ with &dollar;
+                .replaceAll("\\$([^$]*)\\$", "\\{$1\\}"); // Replace $...$ with {...} to simplify conversion
 
         StringBuilder sb = new StringBuilder();
         StringBuilder currentCommand = null;
@@ -106,7 +106,13 @@ public class HTMLChars implements LayoutFormatter {
                     if (!tag.isEmpty()) {
                         String part = StringUtil.getPart(field, i, true);
                         i += part.length();
-                        sb.append('<').append(tag).append('>').append(part).append("</").append(tag).append('>');
+                        sb.append('<')
+                                .append(tag)
+                                .append('>')
+                                .append(part)
+                                .append("</")
+                                .append(tag)
+                                .append('>');
                     } else if (c == '{') {
                         String argument = StringUtil.getPart(field, i, true);
                         i += argument.length();
@@ -162,38 +168,38 @@ public class HTMLChars implements LayoutFormatter {
     private String getHTMLTag(String latexCommand) {
         String result = "";
         switch (latexCommand) {
-            // Italic
+                // Italic
             case "textit":
             case "it":
                 result = "i";
                 break;
-            // Emphasize
+                // Emphasize
             case "emph":
             case "em":
                 result = "em";
                 break;
-            // Bold font
+                // Bold font
             case "textbf":
             case "bf":
                 result = "b";
                 break;
-            // Underline
+                // Underline
             case "underline":
                 result = "u";
                 break;
-            // Strikeout, sout is the "standard" command, although it is actually based on the package ulem
+                // Strikeout, sout is the "standard" command, although it is actually based on the package ulem
             case "sout":
                 result = "s";
                 break;
-            // Monospace font
+                // Monospace font
             case "texttt":
                 result = "tt";
                 break;
-            // Superscript
+                // Superscript
             case "textsuperscript":
                 result = "sup";
                 break;
-            // Subscript
+                // Subscript
             case "textsubscript":
                 result = "sub";
                 break;

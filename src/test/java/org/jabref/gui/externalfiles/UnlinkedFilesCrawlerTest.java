@@ -33,7 +33,13 @@ class UnlinkedFilesCrawlerTest {
         UnlinkedPDFFileFilter unlinkedPDFFileFilter = mock(UnlinkedPDFFileFilter.class);
         when(unlinkedPDFFileFilter.accept(any(Path.class))).thenReturn(true);
 
-        UnlinkedFilesCrawler unlinkedFilesCrawler = new UnlinkedFilesCrawler(testRoot, unlinkedPDFFileFilter, DateRange.ALL_TIME, ExternalFileSorter.DEFAULT, mock(BibDatabaseContext.class), mock(FilePreferences.class));
+        UnlinkedFilesCrawler unlinkedFilesCrawler = new UnlinkedFilesCrawler(
+                testRoot,
+                unlinkedPDFFileFilter,
+                DateRange.ALL_TIME,
+                ExternalFileSorter.DEFAULT,
+                mock(BibDatabaseContext.class),
+                mock(FilePreferences.class));
 
         FileNodeViewModel fileNodeViewModel = unlinkedFilesCrawler.searchDirectory(testRoot, unlinkedPDFFileFilter);
 
@@ -52,10 +58,18 @@ class UnlinkedFilesCrawlerTest {
         databaseContext.setDatabasePath(databasePath);
 
         FilePreferences filePreferences = mock(FilePreferences.class);
-        Filter<Path> fileExtensionFilter = new FileExtensionViewModel(StandardFileType.ANY_FILE, filePreferences).dirFilter();
-        UnlinkedPDFFileFilter unlinkedPdfFileFilter = new UnlinkedPDFFileFilter(fileExtensionFilter, databaseContext, filePreferences);
+        Filter<Path> fileExtensionFilter =
+                new FileExtensionViewModel(StandardFileType.ANY_FILE, filePreferences).dirFilter();
+        UnlinkedPDFFileFilter unlinkedPdfFileFilter =
+                new UnlinkedPDFFileFilter(fileExtensionFilter, databaseContext, filePreferences);
 
-        UnlinkedFilesCrawler unlinkedFilesCrawler = new UnlinkedFilesCrawler(testRoot, unlinkedPdfFileFilter, DateRange.ALL_TIME, ExternalFileSorter.DEFAULT, databaseContext, filePreferences);
+        UnlinkedFilesCrawler unlinkedFilesCrawler = new UnlinkedFilesCrawler(
+                testRoot,
+                unlinkedPdfFileFilter,
+                DateRange.ALL_TIME,
+                ExternalFileSorter.DEFAULT,
+                databaseContext,
+                filePreferences);
         FileNodeViewModel fileNodeViewModel = unlinkedFilesCrawler.searchDirectory(testRoot, unlinkedPdfFileFilter);
 
         // checking to see if the database file has been filtered

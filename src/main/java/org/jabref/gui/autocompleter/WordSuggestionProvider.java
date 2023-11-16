@@ -21,8 +21,6 @@ public class WordSuggestionProvider extends StringSuggestionProvider {
 
     @Override
     public Stream<String> getSource() {
-        return database.getEntries()
-                       .parallelStream()
-                       .flatMap(entry -> entry.getFieldAsWords(field).stream());
+        return database.getEntries().parallelStream().flatMap(entry -> entry.getFieldAsWords(field).stream());
     }
 }

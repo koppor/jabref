@@ -99,7 +99,8 @@ class WrapFileLinksTest {
     void testPath() throws IOException {
         formatter = new WrapFileLinks(Collections.singletonList(Path.of("src/test/resources/pdfs/")), "");
         formatter.setArgument("\\p");
-        assertEquals(new File("src/test/resources/pdfs/encrypted.pdf").getCanonicalPath(),
+        assertEquals(
+                new File("src/test/resources/pdfs/encrypted.pdf").getCanonicalPath(),
                 formatter.format("Preferences:encrypted.pdf:PDF"));
     }
 
@@ -107,7 +108,8 @@ class WrapFileLinksTest {
     void testPathFallBackToGeneratedDir() throws IOException {
         formatter = new WrapFileLinks(Collections.emptyList(), "src/test/resources/pdfs/");
         formatter.setArgument("\\p");
-        assertEquals(new File("src/test/resources/pdfs/encrypted.pdf").getCanonicalPath(),
+        assertEquals(
+                new File("src/test/resources/pdfs/encrypted.pdf").getCanonicalPath(),
                 formatter.format("Preferences:encrypted.pdf:PDF"));
     }
 

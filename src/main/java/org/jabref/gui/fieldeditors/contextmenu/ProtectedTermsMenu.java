@@ -65,7 +65,8 @@ class ProtectedTermsMenu extends Menu {
             String selectedText = textInputControl.getSelectedText();
             String firstStr = "{";
             String lastStr = "}";
-            // If the selected text contains spaces at the beginning and end, then add spaces before or after the brackets
+            // If the selected text contains spaces at the beginning and end, then add spaces before or after the
+            // brackets
             if (selectedText.startsWith(" ")) {
                 firstStr = " {";
             }
@@ -138,20 +139,23 @@ class ProtectedTermsMenu extends Menu {
         super(Localization.lang("Protect terms"));
         this.textInputControl = textInputControl;
 
-        getItems().addAll(factory.createMenuItem(protectSelectionActionInformation, new ProtectSelectionAction()),
-                getExternalFilesMenu(),
-                new SeparatorMenuItem(),
-                factory.createMenuItem(() -> Localization.lang("Format field"), new FormatFieldAction()),
-                factory.createMenuItem(unprotectSelectionActionInformation, new UnprotectSelectionAction()));
+        getItems()
+                .addAll(
+                        factory.createMenuItem(protectSelectionActionInformation, new ProtectSelectionAction()),
+                        getExternalFilesMenu(),
+                        new SeparatorMenuItem(),
+                        factory.createMenuItem(() -> Localization.lang("Format field"), new FormatFieldAction()),
+                        factory.createMenuItem(unprotectSelectionActionInformation, new UnprotectSelectionAction()));
     }
 
     private Menu getExternalFilesMenu() {
         Menu protectedTermsMenu = factory.createSubMenu(() -> Localization.lang("Add selected text to list"));
 
         Globals.protectedTermsLoader.getProtectedTermsLists().stream()
-                                    .filter(list -> !list.isInternalList())
-                                    .forEach(list -> protectedTermsMenu.getItems().add(
-                                            factory.createMenuItem(list::getDescription, new AddToProtectedTermsAction(list))));
+                .filter(list -> !list.isInternalList())
+                .forEach(list -> protectedTermsMenu
+                        .getItems()
+                        .add(factory.createMenuItem(list::getDescription, new AddToProtectedTermsAction(list))));
 
         if (protectedTermsMenu.getItems().isEmpty()) {
             MenuItem emptyItem = new MenuItem(Localization.lang("No list enabled"));

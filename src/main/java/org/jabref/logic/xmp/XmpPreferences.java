@@ -16,7 +16,8 @@ public class XmpPreferences {
     private final ObservableSet<Field> xmpPrivacyFilter;
     private final ObjectProperty<Character> keywordSeparator;
 
-    public XmpPreferences(boolean useXmpPrivacyFilter, Set<Field> xmpPrivacyFilter, ObjectProperty<Character> keywordSeparator) {
+    public XmpPreferences(
+            boolean useXmpPrivacyFilter, Set<Field> xmpPrivacyFilter, ObjectProperty<Character> keywordSeparator) {
         this.useXmpPrivacyFilter = new SimpleBooleanProperty(useXmpPrivacyFilter);
         this.xmpPrivacyFilter = FXCollections.observableSet(xmpPrivacyFilter);
         this.keywordSeparator = keywordSeparator;

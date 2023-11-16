@@ -11,11 +11,17 @@ import org.jabref.preferences.PreferencesService;
 
 import jakarta.inject.Inject;
 
-public abstract class AbstractPreferenceTabView<T extends PreferenceTabViewModel> extends VBox implements PreferencesTab {
+public abstract class AbstractPreferenceTabView<T extends PreferenceTabViewModel> extends VBox
+        implements PreferencesTab {
 
-    @Inject protected TaskExecutor taskExecutor;
-    @Inject protected DialogService dialogService;
-    @Inject protected PreferencesService preferencesService;
+    @Inject
+    protected TaskExecutor taskExecutor;
+
+    @Inject
+    protected DialogService dialogService;
+
+    @Inject
+    protected PreferencesService preferencesService;
 
     protected T viewModel;
 

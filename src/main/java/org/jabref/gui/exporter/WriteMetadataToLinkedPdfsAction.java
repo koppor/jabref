@@ -42,14 +42,15 @@ public class WriteMetadataToLinkedPdfsAction extends SimpleCommand {
     private final XmpPreferences xmpPreferences;
     private final JournalAbbreviationRepository abbreviationRepository;
 
-    public WriteMetadataToLinkedPdfsAction(DialogService dialogService,
-                                           FieldPreferences fieldPreferences,
-                                           FilePreferences filePreferences,
-                                           XmpPreferences xmpPreferences,
-                                           BibEntryTypesManager entryTypesManager,
-                                           JournalAbbreviationRepository abbreviationRepository,
-                                           TaskExecutor taskExecutor,
-                                           StateManager stateManager) {
+    public WriteMetadataToLinkedPdfsAction(
+            DialogService dialogService,
+            FieldPreferences fieldPreferences,
+            FilePreferences filePreferences,
+            XmpPreferences xmpPreferences,
+            BibEntryTypesManager entryTypesManager,
+            JournalAbbreviationRepository abbreviationRepository,
+            TaskExecutor taskExecutor,
+            StateManager stateManager) {
         this.stateManager = stateManager;
         this.entryTypesManager = entryTypesManager;
         this.fieldPreferences = fieldPreferences;
@@ -90,15 +91,15 @@ public class WriteMetadataToLinkedPdfsAction extends SimpleCommand {
         dialogService.notify(Localization.lang("Writing metadata..."));
 
         new WriteMetaDataTask(
-                databaseContext,
-                entries,
-                abbreviationRepository,
-                entryTypesManager,
-                fieldPreferences,
-                filePreferences,
-                xmpPreferences,
-                stateManager,
-                dialogService)
+                        databaseContext,
+                        entries,
+                        abbreviationRepository,
+                        entryTypesManager,
+                        fieldPreferences,
+                        filePreferences,
+                        xmpPreferences,
+                        stateManager,
+                        dialogService)
                 .executeWith(taskExecutor);
     }
 
@@ -119,15 +120,16 @@ public class WriteMetadataToLinkedPdfsAction extends SimpleCommand {
         private int entriesChanged = 0;
         private int errors = 0;
 
-        public WriteMetaDataTask(BibDatabaseContext databaseContext,
-                                 List<BibEntry> entries,
-                                 JournalAbbreviationRepository abbreviationRepository,
-                                 BibEntryTypesManager entryTypesManager,
-                                 FieldPreferences fieldPreferences,
-                                 FilePreferences filePreferences,
-                                 XmpPreferences xmpPreferences,
-                                 StateManager stateManager,
-                                 DialogService dialogService) {
+        public WriteMetaDataTask(
+                BibDatabaseContext databaseContext,
+                List<BibEntry> entries,
+                JournalAbbreviationRepository abbreviationRepository,
+                BibEntryTypesManager entryTypesManager,
+                FieldPreferences fieldPreferences,
+                FilePreferences filePreferences,
+                XmpPreferences xmpPreferences,
+                StateManager stateManager,
+                DialogService dialogService) {
             this.databaseContext = databaseContext;
             this.entries = entries;
             this.abbreviationRepository = abbreviationRepository;
@@ -153,14 +155,15 @@ public class WriteMetadataToLinkedPdfsAction extends SimpleCommand {
 
                 // Make a list of all PDFs linked from this entry:
                 List<Path> files = entry.getFiles().stream()
-                                        .map(file -> file.findIn(stateManager.getActiveDatabase().get(), filePreferences))
-                                        .filter(Optional::isPresent)
-                                        .map(Optional::get)
-                                        .filter(FileUtil::isPDFFile)
-                                        .toList();
+                        .map(file ->
+                                file.findIn(stateManager.getActiveDatabase().get(), filePreferences))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .filter(FileUtil::isPDFFile)
+                        .toList();
                 if (files.isEmpty()) {
-                    LOGGER.debug("Skipped empty entry '{}'",
-                            entry.getCitationKey().orElse(entry.getAuthorTitleYear(16)));
+                    LOGGER.debug(
+                            "Skipped empty entry '{}'", entry.getCitationKey().orElse(entry.getAuthorTitleYear(16)));
                     skipped++;
                 } else {
                     for (Path file : files) {
@@ -193,9 +196,12 @@ public class WriteMetadataToLinkedPdfsAction extends SimpleCommand {
             }
 
             updateMessage(Localization.lang("Finished"));
-            dialogService.notify(Localization.lang("Finished writing metadata for library %0 (%1 succeeded, %2 skipped, %3 errors).",
+            dialogService.notify(Localization.lang(
+                    "Finished writing metadata for library %0 (%1 succeeded, %2 skipped, %3 errors).",
                     databaseContext.getDatabasePath().map(Path::toString).orElse("undefined"),
-                    String.valueOf(entriesChanged), String.valueOf(skipped), String.valueOf(errors)));
+                    String.valueOf(entriesChanged),
+                    String.valueOf(skipped),
+                    String.valueOf(errors)));
 
             if (!failedWrittenFiles.isEmpty()) {
                 LOGGER.error("Failed to write XMP data to PDFs:\n" + failedWrittenFiles);

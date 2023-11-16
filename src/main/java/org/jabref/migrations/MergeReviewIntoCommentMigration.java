@@ -17,28 +17,30 @@ public class MergeReviewIntoCommentMigration {
 
     public static boolean needsMigration(ParserResult parserResult) {
         return parserResult.getDatabase().getEntries().stream()
-                           .anyMatch(bibEntry -> bibEntry.getField(StandardField.REVIEW).isPresent());
+                .anyMatch(bibEntry -> bibEntry.getField(StandardField.REVIEW).isPresent());
     }
 
     public void performMigration(ParserResult parserResult) {
         /* This migration only handles the non-conflicting entries.
          * For the other see this.performConflictingMigration().
          */
-        List<BibEntry> entries = Objects.requireNonNull(parserResult).getDatabase().getEntries();
+        List<BibEntry> entries =
+                Objects.requireNonNull(parserResult).getDatabase().getEntries();
 
         entries.stream()
-               .filter(MergeReviewIntoCommentMigration::hasReviewField)
-               .filter(entry -> !MergeReviewIntoCommentMigration.hasCommentField(entry))
-               .forEach(entry -> migrate(entry, parserResult));
+                .filter(MergeReviewIntoCommentMigration::hasReviewField)
+                .filter(entry -> !MergeReviewIntoCommentMigration.hasCommentField(entry))
+                .forEach(entry -> migrate(entry, parserResult));
     }
 
     public static List<BibEntry> collectConflicts(ParserResult parserResult) {
-        List<BibEntry> entries = Objects.requireNonNull(parserResult).getDatabase().getEntries();
+        List<BibEntry> entries =
+                Objects.requireNonNull(parserResult).getDatabase().getEntries();
 
         return entries.stream()
-                      .filter(MergeReviewIntoCommentMigration::hasReviewField)
-                      .filter(MergeReviewIntoCommentMigration::hasCommentField)
-                      .collect(Collectors.toList());
+                .filter(MergeReviewIntoCommentMigration::hasReviewField)
+                .filter(MergeReviewIntoCommentMigration::hasCommentField)
+                .collect(Collectors.toList());
     }
 
     public void performConflictingMigration(ParserResult parserResult) {
@@ -55,15 +57,22 @@ public class MergeReviewIntoCommentMigration {
 
     private String mergeCommentFieldIfPresent(BibEntry entry, String review) {
         if (entry.getField(StandardField.COMMENT).isPresent()) {
-            LOGGER.info(String.format("Both Comment and Review fields are present in %s! Merging them into the comment field.", entry.getAuthorTitleYear(150)));
-            return String.format("%s\n%s:\n%s", entry.getField(StandardField.COMMENT).get().trim(), Localization.lang("Review"), review.trim());
+            LOGGER.info(String.format(
+                    "Both Comment and Review fields are present in %s! Merging them into the comment field.",
+                    entry.getAuthorTitleYear(150)));
+            return String.format(
+                    "%s\n%s:\n%s",
+                    entry.getField(StandardField.COMMENT).get().trim(), Localization.lang("Review"), review.trim());
         }
         return review;
     }
 
     private void migrate(BibEntry entry, ParserResult parserResult) {
         if (hasReviewField(entry)) {
-            updateFields(entry, mergeCommentFieldIfPresent(entry, entry.getField(StandardField.REVIEW).get()));
+            updateFields(
+                    entry,
+                    mergeCommentFieldIfPresent(
+                            entry, entry.getField(StandardField.REVIEW).get()));
             parserResult.wasChangedOnMigration();
         }
     }

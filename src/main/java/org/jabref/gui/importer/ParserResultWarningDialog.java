@@ -12,8 +12,7 @@ import org.jabref.logic.l10n.Localization;
  */
 public class ParserResultWarningDialog {
 
-    private ParserResultWarningDialog() {
-    }
+    private ParserResultWarningDialog() {}
 
     /**
      * Shows a dialog with the warnings from an import or open of a file
@@ -34,8 +33,8 @@ public class ParserResultWarningDialog {
      * @param jabRefFrame    - the JabRefFrame
      * @param dataBaseNumber - Database tab number to activate when showing the warning dialog
      */
-    public static void showParserResultWarningDialog(final ParserResult parserResult, final JabRefFrame jabRefFrame,
-                                                     final int dataBaseNumber) {
+    public static void showParserResultWarningDialog(
+            final ParserResult parserResult, final JabRefFrame jabRefFrame, final int dataBaseNumber) {
         Objects.requireNonNull(parserResult);
         Objects.requireNonNull(jabRefFrame);
         // Return if no warnings
@@ -62,7 +61,8 @@ public class ParserResultWarningDialog {
         if (dataBaseNumber < 0 || parserResult.getPath().isEmpty()) {
             dialogTitle = Localization.lang("Warnings");
         } else {
-            dialogTitle = Localization.lang("Warnings") + " (" + parserResult.getPath().get().getFileName() + ")";
+            dialogTitle = Localization.lang("Warnings") + " ("
+                    + parserResult.getPath().get().getFileName() + ")";
         }
 
         // Show dialog

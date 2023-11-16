@@ -21,13 +21,15 @@ public class PersonsEditor extends HBox implements FieldEditorFX {
     private final TextInputControl textInput;
     private final UiThreadStringProperty decoratedStringProperty;
 
-    public PersonsEditor(final Field field,
-                         final SuggestionProvider<?> suggestionProvider,
-                         final PreferencesService preferencesService,
-                         final FieldCheckers fieldCheckers,
-                         final boolean isMultiLine,
-                         final UndoManager undoManager) {
-        this.viewModel = new PersonsEditorViewModel(field, suggestionProvider, preferencesService.getAutoCompletePreferences(), fieldCheckers, undoManager);
+    public PersonsEditor(
+            final Field field,
+            final SuggestionProvider<?> suggestionProvider,
+            final PreferencesService preferencesService,
+            final FieldCheckers fieldCheckers,
+            final boolean isMultiLine,
+            final UndoManager undoManager) {
+        this.viewModel = new PersonsEditorViewModel(
+                field, suggestionProvider, preferencesService.getAutoCompletePreferences(), fieldCheckers, undoManager);
 
         textInput = isMultiLine ? new EditorTextArea() : new EditorTextField();
 
@@ -36,9 +38,14 @@ public class PersonsEditor extends HBox implements FieldEditorFX {
         ((ContextMenuAddable) textInput).initContextMenu(EditorMenus.getNameMenu(textInput));
         this.getChildren().add(textInput);
 
-        AutoCompletionTextInputBinding.autoComplete(textInput, viewModel::complete, viewModel.getAutoCompletionConverter(), viewModel.getAutoCompletionStrategy());
+        AutoCompletionTextInputBinding.autoComplete(
+                textInput,
+                viewModel::complete,
+                viewModel.getAutoCompletionConverter(),
+                viewModel.getAutoCompletionStrategy());
 
-        new EditorValidator(preferencesService).configureValidation(viewModel.getFieldValidator().getValidationStatus(), textInput);
+        new EditorValidator(preferencesService)
+                .configureValidation(viewModel.getFieldValidator().getValidationStatus(), textInput);
     }
 
     @Override

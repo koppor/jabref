@@ -57,12 +57,13 @@ public class DuplicateSearch extends SimpleCommand {
     private final BibEntryTypesManager entryTypesManager;
     private final TaskExecutor taskExecutor;
 
-    public DuplicateSearch(JabRefFrame frame,
-                           DialogService dialogService,
-                           StateManager stateManager,
-                           PreferencesService prefs,
-                           BibEntryTypesManager entryTypesManager,
-                           TaskExecutor taskExecutor) {
+    public DuplicateSearch(
+            JabRefFrame frame,
+            DialogService dialogService,
+            StateManager stateManager,
+            PreferencesService prefs,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor) {
         this.frame = frame;
         this.dialogService = dialogService;
         this.stateManager = stateManager;
@@ -75,7 +76,8 @@ public class DuplicateSearch extends SimpleCommand {
 
     @Override
     public void execute() {
-        BibDatabaseContext database = stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
+        BibDatabaseContext database =
+                stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
         dialogService.notify(Localization.lang("Searching for duplicates..."));
 
         List<BibEntry> entries = database.getEntries();
@@ -88,12 +90,14 @@ public class DuplicateSearch extends SimpleCommand {
             return;
         }
 
-        duplicateCountObservable.addListener((obj, oldValue, newValue) -> DefaultTaskExecutor.runAndWaitInJavaFXThread(() -> duplicateTotal.set(newValue)));
+        duplicateCountObservable.addListener((obj, oldValue, newValue) ->
+                DefaultTaskExecutor.runAndWaitInJavaFXThread(() -> duplicateTotal.set(newValue)));
 
-        JabRefExecutorService.INSTANCE.executeInterruptableTask(() -> searchPossibleDuplicates(entries, database.getMode()), "DuplicateSearcher");
+        JabRefExecutorService.INSTANCE.executeInterruptableTask(
+                () -> searchPossibleDuplicates(entries, database.getMode()), "DuplicateSearcher");
         BackgroundTask.wrap(this::verifyDuplicates)
-                      .onSuccess(this::handleDuplicates)
-                      .executeWith(taskExecutor);
+                .onSuccess(this::handleDuplicates)
+                .executeWith(taskExecutor);
     }
 
     private void searchPossibleDuplicates(List<BibEntry> entries, BibDatabaseMode databaseMode) {
@@ -146,22 +150,39 @@ public class DuplicateSearch extends SimpleCommand {
                     askAboutExact = true;
                 }
 
-                DuplicateResolverType resolverType = askAboutExact ? DuplicateResolverType.DUPLICATE_SEARCH_WITH_EXACT : DuplicateResolverType.DUPLICATE_SEARCH;
+                DuplicateResolverType resolverType = askAboutExact
+                        ? DuplicateResolverType.DUPLICATE_SEARCH_WITH_EXACT
+                        : DuplicateResolverType.DUPLICATE_SEARCH;
 
-                DefaultTaskExecutor.runAndWaitInJavaFXThread(() -> askResolveStrategy(result, first, second, resolverType));
+                DefaultTaskExecutor.runAndWaitInJavaFXThread(
+                        () -> askResolveStrategy(result, first, second, resolverType));
             }
         }
 
         return result;
     }
 
-    private void askResolveStrategy(DuplicateSearchResult result, BibEntry first, BibEntry second, DuplicateResolverType resolverType) {
-        DuplicateResolverDialog dialog = new DuplicateResolverDialog(first, second, resolverType, frame.getCurrentLibraryTab().getBibDatabaseContext(), stateManager, dialogService, prefs);
+    private void askResolveStrategy(
+            DuplicateSearchResult result, BibEntry first, BibEntry second, DuplicateResolverType resolverType) {
+        DuplicateResolverDialog dialog = new DuplicateResolverDialog(
+                first,
+                second,
+                resolverType,
+                frame.getCurrentLibraryTab().getBibDatabaseContext(),
+                stateManager,
+                dialogService,
+                prefs);
 
-        dialog.titleProperty().bind(Bindings.concat(dialog.getTitle()).concat(" (").concat(duplicateProgress.getValue()).concat("/").concat(duplicateTotal).concat(")"));
+        dialog.titleProperty()
+                .bind(Bindings.concat(dialog.getTitle())
+                        .concat(" (")
+                        .concat(duplicateProgress.getValue())
+                        .concat("/")
+                        .concat(duplicateTotal)
+                        .concat(")"));
 
-        DuplicateResolverResult resolverResult = dialogService.showCustomDialogAndWait(dialog)
-                                                              .orElse(DuplicateResolverResult.BREAK);
+        DuplicateResolverResult resolverResult =
+                dialogService.showCustomDialogAndWait(dialog).orElse(DuplicateResolverResult.BREAK);
 
         if ((resolverResult == DuplicateResolverResult.KEEP_LEFT)
                 || (resolverResult == DuplicateResolverResult.AUTOREMOVE_EXACT)) {

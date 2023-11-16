@@ -45,7 +45,10 @@ public class PushToSublimeText extends AbstractPushToApplication {
         couldNotCall = false;
         notDefined = false;
 
-        commandPath = preferencesService.getPushToApplicationPreferences().getCommandPaths().get(this.getDisplayName());
+        commandPath = preferencesService
+                .getPushToApplicationPreferences()
+                .getCommandPaths()
+                .get(this.getDisplayName());
 
         // Check if a path to the command has been specified
         if (StringUtil.isNullOrEmpty(commandPath)) {
@@ -81,9 +84,19 @@ public class PushToSublimeText extends AbstractPushToApplication {
 
         if (OS.WINDOWS) {
             // TODO we might need to escape the inner double quotes with """ """
-            return new String[] {"cmd.exe", "/c", "\"" + commandPath + "\"" + "--command \"insert {\\\"characters\\\": \"\\" + getCitePrefix() + keyString + getCiteSuffix() + "\"}\""};
+            return new String[] {
+                "cmd.exe",
+                "/c",
+                "\"" + commandPath + "\"" + "--command \"insert {\\\"characters\\\": \"\\" + getCitePrefix() + keyString
+                        + getCiteSuffix() + "\"}\""
+            };
         } else {
-            return new String[] {"sh", "-c", "\"" + commandPath + "\"" + " --command 'insert {\"characters\": \"" + citeCommand + keyString + getCiteSuffix() + "\"}'"};
+            return new String[] {
+                "sh",
+                "-c",
+                "\"" + commandPath + "\"" + " --command 'insert {\"characters\": \"" + citeCommand + keyString
+                        + getCiteSuffix() + "\"}'"
+            };
         }
     }
 }

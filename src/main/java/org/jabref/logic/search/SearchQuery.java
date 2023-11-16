@@ -69,7 +69,8 @@ public class SearchQuery implements SearchMatcher {
 
     @Override
     public String toString() {
-        return String.format("\"%s\" (%s, %s)", getQuery(), getCaseSensitiveDescription(), getRegularExpressionDescription());
+        return String.format(
+                "\"%s\" (%s, %s)", getQuery(), getCaseSensitiveDescription(), getRegularExpressionDescription());
     }
 
     @Override
@@ -102,10 +103,9 @@ public class SearchQuery implements SearchMatcher {
     }
 
     public String localize() {
-        return String.format("\"%s\" (%s, %s)",
-                getQuery(),
-                getLocalizedCaseSensitiveDescription(),
-                getLocalizedRegularExpressionDescription());
+        return String.format(
+                "\"%s\" (%s, %s)",
+                getQuery(), getLocalizedCaseSensitiveDescription(), getLocalizedRegularExpressionDescription());
     }
 
     private String getLocalizedCaseSensitiveDescription() {
@@ -154,12 +154,14 @@ public class SearchQuery implements SearchMatcher {
         }
     }
 
-    // Returns a regular expression pattern in the form (w1)|(w2)| ... wi are escaped if no regular expression search is enabled
+    // Returns a regular expression pattern in the form (w1)|(w2)| ... wi are escaped if no regular expression search is
+    // enabled
     public Optional<Pattern> getPatternForWords() {
         return joinWordsToPattern(EscapeMode.JAVA);
     }
 
-    // Returns a regular expression pattern in the form (w1)|(w2)| ... wi are escaped for javascript if no regular expression search is enabled
+    // Returns a regular expression pattern in the form (w1)|(w2)| ... wi are escaped for javascript if no regular
+    // expression search is enabled
     public Optional<Pattern> getJavaScriptPatternForWords() {
         return joinWordsToPattern(EscapeMode.JAVASCRIPT);
     }

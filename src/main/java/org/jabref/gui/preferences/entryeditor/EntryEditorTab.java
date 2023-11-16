@@ -19,26 +19,47 @@ import jakarta.inject.Inject;
 
 public class EntryEditorTab extends AbstractPreferenceTabView<EntryEditorTabViewModel> implements PreferencesTab {
 
-    @FXML private CheckBox openOnNewEntry;
-    @FXML private CheckBox defaultSource;
-    @FXML private CheckBox enableRelatedArticlesTab;
-    @FXML private CheckBox acceptRecommendations;
-    @FXML private CheckBox enableLatexCitationsTab;
-    @FXML private CheckBox enableValidation;
-    @FXML private CheckBox allowIntegerEdition;
-    @FXML private CheckBox journalPopupEnabled;
-    @FXML private CheckBox autoLinkFilesEnabled;
-    @FXML private CheckBox enableSciteTab;
+    @FXML
+    private CheckBox openOnNewEntry;
 
-    @FXML private Button generalFieldsHelp;
-    @FXML private TextArea fieldsTextArea;
+    @FXML
+    private CheckBox defaultSource;
 
-    @Inject private KeyBindingRepository keyBindingRepository;
+    @FXML
+    private CheckBox enableRelatedArticlesTab;
+
+    @FXML
+    private CheckBox acceptRecommendations;
+
+    @FXML
+    private CheckBox enableLatexCitationsTab;
+
+    @FXML
+    private CheckBox enableValidation;
+
+    @FXML
+    private CheckBox allowIntegerEdition;
+
+    @FXML
+    private CheckBox journalPopupEnabled;
+
+    @FXML
+    private CheckBox autoLinkFilesEnabled;
+
+    @FXML
+    private CheckBox enableSciteTab;
+
+    @FXML
+    private Button generalFieldsHelp;
+
+    @FXML
+    private TextArea fieldsTextArea;
+
+    @Inject
+    private KeyBindingRepository keyBindingRepository;
 
     public EntryEditorTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -63,7 +84,10 @@ public class EntryEditorTab extends AbstractPreferenceTabView<EntryEditorTabView
         fieldsTextArea.textProperty().bindBidirectional(viewModel.fieldsProperty());
 
         ActionFactory actionFactory = new ActionFactory(keyBindingRepository);
-        actionFactory.configureIconButton(StandardActions.HELP, new HelpAction(HelpFile.GENERAL_FIELDS, dialogService, preferencesService.getFilePreferences()), generalFieldsHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP,
+                new HelpAction(HelpFile.GENERAL_FIELDS, dialogService, preferencesService.getFilePreferences()),
+                generalFieldsHelp);
     }
 
     @FXML

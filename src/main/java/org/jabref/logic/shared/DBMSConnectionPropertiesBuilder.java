@@ -66,6 +66,7 @@ public class DBMSConnectionPropertiesBuilder {
         if (port == -1) {
             port = type.getDefaultPort();
         }
-        return new DBMSConnectionProperties(type, host, port, database, user, password, useSSL, allowPublicKeyRetrieval, serverTimezone, keyStore);
+        return new DBMSConnectionProperties(
+                type, host, port, database, user, password, useSSL, allowPublicKeyRetrieval, serverTimezone, keyStore);
     }
 }

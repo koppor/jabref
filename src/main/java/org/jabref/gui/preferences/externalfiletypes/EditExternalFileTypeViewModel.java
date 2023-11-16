@@ -27,7 +27,8 @@ public class EditExternalFileTypeViewModel {
             defaultApplicationSelectedProperty.setValue(true);
         } else {
             customApplicationSelectedProperty.setValue(true);
-            selectedApplicationProperty.setValue(fileTypeViewModel.applicationProperty().getValue());
+            selectedApplicationProperty.setValue(
+                    fileTypeViewModel.applicationProperty().getValue());
         }
     }
 
@@ -61,7 +62,9 @@ public class EditExternalFileTypeViewModel {
 
     public void storeSettings() {
         fileTypeViewModel.nameProperty().setValue(nameProperty.getValue().trim());
-        fileTypeViewModel.mimetypeProperty().setValue(mimeTypeProperty.getValue().trim());
+        fileTypeViewModel
+                .mimetypeProperty()
+                .setValue(mimeTypeProperty.getValue().trim());
 
         String ext = extensionProperty.getValue().trim();
         if (!ext.isEmpty() && (ext.charAt(0) == '.')) {

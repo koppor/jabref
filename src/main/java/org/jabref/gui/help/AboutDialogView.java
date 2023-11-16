@@ -17,22 +17,30 @@ import jakarta.inject.Inject;
 
 public class AboutDialogView extends BaseDialog<Void> {
 
-    @FXML private ButtonType copyVersionButton;
-    @FXML private TextArea textAreaVersions;
+    @FXML
+    private ButtonType copyVersionButton;
 
-    @Inject private DialogService dialogService;
-    @Inject private PreferencesService preferencesService;
-    @Inject private ClipBoardManager clipBoardManager;
-    @Inject private BuildInfo buildInfo;
+    @FXML
+    private TextArea textAreaVersions;
+
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private PreferencesService preferencesService;
+
+    @Inject
+    private ClipBoardManager clipBoardManager;
+
+    @Inject
+    private BuildInfo buildInfo;
 
     private AboutDialogViewModel viewModel;
 
     public AboutDialogView() {
         this.setTitle(Localization.lang("About JabRef"));
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         ControlHelper.setAction(copyVersionButton, getDialogPane(), event -> copyVersionToClipboard());
     }

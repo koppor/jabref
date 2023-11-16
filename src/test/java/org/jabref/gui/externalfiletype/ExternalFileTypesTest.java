@@ -28,25 +28,24 @@ class ExternalFileTypesTest {
             StandardExternalFileType.JPG,
             StandardExternalFileType.TXT);
 
-    private static final String TEST_STRINGLIST = "PostScript:REMOVED;" +
-            "Word:REMOVED;" +
-            "Word 2007+:REMOVED;" +
-            "OpenDocument text:REMOVED;" +
-            "Excel:REMOVED;" +
-            "Excel 2007+:REMOVED;" +
-            "OpenDocument spreadsheet:REMOVED;" +
-            "PowerPoint:REMOVED;" +
-            "PowerPoint 2007+:REMOVED;" +
-            "OpenDocument presentation:REMOVED;" +
-            "Rich Text Format:REMOVED;" +
-            "PNG image:REMOVED;" +
-            "GIF image:REMOVED;" +
-            "Djvu:REMOVED;" +
-            "LaTeX:REMOVED;" +
-            "CHM:REMOVED;" +
-            "TIFF image:REMOVED;" +
-            "MHT:REMOVED;" +
-            "ePUB:REMOVED";
+    private static final String TEST_STRINGLIST = "PostScript:REMOVED;" + "Word:REMOVED;"
+            + "Word 2007+:REMOVED;"
+            + "OpenDocument text:REMOVED;"
+            + "Excel:REMOVED;"
+            + "Excel 2007+:REMOVED;"
+            + "OpenDocument spreadsheet:REMOVED;"
+            + "PowerPoint:REMOVED;"
+            + "PowerPoint 2007+:REMOVED;"
+            + "OpenDocument presentation:REMOVED;"
+            + "Rich Text Format:REMOVED;"
+            + "PNG image:REMOVED;"
+            + "GIF image:REMOVED;"
+            + "Djvu:REMOVED;"
+            + "LaTeX:REMOVED;"
+            + "CHM:REMOVED;"
+            + "TIFF image:REMOVED;"
+            + "MHT:REMOVED;"
+            + "ePUB:REMOVED";
 
     private final FilePreferences filePreferences = mock(FilePreferences.class);
 
@@ -57,12 +56,16 @@ class ExternalFileTypesTest {
 
     @Test
     void getExternalFileTypeByName() {
-        assertEquals(Optional.of(StandardExternalFileType.PDF), ExternalFileTypes.getExternalFileTypeByName("PDF", filePreferences));
+        assertEquals(
+                Optional.of(StandardExternalFileType.PDF),
+                ExternalFileTypes.getExternalFileTypeByName("PDF", filePreferences));
     }
 
     @Test
     void getExternalFileTypeByExt() {
-        assertEquals(Optional.of(StandardExternalFileType.URL), ExternalFileTypes.getExternalFileTypeByExt("html", filePreferences));
+        assertEquals(
+                Optional.of(StandardExternalFileType.URL),
+                ExternalFileTypes.getExternalFileTypeByExt("html", filePreferences));
     }
 
     @Test
@@ -73,24 +76,32 @@ class ExternalFileTypesTest {
 
     @Test
     void getExternalFileTypeForName() {
-        assertEquals(Optional.of(StandardExternalFileType.JPG), ExternalFileTypes.getExternalFileTypeForName("testfile.jpg", filePreferences));
+        assertEquals(
+                Optional.of(StandardExternalFileType.JPG),
+                ExternalFileTypes.getExternalFileTypeForName("testfile.jpg", filePreferences));
     }
 
     @Test
     void getExternalFileTypeByMimeType() {
-        assertEquals(Optional.of(StandardExternalFileType.TXT), ExternalFileTypes.getExternalFileTypeByMimeType("text/plain", filePreferences));
+        assertEquals(
+                Optional.of(StandardExternalFileType.TXT),
+                ExternalFileTypes.getExternalFileTypeByMimeType("text/plain", filePreferences));
     }
 
     @Test
     void getExternalFileTypeByFile() {
         Path testfile = Path.of("testfile.txt");
-        assertEquals(Optional.of(StandardExternalFileType.TXT), ExternalFileTypes.getExternalFileTypeByFile(testfile, filePreferences));
+        assertEquals(
+                Optional.of(StandardExternalFileType.TXT),
+                ExternalFileTypes.getExternalFileTypeByFile(testfile, filePreferences));
     }
 
     @Test
     void getExternalFileTypeByLinkedFile() {
         LinkedFile testfile = new LinkedFile("A testfile", "https://testserver.com/testfile.pdf", "PDF");
-        assertEquals(Optional.of(StandardExternalFileType.PDF), ExternalFileTypes.getExternalFileTypeByLinkedFile(testfile, false, filePreferences));
+        assertEquals(
+                Optional.of(StandardExternalFileType.PDF),
+                ExternalFileTypes.getExternalFileTypeByLinkedFile(testfile, false, filePreferences));
     }
 
     @Test
@@ -110,12 +121,7 @@ class ExternalFileTypesTest {
     @Test
     void externalFileTypetoStringArray() {
         ExternalFileType type = new CustomExternalFileType(
-                "testEntry",
-                "tst",
-                "text/plain",
-                "emacs",
-                "close",
-                IconTheme.JabRefIcons.CLOSE);
+                "testEntry", "tst", "text/plain", "emacs", "close", IconTheme.JabRefIcons.CLOSE);
 
         assertEquals("[testEntry, tst, text/plain, emacs, CLOSE]", Arrays.toString(type.toStringArray()));
     }

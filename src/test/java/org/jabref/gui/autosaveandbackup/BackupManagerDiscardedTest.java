@@ -53,25 +53,28 @@ class BackupManagerDiscardedTest {
         bibDatabaseContext.setDatabasePath(testBib);
 
         bibEntryTypesManager = new BibEntryTypesManager();
-        saveConfiguration = new SelfContainedSaveConfiguration(SaveOrder.getDefaultSaveOrder(), false, BibDatabaseWriter.SaveType.WITH_JABREF_META_DATA, false);
+        saveConfiguration = new SelfContainedSaveConfiguration(
+                SaveOrder.getDefaultSaveOrder(), false, BibDatabaseWriter.SaveType.WITH_JABREF_META_DATA, false);
         preferencesService = mock(PreferencesService.class, Answers.RETURNS_DEEP_STUBS);
 
         saveDatabase();
 
-        backupManager = new BackupManager(mock(LibraryTab.class), bibDatabaseContext, bibEntryTypesManager, preferencesService);
+        backupManager =
+                new BackupManager(mock(LibraryTab.class), bibDatabaseContext, bibEntryTypesManager, preferencesService);
 
         makeBackup();
     }
 
     private void saveDatabase() throws IOException {
         try (Writer writer = new AtomicFileWriter(testBib, StandardCharsets.UTF_8, false)) {
-            BibWriter bibWriter = new BibWriter(writer, bibDatabaseContext.getDatabase().getNewLineSeparator());
+            BibWriter bibWriter =
+                    new BibWriter(writer, bibDatabaseContext.getDatabase().getNewLineSeparator());
             new BibtexDatabaseWriter(
-                    bibWriter,
-                    saveConfiguration,
-                    preferencesService.getFieldPreferences(),
-                    preferencesService.getCitationKeyPatternPreferences(),
-                    bibEntryTypesManager)
+                            bibWriter,
+                            saveConfiguration,
+                            preferencesService.getFieldPreferences(),
+                            preferencesService.getCitationKeyPatternPreferences(),
+                            bibEntryTypesManager)
                     .saveDatabase(bibDatabaseContext);
         }
     }

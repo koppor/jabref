@@ -14,8 +14,7 @@ import org.apache.commons.csv.CSVPrinter;
  */
 public final class AbbreviationWriter {
 
-    private AbbreviationWriter() {
-    }
+    private AbbreviationWriter() {}
 
     /**
      * This method will write the list of abbreviations to a file on the file system specified by the given path. If the
@@ -26,12 +25,13 @@ public final class AbbreviationWriter {
      */
     public static void writeOrCreate(Path path, List<Abbreviation> abbreviations) throws IOException {
         try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8);
-             CSVPrinter csvPrinter = new CSVPrinter(writer, AbbreviationFormat.getCSVFormatWithDefaultDilimeter())) {
+                CSVPrinter csvPrinter = new CSVPrinter(writer, AbbreviationFormat.getCSVFormatWithDefaultDilimeter())) {
             for (Abbreviation entry : abbreviations) {
                 if (entry.isDefaultShortestUniqueAbbreviation()) {
                     csvPrinter.printRecord(entry.getName(), entry.getAbbreviation());
                 } else {
-                    csvPrinter.printRecord(entry.getName(), entry.getAbbreviation(), entry.getShortestUniqueAbbreviation());
+                    csvPrinter.printRecord(
+                            entry.getName(), entry.getAbbreviation(), entry.getShortestUniqueAbbreviation());
                 }
             }
         }

@@ -16,9 +16,7 @@ import com.sun.star.text.XTextDocument;
  */
 public class UnoRedlines {
 
-    public static boolean getRecordChanges(XTextDocument doc)
-            throws
-            WrappedTargetException {
+    public static boolean getRecordChanges(XTextDocument doc) throws WrappedTargetException {
 
         // https://wiki.openoffice.org/wiki/Documentation/DevGuide/Text/Settings
         // "Properties of com.sun.star.text.TextDocument"

@@ -100,16 +100,17 @@ public class OpenOfficePanel {
     private OOBibBase ooBase;
     private OOBibStyle style;
 
-    public OpenOfficePanel(LibraryTabContainer tabContainer,
-                           PreferencesService preferencesService,
-                           KeyBindingRepository keyBindingRepository,
-                           JournalAbbreviationRepository abbreviationRepository,
-                           TaskExecutor taskExecutor,
-                           DialogService dialogService,
-                           StateManager stateManager,
-                           FileUpdateMonitor fileUpdateMonitor,
-                           BibEntryTypesManager entryTypesManager,
-                           UndoManager undoManager) {
+    public OpenOfficePanel(
+            LibraryTabContainer tabContainer,
+            PreferencesService preferencesService,
+            KeyBindingRepository keyBindingRepository,
+            JournalAbbreviationRepository abbreviationRepository,
+            TaskExecutor taskExecutor,
+            DialogService dialogService,
+            StateManager stateManager,
+            FileUpdateMonitor fileUpdateMonitor,
+            BibEntryTypesManager entryTypesManager,
+            UndoManager undoManager) {
         this.tabContainer = tabContainer;
         this.fileUpdateMonitor = fileUpdateMonitor;
         this.entryTypesManager = entryTypesManager;
@@ -130,7 +131,10 @@ public class OpenOfficePanel {
         manualConnect.setTooltip(new Tooltip(Localization.lang("Manual connect")));
         manualConnect.setMaxWidth(Double.MAX_VALUE);
 
-        help = factory.createIconButton(StandardActions.HELP, new HelpAction(HelpFile.OPENOFFICE_LIBREOFFICE, dialogService, preferencesService.getFilePreferences()));
+        help = factory.createIconButton(
+                StandardActions.HELP,
+                new HelpAction(
+                        HelpFile.OPENOFFICE_LIBREOFFICE, dialogService, preferencesService.getFilePreferences()));
         help.setMaxWidth(Double.MAX_VALUE);
 
         selectDocument = new Button();
@@ -188,17 +192,17 @@ public class OpenOfficePanel {
         selectDocument.setOnAction(e -> ooBase.guiActionSelectDocument(false));
 
         setStyleFile.setMaxWidth(Double.MAX_VALUE);
-        setStyleFile.setOnAction(event ->
-                dialogService.showCustomDialogAndWait(new StyleSelectDialogView(loader))
-                             .ifPresent(selectedStyle -> {
-                                 style = selectedStyle;
-                                 try {
-                                     style.ensureUpToDate();
-                                 } catch (IOException e) {
-                                     LOGGER.warn("Unable to reload style file '" + style.getPath() + "'", e);
-                                 }
-                                 dialogService.notify(Localization.lang("Current style is '%0'", style.getName()));
-                             }));
+        setStyleFile.setOnAction(event -> dialogService
+                .showCustomDialogAndWait(new StyleSelectDialogView(loader))
+                .ifPresent(selectedStyle -> {
+                    style = selectedStyle;
+                    try {
+                        style.ensureUpToDate();
+                    } catch (IOException e) {
+                        LOGGER.warn("Unable to reload style file '" + style.getPath() + "'", e);
+                    }
+                    dialogService.notify(Localization.lang("Current style is '%0'", style.getName()));
+                }));
 
         pushEntries.setTooltip(new Tooltip(Localization.lang("Cite selected entries between parenthesis")));
         pushEntries.setOnAction(e -> pushEntries(CitationType.AUTHORYEAR_PAR, false));
@@ -206,7 +210,8 @@ public class OpenOfficePanel {
         pushEntriesInt.setTooltip(new Tooltip(Localization.lang("Cite selected entries with in-text citation")));
         pushEntriesInt.setOnAction(e -> pushEntries(CitationType.AUTHORYEAR_INTEXT, false));
         pushEntriesInt.setMaxWidth(Double.MAX_VALUE);
-        pushEntriesEmpty.setTooltip(new Tooltip(Localization.lang("Insert a citation without text (the entry will appear in the reference list)")));
+        pushEntriesEmpty.setTooltip(new Tooltip(
+                Localization.lang("Insert a citation without text (the entry will appear in the reference list)")));
         pushEntriesEmpty.setOnAction(e -> pushEntries(CitationType.INVISIBLE_CIT, false));
         pushEntriesEmpty.setMaxWidth(Double.MAX_VALUE);
         pushEntriesAdvanced.setTooltip(new Tooltip(Localization.lang("Cite selected entries with extra information")));
@@ -225,7 +230,8 @@ public class OpenOfficePanel {
         });
 
         merge.setMaxWidth(Double.MAX_VALUE);
-        merge.setTooltip(new Tooltip(Localization.lang("Combine pairs of citations that are separated by spaces only")));
+        merge.setTooltip(
+                new Tooltip(Localization.lang("Combine pairs of citations that are separated by spaces only")));
         merge.setOnAction(e -> ooBase.guiActionMergeCitationGroups(getBaseList(), style));
 
         unmerge.setMaxWidth(Double.MAX_VALUE);
@@ -293,16 +299,18 @@ public class OpenOfficePanel {
                 databases.add(database.getDatabase());
             }
         } else {
-            databases.add(stateManager.getActiveDatabase()
-                                      .map(BibDatabaseContext::getDatabase)
-                                      .orElse(new BibDatabase()));
+            databases.add(stateManager
+                    .getActiveDatabase()
+                    .map(BibDatabaseContext::getDatabase)
+                    .orElse(new BibDatabase()));
         }
 
         return databases;
     }
 
     private void connectAutomatically() {
-        DetectOpenOfficeInstallation officeInstallation = new DetectOpenOfficeInstallation(preferencesService.getOpenOfficePreferences(), dialogService);
+        DetectOpenOfficeInstallation officeInstallation =
+                new DetectOpenOfficeInstallation(preferencesService.getOpenOfficePreferences(), dialogService);
 
         if (officeInstallation.isExecutablePathDefined()) {
             connect();
@@ -325,32 +333,47 @@ public class OpenOfficePanel {
                 }
             });
 
-            taskConnectIfInstalled.setOnFailed(value -> dialogService.showErrorDialogAndWait(Localization.lang("Autodetection failed"), Localization.lang("Autodetection failed"), taskConnectIfInstalled.getException()));
+            taskConnectIfInstalled.setOnFailed(value -> dialogService.showErrorDialogAndWait(
+                    Localization.lang("Autodetection failed"),
+                    Localization.lang("Autodetection failed"),
+                    taskConnectIfInstalled.getException()));
 
-            dialogService.showProgressDialog(Localization.lang("Autodetecting paths..."), Localization.lang("Autodetecting paths..."), taskConnectIfInstalled);
+            dialogService.showProgressDialog(
+                    Localization.lang("Autodetecting paths..."),
+                    Localization.lang("Autodetecting paths..."),
+                    taskConnectIfInstalled);
             taskExecutor.execute(taskConnectIfInstalled);
         }
     }
 
     private void connectManually() {
-        var fileDialogConfiguration = new DirectoryDialogConfiguration.Builder().withInitialDirectory(System.getProperty("user.home")).build();
+        var fileDialogConfiguration = new DirectoryDialogConfiguration.Builder()
+                .withInitialDirectory(System.getProperty("user.home"))
+                .build();
         Optional<Path> selectedPath = dialogService.showDirectorySelectionDialog(fileDialogConfiguration);
 
-        DetectOpenOfficeInstallation officeInstallation = new DetectOpenOfficeInstallation(preferencesService.getOpenOfficePreferences(), dialogService);
+        DetectOpenOfficeInstallation officeInstallation =
+                new DetectOpenOfficeInstallation(preferencesService.getOpenOfficePreferences(), dialogService);
 
         if (selectedPath.isPresent()) {
             BackgroundTask.wrap(() -> officeInstallation.setOpenOfficePreferences(selectedPath.get()))
-                          .withInitialMessage("Searching for executable")
-                          .onFailure(dialogService::showErrorDialogAndWait).onSuccess(value -> {
-                              if (value) {
-                                  connect();
-                              } else {
-                                  dialogService.showErrorDialogAndWait(Localization.lang("Could not connect to running OpenOffice/LibreOffice."), Localization.lang("If connecting manually, please verify program and library paths."));
-                              }
-                          })
-                          .executeWith(taskExecutor);
+                    .withInitialMessage("Searching for executable")
+                    .onFailure(dialogService::showErrorDialogAndWait)
+                    .onSuccess(value -> {
+                        if (value) {
+                            connect();
+                        } else {
+                            dialogService.showErrorDialogAndWait(
+                                    Localization.lang("Could not connect to running OpenOffice/LibreOffice."),
+                                    Localization.lang(
+                                            "If connecting manually, please verify program and library paths."));
+                        }
+                    })
+                    .executeWith(taskExecutor);
         } else {
-            dialogService.showErrorDialogAndWait(Localization.lang("Could not connect to running OpenOffice/LibreOffice."), Localization.lang("If connecting manually, please verify program and library paths."));
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Could not connect to running OpenOffice/LibreOffice."),
+                    Localization.lang("If connecting manually, please verify program and library paths."));
         }
     }
 
@@ -406,26 +429,34 @@ public class OpenOfficePanel {
             if (ex instanceof UnsatisfiedLinkError) {
                 LOGGER.warn("Could not connect to running OpenOffice/LibreOffice", ex);
 
-                dialogService.showErrorDialogAndWait(Localization.lang("Unable to connect. One possible reason is that JabRef "
-                        + "and OpenOffice/LibreOffice are not both running in either 32 bit mode or 64 bit mode."));
+                dialogService.showErrorDialogAndWait(
+                        Localization.lang(
+                                "Unable to connect. One possible reason is that JabRef "
+                                        + "and OpenOffice/LibreOffice are not both running in either 32 bit mode or 64 bit mode."));
             } else if (ex instanceof IOException) {
                 LOGGER.warn("Could not connect to running OpenOffice/LibreOffice", ex);
 
-                dialogService.showErrorDialogAndWait(Localization.lang("Could not connect to running OpenOffice/LibreOffice."),
+                dialogService.showErrorDialogAndWait(
+                        Localization.lang("Could not connect to running OpenOffice/LibreOffice."),
                         Localization.lang("Could not connect to running OpenOffice/LibreOffice.")
                                 + "\n"
-                                + Localization.lang("Make sure you have installed OpenOffice/LibreOffice with Java support.") + "\n"
-                                + Localization.lang("If connecting manually, please verify program and library paths.") + "\n" + "\n" + Localization.lang("Error message:"),
+                                + Localization.lang(
+                                        "Make sure you have installed OpenOffice/LibreOffice with Java support.")
+                                + "\n"
+                                + Localization.lang("If connecting manually, please verify program and library paths.")
+                                + "\n" + "\n" + Localization.lang("Error message:"),
                         ex);
             } else if (ex instanceof BootstrapException bootstrapEx) {
-               LOGGER.error("Exception boostrap cause", bootstrapEx.getTargetException());
-               dialogService.showErrorDialogAndWait("Bootstrap error", bootstrapEx.getTargetException());
+                LOGGER.error("Exception boostrap cause", bootstrapEx.getTargetException());
+                dialogService.showErrorDialogAndWait("Bootstrap error", bootstrapEx.getTargetException());
             } else {
-                dialogService.showErrorDialogAndWait(Localization.lang("Autodetection failed"), Localization.lang("Autodetection failed"), ex);
+                dialogService.showErrorDialogAndWait(
+                        Localization.lang("Autodetection failed"), Localization.lang("Autodetection failed"), ex);
             }
         });
 
-        dialogService.showProgressDialog(Localization.lang("Autodetecting paths..."), Localization.lang("Autodetecting paths..."), connectTask);
+        dialogService.showProgressDialog(
+                Localization.lang("Autodetecting paths..."), Localization.lang("Autodetecting paths..."), connectTask);
         taskExecutor.execute(connectTask);
     }
 
@@ -443,9 +474,7 @@ public class OpenOfficePanel {
         if (!withText) {
             return CitationType.INVISIBLE_CIT;
         }
-        return inParenthesis
-                ? CitationType.AUTHORYEAR_PAR
-                : CitationType.AUTHORYEAR_INTEXT;
+        return inParenthesis ? CitationType.AUTHORYEAR_PAR : CitationType.AUTHORYEAR_INTEXT;
     }
 
     private void pushEntries(CitationType citationType, boolean addPageInfo) {
@@ -453,25 +482,19 @@ public class OpenOfficePanel {
 
         if (stateManager.getActiveDatabase().isEmpty()
                 || (stateManager.getActiveDatabase().get().getDatabase() == null)) {
-            OOError.noDataBaseIsOpenForCiting()
-                   .setTitle(errorDialogTitle)
-                   .showErrorDialog(dialogService);
+            OOError.noDataBaseIsOpenForCiting().setTitle(errorDialogTitle).showErrorDialog(dialogService);
             return;
         }
 
         final BibDatabase database = stateManager.getActiveDatabase().get().getDatabase();
         if (database == null) {
-            OOError.noDataBaseIsOpenForCiting()
-                   .setTitle(errorDialogTitle)
-                   .showErrorDialog(dialogService);
+            OOError.noDataBaseIsOpenForCiting().setTitle(errorDialogTitle).showErrorDialog(dialogService);
             return;
         }
 
         List<BibEntry> entries = stateManager.getSelectedEntries();
         if (entries.isEmpty()) {
-            OOError.noEntriesSelectedForCitation()
-                   .setTitle(errorDialogTitle)
-                   .showErrorDialog(dialogService);
+            OOError.noEntriesSelectedForCitation().setTitle(errorDialogTitle).showErrorDialog(dialogService);
             return;
         }
 
@@ -483,13 +506,15 @@ public class OpenOfficePanel {
         if (addPageInfo) {
             boolean withText = citationType.withText();
 
-            Optional<AdvancedCiteDialogViewModel> citeDialogViewModel = dialogService.showCustomDialogAndWait(new AdvancedCiteDialogView());
+            Optional<AdvancedCiteDialogViewModel> citeDialogViewModel =
+                    dialogService.showCustomDialogAndWait(new AdvancedCiteDialogView());
             if (citeDialogViewModel.isPresent()) {
                 AdvancedCiteDialogViewModel model = citeDialogViewModel.get();
                 if (!model.pageInfoProperty().getValue().isEmpty()) {
                     pageInfo = model.pageInfoProperty().getValue();
                 }
-                citationType = citationTypeFromOptions(withText, model.citeInParProperty().getValue());
+                citationType = citationTypeFromOptions(
+                        withText, model.citeInParProperty().getValue());
             } else {
                 // user canceled
                 return;
@@ -506,12 +531,7 @@ public class OpenOfficePanel {
                         ? Optional.of(new Update.SyncOptions(getBaseList()))
                         : Optional.empty();
 
-        ooBase.guiActionInsertEntry(entries,
-                database,
-                style,
-                citationType,
-                pageInfo,
-                syncOptions);
+        ooBase.guiActionInsertEntry(entries, database, style, citationType, pageInfo, syncOptions);
     }
 
     /**
@@ -537,7 +557,8 @@ public class OpenOfficePanel {
         }
 
         // Ask if keys should be generated
-        boolean citePressed = dialogService.showConfirmationDialogAndWait(Localization.lang("Cite"),
+        boolean citePressed = dialogService.showConfirmationDialogAndWait(
+                Localization.lang("Cite"),
                 Localization.lang("Cannot cite entries without citation keys. Generate keys now?"),
                 Localization.lang("Generate keys"),
                 Localization.lang("Cancel"));
@@ -571,12 +592,16 @@ public class OpenOfficePanel {
 
         ContextMenu contextMenu = new ContextMenu();
 
-        CheckMenuItem autoSync = new CheckMenuItem(Localization.lang("Automatically sync bibliography when inserting citations"));
-        autoSync.selectedProperty().set(preferencesService.getOpenOfficePreferences().getSyncWhenCiting());
+        CheckMenuItem autoSync =
+                new CheckMenuItem(Localization.lang("Automatically sync bibliography when inserting citations"));
+        autoSync.selectedProperty()
+                .set(preferencesService.getOpenOfficePreferences().getSyncWhenCiting());
 
         ToggleGroup toggleGroup = new ToggleGroup();
-        RadioMenuItem useActiveBase = new RadioMenuItem(Localization.lang("Look up BibTeX entries in the active tab only"));
-        RadioMenuItem useAllBases = new RadioMenuItem(Localization.lang("Look up BibTeX entries in all open libraries"));
+        RadioMenuItem useActiveBase =
+                new RadioMenuItem(Localization.lang("Look up BibTeX entries in the active tab only"));
+        RadioMenuItem useAllBases =
+                new RadioMenuItem(Localization.lang("Look up BibTeX entries in all open libraries"));
         useActiveBase.setToggleGroup(toggleGroup);
         useAllBases.setToggleGroup(toggleGroup);
 
@@ -596,13 +621,15 @@ public class OpenOfficePanel {
             dialogService.notify(Localization.lang("Cleared connection settings"));
         });
 
-        contextMenu.getItems().addAll(
-                autoSync,
-                new SeparatorMenuItem(),
-                useActiveBase,
-                useAllBases,
-                new SeparatorMenuItem(),
-                clearConnectionSettings);
+        contextMenu
+                .getItems()
+                .addAll(
+                        autoSync,
+                        new SeparatorMenuItem(),
+                        useActiveBase,
+                        useAllBases,
+                        new SeparatorMenuItem(),
+                        clearConnectionSettings);
 
         return contextMenu;
     }

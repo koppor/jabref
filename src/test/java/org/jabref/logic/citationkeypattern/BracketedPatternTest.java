@@ -34,20 +34,25 @@ class BracketedPatternTest {
 
     @BeforeEach
     void setUp() {
-        bibentry = new BibEntry().withField(StandardField.AUTHOR, "O. Kitsune")
-                                 .withField(StandardField.YEAR, "2017")
-                                 .withField(StandardField.PAGES, "213--216");
+        bibentry = new BibEntry()
+                .withField(StandardField.AUTHOR, "O. Kitsune")
+                .withField(StandardField.YEAR, "2017")
+                .withField(StandardField.PAGES, "213--216");
 
         dbentry = new BibEntry(StandardEntryType.Article)
                 .withCitationKey("HipKro03")
                 .withField(StandardField.AUTHOR, "Eric von Hippel and Georg von Krogh")
-                .withField(StandardField.TITLE, "Open Source Software and the \"Private-Collective\" Innovation Model: Issues for Organization Science")
+                .withField(
+                        StandardField.TITLE,
+                        "Open Source Software and the \"Private-Collective\" Innovation Model: Issues for Organization Science")
                 .withField(StandardField.JOURNAL, "Organization Science")
                 .withField(StandardField.YEAR, "2003")
                 .withField(StandardField.VOLUME, "14")
                 .withField(StandardField.PAGES, "209--223")
                 .withField(StandardField.NUMBER, "2")
-                .withField(StandardField.ADDRESS, "Institute for Operations Research and the Management Sciences (INFORMS), Linthicum, Maryland, USA")
+                .withField(
+                        StandardField.ADDRESS,
+                        "Institute for Operations Research and the Management Sciences (INFORMS), Linthicum, Maryland, USA")
                 .withField(StandardField.DOI, "http://dx.doi.org/10.1287/orsc.14.2.209.14992")
                 .withField(StandardField.ISSN, "1526-5455")
                 .withField(StandardField.PUBLISHER, "INFORMS");
@@ -63,9 +68,15 @@ class BracketedPatternTest {
                 Arguments.of("AachenBerlinEtAl", "Aachen and Berlin and others"),
                 Arguments.of("AachenBerlinChemnitzEtAl", "Aachen and Berlin and Chemnitz and others"),
                 Arguments.of("AachenBerlinChemnitzDüsseldorf", "Aachen and Berlin and Chemnitz and Düsseldorf"),
-                Arguments.of("AachenBerlinChemnitzDüsseldorfEtAl", "Aachen and Berlin and Chemnitz and Düsseldorf and others"),
-                Arguments.of("AachenBerlinChemnitzDüsseldorfEssen", "Aachen and Berlin and Chemnitz and Düsseldorf and Essen"),
-                Arguments.of("AachenBerlinChemnitzDüsseldorfEssenEtAl", "Aachen and Berlin and Chemnitz and Düsseldorf and Essen and others"));
+                Arguments.of(
+                        "AachenBerlinChemnitzDüsseldorfEtAl",
+                        "Aachen and Berlin and Chemnitz and Düsseldorf and others"),
+                Arguments.of(
+                        "AachenBerlinChemnitzDüsseldorfEssen",
+                        "Aachen and Berlin and Chemnitz and Düsseldorf and Essen"),
+                Arguments.of(
+                        "AachenBerlinChemnitzDüsseldorfEssenEtAl",
+                        "Aachen and Berlin and Chemnitz and Düsseldorf and Essen and others"));
     }
 
     @ParameterizedTest
@@ -268,24 +279,23 @@ class BracketedPatternTest {
 
     @ParameterizedTest
     @CsvSource({
-            "'Newton', '[auth]', 'Isaac Newton'",
-            "'Newton', '[authFirstFull]', 'Isaac Newton'",
-            "'I', '[authForeIni]', 'Isaac Newton'",
-            "'Newton', '[auth.etal]', 'Isaac Newton'",
-            "'Newton', '[authEtAl]', 'Isaac Newton'",
-            "'Newton', '[auth.auth.ea]', 'Isaac Newton'",
-            "'Newton', '[authors]', 'Isaac Newton'",
-            "'Newton', '[authors2]', 'Isaac Newton'",
-            "'Ne', '[authIni2]', 'Isaac Newton'",
-            "'New', '[auth3]', 'Isaac Newton'",
-            "'New', '[auth3_1]', 'Isaac Newton'",
-            "'Newton', '[authshort]', 'Isaac Newton'",
-            "'New', '[authorsAlpha]', 'Isaac Newton'",
-            "'Newton', '[authorLast]', 'Isaac Newton'",
-            "'I', '[authorLastForeIni]', 'Isaac Newton'",
-
-            "'Agency', '[authors]', 'European Union Aviation Safety Agency'",
-            "'EUASA', '[authors]', '{European Union Aviation Safety Agency}'"
+        "'Newton', '[auth]', 'Isaac Newton'",
+        "'Newton', '[authFirstFull]', 'Isaac Newton'",
+        "'I', '[authForeIni]', 'Isaac Newton'",
+        "'Newton', '[auth.etal]', 'Isaac Newton'",
+        "'Newton', '[authEtAl]', 'Isaac Newton'",
+        "'Newton', '[auth.auth.ea]', 'Isaac Newton'",
+        "'Newton', '[authors]', 'Isaac Newton'",
+        "'Newton', '[authors2]', 'Isaac Newton'",
+        "'Ne', '[authIni2]', 'Isaac Newton'",
+        "'New', '[auth3]', 'Isaac Newton'",
+        "'New', '[auth3_1]', 'Isaac Newton'",
+        "'Newton', '[authshort]', 'Isaac Newton'",
+        "'New', '[authorsAlpha]', 'Isaac Newton'",
+        "'Newton', '[authorLast]', 'Isaac Newton'",
+        "'I', '[authorLastForeIni]', 'Isaac Newton'",
+        "'Agency', '[authors]', 'European Union Aviation Safety Agency'",
+        "'EUASA', '[authors]', '{European Union Aviation Safety Agency}'"
     })
     void testAuthorFieldMarkers(String expectedCitationKey, String pattern, String author) {
         BibEntry bibEntry = new BibEntry().withField(StandardField.AUTHOR, author);
@@ -301,15 +311,14 @@ class BracketedPatternTest {
                 Arguments.of("", "[title:([YEAR)]"),
                 Arguments.of(")]", "[title:(YEAR])]"),
                 Arguments.of("2105.02891", "[title:([EPRINT:([YEAR])])]"),
-                Arguments.of("2021", "[title:([auth:([YEAR])])]")
-        );
+                Arguments.of("2021", "[title:([auth:([YEAR])])]"));
     }
 
     @ParameterizedTest
     @MethodSource()
     void expandBracketsWithFallback(String expandResult, String pattern) {
-        BibEntry bibEntry = new BibEntry()
-                .withField(StandardField.YEAR, "2021").withField(StandardField.EPRINT, "2105.02891");
+        BibEntry bibEntry =
+                new BibEntry().withField(StandardField.YEAR, "2021").withField(StandardField.EPRINT, "2105.02891");
         BracketedPattern bracketedPattern = new BracketedPattern(pattern);
 
         assertEquals(expandResult, bracketedPattern.expand(bibEntry));
@@ -377,8 +386,7 @@ class BracketedPatternTest {
                 .withField(StandardField.YEAR, "2017")
                 .withField(StandardField.PAGES, "213--216");
         BracketedPattern pattern = new BracketedPattern("[year]_[auth]_[firstpage]");
-        assertEquals("2017_Gražulis_213", pattern.expand(bibentry,
-                another_database));
+        assertEquals("2017_Gražulis_213", pattern.expand(bibentry, another_database));
     }
 
     @Test
@@ -466,13 +474,15 @@ class BracketedPatternTest {
 
     @Test
     void authorPatternTreatsVonNamePrefixCorrectly() {
-        assertEquals("Eric von Hippel and Georg von Krogh",
+        assertEquals(
+                "Eric von Hippel and Georg von Krogh",
                 BracketedPattern.expandBrackets("[author]", ';', dbentry, database));
     }
 
     @Test
     void lowerFormatterWorksOnVonNamePrefixes() {
-        assertEquals("eric von hippel and georg von krogh",
+        assertEquals(
+                "eric von hippel and georg von krogh",
                 BracketedPattern.expandBrackets("[author:lower]", ';', dbentry, database));
     }
 
@@ -482,7 +492,8 @@ class BracketedPatternTest {
         database.insertEntry(child);
 
         Character separator = ';';
-        assertEquals("Eric von Hippel and Georg von Krogh",
+        assertEquals(
+                "Eric von Hippel and Georg von Krogh",
                 BracketedPattern.expandBrackets("[author]", separator, child, database));
 
         assertEquals("", BracketedPattern.expandBrackets("[unknownkey]", separator, child, database));
@@ -491,7 +502,8 @@ class BracketedPatternTest {
 
         assertEquals("", BracketedPattern.expandBrackets("[:lower]", separator, child, database));
 
-        assertEquals("eric von hippel and georg von krogh",
+        assertEquals(
+                "eric von hippel and georg von krogh",
                 BracketedPattern.expandBrackets("[author:lower]", separator, child, database));
 
         // the citation key is not inherited
@@ -502,8 +514,7 @@ class BracketedPatternTest {
 
     @Test
     void testResolvedParentNotInDatabase() {
-        BibEntry child = new BibEntry()
-                .withField(StandardField.CROSSREF, "HipKro03");
+        BibEntry child = new BibEntry().withField(StandardField.CROSSREF, "HipKro03");
         database.removeEntry(dbentry);
         database.insertEntry(child);
 
@@ -512,19 +523,24 @@ class BracketedPatternTest {
 
     @Test
     void regularExpressionReplace() {
-        assertEquals("2003-JabRef Science",
-                BracketedPattern.expandBrackets("[year]-[journal:regex(\"Organization\",\"JabRef\")]", ';', dbentry, database));
+        assertEquals(
+                "2003-JabRef Science",
+                BracketedPattern.expandBrackets(
+                        "[year]-[journal:regex(\"Organization\",\"JabRef\")]", ';', dbentry, database));
     }
 
     @Test
     void regularExpressionWithBrackets() {
-        assertEquals("2003-JabRef Science",
-                BracketedPattern.expandBrackets("[year]-[journal:regex(\"[OX]rganization\",\"JabRef\")]", ';', dbentry, database));
+        assertEquals(
+                "2003-JabRef Science",
+                BracketedPattern.expandBrackets(
+                        "[year]-[journal:regex(\"[OX]rganization\",\"JabRef\")]", ';', dbentry, database));
     }
 
     @Test
     void testEmptyBrackets() {
-        assertEquals("2003-Organization Science",
+        assertEquals(
+                "2003-Organization Science",
                 BracketedPattern.expandBrackets("[year][]-[journal]", ';', dbentry, database));
     }
 
@@ -533,13 +549,14 @@ class BracketedPatternTest {
      */
     @Test
     void expandBracketsChainsTwoTruncateModifiers() {
-        assertEquals("Open",
-                BracketedPattern.expandBrackets("[fulltitle:truncate6:truncate5]", ';', dbentry, database));
+        assertEquals(
+                "Open", BracketedPattern.expandBrackets("[fulltitle:truncate6:truncate5]", ';', dbentry, database));
     }
 
     @Test
     void expandBracketsDoesNotTruncateWithoutAnArgumentToTruncateModifier() {
-        assertEquals("Open Source Software and the \"Private-Collective\" Innovation Model: Issues for Organization Science",
+        assertEquals(
+                "Open Source Software and the \"Private-Collective\" Innovation Model: Issues for Organization Science",
                 BracketedPattern.expandBrackets("[fulltitle:truncate]", ';', dbentry, database));
     }
 
@@ -548,14 +565,17 @@ class BracketedPatternTest {
         // Issue https://github.com/JabRef/jabref/issues/3920
         BibEntry bibEntry = new BibEntry()
                 .withField(StandardField.AUTHOR, "Patrik {\\v{S}}pan{\\v{e}}l and Kseniya Dryahina and David Smith");
-        assertEquals("ŠpanělEtAl", BracketedPattern.expandBrackets("[authEtAl:latex_to_unicode]", null, bibEntry, null));
+        assertEquals(
+                "ŠpanělEtAl", BracketedPattern.expandBrackets("[authEtAl:latex_to_unicode]", null, bibEntry, null));
     }
 
     @Test
     void expandBracketsWithModifierContainingRegexCharacterClass() {
         BibEntry bibEntry = new BibEntry().withField(StandardField.TITLE, "Wickedness:Managing");
 
-        assertEquals("Wickedness.Managing", BracketedPattern.expandBrackets("[title:regex(\"[:]+\",\".\")]", null, bibEntry, null));
+        assertEquals(
+                "Wickedness.Managing",
+                BracketedPattern.expandBrackets("[title:regex(\"[:]+\",\".\")]", null, bibEntry, null));
     }
 
     @Test
@@ -575,40 +595,35 @@ class BracketedPatternTest {
 
     @Test
     void expandBracketsInstitutionAbbreviationForAuthorContainingUnion() {
-        BibEntry bibEntry = new BibEntry()
-                .withField(StandardField.AUTHOR, "{European Union Aviation Safety Agency}");
+        BibEntry bibEntry = new BibEntry().withField(StandardField.AUTHOR, "{European Union Aviation Safety Agency}");
 
         assertEquals("EUASA", BracketedPattern.expandBrackets("[auth]", null, bibEntry, null));
     }
 
     @Test
     void expandBracketsLastNameForAuthorStartingWithOnlyLastNameStartingWithLowerCase() {
-        BibEntry bibEntry = new BibEntry()
-                .withField(StandardField.AUTHOR, "{eBay}");
+        BibEntry bibEntry = new BibEntry().withField(StandardField.AUTHOR, "{eBay}");
 
         assertEquals("eBay", BracketedPattern.expandBrackets("[auth]", null, bibEntry, null));
     }
 
     @Test
     void expandBracketsLastNameWithChineseCharacters() {
-        BibEntry bibEntry = new BibEntry()
-                .withField(StandardField.AUTHOR, "杨秀群");
+        BibEntry bibEntry = new BibEntry().withField(StandardField.AUTHOR, "杨秀群");
 
         assertEquals("杨秀群", BracketedPattern.expandBrackets("[auth]", null, bibEntry, null));
     }
 
     @Test
     void expandBracketsUnmodifiedStringFromLongFirstPageNumber() {
-        BibEntry bibEntry = new BibEntry()
-                .withField(StandardField.PAGES, "2325967120921344");
+        BibEntry bibEntry = new BibEntry().withField(StandardField.PAGES, "2325967120921344");
 
         assertEquals("2325967120921344", BracketedPattern.expandBrackets("[firstpage]", null, bibEntry, null));
     }
 
     @Test
     void expandBracketsUnmodifiedStringFromLongLastPageNumber() {
-        BibEntry bibEntry = new BibEntry()
-                .withField(StandardField.PAGES, "2325967120921344");
+        BibEntry bibEntry = new BibEntry().withField(StandardField.PAGES, "2325967120921344");
 
         assertEquals("2325967120921344", BracketedPattern.expandBrackets("[lastpage]", null, bibEntry, null));
     }
@@ -618,13 +633,17 @@ class BracketedPatternTest {
         BibEntry entry = new BibEntry(StandardEntryType.Article)
                 .withCitationKey("HipKro03")
                 .withField(StandardField.AUTHOR, "Eric von Hippel and Georg von Krogh")
-                .withField(StandardField.TITLE, "Open Source Software and the \"Private-Collective\" Innovation Model: Issues for Organization Science")
+                .withField(
+                        StandardField.TITLE,
+                        "Open Source Software and the \"Private-Collective\" Innovation Model: Issues for Organization Science")
                 .withField(StandardField.JOURNAL, "Organization Science")
                 .withField(StandardField.YEAR, "2003")
                 .withField(StandardField.VOLUME, "14")
                 .withField(StandardField.PAGES, "209--223")
                 .withField(StandardField.NUMBER, "2")
-                .withField(StandardField.ADDRESS, "Institute for Operations Research and the Management Sciences (INFORMS), Linthicum, Maryland, USA")
+                .withField(
+                        StandardField.ADDRESS,
+                        "Institute for Operations Research and the Management Sciences (INFORMS), Linthicum, Maryland, USA")
                 .withField(StandardField.DOI, "http://dx.doi.org/10.1287/orsc.14.2.209.14992")
                 .withField(StandardField.ISSN, "1526-5455")
                 .withField(StandardField.PUBLISHER, "INFORMS");
@@ -636,18 +655,22 @@ class BracketedPatternTest {
 
         assertEquals("dropped", BracketedPattern.expandBrackets("drop[unknownkey]ped", ',', entry, database));
 
-        assertEquals("Eric von Hippel and Georg von Krogh",
+        assertEquals(
+                "Eric von Hippel and Georg von Krogh",
                 BracketedPattern.expandBrackets("[author]", ',', entry, database));
 
-        assertEquals("Eric von Hippel and Georg von Krogh are two famous authors.",
+        assertEquals(
+                "Eric von Hippel and Georg von Krogh are two famous authors.",
                 BracketedPattern.expandBrackets("[author] are two famous authors.", ',', entry, database));
 
-        assertEquals("Eric von Hippel and Georg von Krogh are two famous authors.",
+        assertEquals(
+                "Eric von Hippel and Georg von Krogh are two famous authors.",
                 BracketedPattern.expandBrackets("[author] are two famous authors.", ',', entry, database));
 
         assertEquals(
                 "Eric von Hippel and Georg von Krogh have published Open Source Software and the \"Private-Collective\" Innovation Model: Issues for Organization Science in Organization Science.",
-                BracketedPattern.expandBrackets("[author] have published [fulltitle] in [journal].", ',', entry, database));
+                BracketedPattern.expandBrackets(
+                        "[author] have published [fulltitle] in [journal].", ',', entry, database));
 
         assertEquals(
                 "Eric von Hippel and Georg von Krogh have published Open Source Software and the \"Private Collective\" Innovation Model: Issues for Organization Science in Organization Science.",
@@ -656,28 +679,27 @@ class BracketedPatternTest {
 
     @Test
     void expandBracketsWithoutProtectiveBracesUsingUnprotectTermsModifier() {
-        BibEntry bibEntry = new BibEntry()
-                .withField(StandardField.JOURNAL, "{ACS} Medicinal Chemistry Letters");
-        assertEquals("ACS Medicinal Chemistry Letters", BracketedPattern.expandBrackets("[JOURNAL:unprotect_terms]", null, bibEntry, null));
+        BibEntry bibEntry = new BibEntry().withField(StandardField.JOURNAL, "{ACS} Medicinal Chemistry Letters");
+        assertEquals(
+                "ACS Medicinal Chemistry Letters",
+                BracketedPattern.expandBrackets("[JOURNAL:unprotect_terms]", null, bibEntry, null));
     }
 
     @ParameterizedTest
     @CsvSource({
-            "'Newton', '[edtr]', 'Isaac Newton'",
-            "'I', '[edtrForeIni]', 'Isaac Newton'",
-            "'Newton', '[editors]', 'Isaac Newton'",
-            "'Ne', '[edtrIni2]', 'Isaac Newton'",
-            "'New', '[edtr3]', 'Isaac Newton'",
-            "'Newton', '[edtr7]', 'Isaac Newton'",
-            "'New', '[edtr3_1]', 'Isaac Newton'",
-            "'Newton.Maxwell', '[edtr.edtr.ea]', 'Isaac Newton and James Maxwell'",
-            "'Newton', '[edtrshort]', 'Isaac Newton'",
-            "'Newton', '[editorLast]', 'Isaac Newton'",
-            "'I', '[editorLastForeIni]', 'Isaac Newton'",
-
-            "'EUASA', '[editors]', '{European Union Aviation Safety Agency}'"
+        "'Newton', '[edtr]', 'Isaac Newton'",
+        "'I', '[edtrForeIni]', 'Isaac Newton'",
+        "'Newton', '[editors]', 'Isaac Newton'",
+        "'Ne', '[edtrIni2]', 'Isaac Newton'",
+        "'New', '[edtr3]', 'Isaac Newton'",
+        "'Newton', '[edtr7]', 'Isaac Newton'",
+        "'New', '[edtr3_1]', 'Isaac Newton'",
+        "'Newton.Maxwell', '[edtr.edtr.ea]', 'Isaac Newton and James Maxwell'",
+        "'Newton', '[edtrshort]', 'Isaac Newton'",
+        "'Newton', '[editorLast]', 'Isaac Newton'",
+        "'I', '[editorLastForeIni]', 'Isaac Newton'",
+        "'EUASA', '[editors]', '{European Union Aviation Safety Agency}'"
     })
-
     void testEditorFieldMarkers(String expectedCitationKey, String pattern, String editor) {
         BibEntry bibEntry = new BibEntry().withField(StandardField.EDITOR, editor);
         BracketedPattern bracketedPattern = new BracketedPattern(pattern);

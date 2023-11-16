@@ -47,16 +47,18 @@ class AtomicFileOutputStreamTest {
         try (FileOutputStream outputStream = new FileOutputStream(pathToTmpFile.toFile())) {
             FileOutputStream spiedOutputStream = spy(outputStream);
             doAnswer(invocation -> {
-                // by writing one byte, we ensure that the `.tmp` file is created
-                outputStream.write(((byte[]) invocation.getRawArguments()[0])[0]);
-                outputStream.flush();
-                throw new IOException();
-            }).when(spiedOutputStream)
-              .write(Mockito.any(byte[].class), anyInt(), anyInt());
+                        // by writing one byte, we ensure that the `.tmp` file is created
+                        outputStream.write(((byte[]) invocation.getRawArguments()[0])[0]);
+                        outputStream.flush();
+                        throw new IOException();
+                    })
+                    .when(spiedOutputStream)
+                    .write(Mockito.any(byte[].class), anyInt(), anyInt());
 
             assertThrows(IOException.class, () -> {
-                try (AtomicFileOutputStream atomicFileOutputStream = new AtomicFileOutputStream(pathToTestFile, pathToTmpFile, spiedOutputStream, false);
-                     InputStream inputStream = new ByteArrayInputStream(FIVE_THOUSAND_CHARS.getBytes())) {
+                try (AtomicFileOutputStream atomicFileOutputStream =
+                                new AtomicFileOutputStream(pathToTestFile, pathToTmpFile, spiedOutputStream, false);
+                        InputStream inputStream = new ByteArrayInputStream(FIVE_THOUSAND_CHARS.getBytes())) {
                     inputStream.transferTo(atomicFileOutputStream);
                 }
             });

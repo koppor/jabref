@@ -27,15 +27,16 @@ public class SidePaneContentFactory {
     private final BibEntryTypesManager entryTypesManager;
     private final UndoManager undoManager;
 
-    public SidePaneContentFactory(LibraryTabContainer tabContainer,
-                                  PreferencesService preferences,
-                                  JournalAbbreviationRepository abbreviationRepository,
-                                  TaskExecutor taskExecutor,
-                                  DialogService dialogService,
-                                  StateManager stateManager,
-                                  FileUpdateMonitor fileUpdateMonitor,
-                                  BibEntryTypesManager entryTypesManager,
-                                  UndoManager undoManager) {
+    public SidePaneContentFactory(
+            LibraryTabContainer tabContainer,
+            PreferencesService preferences,
+            JournalAbbreviationRepository abbreviationRepository,
+            TaskExecutor taskExecutor,
+            DialogService dialogService,
+            StateManager stateManager,
+            FileUpdateMonitor fileUpdateMonitor,
+            BibEntryTypesManager entryTypesManager,
+            UndoManager undoManager) {
         this.tabContainer = tabContainer;
         this.preferences = preferences;
         this.abbreviationRepository = abbreviationRepository;
@@ -49,26 +50,20 @@ public class SidePaneContentFactory {
 
     public Node create(SidePaneType sidePaneType) {
         return switch (sidePaneType) {
-            case GROUPS -> new GroupTreeView(
-                    taskExecutor,
-                    stateManager,
-                    preferences,
-                    dialogService);
+            case GROUPS -> new GroupTreeView(taskExecutor, stateManager, preferences, dialogService);
             case OPEN_OFFICE -> new OpenOfficePanel(
-                    tabContainer,
-                    preferences,
-                    preferences.getKeyBindingRepository(),
-                    abbreviationRepository,
-                    taskExecutor,
-                    dialogService,
-                    stateManager,
-                    fileUpdateMonitor,
-                    entryTypesManager,
-                    undoManager).getContent();
-            case WEB_SEARCH -> new WebSearchPaneView(
-                    preferences,
-                    dialogService,
-                    stateManager);
+                            tabContainer,
+                            preferences,
+                            preferences.getKeyBindingRepository(),
+                            abbreviationRepository,
+                            taskExecutor,
+                            dialogService,
+                            stateManager,
+                            fileUpdateMonitor,
+                            entryTypesManager,
+                            undoManager)
+                    .getContent();
+            case WEB_SEARCH -> new WebSearchPaneView(preferences, dialogService, stateManager);
         };
     }
 }

@@ -59,13 +59,28 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
     public CheckBox downloadLinkedOnlineFiles;
     private final BackgroundTask<ParserResult> task;
     private ImportEntriesViewModel viewModel;
-    @Inject private TaskExecutor taskExecutor;
-    @Inject private DialogService dialogService;
-    @Inject private UndoManager undoManager;
-    @Inject private PreferencesService preferences;
-    @Inject private StateManager stateManager;
-    @Inject private BibEntryTypesManager entryTypesManager;
-    @Inject private FileUpdateMonitor fileUpdateMonitor;
+
+    @Inject
+    private TaskExecutor taskExecutor;
+
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private UndoManager undoManager;
+
+    @Inject
+    private PreferencesService preferences;
+
+    @Inject
+    private StateManager stateManager;
+
+    @Inject
+    private BibEntryTypesManager entryTypesManager;
+
+    @Inject
+    private FileUpdateMonitor fileUpdateMonitor;
+
     private final BibDatabaseContext database;
 
     /**
@@ -77,11 +92,10 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
     public ImportEntriesDialog(BibDatabaseContext database, BackgroundTask<ParserResult> task) {
         this.database = database;
         this.task = task;
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
-        BooleanBinding booleanBind = Bindings.isEmpty(entriesListView.getCheckModel().getCheckedItems());
+        BooleanBinding booleanBind =
+                Bindings.isEmpty(entriesListView.getCheckModel().getCheckedItems());
         Button btn = (Button) this.getDialogPane().lookupButton(importButton);
         btn.disableProperty().bind(booleanBind);
 
@@ -89,7 +103,8 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
 
         setResultConverter(button -> {
             if (button == importButton) {
-                viewModel.importEntries(entriesListView.getCheckModel().getCheckedItems(), downloadLinkedOnlineFiles.isSelected());
+                viewModel.importEntries(
+                        entriesListView.getCheckModel().getCheckedItems(), downloadLinkedOnlineFiles.isSelected());
             } else {
                 dialogService.notify(Localization.lang("Import canceled"));
             }
@@ -100,7 +115,16 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
 
     @FXML
     private void initialize() {
-        viewModel = new ImportEntriesViewModel(task, taskExecutor, database, dialogService, undoManager, preferences, stateManager, entryTypesManager, fileUpdateMonitor);
+        viewModel = new ImportEntriesViewModel(
+                task,
+                taskExecutor,
+                database,
+                dialogService,
+                undoManager,
+                preferences,
+                stateManager,
+                entryTypesManager,
+                fileUpdateMonitor);
         Label placeholder = new Label();
         placeholder.textProperty().bind(viewModel.messageProperty());
         entriesListView.setPlaceholder(placeholder);
@@ -112,7 +136,9 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
                 .withText(database -> {
                     Optional<String> dbOpt = Optional.empty();
                     if (database.getDatabasePath().isPresent()) {
-                        dbOpt = FileUtil.getUniquePathFragment(stateManager.collectAllDatabasePaths(), database.getDatabasePath().get());
+                        dbOpt = FileUtil.getUniquePathFragment(
+                                stateManager.collectAllDatabasePaths(),
+                                database.getDatabasePath().get());
                     }
                     if (database.getLocation() == DatabaseLocation.SHARED) {
                         return database.getDBMSSynchronizer().getDBName() + " [" + Localization.lang("shared") + "]";
@@ -126,7 +152,9 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
                 })
                 .install(libraryListView);
         viewModel.selectedDbProperty().bind(libraryListView.getSelectionModel().selectedItemProperty());
-        stateManager.getActiveDatabase().ifPresent(database1 -> libraryListView.getSelectionModel().select(database1));
+        stateManager
+                .getActiveDatabase()
+                .ifPresent(database1 -> libraryListView.getSelectionModel().select(database1));
 
         PseudoClass entrySelected = PseudoClass.getPseudoClass("entry-selected");
         new ViewModelListCellFactory<BibEntry>()
@@ -134,7 +162,9 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
                     ToggleButton addToggle = IconTheme.JabRefIcons.ADD.asToggleButton();
                     EasyBind.subscribe(addToggle.selectedProperty(), selected -> {
                         if (selected) {
-                            addToggle.setGraphic(IconTheme.JabRefIcons.ADD_FILLED.withColor(IconTheme.SELECTED_COLOR).getGraphicNode());
+                            addToggle.setGraphic(IconTheme.JabRefIcons.ADD_FILLED
+                                    .withColor(IconTheme.SELECTED_COLOR)
+                                    .getGraphicNode());
                         } else {
                             addToggle.setGraphic(IconTheme.JabRefIcons.ADD.getGraphicNode());
                         }
@@ -148,14 +178,17 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
                     HBox container = new HBox(entryNode, separator, addToggle);
                     container.getStyleClass().add("entry-container");
 
-                    BackgroundTask.wrap(() -> viewModel.hasDuplicate(entry)).onSuccess(duplicateFound -> {
-                        if (duplicateFound) {
-                            Button duplicateButton = IconTheme.JabRefIcons.DUPLICATE.asButton();
-                            duplicateButton.setTooltip(new Tooltip(Localization.lang("Possible duplicate of existing entry. Click to resolve.")));
-                            duplicateButton.setOnAction(event -> viewModel.resolveDuplicate(entry));
-                            container.getChildren().add(1, duplicateButton);
-                        }
-                    }).executeWith(taskExecutor);
+                    BackgroundTask.wrap(() -> viewModel.hasDuplicate(entry))
+                            .onSuccess(duplicateFound -> {
+                                if (duplicateFound) {
+                                    Button duplicateButton = IconTheme.JabRefIcons.DUPLICATE.asButton();
+                                    duplicateButton.setTooltip(new Tooltip(Localization.lang(
+                                            "Possible duplicate of existing entry. Click to resolve.")));
+                                    duplicateButton.setOnAction(event -> viewModel.resolveDuplicate(entry));
+                                    container.getChildren().add(1, duplicateButton);
+                                }
+                            })
+                            .executeWith(taskExecutor);
 
                     /*
                     inserted the if-statement here, since a Platform.runLater() call did not work.
@@ -167,11 +200,15 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
 
                     return container;
                 })
-                .withOnMouseClickedEvent((entry, event) -> entriesListView.getCheckModel().toggleCheckState(entry))
+                .withOnMouseClickedEvent(
+                        (entry, event) -> entriesListView.getCheckModel().toggleCheckState(entry))
                 .withPseudoClass(entrySelected, entriesListView::getItemBooleanProperty)
                 .install(entriesListView);
 
-        selectedItems.textProperty().bind(Bindings.size(entriesListView.getCheckModel().getCheckedItems()).asString());
+        selectedItems
+                .textProperty()
+                .bind(Bindings.size(entriesListView.getCheckModel().getCheckedItems())
+                        .asString());
         totalItems.textProperty().bind(Bindings.size(entriesListView.getItems()).asString());
         entriesListView.setSelectionModel(new NoSelectionModel<>());
     }
@@ -179,20 +216,20 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
     private Node getEntryNode(BibEntry entry) {
         Node entryType = getIcon(entry.getType()).getGraphicNode();
         entryType.getStyleClass().add("type");
-        Label authors = new Label(entry.getFieldOrAliasLatexFree(StandardField.AUTHOR).orElse(""));
+        Label authors =
+                new Label(entry.getFieldOrAliasLatexFree(StandardField.AUTHOR).orElse(""));
         authors.getStyleClass().add("authors");
-        Label title = new Label(entry.getFieldOrAliasLatexFree(StandardField.TITLE).orElse(""));
+        Label title =
+                new Label(entry.getFieldOrAliasLatexFree(StandardField.TITLE).orElse(""));
         title.getStyleClass().add("title");
-        Label year = new Label(entry.getFieldOrAliasLatexFree(StandardField.YEAR).orElse(""));
+        Label year =
+                new Label(entry.getFieldOrAliasLatexFree(StandardField.YEAR).orElse(""));
         year.getStyleClass().add("year");
-        Label journal = new Label(entry.getFieldOrAliasLatexFree(StandardField.JOURNAL).orElse(""));
+        Label journal =
+                new Label(entry.getFieldOrAliasLatexFree(StandardField.JOURNAL).orElse(""));
         journal.getStyleClass().add("journal");
 
-        VBox entryContainer = new VBox(
-                new HBox(10, entryType, title),
-                new HBox(5, year, journal),
-                authors
-        );
+        VBox entryContainer = new VBox(new HBox(10, entryType, title), new HBox(5, year, journal), authors);
         entry.getFieldOrAliasLatexFree(StandardField.ABSTRACT).ifPresent(summaryText -> {
             TextFlowLimited summary = new TextFlowLimited(new Text(summaryText));
             summary.getStyleClass().add("summary");
@@ -204,7 +241,8 @@ public class ImportEntriesDialog extends BaseDialog<Boolean> {
     }
 
     private IconTheme.JabRefIcons getIcon(EntryType type) {
-        EnumSet<StandardEntryType> crossRefTypes = EnumSet.of(StandardEntryType.InBook, StandardEntryType.InProceedings, StandardEntryType.InCollection);
+        EnumSet<StandardEntryType> crossRefTypes =
+                EnumSet.of(StandardEntryType.InBook, StandardEntryType.InProceedings, StandardEntryType.InCollection);
         if (type == StandardEntryType.Book) {
             return IconTheme.JabRefIcons.BOOK;
         } else if (crossRefTypes.contains(type)) {

@@ -35,7 +35,8 @@ public class SlrGitHandler extends GitHandler {
         super(repositoryPath);
     }
 
-    public void appendLatestSearchResultsOntoCurrentBranch(String patchMessage, String searchBranchName) throws IOException, GitAPIException {
+    public void appendLatestSearchResultsOntoCurrentBranch(String patchMessage, String searchBranchName)
+            throws IOException, GitAPIException {
         // Calculate and apply new search results to work branch
         String patch = calculatePatchOfNewSearchResults(searchBranchName);
         Map<Path, String> result = parsePatchForAddedEntries(patch);

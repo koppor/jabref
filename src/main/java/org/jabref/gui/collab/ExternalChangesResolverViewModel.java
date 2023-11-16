@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class ExternalChangesResolverViewModel extends AbstractViewModel {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ExternalChangesResolverViewModel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalChangesResolverViewModel.class);
 
     private final NamedCompound ce = new NamedCompound(Localization.lang("Merged external changes"));
     private final ObservableList<DatabaseChange> visibleChanges = FXCollections.observableArrayList();
@@ -50,7 +50,10 @@ public class ExternalChangesResolverViewModel extends AbstractViewModel {
         this.undoManager = undoManager;
 
         areAllChangesResolved = Bindings.createBooleanBinding(visibleChanges::isEmpty, visibleChanges);
-        canAskUserToResolveChange = Bindings.createBooleanBinding(() -> selectedChange.isNotNull().get() && selectedChange.get().getExternalChangeResolver().isPresent(), selectedChange);
+        canAskUserToResolveChange = Bindings.createBooleanBinding(
+                () -> selectedChange.isNotNull().get()
+                        && selectedChange.get().getExternalChangeResolver().isPresent(),
+                selectedChange);
     }
 
     public ObservableList<DatabaseChange> getVisibleChanges() {

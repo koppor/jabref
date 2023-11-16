@@ -24,11 +24,17 @@ import jakarta.inject.Inject;
 
 public class CitationKeyPatternPanel extends TableView<CitationKeyPatternPanelItemModel> {
 
-    @FXML public TableColumn<CitationKeyPatternPanelItemModel, EntryType> entryTypeColumn;
-    @FXML public TableColumn<CitationKeyPatternPanelItemModel, String> patternColumn;
-    @FXML public TableColumn<CitationKeyPatternPanelItemModel, EntryType> actionsColumn;
+    @FXML
+    public TableColumn<CitationKeyPatternPanelItemModel, EntryType> entryTypeColumn;
 
-    @Inject private PreferencesService preferences;
+    @FXML
+    public TableColumn<CitationKeyPatternPanelItemModel, String> patternColumn;
+
+    @FXML
+    public TableColumn<CitationKeyPatternPanelItemModel, EntryType> actionsColumn;
+
+    @Inject
+    private PreferencesService preferences;
 
     private CitationKeyPatternPanelViewModel viewModel;
 
@@ -38,9 +44,7 @@ public class CitationKeyPatternPanel extends TableView<CitationKeyPatternPanelIt
     public CitationKeyPatternPanel() {
         super();
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @FXML
@@ -55,17 +59,16 @@ public class CitationKeyPatternPanel extends TableView<CitationKeyPatternPanelIt
         new ValueTableCellFactory<CitationKeyPatternPanelItemModel, EntryType>()
                 .withText(EntryType::getDisplayName)
                 .install(entryTypeColumn);
-        this.setOnSort(event ->
-                viewModel.patternListProperty().sort(CitationKeyPatternPanelViewModel.defaultOnTopComparator));
+        this.setOnSort(
+                event -> viewModel.patternListProperty().sort(CitationKeyPatternPanelViewModel.defaultOnTopComparator));
 
         patternColumn.setSortable(true);
         patternColumn.setReorderable(false);
         patternColumn.setCellValueFactory(cellData -> cellData.getValue().pattern());
         patternColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         patternColumn.setEditable(true);
-        patternColumn.setOnEditCommit(
-                (TableColumn.CellEditEvent<CitationKeyPatternPanelItemModel, String> event) ->
-                        event.getRowValue().setPattern(event.getNewValue()));
+        patternColumn.setOnEditCommit((TableColumn.CellEditEvent<CitationKeyPatternPanelItemModel, String> event) ->
+                event.getRowValue().setPattern(event.getNewValue()));
 
         actionsColumn.setSortable(false);
         actionsColumn.setReorderable(false);
@@ -112,8 +115,10 @@ public class CitationKeyPatternPanel extends TableView<CitationKeyPatternPanelIt
 
         lastKeyPressTime = System.currentTimeMillis();
 
-        this.getItems().stream().filter(item -> item.getEntryType().getName().toLowerCase().startsWith(tableSearchTerm))
-            .findFirst().ifPresent(this::scrollTo);
+        this.getItems().stream()
+                .filter(item -> item.getEntryType().getName().toLowerCase().startsWith(tableSearchTerm))
+                .findFirst()
+                .ifPresent(this::scrollTo);
     }
 
     private static class HighlightTableRow extends TableRow<CitationKeyPatternPanelItemModel> {

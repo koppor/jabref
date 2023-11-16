@@ -40,7 +40,8 @@ public class LatexIntegrityChecker implements EntryChecker {
     private static final Logger LOGGER = LoggerFactory.getLogger(SnuggleSession.class);
     private static final SnuggleEngine ENGINE = new SnuggleEngine();
     private static final SnuggleSession SESSION;
-    private static final ResourceBundle ERROR_MESSAGES = ENGINE.getPackages().get(0).getErrorMessageBundle();
+    private static final ResourceBundle ERROR_MESSAGES =
+            ENGINE.getPackages().get(0).getErrorMessageBundle();
     private static final Set<ErrorCode> EXCLUDED_ERRORS = new HashSet<>();
 
     static {
@@ -50,7 +51,8 @@ public class LatexIntegrityChecker implements EntryChecker {
         snugglePackage.addComplexCommand("textbackslash", false, 0, TEXT_MODE_ONLY, null, null, null);
         snugglePackage.addComplexCommand("textbar", false, 0, TEXT_MODE_ONLY, null, null, null);
         // ENGINE.getPackages().get(0).addComplexCommandOneArg()
-              // engine.getPackages().get(0).addComplexCommandOneArg("text", false, ALL_MODES,LR, StyleDeclarationInterpretation.NORMALSIZE, null, TextFlowContext.ALLOW_INLINE);
+        // engine.getPackages().get(0).addComplexCommandOneArg("text", false, ALL_MODES,LR,
+        // StyleDeclarationInterpretation.NORMALSIZE, null, TextFlowContext.ALLOW_INLINE);
 
         SESSION = ENGINE.createSession();
         SESSION.getConfiguration().setFailingFast(true);
@@ -62,14 +64,17 @@ public class LatexIntegrityChecker implements EntryChecker {
     @Override
     public List<IntegrityMessage> check(BibEntry entry) {
         return entry.getFieldMap().entrySet().stream()
-                    .filter(field -> !field.getKey().getProperties().contains(FieldProperty.VERBATIM))
-                    .flatMap(LatexIntegrityChecker::getUnescapedAmpersandsWithCount)
-                    // Exclude all DOM building errors as this functionality is not used.
-                    .filter(pair -> !pair.getValue().getErrorCode().getErrorGroup().equals(CoreErrorGroup.TDE))
-                    .filter(pair -> !EXCLUDED_ERRORS.contains(pair.getValue().getErrorCode()))
-                    .map(pair ->
-                            new IntegrityMessage(errorMessageFormatHelper(pair.getValue().getErrorCode(), pair.getValue().getArguments()), entry, pair.getKey()))
-                    .toList();
+                .filter(field -> !field.getKey().getProperties().contains(FieldProperty.VERBATIM))
+                .flatMap(LatexIntegrityChecker::getUnescapedAmpersandsWithCount)
+                // Exclude all DOM building errors as this functionality is not used.
+                .filter(pair -> !pair.getValue().getErrorCode().getErrorGroup().equals(CoreErrorGroup.TDE))
+                .filter(pair -> !EXCLUDED_ERRORS.contains(pair.getValue().getErrorCode()))
+                .map(pair -> new IntegrityMessage(
+                        errorMessageFormatHelper(
+                                pair.getValue().getErrorCode(), pair.getValue().getArguments()),
+                        entry,
+                        pair.getKey()))
+                .toList();
     }
 
     private static Stream<Pair<Field, InputError>> getUnescapedAmpersandsWithCount(Map.Entry<Field, String> entry) {

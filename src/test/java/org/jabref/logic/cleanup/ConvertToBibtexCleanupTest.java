@@ -54,7 +54,8 @@ public class ConvertToBibtexCleanupTest {
 
     @Test
     public void cleanUpDoesntMoveFileField() {
-        String fileField = ":Ambriola2006 - On the Systematic Analysis of Natural Language Requirements with CIRCE.pdf:PDF";
+        String fileField =
+                ":Ambriola2006 - On the Systematic Analysis of Natural Language Requirements with CIRCE.pdf:PDF";
         BibEntry entry = new BibEntry().withField(StandardField.FILE, fileField);
 
         worker.cleanup(entry);

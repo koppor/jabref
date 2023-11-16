@@ -17,7 +17,10 @@ public final class BibTexStringAdd extends DatabaseChange {
 
     private final BibtexString addedString;
 
-    public BibTexStringAdd(BibtexString addedString, BibDatabaseContext databaseContext, DatabaseChangeResolverFactory databaseChangeResolverFactory) {
+    public BibTexStringAdd(
+            BibtexString addedString,
+            BibDatabaseContext databaseContext,
+            DatabaseChangeResolverFactory databaseChangeResolverFactory) {
         super(databaseContext, databaseChangeResolverFactory);
         this.addedString = addedString;
         setChangeName(Localization.lang("Added string: '%0'", addedString.getName()));

@@ -70,7 +70,8 @@ class LatexToUnicodeFormatterTest {
 
     @Test
     void testIWithDiaresisAndEscapedI() {
-        // this might look strange in the test, but is actually a correct translation and renders identically to the above example in the UI
+        // this might look strange in the test, but is actually a correct translation and renders identically to the
+        // above example in the UI
         assertEquals("ı̈", formatter.format("\\\"{\\i}"));
     }
 

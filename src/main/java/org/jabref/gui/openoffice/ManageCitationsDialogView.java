@@ -26,20 +26,24 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
 
     private final OOBibBase ooBase;
 
-    @FXML private TableView<CitationEntryViewModel> citationsTableView;
-    @FXML private TableColumn<CitationEntryViewModel, String> citation;
-    @FXML private TableColumn<CitationEntryViewModel, String> extraInfo;
+    @FXML
+    private TableView<CitationEntryViewModel> citationsTableView;
 
-    @Inject private DialogService dialogService;
+    @FXML
+    private TableColumn<CitationEntryViewModel, String> citation;
+
+    @FXML
+    private TableColumn<CitationEntryViewModel, String> extraInfo;
+
+    @Inject
+    private DialogService dialogService;
 
     private ManageCitationsDialogViewModel viewModel;
 
     public ManageCitationsDialogView(OOBibBase ooBase) {
         this.ooBase = ooBase;
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         setResultConverter(btn -> {
             if (btn == ButtonType.OK) {
@@ -56,7 +60,9 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
         viewModel = new ManageCitationsDialogViewModel(ooBase, dialogService);
 
         citation.setCellValueFactory(cellData -> cellData.getValue().citationProperty());
-        new ValueTableCellFactory<CitationEntryViewModel, String>().withGraphic(this::getText).install(citation);
+        new ValueTableCellFactory<CitationEntryViewModel, String>()
+                .withGraphic(this::getText)
+                .install(citation);
 
         extraInfo.setCellValueFactory(cellData -> cellData.getValue().extraInformationProperty());
         extraInfo.setEditable(true);
@@ -73,7 +79,8 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
     private Node getText(String citationContext) {
         String inBetween = StringUtil.substringBetween(citationContext, HTML_BOLD_START_TAG, HTML_BOLD_END_TAG);
         String start = citationContext.substring(0, citationContext.indexOf(HTML_BOLD_START_TAG));
-        String end = citationContext.substring(citationContext.lastIndexOf(HTML_BOLD_END_TAG) + HTML_BOLD_END_TAG.length());
+        String end =
+                citationContext.substring(citationContext.lastIndexOf(HTML_BOLD_END_TAG) + HTML_BOLD_END_TAG.length());
 
         Text startText = new Text(start);
         Text inBetweenText = new Text(inBetween);

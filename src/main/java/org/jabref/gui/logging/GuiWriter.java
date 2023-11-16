@@ -32,10 +32,8 @@ public class GuiWriter extends AbstractFormatPatternWriter {
     }
 
     @Override
-    public void flush() throws Exception {
-    }
+    public void flush() throws Exception {}
 
     @Override
-    public void close() throws Exception {
-    }
+    public void close() throws Exception {}
 }

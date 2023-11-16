@@ -26,10 +26,11 @@ public class PushToApplicationSettings {
     protected final PushToApplicationPreferences preferences;
     protected final AbstractPushToApplication application;
 
-    public PushToApplicationSettings(PushToApplication application,
-                                     DialogService dialogService,
-                                     FilePreferences filePreferences,
-                                     PushToApplicationPreferences preferences) {
+    public PushToApplicationSettings(
+            PushToApplication application,
+            DialogService dialogService,
+            FilePreferences filePreferences,
+            PushToApplicationPreferences preferences) {
         this.application = (AbstractPushToApplication) application;
         this.preferences = preferences;
 
@@ -61,9 +62,11 @@ public class PushToApplicationSettings {
         settingsPane.add(path, 1, 0);
 
         FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
-                .withInitialDirectory(filePreferences.getWorkingDirectory()).build();
-        browse.setOnAction(e -> dialogService.showFileOpenDialog(fileDialogConfiguration)
-                                             .ifPresent(f -> path.setText(f.toAbsolutePath().toString())));
+                .withInitialDirectory(filePreferences.getWorkingDirectory())
+                .build();
+        browse.setOnAction(e -> dialogService
+                .showFileOpenDialog(fileDialogConfiguration)
+                .ifPresent(f -> path.setText(f.toAbsolutePath().toString())));
         settingsPane.add(browse, 2, 0);
 
         ColumnConstraints textConstraints = new ColumnConstraints();

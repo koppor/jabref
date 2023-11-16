@@ -29,13 +29,12 @@ public class GroupMergerTest {
                 Arguments.of("a, b", "c", "a, b, c"),
                 Arguments.of("a, b, c", "c", "a, b, c"),
                 Arguments.of("a, b", "c, d", "a, b, c, d"),
-                Arguments.of("a, b, c", "b, z", "a, b, c, z")
-        );
+                Arguments.of("a, b, c", "b, z", "a, b, c, z"));
     }
 
     @ParameterizedTest
     @MethodSource
     public void mergeShouldMergeGroupsCorrectly(String groupsA, String groupsB, String expected) {
-     assertEquals(expected, groupMerger.merge(groupsA, groupsB));
+        assertEquals(expected, groupMerger.merge(groupsA, groupsB));
     }
 }

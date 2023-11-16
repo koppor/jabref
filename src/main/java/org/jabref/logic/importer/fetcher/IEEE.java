@@ -55,11 +55,13 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
     private static final Pattern STAMP_PATTERN = Pattern.compile("(/stamp/stamp.jsp\\?t?p?=?&?arnumber=[0-9]+)");
     private static final Pattern DOCUMENT_PATTERN = Pattern.compile("document/([0-9]+)/");
 
-    private static final Pattern PDF_PATTERN = Pattern.compile("\"(https://ieeexplore.ieee.org/ielx[0-9/]+\\.pdf[^\"]+)\"");
+    private static final Pattern PDF_PATTERN =
+            Pattern.compile("\"(https://ieeexplore.ieee.org/ielx[0-9/]+\\.pdf[^\"]+)\"");
     private static final String IEEE_DOI = "10.1109";
     private static final String BASE_URL = "https://ieeexplore.ieee.org";
     private static final String API_KEY = new BuildInfo().ieeeAPIKey;
-    private static final String TEST_URL_WITHOUT_API_KEY = "https://ieeexploreapi.ieee.org/api/v1/search/articles?max_records=0&apikey=";
+    private static final String TEST_URL_WITHOUT_API_KEY =
+            "https://ieeexploreapi.ieee.org/api/v1/search/articles?max_records=0&apikey=";
 
     private final ImportFormatPreferences importFormatPreferences;
     private final ImporterPreferences importerPreferences;
@@ -102,16 +104,22 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
         JSONObject keywordsContainer = jsonEntry.optJSONObject("index_terms");
         if (keywordsContainer != null) {
             if (keywordsContainer.has("ieee_terms")) {
-                keywordsContainer.getJSONObject("ieee_terms").getJSONArray("terms").forEach(data -> {
-                    String keyword = (String) data;
-                    entry.addKeyword(keyword, keywordSeparator);
-                });
+                keywordsContainer
+                        .getJSONObject("ieee_terms")
+                        .getJSONArray("terms")
+                        .forEach(data -> {
+                            String keyword = (String) data;
+                            entry.addKeyword(keyword, keywordSeparator);
+                        });
             }
             if (keywordsContainer.has("author_terms")) {
-                keywordsContainer.getJSONObject("author_terms").getJSONArray("terms").forEach(data -> {
-                    String keyword = (String) data;
-                    entry.addKeyword(keyword, keywordSeparator);
-                });
+                keywordsContainer
+                        .getJSONObject("author_terms")
+                        .getJSONArray("terms")
+                        .forEach(data -> {
+                            String keyword = (String) data;
+                            entry.addKeyword(keyword, keywordSeparator);
+                        });
             }
         }
 
@@ -160,9 +168,12 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
         // If not, try DOI
         if (stampString.isEmpty()) {
             Optional<DOI> doi = entry.getField(StandardField.DOI).flatMap(DOI::parse);
-            if (doi.isPresent() && doi.get().getDOI().startsWith(IEEE_DOI) && doi.get().getExternalURI().isPresent()) {
+            if (doi.isPresent()
+                    && doi.get().getDOI().startsWith(IEEE_DOI)
+                    && doi.get().getExternalURI().isPresent()) {
                 // Download the HTML page from IEEE
-                URLDownload urlDownload = new URLDownload(doi.get().getExternalURI().get().toURL());
+                URLDownload urlDownload =
+                        new URLDownload(doi.get().getExternalURI().get().toURL());
                 // We don't need to modify the cookies, but we need support for them
                 urlDownload.getCookieFromUrl();
 
@@ -205,7 +216,9 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
     @Override
     public Parser getParser() {
         return inputStream -> {
-            String response = new BufferedReader(new InputStreamReader(inputStream)).lines().collect(Collectors.joining(OS.NEWLINE));
+            String response = new BufferedReader(new InputStreamReader(inputStream))
+                    .lines()
+                    .collect(Collectors.joining(OS.NEWLINE));
             JSONObject jsonObject = new JSONObject(response);
 
             List<BibEntry> entries = new ArrayList<>();
@@ -213,18 +226,27 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
                 JSONArray results = jsonObject.getJSONArray("articles");
                 for (int i = 0; i < results.length(); i++) {
                     JSONObject jsonEntry = results.getJSONObject(i);
-                    BibEntry entry = parseJsonResponse(jsonEntry, importFormatPreferences.bibEntryPreferences().getKeywordSeparator());
+                    BibEntry entry = parseJsonResponse(
+                            jsonEntry,
+                            importFormatPreferences.bibEntryPreferences().getKeywordSeparator());
                     boolean addEntry;
                     // In case entry has no year, add it
                     // In case an entry has a year, check if its in the year range
                     // The implementation uses some Java 8 Optional magic to implement that
                     if (entry.hasField(StandardField.YEAR)) {
-                        addEntry = entry.getField(StandardField.YEAR).filter(year -> {
-                            int yearAsInteger = Integer.parseInt(year);
-                            return
-                                    transformer.getStartYear().map(startYear -> yearAsInteger >= startYear).orElse(true) &&
-                                            transformer.getEndYear().map(endYear -> yearAsInteger <= endYear).orElse(true);
-                        }).isPresent();
+                        addEntry = entry.getField(StandardField.YEAR)
+                                .filter(year -> {
+                                    int yearAsInteger = Integer.parseInt(year);
+                                    return transformer
+                                                    .getStartYear()
+                                                    .map(startYear -> yearAsInteger >= startYear)
+                                                    .orElse(true)
+                                            && transformer
+                                                    .getEndYear()
+                                                    .map(endYear -> yearAsInteger <= endYear)
+                                                    .orElse(true);
+                                })
+                                .isPresent();
                     } else {
                         addEntry = true;
                     }
@@ -258,7 +280,8 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         // transformer is stored globally, because we need to filter out the bib entries by the year manually
         // the transformer stores the min and max year
         transformer = new IEEEQueryTransformer();
@@ -271,16 +294,20 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
         uriBuilder.addParameter("max_records", String.valueOf(getPageSize()));
         // Currently not working as part of the query string
         if (transformer.getJournal().isPresent()) {
-            uriBuilder.addParameter("publication_title", transformer.getJournal().get());
+            uriBuilder.addParameter(
+                    "publication_title", transformer.getJournal().get());
         }
         if (transformer.getStartYear().isPresent()) {
-            uriBuilder.addParameter("start_year", String.valueOf(transformer.getStartYear().get()));
+            uriBuilder.addParameter(
+                    "start_year", String.valueOf(transformer.getStartYear().get()));
         }
         if (transformer.getEndYear().isPresent()) {
-            uriBuilder.addParameter("end_year", String.valueOf(transformer.getEndYear().get()));
+            uriBuilder.addParameter(
+                    "end_year", String.valueOf(transformer.getEndYear().get()));
         }
         if (transformer.getArticleNumber().isPresent()) {
-            uriBuilder.addParameter("article_number", transformer.getArticleNumber().get());
+            uriBuilder.addParameter(
+                    "article_number", transformer.getArticleNumber().get());
         }
         // Starts to index at 1 for the first entry
         uriBuilder.addParameter("start_record", String.valueOf(getPageSize() * pageNumber) + 1);

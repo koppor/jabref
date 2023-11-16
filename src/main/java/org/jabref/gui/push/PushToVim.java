@@ -39,7 +39,8 @@ public class PushToVim extends AbstractPushToApplication {
     }
 
     @Override
-    public PushToApplicationSettings getSettings(PushToApplication application, PushToApplicationPreferences preferences) {
+    public PushToApplicationSettings getSettings(
+            PushToApplication application, PushToApplicationPreferences preferences) {
         return new PushToVimSettings(application, dialogService, preferencesService.getFilePreferences(), preferences);
     }
 
@@ -49,7 +50,10 @@ public class PushToVim extends AbstractPushToApplication {
         couldNotCall = false;
         notDefined = false;
 
-        commandPath = preferencesService.getPushToApplicationPreferences().getCommandPaths().get(this.getDisplayName());
+        commandPath = preferencesService
+                .getPushToApplicationPreferences()
+                .getCommandPaths()
+                .get(this.getDisplayName());
 
         if ((commandPath == null) || commandPath.trim().isEmpty()) {
             notDefined = true;
@@ -57,14 +61,18 @@ public class PushToVim extends AbstractPushToApplication {
         }
 
         try {
-            String[] com = new String[]{commandPath, "--servername",
-                    preferencesService.getPushToApplicationPreferences().getVimServer(), "--remote-send",
-                    "<C-\\><C-N>a" + getCitePrefix() + keys + getCiteSuffix()};
+            String[] com = new String[] {
+                commandPath,
+                "--servername",
+                preferencesService.getPushToApplicationPreferences().getVimServer(),
+                "--remote-send",
+                "<C-\\><C-N>a" + getCitePrefix() + keys + getCiteSuffix()
+            };
 
             LOGGER.atDebug()
-                  .setMessage("Executing command {}")
-                  .addArgument(() -> Arrays.toString(com))
-                  .log();
+                    .setMessage("Executing command {}")
+                    .addArgument(() -> Arrays.toString(com))
+                    .log();
 
             final Process p = Runtime.getRuntime().exec(com);
 
@@ -97,11 +105,12 @@ public class PushToVim extends AbstractPushToApplication {
     @Override
     public void onOperationCompleted() {
         if (couldNotPush) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"),
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error pushing entries"),
                     Localization.lang("Could not push to a running Vim server."));
         } else if (couldNotCall) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"),
-                    Localization.lang("Could not run the 'vim' program."));
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error pushing entries"), Localization.lang("Could not run the 'vim' program."));
         } else {
             super.onOperationCompleted();
         }

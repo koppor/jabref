@@ -17,8 +17,12 @@ class AuthorAndToSemicolonReplacerTest {
                 Arguments.of("", ""),
                 Arguments.of("Someone, Van Something", "Someone, Van Something"),
                 Arguments.of("John Smith and Black Brown, Peter", "John Smith; Black Brown, Peter"),
-                Arguments.of("von Neumann, John and Smith, John and Black Brown, Peter", "von Neumann, John; Smith, John; Black Brown, Peter"),
-                Arguments.of("John von Neumann and John Smith and Peter Black Brown", "John von Neumann; John Smith; Peter Black Brown"));
+                Arguments.of(
+                        "von Neumann, John and Smith, John and Black Brown, Peter",
+                        "von Neumann, John; Smith, John; Black Brown, Peter"),
+                Arguments.of(
+                        "John von Neumann and John Smith and Peter Black Brown",
+                        "John von Neumann; John Smith; Peter Black Brown"));
     }
 
     @ParameterizedTest

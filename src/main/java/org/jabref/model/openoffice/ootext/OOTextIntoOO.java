@@ -80,23 +80,20 @@ public class OOTextIntoOO {
     private static final String TAG_NAME_REGEXP =
             "(?:b|i|em|tt|smallcaps|sup|sub|u|s|p|span|oo:referenceToPageNumberOfReferenceMark)";
 
-    private static final String ATTRIBUTE_NAME_REGEXP =
-            "(?:oo:ParaStyleName|oo:CharStyleName|lang|style|target)";
+    private static final String ATTRIBUTE_NAME_REGEXP = "(?:oo:ParaStyleName|oo:CharStyleName|lang|style|target)";
 
     private static final String ATTRIBUTE_VALUE_REGEXP = "\"([^\"]*)\"";
 
-    private static final Pattern HTML_TAG =
-            Pattern.compile("<(/" + TAG_NAME_REGEXP + ")>"
-                    + "|"
-                    + "<(" + TAG_NAME_REGEXP + ")"
-                    + "((?:\\s+(" + ATTRIBUTE_NAME_REGEXP + ")=" + ATTRIBUTE_VALUE_REGEXP + ")*)"
-                    + ">");
+    private static final Pattern HTML_TAG = Pattern.compile("<(/" + TAG_NAME_REGEXP + ")>"
+            + "|"
+            + "<(" + TAG_NAME_REGEXP + ")"
+            + "((?:\\s+(" + ATTRIBUTE_NAME_REGEXP + ")=" + ATTRIBUTE_VALUE_REGEXP + ")*)"
+            + ">");
 
     private static final Pattern ATTRIBUTE_PATTERN =
             Pattern.compile("\\s+(" + ATTRIBUTE_NAME_REGEXP + ")=" + ATTRIBUTE_VALUE_REGEXP);
 
-    private OOTextIntoOO() {
-    }
+    private OOTextIntoOO() {}
 
     /**
      * Insert a text with formatting indicated by HTML-like tags, into a text at the position given by a cursor.
@@ -129,9 +126,7 @@ public class OOTextIntoOO {
      * @param ootext   The marked-up text to insert.
      */
     public static void write(XTextDocument doc, XTextCursor position, OOText ootext)
-            throws
-            WrappedTargetException,
-            CreationException {
+            throws WrappedTargetException, CreationException {
 
         Objects.requireNonNull(doc);
         Objects.requireNonNull(ootext);
@@ -249,20 +244,20 @@ public class OOTextIntoOO {
                         String value = pair.b;
                         switch (key) {
                             case "oo:CharStyleName" ->
-                                    // <span oo:CharStyleName="Standard">
-                                    settings.addAll(setCharStyleName(value));
+                            // <span oo:CharStyleName="Standard">
+                            settings.addAll(setCharStyleName(value));
                             case "lang" ->
-                                    // <span lang="zxx">
-                                    // <span lang="en-US">
-                                    settings.addAll(setCharLocale(value));
+                            // <span lang="zxx">
+                            // <span lang="en-US">
+                            settings.addAll(setCharLocale(value));
                             case "style" -> {
                                 // HTML-style small-caps
                                 if ("font-variant: small-caps".equals(value)) {
                                     settings.addAll(setCharCaseMap(CaseMap.SMALLCAPS));
                                     break;
                                 }
-                                LOGGER.warn(String.format("Unexpected value %s for attribute '%s' for <%s>",
-                                        value, key, tagName));
+                                LOGGER.warn(String.format(
+                                        "Unexpected value %s for attribute '%s' for <%s>", value, key, tagName));
                             }
                             default -> LOGGER.warn(String.format("Unexpected attribute '%s' for <%s>", key, tagName));
                         }
@@ -283,10 +278,8 @@ public class OOTextIntoOO {
                     formatStack.popLayer();
                     String expected = expectEnd.pop();
                     if (!tagName.equals(expected)) {
-                        LOGGER.warn(String.format("expected '<%s>', found '<%s>' after '%s'",
-                                expected,
-                                tagName,
-                                currentSubstring));
+                        LOGGER.warn(String.format(
+                                "expected '<%s>', found '<%s>' after '%s'", expected, tagName, currentSubstring));
                     }
                     break;
                 default:
@@ -318,18 +311,18 @@ public class OOTextIntoOO {
      * In particular, when filling the bibliography title and body.
      */
     public static void removeDirectFormatting(XTextCursor cursor) {
-        XMultiPropertyStates mpss = UnoCast.cast(XMultiPropertyStates.class, cursor).get();
+        XMultiPropertyStates mpss =
+                UnoCast.cast(XMultiPropertyStates.class, cursor).get();
 
         XPropertySet propertySet = UnoCast.cast(XPropertySet.class, cursor).get();
-        XPropertyState xPropertyState = UnoCast.cast(XPropertyState.class, cursor).get();
+        XPropertyState xPropertyState =
+                UnoCast.cast(XPropertyState.class, cursor).get();
 
         try {
             // Special handling
             propertySet.setPropertyValue(CHAR_STYLE_NAME, "Standard");
             xPropertyState.setPropertyToDefault("CharCaseMap");
-        } catch (UnknownPropertyException |
-                PropertyVetoException |
-                WrappedTargetException ex) {
+        } catch (UnknownPropertyException | PropertyVetoException | WrappedTargetException ex) {
             LOGGER.warn("exception caught", ex);
         }
 
@@ -343,7 +336,8 @@ public class OOTextIntoOO {
          */
 
         // Only report those we do not yet know about
-        final Set<String> knownToFail = Set.of("ListAutoFormat",
+        final Set<String> knownToFail = Set.of(
+                "ListAutoFormat",
                 "ListId",
                 "NumberingIsNumber",
                 "NumberingLevel",
@@ -396,7 +390,9 @@ public class OOTextIntoOO {
                  *
                  * These three are interdependent: changing one may change others.
                  */
-                "CharEscapement", "CharEscapementHeight", "CharAutoEscapement",
+                "CharEscapement",
+                "CharEscapementHeight",
+                "CharAutoEscapement",
 
                 /* used for Bold */
                 "CharWeight",
@@ -405,7 +401,8 @@ public class OOTextIntoOO {
                 "CharPosture",
 
                 /* Used for strikeout. These two are interdependent. */
-                "CharStrikeout", "CharCrossedOut",
+                "CharStrikeout",
+                "CharCrossedOut",
 
                 /* Used for underline. These three are interdependent, but apparently
                  * we can leave out the last two.
@@ -473,7 +470,8 @@ public class OOTextIntoOO {
             }
 
             // Get the initial state of the properties and add the first layer.
-            XMultiPropertyStates mpss = UnoCast.cast(XMultiPropertyStates.class, cursor).get();
+            XMultiPropertyStates mpss =
+                    UnoCast.cast(XMultiPropertyStates.class, cursor).get();
             PropertyState[] propertyStates;
             try {
                 propertyStates = mpss.getPropertyStates(goodNames);
@@ -481,7 +479,8 @@ public class OOTextIntoOO {
                 throw new IllegalStateException("Caught unexpected UnknownPropertyException", ex);
             }
 
-            XMultiPropertySet mps = UnoCast.cast(XMultiPropertySet.class, cursor).get();
+            XMultiPropertySet mps =
+                    UnoCast.cast(XMultiPropertySet.class, cursor).get();
             Object[] initialValues = mps.getPropertyValues(goodNames);
 
             ArrayList<Optional<Object>> initialValuesOpt = new ArrayList<>(goodSize);
@@ -536,8 +535,10 @@ public class OOTextIntoOO {
          * The idea is to minimize the number of calls to OpenOffice.
          */
         void apply(XTextCursor cursor) {
-            XMultiPropertySet mps = UnoCast.cast(XMultiPropertySet.class, cursor).get();
-            XMultiPropertyStates mpss = UnoCast.cast(XMultiPropertyStates.class, cursor).get();
+            XMultiPropertySet mps =
+                    UnoCast.cast(XMultiPropertySet.class, cursor).get();
+            XMultiPropertyStates mpss =
+                    UnoCast.cast(XMultiPropertyStates.class, cursor).get();
             ArrayList<Optional<Object>> topLayer = layers.peek();
             try {
                 // select values to be set
@@ -598,14 +599,13 @@ public class OOTextIntoOO {
     /**
      * We rely on property values being either DIRECT_VALUE or DEFAULT_VALUE (not AMBIGUOUS_VALUE). If the cursor covers a homogeneous region, or is collapsed, then this is true.
      */
-    private static boolean isPropertyDefault(XTextCursor cursor, String propertyName)
-            throws
-            UnknownPropertyException {
-        XPropertyState xPropertyState = UnoCast.cast(XPropertyState.class, cursor).get();
+    private static boolean isPropertyDefault(XTextCursor cursor, String propertyName) throws UnknownPropertyException {
+        XPropertyState xPropertyState =
+                UnoCast.cast(XPropertyState.class, cursor).get();
         PropertyState state = xPropertyState.getPropertyState(propertyName);
         if (state == PropertyState.AMBIGUOUS_VALUE) {
-            throw new java.lang.IllegalArgumentException("PropertyState.AMBIGUOUS_VALUE"
-                    + " (expected properties for a homogeneous cursor)");
+            throw new java.lang.IllegalArgumentException(
+                    "PropertyState.AMBIGUOUS_VALUE" + " (expected properties for a homogeneous cursor)");
         }
         return state == PropertyState.DEFAULT_VALUE;
     }
@@ -684,18 +684,13 @@ public class OOTextIntoOO {
      * @param relative If true, calculate the new values relative to the current values. This allows
      *                 subscript-in-superscript.
      */
-    private static List<OOPair<String, Object>> setCharEscapement(Optional<Short> value,
-                                                                  Optional<Byte> height,
-                                                                  boolean relative,
-                                                                  MyPropertyStack formatStack) {
+    private static List<OOPair<String, Object>> setCharEscapement(
+            Optional<Short> value, Optional<Byte> height, boolean relative, MyPropertyStack formatStack) {
         List<OOPair<String, Object>> settings = new ArrayList<>();
-        Optional<Short> oldValue = formatStack
-                .getPropertyValue(CHAR_ESCAPEMENT)
-                .map(e -> (short) e);
+        Optional<Short> oldValue = formatStack.getPropertyValue(CHAR_ESCAPEMENT).map(e -> (short) e);
 
-        Optional<Byte> oldHeight = formatStack
-                .getPropertyValue(CHAR_ESCAPEMENT_HEIGHT)
-                .map(e -> (byte) e);
+        Optional<Byte> oldHeight =
+                formatStack.getPropertyValue(CHAR_ESCAPEMENT_HEIGHT).map(e -> (byte) e);
 
         if (relative && (value.isPresent() || height.isPresent())) {
             double oldHeightFloat = oldHeight.orElse(CHAR_ESCAPEMENT_HEIGHT_DEFAULT) * 0.01;
@@ -722,17 +717,11 @@ public class OOTextIntoOO {
     }
 
     private static List<OOPair<String, Object>> setSubScript(MyPropertyStack formatStack) {
-        return setCharEscapement(Optional.of(SUBSCRIPT_VALUE),
-                Optional.of(SUBSCRIPT_HEIGHT),
-                true,
-                formatStack);
+        return setCharEscapement(Optional.of(SUBSCRIPT_VALUE), Optional.of(SUBSCRIPT_HEIGHT), true, formatStack);
     }
 
     private static List<OOPair<String, Object>> setSuperScript(MyPropertyStack formatStack) {
-        return setCharEscapement(Optional.of(SUPERSCRIPT_VALUE),
-                Optional.of(SUPERSCRIPT_HEIGHT),
-                true,
-                formatStack);
+        return setCharEscapement(Optional.of(SUPERSCRIPT_VALUE), Optional.of(SUPERSCRIPT_HEIGHT), true, formatStack);
     }
 
     /**
@@ -742,8 +731,10 @@ public class OOTextIntoOO {
         final boolean FAIL = true;
         final boolean PASS = false;
 
-        XParagraphCursor paragraphCursor = UnoCast.cast(XParagraphCursor.class, cursor).get();
-        XPropertySet propertySet = UnoCast.cast(XPropertySet.class, paragraphCursor).get();
+        XParagraphCursor paragraphCursor =
+                UnoCast.cast(XParagraphCursor.class, cursor).get();
+        XPropertySet propertySet =
+                UnoCast.cast(XPropertySet.class, paragraphCursor).get();
         try {
             propertySet.setPropertyValue(PARA_STYLE_NAME, paragraphStyle);
             return PASS;
@@ -762,7 +753,8 @@ public class OOTextIntoOO {
             // Assuming it means wrong code for ControlCharacter.
             // https://api.libreoffice.org/docs/idl/ref/  does not tell.
             // If my assumption is correct, we never get here.
-            throw new java.lang.IllegalArgumentException("Caught unexpected com.sun.star.lang.IllegalArgumentException", ex);
+            throw new java.lang.IllegalArgumentException(
+                    "Caught unexpected com.sun.star.lang.IllegalArgumentException", ex);
         }
     }
 }

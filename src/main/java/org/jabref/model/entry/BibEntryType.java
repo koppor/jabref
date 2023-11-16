@@ -44,13 +44,12 @@ public class BibEntryType implements Comparable<BibEntryType> {
 
     public Set<BibField> getOptionalFields() {
         return getAllBibFields().stream()
-                             .filter(field -> !isRequired(field.field()))
-                             .collect(Collectors.toCollection(LinkedHashSet::new));
+                .filter(field -> !isRequired(field.field()))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public boolean isRequired(Field field) {
-        return getRequiredFields().stream()
-                                  .anyMatch(fields -> fields.contains(field));
+        return getRequiredFields().stream().anyMatch(fields -> fields.contains(field));
     }
 
     /**
@@ -77,16 +76,16 @@ public class BibEntryType implements Comparable<BibEntryType> {
 
     public Set<Field> getPrimaryOptionalFields() {
         return getOptionalFields().stream()
-                                  .filter(field -> field.priority() == FieldPriority.IMPORTANT)
-                                  .map(BibField::field)
-                                  .collect(Collectors.toCollection(LinkedHashSet::new));
+                .filter(field -> field.priority() == FieldPriority.IMPORTANT)
+                .map(BibField::field)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public Set<Field> getSecondaryOptionalFields() {
         return getOptionalFields().stream()
-                                  .filter(field -> field.priority() == FieldPriority.DETAIL)
-                                  .map(BibField::field)
-                                  .collect(Collectors.toCollection(LinkedHashSet::new));
+                .filter(field -> field.priority() == FieldPriority.DETAIL)
+                .map(BibField::field)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public Set<Field> getDeprecatedFields(BibDatabaseMode mode) {
@@ -116,7 +115,8 @@ public class BibEntryType implements Comparable<BibEntryType> {
      * Get list of all optional fields of this entry and all fields being source for a BibTeX to BibLaTeX conversion.
      */
     private Set<Field> getOptionalFieldsAndAliases() {
-        Set<Field> optionalFieldsAndAliases = new LinkedHashSet<>(getOptionalFields().size());
+        Set<Field> optionalFieldsAndAliases =
+                new LinkedHashSet<>(getOptionalFields().size());
         for (BibField field : getOptionalFields()) {
             optionalFieldsAndAliases.add(field.field());
             if (EntryConverter.FIELD_ALIASES_BIBTEX_TO_BIBLATEX.containsKey(field.field())) {
@@ -135,9 +135,9 @@ public class BibEntryType implements Comparable<BibEntryType> {
             return false;
         }
         BibEntryType that = (BibEntryType) o;
-        return type.equals(that.type) &&
-               Objects.equals(requiredFields, that.requiredFields) &&
-               Objects.equals(fields, that.fields);
+        return type.equals(that.type)
+                && Objects.equals(requiredFields, that.requiredFields)
+                && Objects.equals(fields, that.fields);
     }
 
     @Override
@@ -155,11 +155,7 @@ public class BibEntryType implements Comparable<BibEntryType> {
      */
     @Override
     public String toString() {
-        return "BibEntryType{" +
-                "type=" + type +
-                ", allFields=" + fields +
-                ", requiredFields=" + requiredFields +
-                '}';
+        return "BibEntryType{" + "type=" + type + ", allFields=" + fields + ", requiredFields=" + requiredFields + '}';
     }
 
     @Override

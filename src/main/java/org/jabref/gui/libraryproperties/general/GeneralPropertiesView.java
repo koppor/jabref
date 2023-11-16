@@ -17,20 +17,28 @@ import com.airhacks.afterburner.views.ViewLoader;
 import jakarta.inject.Inject;
 
 public class GeneralPropertiesView extends AbstractPropertiesTabView<GeneralPropertiesViewModel> {
-    @FXML private ComboBox<Charset> encoding;
-    @FXML private ComboBox<BibDatabaseMode> databaseMode;
-    @FXML private TextField generalFileDirectory;
-    @FXML private TextField userSpecificFileDirectory;
-    @FXML private TextField laTexFileDirectory;
+    @FXML
+    private ComboBox<Charset> encoding;
 
-    @Inject private PreferencesService preferencesService;
+    @FXML
+    private ComboBox<BibDatabaseMode> databaseMode;
+
+    @FXML
+    private TextField generalFileDirectory;
+
+    @FXML
+    private TextField userSpecificFileDirectory;
+
+    @FXML
+    private TextField laTexFileDirectory;
+
+    @Inject
+    private PreferencesService preferencesService;
 
     public GeneralPropertiesView(BibDatabaseContext databaseContext) {
         this.databaseContext = databaseContext;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -41,9 +49,7 @@ public class GeneralPropertiesView extends AbstractPropertiesTabView<GeneralProp
     public void initialize() {
         this.viewModel = new GeneralPropertiesViewModel(databaseContext, dialogService, preferencesService);
 
-        new ViewModelListCellFactory<Charset>()
-                .withText(Charset::displayName)
-                .install(encoding);
+        new ViewModelListCellFactory<Charset>().withText(Charset::displayName).install(encoding);
         encoding.disableProperty().bind(viewModel.encodingDisableProperty());
         encoding.itemsProperty().bind(viewModel.encodingsProperty());
         encoding.valueProperty().bindBidirectional(viewModel.selectedEncodingProperty());

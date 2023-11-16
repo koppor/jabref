@@ -28,11 +28,12 @@ public class SendAsStandardEmailAction extends SendAsEMailAction {
     private final StateManager stateManager;
     private final BibEntryTypesManager entryTypesManager;
 
-    public SendAsStandardEmailAction(DialogService dialogService,
-                                     PreferencesService preferencesService,
-                                     StateManager stateManager,
-                                     BibEntryTypesManager entryTypesManager,
-                                     TaskExecutor taskExecutor) {
+    public SendAsStandardEmailAction(
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            StateManager stateManager,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor) {
         super(dialogService, preferencesService, stateManager, taskExecutor);
         this.preferencesService = preferencesService;
         this.stateManager = stateManager;
@@ -57,7 +58,8 @@ public class SendAsStandardEmailAction extends SendAsEMailAction {
         StringWriter rawEntries = new StringWriter();
         BibWriter bibWriter = new BibWriter(rawEntries, OS.NEWLINE);
 
-        BibEntryWriter bibtexEntryWriter = new BibEntryWriter(new FieldWriter(preferencesService.getFieldPreferences()), entryTypesManager);
+        BibEntryWriter bibtexEntryWriter =
+                new BibEntryWriter(new FieldWriter(preferencesService.getFieldPreferences()), entryTypesManager);
 
         for (BibEntry entry : entries) {
             try {

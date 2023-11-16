@@ -34,8 +34,7 @@ public class BibStringDiff {
 
         // First try to match by string names.
         for (BibtexString original : originalDatabase.getStringValues()) {
-            Optional<BibtexString> match = newDatabase
-                    .getStringValues().stream()
+            Optional<BibtexString> match = newDatabase.getStringValues().stream()
                     .filter(test -> test.getName().equals(original.getName()))
                     .findAny();
             if (match.isPresent()) {
@@ -55,8 +54,7 @@ public class BibStringDiff {
         for (Iterator<BibtexString> iterator = notMatched.iterator(); iterator.hasNext(); ) {
             BibtexString original = iterator.next();
 
-            Optional<BibtexString> match = newDatabase
-                    .getStringValues().stream()
+            Optional<BibtexString> match = newDatabase.getStringValues().stream()
                     .filter(test -> test.getContent().equals(original.getContent()))
                     .findAny();
             if (match.isPresent()) {
@@ -75,8 +73,8 @@ public class BibStringDiff {
 
         // Finally, see if there are remaining strings in the new database. They must have been added.
         newDatabase.getStringValues().stream()
-                   .filter(test -> !used.contains(test))
-                   .forEach(newString -> differences.add(new BibStringDiff(null, newString)));
+                .filter(test -> !used.contains(test))
+                .forEach(newString -> differences.add(new BibStringDiff(null, newString)));
 
         return differences;
     }

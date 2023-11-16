@@ -100,7 +100,12 @@ public class Launcher {
                     System.exit(0);
                 }
 
-                MainApplication.main(argumentProcessor.getParserResults(), argumentProcessor.isBlank(), preferences, fileUpdateMonitor, ARGUMENTS);
+                MainApplication.main(
+                        argumentProcessor.getParserResults(),
+                        argumentProcessor.isBlank(),
+                        preferences,
+                        fileUpdateMonitor,
+                        ARGUMENTS);
             } catch (ParseException e) {
                 LOGGER.error("Problem parsing arguments", e);
                 JabRefCLI.printUsage(preferences);
@@ -132,11 +137,16 @@ public class Launcher {
         // The "Shared File Writer" is explained at
         // https://tinylog.org/v2/configuration/#shared-file-writer
         Map<String, String> configuration = Map.of(
-                "writerFile", "shared file",
-                "writerFile.level", isDebugEnabled ? "debug" : "info",
-                "level", isDebugEnabled ? "debug" : "info",
-                "writerFile.file", directory.resolve("log.txt").toString(),
-                "writerFile.charset", "UTF-8");
+                "writerFile",
+                "shared file",
+                "writerFile.level",
+                isDebugEnabled ? "debug" : "info",
+                "level",
+                isDebugEnabled ? "debug" : "info",
+                "writerFile.file",
+                directory.resolve("log.txt").toString(),
+                "writerFile.charset",
+                "UTF-8");
 
         configuration.entrySet().forEach(config -> Configuration.set(config.getKey(), config.getValue()));
         initializeLogger();
@@ -167,8 +177,8 @@ public class Launcher {
 
     private static void initGlobals(PreferencesService preferences) {
         // Read list(s) of journal names and abbreviations
-        Globals.journalAbbreviationRepository = JournalAbbreviationLoader
-                .loadRepository(preferences.getJournalAbbreviationPreferences());
+        Globals.journalAbbreviationRepository =
+                JournalAbbreviationLoader.loadRepository(preferences.getJournalAbbreviationPreferences());
 
         Globals.entryTypesManager = preferences.getCustomEntryTypesRepository();
         Globals.protectedTermsLoader = new ProtectedTermsLoader(preferences.getProtectedTermsPreferences());
@@ -197,7 +207,9 @@ public class Launcher {
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(appData)) {
             for (Path path : stream) {
-                if (Files.isDirectory(path) && !path.toString().endsWith("ssl") && path.toString().contains("lucene")
+                if (Files.isDirectory(path)
+                        && !path.toString().endsWith("ssl")
+                        && path.toString().contains("lucene")
                         && !path.equals(currentIndexPath)) {
                     LOGGER.info("Deleting out-of-date fulltext search index at {}.", path);
                     Files.walk(path)

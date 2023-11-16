@@ -20,8 +20,13 @@ public class AutosaveUiManager {
 
     private final SaveDatabaseAction saveDatabaseAction;
 
-    public AutosaveUiManager(LibraryTab libraryTab, DialogService dialogService, PreferencesService preferencesService, BibEntryTypesManager entryTypesManager) {
-        this.saveDatabaseAction = new SaveDatabaseAction(libraryTab, dialogService, preferencesService, entryTypesManager);
+    public AutosaveUiManager(
+            LibraryTab libraryTab,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            BibEntryTypesManager entryTypesManager) {
+        this.saveDatabaseAction =
+                new SaveDatabaseAction(libraryTab, dialogService, preferencesService, entryTypesManager);
     }
 
     @Subscribe

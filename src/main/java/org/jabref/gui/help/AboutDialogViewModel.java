@@ -44,7 +44,11 @@ public class AboutDialogViewModel extends AbstractViewModel {
     private final ReadOnlyStringWrapper developmentVersion = new ReadOnlyStringWrapper();
     private final ClipBoardManager clipBoardManager;
 
-    public AboutDialogViewModel(DialogService dialogService, PreferencesService preferencesService, ClipBoardManager clipBoardManager, BuildInfo buildInfo) {
+    public AboutDialogViewModel(
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            ClipBoardManager clipBoardManager,
+            BuildInfo buildInfo) {
         this.dialogService = Objects.requireNonNull(dialogService);
         this.preferencesService = Objects.requireNonNull(preferencesService);
         this.clipBoardManager = Objects.requireNonNull(clipBoardManager);
@@ -55,18 +59,26 @@ public class AboutDialogViewModel extends AbstractViewModel {
             isDevelopmentVersion.set(false);
         } else {
             isDevelopmentVersion.set(true);
-            String dev = Lists.newArrayList(version).stream().filter(string -> !string.equals(version[0])).collect(
-                    Collectors.joining("--"));
+            String dev = Lists.newArrayList(version).stream()
+                    .filter(string -> !string.equals(version[0]))
+                    .collect(Collectors.joining("--"));
             developmentVersion.set(dev);
         }
         maintainers.set(buildInfo.maintainers);
         license.set(Localization.lang("License") + ":");
         changelogUrl = buildInfo.version.getChangelogUrl();
 
-        String javafx_version = System.getProperty("javafx.runtime.version", BuildInfo.UNKNOWN_VERSION).toLowerCase(Locale.ROOT);
+        String javafx_version = System.getProperty("javafx.runtime.version", BuildInfo.UNKNOWN_VERSION)
+                .toLowerCase(Locale.ROOT);
 
-        versionInfo = String.format("JabRef %s%n%s %s %s %nJava %s %nJavaFX %s", buildInfo.version, BuildInfo.OS,
-                BuildInfo.OS_VERSION, BuildInfo.OS_ARCH, BuildInfo.JAVA_VERSION, javafx_version);
+        versionInfo = String.format(
+                "JabRef %s%n%s %s %s %nJava %s %nJavaFX %s",
+                buildInfo.version,
+                BuildInfo.OS,
+                BuildInfo.OS_VERSION,
+                BuildInfo.OS_ARCH,
+                BuildInfo.JAVA_VERSION,
+                javafx_version);
     }
 
     public String getDevelopmentVersion() {

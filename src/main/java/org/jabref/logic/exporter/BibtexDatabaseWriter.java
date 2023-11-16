@@ -35,29 +35,25 @@ public class BibtexDatabaseWriter extends BibDatabaseWriter {
 
     private final FieldPreferences fieldPreferences;
 
-    public BibtexDatabaseWriter(BibWriter bibWriter,
-                                SelfContainedSaveConfiguration saveConfiguration,
-                                FieldPreferences fieldPreferences,
-                                CitationKeyPatternPreferences citationKeyPatternPreferences,
-                                BibEntryTypesManager entryTypesManager) {
-        super(bibWriter,
-                saveConfiguration,
-                citationKeyPatternPreferences,
-                entryTypesManager);
+    public BibtexDatabaseWriter(
+            BibWriter bibWriter,
+            SelfContainedSaveConfiguration saveConfiguration,
+            FieldPreferences fieldPreferences,
+            CitationKeyPatternPreferences citationKeyPatternPreferences,
+            BibEntryTypesManager entryTypesManager) {
+        super(bibWriter, saveConfiguration, citationKeyPatternPreferences, entryTypesManager);
 
         this.fieldPreferences = fieldPreferences;
     }
 
-    public BibtexDatabaseWriter(Writer writer,
-                                String newline,
-                                SelfContainedSaveConfiguration saveConfiguration,
-                                FieldPreferences fieldPreferences,
-                                CitationKeyPatternPreferences citationKeyPatternPreferences,
-                                BibEntryTypesManager entryTypesManager) {
-        super(new BibWriter(writer, newline),
-                saveConfiguration,
-                citationKeyPatternPreferences,
-                entryTypesManager);
+    public BibtexDatabaseWriter(
+            Writer writer,
+            String newline,
+            SelfContainedSaveConfiguration saveConfiguration,
+            FieldPreferences fieldPreferences,
+            CitationKeyPatternPreferences citationKeyPatternPreferences,
+            BibEntryTypesManager entryTypesManager) {
+        super(new BibWriter(writer, newline), saveConfiguration, citationKeyPatternPreferences, entryTypesManager);
 
         this.fieldPreferences = fieldPreferences;
     }
@@ -105,14 +101,14 @@ public class BibtexDatabaseWriter extends BibDatabaseWriter {
             bibWriter.writeLine(userComments);
         }
 
-        bibWriter.write(STRING_PREFIX + "{" + bibtexString.getName() + StringUtil
-                .repeatSpaces(maxKeyLength - bibtexString.getName().length()) + " = ");
+        bibWriter.write(STRING_PREFIX + "{" + bibtexString.getName()
+                + StringUtil.repeatSpaces(maxKeyLength - bibtexString.getName().length()) + " = ");
         if (bibtexString.getContent().isEmpty()) {
             bibWriter.write("{}");
         } else {
             try {
-                String formatted = new FieldWriter(fieldPreferences)
-                        .write(InternalField.BIBTEX_STRING, bibtexString.getContent());
+                String formatted =
+                        new FieldWriter(fieldPreferences).write(InternalField.BIBTEX_STRING, bibtexString.getContent());
                 bibWriter.write(formatted);
             } catch (InvalidFieldValueException ex) {
                 throw new IOException(ex);
@@ -136,7 +132,9 @@ public class BibtexDatabaseWriter extends BibDatabaseWriter {
         //   - it is provided (!= null)
         //   - explicitly set in the .bib file OR not equal to UTF_8
         // Otherwise, we do not write anything and return
-        if ((encoding == null) || (!bibDatabaseContext.getMetaData().getEncodingExplicitlySupplied() && (encoding.equals(StandardCharsets.UTF_8)))) {
+        if ((encoding == null)
+                || (!bibDatabaseContext.getMetaData().getEncodingExplicitlySupplied()
+                        && (encoding.equals(StandardCharsets.UTF_8)))) {
             return;
         }
 

@@ -25,6 +25,7 @@ public abstract class AbstractGroup implements SearchMatcher {
      * The hierarchical context of the group.
      */
     protected final GroupHierarchyType context;
+
     protected Optional<Color> color = Optional.empty();
     protected boolean isExpanded = true;
     protected Optional<String> description = Optional.empty();
@@ -37,14 +38,13 @@ public abstract class AbstractGroup implements SearchMatcher {
 
     @Override
     public String toString() {
-        return "AbstractGroup{" +
-                "name='" + name.getValue() + '\'' +
-                ", context=" + context +
-                ", color=" + color +
-                ", isExpanded=" + isExpanded +
-                ", description=" + description +
-                ", iconName=" + iconName +
-                '}';
+        return "AbstractGroup{" + "name='"
+                + name.getValue() + '\'' + ", context="
+                + context + ", color="
+                + color + ", isExpanded="
+                + isExpanded + ", description="
+                + description + ", iconName="
+                + iconName + '}';
     }
 
     @Override
@@ -56,7 +56,8 @@ public abstract class AbstractGroup implements SearchMatcher {
             return false;
         }
         AbstractGroup that = (AbstractGroup) other;
-        return Objects.equals(this.name.getValue(), that.name.getValue()) && Objects.equals(this.description, that.description)
+        return Objects.equals(this.name.getValue(), that.name.getValue())
+                && Objects.equals(this.description, that.description)
                 && Objects.equals(this.context, that.context);
     }
 

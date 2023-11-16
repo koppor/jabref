@@ -25,8 +25,8 @@ import static org.mockito.Mockito.when;
 
 public class ContentSelectorViewModelTest {
     private final DialogService dialogService = mock(DialogService.class);
-    private final List<StandardField> DEFAULT_FIELDS = Arrays.asList(
-            StandardField.AUTHOR, StandardField.JOURNAL, StandardField.KEYWORDS, StandardField.PUBLISHER);
+    private final List<StandardField> DEFAULT_FIELDS =
+            Arrays.asList(StandardField.AUTHOR, StandardField.JOURNAL, StandardField.KEYWORDS, StandardField.PUBLISHER);
     private ContentSelectorViewModel viewModel;
     private BibDatabaseContext databaseContext;
 
@@ -49,8 +49,7 @@ public class ContentSelectorViewModelTest {
     void addsNewKeyword() {
         addKeyword(StandardField.KEYWORDS, "test");
 
-        ListProperty<String> expected = new SimpleListProperty<>(
-                FXCollections.observableArrayList("test"));
+        ListProperty<String> expected = new SimpleListProperty<>(FXCollections.observableArrayList("test"));
         ListProperty<String> result = viewModel.getKeywordsBackingList();
 
         assertEquals(expected, result);
@@ -61,8 +60,7 @@ public class ContentSelectorViewModelTest {
         addKeyword(StandardField.KEYWORDS, "test");
         addKeyword(StandardField.KEYWORDS, "test");
 
-        ListProperty<String> expected = new SimpleListProperty<>(
-                FXCollections.observableArrayList("test"));
+        ListProperty<String> expected = new SimpleListProperty<>(FXCollections.observableArrayList("test"));
         ListProperty<String> result = viewModel.getKeywordsBackingList();
 
         assertEquals(expected, result);
@@ -107,8 +105,7 @@ public class ContentSelectorViewModelTest {
         addKeyword(StandardField.KEYWORDS, "test1");
         addKeyword(StandardField.KEYWORDS, "test2");
 
-        ListProperty<String> expected = new SimpleListProperty<>(
-                FXCollections.observableArrayList("test1", "test2"));
+        ListProperty<String> expected = new SimpleListProperty<>(FXCollections.observableArrayList("test1", "test2"));
         ListProperty<String> result = viewModel.getKeywordsBackingList();
 
         assertEquals(expected, result);
@@ -122,24 +119,23 @@ public class ContentSelectorViewModelTest {
         addKeyword(testField, "test2");
         viewModel.storeSettings();
 
-        List<String> result = databaseContext.getMetaData()
-                                             .getContentSelectorValuesForField(testField);
+        List<String> result = databaseContext.getMetaData().getContentSelectorValuesForField(testField);
         List<String> expected = Arrays.asList("test1", "test2");
 
         assertEquals(expected, result);
     }
 
     private void addKeyword(Field field, String keyword) {
-        when(dialogService.showInputDialogAndWait(
-                Localization.lang("Add new keyword"), Localization.lang("Keyword:")))
+        when(dialogService.showInputDialogAndWait(Localization.lang("Add new keyword"), Localization.lang("Keyword:")))
                 .thenReturn(Optional.of(keyword));
 
         viewModel.showInputKeywordDialog(field);
     }
 
     private void removeKeyword(Field field, String keyword) {
-        when(dialogService.showConfirmationDialogAndWait(Localization.lang("Remove keyword"),
-                Localization.lang("Are you sure you want to remove keyword: \"%0\"?", keyword)))
+        when(dialogService.showConfirmationDialogAndWait(
+                        Localization.lang("Remove keyword"),
+                        Localization.lang("Are you sure you want to remove keyword: \"%0\"?", keyword)))
                 .thenReturn(true);
 
         viewModel.showRemoveKeywordConfirmationDialog(field, keyword);
@@ -147,7 +143,7 @@ public class ContentSelectorViewModelTest {
 
     private void addField(Field field) {
         when(dialogService.showInputDialogAndWait(
-                Localization.lang("Add new field name"), Localization.lang("Field name")))
+                        Localization.lang("Add new field name"), Localization.lang("Field name")))
                 .thenReturn(Optional.of(field.getDisplayName()));
 
         viewModel.showInputFieldNameDialog();
@@ -155,8 +151,9 @@ public class ContentSelectorViewModelTest {
 
     private void removeField(Field field) {
         when(dialogService.showConfirmationDialogAndWait(
-                Localization.lang("Remove field name"),
-                Localization.lang("Are you sure you want to remove field name: \"%0\"?", field.getDisplayName())))
+                        Localization.lang("Remove field name"),
+                        Localization.lang(
+                                "Are you sure you want to remove field name: \"%0\"?", field.getDisplayName())))
                 .thenReturn(true);
 
         viewModel.showRemoveFieldNameConfirmationDialog(field);

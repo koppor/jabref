@@ -31,19 +31,30 @@ public class RequiredFieldsTab extends FieldsEditorTab {
     public static final String NAME = "Required fields";
     private final BibEntryTypesManager entryTypesManager;
 
-    public RequiredFieldsTab(BibDatabaseContext databaseContext,
-                             SuggestionProviders suggestionProviders,
-                             UndoManager undoManager,
-                             DialogService dialogService,
-                             PreferencesService preferences,
-                             StateManager stateManager,
-                             ThemeManager themeManager,
-                             IndexingTaskManager indexingTaskManager,
-                             BibEntryTypesManager entryTypesManager,
-                             TaskExecutor taskExecutor,
-                             JournalAbbreviationRepository journalAbbreviationRepository) {
-        super(false, databaseContext, suggestionProviders, undoManager, dialogService,
-                preferences, stateManager, themeManager, taskExecutor, journalAbbreviationRepository, indexingTaskManager);
+    public RequiredFieldsTab(
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            DialogService dialogService,
+            PreferencesService preferences,
+            StateManager stateManager,
+            ThemeManager themeManager,
+            IndexingTaskManager indexingTaskManager,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository) {
+        super(
+                false,
+                databaseContext,
+                suggestionProviders,
+                undoManager,
+                dialogService,
+                preferences,
+                stateManager,
+                themeManager,
+                taskExecutor,
+                journalAbbreviationRepository,
+                indexingTaskManager);
         this.entryTypesManager = entryTypesManager;
         setText(Localization.lang("Required fields"));
         setTooltip(new Tooltip(Localization.lang("Show required fields")));

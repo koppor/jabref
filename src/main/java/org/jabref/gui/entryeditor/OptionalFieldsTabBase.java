@@ -29,20 +29,22 @@ public class OptionalFieldsTabBase extends FieldsEditorTab {
     private final BibEntryTypesManager entryTypesManager;
     private final boolean isPrimaryOptionalFields;
 
-    public OptionalFieldsTabBase(String title,
-                                 boolean isPrimaryOptionalFields,
-                                 BibDatabaseContext databaseContext,
-                                 SuggestionProviders suggestionProviders,
-                                 UndoManager undoManager,
-                                 DialogService dialogService,
-                                 PreferencesService preferences,
-                                 StateManager stateManager,
-                                 ThemeManager themeManager,
-                                 IndexingTaskManager indexingTaskManager,
-                                 BibEntryTypesManager entryTypesManager,
-                                 TaskExecutor taskExecutor,
-                                 JournalAbbreviationRepository journalAbbreviationRepository) {
-        super(true,
+    public OptionalFieldsTabBase(
+            String title,
+            boolean isPrimaryOptionalFields,
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            DialogService dialogService,
+            PreferencesService preferences,
+            StateManager stateManager,
+            ThemeManager themeManager,
+            IndexingTaskManager indexingTaskManager,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository) {
+        super(
+                true,
                 databaseContext,
                 suggestionProviders,
                 undoManager,

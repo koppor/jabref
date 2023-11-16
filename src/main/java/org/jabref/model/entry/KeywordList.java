@@ -76,7 +76,9 @@ public class KeywordList implements Iterable<Keyword> {
     public static KeywordList merge(String keywordStringA, String keywordStringB, Character delimiter) {
         KeywordList keywordListA = parse(keywordStringA, delimiter);
         KeywordList keywordListB = parse(keywordStringB, delimiter);
-        List<Keyword> distinctKeywords = Stream.concat(keywordListA.stream(), keywordListB.stream()).distinct().toList();
+        List<Keyword> distinctKeywords = Stream.concat(keywordListA.stream(), keywordListB.stream())
+                .distinct()
+                .toList();
         return new KeywordList(distinctKeywords);
     }
 

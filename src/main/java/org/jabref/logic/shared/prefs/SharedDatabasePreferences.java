@@ -32,7 +32,8 @@ public class SharedDatabasePreferences {
     private static final String SHARED_DATABASE_KEYSTORE_FILE = "sharedDatabaseKeyStoreFile";
     private static final String SHARED_DATABASE_SERVER_TIMEZONE = "sharedDatabaseServerTimezone";
 
-    // This {@link Preferences} is used only for things which should not appear in real JabRefPreferences due to security reasons.
+    // This {@link Preferences} is used only for things which should not appear in real JabRefPreferences due to
+    // security reasons.
     private final Preferences internalPrefs;
 
     public SharedDatabasePreferences() {

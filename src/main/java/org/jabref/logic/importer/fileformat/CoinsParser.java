@@ -35,7 +35,8 @@ public class CoinsParser implements Parser {
 
     @Override
     public List<BibEntry> parseEntries(InputStream inputStream) throws ParseException {
-        String data = new BufferedReader(new InputStreamReader(inputStream)).lines().collect(Collectors.joining(OS.NEWLINE));
+        String data =
+                new BufferedReader(new InputStreamReader(inputStream)).lines().collect(Collectors.joining(OS.NEWLINE));
         BibEntry entry = new BibEntry();
 
         appendData(data, entry, DOI, StandardField.DOI);

@@ -64,11 +64,9 @@ abstract class ServerTest extends JerseyTest {
     }
 
     protected void setAvailableLibraries(EnumSet<TestBibFile> files) {
-        when(guiPreferences.getLastFilesOpened()).thenReturn(
-                FXCollections.observableArrayList(
-                        files.stream()
-                             .map(file -> file.path.toString())
-                             .collect(Collectors.toList())));
+        when(guiPreferences.getLastFilesOpened())
+                .thenReturn(FXCollections.observableArrayList(
+                        files.stream().map(file -> file.path.toString()).collect(Collectors.toList())));
     }
 
     private static void initializePreferencesService() {
@@ -93,6 +91,7 @@ abstract class ServerTest extends JerseyTest {
         guiPreferences = mock(GuiPreferences.class);
         when(preferencesService.getGuiPreferences()).thenReturn(guiPreferences);
 
-        when(guiPreferences.getLastFilesOpened()).thenReturn(FXCollections.observableArrayList(TestBibFile.GENERAL_SERVER_TEST.path.toString()));
+        when(guiPreferences.getLastFilesOpened())
+                .thenReturn(FXCollections.observableArrayList(TestBibFile.GENERAL_SERVER_TEST.path.toString()));
     }
 }

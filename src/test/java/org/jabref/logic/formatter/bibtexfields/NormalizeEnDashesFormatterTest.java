@@ -19,7 +19,9 @@ public class NormalizeEnDashesFormatterTest {
 
     @Test
     public void formatExample() {
-        assertEquals("Winery -- A Modeling Tool for TOSCA-based Cloud Applications", formatter.format(formatter.getExampleInput()));
+        assertEquals(
+                "Winery -- A Modeling Tool for TOSCA-based Cloud Applications",
+                formatter.format(formatter.getExampleInput()));
     }
 
     @Test

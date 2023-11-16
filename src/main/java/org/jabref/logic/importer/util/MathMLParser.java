@@ -43,7 +43,9 @@ public class MathMLParser {
             Source xmlSource = new StreamSource(new StringReader(xmlContent));
 
             URL xsltResource = MathMLParser.class.getResource(XSLT_FILE_PATH);
-            Source xsltSource = new StreamSource(Objects.requireNonNull(xsltResource).openStream(), xsltResource.toURI().toASCIIString());
+            Source xsltSource = new StreamSource(
+                    Objects.requireNonNull(xsltResource).openStream(),
+                    xsltResource.toURI().toASCIIString());
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer(xsltSource);
@@ -66,4 +68,3 @@ public class MathMLParser {
         return latexResult;
     }
 }
-

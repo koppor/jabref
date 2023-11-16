@@ -141,7 +141,11 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
     private String localCopy;
     private boolean isDefaultLayoutPresent;
 
-    public OOBibStyle(Path styleFile, LayoutFormatterPreferences layoutPreferences, JournalAbbreviationRepository abbreviationRepository) throws IOException {
+    public OOBibStyle(
+            Path styleFile,
+            LayoutFormatterPreferences layoutPreferences,
+            JournalAbbreviationRepository abbreviationRepository)
+            throws IOException {
         this.layoutPreferences = Objects.requireNonNull(layoutPreferences);
         this.abbreviationRepository = abbreviationRepository;
         this.styleFile = Objects.requireNonNull(styleFile);
@@ -151,7 +155,11 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         path = styleFile.toAbsolutePath().toString();
     }
 
-    public OOBibStyle(String resourcePath, LayoutFormatterPreferences layoutPreferences, JournalAbbreviationRepository abbreviationRepository) throws IOException {
+    public OOBibStyle(
+            String resourcePath,
+            LayoutFormatterPreferences layoutPreferences,
+            JournalAbbreviationRepository abbreviationRepository)
+            throws IOException {
         this.layoutPreferences = Objects.requireNonNull(layoutPreferences);
         this.abbreviationRepository = abbreviationRepository;
 
@@ -263,7 +271,8 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      */
     private void reload() throws IOException {
         if (styleFile != null) {
-            this.styleFileModificationTime = Files.getLastModifiedTime(styleFile).toMillis();
+            this.styleFileModificationTime =
+                    Files.getLastModifiedTime(styleFile).toMillis();
             try (InputStream stream = Files.newInputStream(styleFile)) {
                 initialize(stream);
             }
@@ -384,7 +393,9 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
             try {
                 final String typeName = line.substring(0, index);
                 final String formatString = line.substring(index + 1);
-                Layout layout = new LayoutHelper(new StringReader(formatString), layoutPreferences, abbreviationRepository).getLayoutFromText();
+                Layout layout = new LayoutHelper(
+                                new StringReader(formatString), layoutPreferences, abbreviationRepository)
+                        .getLayoutFromText();
                 EntryType type = EntryTypeFactory.parse(typeName);
 
                 if (!isDefaultLayoutPresent && OOBibStyle.DEFAULT_MARK.equals(typeName)) {
@@ -674,19 +685,14 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      */
     public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries) {
         final int minGroupingCount = this.getMinimumGroupingCount();
-        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
-                                                                    entries,
-                                                                    minGroupingCount);
+        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this, entries, minGroupingCount);
     }
 
     /**
      * For some tests we need to override minGroupingCount.
      */
-    public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries,
-                                        int minGroupingCount) {
-        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this,
-                                                                    entries,
-                                                                    minGroupingCount);
+    public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries, int minGroupingCount) {
+        return OOBibStyleGetNumCitationMarker.getNumCitationMarker2(this, entries, minGroupingCount);
     }
 
     /**
@@ -731,13 +737,12 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
      *         OOFormat.setLocaleNone() and OOFormat.setCharStyle().
      *         These are added by decorateCitationMarker()
      */
-    public OOText createCitationMarker(List<CitationMarkerEntry> citationMarkerEntries,
-                                       boolean inParenthesis,
-                                       NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
-        return OOBibStyleGetCitationMarker.createCitationMarker(this,
-                                                                citationMarkerEntries,
-                                                                inParenthesis,
-                                                                nonUniqueCitationMarkerHandling);
+    public OOText createCitationMarker(
+            List<CitationMarkerEntry> citationMarkerEntries,
+            boolean inParenthesis,
+            NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
+        return OOBibStyleGetCitationMarker.createCitationMarker(
+                this, citationMarkerEntries, inParenthesis, nonUniqueCitationMarkerHandling);
     }
 
     /**
@@ -922,8 +927,6 @@ public class OOBibStyle implements Comparable<OOBibStyle> {
         OOBibStyle style = this;
         OOText title = style.getReferenceHeaderText();
         String parStyle = style.getReferenceHeaderParagraphFormat();
-        return parStyle == null
-                ? OOFormat.paragraph(title)
-                : OOFormat.paragraph(title, parStyle);
+        return parStyle == null ? OOFormat.paragraph(title) : OOFormat.paragraph(title, parStyle);
     }
 }

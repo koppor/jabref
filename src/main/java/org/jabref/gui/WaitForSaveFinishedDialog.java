@@ -36,8 +36,7 @@ public class WaitForSaveFinishedDialog {
             dialogService.showProgressDialog(
                     Localization.lang("Please wait..."),
                     Localization.lang("Waiting for save operation to finish") + "...",
-                    waitForSaveFinished
-            );
+                    waitForSaveFinished);
         }
     }
 }

@@ -37,24 +37,22 @@ public class PersonNamesCheckerTest {
 
     private static Stream<String> provideValidNames() {
         return Stream.of(
-                "Kolb, Stefan",                     // single [Name, Firstname]
-                "Kolb, Stefan and Harrer, Simon",   // multiple [Name, Firstname]
-                "Stefan Kolb",                      // single [Firstname Name]
-                "Stefan Kolb and Simon Harrer",     // multiple [Firstname Name]
-
-                "M. J. Gotay",                      // second name in front
-
-                "{JabRef}",                         // corporate name in brackets
-                "{JabRef} and Stefan Kolb",         // mixed corporate name with name
+                "Kolb, Stefan", // single [Name, Firstname]
+                "Kolb, Stefan and Harrer, Simon", // multiple [Name, Firstname]
+                "Stefan Kolb", // single [Firstname Name]
+                "Stefan Kolb and Simon Harrer", // multiple [Firstname Name]
+                "M. J. Gotay", // second name in front
+                "{JabRef}", // corporate name in brackets
+                "{JabRef} and Stefan Kolb", // mixed corporate name with name
                 "{JabRef} and Kolb, Stefan",
-
-                "hugo Para{\\~n}os"                 // tilde in name
-        );
+                "hugo Para{\\~n}os" // tilde in name
+                );
     }
 
     @Test
     public void complainAboutPersonStringWithTwoManyCommas() {
-        assertEquals(Optional.of("Names are not in the standard BibTeX format."),
+        assertEquals(
+                Optional.of("Names are not in the standard BibTeX format."),
                 checker.checkValue("Test1, Test2, Test3, Test4, Test5, Test6"));
     }
 
@@ -71,10 +69,7 @@ public class PersonNamesCheckerTest {
     }
 
     private static Stream<String> provideCorrectFormats() {
-        return Stream.of(
-                "",
-                "Knuth",
-                "Donald E. Knuth and Kurt Cobain and A. Einstein");
+        return Stream.of("", "Knuth", "Donald E. Knuth and Kurt Cobain and A. Einstein");
     }
 
     private static Stream<String> provideIncorrectFormats() {

@@ -35,26 +35,44 @@ public class ErrorConsoleView extends BaseDialog<Void> {
 
     private ErrorConsoleViewModel viewModel;
 
-    @FXML private ButtonType copyLogButton;
-    @FXML private ButtonType clearLogButton;
-    @FXML private ButtonType createIssueButton;
-    @FXML private ListView<LogEventViewModel> messagesListView;
-    @FXML private Label descriptionLabel;
+    @FXML
+    private ButtonType copyLogButton;
 
-    @Inject private DialogService dialogService;
-    @Inject private PreferencesService preferencesService;
-    @Inject private ClipBoardManager clipBoardManager;
-    @Inject private BuildInfo buildInfo;
-    @Inject private KeyBindingRepository keyBindingRepository;
-    @Inject private ThemeManager themeManager;
+    @FXML
+    private ButtonType clearLogButton;
+
+    @FXML
+    private ButtonType createIssueButton;
+
+    @FXML
+    private ListView<LogEventViewModel> messagesListView;
+
+    @FXML
+    private Label descriptionLabel;
+
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private PreferencesService preferencesService;
+
+    @Inject
+    private ClipBoardManager clipBoardManager;
+
+    @Inject
+    private BuildInfo buildInfo;
+
+    @Inject
+    private KeyBindingRepository keyBindingRepository;
+
+    @Inject
+    private ThemeManager themeManager;
 
     public ErrorConsoleView() {
         this.setTitle(Localization.lang("Event log"));
         this.initModality(Modality.NONE);
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         ControlHelper.setAction(copyLogButton, getDialogPane(), event -> copyLog());
         ControlHelper.setAction(clearLogButton, getDialogPane(), event -> clearLog());
@@ -118,7 +136,8 @@ public class ErrorConsoleView extends BaseDialog<Void> {
     @FXML
     private void copySelectedLogEntries(KeyEvent event) {
         if (keyBindingRepository.checkKeyCombinationEquality(KeyBinding.COPY, event)) {
-            ObservableList<LogEventViewModel> selectedEntries = messagesListView.getSelectionModel().getSelectedItems();
+            ObservableList<LogEventViewModel> selectedEntries =
+                    messagesListView.getSelectionModel().getSelectedItems();
             viewModel.copyLog(selectedEntries);
         }
     }

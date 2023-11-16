@@ -28,11 +28,8 @@ import static org.mockito.Mockito.when;
 public class AutoSetFileLinksUtilTest {
 
     private final FilePreferences filePreferences = mock(FilePreferences.class);
-    private final AutoLinkPreferences autoLinkPrefs = new AutoLinkPreferences(
-            AutoLinkPreferences.CitationKeyDependency.START,
-            "",
-            false,
-            ';');
+    private final AutoLinkPreferences autoLinkPrefs =
+            new AutoLinkPreferences(AutoLinkPreferences.CitationKeyDependency.START, "", false, ';');
     private final BibDatabaseContext databaseContext = mock(BibDatabaseContext.class);
     private final BibEntry entry = new BibEntry(StandardEntryType.Article);
     private Path path = null;
@@ -43,7 +40,8 @@ public class AutoSetFileLinksUtilTest {
         Files.createFile(path);
         entry.setCitationKey("CiteKey");
         when(filePreferences.getExternalFileTypes())
-                .thenReturn(FXCollections.observableSet(new TreeSet<>(ExternalFileTypes.getDefaultExternalFileTypes())));
+                .thenReturn(
+                        FXCollections.observableSet(new TreeSet<>(ExternalFileTypes.getDefaultExternalFileTypes())));
     }
 
     @Test

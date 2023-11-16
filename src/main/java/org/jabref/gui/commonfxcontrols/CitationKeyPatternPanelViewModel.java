@@ -45,7 +45,8 @@ public class CitationKeyPatternPanelViewModel {
 
     public void setValues(Collection<BibEntryType> entryTypeList, AbstractCitationKeyPattern initialKeyPattern) {
         String defaultPattern;
-        if ((initialKeyPattern.getDefaultValue() == null) || initialKeyPattern.getDefaultValue().isEmpty()) {
+        if ((initialKeyPattern.getDefaultValue() == null)
+                || initialKeyPattern.getDefaultValue().isEmpty()) {
             defaultPattern = "";
         } else {
             defaultPattern = initialKeyPattern.getDefaultValue().get(0);
@@ -55,17 +56,15 @@ public class CitationKeyPatternPanelViewModel {
         patternListProperty.setValue(FXCollections.observableArrayList());
         patternListProperty.add(defaultItemProperty.getValue());
 
-        entryTypeList.stream()
-                     .map(BibEntryType::getType)
-                     .forEach(entryType -> {
-                         String pattern;
-                         if (initialKeyPattern.isDefaultValue(entryType)) {
-                             pattern = "";
-                         } else {
-                             pattern = initialKeyPattern.getPatterns().get(entryType).get(0);
-                         }
-                         patternListProperty.add(new CitationKeyPatternPanelItemModel(entryType, pattern));
-                     });
+        entryTypeList.stream().map(BibEntryType::getType).forEach(entryType -> {
+            String pattern;
+            if (initialKeyPattern.isDefaultValue(entryType)) {
+                pattern = "";
+            } else {
+                pattern = initialKeyPattern.getPatterns().get(entryType).get(0);
+            }
+            patternListProperty.add(new CitationKeyPatternPanelItemModel(entryType, pattern));
+        });
     }
 
     public void setItemToDefaultPattern(CitationKeyPatternPanelItemModel item) {

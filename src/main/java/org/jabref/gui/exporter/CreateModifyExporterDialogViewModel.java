@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
  * for "modify exporter."  It returns an optional exporter which empty if an invalid or no exporter is
  * created, and otherwise contains the exporter to be added or that is modified.
  */
-
 public class CreateModifyExporterDialogViewModel extends AbstractViewModel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CreateModifyExporterDialogViewModel.class);
@@ -34,9 +33,8 @@ public class CreateModifyExporterDialogViewModel extends AbstractViewModel {
     private final StringProperty layoutFile = new SimpleStringProperty("");
     private final StringProperty extension = new SimpleStringProperty("");
 
-    public CreateModifyExporterDialogViewModel(ExporterViewModel exporter,
-                                               DialogService dialogService,
-                                               PreferencesService preferences) {
+    public CreateModifyExporterDialogViewModel(
+            ExporterViewModel exporter, DialogService dialogService, PreferencesService preferences) {
         this.dialogService = dialogService;
         this.preferences = preferences;
 
@@ -55,7 +53,9 @@ public class CreateModifyExporterDialogViewModel extends AbstractViewModel {
         }
 
         // Check that there are no empty strings.
-        if (layoutFile.get().isEmpty() || name.get().isEmpty() || extension.get().isEmpty()
+        if (layoutFile.get().isEmpty()
+                || name.get().isEmpty()
+                || extension.get().isEmpty()
                 || !layoutFile.get().endsWith(".layout")) {
             LOGGER.info("One of the fields is empty or invalid!");
             return null;
@@ -76,8 +76,11 @@ public class CreateModifyExporterDialogViewModel extends AbstractViewModel {
         FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
                 .addExtensionFilter(Localization.lang("Custom layout file"), StandardFileType.LAYOUT)
                 .withDefaultExtension(Localization.lang("Custom layout file"), StandardFileType.LAYOUT)
-                .withInitialDirectory(preferences.getExportPreferences().getExportWorkingDirectory()).build();
-        dialogService.showFileOpenDialog(fileDialogConfiguration).ifPresent(f -> layoutFile.set(f.toAbsolutePath().toString()));
+                .withInitialDirectory(preferences.getExportPreferences().getExportWorkingDirectory())
+                .build();
+        dialogService
+                .showFileOpenDialog(fileDialogConfiguration)
+                .ifPresent(f -> layoutFile.set(f.toAbsolutePath().toString()));
     }
 
     public StringProperty getName() {

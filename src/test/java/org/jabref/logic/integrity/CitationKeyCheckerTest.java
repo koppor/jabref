@@ -18,34 +18,41 @@ public class CitationKeyCheckerTest {
 
     @Test
     void bibTexAcceptsKeyFromAuthorAndYear() {
-        BibEntry entry = new BibEntry().withField(InternalField.KEY_FIELD, "Knuth2014")
-                                       .withField(StandardField.AUTHOR, "Knuth")
-                                       .withField(StandardField.YEAR, "2014");
+        BibEntry entry = new BibEntry()
+                .withField(InternalField.KEY_FIELD, "Knuth2014")
+                .withField(StandardField.AUTHOR, "Knuth")
+                .withField(StandardField.YEAR, "2014");
         assertEquals(Collections.emptyList(), checker.check(entry));
     }
 
     @Test
     void acceptsKeyFromAuthorAndTitle() {
-        BibEntry entry = new BibEntry().withField(InternalField.KEY_FIELD, "BrownTheTitle")
-                                       .withField(StandardField.AUTHOR, "Brown")
-                                       .withField(StandardField.TITLE, "The Title");
+        BibEntry entry = new BibEntry()
+                .withField(InternalField.KEY_FIELD, "BrownTheTitle")
+                .withField(StandardField.AUTHOR, "Brown")
+                .withField(StandardField.TITLE, "The Title");
         assertEquals(Collections.emptyList(), checker.check(entry));
     }
 
     @Test
     void acceptsKeyFromTitleAndYear() {
-        BibEntry entry = new BibEntry().withField(InternalField.KEY_FIELD, "TheTitle2021")
-                                       .withField(StandardField.TITLE, "The Title")
-                                       .withField(StandardField.YEAR, "2021");
+        BibEntry entry = new BibEntry()
+                .withField(InternalField.KEY_FIELD, "TheTitle2021")
+                .withField(StandardField.TITLE, "The Title")
+                .withField(StandardField.YEAR, "2021");
         assertEquals(Collections.emptyList(), checker.check(entry));
     }
 
     @Test
     void emptyCitationKey() {
-        BibEntry entry = new BibEntry().withField(StandardField.AUTHOR, "Brown")
-                                       .withField(StandardField.TITLE, "The Title")
-                                       .withField(StandardField.YEAR, "2021");
-        List<IntegrityMessage> expected = Collections.singletonList(new IntegrityMessage(Localization.lang("empty citation key") + ": " + entry.getAuthorTitleYear(100), entry, InternalField.KEY_FIELD));
+        BibEntry entry = new BibEntry()
+                .withField(StandardField.AUTHOR, "Brown")
+                .withField(StandardField.TITLE, "The Title")
+                .withField(StandardField.YEAR, "2021");
+        List<IntegrityMessage> expected = Collections.singletonList(new IntegrityMessage(
+                Localization.lang("empty citation key") + ": " + entry.getAuthorTitleYear(100),
+                entry,
+                InternalField.KEY_FIELD));
         assertEquals(expected, checker.check(entry));
     }
 }

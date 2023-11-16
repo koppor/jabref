@@ -51,7 +51,9 @@ public class BibDatabase {
     /**
      * State attributes
      */
-    private final ObservableList<BibEntry> entries = FXCollections.synchronizedObservableList(FXCollections.observableArrayList(BibEntry::getObservables));
+    private final ObservableList<BibEntry> entries =
+            FXCollections.synchronizedObservableList(FXCollections.observableArrayList(BibEntry::getObservables));
+
     private Map<String, BibtexString> bibtexStrings = new ConcurrentHashMap<>();
 
     private final EventBus eventBus = new EventBus();
@@ -140,8 +142,9 @@ public class BibDatabase {
         for (BibEntry e : getEntries()) {
             allFields.addAll(e.getFields());
         }
-        return allFields.stream().filter(field -> !FieldFactory.isInternalField(field))
-                        .collect(Collectors.toSet());
+        return allFields.stream()
+                .filter(field -> !FieldFactory.isInternalField(field))
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -329,7 +332,9 @@ public class BibDatabase {
      * Returns the string with the given name/label
      */
     public Optional<BibtexString> getStringByName(String name) {
-        return getStringValues().stream().filter(string -> string.getName().equals(name)).findFirst();
+        return getStringValues().stream()
+                .filter(string -> string.getName().equals(name))
+                .findFirst();
     }
 
     /**
@@ -613,9 +618,9 @@ public class BibDatabase {
      */
     public long getNumberOfCitationKeyOccurrences(String key) {
         return entries.stream()
-                      .flatMap(entry -> entry.getCitationKey().stream())
-                      .filter(key::equals)
-                      .count();
+                .flatMap(entry -> entry.getCitationKey().stream())
+                .filter(key::equals)
+                .count();
     }
 
     /**

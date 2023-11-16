@@ -86,8 +86,8 @@ public class ProtectedTermsList implements Comparable<ProtectedTermsList> {
 
         Path p = Path.of(location);
         String s = OS.NEWLINE + term;
-        try (BufferedWriter writer = Files.newBufferedWriter(p, StandardCharsets.UTF_8,
-                create ? StandardOpenOption.CREATE : StandardOpenOption.APPEND)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(
+                p, StandardCharsets.UTF_8, create ? StandardOpenOption.CREATE : StandardOpenOption.APPEND)) {
             writer.write(s);
             termsList.add(term);
         } catch (IOException ioe) {

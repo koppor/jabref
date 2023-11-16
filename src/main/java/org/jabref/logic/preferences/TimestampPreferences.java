@@ -18,7 +18,12 @@ public class TimestampPreferences {
     private final Field timestampField;
     private final String timestampFormat;
 
-    public TimestampPreferences(boolean addCreationDate, boolean modifyTimestamp, boolean updateTimestamp, Field timestampField, String timestampFormat) {
+    public TimestampPreferences(
+            boolean addCreationDate,
+            boolean modifyTimestamp,
+            boolean updateTimestamp,
+            Field timestampField,
+            String timestampFormat) {
         this.addCreationDate = new SimpleBooleanProperty(addCreationDate);
         this.addModificationDate = new SimpleBooleanProperty(modifyTimestamp);
         this.updateTimestamp = updateTimestamp;

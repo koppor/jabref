@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
 public class ShortenDOIFormatter extends Formatter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShortenDOIFormatter.class);
-    private static final Predicate<String> SHORT_DOI_FORMAT = Pattern.compile("^10/[a-zA-Z0-9]+$").asPredicate();
+    private static final Predicate<String> SHORT_DOI_FORMAT =
+            Pattern.compile("^10/[a-zA-Z0-9]+$").asPredicate();
 
     @Override
     public String getName() {
@@ -31,15 +32,18 @@ public class ShortenDOIFormatter extends Formatter {
     @Override
     public String format(String value) {
         Objects.requireNonNull(value);
-        return SHORT_DOI_FORMAT.test(value) ? value : DOI.parse(value)
-                  .map(doi -> {
-                      try {
-                          return new ShortDOIService().getShortDOI(doi).getDOI();
-                      } catch (ShortDOIServiceException e) {
-                          LOGGER.error(e.getMessage(), e);
-                          return value;
-                      }
-                  }).orElse(value);
+        return SHORT_DOI_FORMAT.test(value)
+                ? value
+                : DOI.parse(value)
+                        .map(doi -> {
+                            try {
+                                return new ShortDOIService().getShortDOI(doi).getDOI();
+                            } catch (ShortDOIServiceException e) {
+                                LOGGER.error(e.getMessage(), e);
+                                return value;
+                            }
+                        })
+                        .orElse(value);
     }
 
     @Override

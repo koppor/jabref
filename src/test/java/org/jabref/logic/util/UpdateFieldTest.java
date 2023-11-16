@@ -263,8 +263,12 @@ public class UpdateFieldTest {
         BibEntry entry2 = new BibEntry();
         entry2.setField(StandardField.OWNER, initialOwner);
 
-        assertEquals(Optional.of(initialOwner), entry.getField(StandardField.OWNER), "Owner field for entry is not present");
-        assertEquals(Optional.of(initialOwner), entry2.getField(StandardField.OWNER), "Owner field for entry2 is not present");
+        assertEquals(
+                Optional.of(initialOwner), entry.getField(StandardField.OWNER), "Owner field for entry is not present");
+        assertEquals(
+                Optional.of(initialOwner),
+                entry2.getField(StandardField.OWNER),
+                "Owner field for entry2 is not present");
 
         Collection<BibEntry> bibs = Arrays.asList(entry, entry2);
 
@@ -272,8 +276,12 @@ public class UpdateFieldTest {
         TimestampPreferences timestampPreferences = createTimestampPreference();
         UpdateField.setAutomaticFields(bibs, ownerPreferences, timestampPreferences);
 
-        assertEquals(Optional.of(initialOwner), entry.getField(StandardField.OWNER), "entry has new value for owner field");
-        assertEquals(Optional.of(initialOwner), entry2.getField(StandardField.OWNER), "entry2 has new value for owner field");
+        assertEquals(
+                Optional.of(initialOwner), entry.getField(StandardField.OWNER), "entry has new value for owner field");
+        assertEquals(
+                Optional.of(initialOwner),
+                entry2.getField(StandardField.OWNER),
+                "entry2 has new value for owner field");
     }
 
     private OwnerPreferences createOwnerPreference(boolean useOwner, boolean overwriteOwner) {

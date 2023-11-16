@@ -23,9 +23,11 @@ public class ImportCustomEntryTypesDialogViewModel {
     private final PreferencesService preferencesService;
 
     private final ObservableList<BibEntryType> newTypes = FXCollections.observableArrayList();
-    private final ObservableList<BibEntryTypePrefsAndFileViewModel> differentCustomizationTypes = FXCollections.observableArrayList();
+    private final ObservableList<BibEntryTypePrefsAndFileViewModel> differentCustomizationTypes =
+            FXCollections.observableArrayList();
 
-    public ImportCustomEntryTypesDialogViewModel(BibDatabaseMode mode, List<BibEntryType> entryTypes, PreferencesService preferencesService) {
+    public ImportCustomEntryTypesDialogViewModel(
+            BibDatabaseMode mode, List<BibEntryType> entryTypes, PreferencesService preferencesService) {
         this.mode = mode;
         this.preferencesService = preferencesService;
 
@@ -37,7 +39,8 @@ public class ImportCustomEntryTypesDialogViewModel {
                 if (!EntryTypeFactory.nameAndFieldsAreEqual(customType, currentlyStoredType.get())) {
                     LOGGER.info("currently stored type:    {}", currentlyStoredType.get());
                     LOGGER.info("type provided by library: {}", customType);
-                    differentCustomizationTypes.add(new BibEntryTypePrefsAndFileViewModel(currentlyStoredType.get(), customType));
+                    differentCustomizationTypes.add(
+                            new BibEntryTypePrefsAndFileViewModel(currentlyStoredType.get(), customType));
                 }
             }
         }
@@ -51,7 +54,8 @@ public class ImportCustomEntryTypesDialogViewModel {
         return this.differentCustomizationTypes;
     }
 
-    public void importBibEntryTypes(List<BibEntryType> checkedUnknownEntryTypes, List<BibEntryType> checkedDifferentEntryTypes) {
+    public void importBibEntryTypes(
+            List<BibEntryType> checkedUnknownEntryTypes, List<BibEntryType> checkedDifferentEntryTypes) {
         if (!checkedUnknownEntryTypes.isEmpty()) {
             checkedUnknownEntryTypes.forEach(type -> Globals.entryTypesManager.addCustomOrModifiedType(type, mode));
             preferencesService.storeCustomEntryTypesRepository(Globals.entryTypesManager);

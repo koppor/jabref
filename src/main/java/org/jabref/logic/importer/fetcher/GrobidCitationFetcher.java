@@ -47,7 +47,8 @@ public class GrobidCitationFetcher implements SearchBasedFetcher {
      */
     private Optional<BibEntry> parseUsingGrobid(String plainText) throws FetcherException {
         try {
-            return grobidService.processCitation(plainText, importFormatPreferences, GrobidService.ConsolidateCitations.WITH_METADATA);
+            return grobidService.processCitation(
+                    plainText, importFormatPreferences, GrobidService.ConsolidateCitations.WITH_METADATA);
         } catch (HttpStatusException e) {
             String msg = "Connection failure.";
             LOGGER.debug(msg, e);
@@ -73,11 +74,11 @@ public class GrobidCitationFetcher implements SearchBasedFetcher {
         List<BibEntry> collect;
         try {
             collect = Arrays.stream(searchQuery.split("\\r\\r+|\\n\\n+|\\r\\n(\\r\\n)+"))
-                            .map(String::trim)
-                            .filter(str -> !str.isBlank())
-                            .map(Unchecked.function(this::parseUsingGrobid))
-                            .flatMap(Optional::stream)
-                            .collect(Collectors.toList());
+                    .map(String::trim)
+                    .filter(str -> !str.isBlank())
+                    .map(Unchecked.function(this::parseUsingGrobid))
+                    .flatMap(Optional::stream)
+                    .collect(Collectors.toList());
         } catch (UncheckedException e) {
             // This "undoes" Unchecked.function(this::parseUsingGrobid))
             throw (FetcherException) e.getCause();

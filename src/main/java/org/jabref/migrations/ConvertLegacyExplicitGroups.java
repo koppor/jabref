@@ -22,7 +22,8 @@ public class ConvertLegacyExplicitGroups implements PostOpenMigration {
             return;
         }
 
-        for (ExplicitGroup group : getExplicitGroupsWithLegacyKeys(parserResult.getMetaData().getGroups().get())) {
+        for (ExplicitGroup group : getExplicitGroupsWithLegacyKeys(
+                parserResult.getMetaData().getGroups().get())) {
             for (String entryKey : group.getLegacyEntryKeys()) {
                 for (BibEntry entry : parserResult.getDatabase().getEntriesByCitationKey(entryKey)) {
                     group.add(entry);

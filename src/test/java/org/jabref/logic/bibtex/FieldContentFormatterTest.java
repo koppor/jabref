@@ -16,10 +16,8 @@ class FieldContentFormatterTest {
 
     @BeforeEach
     void setUp() {
-        parser = new FieldContentFormatter(new FieldPreferences(
-                false,
-                Collections.emptyList(),
-                Collections.emptyList()));
+        parser = new FieldContentFormatter(
+                new FieldPreferences(false, Collections.emptyList(), Collections.emptyList()));
     }
 
     @Test

@@ -67,15 +67,15 @@ public class CiteSeerQueryTransformer extends AbstractQueryTransformer {
 
     @Override
     protected String handleYearRange(String yearRange) {
-         parseYearRange(yearRange);
-         if (endYear == Integer.MAX_VALUE) { // invalid year range
-             Calendar calendar = Calendar.getInstance();
-             this.getJSONPayload().put("yearEnd", calendar.get(Calendar.YEAR));
-             return "";
-         }
-         this.getJSONPayload().put("yearStart", startYear);
-         this.getJSONPayload().put("yearEnd", endYear);
-         return yearRange;
+        parseYearRange(yearRange);
+        if (endYear == Integer.MAX_VALUE) { // invalid year range
+            Calendar calendar = Calendar.getInstance();
+            this.getJSONPayload().put("yearEnd", calendar.get(Calendar.YEAR));
+            return "";
+        }
+        this.getJSONPayload().put("yearStart", startYear);
+        this.getJSONPayload().put("yearEnd", endYear);
+        return yearRange;
     }
 
     /**

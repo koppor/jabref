@@ -28,10 +28,13 @@ public class AuthorFirstLastCommasTest {
                 Arguments.of("", ""),
                 Arguments.of("Van Something Someone", "Someone, Van Something"),
                 Arguments.of("John von Neumann and Peter Black Brown", "John von Neumann and Peter Black Brown"),
-                Arguments.of("John von Neumann, John Smith and Peter Black Brown", "von Neumann, John and Smith, John and Black Brown, Peter"),
-                Arguments.of("John von Neumann, John Smith and Peter Black Brown", "John von Neumann and John Smith and Black Brown, Peter"),
+                Arguments.of(
+                        "John von Neumann, John Smith and Peter Black Brown",
+                        "von Neumann, John and Smith, John and Black Brown, Peter"),
+                Arguments.of(
+                        "John von Neumann, John Smith and Peter Black Brown",
+                        "John von Neumann and John Smith and Black Brown, Peter"),
                 Arguments.of("John von Neumann and Peter Black Brown", "John von Neumann and Peter Black Brown"),
-                Arguments.of("John von Neumann and Peter Black Brown", "John von Neumann and Peter Black Brown")
-        );
+                Arguments.of("John von Neumann and Peter Black Brown", "John von Neumann and Peter Black Brown"));
     }
 }

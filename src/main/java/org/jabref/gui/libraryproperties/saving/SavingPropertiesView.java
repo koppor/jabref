@@ -14,20 +14,25 @@ import org.jabref.preferences.PreferencesService;
 import com.airhacks.afterburner.views.ViewLoader;
 import jakarta.inject.Inject;
 
-public class SavingPropertiesView extends AbstractPropertiesTabView<SavingPropertiesViewModel> implements PropertiesTab {
+public class SavingPropertiesView extends AbstractPropertiesTabView<SavingPropertiesViewModel>
+        implements PropertiesTab {
 
-    @FXML private CheckBox protect;
-    @FXML private SaveOrderConfigPanel saveOrderConfigPanel;
-    @FXML private FieldFormatterCleanupsPanel fieldFormatterCleanupsPanel;
+    @FXML
+    private CheckBox protect;
 
-    @Inject private PreferencesService preferencesService;
+    @FXML
+    private SaveOrderConfigPanel saveOrderConfigPanel;
+
+    @FXML
+    private FieldFormatterCleanupsPanel fieldFormatterCleanupsPanel;
+
+    @Inject
+    private PreferencesService preferencesService;
 
     public SavingPropertiesView(BibDatabaseContext databaseContext) {
         this.databaseContext = databaseContext;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override

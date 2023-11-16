@@ -50,7 +50,8 @@ public class ExistingStudySearchAction extends SimpleCommand {
             TaskExecutor taskExecutor,
             PreferencesService preferencesService,
             StateManager stateManager) {
-        this(frame,
+        this(
+                frame,
                 openDatabaseAction,
                 dialogService,
                 fileUpdateMonitor,
@@ -117,24 +118,28 @@ public class ExistingStudySearchAction extends SimpleCommand {
                     fileUpdateMonitor);
         } catch (IOException | ParseException e) {
             LOGGER.error("Error during reading of study definition file.", e);
-            dialogService.showErrorDialogAndWait(Localization.lang("Error during reading of study definition file."), e);
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error during reading of study definition file."), e);
             return;
         }
 
         dialogService.notify(Localization.lang("Searching..."));
         BackgroundTask.wrap(() -> {
-                          crawler.performCrawl();
-                          return 0; // Return any value to make this a callable instead of a runnable. This allows throwing exceptions.
-                      })
-                      .onFailure(e -> {
-                          LOGGER.error("Error during persistence of crawling results.");
-                          dialogService.showErrorDialogAndWait(Localization.lang("Error during persistence of crawling results."), e);
-                      })
-                      .onSuccess(unused -> {
-                          dialogService.notify(Localization.lang("Finished Searching"));
-                          openDatabaseAction.openFile(Path.of(this.studyDirectory.toString(), Crawler.FILENAME_STUDY_RESULT_BIB));
-                      })
-                      .executeWith(taskExecutor);
+                    crawler.performCrawl();
+                    return 0; // Return any value to make this a callable instead of a runnable. This allows throwing
+                              // exceptions.
+                })
+                .onFailure(e -> {
+                    LOGGER.error("Error during persistence of crawling results.");
+                    dialogService.showErrorDialogAndWait(
+                            Localization.lang("Error during persistence of crawling results."), e);
+                })
+                .onSuccess(unused -> {
+                    dialogService.notify(Localization.lang("Finished Searching"));
+                    openDatabaseAction.openFile(
+                            Path.of(this.studyDirectory.toString(), Crawler.FILENAME_STUDY_RESULT_BIB));
+                })
+                .executeWith(taskExecutor);
     }
 
     /**

@@ -32,7 +32,8 @@ public class EditExistingStudyAction extends SimpleCommand {
     public void execute() {
         // The action works on the current library
         // This library has to be determined
-        if (stateManager.getActiveDatabase().isEmpty() || !stateManager.getActiveDatabase().get().isStudy()) {
+        if (stateManager.getActiveDatabase().isEmpty()
+                || !stateManager.getActiveDatabase().get().isStudy()) {
             return;
         }
         BibDatabaseContext bibDatabaseContext = stateManager.getActiveDatabase().get();
@@ -51,7 +52,8 @@ public class EditExistingStudyAction extends SimpleCommand {
 
         Study study;
         try {
-            study = new StudyYamlParser().parseStudyYamlFile(studyDirectory.resolve(StudyRepository.STUDY_DEFINITION_FILE_NAME));
+            study = new StudyYamlParser()
+                    .parseStudyYamlFile(studyDirectory.resolve(StudyRepository.STUDY_DEFINITION_FILE_NAME));
         } catch (IOException e) {
             dialogService.showErrorDialogAndWait(Localization.lang("Error opening file"), e);
             return;

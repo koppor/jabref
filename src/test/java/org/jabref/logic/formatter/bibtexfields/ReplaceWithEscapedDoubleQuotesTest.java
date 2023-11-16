@@ -25,7 +25,7 @@ public class ReplaceWithEscapedDoubleQuotesTest {
     public void replacingMultipleDoubleQuote() {
         assertEquals("multiple \"\"double\"\" quote", formatter.format("multiple \"double\" quote"));
     }
-    
+
     @Test
     public void replacingSingleDoubleQuoteHavingCommas() {
         assertEquals("this \"\"is\"\", a test", formatter.format("this \"is\", a test"));

@@ -35,12 +35,14 @@ public class StartNewStudyAction extends ExistingStudySearchAction {
 
     Study newStudy;
 
-    public StartNewStudyAction(JabRefFrame frame,
-                               FileUpdateMonitor fileUpdateMonitor,
-                               TaskExecutor taskExecutor,
-                               PreferencesService preferencesService,
-                               StateManager stateManager) {
-        super(frame,
+    public StartNewStudyAction(
+            JabRefFrame frame,
+            FileUpdateMonitor fileUpdateMonitor,
+            TaskExecutor taskExecutor,
+            PreferencesService preferencesService,
+            StateManager stateManager) {
+        super(
+                frame,
                 frame.getOpenDatabaseAction(),
                 frame.getDialogService(),
                 fileUpdateMonitor,
@@ -53,7 +55,8 @@ public class StartNewStudyAction extends ExistingStudySearchAction {
     @Override
     protected void crawlPreparation(Path studyRepositoryRoot) throws IOException, GitAPIException {
         StudyYamlParser studyYAMLParser = new StudyYamlParser();
-        studyYAMLParser.writeStudyYamlFile(newStudy, studyRepositoryRoot.resolve(StudyRepository.STUDY_DEFINITION_FILE_NAME));
+        studyYAMLParser.writeStudyYamlFile(
+                newStudy, studyRepositoryRoot.resolve(StudyRepository.STUDY_DEFINITION_FILE_NAME));
 
         // When execution reaches this point, the user created a new study.
         // The GitHandler is already called to initialize the repository with one single commit "Initial commit".
@@ -64,8 +67,9 @@ public class StartNewStudyAction extends ExistingStudySearchAction {
 
     @Override
     public void execute() {
-        Optional<SlrStudyAndDirectory> studyAndDirectory = dialogService.showCustomDialogAndWait(
-                new ManageStudyDefinitionView(preferencesService.getFilePreferences().getWorkingDirectory()));
+        Optional<SlrStudyAndDirectory> studyAndDirectory =
+                dialogService.showCustomDialogAndWait(new ManageStudyDefinitionView(
+                        preferencesService.getFilePreferences().getWorkingDirectory()));
         if (studyAndDirectory.isEmpty()) {
             return;
         }

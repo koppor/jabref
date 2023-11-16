@@ -50,7 +50,10 @@ public class EmbeddedBibFilePdfExporter extends Exporter {
     private final BibEntryTypesManager bibEntryTypesManager;
     private final FieldPreferences fieldPreferences;
 
-    public EmbeddedBibFilePdfExporter(BibDatabaseMode bibDatabaseMode, BibEntryTypesManager bibEntryTypesManager, FieldPreferences fieldPreferences) {
+    public EmbeddedBibFilePdfExporter(
+            BibDatabaseMode bibDatabaseMode,
+            BibEntryTypesManager bibEntryTypesManager,
+            FieldPreferences fieldPreferences) {
         super("bib", "Embedded BibTeX", StandardFileType.PDF);
         this.bibDatabaseMode = bibDatabaseMode;
         this.bibEntryTypesManager = bibEntryTypesManager;
@@ -77,7 +80,8 @@ public class EmbeddedBibFilePdfExporter extends Exporter {
                     contentStream.beginText();
                     contentStream.newLineAtOffset(25, 500);
                     contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                    contentStream.showText("This PDF was created by JabRef. It demonstrates the embedding of BibTeX data in PDF files. Please open the file metadata view of your PDF viewer to see the attached files.");
+                    contentStream.showText(
+                            "This PDF was created by JabRef. It demonstrates the embedding of BibTeX data in PDF files. Please open the file metadata view of your PDF viewer to see the attached files.");
                     contentStream.endText();
                 }
                 document.save(file.toString());
@@ -103,7 +107,8 @@ public class EmbeddedBibFilePdfExporter extends Exporter {
         // See https://issues.apache.org/jira/browse/PDFBOX-4028
         Path newFile = Files.createTempFile("JabRef", "pdf");
         try (PDDocument document = Loader.loadPDF(path.toFile())) {
-            PDDocumentNameDictionary nameDictionary = document.getDocumentCatalog().getNames();
+            PDDocumentNameDictionary nameDictionary =
+                    document.getDocumentCatalog().getNames();
             PDEmbeddedFilesNameTreeNode efTree;
             Map<String, PDComplexFileSpecification> names;
 

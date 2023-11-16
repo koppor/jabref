@@ -19,19 +19,18 @@ class AbstractCitationKeyPatternTest {
 
         pattern.setDefaultValue("[field1]spacer1[field2]spacer2[field3]");
         List<String> expectedPattern = List.of(
-            "[field1]spacer1[field2]spacer2[field3]",
-            "[",
-            "field1",
-            "]",
-            "spacer1",
-            "[",
-            "field2",
-            "]",
-            "spacer2",
-            "[",
-            "field3",
-            "]"
-        );
+                "[field1]spacer1[field2]spacer2[field3]",
+                "[",
+                "field1",
+                "]",
+                "spacer1",
+                "[",
+                "field2",
+                "]",
+                "spacer2",
+                "[",
+                "field3",
+                "]");
         assertEquals(expectedPattern, pattern.getDefaultValue());
     }
 
@@ -41,18 +40,17 @@ class AbstractCitationKeyPatternTest {
 
         pattern.setDefaultValue("[field1][field2]spacer2[field3]");
         List<String> expectedPattern = List.of(
-            "[field1][field2]spacer2[field3]",
-            "[",
-            "field1",
-            "]",
-            "[",
-            "field2",
-            "]",
-            "spacer2",
-            "[",
-            "field3",
-            "]"
-        );
+                "[field1][field2]spacer2[field3]",
+                "[",
+                "field1",
+                "]",
+                "[",
+                "field2",
+                "]",
+                "spacer2",
+                "[",
+                "field3",
+                "]");
         assertEquals(expectedPattern, pattern.getDefaultValue());
     }
 }

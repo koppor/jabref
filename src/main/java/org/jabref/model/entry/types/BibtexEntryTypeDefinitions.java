@@ -22,7 +22,13 @@ public class BibtexEntryTypeDefinitions {
     private static final BibEntryType ARTICLE = new BibEntryTypeBuilder()
             .withType(StandardEntryType.Article)
             .withRequiredFields(StandardField.AUTHOR, StandardField.TITLE, StandardField.JOURNAL, StandardField.YEAR)
-            .withImportantFields(StandardField.VOLUME, StandardField.NUMBER, StandardField.PAGES, StandardField.MONTH, StandardField.ISSN, StandardField.NOTE)
+            .withImportantFields(
+                    StandardField.VOLUME,
+                    StandardField.NUMBER,
+                    StandardField.PAGES,
+                    StandardField.MONTH,
+                    StandardField.ISSN,
+                    StandardField.NOTE)
             .build();
 
     /**
@@ -33,8 +39,20 @@ public class BibtexEntryTypeDefinitions {
      */
     private static final BibEntryType BOOK = new BibEntryTypeBuilder()
             .withType(StandardEntryType.Book)
-            .withRequiredFields(new OrFields(StandardField.AUTHOR, StandardField.EDITOR), StandardField.TITLE, StandardField.PUBLISHER, StandardField.YEAR)
-            .withImportantFields(StandardField.VOLUME, StandardField.NUMBER, StandardField.SERIES, StandardField.ADDRESS, StandardField.EDITION, StandardField.MONTH, StandardField.ISBN, StandardField.NOTE)
+            .withRequiredFields(
+                    new OrFields(StandardField.AUTHOR, StandardField.EDITOR),
+                    StandardField.TITLE,
+                    StandardField.PUBLISHER,
+                    StandardField.YEAR)
+            .withImportantFields(
+                    StandardField.VOLUME,
+                    StandardField.NUMBER,
+                    StandardField.SERIES,
+                    StandardField.ADDRESS,
+                    StandardField.EDITION,
+                    StandardField.MONTH,
+                    StandardField.ISBN,
+                    StandardField.NOTE)
             .build();
 
     /**
@@ -46,7 +64,13 @@ public class BibtexEntryTypeDefinitions {
     private static final BibEntryType BOOKLET = new BibEntryTypeBuilder()
             .withType(StandardEntryType.Booklet)
             .withRequiredFields(StandardField.TITLE)
-            .withImportantFields(StandardField.AUTHOR, StandardField.HOWPUBLISHED, StandardField.ADDRESS, StandardField.MONTH, StandardField.YEAR, StandardField.NOTE)
+            .withImportantFields(
+                    StandardField.AUTHOR,
+                    StandardField.HOWPUBLISHED,
+                    StandardField.ADDRESS,
+                    StandardField.MONTH,
+                    StandardField.YEAR,
+                    StandardField.NOTE)
             .build();
 
     /**
@@ -58,7 +82,17 @@ public class BibtexEntryTypeDefinitions {
     private static final BibEntryType CONFERENCE = new BibEntryTypeBuilder()
             .withType(StandardEntryType.Conference)
             .withRequiredFields(StandardField.AUTHOR, StandardField.TITLE, StandardField.BOOKTITLE, StandardField.YEAR)
-            .withImportantFields(StandardField.EDITOR, StandardField.VOLUME, StandardField.NUMBER, StandardField.SERIES, StandardField.PAGES, StandardField.ADDRESS, StandardField.MONTH, StandardField.ORGANIZATION, StandardField.PUBLISHER, StandardField.NOTE)
+            .withImportantFields(
+                    StandardField.EDITOR,
+                    StandardField.VOLUME,
+                    StandardField.NUMBER,
+                    StandardField.SERIES,
+                    StandardField.PAGES,
+                    StandardField.ADDRESS,
+                    StandardField.MONTH,
+                    StandardField.ORGANIZATION,
+                    StandardField.PUBLISHER,
+                    StandardField.NOTE)
             .build();
 
     /**
@@ -69,8 +103,23 @@ public class BibtexEntryTypeDefinitions {
      */
     private static final BibEntryType INBOOK = new BibEntryTypeBuilder()
             .withType(StandardEntryType.InBook)
-            .withRequiredFields(Arrays.asList(new OrFields(StandardField.CHAPTER, StandardField.PAGES), new OrFields(StandardField.AUTHOR, StandardField.EDITOR)), StandardField.TITLE, StandardField.PUBLISHER, StandardField.YEAR)
-            .withImportantFields(StandardField.VOLUME, StandardField.NUMBER, StandardField.SERIES, StandardField.TYPE, StandardField.ADDRESS, StandardField.EDITION, StandardField.MONTH, StandardField.ISBN, StandardField.NOTE)
+            .withRequiredFields(
+                    Arrays.asList(
+                            new OrFields(StandardField.CHAPTER, StandardField.PAGES),
+                            new OrFields(StandardField.AUTHOR, StandardField.EDITOR)),
+                    StandardField.TITLE,
+                    StandardField.PUBLISHER,
+                    StandardField.YEAR)
+            .withImportantFields(
+                    StandardField.VOLUME,
+                    StandardField.NUMBER,
+                    StandardField.SERIES,
+                    StandardField.TYPE,
+                    StandardField.ADDRESS,
+                    StandardField.EDITION,
+                    StandardField.MONTH,
+                    StandardField.ISBN,
+                    StandardField.NOTE)
             .build();
 
     /**
@@ -80,8 +129,25 @@ public class BibtexEntryTypeDefinitions {
      */
     private static final BibEntryType INCOLLECTION = new BibEntryTypeBuilder()
             .withType(StandardEntryType.InCollection)
-            .withRequiredFields(StandardField.AUTHOR, StandardField.TITLE, StandardField.BOOKTITLE, StandardField.PUBLISHER, StandardField.YEAR)
-            .withImportantFields(StandardField.EDITOR, StandardField.VOLUME, StandardField.NUMBER, StandardField.SERIES, StandardField.TYPE, StandardField.CHAPTER, StandardField.PAGES, StandardField.ADDRESS, StandardField.EDITION, StandardField.MONTH, StandardField.ISBN, StandardField.NOTE)
+            .withRequiredFields(
+                    StandardField.AUTHOR,
+                    StandardField.TITLE,
+                    StandardField.BOOKTITLE,
+                    StandardField.PUBLISHER,
+                    StandardField.YEAR)
+            .withImportantFields(
+                    StandardField.EDITOR,
+                    StandardField.VOLUME,
+                    StandardField.NUMBER,
+                    StandardField.SERIES,
+                    StandardField.TYPE,
+                    StandardField.CHAPTER,
+                    StandardField.PAGES,
+                    StandardField.ADDRESS,
+                    StandardField.EDITION,
+                    StandardField.MONTH,
+                    StandardField.ISBN,
+                    StandardField.NOTE)
             .build();
 
     /**
@@ -93,7 +159,17 @@ public class BibtexEntryTypeDefinitions {
     private static final BibEntryType INPROCEEDINGS = new BibEntryTypeBuilder()
             .withType(StandardEntryType.InProceedings)
             .withRequiredFields(StandardField.AUTHOR, StandardField.TITLE, StandardField.BOOKTITLE, StandardField.YEAR)
-            .withImportantFields(StandardField.EDITOR, StandardField.VOLUME, StandardField.NUMBER, StandardField.SERIES, StandardField.PAGES, StandardField.ADDRESS, StandardField.MONTH, StandardField.ORGANIZATION, StandardField.PUBLISHER, StandardField.NOTE)
+            .withImportantFields(
+                    StandardField.EDITOR,
+                    StandardField.VOLUME,
+                    StandardField.NUMBER,
+                    StandardField.SERIES,
+                    StandardField.PAGES,
+                    StandardField.ADDRESS,
+                    StandardField.MONTH,
+                    StandardField.ORGANIZATION,
+                    StandardField.PUBLISHER,
+                    StandardField.NOTE)
             .build();
 
     /**
@@ -101,8 +177,19 @@ public class BibtexEntryTypeDefinitions {
      * Required field: title.
      * Optional fields: author, organization, address, edition, month, year, note.
      */
-    private static final BibEntryType MANUAL = new BibEntryTypeBuilder().withRequiredFields(StandardField.TITLE).withImportantFields(StandardField.AUTHOR, StandardField.ORGANIZATION, StandardField.ADDRESS, StandardField.EDITION, StandardField.MONTH, StandardField.YEAR, StandardField.ISBN, StandardField.NOTE).withType(StandardEntryType.Manual)
-                                                                        .build();
+    private static final BibEntryType MANUAL = new BibEntryTypeBuilder()
+            .withRequiredFields(StandardField.TITLE)
+            .withImportantFields(
+                    StandardField.AUTHOR,
+                    StandardField.ORGANIZATION,
+                    StandardField.ADDRESS,
+                    StandardField.EDITION,
+                    StandardField.MONTH,
+                    StandardField.YEAR,
+                    StandardField.ISBN,
+                    StandardField.NOTE)
+            .withType(StandardEntryType.Manual)
+            .build();
 
     /**
      * A Master's thesis.
@@ -124,7 +211,13 @@ public class BibtexEntryTypeDefinitions {
      */
     private static final BibEntryType MISC = new BibEntryTypeBuilder()
             .withType(StandardEntryType.Misc)
-            .withImportantFields(StandardField.AUTHOR, StandardField.TITLE, StandardField.HOWPUBLISHED, StandardField.MONTH, StandardField.YEAR, StandardField.NOTE)
+            .withImportantFields(
+                    StandardField.AUTHOR,
+                    StandardField.TITLE,
+                    StandardField.HOWPUBLISHED,
+                    StandardField.MONTH,
+                    StandardField.YEAR,
+                    StandardField.NOTE)
             .build();
 
     /**
@@ -148,7 +241,17 @@ public class BibtexEntryTypeDefinitions {
     private static final BibEntryType PROCEEDINGS = new BibEntryTypeBuilder()
             .withType(StandardEntryType.Proceedings)
             .withRequiredFields(StandardField.TITLE, StandardField.YEAR)
-            .withImportantFields(StandardField.EDITOR, StandardField.VOLUME, StandardField.NUMBER, StandardField.SERIES, StandardField.ADDRESS, StandardField.PUBLISHER, StandardField.MONTH, StandardField.ORGANIZATION, StandardField.ISBN, StandardField.NOTE)
+            .withImportantFields(
+                    StandardField.EDITOR,
+                    StandardField.VOLUME,
+                    StandardField.NUMBER,
+                    StandardField.SERIES,
+                    StandardField.ADDRESS,
+                    StandardField.PUBLISHER,
+                    StandardField.MONTH,
+                    StandardField.ORGANIZATION,
+                    StandardField.ISBN,
+                    StandardField.NOTE)
             .build();
 
     /**
@@ -159,8 +262,14 @@ public class BibtexEntryTypeDefinitions {
      */
     private static final BibEntryType TECHREPORT = new BibEntryTypeBuilder()
             .withType(StandardEntryType.TechReport)
-            .withRequiredFields(StandardField.AUTHOR, StandardField.TITLE, StandardField.INSTITUTION, StandardField.YEAR)
-            .withImportantFields(StandardField.TYPE, StandardField.NUMBER, StandardField.ADDRESS, StandardField.MONTH, StandardField.NOTE)
+            .withRequiredFields(
+                    StandardField.AUTHOR, StandardField.TITLE, StandardField.INSTITUTION, StandardField.YEAR)
+            .withImportantFields(
+                    StandardField.TYPE,
+                    StandardField.NUMBER,
+                    StandardField.ADDRESS,
+                    StandardField.MONTH,
+                    StandardField.NOTE)
             .build();
 
     /**
@@ -175,11 +284,23 @@ public class BibtexEntryTypeDefinitions {
             .withImportantFields(StandardField.MONTH, StandardField.YEAR)
             .build();
 
-    public static final List<BibEntryType> ALL = Arrays.asList(ARTICLE, INBOOK, BOOK, BOOKLET, INCOLLECTION, CONFERENCE,
-            INPROCEEDINGS, PROCEEDINGS, MANUAL, MASTERSTHESIS, PHDTHESIS, TECHREPORT, UNPUBLISHED, MISC);
+    public static final List<BibEntryType> ALL = Arrays.asList(
+            ARTICLE,
+            INBOOK,
+            BOOK,
+            BOOKLET,
+            INCOLLECTION,
+            CONFERENCE,
+            INPROCEEDINGS,
+            PROCEEDINGS,
+            MANUAL,
+            MASTERSTHESIS,
+            PHDTHESIS,
+            TECHREPORT,
+            UNPUBLISHED,
+            MISC);
 
     public static final List<BibEntryType> RECOMMENDED = Arrays.asList(ARTICLE, BOOK, INPROCEEDINGS, TECHREPORT, MISC);
 
-    private BibtexEntryTypeDefinitions() {
-    }
+    private BibtexEntryTypeDefinitions() {}
 }

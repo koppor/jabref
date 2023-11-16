@@ -23,7 +23,8 @@ public class SearchShortScienceAction extends SimpleCommand {
     private final StateManager stateManager;
     private final PreferencesService preferencesService;
 
-    public SearchShortScienceAction(DialogService dialogService, StateManager stateManager, PreferencesService preferencesService) {
+    public SearchShortScienceAction(
+            DialogService dialogService, StateManager stateManager, PreferencesService preferencesService) {
         this.dialogService = dialogService;
         this.stateManager = stateManager;
         this.preferencesService = preferencesService;
@@ -43,7 +44,13 @@ public class SearchShortScienceAction extends SimpleCommand {
             }
             ExternalLinkCreator.getShortScienceSearchURL(bibEntries.get(0)).ifPresent(url -> {
                 try {
-                    JabRefDesktop.openExternalViewer(databaseContext, preferencesService, url, StandardField.URL, dialogService, bibEntries.get(0));
+                    JabRefDesktop.openExternalViewer(
+                            databaseContext,
+                            preferencesService,
+                            url,
+                            StandardField.URL,
+                            dialogService,
+                            bibEntries.get(0));
                 } catch (IOException ex) {
                     dialogService.showErrorDialogAndWait(Localization.lang("Unable to open ShortScience."), ex);
                 }

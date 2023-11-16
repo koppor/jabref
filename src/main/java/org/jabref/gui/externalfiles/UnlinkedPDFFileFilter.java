@@ -25,7 +25,10 @@ public class UnlinkedPDFFileFilter implements DirectoryStream.Filter<Path> {
     private final DatabaseFileLookup lookup;
     private final Filter<Path> fileFilter;
 
-    public UnlinkedPDFFileFilter(DirectoryStream.Filter<Path> fileFilter, BibDatabaseContext databaseContext, FilePreferences filePreferences) {
+    public UnlinkedPDFFileFilter(
+            DirectoryStream.Filter<Path> fileFilter,
+            BibDatabaseContext databaseContext,
+            FilePreferences filePreferences) {
         this.fileFilter = fileFilter;
         this.lookup = new DatabaseFileLookup(databaseContext, filePreferences);
     }
@@ -35,7 +38,9 @@ public class UnlinkedPDFFileFilter implements DirectoryStream.Filter<Path> {
         if (Files.isDirectory(pathname)) {
             return true;
         } else {
-            return fileFilter.accept(pathname) && !lookup.lookupDatabase(pathname) && !lookup.getPathOfDatabase().equals(pathname);
+            return fileFilter.accept(pathname)
+                    && !lookup.lookupDatabase(pathname)
+                    && !lookup.getPathOfDatabase().equals(pathname);
         }
     }
 }

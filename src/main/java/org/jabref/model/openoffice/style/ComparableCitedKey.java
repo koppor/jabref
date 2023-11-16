@@ -13,4 +13,3 @@ public interface ComparableCitedKey {
 
     Optional<BibEntry> getBibEntry();
 }
-

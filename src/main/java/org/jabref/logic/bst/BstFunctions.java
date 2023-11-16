@@ -45,12 +45,13 @@ public class BstFunctions {
         }
     }
 
-    public BstFunctions(BstVMContext bstVMContext,
-                        StringBuilder bbl) {
+    public BstFunctions(BstVMContext bstVMContext, StringBuilder bbl) {
         this.strings = bstVMContext.strings();
         this.integers = bstVMContext.integers();
         this.functions = bstVMContext.functions();
-        this.preamble = Optional.ofNullable(bstVMContext.bibDatabase()).flatMap(BibDatabase::getPreamble).orElse("");
+        this.preamble = Optional.ofNullable(bstVMContext.bibDatabase())
+                .flatMap(BibDatabase::getPreamble)
+                .orElse("");
         this.stack = bstVMContext.stack();
 
         this.bbl = bbl;
@@ -107,7 +108,8 @@ public class BstFunctions {
      */
     private void bstIsGreaterThan(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.size() < 2) {
-            throw new BstVMException("Not enough operands on stack for operation > (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation > (line %d)".formatted(ctx.start.getLine()));
         }
         Object o2 = stack.pop();
         Object o1 = stack.pop();
@@ -144,7 +146,8 @@ public class BstFunctions {
      */
     private void bstEquals(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.size() < 2) {
-            throw new BstVMException("Not enough operands on stack for operation = (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation = (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
         Object o2 = stack.pop();
@@ -167,7 +170,8 @@ public class BstFunctions {
      */
     private void bstAdd(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.size() < 2) {
-            throw new BstVMException("Not enough operands on stack for operation + (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation + (line %d)".formatted(ctx.start.getLine()));
         }
         Object o2 = stack.pop();
         Object o1 = stack.pop();
@@ -185,7 +189,8 @@ public class BstFunctions {
      */
     private void bstSubtract(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.size() < 2) {
-            throw new BstVMException("Not enough operands on stack for operation - (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation - (line %d)".formatted(ctx.start.getLine()));
         }
         Object o2 = stack.pop();
         Object o1 = stack.pop();
@@ -204,7 +209,8 @@ public class BstFunctions {
      */
     private void bstConcat(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.size() < 2) {
-            throw new BstVMException("Not enough operands on stack for operation * (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation * (line %d)".formatted(ctx.start.getLine()));
         }
         Object o2 = stack.pop();
         Object o1 = stack.pop();
@@ -239,7 +245,8 @@ public class BstFunctions {
         @Override
         public void execute(BstVMVisitor visitor, ParserRuleContext ctx, BstEntry bstEntry) {
             if (stack.size() < 2) {
-                throw new BstVMException("Not enough operands on stack for operation := (line %d)".formatted(ctx.start.getLine()));
+                throw new BstVMException(
+                        "Not enough operands on stack for operation := (line %d)".formatted(ctx.start.getLine()));
             }
             Object o1 = stack.pop();
             Object o2 = stack.pop();
@@ -280,12 +287,14 @@ public class BstFunctions {
      */
     private void bstAddPeriod(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.isEmpty()) {
-            throw new BstVMException("Not enough operands on stack for operation add.period$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation add.period$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
 
         if (!(o1 instanceof String s)) {
-            throw new BstVMException("Can only add a period to a string for add.period$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Can only add a period to a string for add.period$ (line %d)".formatted(ctx.start.getLine()));
         }
 
         Matcher m = ADD_PERIOD_PATTERN.matcher(s);
@@ -317,7 +326,9 @@ public class BstFunctions {
     public class BstCallTypeFunction implements BstFunction {
         @Override
         public void execute(BstVMVisitor visitor, ParserRuleContext ctx) {
-            throw new BstVMException("Call.type$ can only be called from within a context (ITERATE or REVERSE). (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Call.type$ can only be called from within a context (ITERATE or REVERSE). (line %d)"
+                            .formatted(ctx.start.getLine()));
         }
 
         @Override
@@ -351,17 +362,20 @@ public class BstFunctions {
      */
     private void bstChangeCase(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.size() < 2) {
-            throw new BstVMException("Not enough operands on stack for operation change.case$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation change.case$ (line %d)".formatted(ctx.start.getLine()));
         }
 
         Object o1 = stack.pop();
         if (!((o1 instanceof String format) && (format.length() == 1))) {
-            throw new BstVMException("A format string of length 1 is needed for change.case$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "A format string of length 1 is needed for change.case$ (line %d)".formatted(ctx.start.getLine()));
         }
 
         Object o2 = stack.pop();
         if (!(o2 instanceof String toChange)) {
-            throw new BstVMException("A string is needed as second parameter for change.case$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "A string is needed as second parameter for change.case$ (line %d)".formatted(ctx.start.getLine()));
         }
 
         stack.push(BstCaseChanger.changeCase(toChange, BstCaseChanger.FormatMode.of(format)));
@@ -374,12 +388,14 @@ public class BstFunctions {
      */
     private void bstChrToInt(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.isEmpty()) {
-            throw new BstVMException("Not enough operands on stack for operation chr.to.int$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation chr.to.int$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
 
         if (!((o1 instanceof String s) && (((String) o1).length() == 1))) {
-            throw new BstVMException("Can only perform chr.to.int$ on string with length 1 (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Can only perform chr.to.int$ on string with length 1 (line %d)".formatted(ctx.start.getLine()));
         }
 
         stack.push((int) s.charAt(0));
@@ -411,7 +427,8 @@ public class BstFunctions {
      */
     private void bstDuplicate(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.isEmpty()) {
-            throw new BstVMException("Not enough operands on stack for operation duplicate$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation duplicate$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
 
@@ -426,7 +443,8 @@ public class BstFunctions {
      */
     private void bstEmpty(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.isEmpty()) {
-            throw new BstVMException("Not enough operands on stack for operation empty$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation empty$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
 
@@ -455,7 +473,8 @@ public class BstFunctions {
      */
     private void bstFormatName(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.size() < 3) {
-            throw new BstVMException("Not enough operands on stack for operation format.name$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation format.name$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
         Object o2 = stack.pop();
@@ -476,7 +495,8 @@ public class BstFunctions {
         } else {
             AuthorList a = AuthorList.parse(names);
             if (name > a.getNumberOfAuthors()) {
-                throw new BstVMException("Author Out of Bounds. Number %d invalid for %s (line %d)".formatted(name, names, ctx.start.getLine()));
+                throw new BstVMException("Author Out of Bounds. Number %d invalid for %s (line %d)"
+                        .formatted(name, names, ctx.start.getLine()));
             }
             Author author = a.getAuthor(name - 1);
 
@@ -502,7 +522,8 @@ public class BstFunctions {
         if (!((f1 instanceof BstVMVisitor.Identifier) || (f1 instanceof ParseTree))
                 && ((f2 instanceof BstVMVisitor.Identifier) || (f2 instanceof ParseTree))
                 && (i instanceof Integer)) {
-            throw new BstVMException("Expecting two functions and an integer for if$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Expecting two functions and an integer for if$ (line %d)".formatted(ctx.start.getLine()));
         }
 
         if (((Integer) i) > 0) {
@@ -529,12 +550,14 @@ public class BstFunctions {
      */
     private void bstIntToChr(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.isEmpty()) {
-            throw new BstVMException("Not enough operands on stack for operation int.to.chr$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation int.to.chr$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
 
         if (!(o1 instanceof Integer i)) {
-            throw new BstVMException("Can only perform operation int.to.chr$ on an Integer (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Can only perform operation int.to.chr$ on an Integer (line %d)".formatted(ctx.start.getLine()));
         }
 
         stack.push(String.valueOf((char) i.intValue()));
@@ -546,12 +569,14 @@ public class BstFunctions {
      */
     private void bstIntToStr(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.isEmpty()) {
-            throw new BstVMException("Not enough operands on stack for operation int.to.str$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation int.to.str$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
 
         if (!(o1 instanceof Integer)) {
-            throw new BstVMException("Can only transform an integer to an string using int.to.str$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException("Can only transform an integer to an string using int.to.str$ (line %d)"
+                    .formatted(ctx.start.getLine()));
         }
 
         stack.push(o1.toString());
@@ -563,7 +588,8 @@ public class BstFunctions {
      */
     private void bstMissing(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.isEmpty()) {
-            throw new BstVMException("Not enough operands on stack for operation missing$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation missing$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
 
@@ -600,12 +626,14 @@ public class BstFunctions {
      */
     private void bstNumNames(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.isEmpty()) {
-            throw new BstVMException("Not enough operands on stack for operation num.names$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation num.names$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
 
         if (!(o1 instanceof String s)) {
-            throw new BstVMException("Need a string at the top of the stack for num.names$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Need a string at the top of the stack for num.names$ (line %d)".formatted(ctx.start.getLine()));
         }
 
         stack.push(AuthorList.parse(s).getNumberOfAuthors());
@@ -638,7 +666,8 @@ public class BstFunctions {
      */
     private void bstPurify(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.isEmpty()) {
-            throw new BstVMException("Not enough operands on stack for operation purify$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation purify$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
 
@@ -686,14 +715,16 @@ public class BstFunctions {
      */
     private void bstSubstring(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.size() < 3) {
-            throw new BstVMException("Not enough operands on stack for operation substring$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation substring$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
         Object o2 = stack.pop();
         Object o3 = stack.pop();
 
         if (!((o1 instanceof Integer len) && (o2 instanceof Integer start) && (o3 instanceof String s))) {
-            throw new BstVMException("Expecting two integers and a string for substring$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Expecting two integers and a string for substring$ (line %d)".formatted(ctx.start.getLine()));
         }
 
         int lenI = len;
@@ -728,7 +759,8 @@ public class BstFunctions {
      */
     private void bstSwap(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.size() < 2) {
-            throw new BstVMException("Not enough operands on stack for operation swap$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation swap$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object f1 = stack.pop();
         Object f2 = stack.pop();
@@ -750,12 +782,14 @@ public class BstFunctions {
      */
     private void bstTextLength(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.isEmpty()) {
-            throw new BstVMException("Not enough operands on stack for operation text.length$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation text.length$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
 
         if (!(o1 instanceof String s)) {
-            throw new BstVMException("Can only perform operation on a string text.length$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Can only perform operation on a string text.length$ (line %d)".formatted(ctx.start.getLine()));
         }
 
         char[] c = s.toCharArray();
@@ -806,7 +840,8 @@ public class BstFunctions {
      */
     private void bstTextPrefix(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.size() < 2) {
-            throw new BstVMException("Not enough operands on stack for operation text.prefix$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation text.prefix$ (line %d)".formatted(ctx.start.getLine()));
         }
 
         Object o1 = stack.pop();
@@ -870,7 +905,8 @@ public class BstFunctions {
      */
     private void bstWhile(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.size() < 2) {
-            throw new BstVMException("Not enough operands on stack for operation while$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation while$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object f2 = stack.pop();
         Object f1 = stack.pop();
@@ -906,7 +942,8 @@ public class BstFunctions {
      */
     private void bstWidth(BstVMVisitor visitor, ParserRuleContext ctx) {
         if (stack.isEmpty()) {
-            throw new BstVMException("Not enough operands on stack for operation width$ (line %d)".formatted(ctx.start.getLine()));
+            throw new BstVMException(
+                    "Not enough operands on stack for operation width$ (line %d)".formatted(ctx.start.getLine()));
         }
         Object o1 = stack.pop();
 

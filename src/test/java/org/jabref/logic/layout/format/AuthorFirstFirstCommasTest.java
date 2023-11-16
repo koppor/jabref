@@ -11,8 +11,8 @@ public class AuthorFirstFirstCommasTest {
      */
     @Test
     public void testFormat() {
-        assertEquals("John von Neumann, John Smith and Peter Black Brown, Jr",
-                new AuthorFirstFirstCommas()
-                        .format("von Neumann,,John and John Smith and Black Brown, Jr, Peter"));
+        assertEquals(
+                "John von Neumann, John Smith and Peter Black Brown, Jr",
+                new AuthorFirstFirstCommas().format("von Neumann,,John and John Smith and Black Brown, Jr, Peter"));
     }
 }

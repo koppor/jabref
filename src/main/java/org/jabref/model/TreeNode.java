@@ -114,8 +114,10 @@ public abstract class TreeNode<T extends TreeNode<T>> {
      * @return the child index of this node in its parent
      */
     public int getPositionInParent() {
-        return getParent().orElseThrow(() -> new UnsupportedOperationException("Roots have no position in parent"))
-                          .getIndexOfChild((T) this).get();
+        return getParent()
+                .orElseThrow(() -> new UnsupportedOperationException("Roots have no position in parent"))
+                .getIndexOfChild((T) this)
+                .get();
     }
 
     /**

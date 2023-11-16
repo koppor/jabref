@@ -53,16 +53,20 @@ public class SpringerLink implements FulltextFetcher, CustomizableKeyFetcher {
         // Available in catalog?
         try {
             HttpResponse<JsonNode> jsonResponse = Unirest.get(API_URL)
-                                                         .queryString("api_key", importerPreferences.getApiKey(getName()).orElse(API_KEY))
-                                                         .queryString("q", String.format("doi:%s", doi.get().getDOI()))
-                                                         .asJson();
+                    .queryString(
+                            "api_key", importerPreferences.getApiKey(getName()).orElse(API_KEY))
+                    .queryString("q", String.format("doi:%s", doi.get().getDOI()))
+                    .asJson();
             if (jsonResponse.getBody() != null) {
                 JSONObject json = jsonResponse.getBody().getObject();
                 int results = json.getJSONArray("result").getJSONObject(0).getInt("total");
 
                 if (results > 0) {
                     LOGGER.info("Fulltext PDF found @ Springer.");
-                    return Optional.of(new URL("http", CONTENT_HOST, String.format("/content/pdf/%s.pdf", doi.get().getDOI())));
+                    return Optional.of(new URL(
+                            "http",
+                            CONTENT_HOST,
+                            String.format("/content/pdf/%s.pdf", doi.get().getDOI())));
                 }
             }
         } catch (UnirestException e) {

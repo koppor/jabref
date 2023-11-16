@@ -10,12 +10,11 @@ import org.jabref.logic.l10n.Localization;
 import com.airhacks.afterburner.views.ViewLoader;
 
 public class ExportTab extends AbstractPreferenceTabView<ExportTabViewModel> implements PreferencesTab {
-    @FXML private SaveOrderConfigPanel exportOrderPanel;
+    @FXML
+    private SaveOrderConfigPanel exportOrderPanel;
 
     public ExportTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override

@@ -27,11 +27,11 @@ import org.jabref.model.entry.types.StandardEntryType;
  */
 public class OvidImporter extends Importer {
 
-    private static final Pattern OVID_SOURCE_PATTERN = Pattern
-            .compile("Source ([ \\w&\\-,:]+)\\.[ ]+([0-9]+)\\(([\\w\\-]+)\\):([0-9]+\\-?[0-9]+?)\\,.*([0-9][0-9][0-9][0-9])");
+    private static final Pattern OVID_SOURCE_PATTERN = Pattern.compile(
+            "Source ([ \\w&\\-,:]+)\\.[ ]+([0-9]+)\\(([\\w\\-]+)\\):([0-9]+\\-?[0-9]+?)\\,.*([0-9][0-9][0-9][0-9])");
 
-    private static final Pattern OVID_SOURCE_PATTERN_NO_ISSUE = Pattern
-            .compile("Source ([ \\w&\\-,:]+)\\.[ ]+([0-9]+):([0-9]+\\-?[0-9]+?)\\,.*([0-9][0-9][0-9][0-9])");
+    private static final Pattern OVID_SOURCE_PATTERN_NO_ISSUE =
+            Pattern.compile("Source ([ \\w&\\-,:]+)\\.[ ]+([0-9]+):([0-9]+\\-?[0-9]+?)\\,.*([0-9][0-9][0-9][0-9])");
 
     private static final Pattern OVID_SOURCE_PATTERN_2 = Pattern.compile(
             "([ \\w&\\-,]+)\\. Vol ([0-9]+)\\(([\\w\\-]+)\\) ([A-Za-z]+) ([0-9][0-9][0-9][0-9]), ([0-9]+\\-?[0-9]+)");
@@ -39,8 +39,8 @@ public class OvidImporter extends Importer {
     private static final Pattern INCOLLECTION_PATTERN = Pattern.compile(
             "(.+)\\(([0-9][0-9][0-9][0-9])\\)\\. ([ \\w&\\-,:]+)\\.[ ]+\\(pp. ([0-9]+\\-?[0-9]+?)\\).[A-Za-z0-9, ]+pp\\. "
                     + "([\\w, ]+): ([\\w, ]+)");
-    private static final Pattern BOOK_PATTERN = Pattern.compile(
-            "\\(([0-9][0-9][0-9][0-9])\\)\\. [A-Za-z, ]+([0-9]+) pp\\. ([\\w, ]+): ([\\w, ]+)");
+    private static final Pattern BOOK_PATTERN =
+            Pattern.compile("\\(([0-9][0-9][0-9][0-9])\\)\\. [A-Za-z, ]+([0-9]+) pp\\. ([\\w, ]+): ([\\w, ]+)");
 
     private static final String OVID_PATTERN_STRING = "<[0-9]+>";
     private static final Pattern OVID_PATTERN = Pattern.compile(OVID_PATTERN_STRING);
@@ -126,7 +126,8 @@ public class OvidImporter extends Importer {
                         h.put(StandardField.ISSUE, matcher.group(3));
                         h.put(StandardField.PAGES, matcher.group(4));
                         h.put(StandardField.YEAR, matcher.group(5));
-                    } else if ((matcher = OvidImporter.OVID_SOURCE_PATTERN_NO_ISSUE.matcher(content)).find()) { // may be missing the issue
+                    } else if ((matcher = OvidImporter.OVID_SOURCE_PATTERN_NO_ISSUE.matcher(content))
+                            .find()) { // may be missing the issue
                         h.put(StandardField.JOURNAL, matcher.group(1));
                         h.put(StandardField.VOLUME, matcher.group(2));
                         h.put(StandardField.PAGES, matcher.group(3));
@@ -196,7 +197,9 @@ public class OvidImporter extends Importer {
             }
 
             // Set the entrytype properly:
-            EntryType entryType = h.containsKey(InternalField.TYPE_HEADER) ? EntryTypeFactory.parse(h.get(InternalField.TYPE_HEADER)) : BibEntry.DEFAULT_TYPE;
+            EntryType entryType = h.containsKey(InternalField.TYPE_HEADER)
+                    ? EntryTypeFactory.parse(h.get(InternalField.TYPE_HEADER))
+                    : BibEntry.DEFAULT_TYPE;
             h.remove(InternalField.TYPE_HEADER);
             if (entryType.equals(StandardEntryType.Book) && h.containsKey(new UnknownField("chaptertitle"))) {
                 // This means we have an "incollection" entry.

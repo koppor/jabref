@@ -34,8 +34,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(ApplicationExtension.class)
 class ThemeManagerTest {
 
-    private static final String TEST_CSS_DATA = "data:text/css;charset=utf-8;base64,LyogQmlibGF0ZXggU291cmNlIENvZGUgKi8KLmNvZGUtYXJlYSAudGV4dCB7CiAgICAtZngtZm9udC1mYW1pbHk6IG1vbm9zcGFjZTsKfQ==";
-    private static final String TEST_CSS_CONTENT = """
+    private static final String TEST_CSS_DATA =
+            "data:text/css;charset=utf-8;base64,LyogQmlibGF0ZXggU291cmNlIENvZGUgKi8KLmNvZGUtYXJlYSAudGV4dCB7CiAgICAtZngtZm9udC1mYW1pbHk6IG1vbm9zcGFjZTsKfQ==";
+    private static final String TEST_CSS_CONTENT =
+            """
             /* Biblatex Source Code */
             .code-area .text {
                 -fx-font-family: monospace;
@@ -59,9 +61,8 @@ class ThemeManagerTest {
 
         assertEquals(Theme.Type.CUSTOM, themeManager.getActiveTheme().getType());
         assertEquals(testCss.toString(), themeManager.getActiveTheme().getName());
-        Optional<String> cssLocationBeforeDeletion = themeManager.getActiveTheme()
-                                                                 .getAdditionalStylesheet()
-                                                                 .map(StyleSheet::getWebEngineStylesheet);
+        Optional<String> cssLocationBeforeDeletion =
+                themeManager.getActiveTheme().getAdditionalStylesheet().map(StyleSheet::getWebEngineStylesheet);
         assertTrue(cssLocationBeforeDeletion.isPresent(), "expected custom theme location to be available");
         assertEquals(TEST_CSS_DATA, cssLocationBeforeDeletion.get());
     }
@@ -69,21 +70,23 @@ class ThemeManagerTest {
     @Test
     public void customThemeAvailableEvenWhenDeleted() throws IOException {
         /* Create a temporary custom theme that is just a small snippet of CSS. There is no CSS
-         validation (at the moment) but by making a valid CSS block we don't preclude adding validation later */
+        validation (at the moment) but by making a valid CSS block we don't preclude adding validation later */
         Path testCss = tempFolder.resolve("test.css");
         Files.writeString(testCss, TEST_CSS_CONTENT, StandardOpenOption.CREATE);
         WorkspacePreferences workspacePreferences = mock(WorkspacePreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(workspacePreferences.getTheme()).thenReturn(new Theme(testCss.toString()));
 
         // ActiveTheme should provide the additionalStylesheet that was created before
-        ThemeManager themeManagerCreatedBeforeFileDeleted = new ThemeManager(workspacePreferences, new DummyFileUpdateMonitor(), Runnable::run);
+        ThemeManager themeManagerCreatedBeforeFileDeleted =
+                new ThemeManager(workspacePreferences, new DummyFileUpdateMonitor(), Runnable::run);
 
         Files.delete(testCss);
 
         // ActiveTheme should keep the additionalStylesheet in memory and provide it
-        Optional<String> cssLocationAfterDeletion = themeManagerCreatedBeforeFileDeleted.getActiveTheme()
-                                                                                        .getAdditionalStylesheet()
-                                                                                        .map(StyleSheet::getWebEngineStylesheet);
+        Optional<String> cssLocationAfterDeletion = themeManagerCreatedBeforeFileDeleted
+                .getActiveTheme()
+                .getAdditionalStylesheet()
+                .map(StyleSheet::getWebEngineStylesheet);
         assertTrue(cssLocationAfterDeletion.isPresent(), "expected custom theme location to be available");
         assertEquals(TEST_CSS_DATA, cssLocationAfterDeletion.get());
     }
@@ -104,17 +107,20 @@ class ThemeManagerTest {
         when(workspacePreferences.getTheme()).thenReturn(new Theme(testCss.toString()));
 
         // ActiveTheme should provide no additionalStylesheet when no file exists
-        ThemeManager themeManagerCreatedBeforeFileExists = new ThemeManager(workspacePreferences, new DummyFileUpdateMonitor(), Runnable::run);
-        assertEquals(Optional.empty(), themeManagerCreatedBeforeFileExists.getActiveTheme()
-                                                                          .getAdditionalStylesheet(),
+        ThemeManager themeManagerCreatedBeforeFileExists =
+                new ThemeManager(workspacePreferences, new DummyFileUpdateMonitor(), Runnable::run);
+        assertEquals(
+                Optional.empty(),
+                themeManagerCreatedBeforeFileExists.getActiveTheme().getAdditionalStylesheet(),
                 "didn't expect additional stylesheet to be available because it didn't exist when theme was created");
 
         Files.writeString(testCss, TEST_CSS_CONTENT, StandardOpenOption.CREATE);
 
         // ActiveTheme should provide an additionalStylesheet after the file was created
-        Optional<String> cssLocationAfterFileCreated = themeManagerCreatedBeforeFileExists.getActiveTheme()
-                                                                                          .getAdditionalStylesheet()
-                                                                                          .map(StyleSheet::getWebEngineStylesheet);
+        Optional<String> cssLocationAfterFileCreated = themeManagerCreatedBeforeFileExists
+                .getActiveTheme()
+                .getAdditionalStylesheet()
+                .map(StyleSheet::getWebEngineStylesheet);
         assertTrue(cssLocationAfterFileCreated.isPresent(), "expected custom theme location to be available");
         assertEquals(TEST_CSS_DATA, cssLocationAfterFileCreated.get());
     }
@@ -136,24 +142,27 @@ class ThemeManagerTest {
 
         // ActiveTheme should provide the large additionalStylesheet that was created before
         ThemeManager themeManager = new ThemeManager(workspacePreferences, new DummyFileUpdateMonitor(), Runnable::run);
-        Optional<String> cssLocationBeforeRemoved = themeManager.getActiveTheme()
-                                                                .getAdditionalStylesheet()
-                                                                .map(StyleSheet::getWebEngineStylesheet);
+        Optional<String> cssLocationBeforeRemoved =
+                themeManager.getActiveTheme().getAdditionalStylesheet().map(StyleSheet::getWebEngineStylesheet);
         assertTrue(cssLocationBeforeRemoved.isPresent(), "expected custom theme location to be available");
         assertTrue(cssLocationBeforeRemoved.get().startsWith("file:"), "expected large custom theme to be a file");
 
         Files.move(largeCssTestFile, largeCssTestFile.resolveSibling("renamed.css"));
 
         // getAdditionalStylesheet() should no longer offer the deleted stylesheet as it is not been held in memory
-        assertEquals(themeManager.getActiveTheme().getAdditionalStylesheet().get().getWebEngineStylesheet(), "",
+        assertEquals(
+                themeManager.getActiveTheme().getAdditionalStylesheet().get().getWebEngineStylesheet(),
+                "",
                 "didn't expect additional stylesheet after css was deleted");
 
         Files.move(largeCssTestFile.resolveSibling("renamed.css"), largeCssTestFile);
 
         // Check that it is available once more, if the file is restored
-        Optional<String> cssLocationAfterFileIsRestored = themeManager.getActiveTheme().getAdditionalStylesheet().map(StyleSheet::getWebEngineStylesheet);
+        Optional<String> cssLocationAfterFileIsRestored =
+                themeManager.getActiveTheme().getAdditionalStylesheet().map(StyleSheet::getWebEngineStylesheet);
         assertTrue(cssLocationAfterFileIsRestored.isPresent(), "expected custom theme location to be available");
-        assertTrue(cssLocationAfterFileIsRestored.get().startsWith("file:"), "expected large custom theme to be a file");
+        assertTrue(
+                cssLocationAfterFileIsRestored.get().startsWith("file:"), "expected large custom theme to be a file");
     }
 
     @Test
@@ -226,11 +235,14 @@ class ThemeManagerTest {
 
         themeManager.installCss(scene);
 
-        Files.writeString(testCss, """
+        Files.writeString(
+                testCss,
+                """
                 /* And now for something slightly different */
                 .code-area .text {
                     -fx-font-family: serif;
-                }""", StandardOpenOption.CREATE);
+                }""",
+                StandardOpenOption.CREATE);
 
         // Wait for the stylesheet to be reloaded
         Thread.sleep(500);
@@ -238,7 +250,8 @@ class ThemeManagerTest {
         fileUpdateMonitor.shutdown();
         thread.join();
 
-        Optional<String> testCssLocation2 = themeManager.getActiveTheme().getAdditionalStylesheet().map(StyleSheet::getWebEngineStylesheet);
+        Optional<String> testCssLocation2 =
+                themeManager.getActiveTheme().getAdditionalStylesheet().map(StyleSheet::getWebEngineStylesheet);
         assertTrue(testCssLocation2.isPresent(), "expected custom theme location to be available");
         assertEquals(
                 "data:text/css;charset=utf-8;base64,LyogQW5kIG5vdyBmb3Igc29tZXRoaW5nIHNsaWdodGx5IGRpZmZlcmVudCAqLwouY29kZS1hcmVhIC50ZXh0IHsKICAgIC1meC1mb250LWZhbWlseTogc2VyaWY7Cn0=",

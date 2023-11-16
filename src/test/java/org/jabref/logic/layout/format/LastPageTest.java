@@ -27,7 +27,6 @@ public class LastPageTest {
                 Arguments.of("345", "345"),
                 Arguments.of("350", "345-350"),
                 Arguments.of("350", "345--350"),
-                Arguments.of("", "--")
-        );
+                Arguments.of("", "--"));
     }
 }

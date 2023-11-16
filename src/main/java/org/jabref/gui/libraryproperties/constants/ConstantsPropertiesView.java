@@ -23,24 +23,37 @@ import org.jabref.preferences.PreferencesService;
 import com.airhacks.afterburner.views.ViewLoader;
 import jakarta.inject.Inject;
 
-public class ConstantsPropertiesView extends AbstractPropertiesTabView<ConstantsPropertiesViewModel> implements PropertiesTab {
+public class ConstantsPropertiesView extends AbstractPropertiesTabView<ConstantsPropertiesViewModel>
+        implements PropertiesTab {
 
-    @FXML private TableView<ConstantsItemModel> stringsList;
-    @FXML private TableColumn<ConstantsItemModel, String> labelColumn;
-    @FXML private TableColumn<ConstantsItemModel, String> contentColumn;
-    @FXML private TableColumn<ConstantsItemModel, String> actionsColumn;
-    @FXML private Button addStringButton;
-    @FXML private ButtonType saveButton;
+    @FXML
+    private TableView<ConstantsItemModel> stringsList;
 
-    @Inject private PreferencesService preferencesService;
-    @Inject private DialogService dialogService;
+    @FXML
+    private TableColumn<ConstantsItemModel, String> labelColumn;
+
+    @FXML
+    private TableColumn<ConstantsItemModel, String> contentColumn;
+
+    @FXML
+    private TableColumn<ConstantsItemModel, String> actionsColumn;
+
+    @FXML
+    private Button addStringButton;
+
+    @FXML
+    private ButtonType saveButton;
+
+    @Inject
+    private PreferencesService preferencesService;
+
+    @Inject
+    private DialogService dialogService;
 
     public ConstantsPropertiesView(BibDatabaseContext databaseContext) {
         this.databaseContext = databaseContext;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -49,7 +62,8 @@ public class ConstantsPropertiesView extends AbstractPropertiesTabView<Constants
     }
 
     public void initialize() {
-        this.viewModel = new ConstantsPropertiesViewModel(databaseContext, dialogService, preferencesService.getFilePreferences());
+        this.viewModel = new ConstantsPropertiesViewModel(
+                databaseContext, dialogService, preferencesService.getFilePreferences());
 
         addStringButton.setTooltip(new Tooltip(Localization.lang("New string")));
 
@@ -61,17 +75,15 @@ public class ConstantsPropertiesView extends AbstractPropertiesTabView<Constants
                 .withValidation(ConstantsItemModel::labelValidation)
                 .install(labelColumn, new DefaultStringConverter());
         labelColumn.setOnEditCommit((TableColumn.CellEditEvent<ConstantsItemModel, String> cellEvent) -> {
-
             var tableView = cellEvent.getTableView();
-            ConstantsItemModel cellItem = tableView.getItems()
-                                                   .get(cellEvent.getTablePosition().getRow());
+            ConstantsItemModel cellItem =
+                    tableView.getItems().get(cellEvent.getTablePosition().getRow());
 
             Optional<ConstantsItemModel> existingItem = viewModel.labelAlreadyExists(cellEvent.getNewValue());
 
             if (existingItem.isPresent() && !existingItem.get().equals(cellItem)) {
-                dialogService.showErrorDialogAndWait(Localization.lang(
-                        "A string with the label '%0' already exists.",
-                        cellEvent.getNewValue()));
+                dialogService.showErrorDialogAndWait(
+                        Localization.lang("A string with the label '%0' already exists.", cellEvent.getNewValue()));
                 cellItem.setLabel(cellEvent.getOldValue());
             } else {
                 cellItem.setLabel(cellEvent.getNewValue());

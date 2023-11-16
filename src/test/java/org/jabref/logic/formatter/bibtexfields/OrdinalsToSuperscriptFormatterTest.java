@@ -37,16 +37,14 @@ public class OrdinalsToSuperscriptFormatterTest {
     public void replaceSuperscriptsInMultilineStrings() {
         expectCorrect(
                 "replace on 1st line\nand on 2nd line.",
-                "replace on 1\\textsuperscript{st} line\nand on 2\\textsuperscript{nd} line."
-        );
+                "replace on 1\\textsuperscript{st} line\nand on 2\\textsuperscript{nd} line.");
     }
 
     @Test
     public void replaceAllSuperscripts() {
         expectCorrect(
                 "1st 2nd 3rd 4th",
-                "1\\textsuperscript{st} 2\\textsuperscript{nd} 3\\textsuperscript{rd} 4\\textsuperscript{th}"
-        );
+                "1\\textsuperscript{st} 2\\textsuperscript{nd} 3\\textsuperscript{rd} 4\\textsuperscript{th}");
     }
 
     @Test

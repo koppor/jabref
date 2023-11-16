@@ -69,13 +69,14 @@ public class ImportHandler {
     private final DialogService dialogService;
     private final TaskExecutor taskExecutor;
 
-    public ImportHandler(BibDatabaseContext database,
-                         PreferencesService preferencesService,
-                         FileUpdateMonitor fileupdateMonitor,
-                         UndoManager undoManager,
-                         StateManager stateManager,
-                         DialogService dialogService,
-                         TaskExecutor taskExecutor) {
+    public ImportHandler(
+            BibDatabaseContext database,
+            PreferencesService preferencesService,
+            FileUpdateMonitor fileupdateMonitor,
+            UndoManager undoManager,
+            StateManager stateManager,
+            DialogService dialogService,
+            TaskExecutor taskExecutor) {
 
         this.bibDatabaseContext = database;
         this.preferencesService = preferencesService;
@@ -117,18 +118,28 @@ public class ImportHandler {
                     try {
                         if (FileUtil.isPDFFile(file)) {
                             var pdfImporterResult = contentImporter.importPDFContent(file);
-                            List<BibEntry> pdfEntriesInFile = pdfImporterResult.getDatabase().getEntries();
+                            List<BibEntry> pdfEntriesInFile =
+                                    pdfImporterResult.getDatabase().getEntries();
 
                             if (pdfImporterResult.hasWarnings()) {
-                                addResultToList(file, false, Localization.lang("Error reading PDF content: %0", pdfImporterResult.getErrorMessage()));
+                                addResultToList(
+                                        file,
+                                        false,
+                                        Localization.lang(
+                                                "Error reading PDF content: %0", pdfImporterResult.getErrorMessage()));
                             }
 
                             if (!pdfEntriesInFile.isEmpty()) {
                                 entriesToAdd.addAll(pdfEntriesInFile);
-                                addResultToList(file, true, Localization.lang("File was successfully imported as a new entry"));
+                                addResultToList(
+                                        file, true, Localization.lang("File was successfully imported as a new entry"));
                             } else {
                                 entriesToAdd.add(createEmptyEntryWithLink(file));
-                                addResultToList(file, false, Localization.lang("No metadata was found. An empty entry was created with file link"));
+                                addResultToList(
+                                        file,
+                                        false,
+                                        Localization.lang(
+                                                "No metadata was found. An empty entry was created with file link"));
                             }
                         } else if (FileUtil.isBibFile(file)) {
                             var bibtexParserResult = contentImporter.importFromBibFile(file, fileUpdateMonitor);
@@ -136,20 +147,27 @@ public class ImportHandler {
                                 addResultToList(file, false, bibtexParserResult.getErrorMessage());
                             }
 
-                            entriesToAdd.addAll(bibtexParserResult.getDatabaseContext().getEntries());
+                            entriesToAdd.addAll(
+                                    bibtexParserResult.getDatabaseContext().getEntries());
                             addResultToList(file, true, Localization.lang("Bib entry was successfully imported"));
                         } else {
                             entriesToAdd.add(createEmptyEntryWithLink(file));
-                            addResultToList(file, false, Localization.lang("No BibTeX data was found. An empty entry was created with file link"));
+                            addResultToList(
+                                    file,
+                                    false,
+                                    Localization.lang(
+                                            "No BibTeX data was found. An empty entry was created with file link"));
                         }
                     } catch (IOException ex) {
                         LOGGER.error("Error importing", ex);
-                        addResultToList(file, false, Localization.lang("Error from import: %0", ex.getLocalizedMessage()));
+                        addResultToList(
+                                file, false, Localization.lang("Error from import: %0", ex.getLocalizedMessage()));
 
                         DefaultTaskExecutor.runInJavaFXThread(() -> updateMessage(Localization.lang("Error")));
                     }
 
-                    // We need to run the actual import on the FX Thread, otherwise we will get some deadlocks with the UIThreadList
+                    // We need to run the actual import on the FX Thread, otherwise we will get some deadlocks with the
+                    // UIThreadList
                     DefaultTaskExecutor.runInJavaFXThread(() -> importEntries(entriesToAdd));
 
                     ce.addEdit(new UndoableInsertEntries(bibDatabaseContext.getDatabase(), entriesToAdd));
@@ -196,7 +214,8 @@ public class ImportHandler {
         BibEntry entryToInsert = cleanUpEntry(bibDatabaseContext, entry);
         Optional<BibEntry> existingDuplicateInLibrary = findDuplicate(bibDatabaseContext, entryToInsert);
         if (existingDuplicateInLibrary.isPresent()) {
-            Optional<BibEntry> duplicateHandledEntry = handleDuplicates(bibDatabaseContext, entryToInsert, existingDuplicateInLibrary.get());
+            Optional<BibEntry> duplicateHandledEntry =
+                    handleDuplicates(bibDatabaseContext, entryToInsert, existingDuplicateInLibrary.get());
             if (duplicateHandledEntry.isEmpty()) {
                 return;
             }
@@ -213,11 +232,14 @@ public class ImportHandler {
     }
 
     public Optional<BibEntry> findDuplicate(BibDatabaseContext bibDatabaseContext, BibEntry entryToCheck) {
-        return new DuplicateCheck(Globals.entryTypesManager).containsDuplicate(bibDatabaseContext.getDatabase(), entryToCheck, bibDatabaseContext.getMode());
+        return new DuplicateCheck(Globals.entryTypesManager)
+                .containsDuplicate(bibDatabaseContext.getDatabase(), entryToCheck, bibDatabaseContext.getMode());
     }
 
-    public Optional<BibEntry> handleDuplicates(BibDatabaseContext bibDatabaseContext, BibEntry originalEntry, BibEntry duplicateEntry) {
-        DuplicateDecisionResult decisionResult = getDuplicateDecision(originalEntry, duplicateEntry, bibDatabaseContext);
+    public Optional<BibEntry> handleDuplicates(
+            BibDatabaseContext bibDatabaseContext, BibEntry originalEntry, BibEntry duplicateEntry) {
+        DuplicateDecisionResult decisionResult =
+                getDuplicateDecision(originalEntry, duplicateEntry, bibDatabaseContext);
         switch (decisionResult.decision()) {
             case KEEP_RIGHT:
                 bibDatabaseContext.getDatabase().removeEntry(duplicateEntry);
@@ -236,34 +258,32 @@ public class ImportHandler {
         return Optional.of(originalEntry);
     }
 
-    public DuplicateDecisionResult getDuplicateDecision(BibEntry originalEntry, BibEntry duplicateEntry, BibDatabaseContext bibDatabaseContext) {
-        DuplicateResolverDialog dialog = new DuplicateResolverDialog(duplicateEntry, originalEntry, DuplicateResolverDialog.DuplicateResolverType.IMPORT_CHECK, bibDatabaseContext, stateManager, dialogService, preferencesService);
-        DuplicateResolverDialog.DuplicateResolverResult decision = dialogService.showCustomDialogAndWait(dialog).orElse(DuplicateResolverDialog.DuplicateResolverResult.BREAK);
+    public DuplicateDecisionResult getDuplicateDecision(
+            BibEntry originalEntry, BibEntry duplicateEntry, BibDatabaseContext bibDatabaseContext) {
+        DuplicateResolverDialog dialog = new DuplicateResolverDialog(
+                duplicateEntry,
+                originalEntry,
+                DuplicateResolverDialog.DuplicateResolverType.IMPORT_CHECK,
+                bibDatabaseContext,
+                stateManager,
+                dialogService,
+                preferencesService);
+        DuplicateResolverDialog.DuplicateResolverResult decision = dialogService
+                .showCustomDialogAndWait(dialog)
+                .orElse(DuplicateResolverDialog.DuplicateResolverResult.BREAK);
         return new DuplicateDecisionResult(decision, dialog.getMergedEntry());
     }
 
     public void setAutomaticFields(List<BibEntry> entries) {
         UpdateField.setAutomaticFields(
-                entries,
-                preferencesService.getOwnerPreferences(),
-                preferencesService.getTimestampPreferences()
-        );
+                entries, preferencesService.getOwnerPreferences(), preferencesService.getTimestampPreferences());
     }
 
     public void downloadLinkedFiles(BibEntry entry) {
         if (preferencesService.getFilePreferences().shouldDownloadLinkedFiles()) {
-            entry.getFiles().stream()
-                    .filter(LinkedFile::isOnlineLink)
-                    .forEach(linkedFile ->
-                            new LinkedFileViewModel(
-                                    linkedFile,
-                                    entry,
-                                    bibDatabaseContext,
-                                    taskExecutor,
-                                    dialogService,
-                                    preferencesService
-                            ).download()
-                    );
+            entry.getFiles().stream().filter(LinkedFile::isOnlineLink).forEach(linkedFile -> new LinkedFileViewModel(
+                            linkedFile, entry, bibDatabaseContext, taskExecutor, dialogService, preferencesService)
+                    .download());
         }
     }
 
@@ -290,8 +310,11 @@ public class ImportHandler {
             return;
         }
         CitationKeyGenerator keyGenerator = new CitationKeyGenerator(
-                bibDatabaseContext.getMetaData().getCiteKeyPattern(preferencesService.getCitationKeyPatternPreferences()
-                                                                                     .getKeyPattern()),
+                bibDatabaseContext
+                        .getMetaData()
+                        .getCiteKeyPattern(preferencesService
+                                .getCitationKeyPatternPreferences()
+                                .getKeyPattern()),
                 bibDatabaseContext.getDatabase(),
                 preferencesService.getCitationKeyPatternPreferences());
         entries.forEach(keyGenerator::generateAndSetKey);
@@ -346,19 +369,22 @@ public class ImportHandler {
 
     private List<BibEntry> fetchByDOI(DOI doi) throws FetcherException {
         LOGGER.info("Found DOI identifer in clipboard");
-        Optional<BibEntry> entry = new DoiFetcher(preferencesService.getImportFormatPreferences()).performSearchById(doi.getDOI());
+        Optional<BibEntry> entry =
+                new DoiFetcher(preferencesService.getImportFormatPreferences()).performSearchById(doi.getDOI());
         return OptionalUtil.toList(entry);
     }
 
     private List<BibEntry> fetchByArXiv(ArXivIdentifier arXivIdentifier) throws FetcherException {
         LOGGER.info("Found arxiv identifier in clipboard");
-        Optional<BibEntry> entry = new ArXivFetcher(preferencesService.getImportFormatPreferences()).performSearchById(arXivIdentifier.getNormalizedWithoutVersion());
+        Optional<BibEntry> entry = new ArXivFetcher(preferencesService.getImportFormatPreferences())
+                .performSearchById(arXivIdentifier.getNormalizedWithoutVersion());
         return OptionalUtil.toList(entry);
     }
 
     private List<BibEntry> fetchByISBN(ISBN isbn) throws FetcherException {
         LOGGER.info("Found ISBN identifier in clipboard");
-        Optional<BibEntry> entry = new IsbnFetcher(preferencesService.getImportFormatPreferences()).performSearchById(isbn.getNormalized());
+        Optional<BibEntry> entry = new IsbnFetcher(preferencesService.getImportFormatPreferences())
+                .performSearchById(isbn.getNormalized());
         return OptionalUtil.toList(entry);
     }
 }

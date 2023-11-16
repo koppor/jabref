@@ -44,7 +44,9 @@ public final class TextExtractor {
 
         // Iterates over the array of segments. Each segment consists of 8 points forming a bounding box.
         int totalSegments = boundingBoxes.size() / 8;
-        for (int currentSegment = 1, segmentPointer = 0; currentSegment <= totalSegments; currentSegment++, segmentPointer += 8) {
+        for (int currentSegment = 1, segmentPointer = 0;
+                currentSegment <= totalSegments;
+                currentSegment++, segmentPointer += 8) {
             try {
                 stripperByArea.addRegion("markedRegion", calculateSegmentBoundingBox(boundingBoxes, segmentPointer));
                 stripperByArea.extractRegions(page);

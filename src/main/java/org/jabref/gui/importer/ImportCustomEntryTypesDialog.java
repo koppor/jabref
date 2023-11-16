@@ -22,11 +22,17 @@ public class ImportCustomEntryTypesDialog extends BaseDialog<Void> {
 
     private final List<BibEntryType> customEntryTypes;
 
-    @Inject private PreferencesService preferencesService;
-    @FXML private VBox boxDifferentCustomization;
+    @Inject
+    private PreferencesService preferencesService;
 
-    @FXML private CheckListView<BibEntryType> unknownEntryTypesCheckList;
-    @FXML private CheckListView<BibEntryTypePrefsAndFileViewModel> differentCustomizationCheckList;
+    @FXML
+    private VBox boxDifferentCustomization;
+
+    @FXML
+    private CheckListView<BibEntryType> unknownEntryTypesCheckList;
+
+    @FXML
+    private CheckListView<BibEntryTypePrefsAndFileViewModel> differentCustomizationCheckList;
 
     private final BibDatabaseMode mode;
     private ImportCustomEntryTypesDialogViewModel viewModel;
@@ -35,9 +41,7 @@ public class ImportCustomEntryTypesDialog extends BaseDialog<Void> {
         this.mode = mode;
         this.customEntryTypes = customEntryTypes;
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         setResultConverter(btn -> {
             if (btn == ButtonType.OK) {
@@ -59,13 +63,17 @@ public class ImportCustomEntryTypesDialog extends BaseDialog<Void> {
         boxDifferentCustomization.visibleProperty().bind(Bindings.isNotEmpty(viewModel.differentCustomizations()));
         boxDifferentCustomization.managedProperty().bind(Bindings.isNotEmpty(viewModel.differentCustomizations()));
         unknownEntryTypesCheckList.setItems(viewModel.newTypes());
-        unknownEntryTypesCheckList.setCellFactory(listView -> new CheckBoxListCell<>(unknownEntryTypesCheckList::getItemBooleanProperty) {
-            @Override
-            public void updateItem(BibEntryType bibEntryType, boolean empty) {
-                super.updateItem(bibEntryType, empty);
-                setText(bibEntryType == null ? "" : bibEntryType.getType().getDisplayName());
-            }
-        });
+        unknownEntryTypesCheckList.setCellFactory(
+                listView -> new CheckBoxListCell<>(unknownEntryTypesCheckList::getItemBooleanProperty) {
+                    @Override
+                    public void updateItem(BibEntryType bibEntryType, boolean empty) {
+                        super.updateItem(bibEntryType, empty);
+                        setText(
+                                bibEntryType == null
+                                        ? ""
+                                        : bibEntryType.getType().getDisplayName());
+                    }
+                });
         differentCustomizationCheckList.setItems(viewModel.differentCustomizations());
     }
 }

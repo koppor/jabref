@@ -99,7 +99,8 @@ public class ACMPortalParser implements Parser {
             if (jsonElement.isJsonObject()) {
                 JsonArray items = jsonElement.getAsJsonObject().getAsJsonArray("items");
                 for (JsonElement item : items) {
-                    for (Map.Entry<String, JsonElement> entry : item.getAsJsonObject().entrySet()) {
+                    for (Map.Entry<String, JsonElement> entry :
+                            item.getAsJsonObject().entrySet()) {
                         bibEntries.add(parseBibEntry(entry.getValue().toString()));
                     }
                 }
@@ -131,7 +132,8 @@ public class ACMPortalParser implements Parser {
             type = StandardEntryType.Conference;
         } else {
             String upperUnderscoreTyeStr = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, typeStr);
-            type = Enums.getIfPresent(StandardEntryType.class, upperUnderscoreTyeStr).or(StandardEntryType.Article);
+            type = Enums.getIfPresent(StandardEntryType.class, upperUnderscoreTyeStr)
+                    .or(StandardEntryType.Article);
         }
         return type;
     }
@@ -157,7 +159,8 @@ public class ACMPortalParser implements Parser {
         if (jsonObject.has("issued")) {
             JsonObject issued = jsonObject.get("issued").getAsJsonObject();
             if (issued.has("date-parts")) {
-                JsonArray dateArray = issued.get("date-parts").getAsJsonArray().get(0).getAsJsonArray();
+                JsonArray dateArray =
+                        issued.get("date-parts").getAsJsonArray().get(0).getAsJsonArray();
                 StandardField[] dateField = {StandardField.YEAR, StandardField.MONTH, StandardField.DAY};
                 for (int i = 0; i < dateArray.size(); i++) {
                     bibEntry.setField(dateField[i], dateArray.get(i).getAsString());
@@ -170,11 +173,13 @@ public class ACMPortalParser implements Parser {
         }
 
         if (jsonObject.has("collection-title")) {
-            bibEntry.setField(StandardField.SERIES, jsonObject.get("collection-title").getAsString());
+            bibEntry.setField(
+                    StandardField.SERIES, jsonObject.get("collection-title").getAsString());
         }
 
         if (jsonObject.has("container-title")) {
-            bibEntry.setField(StandardField.BOOKTITLE, jsonObject.get("container-title").getAsString());
+            bibEntry.setField(
+                    StandardField.BOOKTITLE, jsonObject.get("container-title").getAsString());
         }
 
         if (jsonObject.has("DOI")) {
@@ -182,7 +187,8 @@ public class ACMPortalParser implements Parser {
         }
 
         if (jsonObject.has("event-place")) {
-            bibEntry.setField(StandardField.LOCATION, jsonObject.get("event-place").getAsString());
+            bibEntry.setField(
+                    StandardField.LOCATION, jsonObject.get("event-place").getAsString());
         }
 
         if (jsonObject.has("ISBN")) {
@@ -196,7 +202,8 @@ public class ACMPortalParser implements Parser {
         }
 
         if (jsonObject.has("number-of-pages")) {
-            bibEntry.setField(StandardField.PAGETOTAL, jsonObject.get("number-of-pages").getAsString());
+            bibEntry.setField(
+                    StandardField.PAGETOTAL, jsonObject.get("number-of-pages").getAsString());
         }
 
         if (jsonObject.has("page")) {
@@ -204,11 +211,13 @@ public class ACMPortalParser implements Parser {
         }
 
         if (jsonObject.has("publisher")) {
-            bibEntry.setField(StandardField.PUBLISHER, jsonObject.get("publisher").getAsString());
+            bibEntry.setField(
+                    StandardField.PUBLISHER, jsonObject.get("publisher").getAsString());
         }
 
         if (jsonObject.has("publisher-place")) {
-            bibEntry.setField(StandardField.ADDRESS, jsonObject.get("publisher-place").getAsString());
+            bibEntry.setField(
+                    StandardField.ADDRESS, jsonObject.get("publisher-place").getAsString());
         }
 
         if (jsonObject.has("title")) {

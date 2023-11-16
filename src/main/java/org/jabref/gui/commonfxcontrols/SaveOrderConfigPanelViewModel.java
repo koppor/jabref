@@ -16,11 +16,12 @@ public class SaveOrderConfigPanelViewModel {
     private final BooleanProperty saveInTableOrderProperty = new SimpleBooleanProperty();
     private final BooleanProperty saveInSpecifiedOrderProperty = new SimpleBooleanProperty();
 
-    private final ListProperty<Field> sortableFieldsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ListProperty<SortCriterionViewModel> selectedSortCriteriaProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<Field> sortableFieldsProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<SortCriterionViewModel> selectedSortCriteriaProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
 
-    public SaveOrderConfigPanelViewModel() {
-    }
+    public SaveOrderConfigPanelViewModel() {}
 
     public void addCriterion() {
         selectedSortCriteriaProperty.add(new SortCriterionViewModel());

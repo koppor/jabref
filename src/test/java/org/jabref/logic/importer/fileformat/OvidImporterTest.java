@@ -31,9 +31,8 @@ public class OvidImporterTest {
     private OvidImporter importer;
 
     private static Stream<String> fileNames() throws IOException {
-        Predicate<String> fileName = name -> name.startsWith("OvidImporterTest")
-                && !name.contains("Invalid")
-                && name.endsWith(FILE_ENDING);
+        Predicate<String> fileName =
+                name -> name.startsWith("OvidImporterTest") && !name.contains("Invalid") && name.endsWith(FILE_ENDING);
         return ImporterTestEngine.getTestFiles(fileName).stream();
     }
 
@@ -88,7 +87,8 @@ public class OvidImporterTest {
 
     @Test
     public void testImportEntries1() throws IOException, URISyntaxException {
-        Path file = Path.of(OvidImporter.class.getResource("OvidImporterTest1.txt").toURI());
+        Path file =
+                Path.of(OvidImporter.class.getResource("OvidImporterTest1.txt").toURI());
         List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
         assertEquals(5, entries.size());
 
@@ -141,7 +141,8 @@ public class OvidImporterTest {
 
     @Test
     public void testImportEntries2() throws IOException, URISyntaxException {
-        Path file = Path.of(OvidImporter.class.getResource("OvidImporterTest2Invalid.txt").toURI());
+        Path file = Path.of(
+                OvidImporter.class.getResource("OvidImporterTest2Invalid.txt").toURI());
         List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
         assertEquals(Collections.emptyList(), entries);
     }
@@ -150,10 +151,12 @@ public class OvidImporterTest {
     public void testImportSingleEntries() throws IOException, URISyntaxException {
 
         for (int n = 3; n <= 7; n++) {
-            Path file = Path.of(OvidImporter.class.getResource("OvidImporterTest" + n + ".txt").toURI());
+            Path file = Path.of(OvidImporter.class
+                    .getResource("OvidImporterTest" + n + ".txt")
+                    .toURI());
             try (InputStream nis = OvidImporter.class.getResourceAsStream("OvidImporterTestBib" + n + ".bib")) {
-                List<BibEntry> entries = importer.importDatabase(file).getDatabase()
-                                                 .getEntries();
+                List<BibEntry> entries =
+                        importer.importDatabase(file).getDatabase().getEntries();
                 assertNotNull(entries);
                 assertEquals(1, entries.size());
                 BibEntryAssert.assertEquals(nis, entries.get(0));

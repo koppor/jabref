@@ -22,7 +22,7 @@ import org.apache.http.client.utils.URIBuilder;
  */
 public class RfcFetcher implements IdBasedParserFetcher {
 
-    private final static String DRAFT_PREFIX = "draft";
+    private static final String DRAFT_PREFIX = "draft";
     private final ImportFormatPreferences importFormatPreferences;
 
     public RfcFetcher(ImportFormatPreferences importFormatPreferences) {
@@ -46,7 +46,8 @@ public class RfcFetcher implements IdBasedParserFetcher {
      * @return the URL of the RFC resource
      */
     @Override
-    public URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getUrlForIdentifier(String identifier)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         String prefixedIdentifier = identifier.toLowerCase(Locale.ENGLISH);
         // if not a "draft" version
         if ((!prefixedIdentifier.startsWith(DRAFT_PREFIX)) && (!prefixedIdentifier.startsWith("rfc"))) {

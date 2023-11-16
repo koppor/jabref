@@ -24,21 +24,12 @@ import com.sun.star.text.XTextRange;
 
 public class EditSeparate {
 
-    private EditSeparate() {
-    }
+    private EditSeparate() {}
 
-    public static boolean separateCitations(XTextDocument doc,
-                                            OOFrontend frontend,
-                                            List<BibDatabase> databases,
-                                            OOBibStyle style)
-            throws
-            CreationException,
-            IllegalTypeException,
-            NoDocumentException,
-            NotRemoveableException,
-            PropertyVetoException,
-            WrappedTargetException,
-            com.sun.star.lang.IllegalArgumentException {
+    public static boolean separateCitations(
+            XTextDocument doc, OOFrontend frontend, List<BibDatabase> databases, OOBibStyle style)
+            throws CreationException, IllegalTypeException, NoDocumentException, NotRemoveableException,
+                    PropertyVetoException, WrappedTargetException, com.sun.star.lang.IllegalArgumentException {
 
         boolean madeModifications = false;
 
@@ -55,9 +46,7 @@ public class EditSeparate {
             UnoScreenRefresh.lockControllers(doc);
 
             for (CitationGroup group : groups) {
-                XTextRange range1 = frontend
-                        .getMarkRange(doc, group)
-                        .orElseThrow(IllegalStateException::new);
+                XTextRange range1 = frontend.getMarkRange(doc, group).orElseThrow(IllegalStateException::new);
                 XTextCursor textCursor = range1.getText().createTextCursorByRange(range1);
 
                 List<Citation> citations = group.citationsInStorageOrder;
@@ -74,7 +63,8 @@ public class EditSeparate {
                     boolean insertSpaceAfter = i != last;
                     Citation citation = citations.get(i);
 
-                    UpdateCitationMarkers.createAndFillCitationGroup(frontend,
+                    UpdateCitationMarkers.createAndFillCitationGroup(
+                            frontend,
                             doc,
                             List.of(citation.citationKey),
                             List.of(citation.getPageInfo()),

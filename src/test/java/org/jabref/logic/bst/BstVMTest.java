@@ -21,7 +21,8 @@ public class BstVMTest {
         return new BibEntry(StandardEntryType.InProceedings)
                 .withCitationKey("canh05")
                 .withField(StandardField.AUTHOR, "Crowston, K. and Annabi, H. and Howison, J. and Masango, C.")
-                .withField(StandardField.TITLE, "Effective work practices for floss development: A model and propositions")
+                .withField(
+                        StandardField.TITLE, "Effective work practices for floss development: A model and propositions")
                 .withField(StandardField.BOOKTITLE, "Hawaii International Conference On System Sciences (HICSS)")
                 .withField(StandardField.YEAR, "2005")
                 .withField(StandardField.OWNER, "oezbek")
@@ -34,17 +35,17 @@ public class BstVMTest {
         BstVM vm = new BstVM(Path.of("src/test/resources/org/jabref/logic/bst/abbrv.bst"));
         List<BibEntry> testEntries = List.of(defaultTestEntry());
 
-        String expected = "\\begin{thebibliography}{1}\\bibitem{canh05}K.~Crowston, H.~Annabi, J.~Howison, and C.~Masango.\\newblock Effective work practices for floss development: A model and  propositions.\\newblock In {\\em Hawaii International Conference On System Sciences (HICSS)}, 2005.\\end{thebibliography}";
+        String expected =
+                "\\begin{thebibliography}{1}\\bibitem{canh05}K.~Crowston, H.~Annabi, J.~Howison, and C.~Masango.\\newblock Effective work practices for floss development: A model and  propositions.\\newblock In {\\em Hawaii International Conference On System Sciences (HICSS)}, 2005.\\end{thebibliography}";
         String result = vm.render(testEntries);
 
-        assertEquals(
-                expected.replaceAll("\\s", ""),
-                result.replaceAll("\\s", ""));
+        assertEquals(expected.replaceAll("\\s", ""), result.replaceAll("\\s", ""));
     }
 
     @Test
     public void testSimple() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 ENTRY { address author title type } { } { label }
                 INTEGERS { output.state before.all mid.sentence after.sentence after.block }
                 FUNCTION { init.state.consts }{
@@ -69,7 +70,8 @@ public class BstVMTest {
 
     @Test
     public void testLabel() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 ENTRY { title } {} { label }
                 FUNCTION { test } {
                     label #0 =
@@ -107,7 +109,8 @@ public class BstVMTest {
 
     @Test
     public void testVariables() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 STRINGS { t }
                 FUNCTION { not } {
                     { #0 } { #1 } if$
@@ -127,11 +130,9 @@ public class BstVMTest {
     @Test
     public void testHypthenatedName() throws RecognitionException, IOException {
         BstVM vm = new BstVM(Path.of("src/test/resources/org/jabref/logic/bst/abbrv.bst"));
-        List<BibEntry> testEntries = List.of(
-                new BibEntry(StandardEntryType.Article)
-                        .withCitationKey("canh05")
-                        .withField(StandardField.AUTHOR, "Jean-Paul Sartre")
-        );
+        List<BibEntry> testEntries = List.of(new BibEntry(StandardEntryType.Article)
+                .withCitationKey("canh05")
+                .withField(StandardField.AUTHOR, "Jean-Paul Sartre"));
 
         String result = vm.render(testEntries);
 
@@ -140,7 +141,8 @@ public class BstVMTest {
 
     @Test
     void testAbbrevStyleChopWord() {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 STRINGS { s }
                 INTEGERS { len }
 
@@ -176,7 +178,8 @@ public class BstVMTest {
 
     @Test
     void testAbbrevStyleSortFormatTitle() {
-        BstVM vm = new BstVM("""
+        BstVM vm = new BstVM(
+                """
                 STRINGS { s t }
                 INTEGERS { len }
                 FUNCTION { sortify } {

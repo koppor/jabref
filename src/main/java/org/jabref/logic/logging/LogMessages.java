@@ -15,8 +15,7 @@ public class LogMessages {
 
     private final ObservableList<LogEntry> messages = FXCollections.observableArrayList();
 
-    private LogMessages() {
-    }
+    private LogMessages() {}
 
     public static LogMessages getInstance() {
         return instance;

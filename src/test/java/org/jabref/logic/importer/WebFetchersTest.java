@@ -49,15 +49,17 @@ class WebFetchersTest {
 
     private Set<Class<?>> getIgnoredInaccessibleClasses() {
         return IGNORED_INACCESSIBLE_FETCHERS.stream()
-                     .map(className -> "org.jabref.logic.importer.fetcher." + className)
-                     .map(classPath -> {
-                         try {
-                             return Class.forName(classPath);
-                         } catch (ClassNotFoundException e) {
-                             LOGGER.error("Some of the ignored classes were not found", e);
-                             return null;
-                         }
-                     }).filter(Objects::nonNull).collect(Collectors.toSet());
+                .map(className -> "org.jabref.logic.importer.fetcher." + className)
+                .map(classPath -> {
+                    try {
+                        return Class.forName(classPath);
+                    } catch (ClassNotFoundException e) {
+                        LOGGER.error("Some of the ignored classes were not found", e);
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     @Test
@@ -99,7 +101,8 @@ class WebFetchersTest {
                 mock(BibDatabaseContext.class));
 
         try (ScanResult scanResult = classGraph.scan()) {
-            ClassInfoList controlClasses = scanResult.getClassesImplementing(EntryBasedFetcher.class.getCanonicalName());
+            ClassInfoList controlClasses =
+                    scanResult.getClassesImplementing(EntryBasedFetcher.class.getCanonicalName());
             Set<Class<?>> expected = new HashSet<>(controlClasses.loadClasses());
 
             expected.remove(EntryBasedParserFetcher.class);
@@ -110,9 +113,11 @@ class WebFetchersTest {
 
     @Test
     void getSearchBasedFetchersReturnsAllFetcherDerivingFromSearchBasedFetcher() {
-        Set<SearchBasedFetcher> searchBasedFetchers = WebFetchers.getSearchBasedFetchers(importFormatPreferences, importerPreferences);
+        Set<SearchBasedFetcher> searchBasedFetchers =
+                WebFetchers.getSearchBasedFetchers(importFormatPreferences, importerPreferences);
         try (ScanResult scanResult = classGraph.scan()) {
-            ClassInfoList controlClasses = scanResult.getClassesImplementing(SearchBasedFetcher.class.getCanonicalName());
+            ClassInfoList controlClasses =
+                    scanResult.getClassesImplementing(SearchBasedFetcher.class.getCanonicalName());
             Set<Class<?>> expected = new HashSet<>(controlClasses.loadClasses());
 
             // Some classes implement SearchBasedFetcher, but are only accessible to other fetcher, so ignore them
@@ -138,7 +143,8 @@ class WebFetchersTest {
 
     @Test
     void getFullTextFetchersReturnsAllFetcherDerivingFromFullTextFetcher() {
-        Set<FulltextFetcher> fullTextFetchers = WebFetchers.getFullTextFetchers(importFormatPreferences, importerPreferences);
+        Set<FulltextFetcher> fullTextFetchers =
+                WebFetchers.getFullTextFetchers(importFormatPreferences, importerPreferences);
 
         try (ScanResult scanResult = classGraph.scan()) {
             ClassInfoList controlClasses = scanResult.getClassesImplementing(FulltextFetcher.class.getCanonicalName());

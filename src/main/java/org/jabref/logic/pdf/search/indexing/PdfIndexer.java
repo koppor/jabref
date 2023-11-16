@@ -53,7 +53,8 @@ public class PdfIndexer {
         this.filePreferences = filePreferences;
     }
 
-    public static PdfIndexer of(BibDatabaseContext databaseContext, FilePreferences filePreferences) throws IOException {
+    public static PdfIndexer of(BibDatabaseContext databaseContext, FilePreferences filePreferences)
+            throws IOException {
         return new PdfIndexer(new NIOFSDirectory(databaseContext.getFulltextIndexPath()), filePreferences);
     }
 
@@ -63,7 +64,9 @@ public class PdfIndexer {
      */
     public void createIndex() {
         // Create new index by creating IndexWriter but not writing anything.
-        try (IndexWriter indexWriter = new IndexWriter(directoryToIndex, new IndexWriterConfig(new EnglishStemAnalyzer()).setOpenMode(IndexWriterConfig.OpenMode.CREATE))) {
+        try (IndexWriter indexWriter = new IndexWriter(
+                directoryToIndex,
+                new IndexWriterConfig(new EnglishStemAnalyzer()).setOpenMode(IndexWriterConfig.OpenMode.CREATE))) {
             // empty comment for checkstyle
         } catch (IOException e) {
             LOGGER.warn("Could not create new Index!", e);
@@ -121,8 +124,8 @@ public class PdfIndexer {
     public void removeFromIndex(String linkedFilePath) {
         try (IndexWriter indexWriter = new IndexWriter(
                 directoryToIndex,
-                new IndexWriterConfig(
-                        new EnglishStemAnalyzer()).setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND))) {
+                new IndexWriterConfig(new EnglishStemAnalyzer())
+                        .setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND))) {
             indexWriter.deleteDocuments(new Term(SearchFieldConstants.PATH, linkedFilePath));
             indexWriter.commit();
         } catch (IOException e) {
@@ -189,9 +192,11 @@ public class PdfIndexer {
                 // If a document was found, check if is less current than the one in the FS
                 if (topDocs.scoreDocs.length > 0) {
                     Document doc = reader.document(topDocs.scoreDocs[0].doc);
-                    long indexModificationTime = Long.parseLong(doc.getField(SearchFieldConstants.MODIFIED).stringValue());
+                    long indexModificationTime = Long.parseLong(
+                            doc.getField(SearchFieldConstants.MODIFIED).stringValue());
 
-                    BasicFileAttributes attributes = Files.readAttributes(resolvedPath.get(), BasicFileAttributes.class);
+                    BasicFileAttributes attributes =
+                            Files.readAttributes(resolvedPath.get(), BasicFileAttributes.class);
 
                     if (indexModificationTime >= attributes.lastModifiedTime().to(TimeUnit.SECONDS)) {
                         return;
@@ -201,11 +206,13 @@ public class PdfIndexer {
                 // if there is no index yet, don't need to check anything!
             }
             // If no document was found, add the new one
-            Optional<List<Document>> pages = new DocumentReader(entry, filePreferences).readLinkedPdf(this.databaseContext, linkedFile);
+            Optional<List<Document>> pages =
+                    new DocumentReader(entry, filePreferences).readLinkedPdf(this.databaseContext, linkedFile);
             if (pages.isPresent()) {
-                try (IndexWriter indexWriter = new IndexWriter(directoryToIndex,
-                                                               new IndexWriterConfig(
-                                                                                     new EnglishStemAnalyzer()).setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND))) {
+                try (IndexWriter indexWriter = new IndexWriter(
+                        directoryToIndex,
+                        new IndexWriterConfig(new EnglishStemAnalyzer())
+                                .setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND))) {
                     indexWriter.addDocuments(pages.get());
                     indexWriter.commit();
                 }

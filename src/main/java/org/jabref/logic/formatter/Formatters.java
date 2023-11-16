@@ -40,16 +40,14 @@ import org.jabref.logic.layout.format.ReplaceUnicodeLigaturesFormatter;
 public class Formatters {
     private static final Pattern TRUNCATE_PATTERN = Pattern.compile("\\Atruncate\\d+\\z");
 
-    private Formatters() {
-    }
+    private Formatters() {}
 
     public static List<Formatter> getConverters() {
         return Arrays.asList(
                 new HtmlToLatexFormatter(),
                 new HtmlToUnicodeFormatter(),
                 new LatexToUnicodeFormatter(),
-                new UnicodeToLatexFormatter()
-        );
+                new UnicodeToLatexFormatter());
     }
 
     public static List<Formatter> getCaseChangers() {
@@ -58,8 +56,7 @@ public class Formatters {
                 new LowerCaseFormatter(),
                 new SentenceCaseFormatter(),
                 new TitleCaseFormatter(),
-                new UpperCaseFormatter()
-        );
+                new UpperCaseFormatter());
     }
 
     public static List<Formatter> getOthers() {
@@ -80,8 +77,7 @@ public class Formatters {
                 new EscapeDollarSignFormatter(),
                 new ShortenDOIFormatter(),
                 new ReplaceUnicodeLigaturesFormatter(),
-                new UnprotectTermsFormatter()
-        );
+                new UnprotectTermsFormatter());
     }
 
     public static List<Formatter> getAll() {

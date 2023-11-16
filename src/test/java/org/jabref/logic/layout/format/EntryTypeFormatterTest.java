@@ -23,7 +23,6 @@ public class EntryTypeFormatterTest {
                 Arguments.of("Article", "article"),
                 Arguments.of("Banana", "banana"),
                 Arguments.of("InBook", "inbook"),
-                Arguments.of("Aarticle", "aarticle")
-        );
+                Arguments.of("Aarticle", "aarticle"));
     }
 }

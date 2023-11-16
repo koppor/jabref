@@ -49,8 +49,8 @@ public class TextInputControlBehavior {
                 Point2D p = textField.localToScene(menuPos);
                 Scene scene = textField.getScene();
                 Window window = scene.getWindow();
-                Point2D location = new Point2D(window.getX() + scene.getX() + p.getX(),
-                        window.getY() + scene.getY() + p.getY());
+                Point2D location =
+                        new Point2D(window.getX() + scene.getX() + p.getX(), window.getY() + scene.getY() + p.getY());
                 screenX = location.getX();
                 sceneX = p.getX();
                 screenY = location.getY();
@@ -107,8 +107,8 @@ public class TextInputControlBehavior {
                 Point2D p = textArea.localToScene(menuPos);
                 Scene scene = textArea.getScene();
                 Window window = scene.getWindow();
-                Point2D location = new Point2D(window.getX() + scene.getX() + p.getX(),
-                        window.getY() + scene.getY() + p.getY());
+                Point2D location =
+                        new Point2D(window.getX() + scene.getX() + p.getX(), window.getY() + scene.getY() + p.getY());
                 screenX = location.getX();
                 sceneX = p.getX();
                 screenY = location.getY();

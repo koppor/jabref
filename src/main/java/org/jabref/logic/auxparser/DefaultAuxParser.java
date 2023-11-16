@@ -32,7 +32,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultAuxParser implements AuxParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuxParser.class);
 
-    private static final Pattern CITE_PATTERN = Pattern.compile("\\\\(citation|abx@aux@cite)(\\{\\d+\\})?\\{(?<citationkey>.+)\\}");
+    private static final Pattern CITE_PATTERN =
+            Pattern.compile("\\\\(citation|abx@aux@cite)(\\{\\d+\\})?\\{(?<citationkey>.+)\\}");
     private static final Pattern INPUT_PATTERN = Pattern.compile("\\\\@input\\{(.+)\\}");
 
     private final BibDatabase masterDatabase;
@@ -141,7 +142,8 @@ public class DefaultAuxParser implements AuxParser {
         // Copy database definitions
         if (result.getGeneratedBibDatabase().hasEntries()) {
             result.getGeneratedBibDatabase().copyPreamble(masterDatabase);
-            result.insertStrings(masterDatabase.getUsedStrings(result.getGeneratedBibDatabase().getEntries()));
+            result.insertStrings(masterDatabase.getUsedStrings(
+                    result.getGeneratedBibDatabase().getEntries()));
         }
     }
 
@@ -155,7 +157,9 @@ public class DefaultAuxParser implements AuxParser {
         List<BibEntry> entriesToInsert = new ArrayList<>();
         for (BibEntry entry : entries) {
             entry.getField(StandardField.CROSSREF).ifPresent(crossref -> {
-                if (!result.getGeneratedBibDatabase().getEntryByCitationKey(crossref).isPresent()) {
+                if (!result.getGeneratedBibDatabase()
+                        .getEntryByCitationKey(crossref)
+                        .isPresent()) {
                     Optional<BibEntry> refEntry = masterDatabase.getEntryByCitationKey(crossref);
 
                     if (refEntry.isPresent()) {

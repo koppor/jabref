@@ -109,6 +109,7 @@ class SidePaneViewModelTest {
 
         sidePaneComponents.sort(new SidePaneViewModel.PreferredIndexSort(sidePanePreferences));
 
-        assertTrue(sidePaneComponents.get(0) == SidePaneType.OPEN_OFFICE && sidePaneComponents.get(2) == SidePaneType.GROUPS);
+        assertTrue(sidePaneComponents.get(0) == SidePaneType.OPEN_OFFICE
+                && sidePaneComponents.get(2) == SidePaneType.GROUPS);
     }
 }

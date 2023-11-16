@@ -37,12 +37,18 @@ public class GrammarBasedSearchRuleDescriber implements SearchDescriber {
         DescriptionSearchBaseVisitor descriptionSearchBaseVisitor = new DescriptionSearchBaseVisitor();
 
         // describe advanced search expression
-        textFlow.getChildren().add(TooltipTextUtil.createText(String.format("%s ", Localization.lang("This search contains entries in which")), TooltipTextUtil.TextType.NORMAL));
+        textFlow.getChildren()
+                .add(TooltipTextUtil.createText(
+                        String.format("%s ", Localization.lang("This search contains entries in which")),
+                        TooltipTextUtil.TextType.NORMAL));
         textFlow.getChildren().addAll(descriptionSearchBaseVisitor.visit(parseTree));
         textFlow.getChildren().add(TooltipTextUtil.createText(". ", TooltipTextUtil.TextType.NORMAL));
-        textFlow.getChildren().add(TooltipTextUtil.createText(searchFlags.contains(SearchRules.SearchFlags.CASE_SENSITIVE) ? Localization
-                .lang("The search is case-sensitive.") :
-                Localization.lang("The search is case-insensitive."), TooltipTextUtil.TextType.NORMAL));
+        textFlow.getChildren()
+                .add(TooltipTextUtil.createText(
+                        searchFlags.contains(SearchRules.SearchFlags.CASE_SENSITIVE)
+                                ? Localization.lang("The search is case-sensitive.")
+                                : Localization.lang("The search is case-insensitive."),
+                        TooltipTextUtil.TextType.NORMAL));
         return textFlow;
     }
 
@@ -56,14 +62,17 @@ public class GrammarBasedSearchRuleDescriber implements SearchDescriber {
         @Override
         public List<Text> visitUnaryExpression(SearchParser.UnaryExpressionContext context) {
             List<Text> textList = visit(context.expression());
-            textList.add(0, TooltipTextUtil.createText(Localization.lang("not").concat(" "), TooltipTextUtil.TextType.NORMAL));
+            textList.add(
+                    0,
+                    TooltipTextUtil.createText(Localization.lang("not").concat(" "), TooltipTextUtil.TextType.NORMAL));
             return textList;
         }
 
         @Override
         public List<Text> visitParenExpression(SearchParser.ParenExpressionContext context) {
             ArrayList<Text> textList = new ArrayList<>();
-            textList.add(TooltipTextUtil.createText(String.format("%s", context.expression()), TooltipTextUtil.TextType.NORMAL));
+            textList.add(TooltipTextUtil.createText(
+                    String.format("%s", context.expression()), TooltipTextUtil.TextType.NORMAL));
             return textList;
         }
 
@@ -71,9 +80,11 @@ public class GrammarBasedSearchRuleDescriber implements SearchDescriber {
         public List<Text> visitBinaryExpression(SearchParser.BinaryExpressionContext context) {
             List<Text> textList = visit(context.left);
             if ("AND".equalsIgnoreCase(context.operator.getText())) {
-                textList.add(TooltipTextUtil.createText(String.format(" %s ", Localization.lang("and")), TooltipTextUtil.TextType.NORMAL));
+                textList.add(TooltipTextUtil.createText(
+                        String.format(" %s ", Localization.lang("and")), TooltipTextUtil.TextType.NORMAL));
             } else {
-                textList.add(TooltipTextUtil.createText(String.format(" %s ", Localization.lang("or")), TooltipTextUtil.TextType.NORMAL));
+                textList.add(TooltipTextUtil.createText(
+                        String.format(" %s ", Localization.lang("or")), TooltipTextUtil.TextType.NORMAL));
             }
             textList.addAll(visit(context.right));
             return textList;
@@ -85,17 +96,20 @@ public class GrammarBasedSearchRuleDescriber implements SearchDescriber {
             final Optional<SearchParser.NameContext> fieldDescriptor = Optional.ofNullable(context.left);
             final String value = StringUtil.unquote(context.right.getText(), '"');
             if (!fieldDescriptor.isPresent()) {
-                TextFlow description = new ContainsAndRegexBasedSearchRuleDescriber(searchFlags, value).getDescription();
+                TextFlow description =
+                        new ContainsAndRegexBasedSearchRuleDescriber(searchFlags, value).getDescription();
                 description.getChildren().forEach(it -> textList.add((Text) it));
                 return textList;
             }
 
             final String field = StringUtil.unquote(fieldDescriptor.get().getText(), '"');
-            final GrammarBasedSearchRule.ComparisonOperator operator = GrammarBasedSearchRule.ComparisonOperator.build(context.operator.getText());
+            final GrammarBasedSearchRule.ComparisonOperator operator =
+                    GrammarBasedSearchRule.ComparisonOperator.build(context.operator.getText());
 
             final boolean regExpFieldSpec = !Pattern.matches("\\w+", field);
-            String temp = regExpFieldSpec ? Localization.lang(
-                    "any field that matches the regular expression <b>%0</b>") : Localization.lang("the field <b>%0</b>");
+            String temp = regExpFieldSpec
+                    ? Localization.lang("any field that matches the regular expression <b>%0</b>")
+                    : Localization.lang("the field <b>%0</b>");
 
             if (operator == GrammarBasedSearchRule.ComparisonOperator.CONTAINS) {
                 if (searchFlags.contains(SearchRules.SearchFlags.REGULAR_EXPRESSION)) {
@@ -119,7 +133,8 @@ public class GrammarBasedSearchRuleDescriber implements SearchDescriber {
                 throw new IllegalStateException("CANNOT HAPPEN!");
             }
 
-            List<Text> formattedTexts = TooltipTextUtil.formatToTexts(temp,
+            List<Text> formattedTexts = TooltipTextUtil.formatToTexts(
+                    temp,
                     new TooltipTextUtil.TextReplacement("<b>%0</b>", field, TooltipTextUtil.TextType.BOLD),
                     new TooltipTextUtil.TextReplacement("<b>%1</b>", value, TooltipTextUtil.TextType.BOLD));
             textList.addAll(formattedTexts);

@@ -48,23 +48,26 @@ public class PreviewPanel extends VBox {
     private final IndexingTaskManager indexingTaskManager;
     private BibEntry entry;
 
-    public PreviewPanel(BibDatabaseContext database,
-                        DialogService dialogService,
-                        KeyBindingRepository keyBindingRepository,
-                        PreferencesService preferencesService,
-                        StateManager stateManager,
-                        ThemeManager themeManager,
-                        IndexingTaskManager indexingTaskManager,
-                        TaskExecutor taskExecutor) {
+    public PreviewPanel(
+            BibDatabaseContext database,
+            DialogService dialogService,
+            KeyBindingRepository keyBindingRepository,
+            PreferencesService preferencesService,
+            StateManager stateManager,
+            ThemeManager themeManager,
+            IndexingTaskManager indexingTaskManager,
+            TaskExecutor taskExecutor) {
         this.keyBindingRepository = keyBindingRepository;
         this.dialogService = dialogService;
         this.stateManager = stateManager;
         this.previewPreferences = preferencesService.getPreviewPreferences();
         this.indexingTaskManager = indexingTaskManager;
-        this.fileLinker = new ExternalFilesEntryLinker(preferencesService.getFilePreferences(), database, dialogService);
+        this.fileLinker =
+                new ExternalFilesEntryLinker(preferencesService.getFilePreferences(), database, dialogService);
 
         PreviewPreferences previewPreferences = preferencesService.getPreviewPreferences();
-        previewView = new PreviewViewer(database, dialogService, preferencesService, stateManager, themeManager, taskExecutor);
+        previewView = new PreviewViewer(
+                database, dialogService, preferencesService, stateManager, themeManager, taskExecutor);
         previewView.setLayout(previewPreferences.getSelectedPreviewLayout());
         previewView.setContextMenu(createPopupMenu());
         previewView.setOnDragDetected(event -> {
@@ -88,7 +91,9 @@ public class PreviewPanel extends VBox {
         previewView.setOnDragDropped(event -> {
             boolean success = false;
             if (event.getDragboard().hasContent(DataFormat.FILES)) {
-                List<Path> files = event.getDragboard().getFiles().stream().map(File::toPath).collect(Collectors.toList());
+                List<Path> files = event.getDragboard().getFiles().stream()
+                        .map(File::toPath)
+                        .collect(Collectors.toList());
 
                 if (event.getTransferMode() == TransferMode.MOVE) {
                     LOGGER.debug("Mode MOVE"); // shift on win or no modifier
@@ -130,18 +135,24 @@ public class PreviewPanel extends VBox {
     }
 
     private ContextMenu createPopupMenu() {
-        MenuItem copyPreview = new MenuItem(Localization.lang("Copy preview"), IconTheme.JabRefIcons.COPY.getGraphicNode());
+        MenuItem copyPreview =
+                new MenuItem(Localization.lang("Copy preview"), IconTheme.JabRefIcons.COPY.getGraphicNode());
         keyBindingRepository.getKeyCombination(KeyBinding.COPY_PREVIEW).ifPresent(copyPreview::setAccelerator);
         copyPreview.setOnAction(event -> previewView.copyPreviewToClipBoard());
         MenuItem copySelection = new MenuItem(Localization.lang("Copy selection"));
         copySelection.setOnAction(event -> previewView.copySelectionToClipBoard());
-        MenuItem printEntryPreview = new MenuItem(Localization.lang("Print entry preview"), IconTheme.JabRefIcons.PRINTED.getGraphicNode());
+        MenuItem printEntryPreview =
+                new MenuItem(Localization.lang("Print entry preview"), IconTheme.JabRefIcons.PRINTED.getGraphicNode());
         printEntryPreview.setOnAction(event -> previewView.print());
         MenuItem previousPreviewLayout = new MenuItem(Localization.lang("Previous preview layout"));
-        keyBindingRepository.getKeyCombination(KeyBinding.PREVIOUS_PREVIEW_LAYOUT).ifPresent(previousPreviewLayout::setAccelerator);
+        keyBindingRepository
+                .getKeyCombination(KeyBinding.PREVIOUS_PREVIEW_LAYOUT)
+                .ifPresent(previousPreviewLayout::setAccelerator);
         previousPreviewLayout.setOnAction(event -> this.previousPreviewStyle());
         MenuItem nextPreviewLayout = new MenuItem(Localization.lang("Next preview layout"));
-        keyBindingRepository.getKeyCombination(KeyBinding.NEXT_PREVIEW_LAYOUT).ifPresent(nextPreviewLayout::setAccelerator);
+        keyBindingRepository
+                .getKeyCombination(KeyBinding.NEXT_PREVIEW_LAYOUT)
+                .ifPresent(nextPreviewLayout::setAccelerator);
         nextPreviewLayout.setOnAction(event -> this.nextPreviewStyle());
 
         ContextMenu menu = new ContextMenu();

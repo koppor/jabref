@@ -35,12 +35,10 @@ public class GrobidServiceTest {
     @BeforeAll
     public static void setup() {
         importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
+        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator())
+                .thenReturn(',');
 
-        GrobidPreferences grobidPreferences = new GrobidPreferences(
-                true,
-                false,
-                "http://grobid.jabref.org:8070");
+        GrobidPreferences grobidPreferences = new GrobidPreferences(true, false, "http://grobid.jabref.org:8070");
         grobidService = new GrobidService(grobidPreferences);
     }
 
@@ -59,40 +57,45 @@ public class GrobidServiceTest {
                 .withField(StandardField.PAGES, "245-259")
                 .withField(StandardField.VOLUME, "23")
                 .withField(StandardField.NUMBER, "4");
-        Optional<BibEntry> response = grobidService.processCitation("Derwing, T. M., Rossiter, M. J., & Munro, " +
-                "M. J. (2002). Teaching native speakers to listen to foreign-accented speech. " +
-                "Journal of Multilingual and Multicultural Development, 23(4), 245-259.", importFormatPreferences, GrobidService.ConsolidateCitations.WITH_METADATA);
+        Optional<BibEntry> response = grobidService.processCitation(
+                "Derwing, T. M., Rossiter, M. J., & Munro, "
+                        + "M. J. (2002). Teaching native speakers to listen to foreign-accented speech. "
+                        + "Journal of Multilingual and Multicultural Development, 23(4), 245-259.",
+                importFormatPreferences,
+                GrobidService.ConsolidateCitations.WITH_METADATA);
         assertTrue(response.isPresent());
         assertEquals(exampleBibEntry, response.get());
     }
 
     @Test
     public void processEmptyStringTest() throws IOException, ParseException {
-        Optional<BibEntry> response = grobidService.processCitation(" ", importFormatPreferences, GrobidService.ConsolidateCitations.WITH_METADATA);
+        Optional<BibEntry> response = grobidService.processCitation(
+                " ", importFormatPreferences, GrobidService.ConsolidateCitations.WITH_METADATA);
         assertNotNull(response);
         assertEquals(Optional.empty(), response);
     }
 
     @Test
     public void processInvalidCitationTest() {
-        assertThrows(IOException.class, () -> grobidService.processCitation(
-                "Iiiiiiiiiiiiiiiiiiiiiiii",
-                importFormatPreferences,
-                GrobidService.ConsolidateCitations.WITH_METADATA));
+        assertThrows(
+                IOException.class,
+                () -> grobidService.processCitation(
+                        "Iiiiiiiiiiiiiiiiiiiiiiii",
+                        importFormatPreferences,
+                        GrobidService.ConsolidateCitations.WITH_METADATA));
     }
 
     @Test
     public void failsWhenGrobidDisabled() {
-        GrobidPreferences importSettingsWithGrobidDisabled = new GrobidPreferences(
-                false,
-                false,
-                "http://grobid.jabref.org:8070");
+        GrobidPreferences importSettingsWithGrobidDisabled =
+                new GrobidPreferences(false, false, "http://grobid.jabref.org:8070");
         assertThrows(UnsupportedOperationException.class, () -> new GrobidService(importSettingsWithGrobidDisabled));
     }
 
     @Test
     public void processPdfTest() throws IOException, ParseException, URISyntaxException {
-        Path file = Path.of(PdfGrobidImporterTest.class.getResource("LNCS-minimal.pdf").toURI());
+        Path file = Path.of(
+                PdfGrobidImporterTest.class.getResource("LNCS-minimal.pdf").toURI());
         List<BibEntry> response = grobidService.processPDF(file, importFormatPreferences);
         assertEquals(1, response.size());
         BibEntry be0 = response.get(0);

@@ -25,7 +25,8 @@ public class SaveAllAction extends SimpleCommand {
         dialogService.notify(Localization.lang("Saving all libraries..."));
 
         for (LibraryTab libraryTab : frame.getLibraryTabs()) {
-            SaveDatabaseAction saveDatabaseAction = new SaveDatabaseAction(libraryTab, dialogService, preferencesService, Globals.entryTypesManager);
+            SaveDatabaseAction saveDatabaseAction =
+                    new SaveDatabaseAction(libraryTab, dialogService, preferencesService, Globals.entryTypesManager);
             boolean saveResult = saveDatabaseAction.save();
             if (!saveResult) {
                 dialogService.notify(Localization.lang("Could not save file."));

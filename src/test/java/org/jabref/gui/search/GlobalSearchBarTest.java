@@ -58,8 +58,7 @@ public class GlobalSearchBarTest {
                 stateManager,
                 prefs,
                 mock(CountingUndoManager.class),
-                mock(DialogService.class)
-        );
+                mock(DialogService.class));
 
         hBox = new HBox(searchBar);
 
@@ -87,7 +86,8 @@ public class GlobalSearchBarTest {
 
         // Set the focus to another node to trigger the listener and finally record the query.
         DefaultTaskExecutor.runAndWaitInJavaFXThread(hBox::requestFocus);
-        List<String> lastSearchHistory = stateManager.getWholeSearchHistory().stream().toList();
+        List<String> lastSearchHistory =
+                stateManager.getWholeSearchHistory().stream().toList();
 
         assertEquals(List.of("Smith"), lastSearchHistory);
     }
@@ -102,7 +102,8 @@ public class GlobalSearchBarTest {
         searchFieldRoboto.write(searchQuery);
 
         DefaultTaskExecutor.runAndWaitInJavaFXThread(hBox::requestFocus);
-        List<String> lastSearchHistory = stateManager.getWholeSearchHistory().stream().toList();
+        List<String> lastSearchHistory =
+                stateManager.getWholeSearchHistory().stream().toList();
 
         assertEquals(List.of(), lastSearchHistory);
     }

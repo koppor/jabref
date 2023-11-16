@@ -20,14 +20,23 @@ import jakarta.inject.Inject;
 
 public class LinkedFileEditDialogView extends BaseDialog<LinkedFile> {
 
-    @FXML private TextField link;
-    @FXML private TextField description;
-    @FXML private ComboBox<ExternalFileType> fileType;
+    @FXML
+    private TextField link;
 
-    @Inject private DialogService dialogService;
-    @Inject private StateManager stateManager;
+    @FXML
+    private TextField description;
 
-    @Inject private PreferencesService preferences;
+    @FXML
+    private ComboBox<ExternalFileType> fileType;
+
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private StateManager stateManager;
+
+    @Inject
+    private PreferencesService preferences;
 
     private LinkedFilesEditDialogViewModel viewModel;
 
@@ -36,9 +45,7 @@ public class LinkedFileEditDialogView extends BaseDialog<LinkedFile> {
     public LinkedFileEditDialogView(LinkedFile linkedFile) {
         this.linkedFile = linkedFile;
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsContent(this.getDialogPane());
+        ViewLoader.view(this).load().setAsContent(this.getDialogPane());
 
         this.getDialogPane().getButtonTypes().addAll(ButtonType.APPLY, ButtonType.CANCEL);
         this.setResizable(false);
@@ -55,7 +62,8 @@ public class LinkedFileEditDialogView extends BaseDialog<LinkedFile> {
 
     @FXML
     private void initialize() {
-        viewModel = new LinkedFilesEditDialogViewModel(linkedFile, stateManager.getActiveDatabase().get(), dialogService, preferences.getFilePreferences());
+        viewModel = new LinkedFilesEditDialogViewModel(
+                linkedFile, stateManager.getActiveDatabase().get(), dialogService, preferences.getFilePreferences());
         fileType.itemsProperty().bindBidirectional(viewModel.externalFileTypeProperty());
         new ViewModelListCellFactory<ExternalFileType>()
                 .withIcon(ExternalFileType::getIcon)

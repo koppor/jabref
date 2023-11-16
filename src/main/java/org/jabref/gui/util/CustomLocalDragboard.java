@@ -16,7 +16,8 @@ import org.jabref.model.entry.BibEntry;
  */
 public class CustomLocalDragboard {
 
-    @SuppressWarnings("unchecked") private static final Class<List<BibEntry>> BIB_ENTRIES = (Class<List<BibEntry>>) (Class<?>) List.class;
+    @SuppressWarnings("unchecked")
+    private static final Class<List<BibEntry>> BIB_ENTRIES = (Class<List<BibEntry>>) (Class<?>) List.class;
 
     private final Map<Class<?>, Object> contents = new HashMap<>();
 

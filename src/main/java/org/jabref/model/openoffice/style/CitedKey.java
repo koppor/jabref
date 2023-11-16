@@ -13,10 +13,7 @@ import org.jabref.model.openoffice.ootext.OOText;
  * <p>
  * They contain backreferences to the corresponding citations in {@code where}. This allows the extra information generated using CitedKeys to be distributed back to the in-text citations.
  */
-public class CitedKey implements
-        ComparableCitedKey,
-        CitationMarkerNormEntry,
-        CitationMarkerNumericBibEntry {
+public class CitedKey implements ComparableCitedKey, CitationMarkerNormEntry, CitationMarkerNumericBibEntry {
 
     public final String citationKey;
     private final List<CitationPath> where;
@@ -24,7 +21,7 @@ public class CitedKey implements
     private Optional<CitationLookupResult> db;
     private Optional<Integer> number; // For Numbered citation styles.
     private Optional<String> uniqueLetter; // For AuthorYear citation styles.
-    private Optional<OOText> normCitMarker;  // For AuthorYear citation styles.
+    private Optional<OOText> normCitMarker; // For AuthorYear citation styles.
 
     CitedKey(String citationKey, CitationPath path, Citation citation) {
         this.citationKey = citationKey;

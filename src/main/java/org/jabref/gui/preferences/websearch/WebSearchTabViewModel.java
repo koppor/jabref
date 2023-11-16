@@ -90,18 +90,19 @@ public class WebSearchTabViewModel implements PreferenceTabViewModel {
         grobidEnabledProperty.setValue(grobidPreferences.isGrobidEnabled());
         grobidURLProperty.setValue(grobidPreferences.getGrobidURL());
 
-        apiKeys.setValue(FXCollections.observableArrayList(preferencesService.getImporterPreferences().getApiKeys()));
+        apiKeys.setValue(FXCollections.observableArrayList(
+                preferencesService.getImporterPreferences().getApiKeys()));
         apikeyPersistAvailableProperty.setValue(OS.isKeyringAvailable());
-        apikeyPersistProperty.setValue(preferencesService.getImporterPreferences().shouldPersistCustomKeys());
-        catalogs.addAll(WebFetchers.getSearchBasedFetchers(importFormatPreferences, importerPreferences)
-                                   .stream()
-                                   .map(SearchBasedFetcher::getName)
-                                   .filter(name -> !name.equals(CompositeSearchBasedFetcher.FETCHER_NAME))
-                                   .map(name -> {
-                                       boolean enabled = importerPreferences.getCatalogs().contains(name);
-                                       return new StudyCatalogItem(name, enabled);
-                                   })
-                                   .toList());
+        apikeyPersistProperty.setValue(
+                preferencesService.getImporterPreferences().shouldPersistCustomKeys());
+        catalogs.addAll(WebFetchers.getSearchBasedFetchers(importFormatPreferences, importerPreferences).stream()
+                .map(SearchBasedFetcher::getName)
+                .filter(name -> !name.equals(CompositeSearchBasedFetcher.FETCHER_NAME))
+                .map(name -> {
+                    boolean enabled = importerPreferences.getCatalogs().contains(name);
+                    return new StudyCatalogItem(name, enabled);
+                })
+                .toList());
     }
 
     @Override
@@ -116,11 +117,10 @@ public class WebSearchTabViewModel implements PreferenceTabViewModel {
         grobidPreferences.setGrobidURL(grobidURLProperty.getValue());
         doiPreferences.setUseCustom(useCustomDOIProperty.get());
         doiPreferences.setDefaultBaseURI(useCustomDOINameProperty.getValue().trim());
-        importerPreferences.setCatalogs(
-                FXCollections.observableList(catalogs.stream()
-                                                     .filter(StudyCatalogItem::isEnabled)
-                                                     .map(StudyCatalogItem::getName)
-                                                     .collect(Collectors.toList())));
+        importerPreferences.setCatalogs(FXCollections.observableList(catalogs.stream()
+                .filter(StudyCatalogItem::isEnabled)
+                .map(StudyCatalogItem::getName)
+                .collect(Collectors.toList())));
         importerPreferences.setPersistCustomKeys(apikeyPersistProperty.get());
         preferencesService.getImporterPreferences().getApiKeys().clear();
         if (apikeyPersistAvailableProperty.get()) {
@@ -183,18 +183,15 @@ public class WebSearchTabViewModel implements PreferenceTabViewModel {
     public void checkCustomApiKey() {
         final String apiKeyName = selectedApiKeyProperty.get().getName();
 
-        final Optional<CustomizableKeyFetcher> fetcherOpt =
-                WebFetchers.getCustomizableKeyFetchers(
-                                   preferencesService.getImportFormatPreferences(),
-                                   preferencesService.getImporterPreferences())
-                           .stream()
-                           .filter(fetcher -> fetcher.getName().equals(apiKeyName))
-                           .findFirst();
+        final Optional<CustomizableKeyFetcher> fetcherOpt = WebFetchers.getCustomizableKeyFetchers(
+                        preferencesService.getImportFormatPreferences(), preferencesService.getImporterPreferences())
+                .stream()
+                .filter(fetcher -> fetcher.getName().equals(apiKeyName))
+                .findFirst();
 
         if (fetcherOpt.isEmpty()) {
             dialogService.showErrorDialogAndWait(
-                    Localization.lang("Check %0 API Key Setting", apiKeyName),
-                    Localization.lang("Fetcher unknown!"));
+                    Localization.lang("Check %0 API Key Setting", apiKeyName), Localization.lang("Fetcher unknown!"));
             return;
         }
 
@@ -229,9 +226,12 @@ public class WebSearchTabViewModel implements PreferenceTabViewModel {
         }
 
         if (keyValid) {
-            dialogService.showInformationDialogAndWait(Localization.lang("Check %0 API Key Setting", apiKeyName), Localization.lang("Connection successful!"));
+            dialogService.showInformationDialogAndWait(
+                    Localization.lang("Check %0 API Key Setting", apiKeyName),
+                    Localization.lang("Connection successful!"));
         } else {
-            dialogService.showErrorDialogAndWait(Localization.lang("Check %0 API Key Setting", apiKeyName), Localization.lang("Connection failed!"));
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Check %0 API Key Setting", apiKeyName), Localization.lang("Connection failed!"));
         }
     }
 

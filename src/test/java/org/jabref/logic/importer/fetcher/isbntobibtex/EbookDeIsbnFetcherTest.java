@@ -36,7 +36,8 @@ public class EbookDeIsbnFetcherTest extends AbstractIsbnFetcherTest {
                 .withField(StandardField.DATE, "2018-01-15")
                 .withField(new UnknownField("ean"), "9780134685991")
                 .withField(StandardField.ISBN, "0134685997")
-                .withField(StandardField.URL, "https://www.ebook.de/de/product/28983211/joshua_bloch_effective_java.html");
+                .withField(
+                        StandardField.URL, "https://www.ebook.de/de/product/28983211/joshua_bloch_effective_java.html");
 
         fetcher = new EbookDeIsbnFetcher(mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS));
     }
@@ -69,12 +70,16 @@ public class EbookDeIsbnFetcherTest extends AbstractIsbnFetcherTest {
                 .withField(StandardField.TITLE, "Fundamentals of Business Process Management")
                 .withField(StandardField.PUBLISHER, "Springer Berlin Heidelberg")
                 .withField(StandardField.YEAR, "2019")
-                .withField(StandardField.AUTHOR, "Dumas, Marlon and Rosa, Marcello La and Mendling, Jan and Reijers, Hajo A.")
+                .withField(
+                        StandardField.AUTHOR,
+                        "Dumas, Marlon and Rosa, Marcello La and Mendling, Jan and Reijers, Hajo A.")
                 .withField(StandardField.DATE, "2019-02-01")
                 .withField(StandardField.PAGETOTAL, "560")
                 .withField(new UnknownField("ean"), "9783662585856")
                 .withField(StandardField.ISBN, "3662585855")
-                .withField(StandardField.URL, "https://www.ebook.de/de/product/35805105/marlon_dumas_marcello_la_rosa_jan_mendling_hajo_a_reijers_fundamentals_of_business_process_management.html");
+                .withField(
+                        StandardField.URL,
+                        "https://www.ebook.de/de/product/35805105/marlon_dumas_marcello_la_rosa_jan_mendling_hajo_a_reijers_fundamentals_of_business_process_management.html");
 
         Optional<BibEntry> fetchedEntry = fetcher.performSearchById("3662585855");
         assertEquals(Optional.of(bibEntry), fetchedEntry);

@@ -30,18 +30,20 @@ public class ExternalFileTypesTabViewModel implements PreferenceTabViewModel {
     public void setValues() {
         fileTypes.clear();
         fileTypes.addAll(filePreferences.getExternalFileTypes().stream()
-                       .map(ExternalFileTypeItemViewModel::new)
-                       .toList());
+                .map(ExternalFileTypeItemViewModel::new)
+                .toList());
         fileTypes.sort(Comparator.comparing(ExternalFileTypeItemViewModel::getName));
     }
 
     public void storeSettings() {
         Set<ExternalFileType> saveList = new HashSet<>();
 
-        fileTypes.stream().map(ExternalFileTypeItemViewModel::toExternalFileType)
-                 .forEach(type -> ExternalFileTypes.getDefaultExternalFileTypes().stream()
-                                                   .filter(type::equals).findAny()
-                                                   .ifPresentOrElse(saveList::add, () -> saveList.add(type)));
+        fileTypes.stream()
+                .map(ExternalFileTypeItemViewModel::toExternalFileType)
+                .forEach(type -> ExternalFileTypes.getDefaultExternalFileTypes().stream()
+                        .filter(type::equals)
+                        .findAny()
+                        .ifPresentOrElse(saveList::add, () -> saveList.add(type)));
 
         filePreferences.getExternalFileTypes().clear();
         filePreferences.getExternalFileTypes().addAll(saveList);
@@ -49,8 +51,8 @@ public class ExternalFileTypesTabViewModel implements PreferenceTabViewModel {
 
     public void resetToDefaults() {
         fileTypes.setAll(ExternalFileTypes.getDefaultExternalFileTypes().stream()
-                                          .map(ExternalFileTypeItemViewModel::new)
-                                          .toList());
+                .map(ExternalFileTypeItemViewModel::new)
+                .toList());
         fileTypes.sort(Comparator.comparing(ExternalFileTypeItemViewModel::getName));
     }
 

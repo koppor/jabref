@@ -22,8 +22,11 @@ class ProtectedTermsLoaderTest {
 
     @BeforeEach
     void setUp() {
-        loader = new ProtectedTermsLoader(new ProtectedTermsPreferences(ProtectedTermsLoader.getInternalLists(),
-                Collections.emptyList(), Collections.emptyList(), Collections.emptyList()));
+        loader = new ProtectedTermsLoader(new ProtectedTermsPreferences(
+                ProtectedTermsLoader.getInternalLists(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList()));
     }
 
     @Test
@@ -34,28 +37,36 @@ class ProtectedTermsLoaderTest {
             loader.removeProtectedTermsList(list);
         }
         assertTrue(loader.getProtectedTermsLists().isEmpty());
-        String filename = Path.of(ProtectedTermsLoader.class.getResource("/org/jabref/logic/protectedterms/namedterms.terms")
-                                                            .toURI())
-                              .toFile().getPath();
+        String filename = Path.of(ProtectedTermsLoader.class
+                        .getResource("/org/jabref/logic/protectedterms/namedterms.terms")
+                        .toURI())
+                .toFile()
+                .getPath();
         loader.addProtectedTermsListFromFile(filename, true);
         assertEquals(List.of("Einstein"), loader.getProtectedTerms());
     }
 
     @Test
     void testAddProtectedTermsListFromFile() throws URISyntaxException {
-        String filename = Path.of(ProtectedTermsLoader.class.getResource("/org/jabref/logic/protectedterms/namedterms.terms")
-                                                            .toURI())
-                              .toFile().getPath();
-        assertEquals(ProtectedTermsLoader.getInternalLists().size(), loader.getProtectedTermsLists().size());
+        String filename = Path.of(ProtectedTermsLoader.class
+                        .getResource("/org/jabref/logic/protectedterms/namedterms.terms")
+                        .toURI())
+                .toFile()
+                .getPath();
+        assertEquals(
+                ProtectedTermsLoader.getInternalLists().size(),
+                loader.getProtectedTermsLists().size());
         loader.addProtectedTermsListFromFile(filename, false);
-        assertEquals(ProtectedTermsLoader.getInternalLists().size() + 1, loader.getProtectedTermsLists().size());
+        assertEquals(
+                ProtectedTermsLoader.getInternalLists().size() + 1,
+                loader.getProtectedTermsLists().size());
     }
 
     @Test
     void testReadProtectedTermsListFromFileReadsDescription() throws URISyntaxException {
-        Path file = Path.of(
-                ProtectedTermsLoader.class.getResource("/org/jabref/logic/protectedterms/namedterms.terms")
-                                          .toURI());
+        Path file = Path.of(ProtectedTermsLoader.class
+                .getResource("/org/jabref/logic/protectedterms/namedterms.terms")
+                .toURI());
 
         ProtectedTermsList list = ProtectedTermsLoader.readProtectedTermsListFromFile(file, true);
         assertEquals("Term list", list.getDescription());
@@ -63,8 +74,9 @@ class ProtectedTermsLoaderTest {
 
     @Test
     void testReadProtectedTermsListFromFileDisabledWorks() throws URISyntaxException {
-        Path file = Path.of(ProtectedTermsLoader.class.getResource("/org/jabref/logic/protectedterms/namedterms.terms")
-                                                      .toURI());
+        Path file = Path.of(ProtectedTermsLoader.class
+                .getResource("/org/jabref/logic/protectedterms/namedterms.terms")
+                .toURI());
 
         ProtectedTermsList list = ProtectedTermsLoader.readProtectedTermsListFromFile(file, false);
         assertFalse(list.isEnabled());
@@ -72,8 +84,9 @@ class ProtectedTermsLoaderTest {
 
     @Test
     void testReadProtectedTermsListFromFileEnabledWorks() throws URISyntaxException {
-        Path file = Path.of(ProtectedTermsLoader.class.getResource("/org/jabref/logic/protectedterms/namedterms.terms")
-                                                      .toURI());
+        Path file = Path.of(ProtectedTermsLoader.class
+                .getResource("/org/jabref/logic/protectedterms/namedterms.terms")
+                .toURI());
 
         ProtectedTermsList list = ProtectedTermsLoader.readProtectedTermsListFromFile(file, true);
         assertTrue(list.isEnabled());
@@ -81,41 +94,37 @@ class ProtectedTermsLoaderTest {
 
     @Test
     void testReadProtectedTermsListFromFileIsNotInternalList() throws URISyntaxException {
-        Path file = Path.of(ProtectedTermsLoader.class.getResource("/org/jabref/logic/protectedterms/namedterms.terms")
-                                                      .toURI());
+        Path file = Path.of(ProtectedTermsLoader.class
+                .getResource("/org/jabref/logic/protectedterms/namedterms.terms")
+                .toURI());
 
         ProtectedTermsList list = ProtectedTermsLoader.readProtectedTermsListFromFile(file, true);
         assertFalse(list.isInternalList());
     }
 
     @Test
-    void testReadProtectedTermsListFromFileNoDescriptionGivesDefaultDescription()
-            throws URISyntaxException {
-        Path file = Path.of(
-                ProtectedTermsLoader.class.getResource("/org/jabref/logic/protectedterms/unnamedterms.terms")
-                                          .toURI());
+    void testReadProtectedTermsListFromFileNoDescriptionGivesDefaultDescription() throws URISyntaxException {
+        Path file = Path.of(ProtectedTermsLoader.class
+                .getResource("/org/jabref/logic/protectedterms/unnamedterms.terms")
+                .toURI());
         ProtectedTermsList list = ProtectedTermsLoader.readProtectedTermsListFromFile(file, true);
-        assertEquals(Localization.lang("The text after the last line starting with # will be used"),
-                list.getDescription());
+        assertEquals(
+                Localization.lang("The text after the last line starting with # will be used"), list.getDescription());
     }
 
     @Test
     void testNewListsAreIncluded() {
         ProtectedTermsLoader localLoader = new ProtectedTermsLoader(new ProtectedTermsPreferences(
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList()));
-        assertEquals(ProtectedTermsLoader.getInternalLists().size(), localLoader.getProtectedTermsLists().size());
+                Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList()));
+        assertEquals(
+                ProtectedTermsLoader.getInternalLists().size(),
+                localLoader.getProtectedTermsLists().size());
     }
 
     @Test
     void testNewListsAreEnabled() {
         ProtectedTermsLoader localLoader = new ProtectedTermsLoader(new ProtectedTermsPreferences(
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList(),
-                Collections.emptyList()));
+                Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList()));
         for (ProtectedTermsList list : localLoader.getProtectedTermsLists()) {
             assertTrue(list.isEnabled());
         }
@@ -140,7 +149,9 @@ class ProtectedTermsLoaderTest {
                 Collections.singletonList("someUnlikelyNameThatNeverWillExist"),
                 Collections.emptyList(),
                 Collections.emptyList()));
-        assertEquals(ProtectedTermsLoader.getInternalLists().size(), localLoader.getProtectedTermsLists().size());
+        assertEquals(
+                ProtectedTermsLoader.getInternalLists().size(),
+                localLoader.getProtectedTermsLists().size());
     }
 
     @Test
@@ -155,13 +166,14 @@ class ProtectedTermsLoaderTest {
 
     @Test
     void testDoNotLoadTheSameInternalListTwice() {
-        ProtectedTermsLoader localLoader = new ProtectedTermsLoader(
-                new ProtectedTermsPreferences(
-                        ProtectedTermsLoader.getInternalLists(),
-                        Collections.emptyList(),
-                        ProtectedTermsLoader.getInternalLists(),
-                        Collections.emptyList()));
-        assertEquals(ProtectedTermsLoader.getInternalLists().size(), localLoader.getProtectedTermsLists().size());
+        ProtectedTermsLoader localLoader = new ProtectedTermsLoader(new ProtectedTermsPreferences(
+                ProtectedTermsLoader.getInternalLists(),
+                Collections.emptyList(),
+                ProtectedTermsLoader.getInternalLists(),
+                Collections.emptyList()));
+        assertEquals(
+                ProtectedTermsLoader.getInternalLists().size(),
+                localLoader.getProtectedTermsLists().size());
     }
 
     @Test
@@ -171,33 +183,37 @@ class ProtectedTermsLoaderTest {
                 Collections.emptyList(),
                 ProtectedTermsLoader.getInternalLists(),
                 Collections.emptyList()));
-        localLoader.addNewProtectedTermsList("My new list", tempDir.resolve("MyNewList.terms").toAbsolutePath().toString());
-        assertEquals(ProtectedTermsLoader.getInternalLists().size() + 1, localLoader.getProtectedTermsLists().size());
+        localLoader.addNewProtectedTermsList(
+                "My new list",
+                tempDir.resolve("MyNewList.terms").toAbsolutePath().toString());
+        assertEquals(
+                ProtectedTermsLoader.getInternalLists().size() + 1,
+                localLoader.getProtectedTermsLists().size());
     }
 
     @Test
     void testAddNewTermListNewListInList(@TempDir Path tempDir) {
-        ProtectedTermsLoader localLoader = new ProtectedTermsLoader(
-                new ProtectedTermsPreferences(
-                        Collections.emptyList(),
-                        Collections.emptyList(),
-                        ProtectedTermsLoader.getInternalLists(),
-                        Collections.emptyList()));
-        ProtectedTermsList newList = localLoader.addNewProtectedTermsList("My new list", tempDir.resolve("MyNewList.terms")
-                                                                                                .toAbsolutePath()
-                                                                                                .toString());
+        ProtectedTermsLoader localLoader = new ProtectedTermsLoader(new ProtectedTermsPreferences(
+                Collections.emptyList(),
+                Collections.emptyList(),
+                ProtectedTermsLoader.getInternalLists(),
+                Collections.emptyList()));
+        ProtectedTermsList newList = localLoader.addNewProtectedTermsList(
+                "My new list",
+                tempDir.resolve("MyNewList.terms").toAbsolutePath().toString());
         assertTrue(localLoader.getProtectedTermsLists().contains(newList));
     }
 
     @Test
     void testRemoveTermList(@TempDir Path tempDir) {
-        ProtectedTermsLoader localLoader = new ProtectedTermsLoader(
-                new ProtectedTermsPreferences(
-                        Collections.emptyList(),
-                        Collections.emptyList(),
-                        ProtectedTermsLoader.getInternalLists(),
-                        Collections.emptyList()));
-        ProtectedTermsList newList = localLoader.addNewProtectedTermsList("My new list", tempDir.resolve("MyNewList.terms").toAbsolutePath().toString());
+        ProtectedTermsLoader localLoader = new ProtectedTermsLoader(new ProtectedTermsPreferences(
+                Collections.emptyList(),
+                Collections.emptyList(),
+                ProtectedTermsLoader.getInternalLists(),
+                Collections.emptyList()));
+        ProtectedTermsList newList = localLoader.addNewProtectedTermsList(
+                "My new list",
+                tempDir.resolve("MyNewList.terms").toAbsolutePath().toString());
         assertTrue(localLoader.removeProtectedTermsList(newList));
     }
 
@@ -208,9 +224,13 @@ class ProtectedTermsLoaderTest {
                 Collections.emptyList(),
                 ProtectedTermsLoader.getInternalLists(),
                 Collections.emptyList()));
-        ProtectedTermsList newList = localLoader.addNewProtectedTermsList("My new list", tempDir.resolve("MyNewList.terms").toAbsolutePath().toString());
+        ProtectedTermsList newList = localLoader.addNewProtectedTermsList(
+                "My new list",
+                tempDir.resolve("MyNewList.terms").toAbsolutePath().toString());
         localLoader.removeProtectedTermsList(newList);
-        assertEquals(ProtectedTermsLoader.getInternalLists().size(), localLoader.getProtectedTermsLists().size());
+        assertEquals(
+                ProtectedTermsLoader.getInternalLists().size(),
+                localLoader.getProtectedTermsLists().size());
     }
 
     @Test
@@ -220,7 +240,9 @@ class ProtectedTermsLoaderTest {
                 Collections.emptyList(),
                 ProtectedTermsLoader.getInternalLists(),
                 Collections.emptyList()));
-        ProtectedTermsList newList = localLoader.addNewProtectedTermsList("My new list", tempDir.resolve("MyNewList.terms").toAbsolutePath().toString());
+        ProtectedTermsList newList = localLoader.addNewProtectedTermsList(
+                "My new list",
+                tempDir.resolve("MyNewList.terms").toAbsolutePath().toString());
         assertEquals("My new list", newList.getDescription());
     }
 }

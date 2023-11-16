@@ -55,9 +55,7 @@ public class CitationGroups {
     /**
      * For each citation in {@code where} call {@code fun.accept(new Pair(citation, value));}
      */
-    public <T> void distributeToCitations(List<CitationPath> where,
-                                          Consumer<OOPair<Citation, T>> fun,
-                                          T value) {
+    public <T> void distributeToCitations(List<CitationPath> where, Consumer<OOPair<Citation, T>> fun, T value) {
 
         for (CitationPath p : where) {
             CitationGroup group = citationGroupsUnordered.get(p.group);
@@ -212,8 +210,8 @@ public class CitationGroups {
 
     public void createNumberedBibliographySortedInOrderOfAppearance() {
         if (bibliography.isPresent()) {
-            throw new IllegalStateException("createNumberedBibliographySortedInOrderOfAppearance:"
-                    + " already have a bibliography");
+            throw new IllegalStateException(
+                    "createNumberedBibliographySortedInOrderOfAppearance:" + " already have a bibliography");
         }
         CitedKeys citedKeys = getCitedKeysSortedInOrderOfAppearance();
         citedKeys.numberCitedKeysInCurrentOrder();
@@ -238,7 +236,8 @@ public class CitationGroups {
      */
     public void createNumberedBibliographySortedByComparator(Comparator<BibEntry> entryComparator) {
         if (bibliography.isPresent()) {
-            throw new IllegalStateException("createNumberedBibliographySortedByComparator: already have a bibliography");
+            throw new IllegalStateException(
+                    "createNumberedBibliographySortedByComparator: already have a bibliography");
         }
         CitedKeys citedKeys = getCitedKeysUnordered();
         citedKeys.sortByComparator(entryComparator);

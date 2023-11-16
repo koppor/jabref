@@ -25,13 +25,23 @@ public class ParseLatexResultView extends BaseDialog<Void> {
     private final LatexBibEntriesResolverResult resolverResult;
     private final BibDatabaseContext databaseContext;
     private final Path basePath;
-    @FXML private ListView<ReferenceViewModel> referenceListView;
-    @FXML private CitationsDisplay citationsDisplay;
-    @FXML private ButtonType importButtonType;
-    @Inject private ThemeManager themeManager;
+
+    @FXML
+    private ListView<ReferenceViewModel> referenceListView;
+
+    @FXML
+    private CitationsDisplay citationsDisplay;
+
+    @FXML
+    private ButtonType importButtonType;
+
+    @Inject
+    private ThemeManager themeManager;
+
     private ParseLatexResultViewModel viewModel;
 
-    public ParseLatexResultView(LatexBibEntriesResolverResult resolverResult, BibDatabaseContext databaseContext, Path basePath) {
+    public ParseLatexResultView(
+            LatexBibEntriesResolverResult resolverResult, BibDatabaseContext databaseContext, Path basePath) {
         this.resolverResult = resolverResult;
         this.databaseContext = databaseContext;
         this.basePath = basePath;
@@ -66,8 +76,8 @@ public class ParseLatexResultView extends BaseDialog<Void> {
                 })
                 .install(referenceListView);
 
-        EasyBind.subscribe(referenceListView.getSelectionModel().selectedItemProperty(),
-                viewModel::activeReferenceChanged);
+        EasyBind.subscribe(
+                referenceListView.getSelectionModel().selectedItemProperty(), viewModel::activeReferenceChanged);
 
         citationsDisplay.basePathProperty().set(basePath);
         citationsDisplay.setItems(viewModel.getCitationListByReference());

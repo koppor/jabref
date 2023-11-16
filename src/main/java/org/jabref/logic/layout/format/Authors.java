@@ -150,7 +150,8 @@ public class Authors extends AbstractParamLayoutFormatter {
                 abbrDots = false;
                 lastFirstSeparator = ", ";
             }
-        } else if (Authors.SEPARATORS.contains(key.trim().toLowerCase(Locale.ROOT)) || Authors.LAST_SEPARATORS.contains(key.trim().toLowerCase(Locale.ROOT))) {
+        } else if (Authors.SEPARATORS.contains(key.trim().toLowerCase(Locale.ROOT))
+                || Authors.LAST_SEPARATORS.contains(key.trim().toLowerCase(Locale.ROOT))) {
             // AuthorSep = [Comma | And | Colon | Semicolon | sep=<string>]
             // AuthorLastSep = [And | Comma | Colon | Semicolon | Amp | Oxford | lastsep=<string>]
 
@@ -254,10 +255,14 @@ public class Authors extends AbstractParamLayoutFormatter {
 
     private void addSingleName(StringBuilder sb, Author a, boolean firstFirst) {
         StringBuilder lastNameSB = new StringBuilder();
-        a.getVon().filter(von -> !von.isEmpty()).ifPresent(von -> lastNameSB.append(von).append(' '));
+        a.getVon()
+                .filter(von -> !von.isEmpty())
+                .ifPresent(von -> lastNameSB.append(von).append(' '));
         a.getLast().ifPresent(lastNameSB::append);
         String jrSeparator = " ";
-        a.getJr().filter(jr -> !jr.isEmpty()).ifPresent(jr -> lastNameSB.append(jrSeparator).append(jr));
+        a.getJr()
+                .filter(jr -> !jr.isEmpty())
+                .ifPresent(jr -> lastNameSB.append(jrSeparator).append(jr));
 
         String firstNameResult = "";
         if (a.getFirst().isPresent()) {

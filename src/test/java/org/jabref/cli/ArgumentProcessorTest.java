@@ -40,7 +40,8 @@ class ArgumentProcessorTest {
     private final PreferencesService preferencesService = mock(PreferencesService.class, Answers.RETURNS_DEEP_STUBS);
     private final BibEntryTypesManager entryTypesManager = mock(BibEntryTypesManager.class);
     private final ImporterPreferences importerPreferences = mock(ImporterPreferences.class, Answers.RETURNS_DEEP_STUBS);
-    private final ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+    private final ImportFormatPreferences importFormatPreferences =
+            mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
 
     @BeforeEach()
     void setup() {
@@ -48,15 +49,20 @@ class ArgumentProcessorTest {
 
         when(preferencesService.getImporterPreferences()).thenReturn(importerPreferences);
         when(preferencesService.getImportFormatPreferences()).thenReturn(importFormatPreferences);
-        when(preferencesService.getSearchPreferences()).thenReturn(
-                new SearchPreferences(null, EnumSet.noneOf(SearchRules.SearchFlags.class), false)
-        );
+        when(preferencesService.getSearchPreferences())
+                .thenReturn(new SearchPreferences(null, EnumSet.noneOf(SearchRules.SearchFlags.class), false));
     }
 
     @Test
     void testAuxImport(@TempDir Path tempDir) throws Exception {
-        String auxFile = Path.of(AuxCommandLineTest.class.getResource("paper.aux").toURI()).toAbsolutePath().toString();
-        String originBib = Path.of(AuxCommandLineTest.class.getResource("origin.bib").toURI()).toAbsolutePath().toString();
+        String auxFile = Path.of(
+                        AuxCommandLineTest.class.getResource("paper.aux").toURI())
+                .toAbsolutePath()
+                .toString();
+        String originBib = Path.of(
+                        AuxCommandLineTest.class.getResource("origin.bib").toURI())
+                .toAbsolutePath()
+                .toString();
 
         Path outputBib = tempDir.resolve("output.bisb").toAbsolutePath();
         String outputBibFile = outputBib.toAbsolutePath().toString();
@@ -76,21 +82,23 @@ class ArgumentProcessorTest {
 
     @Test
     void testExportMatches(@TempDir Path tempDir) throws Exception {
-        Path originBib = Path.of(Objects.requireNonNull(ArgumentProcessorTest.class.getResource("origin.bib")).toURI());
+        Path originBib = Path.of(Objects.requireNonNull(ArgumentProcessorTest.class.getResource("origin.bib"))
+                .toURI());
         String originBibFile = originBib.toAbsolutePath().toString();
 
-        Path expectedBib = Path.of(
-                Objects.requireNonNull(ArgumentProcessorTest.class.getResource("ArgumentProcessorTestExportMatches.bib"))
-                       .toURI()
-        );
+        Path expectedBib = Path.of(Objects.requireNonNull(
+                        ArgumentProcessorTest.class.getResource("ArgumentProcessorTestExportMatches.bib"))
+                .toURI());
 
         BibtexImporter bibtexImporter = new BibtexImporter(importFormatPreferences, new DummyFileUpdateMonitor());
-        List<BibEntry> expectedEntries = bibtexImporter.importDatabase(expectedBib).getDatabase().getEntries();
+        List<BibEntry> expectedEntries =
+                bibtexImporter.importDatabase(expectedBib).getDatabase().getEntries();
 
         Path outputBib = tempDir.resolve("output.bib").toAbsolutePath();
         String outputBibFile = outputBib.toAbsolutePath().toString();
 
-        List<String> args = List.of("-n", "--debug", "--exportMatches", "Author=Einstein," + outputBibFile, originBibFile);
+        List<String> args =
+                List.of("-n", "--debug", "--exportMatches", "Author=Einstein," + outputBibFile, originBibFile);
 
         ArgumentProcessor processor = new ArgumentProcessor(
                 args.toArray(String[]::new),
@@ -106,20 +114,23 @@ class ArgumentProcessorTest {
 
     @Test
     void convertBibtexToTablerefsabsbib(@TempDir Path tempDir) throws Exception {
-        Path originBib = Path.of(Objects.requireNonNull(ArgumentProcessorTest.class.getResource("origin.bib")).toURI());
+        Path originBib = Path.of(Objects.requireNonNull(ArgumentProcessorTest.class.getResource("origin.bib"))
+                .toURI());
         String originBibFile = originBib.toAbsolutePath().toString();
 
         Path outputHtml = tempDir.resolve("output.html").toAbsolutePath();
         String outputHtmlFile = outputHtml.toAbsolutePath().toString();
 
-        when(importerPreferences.getCustomImporters()) .thenReturn(FXCollections.emptyObservableSet());
+        when(importerPreferences.getCustomImporters()).thenReturn(FXCollections.emptyObservableSet());
 
         SaveOrder saveOrder = new SaveOrder(SaveOrder.OrderType.TABLE, List.of());
         ExportPreferences exportPreferences = new ExportPreferences(".html", tempDir, saveOrder, List.of());
         when(preferencesService.getExportPreferences()).thenReturn(exportPreferences);
 
-        SelfContainedSaveOrder selfContainedSaveOrder = new SelfContainedSaveOrder(SaveOrder.OrderType.ORIGINAL, List.of());
-        SelfContainedSaveConfiguration selfContainedSaveConfiguration = new SelfContainedSaveConfiguration(selfContainedSaveOrder, false, BibDatabaseWriter.SaveType.WITH_JABREF_META_DATA, false);
+        SelfContainedSaveOrder selfContainedSaveOrder =
+                new SelfContainedSaveOrder(SaveOrder.OrderType.ORIGINAL, List.of());
+        SelfContainedSaveConfiguration selfContainedSaveConfiguration = new SelfContainedSaveConfiguration(
+                selfContainedSaveOrder, false, BibDatabaseWriter.SaveType.WITH_JABREF_META_DATA, false);
         when(preferencesService.getSelfContainedExportConfiguration()).thenReturn(selfContainedSaveConfiguration);
 
         List<String> args = List.of("-n", "-i", originBibFile + ",bibtex", "-o", outputHtmlFile + ",tablerefsabsbib");

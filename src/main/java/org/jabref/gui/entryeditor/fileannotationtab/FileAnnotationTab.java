@@ -31,8 +31,8 @@ public class FileAnnotationTab extends EntryEditorTab {
     @Override
     protected void bindToEntry(BibEntry entry) {
         Parent content = ViewLoader.view(new FileAnnotationTabView(entry, fileAnnotationCache))
-                                   .load()
-                                   .getView();
+                .load()
+                .getView();
         setContent(content);
     }
 }

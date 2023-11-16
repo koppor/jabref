@@ -27,7 +27,7 @@ public class BibDatabaseFilesTest {
     @Test
     public void resolveStrings() throws IOException {
         try (FileInputStream stream = new FileInputStream("src/test/resources/org/jabref/util/twente.bib");
-             InputStreamReader fr = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+                InputStreamReader fr = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             ParserResult result = new BibtexParser(importFormatPreferences).parse(fr);
 
             BibDatabase db = result.getDatabase();

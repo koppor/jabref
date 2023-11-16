@@ -35,21 +35,25 @@ public class PdfSearcherTest {
         // given
         BibDatabase database = new BibDatabase();
         BibDatabaseContext context = mock(BibDatabaseContext.class);
-        when(context.getFileDirectories(Mockito.any())).thenReturn(Collections.singletonList(Path.of("src/test/resources/pdfs")));
+        when(context.getFileDirectories(Mockito.any()))
+                .thenReturn(Collections.singletonList(Path.of("src/test/resources/pdfs")));
         when(context.getFulltextIndexPath()).thenReturn(indexDir);
         when(context.getDatabase()).thenReturn(database);
         when(context.getEntries()).thenReturn(database.getEntries());
         BibEntry examplePdf = new BibEntry(StandardEntryType.Article);
-        examplePdf.setFiles(Collections.singletonList(new LinkedFile("Example Entry", "example.pdf", StandardFileType.PDF.getName())));
+        examplePdf.setFiles(Collections.singletonList(
+                new LinkedFile("Example Entry", "example.pdf", StandardFileType.PDF.getName())));
         database.insertEntry(examplePdf);
 
         BibEntry metaDataEntry = new BibEntry(StandardEntryType.Article);
-        metaDataEntry.setFiles(Collections.singletonList(new LinkedFile("Metadata Entry", "metaData.pdf", StandardFileType.PDF.getName())));
+        metaDataEntry.setFiles(Collections.singletonList(
+                new LinkedFile("Metadata Entry", "metaData.pdf", StandardFileType.PDF.getName())));
         metaDataEntry.setCitationKey("MetaData2017");
         database.insertEntry(metaDataEntry);
 
         BibEntry exampleThesis = new BibEntry(StandardEntryType.PhdThesis);
-        exampleThesis.setFiles(Collections.singletonList(new LinkedFile("Example Thesis", "thesis-example.pdf", StandardFileType.PDF.getName())));
+        exampleThesis.setFiles(Collections.singletonList(
+                new LinkedFile("Example Thesis", "thesis-example.pdf", StandardFileType.PDF.getName())));
         exampleThesis.setCitationKey("ExampleThesis");
         database.insertEntry(exampleThesis);
 

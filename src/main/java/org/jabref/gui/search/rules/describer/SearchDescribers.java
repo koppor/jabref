@@ -7,8 +7,7 @@ import org.jabref.model.search.rules.RegexBasedSearchRule;
 
 public class SearchDescribers {
 
-    private SearchDescribers() {
-    }
+    private SearchDescribers() {}
 
     /**
      * Get the search describer for a given search query.
@@ -18,13 +17,17 @@ public class SearchDescribers {
      */
     public static SearchDescriber getSearchDescriberFor(SearchQuery searchQuery) {
         if (searchQuery.getRule() instanceof GrammarBasedSearchRule grammarBasedSearchRule) {
-            return new GrammarBasedSearchRuleDescriber(grammarBasedSearchRule.getSearchFlags(), grammarBasedSearchRule.getTree());
+            return new GrammarBasedSearchRuleDescriber(
+                    grammarBasedSearchRule.getSearchFlags(), grammarBasedSearchRule.getTree());
         } else if (searchQuery.getRule() instanceof ContainsBasedSearchRule containBasedSearchRule) {
-            return new ContainsAndRegexBasedSearchRuleDescriber(containBasedSearchRule.getSearchFlags(), searchQuery.getQuery());
+            return new ContainsAndRegexBasedSearchRuleDescriber(
+                    containBasedSearchRule.getSearchFlags(), searchQuery.getQuery());
         } else if (searchQuery.getRule() instanceof RegexBasedSearchRule regexBasedSearchRule) {
-            return new ContainsAndRegexBasedSearchRuleDescriber(regexBasedSearchRule.getSearchFlags(), searchQuery.getQuery());
+            return new ContainsAndRegexBasedSearchRuleDescriber(
+                    regexBasedSearchRule.getSearchFlags(), searchQuery.getQuery());
         } else {
-            throw new IllegalStateException("Cannot find a describer for searchRule " + searchQuery.getRule() + " and query " + searchQuery.getQuery());
+            throw new IllegalStateException("Cannot find a describer for searchRule " + searchQuery.getRule()
+                    + " and query " + searchQuery.getQuery());
         }
     }
 }

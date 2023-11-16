@@ -61,17 +61,18 @@ abstract class FieldsEditorTab extends EntryEditorTab {
     private Collection<Field> fields = new ArrayList<>();
     private GridPane gridPane;
 
-    public FieldsEditorTab(boolean compressed,
-                           BibDatabaseContext databaseContext,
-                           SuggestionProviders suggestionProviders,
-                           UndoManager undoManager,
-                           DialogService dialogService,
-                           PreferencesService preferences,
-                           StateManager stateManager,
-                           ThemeManager themeManager,
-                           TaskExecutor taskExecutor,
-                           JournalAbbreviationRepository journalAbbreviationRepository,
-                           IndexingTaskManager indexingTaskManager) {
+    public FieldsEditorTab(
+            boolean compressed,
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            DialogService dialogService,
+            PreferencesService preferences,
+            StateManager stateManager,
+            ThemeManager themeManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository,
+            IndexingTaskManager indexingTaskManager) {
         this.isCompressed = compressed;
         this.databaseContext = Objects.requireNonNull(databaseContext);
         this.suggestionProviders = Objects.requireNonNull(suggestionProviders);
@@ -136,12 +137,23 @@ abstract class FieldsEditorTab extends EntryEditorTab {
 
             addColumn(gridPane, 0, labels.subList(0, rows));
             addColumn(gridPane, 3, labels.subList(rows, labels.size()));
-            addColumn(gridPane, 1, editors.values().stream().map(FieldEditorFX::getNode).limit(rows));
-            addColumn(gridPane, 4, editors.values().stream().map(FieldEditorFX::getNode).skip(rows));
+            addColumn(
+                    gridPane,
+                    1,
+                    editors.values().stream().map(FieldEditorFX::getNode).limit(rows));
+            addColumn(
+                    gridPane,
+                    4,
+                    editors.values().stream().map(FieldEditorFX::getNode).skip(rows));
 
             columnExpand.setPercentWidth(40);
-            gridPane.getColumnConstraints().addAll(columnDoNotContract, columnExpand, new ColumnConstraints(10),
-                    columnDoNotContract, columnExpand);
+            gridPane.getColumnConstraints()
+                    .addAll(
+                            columnDoNotContract,
+                            columnExpand,
+                            new ColumnConstraints(10),
+                            columnDoNotContract,
+                            columnExpand);
 
             setCompressedRowLayout(gridPane, rows);
         } else {
@@ -156,8 +168,8 @@ abstract class FieldsEditorTab extends EntryEditorTab {
 
     private void setRegularRowLayout(GridPane gridPane) {
         double totalWeight = fields.stream()
-                                   .mapToDouble(field -> editors.get(field).getWeight())
-                                   .sum();
+                .mapToDouble(field -> editors.get(field).getWeight())
+                .sum();
 
         List<RowConstraints> constraints = new ArrayList<>();
         for (Field field : fields) {

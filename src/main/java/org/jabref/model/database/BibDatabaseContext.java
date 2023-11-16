@@ -125,8 +125,8 @@ public class BibDatabaseContext {
      */
     public boolean isStudy() {
         return this.getDatabasePath()
-                .map(path -> path.getFileName().toString().equals(Crawler.FILENAME_STUDY_RESULT_BIB) &&
-                        Files.exists(path.resolveSibling(StudyRepository.STUDY_DEFINITION_FILE_NAME)))
+                .map(path -> path.getFileName().toString().equals(Crawler.FILENAME_STUDY_RESULT_BIB)
+                        && Files.exists(path.resolveSibling(StudyRepository.STUDY_DEFINITION_FILE_NAME)))
                 .orElse(false);
     }
 
@@ -187,9 +187,7 @@ public class BibDatabaseContext {
      * @return the path - or an empty optional, if none of the directories exists
      */
     public Optional<Path> getFirstExistingFileDir(FilePreferences preferences) {
-        return getFileDirectories(preferences).stream()
-                                              .filter(Files::exists)
-                                              .findFirst();
+        return getFileDirectories(preferences).stream().filter(Files::exists).findFirst();
     }
 
     private Path getFileDirectoryPath(String directoryName) {
@@ -242,7 +240,8 @@ public class BibDatabaseContext {
         Path indexPath;
 
         if (getDatabasePath().isPresent()) {
-            indexPath = appData.resolve(String.valueOf(this.getDatabasePath().get().hashCode()));
+            indexPath =
+                    appData.resolve(String.valueOf(this.getDatabasePath().get().hashCode()));
             LOGGER.debug("Index path for {} is {}", getDatabasePath().get(), indexPath);
             return indexPath;
         }
@@ -254,12 +253,11 @@ public class BibDatabaseContext {
 
     @Override
     public String toString() {
-        return "BibDatabaseContext{" +
-                "metaData=" + metaData +
-                ", mode=" + getMode() +
-                ", databasePath=" + getDatabasePath() +
-                ", biblatexMode=" + isBiblatexMode() +
-                ", fulltextIndexPath=" + getFulltextIndexPath() +
-                '}';
+        return "BibDatabaseContext{" + "metaData="
+                + metaData + ", mode="
+                + getMode() + ", databasePath="
+                + getDatabasePath() + ", biblatexMode="
+                + isBiblatexMode() + ", fulltextIndexPath="
+                + getFulltextIndexPath() + '}';
     }
 }

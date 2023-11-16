@@ -42,7 +42,13 @@ public class CSLAdapter {
      *
      * @param databaseContext {@link BibDatabaseContext} is used to be able to resolve fields and their aliases
      */
-    public synchronized List<String> makeBibliography(List<BibEntry> bibEntries, String style, CitationStyleOutputFormat outputFormat, BibDatabaseContext databaseContext, BibEntryTypesManager entryTypesManager) throws IOException, IllegalArgumentException {
+    public synchronized List<String> makeBibliography(
+            List<BibEntry> bibEntries,
+            String style,
+            CitationStyleOutputFormat outputFormat,
+            BibDatabaseContext databaseContext,
+            BibEntryTypesManager entryTypesManager)
+            throws IOException, IllegalArgumentException {
         dataProvider.setData(bibEntries, databaseContext, entryTypesManager);
         initialize(style, outputFormat);
         cslInstance.registerCitationItems(dataProvider.getIds());
@@ -61,8 +67,8 @@ public class CSLAdapter {
         final boolean newCslInstanceNeedsToBeCreated = (cslInstance == null) || !Objects.equals(newStyle, style);
         if (newCslInstanceNeedsToBeCreated) {
             // lang and forceLang are set to the default values of other CSL constructors
-            cslInstance = new CSL(dataProvider, new JabRefLocaleProvider(),
-                    new DefaultAbbreviationProvider(), newStyle, "en-US");
+            cslInstance = new CSL(
+                    dataProvider, new JabRefLocaleProvider(), new DefaultAbbreviationProvider(), newStyle, "en-US");
             style = newStyle;
         }
 

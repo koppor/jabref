@@ -69,5 +69,3 @@ class FileHistoryTest {
         assertEquals(Path.of("bb"), history.get(1));
     }
 }
-
-

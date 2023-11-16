@@ -29,29 +29,55 @@ import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
 
 public class TableTab extends AbstractPreferenceTabView<TableTabViewModel> implements PreferencesTab {
 
-    @FXML private TableView<MainTableColumnModel> columnsList;
-    @FXML private TableColumn<MainTableColumnModel, String> nameColumn;
-    @FXML private TableColumn<MainTableColumnModel, String> actionsColumn;
-    @FXML private ComboBox<MainTableColumnModel> addColumnName;
-    @FXML private CheckBox specialFieldsEnable;
-    @FXML private Button specialFieldsHelp;
-    @FXML private CheckBox extraFileColumnsEnable;
-    @FXML private CheckBox autoResizeColumns;
+    @FXML
+    private TableView<MainTableColumnModel> columnsList;
 
-    @FXML private RadioButton namesNatbib;
-    @FXML private RadioButton nameAsIs;
-    @FXML private RadioButton nameFirstLast;
-    @FXML private RadioButton nameLastFirst;
-    @FXML private RadioButton abbreviationDisabled;
-    @FXML private RadioButton abbreviationEnabled;
-    @FXML private RadioButton abbreviationLastNameOnly;
+    @FXML
+    private TableColumn<MainTableColumnModel, String> nameColumn;
+
+    @FXML
+    private TableColumn<MainTableColumnModel, String> actionsColumn;
+
+    @FXML
+    private ComboBox<MainTableColumnModel> addColumnName;
+
+    @FXML
+    private CheckBox specialFieldsEnable;
+
+    @FXML
+    private Button specialFieldsHelp;
+
+    @FXML
+    private CheckBox extraFileColumnsEnable;
+
+    @FXML
+    private CheckBox autoResizeColumns;
+
+    @FXML
+    private RadioButton namesNatbib;
+
+    @FXML
+    private RadioButton nameAsIs;
+
+    @FXML
+    private RadioButton nameFirstLast;
+
+    @FXML
+    private RadioButton nameLastFirst;
+
+    @FXML
+    private RadioButton abbreviationDisabled;
+
+    @FXML
+    private RadioButton abbreviationEnabled;
+
+    @FXML
+    private RadioButton abbreviationLastNameOnly;
 
     private final ControlsFxVisualizer validationVisualizer = new ControlsFxVisualizer();
 
     public TableTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -66,7 +92,10 @@ public class TableTab extends AbstractPreferenceTabView<TableTabViewModel> imple
         setupBindings();
 
         ActionFactory actionFactory = new ActionFactory(preferencesService.getKeyBindingRepository());
-        actionFactory.configureIconButton(StandardActions.HELP_SPECIAL_FIELDS, new HelpAction(HelpFile.SPECIAL_FIELDS, dialogService, preferencesService.getFilePreferences()), specialFieldsHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP_SPECIAL_FIELDS,
+                new HelpAction(HelpFile.SPECIAL_FIELDS, dialogService, preferencesService.getFilePreferences()),
+                specialFieldsHelp);
     }
 
     private void setupTable() {
@@ -111,7 +140,8 @@ public class TableTab extends AbstractPreferenceTabView<TableTabViewModel> imple
         });
 
         validationVisualizer.setDecoration(new IconValidationDecorator());
-        Platform.runLater(() -> validationVisualizer.initVisualization(viewModel.columnsListValidationStatus(), columnsList));
+        Platform.runLater(
+                () -> validationVisualizer.initVisualization(viewModel.columnsListValidationStatus(), columnsList));
     }
 
     private void setupBindings() {
@@ -125,11 +155,17 @@ public class TableTab extends AbstractPreferenceTabView<TableTabViewModel> imple
         nameLastFirst.selectedProperty().bindBidirectional(viewModel.nameLastFirstProperty());
 
         abbreviationDisabled.selectedProperty().bindBidirectional(viewModel.abbreviationDisabledProperty());
-        abbreviationDisabled.disableProperty().bind(namesNatbib.selectedProperty().or(nameAsIs.selectedProperty()));
+        abbreviationDisabled
+                .disableProperty()
+                .bind(namesNatbib.selectedProperty().or(nameAsIs.selectedProperty()));
         abbreviationEnabled.selectedProperty().bindBidirectional(viewModel.abbreviationEnabledProperty());
-        abbreviationEnabled.disableProperty().bind(namesNatbib.selectedProperty().or(nameAsIs.selectedProperty()));
+        abbreviationEnabled
+                .disableProperty()
+                .bind(namesNatbib.selectedProperty().or(nameAsIs.selectedProperty()));
         abbreviationLastNameOnly.selectedProperty().bindBidirectional(viewModel.abbreviationLastNameOnlyProperty());
-        abbreviationLastNameOnly.disableProperty().bind(namesNatbib.selectedProperty().or(nameAsIs.selectedProperty()));
+        abbreviationLastNameOnly
+                .disableProperty()
+                .bind(namesNatbib.selectedProperty().or(nameAsIs.selectedProperty()));
     }
 
     public void updateToCurrentColumnOrder() {

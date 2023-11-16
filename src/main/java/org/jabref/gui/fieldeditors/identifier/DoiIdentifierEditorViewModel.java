@@ -26,14 +26,22 @@ public class DoiIdentifierEditorViewModel extends BaseIdentifierEditorViewModel<
     private final UndoManager undoManager;
     private final StateManager stateManager;
 
-    public DoiIdentifierEditorViewModel(SuggestionProvider<?> suggestionProvider,
-                                        FieldCheckers fieldCheckers,
-                                        DialogService dialogService,
-                                        TaskExecutor taskExecutor,
-                                        PreferencesService preferences,
-                                        UndoManager undoManager,
-                                        StateManager stateManager) {
-        super(StandardField.DOI, suggestionProvider, fieldCheckers, dialogService, taskExecutor, preferences, undoManager);
+    public DoiIdentifierEditorViewModel(
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            DialogService dialogService,
+            TaskExecutor taskExecutor,
+            PreferencesService preferences,
+            UndoManager undoManager,
+            StateManager stateManager) {
+        super(
+                StandardField.DOI,
+                suggestionProvider,
+                fieldCheckers,
+                dialogService,
+                taskExecutor,
+                preferences,
+                undoManager);
         this.undoManager = undoManager;
         this.stateManager = stateManager;
         configure(true, true);
@@ -44,29 +52,32 @@ public class DoiIdentifierEditorViewModel extends BaseIdentifierEditorViewModel<
         CrossRef doiFetcher = new CrossRef();
 
         BackgroundTask.wrap(() -> doiFetcher.findIdentifier(entry))
-            .onRunning(() -> identifierLookupInProgress.setValue(true))
-            .onFinished(() -> identifierLookupInProgress.setValue(false))
-            .onSuccess(identifier -> {
-                if (identifier.isPresent()) {
-                    entry.setField(field, identifier.get().getNormalized());
-                } else {
-                    dialogService.notify(Localization.lang("No %0 found", field.getDisplayName()));
-                }
-            }).onFailure(e -> handleIdentifierFetchingError(e, doiFetcher)).executeWith(taskExecutor);
+                .onRunning(() -> identifierLookupInProgress.setValue(true))
+                .onFinished(() -> identifierLookupInProgress.setValue(false))
+                .onSuccess(identifier -> {
+                    if (identifier.isPresent()) {
+                        entry.setField(field, identifier.get().getNormalized());
+                    } else {
+                        dialogService.notify(Localization.lang("No %0 found", field.getDisplayName()));
+                    }
+                })
+                .onFailure(e -> handleIdentifierFetchingError(e, doiFetcher))
+                .executeWith(taskExecutor);
     }
 
     @Override
     public void fetchBibliographyInformation(BibEntry bibEntry) {
-        stateManager.getActiveDatabase().ifPresentOrElse(
-                databaseContext -> new FetchAndMergeEntry(databaseContext, taskExecutor, preferences, dialogService, undoManager)
-                        .fetchAndMerge(entry, field),
-                () -> dialogService.notify(Localization.lang("No library selected"))
-        );
+        stateManager
+                .getActiveDatabase()
+                .ifPresentOrElse(
+                        databaseContext -> new FetchAndMergeEntry(
+                                        databaseContext, taskExecutor, preferences, dialogService, undoManager)
+                                .fetchAndMerge(entry, field),
+                        () -> dialogService.notify(Localization.lang("No library selected")));
     }
 
     @Override
     public void openExternalLink() {
-        identifier.get().map(DOI::getDOI)
-                  .ifPresent(s -> JabRefDesktop.openCustomDoi(s, preferences, dialogService));
+        identifier.get().map(DOI::getDOI).ifPresent(s -> JabRefDesktop.openCustomDoi(s, preferences, dialogService));
     }
 }

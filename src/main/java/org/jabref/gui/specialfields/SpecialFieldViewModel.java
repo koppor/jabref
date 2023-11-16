@@ -37,10 +37,8 @@ public class SpecialFieldViewModel {
         return field;
     }
 
-    public SpecialFieldAction getSpecialFieldAction(SpecialFieldValue value,
-                                                    JabRefFrame frame,
-                                                    DialogService dialogService,
-                                                    StateManager stateManager) {
+    public SpecialFieldAction getSpecialFieldAction(
+            SpecialFieldValue value, JabRefFrame frame, DialogService dialogService, StateManager stateManager) {
         return new SpecialFieldAction(
                 frame,
                 field,
@@ -78,13 +76,15 @@ public class SpecialFieldViewModel {
     }
 
     public List<SpecialFieldValueViewModel> getValues() {
-        return field.getValues().stream()
-                    .map(SpecialFieldValueViewModel::new)
-                    .collect(Collectors.toList());
+        return field.getValues().stream().map(SpecialFieldValueViewModel::new).collect(Collectors.toList());
     }
 
     public void setSpecialFieldValue(BibEntry bibEntry, SpecialFieldValue value) {
-        Optional<FieldChange> change = UpdateField.updateField(bibEntry, getField(), value.getFieldValue().orElse(null), getField().isSingleValueField());
+        Optional<FieldChange> change = UpdateField.updateField(
+                bibEntry,
+                getField(),
+                value.getFieldValue().orElse(null),
+                getField().isSingleValueField());
 
         change.ifPresent(fieldChange -> undoManager.addEdit(new UndoableFieldChange(fieldChange)));
     }

@@ -32,24 +32,21 @@ public class Crawler {
      *
      * @param studyRepositoryRoot The path to the study repository
      */
-    public Crawler(Path studyRepositoryRoot,
-                   SlrGitHandler gitHandler,
-                   PreferencesService preferencesService,
-                   BibEntryTypesManager bibEntryTypesManager,
-                   FileUpdateMonitor fileUpdateMonitor) throws IllegalArgumentException, IOException, ParseException {
+    public Crawler(
+            Path studyRepositoryRoot,
+            SlrGitHandler gitHandler,
+            PreferencesService preferencesService,
+            BibEntryTypesManager bibEntryTypesManager,
+            FileUpdateMonitor fileUpdateMonitor)
+            throws IllegalArgumentException, IOException, ParseException {
         this.studyRepository = new StudyRepository(
-                studyRepositoryRoot,
-                gitHandler,
-                preferencesService,
-                fileUpdateMonitor,
-                bibEntryTypesManager);
+                studyRepositoryRoot, gitHandler, preferencesService, fileUpdateMonitor, bibEntryTypesManager);
         StudyCatalogToFetcherConverter studyCatalogToFetcherConverter = new StudyCatalogToFetcherConverter(
                 studyRepository.getActiveLibraryEntries(),
                 preferencesService.getImportFormatPreferences(),
                 preferencesService.getImporterPreferences());
         this.studyFetcher = new StudyFetcher(
-                studyCatalogToFetcherConverter.getActiveFetchers(),
-                studyRepository.getSearchQueryStrings());
+                studyCatalogToFetcherConverter.getActiveFetchers(), studyRepository.getSearchQueryStrings());
     }
 
     /**

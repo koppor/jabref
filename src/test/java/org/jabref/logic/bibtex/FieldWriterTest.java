@@ -23,7 +23,9 @@ class FieldWriterTest {
     private FieldWriter writer;
 
     public static Stream<Arguments> getMarkdowns() {
-        return Stream.of(Arguments.of("""
+        return Stream.of(
+                Arguments.of(
+                        """
                         # Changelog
 
                         All notable changes to this project will be documented in this file.
@@ -43,16 +45,16 @@ class FieldWriterTest {
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit,
                                 #### Method
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                                """
-                ),
+                                """),
                 // source: https://github.com/JabRef/jabref/issues/8303 --> bug2.txt
-                Arguments.of("Particularly, we equip SOVA &#x2013; a Semantic and Ontological Variability Analysis method")
-                );
+                Arguments.of(
+                        "Particularly, we equip SOVA &#x2013; a Semantic and Ontological Variability Analysis method"));
     }
 
     @BeforeEach
     void setUp() {
-        FieldPreferences fieldPreferences = new FieldPreferences(true, List.of(StandardField.MONTH), Collections.emptyList());
+        FieldPreferences fieldPreferences =
+                new FieldPreferences(true, List.of(StandardField.MONTH), Collections.emptyList());
         writer = new FieldWriter(fieldPreferences);
     }
 

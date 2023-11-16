@@ -10,8 +10,7 @@ public class SearchRules {
 
     private static final Pattern SIMPLE_EXPRESSION = Pattern.compile("[^\\p{Punct}]*");
 
-    private SearchRules() {
-    }
+    private SearchRules() {}
 
     /**
      * Returns the appropriate search rule that fits best to the given parameter.
@@ -44,6 +43,9 @@ public class SearchRules {
     }
 
     public enum SearchFlags {
-        CASE_SENSITIVE, REGULAR_EXPRESSION, FULLTEXT, KEEP_SEARCH_STRING
+        CASE_SENSITIVE,
+        REGULAR_EXPRESSION,
+        FULLTEXT,
+        KEEP_SEARCH_STRING
     }
 }

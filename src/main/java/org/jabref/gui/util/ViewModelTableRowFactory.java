@@ -48,7 +48,8 @@ public class ViewModelTableRowFactory<S> implements Callback<TableView<S>, Table
         return this;
     }
 
-    public ViewModelTableRowFactory<S> setOnDragDetected(TriConsumer<TableRow<S>, S, ? super MouseEvent> toOnDragDetected) {
+    public ViewModelTableRowFactory<S> setOnDragDetected(
+            TriConsumer<TableRow<S>, S, ? super MouseEvent> toOnDragDetected) {
         this.toOnDragDetected = toOnDragDetected;
         return this;
     }
@@ -58,7 +59,8 @@ public class ViewModelTableRowFactory<S> implements Callback<TableView<S>, Table
         return this;
     }
 
-    public ViewModelTableRowFactory<S> setOnDragDropped(TriConsumer<TableRow<S>, S, ? super DragEvent> toOnDragDropped) {
+    public ViewModelTableRowFactory<S> setOnDragDropped(
+            TriConsumer<TableRow<S>, S, ? super DragEvent> toOnDragDropped) {
         this.toOnDragDropped = toOnDragDropped;
         return this;
     }
@@ -72,7 +74,8 @@ public class ViewModelTableRowFactory<S> implements Callback<TableView<S>, Table
         return this;
     }
 
-    public ViewModelTableRowFactory<S> setOnMouseDragEntered(TriConsumer<TableRow<S>, S, ? super MouseDragEvent> toOnDragEntered) {
+    public ViewModelTableRowFactory<S> setOnMouseDragEntered(
+            TriConsumer<TableRow<S>, S, ? super MouseDragEvent> toOnDragEntered) {
         this.toOnMouseDragEntered = toOnDragEntered;
         return this;
     }

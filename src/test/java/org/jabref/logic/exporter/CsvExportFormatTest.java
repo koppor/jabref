@@ -65,7 +65,8 @@ public class CsvExportFormatTest {
     public void testPerformExportForMultipleAuthors(@TempDir Path testFolder) throws Exception {
         Path path = testFolder.resolve("ThisIsARandomlyNamedFile");
 
-        BibEntry entry = new BibEntry().withField(StandardField.AUTHOR, "von Neumann, John and Smith, John and Black Brown, Peter");
+        BibEntry entry = new BibEntry()
+                .withField(StandardField.AUTHOR, "von Neumann, John and Smith, John and Black Brown, Peter");
         List<BibEntry> entries = List.of(entry);
 
         exportFormat.export(databaseContext, path, entries);

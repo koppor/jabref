@@ -54,7 +54,10 @@ public class DBMSConnectionProperties implements DatabaseConnectionProperties {
             this.user = prefs.getUser().get();
             if (prefs.getPassword().isPresent()) {
                 try {
-                    this.password = new Password(prefs.getPassword().get().toCharArray(), prefs.getUser().get()).decrypt();
+                    this.password = new Password(
+                                    prefs.getPassword().get().toCharArray(),
+                                    prefs.getUser().get())
+                            .decrypt();
                 } catch (UnsupportedEncodingException | GeneralSecurityException e) {
                     LOGGER.error("Could not decrypt password", e);
                 }
@@ -67,8 +70,17 @@ public class DBMSConnectionProperties implements DatabaseConnectionProperties {
         }
     }
 
-    DBMSConnectionProperties(DBMSType type, String host, int port, String database, String user,
-                             String password, boolean useSSL, boolean allowPublicKeyRetrieval, String serverTimezone, String keyStore) {
+    DBMSConnectionProperties(
+            DBMSType type,
+            String host,
+            int port,
+            String database,
+            String user,
+            String password,
+            boolean useSSL,
+            boolean allowPublicKeyRetrieval,
+            String serverTimezone,
+            String keyStore) {
         this.type = type;
         this.host = host;
         this.port = port;

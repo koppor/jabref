@@ -59,12 +59,16 @@ public class FieldWriter {
 
         // Then we throw an exception if the error criteria are met.
         if (right != 0 && (left == 0)) {
-            LOGGER.error("Unescaped '}' character without opening bracket ends string prematurely. Field value: {}", text);
-            throw new InvalidFieldValueException("Unescaped '}' character without opening bracket ends string prematurely. Field value: " + text);
+            LOGGER.error(
+                    "Unescaped '}' character without opening bracket ends string prematurely. Field value: {}", text);
+            throw new InvalidFieldValueException(
+                    "Unescaped '}' character without opening bracket ends string prematurely. Field value: " + text);
         }
         if (right != 0 && (right < left)) {
-            LOGGER.error("Unescaped '}' character without opening bracket ends string prematurely. Field value: {}", text);
-            throw new InvalidFieldValueException("Unescaped '}' character without opening bracket ends string prematurely. Field value: " + text);
+            LOGGER.error(
+                    "Unescaped '}' character without opening bracket ends string prematurely. Field value: {}", text);
+            throw new InvalidFieldValueException(
+                    "Unescaped '}' character without opening bracket ends string prematurely. Field value: " + text);
         }
         if (left != right) {
             LOGGER.error("Braces don't match. Field value: {}", text);
@@ -130,16 +134,18 @@ public class FieldWriter {
                     if (neverFailOnHashes) {
                         pos1 = content.length(); // just write out the rest of the text, and throw no exception
                     } else {
-                        LOGGER.error("The character {} is not allowed in BibTeX strings unless escaped as in '\\{}'. "
-                                + "In JabRef, use pairs of # characters to indicate a string. "
-                                + "Note that the entry causing the problem has been selected. Field value: {}",
+                        LOGGER.error(
+                                "The character {} is not allowed in BibTeX strings unless escaped as in '\\{}'. "
+                                        + "In JabRef, use pairs of # characters to indicate a string. "
+                                        + "Note that the entry causing the problem has been selected. Field value: {}",
                                 BIBTEX_STRING_START_END_SYMBOL,
                                 BIBTEX_STRING_START_END_SYMBOL,
                                 content);
-                        throw new InvalidFieldValueException(
-                                "The character " + BIBTEX_STRING_START_END_SYMBOL + " is not allowed in BibTeX strings unless escaped as in '\\" + BIBTEX_STRING_START_END_SYMBOL + "'.\n"
-                                        + "In JabRef, use pairs of # characters to indicate a string.\n"
-                                        + "Note that the entry causing the problem has been selected. Field value: " + content);
+                        throw new InvalidFieldValueException("The character " + BIBTEX_STRING_START_END_SYMBOL
+                                + " is not allowed in BibTeX strings unless escaped as in '\\"
+                                + BIBTEX_STRING_START_END_SYMBOL + "'.\n"
+                                + "In JabRef, use pairs of # characters to indicate a string.\n"
+                                + "Note that the entry causing the problem has been selected. Field value: " + content);
                     }
                 }
             }
@@ -151,8 +157,7 @@ public class FieldWriter {
                 // We check that the string label is not empty. That means
                 // an occurrence of ## will simply be ignored. Should it instead
                 // cause an error message?
-                writeStringLabel(stringBuilder, content, pos1 + 1, pos2, pos1 == pivot,
-                        (pos2 + 1) == content.length());
+                writeStringLabel(stringBuilder, content, pos1 + 1, pos2, pos1 == pivot, (pos2 + 1) == content.length());
             }
 
             if (pos2 > -1) {
@@ -200,7 +205,8 @@ public class FieldWriter {
      * @param isFirst       true if the label to write is the first one to write
      * @param isLast        true if the label to write is the last one to write
      */
-    private void writeStringLabel(StringBuilder stringBuilder, String text, int startPos, int endPos, boolean isFirst, boolean isLast) {
+    private void writeStringLabel(
+            StringBuilder stringBuilder, String text, int startPos, int endPos, boolean isFirst, boolean isLast) {
         String line = (isFirst ? "" : " # ") + text.substring(startPos, endPos) + (isLast ? "" : " # ");
         stringBuilder.append(line);
     }

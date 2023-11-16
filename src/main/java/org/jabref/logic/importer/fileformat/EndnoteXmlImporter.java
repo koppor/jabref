@@ -114,7 +114,7 @@ public class EndnoteXmlImporter extends Importer implements Parser {
                 if (isStartXMLEvent(reader)) {
                     String elementName = reader.getName().getLocalPart();
                     if ("record".equals(elementName)) {
-                         parseRecord(reader, bibItems, elementName);
+                        parseRecord(reader, bibItems, elementName);
                     }
                 }
             }
@@ -126,7 +126,7 @@ public class EndnoteXmlImporter extends Importer implements Parser {
     }
 
     private void parseRecord(XMLStreamReader reader, List<BibEntry> bibItems, String startElement)
-        throws XMLStreamException {
+            throws XMLStreamException {
 
         Map<Field, String> fields = new HashMap<>();
         EntryType entryType = StandardEntryType.Article;
@@ -165,7 +165,7 @@ public class EndnoteXmlImporter extends Importer implements Parser {
                         parseStyleContent(reader, fields, StandardField.NOTE, elementName);
                     }
                     case "urls" -> {
-                       handleUrlList(reader, fields, linkedFiles);
+                        handleUrlList(reader, fields, linkedFiles);
                     }
                     case "keywords" -> {
                         handleKeywordsList(reader, keywordList, elementName);
@@ -207,12 +207,13 @@ public class EndnoteXmlImporter extends Importer implements Parser {
             case "book section" -> StandardEntryType.InBook;
             case "book" -> StandardEntryType.Book;
             case "report" -> StandardEntryType.Report;
-            // case "journal article" -> StandardEntryType.Article;
+                // case "journal article" -> StandardEntryType.Article;
             default -> StandardEntryType.Article;
         };
     }
 
-    private void handleAuthorList(XMLStreamReader reader, Map<Field, String> fields, String startElement) throws XMLStreamException {
+    private void handleAuthorList(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+            throws XMLStreamException {
         List<String> authorNames = new ArrayList<>();
 
         while (reader.hasNext()) {
@@ -255,7 +256,8 @@ public class EndnoteXmlImporter extends Importer implements Parser {
         }
     }
 
-    private void parseStyleContent(XMLStreamReader reader, Map<Field, String> fields, Field field, String elementName) throws XMLStreamException {
+    private void parseStyleContent(XMLStreamReader reader, Map<Field, String> fields, Field field, String elementName)
+            throws XMLStreamException {
         while (reader.hasNext()) {
             reader.next();
             if (isStartXMLEvent(reader)) {
@@ -263,7 +265,9 @@ public class EndnoteXmlImporter extends Importer implements Parser {
                 if ("style".equals(tag)) {
                     reader.next();
                     if (isCharacterXMLEvent(reader)) {
-                        if ("abstract".equals(elementName) || "electronic-resource-num".equals(elementName) || "notes".equals(elementName)) {
+                        if ("abstract".equals(elementName)
+                                || "electronic-resource-num".equals(elementName)
+                                || "notes".equals(elementName)) {
                             putIfValueNotNull(fields, field, reader.getText().trim());
                         } else if ("isbn".equals(elementName) || "secondary-title".equals(elementName)) {
                             putIfValueNotNull(fields, field, clean(reader.getText()));
@@ -300,7 +304,8 @@ public class EndnoteXmlImporter extends Importer implements Parser {
         }
     }
 
-    private void handleKeywordsList(XMLStreamReader reader, KeywordList keywordList, String startElement) throws XMLStreamException {
+    private void handleKeywordsList(XMLStreamReader reader, KeywordList keywordList, String startElement)
+            throws XMLStreamException {
 
         while (reader.hasNext()) {
             reader.next();
@@ -342,7 +347,8 @@ public class EndnoteXmlImporter extends Importer implements Parser {
         }
     }
 
-    private void handleTitles(XMLStreamReader reader, Map<Field, String> fields, String startElement) throws XMLStreamException {
+    private void handleTitles(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+            throws XMLStreamException {
 
         while (reader.hasNext()) {
             reader.next();
@@ -364,7 +370,8 @@ public class EndnoteXmlImporter extends Importer implements Parser {
                                     }
                                 }
                             }
-                            if (isEndXMLEvent(reader) && reader.getName().getLocalPart().equals(elementName)) {
+                            if (isEndXMLEvent(reader)
+                                    && reader.getName().getLocalPart().equals(elementName)) {
                                 break;
                             }
                         }
@@ -382,7 +389,8 @@ public class EndnoteXmlImporter extends Importer implements Parser {
         }
     }
 
-    private void handleUrlList(XMLStreamReader reader, Map<Field, String> fields, List<LinkedFile> linkedFiles) throws XMLStreamException {
+    private void handleUrlList(XMLStreamReader reader, Map<Field, String> fields, List<LinkedFile> linkedFiles)
+            throws XMLStreamException {
         while (reader.hasNext()) {
             reader.next();
             if (isStartXMLEvent(reader)) {
@@ -428,7 +436,8 @@ public class EndnoteXmlImporter extends Importer implements Parser {
         }
     }
 
-    private void parsePdfUrls(XMLStreamReader reader, Map<Field, String> fields, List<LinkedFile> linkedFiles) throws XMLStreamException {
+    private void parsePdfUrls(XMLStreamReader reader, Map<Field, String> fields, List<LinkedFile> linkedFiles)
+            throws XMLStreamException {
 
         while (reader.hasNext()) {
             reader.next();
@@ -443,8 +452,7 @@ public class EndnoteXmlImporter extends Importer implements Parser {
                             if (isCharacterXMLEvent(reader)) {
                                 try {
                                     linkedFiles.add(new LinkedFile(new URL(reader.getText()), "PDF"));
-                                } catch (
-                                        MalformedURLException e) {
+                                } catch (MalformedURLException e) {
                                     LOGGER.info("Unable to parse {}", reader.getText());
                                 }
                             }
@@ -455,8 +463,7 @@ public class EndnoteXmlImporter extends Importer implements Parser {
             if (isCharacterXMLEvent(reader)) {
                 try {
                     linkedFiles.add(new LinkedFile(new URL(reader.getText()), "PDF"));
-                } catch (
-                        MalformedURLException e) {
+                } catch (MalformedURLException e) {
                     LOGGER.info("Unable to parse {}", reader.getText());
                 }
             }
@@ -467,9 +474,7 @@ public class EndnoteXmlImporter extends Importer implements Parser {
     }
 
     private String clean(String input) {
-        return StringUtil.unifyLineBreaks(input, " ")
-                         .trim()
-                         .replaceAll(" +", " ");
+        return StringUtil.unifyLineBreaks(input, " ").trim().replaceAll(" +", " ");
     }
 
     private void putIfValueNotNull(Map<Field, String> fields, Field field, String value) {
@@ -493,16 +498,12 @@ public class EndnoteXmlImporter extends Importer implements Parser {
     @Override
     public List<BibEntry> parseEntries(InputStream inputStream) throws ParseException {
         try {
-            return importDatabase(
-                    new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))).getDatabase().getEntries();
+            return importDatabase(new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)))
+                    .getDatabase()
+                    .getEntries();
         } catch (IOException e) {
             LOGGER.error(e.getLocalizedMessage(), e);
         }
         return Collections.emptyList();
     }
 }
-
-
-
-
-

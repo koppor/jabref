@@ -32,7 +32,8 @@ public class MrDLibFetcher implements EntryBasedFetcher {
     private static final String NAME = "MDL_FETCHER";
     private static final String MDL_JABREF_PARTNER_ID = "1";
     private static final String MDL_URL = "api.mr-dlib.org";
-    private static final String DEFAULT_MRDLIB_ERROR_MESSAGE = Localization.lang("Error while fetching recommendations from Mr.DLib.");
+    private static final String DEFAULT_MRDLIB_ERROR_MESSAGE =
+            Localization.lang("Error while fetching recommendations from Mr.DLib.");
     private final String LANGUAGE;
     private final Version VERSION;
     private String heading;
@@ -133,7 +134,8 @@ public class MrDLibFetcher implements EntryBasedFetcher {
             builder.addParameter("os", System.getProperty("os.name"));
         }
         if (preferences.shouldSendTimezone()) {
-            builder.addParameter("timezone", Calendar.getInstance().getTimeZone().getID());
+            builder.addParameter(
+                    "timezone", Calendar.getInstance().getTimeZone().getID());
         }
 
         try {

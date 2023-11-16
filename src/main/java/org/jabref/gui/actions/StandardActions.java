@@ -8,7 +8,6 @@ import org.jabref.gui.keyboard.KeyBinding;
 import org.jabref.logic.l10n.Localization;
 
 public enum StandardActions implements Action {
-
     COPY_MORE(Localization.lang("Copy") + "..."),
     COPY_TITLE(Localization.lang("Copy title"), KeyBinding.COPY_TITLE),
     COPY_KEY(Localization.lang("Copy citation key"), KeyBinding.COPY_CITATION_KEY),
@@ -19,7 +18,8 @@ public enum StandardActions implements Action {
     COPY_CITATION_TEXT(Localization.lang("Copy citation (text)")),
     COPY_CITATION_PREVIEW(Localization.lang("Copy preview"), KeyBinding.COPY_PREVIEW),
     EXPORT_TO_CLIPBOARD(Localization.lang("Export to clipboard"), IconTheme.JabRefIcons.EXPORT_TO_CLIPBOARD),
-    EXPORT_SELECTED_TO_CLIPBOARD(Localization.lang("Export selected entries to clipboard"), IconTheme.JabRefIcons.EXPORT_TO_CLIPBOARD),
+    EXPORT_SELECTED_TO_CLIPBOARD(
+            Localization.lang("Export selected entries to clipboard"), IconTheme.JabRefIcons.EXPORT_TO_CLIPBOARD),
     COPY(Localization.lang("Copy"), IconTheme.JabRefIcons.COPY, KeyBinding.COPY),
     PASTE(Localization.lang("Paste"), IconTheme.JabRefIcons.PASTE, KeyBinding.PASTE),
     CUT(Localization.lang("Cut"), IconTheme.JabRefIcons.CUT, KeyBinding.CUT),
@@ -54,7 +54,10 @@ public enum StandardActions implements Action {
     READ_STATUS(Localization.lang("Read status"), IconTheme.JabRefIcons.READ_STATUS),
     CLEAR_READ_STATUS(Localization.lang("Clear read status"), KeyBinding.CLEAR_READ_STATUS),
     READ(Localization.lang("Set read status to read"), IconTheme.JabRefIcons.READ_STATUS_READ, KeyBinding.READ),
-    SKIMMED(Localization.lang("Set read status to skimmed"), IconTheme.JabRefIcons.READ_STATUS_SKIMMED, KeyBinding.SKIMMED),
+    SKIMMED(
+            Localization.lang("Set read status to skimmed"),
+            IconTheme.JabRefIcons.READ_STATUS_SKIMMED,
+            KeyBinding.SKIMMED),
     RELEVANCE(Localization.lang("Relevance"), IconTheme.JabRefIcons.RELEVANCE),
     RELEVANT(Localization.lang("Toggle relevance"), IconTheme.JabRefIcons.RELEVANCE),
     NEW_LIBRARY(Localization.lang("New library"), IconTheme.JabRefIcons.NEW),
@@ -64,18 +67,34 @@ public enum StandardActions implements Action {
     SAVE_LIBRARY(Localization.lang("Save library"), IconTheme.JabRefIcons.SAVE, KeyBinding.SAVE_DATABASE),
     SAVE_LIBRARY_AS(Localization.lang("Save library as..."), KeyBinding.SAVE_DATABASE_AS),
     SAVE_SELECTED_AS_PLAIN_BIBTEX(Localization.lang("Save selected as plain BibTeX...")),
-    SAVE_ALL(Localization.lang("Save all"), Localization.lang("Save all open libraries"), IconTheme.JabRefIcons.SAVE_ALL, KeyBinding.SAVE_ALL),
+    SAVE_ALL(
+            Localization.lang("Save all"),
+            Localization.lang("Save all open libraries"),
+            IconTheme.JabRefIcons.SAVE_ALL,
+            KeyBinding.SAVE_ALL),
     IMPORT_INTO_NEW_LIBRARY(Localization.lang("Import into new library"), KeyBinding.IMPORT_INTO_NEW_DATABASE),
-    IMPORT_INTO_CURRENT_LIBRARY(Localization.lang("Import into current library"), KeyBinding.IMPORT_INTO_CURRENT_DATABASE),
+    IMPORT_INTO_CURRENT_LIBRARY(
+            Localization.lang("Import into current library"), KeyBinding.IMPORT_INTO_CURRENT_DATABASE),
     EXPORT_ALL(Localization.lang("Export all entries")),
     REMOTE_DB(Localization.lang("Shared database"), IconTheme.JabRefIcons.REMOTE_DATABASE),
     EXPORT_SELECTED(Localization.lang("Export selected entries"), KeyBinding.EXPORT_SELECTED),
     CONNECT_TO_SHARED_DB(Localization.lang("Connect to shared database"), IconTheme.JabRefIcons.CONNECT_DB),
-    PULL_CHANGES_FROM_SHARED_DB(Localization.lang("Pull changes from shared database"), KeyBinding.PULL_CHANGES_FROM_SHARED_DATABASE),
-    CLOSE_LIBRARY(Localization.lang("Close library"), Localization.lang("Close the current library"), IconTheme.JabRefIcons.CLOSE, KeyBinding.CLOSE_DATABASE),
-    CLOSE_OTHER_LIBRARIES(Localization.lang("Close others"), Localization.lang("Close other libraries"), IconTheme.JabRefIcons.CLOSE),
-    CLOSE_ALL_LIBRARIES(Localization.lang("Close all"), Localization.lang("Close all libraries"), IconTheme.JabRefIcons.CLOSE),
-    QUIT(Localization.lang("Quit"), Localization.lang("Quit JabRef"), IconTheme.JabRefIcons.CLOSE_JABREF, KeyBinding.QUIT_JABREF),
+    PULL_CHANGES_FROM_SHARED_DB(
+            Localization.lang("Pull changes from shared database"), KeyBinding.PULL_CHANGES_FROM_SHARED_DATABASE),
+    CLOSE_LIBRARY(
+            Localization.lang("Close library"),
+            Localization.lang("Close the current library"),
+            IconTheme.JabRefIcons.CLOSE,
+            KeyBinding.CLOSE_DATABASE),
+    CLOSE_OTHER_LIBRARIES(
+            Localization.lang("Close others"), Localization.lang("Close other libraries"), IconTheme.JabRefIcons.CLOSE),
+    CLOSE_ALL_LIBRARIES(
+            Localization.lang("Close all"), Localization.lang("Close all libraries"), IconTheme.JabRefIcons.CLOSE),
+    QUIT(
+            Localization.lang("Quit"),
+            Localization.lang("Quit JabRef"),
+            IconTheme.JabRefIcons.CLOSE_JABREF,
+            KeyBinding.QUIT_JABREF),
     UNDO(Localization.lang("Undo"), IconTheme.JabRefIcons.UNDO, KeyBinding.UNDO),
     REDO(Localization.lang("Redo"), IconTheme.JabRefIcons.REDO, KeyBinding.REDO),
     REPLACE_ALL(Localization.lang("Find and replace"), KeyBinding.REPLACE_STRING),
@@ -84,29 +103,66 @@ public enum StandardActions implements Action {
 
     AUTOMATIC_FIELD_EDITOR(Localization.lang("Automatic field editor")),
     TOGGLE_GROUPS(Localization.lang("Groups"), IconTheme.JabRefIcons.TOGGLE_GROUPS, KeyBinding.TOGGLE_GROUPS_INTERFACE),
-    TOOGLE_OO(Localization.lang("OpenOffice/LibreOffice"), IconTheme.JabRefIcons.FILE_OPENOFFICE, KeyBinding.OPEN_OPEN_OFFICE_LIBRE_OFFICE_CONNECTION),
-    TOGGLE_WEB_SEARCH(Localization.lang("Web search"), Localization.lang("Toggle web search interface"), IconTheme.JabRefIcons.WWW, KeyBinding.WEB_SEARCH),
+    TOOGLE_OO(
+            Localization.lang("OpenOffice/LibreOffice"),
+            IconTheme.JabRefIcons.FILE_OPENOFFICE,
+            KeyBinding.OPEN_OPEN_OFFICE_LIBRE_OFFICE_CONNECTION),
+    TOGGLE_WEB_SEARCH(
+            Localization.lang("Web search"),
+            Localization.lang("Toggle web search interface"),
+            IconTheme.JabRefIcons.WWW,
+            KeyBinding.WEB_SEARCH),
 
     PARSE_LATEX(Localization.lang("Search for citations in LaTeX files..."), IconTheme.JabRefIcons.LATEX_CITATIONS),
-    NEW_SUB_LIBRARY_FROM_AUX(Localization.lang("New sublibrary based on AUX file") + "...", Localization.lang("New BibTeX sublibrary") + Localization.lang("This feature generates a new library based on which entries are needed in an existing LaTeX document."), IconTheme.JabRefIcons.NEW),
-    WRITE_METADATA_TO_PDF(Localization.lang("Write metadata to PDF files"), Localization.lang("Will write metadata to the PDFs linked from selected entries."), KeyBinding.WRITE_METADATA_TO_PDF),
+    NEW_SUB_LIBRARY_FROM_AUX(
+            Localization.lang("New sublibrary based on AUX file") + "...",
+            Localization.lang("New BibTeX sublibrary")
+                    + Localization.lang(
+                            "This feature generates a new library based on which entries are needed in an existing LaTeX document."),
+            IconTheme.JabRefIcons.NEW),
+    WRITE_METADATA_TO_PDF(
+            Localization.lang("Write metadata to PDF files"),
+            Localization.lang("Will write metadata to the PDFs linked from selected entries."),
+            KeyBinding.WRITE_METADATA_TO_PDF),
 
     START_NEW_STUDY(Localization.lang("Start new systematic literature review")),
     UPDATE_SEARCH_RESULTS_OF_STUDY(Localization.lang("Update study search results")),
     EDIT_EXISTING_STUDY(Localization.lang("Manage study definition")),
 
     OPEN_DATABASE_FOLDER(Localization.lang("Reveal in file explorer")),
-    OPEN_FOLDER(Localization.lang("Open folder"), Localization.lang("Open folder"), IconTheme.JabRefIcons.FOLDER, KeyBinding.OPEN_FOLDER),
-    OPEN_FILE(Localization.lang("Open file"), Localization.lang("Open file"), IconTheme.JabRefIcons.FILE, KeyBinding.OPEN_FILE),
-    OPEN_CONSOLE(Localization.lang("Open terminal here"), Localization.lang("Open terminal here"), IconTheme.JabRefIcons.CONSOLE, KeyBinding.OPEN_CONSOLE),
+    OPEN_FOLDER(
+            Localization.lang("Open folder"),
+            Localization.lang("Open folder"),
+            IconTheme.JabRefIcons.FOLDER,
+            KeyBinding.OPEN_FOLDER),
+    OPEN_FILE(
+            Localization.lang("Open file"),
+            Localization.lang("Open file"),
+            IconTheme.JabRefIcons.FILE,
+            KeyBinding.OPEN_FILE),
+    OPEN_CONSOLE(
+            Localization.lang("Open terminal here"),
+            Localization.lang("Open terminal here"),
+            IconTheme.JabRefIcons.CONSOLE,
+            KeyBinding.OPEN_CONSOLE),
     COPY_LINKED_FILES(Localization.lang("Copy linked files to folder...")),
     COPY_DOI(Localization.lang("Copy DOI")),
     COPY_DOI_URL(Localization.lang("Copy DOI url")),
     ABBREVIATE(Localization.lang("Abbreviate journal names")),
-    ABBREVIATE_DEFAULT(Localization.lang("default"), Localization.lang("Abbreviate journal names of the selected entries (DEFAULT abbreviation)"), KeyBinding.ABBREVIATE),
-    ABBREVIATE_DOTLESS(Localization.lang("dotless"), Localization.lang("Abbreviate journal names of the selected entries (DOTLESS abbreviation)")),
-    ABBREVIATE_SHORTEST_UNIQUE(Localization.lang("shortest unique"), Localization.lang("Abbreviate journal names of the selected entries (SHORTEST UNIQUE abbreviation)")),
-    UNABBREVIATE(Localization.lang("Unabbreviate journal names"), Localization.lang("Unabbreviate journal names of the selected entries"), KeyBinding.UNABBREVIATE),
+    ABBREVIATE_DEFAULT(
+            Localization.lang("default"),
+            Localization.lang("Abbreviate journal names of the selected entries (DEFAULT abbreviation)"),
+            KeyBinding.ABBREVIATE),
+    ABBREVIATE_DOTLESS(
+            Localization.lang("dotless"),
+            Localization.lang("Abbreviate journal names of the selected entries (DOTLESS abbreviation)")),
+    ABBREVIATE_SHORTEST_UNIQUE(
+            Localization.lang("shortest unique"),
+            Localization.lang("Abbreviate journal names of the selected entries (SHORTEST UNIQUE abbreviation)")),
+    UNABBREVIATE(
+            Localization.lang("Unabbreviate journal names"),
+            Localization.lang("Unabbreviate journal names of the selected entries"),
+            KeyBinding.UNABBREVIATE),
 
     MANAGE_CUSTOM_EXPORTS(Localization.lang("Manage custom exports")),
     MANAGE_CUSTOM_IMPORTS(Localization.lang("Manage custom imports")),
@@ -130,48 +186,86 @@ public enum StandardActions implements Action {
 
     NEW_ENTRY(Localization.lang("New entry"), IconTheme.JabRefIcons.ADD_ENTRY, KeyBinding.NEW_ENTRY),
     NEW_ARTICLE(Localization.lang("New article"), IconTheme.JabRefIcons.ADD_ARTICLE),
-    NEW_ENTRY_FROM_PLAIN_TEXT(Localization.lang("New entry from plain text"), IconTheme.JabRefIcons.NEW_ENTRY_FROM_PLAIN_TEXT, KeyBinding.NEW_ENTRY_FROM_PLAIN_TEXT),
+    NEW_ENTRY_FROM_PLAIN_TEXT(
+            Localization.lang("New entry from plain text"),
+            IconTheme.JabRefIcons.NEW_ENTRY_FROM_PLAIN_TEXT,
+            KeyBinding.NEW_ENTRY_FROM_PLAIN_TEXT),
     LIBRARY_PROPERTIES(Localization.lang("Library properties")),
     FIND_DUPLICATES(Localization.lang("Find duplicates"), IconTheme.JabRefIcons.FIND_DUPLICATES),
     MERGE_ENTRIES(Localization.lang("Merge entries"), IconTheme.JabRefIcons.MERGE_ENTRIES, KeyBinding.MERGE_ENTRIES),
-    RESOLVE_DUPLICATE_KEYS(Localization.lang("Resolve duplicate citation keys"), Localization.lang("Find and remove duplicate citation keys"), KeyBinding.RESOLVE_DUPLICATE_CITATION_KEYS),
+    RESOLVE_DUPLICATE_KEYS(
+            Localization.lang("Resolve duplicate citation keys"),
+            Localization.lang("Find and remove duplicate citation keys"),
+            KeyBinding.RESOLVE_DUPLICATE_CITATION_KEYS),
     CHECK_INTEGRITY(Localization.lang("Check integrity"), KeyBinding.CHECK_INTEGRITY),
-    FIND_UNLINKED_FILES(Localization.lang("Search for unlinked local files"), IconTheme.JabRefIcons.SEARCH, KeyBinding.FIND_UNLINKED_FILES),
-    AUTO_LINK_FILES(Localization.lang("Automatically set file links"), IconTheme.JabRefIcons.AUTO_FILE_LINK, KeyBinding.AUTOMATICALLY_LINK_FILES),
+    FIND_UNLINKED_FILES(
+            Localization.lang("Search for unlinked local files"),
+            IconTheme.JabRefIcons.SEARCH,
+            KeyBinding.FIND_UNLINKED_FILES),
+    AUTO_LINK_FILES(
+            Localization.lang("Automatically set file links"),
+            IconTheme.JabRefIcons.AUTO_FILE_LINK,
+            KeyBinding.AUTOMATICALLY_LINK_FILES),
     LOOKUP_DOC_IDENTIFIER(Localization.lang("Search document identifier online")),
-    LOOKUP_FULLTEXT(Localization.lang("Search full text documents online"), IconTheme.JabRefIcons.FILE_SEARCH, KeyBinding.DOWNLOAD_FULL_TEXT),
-    GENERATE_CITE_KEY(Localization.lang("Generate citation key"), IconTheme.JabRefIcons.MAKE_KEY, KeyBinding.AUTOGENERATE_CITATION_KEYS),
-    GENERATE_CITE_KEYS(Localization.lang("Generate citation keys"), IconTheme.JabRefIcons.MAKE_KEY, KeyBinding.AUTOGENERATE_CITATION_KEYS),
-    DOWNLOAD_FULL_TEXT(Localization.lang("Search full text documents online"), IconTheme.JabRefIcons.FILE_SEARCH, KeyBinding.DOWNLOAD_FULL_TEXT),
+    LOOKUP_FULLTEXT(
+            Localization.lang("Search full text documents online"),
+            IconTheme.JabRefIcons.FILE_SEARCH,
+            KeyBinding.DOWNLOAD_FULL_TEXT),
+    GENERATE_CITE_KEY(
+            Localization.lang("Generate citation key"),
+            IconTheme.JabRefIcons.MAKE_KEY,
+            KeyBinding.AUTOGENERATE_CITATION_KEYS),
+    GENERATE_CITE_KEYS(
+            Localization.lang("Generate citation keys"),
+            IconTheme.JabRefIcons.MAKE_KEY,
+            KeyBinding.AUTOGENERATE_CITATION_KEYS),
+    DOWNLOAD_FULL_TEXT(
+            Localization.lang("Search full text documents online"),
+            IconTheme.JabRefIcons.FILE_SEARCH,
+            KeyBinding.DOWNLOAD_FULL_TEXT),
     CLEANUP_ENTRIES(Localization.lang("Cleanup entries"), IconTheme.JabRefIcons.CLEANUP_ENTRIES, KeyBinding.CLEANUP),
     SET_FILE_LINKS(Localization.lang("Automatically set file links"), KeyBinding.AUTOMATICALLY_LINK_FILES),
 
     EDIT_FILE_LINK(Localization.lang("Edit"), IconTheme.JabRefIcons.EDIT, KeyBinding.EDIT_ENTRY),
     DOWNLOAD_FILE(Localization.lang("Download file"), IconTheme.JabRefIcons.DOWNLOAD_FILE),
     RENAME_FILE_TO_PATTERN(Localization.lang("Rename file to defined pattern"), IconTheme.JabRefIcons.AUTO_RENAME),
-    RENAME_FILE_TO_NAME(Localization.lang("Rename file to a given name"), IconTheme.JabRefIcons.RENAME, KeyBinding.REPLACE_STRING),
+    RENAME_FILE_TO_NAME(
+            Localization.lang("Rename file to a given name"), IconTheme.JabRefIcons.RENAME, KeyBinding.REPLACE_STRING),
     MOVE_FILE_TO_FOLDER(Localization.lang("Move file to file directory"), IconTheme.JabRefIcons.MOVE_TO_FOLDER),
     MOVE_FILE_TO_FOLDER_AND_RENAME(Localization.lang("Move file to file directory and rename file")),
-    COPY_FILE_TO_FOLDER(Localization.lang("Copy linked file to folder..."), IconTheme.JabRefIcons.COPY_TO_FOLDER, KeyBinding.COPY),
+    COPY_FILE_TO_FOLDER(
+            Localization.lang("Copy linked file to folder..."), IconTheme.JabRefIcons.COPY_TO_FOLDER, KeyBinding.COPY),
     REMOVE_LINK(Localization.lang("Remove link"), IconTheme.JabRefIcons.REMOVE_LINK),
-    DELETE_FILE(Localization.lang("Permanently delete local file"), IconTheme.JabRefIcons.DELETE_FILE, KeyBinding.DELETE_ENTRY),
+    DELETE_FILE(
+            Localization.lang("Permanently delete local file"),
+            IconTheme.JabRefIcons.DELETE_FILE,
+            KeyBinding.DELETE_ENTRY),
 
     HELP(Localization.lang("Online help"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
     HELP_KEY_PATTERNS(Localization.lang("Help on key patterns"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
-    HELP_REGEX_SEARCH(Localization.lang("Help on regular expression search"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
+    HELP_REGEX_SEARCH(
+            Localization.lang("Help on regular expression search"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
     HELP_NAME_FORMATTER(Localization.lang("Help on Name Formatting"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
     HELP_SPECIAL_FIELDS(Localization.lang("Help on special fields"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
-    HELP_PUSH_TO_APPLICATION(Localization.lang("Help on external applications"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
+    HELP_PUSH_TO_APPLICATION(
+            Localization.lang("Help on external applications"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
     WEB_MENU(Localization.lang("JabRef resources")),
     OPEN_WEBPAGE(Localization.lang("Website"), Localization.lang("Opens JabRef's website"), IconTheme.JabRefIcons.HOME),
     OPEN_FACEBOOK("Facebook", Localization.lang("Opens JabRef's Facebook page"), IconTheme.JabRefIcons.FACEBOOK),
     OPEN_TWITTER("Twitter", Localization.lang("Opens JabRef's Twitter page"), IconTheme.JabRefIcons.TWITTER),
     OPEN_BLOG(Localization.lang("Blog"), Localization.lang("Opens JabRef's blog"), IconTheme.JabRefIcons.BLOG),
-    OPEN_DEV_VERSION_LINK(Localization.lang("Development version"), Localization.lang("Opens a link where the current development version can be downloaded")),
-    OPEN_CHANGELOG(Localization.lang("View change log"), Localization.lang("See what has been changed in the JabRef versions")),
+    OPEN_DEV_VERSION_LINK(
+            Localization.lang("Development version"),
+            Localization.lang("Opens a link where the current development version can be downloaded")),
+    OPEN_CHANGELOG(
+            Localization.lang("View change log"),
+            Localization.lang("See what has been changed in the JabRef versions")),
     OPEN_GITHUB("GitHub", Localization.lang("Opens JabRef's GitHub page"), IconTheme.JabRefIcons.GITHUB),
     DONATE(Localization.lang("Donate to JabRef"), Localization.lang("Donate to JabRef"), IconTheme.JabRefIcons.DONATE),
-    OPEN_FORUM(Localization.lang("Online help forum"), Localization.lang("Online help forum"), IconTheme.JabRefIcons.FORUM),
+    OPEN_FORUM(
+            Localization.lang("Online help forum"),
+            Localization.lang("Online help forum"),
+            IconTheme.JabRefIcons.FORUM),
     ERROR_CONSOLE(Localization.lang("View event log"), Localization.lang("Display all error messages")),
     SEARCH_FOR_UPDATES(Localization.lang("Check for updates")),
     ABOUT(Localization.lang("About JabRef"), Localization.lang("About JabRef")),

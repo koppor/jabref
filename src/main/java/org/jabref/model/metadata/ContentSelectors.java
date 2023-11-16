@@ -89,9 +89,8 @@ public class ContentSelectors {
 
     @Override
     public String toString() {
-        return "ContentSelectors{" +
-                "contentSelectors=" + contentSelectors +
-                ", fieldsWithSelectors=" + getFieldsWithSelectors() +
-                '}';
+        return "ContentSelectors{" + "contentSelectors="
+                + contentSelectors + ", fieldsWithSelectors="
+                + getFieldsWithSelectors() + '}';
     }
 }

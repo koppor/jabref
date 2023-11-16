@@ -33,21 +33,23 @@ public class FilePreferences {
     private final BooleanProperty downloadLinkedFiles = new SimpleBooleanProperty();
     private final BooleanProperty fulltextIndexLinkedFiles = new SimpleBooleanProperty();
     private final ObjectProperty<Path> workingDirectory = new SimpleObjectProperty<>();
-    private final ObservableSet<ExternalFileType> externalFileTypes = FXCollections.observableSet(new TreeSet<>(Comparator.comparing(ExternalFileType::getName)));
+    private final ObservableSet<ExternalFileType> externalFileTypes =
+            FXCollections.observableSet(new TreeSet<>(Comparator.comparing(ExternalFileType::getName)));
     private final BooleanProperty createBackup = new SimpleBooleanProperty();
     private final ObjectProperty<Path> backupDirectory = new SimpleObjectProperty<>();
 
-    public FilePreferences(String userAndHost,
-                           String mainFileDirectory,
-                           boolean storeFilesRelativeToBibFile,
-                           String fileNamePattern,
-                           String fileDirectoryPattern,
-                           boolean downloadLinkedFiles,
-                           boolean fulltextIndexLinkedFiles,
-                           Path workingDirectory,
-                           Set<ExternalFileType> externalFileTypes,
-                           boolean createBackup,
-                           Path backupDirectory) {
+    public FilePreferences(
+            String userAndHost,
+            String mainFileDirectory,
+            boolean storeFilesRelativeToBibFile,
+            String fileNamePattern,
+            String fileDirectoryPattern,
+            boolean downloadLinkedFiles,
+            boolean fulltextIndexLinkedFiles,
+            Path workingDirectory,
+            Set<ExternalFileType> externalFileTypes,
+            boolean createBackup,
+            Path backupDirectory) {
         this.userAndHost.setValue(userAndHost);
         this.mainFileDirectory.setValue(mainFileDirectory);
         this.storeFilesRelativeToBibFile.setValue(storeFilesRelativeToBibFile);

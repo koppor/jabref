@@ -30,12 +30,16 @@ public class ActionHelper {
     }
 
     public static BooleanExpression needsSharedDatabase(StateManager stateManager) {
-        EasyBinding<Boolean> binding = EasyBind.map(stateManager.activeDatabaseProperty(), context -> context.filter(c -> c.getLocation() == DatabaseLocation.SHARED).isPresent());
+        EasyBinding<Boolean> binding = EasyBind.map(stateManager.activeDatabaseProperty(), context -> context.filter(
+                        c -> c.getLocation() == DatabaseLocation.SHARED)
+                .isPresent());
         return BooleanExpression.booleanExpression(binding);
     }
 
     public static BooleanExpression needsStudyDatabase(StateManager stateManager) {
-        EasyBinding<Boolean> binding = EasyBind.map(stateManager.activeDatabaseProperty(), context -> context.filter(BibDatabaseContext::isStudy).isPresent());
+        EasyBinding<Boolean> binding = EasyBind.map(
+                stateManager.activeDatabaseProperty(),
+                context -> context.filter(BibDatabaseContext::isStudy).isPresent());
         return BooleanExpression.booleanExpression(binding);
     }
 
@@ -44,8 +48,8 @@ public class ActionHelper {
     }
 
     public static BooleanExpression needsEntriesSelected(int numberOfEntries, StateManager stateManager) {
-        return Bindings.createBooleanBinding(() -> stateManager.getSelectedEntries().size() == numberOfEntries,
-                                             stateManager.getSelectedEntries());
+        return Bindings.createBooleanBinding(
+                () -> stateManager.getSelectedEntries().size() == numberOfEntries, stateManager.getSelectedEntries());
     }
 
     public static BooleanExpression isFieldSetForSelectedEntry(Field field, StateManager stateManager) {
@@ -55,32 +59,38 @@ public class ActionHelper {
     public static BooleanExpression isAnyFieldSetForSelectedEntry(List<Field> fields, StateManager stateManager) {
         ObservableList<BibEntry> selectedEntries = stateManager.getSelectedEntries();
         Binding<Boolean> fieldsAreSet = EasyBind.valueAt(selectedEntries, 0)
-                                                .mapObservable(entry -> Bindings.createBooleanBinding(() -> {
-                                                    return entry.getFields().stream().anyMatch(fields::contains);
-                                                }, entry.getFieldsObservable()))
-                                                .orElseOpt(false);
+                .mapObservable(entry -> Bindings.createBooleanBinding(
+                        () -> {
+                            return entry.getFields().stream().anyMatch(fields::contains);
+                        },
+                        entry.getFieldsObservable()))
+                .orElseOpt(false);
         return BooleanExpression.booleanExpression(fieldsAreSet);
     }
 
-    public static BooleanExpression isFilePresentForSelectedEntry(StateManager stateManager, PreferencesService preferencesService) {
+    public static BooleanExpression isFilePresentForSelectedEntry(
+            StateManager stateManager, PreferencesService preferencesService) {
         ObservableList<BibEntry> selectedEntries = stateManager.getSelectedEntries();
-        Binding<Boolean> fileIsPresent = EasyBind.valueAt(selectedEntries, 0).mapOpt(entry -> {
-            List<LinkedFile> files = entry.getFiles();
+        Binding<Boolean> fileIsPresent = EasyBind.valueAt(selectedEntries, 0)
+                .mapOpt(entry -> {
+                    List<LinkedFile> files = entry.getFiles();
 
-            if ((!entry.getFiles().isEmpty()) && stateManager.getActiveDatabase().isPresent()) {
-                if (files.get(0).isOnlineLink()) {
-                    return true;
-                }
+                    if ((!entry.getFiles().isEmpty())
+                            && stateManager.getActiveDatabase().isPresent()) {
+                        if (files.get(0).isOnlineLink()) {
+                            return true;
+                        }
 
-                Optional<Path> filename = FileUtil.find(
-                        stateManager.getActiveDatabase().get(),
-                        files.get(0).getLink(),
-                        preferencesService.getFilePreferences());
-                return filename.isPresent();
-            } else {
-                return false;
-            }
-        }).orElseOpt(false);
+                        Optional<Path> filename = FileUtil.find(
+                                stateManager.getActiveDatabase().get(),
+                                files.get(0).getLink(),
+                                preferencesService.getFilePreferences());
+                        return filename.isPresent();
+                    } else {
+                        return false;
+                    }
+                })
+                .orElseOpt(false);
 
         return BooleanExpression.booleanExpression(fileIsPresent);
     }
@@ -94,7 +104,8 @@ public class ActionHelper {
      * @return a boolean binding
      */
     public static BooleanExpression hasLinkedFileForSelectedEntries(StateManager stateManager) {
-        return BooleanExpression.booleanExpression(EasyBind.reduce(stateManager.getSelectedEntries(),
+        return BooleanExpression.booleanExpression(EasyBind.reduce(
+                stateManager.getSelectedEntries(),
                 entries -> entries.anyMatch(entry -> !entry.getFiles().isEmpty())));
     }
 

@@ -25,10 +25,11 @@ public class AttachFileAction extends SimpleCommand {
     private final DialogService dialogService;
     private final FilePreferences filePreferences;
 
-    public AttachFileAction(LibraryTab libraryTab,
-                            DialogService dialogService,
-                            StateManager stateManager,
-                            FilePreferences filePreferences) {
+    public AttachFileAction(
+            LibraryTab libraryTab,
+            DialogService dialogService,
+            StateManager stateManager,
+            FilePreferences filePreferences) {
         this.libraryTab = libraryTab;
         this.stateManager = stateManager;
         this.dialogService = dialogService;
@@ -53,8 +54,8 @@ public class AttachFileAction extends SimpleCommand {
 
         BibEntry entry = stateManager.getSelectedEntries().get(0);
 
-        Path workingDirectory = databaseContext.getFirstExistingFileDir(filePreferences)
-                                               .orElse(filePreferences.getWorkingDirectory());
+        Path workingDirectory =
+                databaseContext.getFirstExistingFileDir(filePreferences).orElse(filePreferences.getWorkingDirectory());
 
         FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
                 .withInitialDirectory(workingDirectory)
@@ -62,21 +63,18 @@ public class AttachFileAction extends SimpleCommand {
 
         dialogService.showFileOpenDialog(fileDialogConfiguration).ifPresent(newFile -> {
             LinkedFile linkedFile = LinkedFilesEditorViewModel.fromFile(
-                    newFile,
-                    databaseContext.getFileDirectories(filePreferences),
-                    filePreferences);
+                    newFile, databaseContext.getFileDirectories(filePreferences), filePreferences);
 
             LinkedFileEditDialogView dialog = new LinkedFileEditDialogView(linkedFile);
 
-            dialogService.showCustomDialogAndWait(dialog)
-                  .ifPresent(editedLinkedFile -> {
-                      Optional<FieldChange> fieldChange = entry.addFile(editedLinkedFile);
-                      fieldChange.ifPresent(change -> {
-                          UndoableFieldChange ce = new UndoableFieldChange(change);
-                          libraryTab.getUndoManager().addEdit(ce);
-                          libraryTab.markBaseChanged();
-                      });
-                  });
+            dialogService.showCustomDialogAndWait(dialog).ifPresent(editedLinkedFile -> {
+                Optional<FieldChange> fieldChange = entry.addFile(editedLinkedFile);
+                fieldChange.ifPresent(change -> {
+                    UndoableFieldChange ce = new UndoableFieldChange(change);
+                    libraryTab.getUndoManager().addEdit(ce);
+                    libraryTab.markBaseChanged();
+                });
+            });
         });
     }
 }

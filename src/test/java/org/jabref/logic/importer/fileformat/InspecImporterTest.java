@@ -28,9 +28,8 @@ public class InspecImporterTest {
     private InspecImporter importer;
 
     private static Stream<String> fileNames() throws IOException {
-        Predicate<String> fileName = name -> name.startsWith("InspecImportTest")
-                && !name.contains("False")
-                && name.endsWith(FILE_ENDING);
+        Predicate<String> fileName =
+                name -> name.startsWith("InspecImportTest") && !name.contains("False") && name.endsWith(FILE_ENDING);
         return ImporterTestEngine.getTestFiles(fileName).stream();
     }
 
@@ -59,7 +58,8 @@ public class InspecImporterTest {
     @Test
     public void testCompleteBibtexEntryOnJournalPaperImport() throws IOException, URISyntaxException {
         BibEntry expectedEntry = new BibEntry(StandardEntryType.Article);
-        expectedEntry.setField(StandardField.TITLE, "The SIS project : software reuse with a natural language approach");
+        expectedEntry.setField(
+                StandardField.TITLE, "The SIS project : software reuse with a natural language approach");
         expectedEntry.setField(StandardField.AUTHOR, "Prechelt, Lutz");
         expectedEntry.setField(StandardField.YEAR, "1992");
         expectedEntry.setField(StandardField.ABSTRACT, "Abstrakt");
@@ -68,36 +68,34 @@ public class InspecImporterTest {
         expectedEntry.setField(StandardField.PAGES, "20");
         expectedEntry.setField(StandardField.VOLUME, "19");
 
-        BibEntryAssert.assertEquals(Collections.singletonList(expectedEntry),
-                InspecImporterTest.class.getResource("InspecImportTest2.txt"), importer);
+        BibEntryAssert.assertEquals(
+                Collections.singletonList(expectedEntry),
+                InspecImporterTest.class.getResource("InspecImportTest2.txt"),
+                importer);
     }
 
     @Test
     public void importConferencePaperGivesInproceedings() throws IOException {
-        String testInput = "Record.*INSPEC.*\n" +
-                "\n" +
-                "RT ~ Conference-Paper\n" +
-                "AU ~ Prechelt, Lutz";
+        String testInput = "Record.*INSPEC.*\n" + "\n" + "RT ~ Conference-Paper\n" + "AU ~ Prechelt, Lutz";
         BibEntry expectedEntry = new BibEntry(StandardEntryType.InProceedings);
         expectedEntry.setField(StandardField.AUTHOR, "Prechelt, Lutz");
 
         try (BufferedReader reader = new BufferedReader(new StringReader(testInput))) {
-            List<BibEntry> entries = importer.importDatabase(reader).getDatabase().getEntries();
+            List<BibEntry> entries =
+                    importer.importDatabase(reader).getDatabase().getEntries();
             assertEquals(Collections.singletonList(expectedEntry), entries);
         }
     }
 
     @Test
     public void importMiscGivesMisc() throws IOException {
-        String testInput = "Record.*INSPEC.*\n" +
-                "\n" +
-                "AU ~ Prechelt, Lutz \n" +
-                "RT ~ Misc";
+        String testInput = "Record.*INSPEC.*\n" + "\n" + "AU ~ Prechelt, Lutz \n" + "RT ~ Misc";
         BibEntry expectedEntry = new BibEntry(StandardEntryType.Misc);
         expectedEntry.setField(StandardField.AUTHOR, "Prechelt, Lutz");
 
         try (BufferedReader reader = new BufferedReader(new StringReader(testInput))) {
-            List<BibEntry> entries = importer.importDatabase(reader).getDatabase().getEntries();
+            List<BibEntry> entries =
+                    importer.importDatabase(reader).getDatabase().getEntries();
             assertEquals(1, entries.size());
             BibEntry entry = entries.get(0);
             assertEquals(expectedEntry, entry);

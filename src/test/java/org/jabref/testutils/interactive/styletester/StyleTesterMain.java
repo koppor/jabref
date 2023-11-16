@@ -25,9 +25,7 @@ public class StyleTesterMain extends Application {
         DefaultFileUpdateMonitor fileUpdateMonitor = new DefaultFileUpdateMonitor();
         JabRefExecutorService.INSTANCE.executeInterruptableTask(fileUpdateMonitor, "FileUpdateMonitor");
         ThemeManager themeManager = new ThemeManager(
-                JabRefPreferences.getInstance().getWorkspacePreferences(),
-                fileUpdateMonitor,
-                Runnable::run);
+                JabRefPreferences.getInstance().getWorkspacePreferences(), fileUpdateMonitor, Runnable::run);
 
         Scene scene = new Scene(view.getContent());
         themeManager.installCss(scene);

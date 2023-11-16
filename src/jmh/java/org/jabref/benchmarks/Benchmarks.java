@@ -62,7 +62,8 @@ public class Benchmarks {
             BibEntry entry = new BibEntry();
             entry.setCitationKey("id" + i);
             entry.setField(StandardField.TITLE, "This is my title " + i);
-            entry.setField(StandardField.AUTHOR, "Firstname Lastname and FirstnameA LastnameA and FirstnameB LastnameB" + i);
+            entry.setField(
+                    StandardField.AUTHOR, "Firstname Lastname and FirstnameA LastnameA and FirstnameB LastnameB" + i);
             entry.setField(StandardField.JOURNAL, "Journal Title " + i);
             entry.setField(StandardField.KEYWORDS, "testkeyword");
             entry.setField(StandardField.YEAR, "1" + i);
@@ -72,7 +73,8 @@ public class Benchmarks {
 
         bibtexString = getOutputWriter().toString();
 
-        latexConversionString = "{A} \\textbf{bold} approach {\\it to} ${{\\Sigma}}{\\Delta}$ modulator \\textsuperscript{2} \\$";
+        latexConversionString =
+                "{A} \\textbf{bold} approach {\\it to} ${{\\Sigma}}{\\Delta}$ modulator \\textsuperscript{2} \\$";
 
         htmlConversionString = "<b>&Ouml;sterreich</b> &#8211; &amp; characters &#x2aa2; <i>italic</i>";
     }
@@ -112,7 +114,9 @@ public class Benchmarks {
     public List<BibEntry> parallelSearch() {
         // FIXME: Reuse SearchWorker here
         SearchQuery searchQuery = new SearchQuery("Journal Title 500", EnumSet.noneOf(SearchFlags.class));
-        return database.getEntries().parallelStream().filter(searchQuery::isMatch).collect(Collectors.toList());
+        return database.getEntries().parallelStream()
+                .filter(searchQuery::isMatch)
+                .collect(Collectors.toList());
     }
 
     @Benchmark
@@ -140,7 +144,8 @@ public class Benchmarks {
 
     @Benchmark
     public boolean keywordGroupContains() {
-        KeywordGroup group = new WordKeywordGroup("testGroup", GroupHierarchyType.INDEPENDENT, StandardField.KEYWORDS, "testkeyword", false, ',', false);
+        KeywordGroup group = new WordKeywordGroup(
+                "testGroup", GroupHierarchyType.INDEPENDENT, StandardField.KEYWORDS, "testkeyword", false, ',', false);
         return group.containsAll(database.getEntries());
     }
 

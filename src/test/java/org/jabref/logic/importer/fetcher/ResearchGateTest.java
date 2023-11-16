@@ -29,8 +29,10 @@ import static org.mockito.Mockito.mock;
 @DisabledOnCIServer("Blocked by Cloudflare")
 public class ResearchGateTest {
 
-    private static final String URL_PDF = "https://www.researchgate.net/profile/Abdurrazzak-Gehani/publication/4207355_Paranoid_a_global_secure_file_access_control_system/links/5457747d0cf2cf516480995e/Paranoid-a-global-secure-file-access-control-system.pdf";
-    private final String URL_PAGE = "https://www.researchgate.net/publication/4207355_Paranoid_a_global_secure_file_access_control_system";
+    private static final String URL_PDF =
+            "https://www.researchgate.net/profile/Abdurrazzak-Gehani/publication/4207355_Paranoid_a_global_secure_file_access_control_system/links/5457747d0cf2cf516480995e/Paranoid-a-global-secure-file-access-control-system.pdf";
+    private final String URL_PAGE =
+            "https://www.researchgate.net/publication/4207355_Paranoid_a_global_secure_file_access_control_system";
     private ResearchGate fetcher;
     private BibEntry entry;
 
@@ -77,10 +79,13 @@ public class ResearchGateTest {
         BibEntry master = new BibEntry(StandardEntryType.PhdThesis)
                 .withCitationKey("phdthesis")
                 .withField(StandardField.AUTHOR, "Diez, Tobias")
-                .withField(StandardField.TITLE, "Slice theorem for Fréchet group actions and covariant symplectic field theory")
+                .withField(
+                        StandardField.TITLE,
+                        "Slice theorem for Fréchet group actions and covariant symplectic field theory")
                 .withField(StandardField.MONTH, "10")
                 .withField(StandardField.YEAR, "2013");
-        List<BibEntry> fetchedEntries = fetcher.performSearch("Slice theorem for Fréchet group actions and covariant symplectic");
+        List<BibEntry> fetchedEntries =
+                fetcher.performSearch("Slice theorem for Fréchet group actions and covariant symplectic");
         assertEquals(Optional.of(master), fetchedEntries.stream().findFirst());
     }
 
@@ -88,20 +93,28 @@ public class ResearchGateTest {
     void performSearchWithLuceneQuery() throws Exception {
         BibEntry master = new BibEntry(StandardEntryType.Article)
                 .withCitationKey("article")
-                .withField(StandardField.TITLE, "Wine Microbiology and Predictive Microbiology: " +
-                        "A Short Overview on Application, and Perspectives")
+                .withField(
+                        StandardField.TITLE,
+                        "Wine Microbiology and Predictive Microbiology: "
+                                + "A Short Overview on Application, and Perspectives")
                 .withField(StandardField.DOI, "10.3390/microorganisms10020421")
                 .withField(StandardField.JOURNAL, "Microorganisms")
                 .withField(StandardField.MONTH, "02")
                 .withField(StandardField.PAGES, "421")
                 .withField(StandardField.VOLUME, "10")
                 .withField(StandardField.YEAR, "2022")
-                .withField(StandardField.AUTHOR, "Petruzzi, Leonardo and Campaniello, Daniela and Corbo," +
-                        " Maria and Speranza, Barbara and Altieri, Clelia and Sinigaglia, Milena and Bevilacqua, Antonio");
+                .withField(
+                        StandardField.AUTHOR,
+                        "Petruzzi, Leonardo and Campaniello, Daniela and Corbo,"
+                                + " Maria and Speranza, Barbara and Altieri, Clelia and Sinigaglia, Milena and Bevilacqua, Antonio");
 
-        QueryNode queryNode = new StandardSyntaxParser().parse("Wine Microbiology and Predictive " +
-                "Microbiology: A Short Overview on Application, and Perspectives", NO_EXPLICIT_FIELD);
-        assertEquals(Optional.of(master), fetcher.performSearch(queryNode).stream().findFirst());
+        QueryNode queryNode = new StandardSyntaxParser()
+                .parse(
+                        "Wine Microbiology and Predictive "
+                                + "Microbiology: A Short Overview on Application, and Perspectives",
+                        NO_EXPLICIT_FIELD);
+        assertEquals(
+                Optional.of(master), fetcher.performSearch(queryNode).stream().findFirst());
     }
 
     @Test
@@ -115,27 +128,35 @@ public class ResearchGateTest {
                 .withField(StandardField.DOI, "10.1109/CSAC.2005.37")
                 .withField(StandardField.VOLUME, "2005")
                 .withField(StandardField.YEAR, "2006")
-                .withField(StandardField.JOURNAL, "Proceedings - Annual Computer Security Applications Conference, ACSAC")
+                .withField(
+                        StandardField.JOURNAL, "Proceedings - Annual Computer Security Applications Conference, ACSAC")
                 .withField(StandardField.AUTHOR, "Bell, D.E.");
-        assertEquals(Optional.of(entryZaffar), fetcher.performSearch(entryZaffar).stream().findFirst());
+        assertEquals(
+                Optional.of(entryZaffar),
+                fetcher.performSearch(entryZaffar).stream().findFirst());
     }
 
     @Test
     @DisabledOnCIServer("CI server is unreliable")
     void performSearchWithTitleWithCurlyBraces() throws FetcherException {
         BibEntry entryInput = new BibEntry(StandardEntryType.Misc)
-                .withField(StandardField.TITLE, "Communicating {COVID}-19 against the backdrop of conspiracy ideologies: {HOW} {PUBLIC} {FIGURES} {DISCUSS} {THE} {MATTER} {ON} {FACEBOOK} {AND} {TELEGRAM}");
+                .withField(
+                        StandardField.TITLE,
+                        "Communicating {COVID}-19 against the backdrop of conspiracy ideologies: {HOW} {PUBLIC} {FIGURES} {DISCUSS} {THE} {MATTER} {ON} {FACEBOOK} {AND} {TELEGRAM}");
 
         Optional<BibEntry> expected = Optional.of(new BibEntry(new UnknownEntryType("unknown"))
                 .withCitationKey("unknown")
-                .withField(StandardField.TITLE, "Communicating COVID-19 against the backdrop of conspiracy ideologies: HOW PUBLIC FIGURES DISCUSS THE MATTER ON FACEBOOK AND TELEGRAM")
+                .withField(
+                        StandardField.TITLE,
+                        "Communicating COVID-19 against the backdrop of conspiracy ideologies: HOW PUBLIC FIGURES DISCUSS THE MATTER ON FACEBOOK AND TELEGRAM")
                 .withField(StandardField.MONTH, "05")
                 .withField(StandardField.YEAR, "2021")
-                .withField(StandardField.AUTHOR, "Hohlfeld, Ralf and Bauerfeind, Franziska and Braglia, Ilenia and Butt, Aqib and Dietz, Anna-Lena and Drexel, Denise and Fedlmeier, Julia and Fischer, Lana and Gandl, Vanessa and Glaser, Felia and Haberzettel, Eva and Helling, Teresa and Käsbauer, Isabel and Kast, Matthias and Krieger, Anja and Lächner, Anja and Malkanova, Adriana and Raab, Marie-Kristin and Rech, Anastasia and Weymar, Pia")
+                .withField(
+                        StandardField.AUTHOR,
+                        "Hohlfeld, Ralf and Bauerfeind, Franziska and Braglia, Ilenia and Butt, Aqib and Dietz, Anna-Lena and Drexel, Denise and Fedlmeier, Julia and Fischer, Lana and Gandl, Vanessa and Glaser, Felia and Haberzettel, Eva and Helling, Teresa and Käsbauer, Isabel and Kast, Matthias and Krieger, Anja and Lächner, Anja and Malkanova, Adriana and Raab, Marie-Kristin and Rech, Anastasia and Weymar, Pia")
                 .withField(StandardField.DOI, "10.13140/RG.2.2.36822.78406"));
 
-        Optional<BibEntry> actual = fetcher.performSearch(entryInput)
-                                                     .stream().findFirst();
+        Optional<BibEntry> actual = fetcher.performSearch(entryInput).stream().findFirst();
         assertEquals(expected, actual);
     }
 }

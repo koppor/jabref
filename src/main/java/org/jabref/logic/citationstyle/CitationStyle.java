@@ -157,13 +157,14 @@ public class CitationStyle {
     }
 
     private static List<CitationStyle> discoverCitationStylesInPath(Path path) throws IOException {
-        try (Stream<Path> stream = Files.find(path, 1, (file, attr) -> file.toString().endsWith("csl"))) {
+        try (Stream<Path> stream =
+                Files.find(path, 1, (file, attr) -> file.toString().endsWith("csl"))) {
             return stream.map(Path::getFileName)
-                         .map(Path::toString)
-                         .map(CitationStyle::createCitationStyleFromFile)
-                         .filter(Optional::isPresent)
-                         .map(Optional::get)
-                         .collect(Collectors.toList());
+                    .map(Path::toString)
+                    .map(CitationStyle::createCitationStyleFromFile)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
         }
     }
 

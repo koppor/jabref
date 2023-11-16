@@ -42,7 +42,8 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
     private static final String GOOGLE_SEARCH = "https://www.google.com/search?q=";
     private static final String GOOGLE_SITE = "%20site:researchgate.net";
     private static final String SEARCH = "https://www.researchgate.net/search.Search.html?";
-    private static final String SEARCH_FOR_BIB_ENTRY = "https://www.researchgate.net/lite.publication.PublicationDownloadCitationModal.downloadCitation.html?fileType=BibTeX&citation=citationAndAbstract&publicationUid=";
+    private static final String SEARCH_FOR_BIB_ENTRY =
+            "https://www.researchgate.net/lite.publication.PublicationDownloadCitationModal.downloadCitation.html?fileType=BibTeX&citation=citationAndAbstract&publicationUid=";
     private final ImportFormatPreferences formatPreferences;
 
     public ResearchGate(ImportFormatPreferences importFormatPreferences) {
@@ -127,14 +128,15 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
             URLDownload urlDownload = new URLDownload(source.toString());
             urlDownload.getCookieFromUrl();
             Document html = Jsoup.connect(source.toString())
-                                 .userAgent(URLDownload.USER_AGENT)
-                                 .referrer("www.google.com")
-                                 .ignoreHttpErrors(true)
-                                 .get();
+                    .userAgent(URLDownload.USER_AGENT)
+                    .referrer("www.google.com")
+                    .ignoreHttpErrors(true)
+                    .get();
 
-            link = HOST + Objects.requireNonNull(html.getElementById("content"))
-                                 .select("a[href^=publication/]")
-                                 .attr("href");
+            link = HOST
+                    + Objects.requireNonNull(html.getElementById("content"))
+                            .select("a[href^=publication/]")
+                            .attr("href");
             if (link.contains("?")) {
                 link = link.substring(0, link.indexOf("?"));
             }
@@ -161,7 +163,8 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
                     .get();
 
             link = Objects.requireNonNull(html.getElementById("search"))
-                          .select("a").attr("href");
+                    .select("a")
+                    .attr("href");
         } catch (URISyntaxException e) {
             return Optional.empty();
         }
@@ -180,15 +183,16 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
      * @throws IOException        from {@link Connection}'s get() method
      */
     private Document getPage(QueryNode luceneQuery) throws URISyntaxException, IOException {
-        String query = new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse("");
+        String query =
+                new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse("");
         URIBuilder source = new URIBuilder(SEARCH);
         source.addParameter("type", "publication");
         source.addParameter("query", query);
         return Jsoup.connect(source.build().toString())
-                    .userAgent(URLDownload.USER_AGENT)
-                    .referrer("www.google.com")
-                    .ignoreHttpErrors(true)
-                    .get();
+                .userAgent(URLDownload.USER_AGENT)
+                .referrer("www.google.com")
+                .ignoreHttpErrors(true)
+                .get();
     }
 
     @Override
@@ -209,7 +213,8 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
         try {
             html = getPage(luceneQuery);
             // ResearchGate's server blocks when too many request are made
-            if (!html.getElementsByClass("nova-legacy-v-publication-item__title").hasText()) {
+            if (!html.getElementsByClass("nova-legacy-v-publication-item__title")
+                    .hasText()) {
                 throw new FetcherException("ResearchGate server unavailable");
             }
         } catch (URISyntaxException | IOException e) {
@@ -218,13 +223,14 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
 
         Elements sol = html.getElementsByClass("nova-legacy-v-publication-item__title");
         List<String> urls = sol.select("a").eachAttr("href").stream()
-                               .filter(stream -> stream.contains("publication/"))
-                               .map(resultStream -> resultStream.substring(resultStream.indexOf("publication/") + 12, resultStream.indexOf("_")))
-                               .map(idStream -> SEARCH_FOR_BIB_ENTRY + idStream)
-                               .map(this::getInputStream)
-                               .filter(Objects::nonNull)
-                               .map(stream -> stream.lines().collect(Collectors.joining(OS.NEWLINE)))
-                               .toList();
+                .filter(stream -> stream.contains("publication/"))
+                .map(resultStream ->
+                        resultStream.substring(resultStream.indexOf("publication/") + 12, resultStream.indexOf("_")))
+                .map(idStream -> SEARCH_FOR_BIB_ENTRY + idStream)
+                .map(this::getInputStream)
+                .filter(Objects::nonNull)
+                .map(stream -> stream.lines().collect(Collectors.joining(OS.NEWLINE)))
+                .toList();
 
         List<BibEntry> list = new ArrayList<>();
         for (String bib : urls) {
@@ -271,4 +277,3 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
         return performSearch(new RTFChars().format(title.get()));
     }
 }
-

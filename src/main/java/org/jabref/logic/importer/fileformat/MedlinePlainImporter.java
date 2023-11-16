@@ -61,7 +61,8 @@ public class MedlinePlainImporter extends Importer {
         // (i.e., PubMed Unique Identifier, PubMed Central Identifier, PubMed Central Release)
         String str;
         while ((str = reader.readLine()) != null) {
-            if (PMID_PATTERN.matcher(str).find() || PMC_PATTERN.matcher(str).find()
+            if (PMID_PATTERN.matcher(str).find()
+                    || PMC_PATTERN.matcher(str).find()
                     || PMCR_PATTERN.matcher(str).find()) {
                 return true;
             }
@@ -74,10 +75,15 @@ public class MedlinePlainImporter extends Importer {
         List<BibEntry> bibitems = new ArrayList<>();
 
         // use optional here, so that no exception will be thrown if the file is empty
-        String linesAsString = reader.lines().reduce((line, nextline) -> line + "\n" + nextline).orElse("");
+        String linesAsString = reader.lines()
+                .reduce((line, nextline) -> line + "\n" + nextline)
+                .orElse("");
 
-        String[] entries = linesAsString.replace("\u2013", "-").replace("\u2014", "--").replace("\u2015", "--")
-                                        .split("\\n\\n");
+        String[] entries = linesAsString
+                .replace("\u2013", "-")
+                .replace("\u2014", "--")
+                .replace("\u2015", "--")
+                .split("\\n\\n");
 
         for (String entry1 : entries) {
             if (entry1.trim().isEmpty() || !entry1.contains("-")) {
@@ -191,10 +197,22 @@ public class MedlinePlainImporter extends Importer {
                         String kw = fieldConversionMap.get(StandardField.KEYWORDS);
                         fieldConversionMap.put(StandardField.KEYWORDS, kw + ", " + value);
                     }
-                } else if ("CON".equals(label) || "CIN".equals(label) || "EIN".equals(label) || "EFR".equals(label)
-                        || "CRI".equals(label) || "CRF".equals(label) || "PRIN".equals(label) || "PROF".equals(label)
-                        || "RPI".equals(label) || "RPF".equals(label) || "RIN".equals(label) || "ROF".equals(label)
-                        || "UIN".equals(label) || "UOF".equals(label) || "SPIN".equals(label) || "ORI".equals(label)) {
+                } else if ("CON".equals(label)
+                        || "CIN".equals(label)
+                        || "EIN".equals(label)
+                        || "EFR".equals(label)
+                        || "CRI".equals(label)
+                        || "CRF".equals(label)
+                        || "PRIN".equals(label)
+                        || "PROF".equals(label)
+                        || "RPI".equals(label)
+                        || "RPF".equals(label)
+                        || "RIN".equals(label)
+                        || "ROF".equals(label)
+                        || "UIN".equals(label)
+                        || "UOF".equals(label)
+                        || "SPIN".equals(label)
+                        || "ORI".equals(label)) {
                     if (!comment.isEmpty()) {
                         comment = comment + "\n";
                     }

@@ -67,10 +67,13 @@ class FieldValueSuggestionProviderTest {
     void completeOnIgnoredFieldReturnsNothing() {
         AutoCompletePreferences autoCompletePreferences = mock(AutoCompletePreferences.class);
         JournalAbbreviationRepository journalAbbreviationRepository = mock(JournalAbbreviationRepository.class);
-        when(autoCompletePreferences.getCompleteFields()).thenReturn(FXCollections.observableSet(Set.of(StandardField.AUTHOR)));
-        SuggestionProviders suggestionProviders = new SuggestionProviders(database, journalAbbreviationRepository, autoCompletePreferences);
+        when(autoCompletePreferences.getCompleteFields())
+                .thenReturn(FXCollections.observableSet(Set.of(StandardField.AUTHOR)));
+        SuggestionProviders suggestionProviders =
+                new SuggestionProviders(database, journalAbbreviationRepository, autoCompletePreferences);
 
-        SuggestionProvider<String> autoCompleter = (SuggestionProvider<String>) suggestionProviders.getForField(StandardField.TITLE);
+        SuggestionProvider<String> autoCompleter =
+                (SuggestionProvider<String>) suggestionProviders.getForField(StandardField.TITLE);
 
         BibEntry entry = new BibEntry();
         entry.setField(StandardField.TITLE, "testValue");

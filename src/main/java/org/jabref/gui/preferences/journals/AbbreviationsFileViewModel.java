@@ -25,8 +25,8 @@ import org.jabref.logic.journals.JournalAbbreviationLoader;
  */
 public class AbbreviationsFileViewModel {
 
-    private final SimpleListProperty<AbbreviationViewModel> abbreviations = new SimpleListProperty<>(
-            FXCollections.observableArrayList());
+    private final SimpleListProperty<AbbreviationViewModel> abbreviations =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
     private final ReadOnlyBooleanProperty isBuiltInList;
     private final String name;
     private final Optional<Path> path;
@@ -51,7 +51,8 @@ public class AbbreviationsFileViewModel {
 
     public void readAbbreviations() throws IOException {
         if (path.isPresent()) {
-            Collection<Abbreviation> abbreviationList = JournalAbbreviationLoader.readAbbreviationsFromCsvFile(path.get());
+            Collection<Abbreviation> abbreviationList =
+                    JournalAbbreviationLoader.readAbbreviationsFromCsvFile(path.get());
             abbreviationList.forEach(abbreviation -> abbreviations.addAll(new AbbreviationViewModel(abbreviation)));
         } else {
             throw new FileNotFoundException();
@@ -65,10 +66,10 @@ public class AbbreviationsFileViewModel {
      */
     public void writeOrCreate() throws IOException {
         if (!isBuiltInList.get()) {
-            List<Abbreviation> actualAbbreviations =
-                    abbreviations.stream().filter(abb -> !abb.isPseudoAbbreviation())
-                                 .map(AbbreviationViewModel::getAbbreviationObject)
-                                 .collect(Collectors.toList());
+            List<Abbreviation> actualAbbreviations = abbreviations.stream()
+                    .filter(abb -> !abb.isPseudoAbbreviation())
+                    .map(AbbreviationViewModel::getAbbreviationObject)
+                    .collect(Collectors.toList());
             AbbreviationWriter.writeOrCreate(path.get(), actualAbbreviations);
         }
     }

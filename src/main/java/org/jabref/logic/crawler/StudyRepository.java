@@ -80,11 +80,13 @@ public class StudyRepository {
      * @throws IOException              Thrown if the given repository does not exist, or the study definition file
      *                                  does not exist
      */
-    public StudyRepository(Path pathToRepository,
-                           SlrGitHandler gitHandler,
-                           PreferencesService preferencesService,
-                           FileUpdateMonitor fileUpdateMonitor,
-                           BibEntryTypesManager bibEntryTypesManager) throws IOException {
+    public StudyRepository(
+            Path pathToRepository,
+            SlrGitHandler gitHandler,
+            PreferencesService preferencesService,
+            FileUpdateMonitor fileUpdateMonitor,
+            BibEntryTypesManager bibEntryTypesManager)
+            throws IOException {
         this.repositoryPath = pathToRepository;
         this.gitHandler = gitHandler;
         this.preferencesService = preferencesService;
@@ -115,7 +117,10 @@ public class StudyRepository {
 
             gitHandler.checkoutBranch(SEARCH_BRANCH);
             // If study definition does not exist on this branch or was changed on work branch, copy it from work
-            boolean studyDefinitionDoesNotExistOrChanged = !(Files.exists(studyDefinitionFile) && new StudyYamlParser().parseStudyYamlFile(studyDefinitionFile).equals(study));
+            boolean studyDefinitionDoesNotExistOrChanged = !(Files.exists(studyDefinitionFile)
+                    && new StudyYamlParser()
+                            .parseStudyYamlFile(studyDefinitionFile)
+                            .equals(study));
             if (studyDefinitionDoesNotExistOrChanged) {
                 new StudyYamlParser().writeStudyYamlFile(study, studyDefinitionFile);
             }
@@ -136,9 +141,11 @@ public class StudyRepository {
      */
     public BibDatabaseContext getFetcherResultEntries(String query, String fetcherName) throws IOException {
         if (Files.exists(getPathToFetcherResultFile(query, fetcherName))) {
-            return OpenDatabase.loadDatabase(getPathToFetcherResultFile(query, fetcherName),
-                    preferencesService.getImportFormatPreferences(),
-                    fileUpdateMonitor).getDatabaseContext();
+            return OpenDatabase.loadDatabase(
+                            getPathToFetcherResultFile(query, fetcherName),
+                            preferencesService.getImportFormatPreferences(),
+                            fileUpdateMonitor)
+                    .getDatabaseContext();
         }
         return new BibDatabaseContext();
     }
@@ -148,9 +155,11 @@ public class StudyRepository {
      */
     public BibDatabaseContext getQueryResultEntries(String query) throws IOException {
         if (Files.exists(getPathToQueryResultFile(query))) {
-            return OpenDatabase.loadDatabase(getPathToQueryResultFile(query),
-                    preferencesService.getImportFormatPreferences(),
-                    fileUpdateMonitor).getDatabaseContext();
+            return OpenDatabase.loadDatabase(
+                            getPathToQueryResultFile(query),
+                            preferencesService.getImportFormatPreferences(),
+                            fileUpdateMonitor)
+                    .getDatabaseContext();
         }
         return new BibDatabaseContext();
     }
@@ -160,9 +169,11 @@ public class StudyRepository {
      */
     public BibDatabaseContext getStudyResultEntries() throws IOException {
         if (Files.exists(getPathToStudyResultFile())) {
-            return OpenDatabase.loadDatabase(getPathToStudyResultFile(),
-                    preferencesService.getImportFormatPreferences(),
-                    fileUpdateMonitor).getDatabaseContext();
+            return OpenDatabase.loadDatabase(
+                            getPathToStudyResultFile(),
+                            preferencesService.getImportFormatPreferences(),
+                            fileUpdateMonitor)
+                    .getDatabaseContext();
         }
         return new BibDatabaseContext();
     }
@@ -183,10 +194,7 @@ public class StudyRepository {
      * @return List of all queries as Strings.
      */
     public List<String> getSearchQueryStrings() {
-        return study.getQueries()
-                    .parallelStream()
-                    .map(StudyQuery::getQuery)
-                    .collect(Collectors.toList());
+        return study.getQueries().parallelStream().map(StudyQuery::getQuery).collect(Collectors.toList());
     }
 
     /**
@@ -196,10 +204,9 @@ public class StudyRepository {
      * @throws IllegalArgumentException If a transformation from Library entry to LibraryDefinition fails
      */
     public List<StudyDatabase> getActiveLibraryEntries() throws IllegalArgumentException {
-        return study.getDatabases()
-                    .parallelStream()
-                    .filter(StudyDatabase::isEnabled)
-                    .collect(Collectors.toList());
+        return study.getDatabases().parallelStream()
+                .filter(StudyDatabase::isEnabled)
+                .collect(Collectors.toList());
     }
 
     public Study getStudy() {
@@ -287,8 +294,9 @@ public class StudyRepository {
                 preferencesService.getImporterPreferences());
         for (String query : this.getSearchQueryStrings()) {
             createQueryResultFolder(query);
-            converter.getActiveFetchers()
-                     .forEach(searchBasedFetcher -> createFetcherResultFile(query, searchBasedFetcher));
+            converter
+                    .getActiveFetchers()
+                    .forEach(searchBasedFetcher -> createFetcherResultFile(query, searchBasedFetcher));
             createQueryResultFile(query);
         }
         createStudyResultFile();
@@ -382,14 +390,16 @@ public class StudyRepository {
      * @param crawlResults The results that shall be persisted.
      */
     private void persistResults(List<QueryResult> crawlResults) throws IOException, SaveException {
-        DatabaseMerger merger = new DatabaseMerger(preferencesService.getBibEntryPreferences().getKeywordSeparator());
+        DatabaseMerger merger =
+                new DatabaseMerger(preferencesService.getBibEntryPreferences().getKeywordSeparator());
         BibDatabase newStudyResultEntries = new BibDatabase();
 
         for (QueryResult result : crawlResults) {
             BibDatabase queryResultEntries = new BibDatabase();
             for (FetchResult fetcherResult : result.getResultsPerFetcher()) {
                 BibDatabase fetcherEntries = fetcherResult.getFetchResult();
-                BibDatabaseContext existingFetcherResult = getFetcherResultEntries(result.getQuery(), fetcherResult.getFetcherName());
+                BibDatabaseContext existingFetcherResult =
+                        getFetcherResultEntries(result.getQuery(), fetcherResult.getFetcherName());
 
                 // Merge new entries into fetcher result file
                 merger.merge(existingFetcherResult.getDatabase(), fetcherEntries);
@@ -400,7 +410,9 @@ public class StudyRepository {
                 // Aggregate each fetcher result into the query result
                 merger.merge(queryResultEntries, fetcherEntries);
 
-                writeResultToFile(getPathToFetcherResultFile(result.getQuery(), fetcherResult.getFetcherName()), existingFetcherResult);
+                writeResultToFile(
+                        getPathToFetcherResultFile(result.getQuery(), fetcherResult.getFetcherName()),
+                        existingFetcherResult);
             }
             BibDatabaseContext existingQueryEntries = getQueryResultEntries(result.getQuery());
 
@@ -420,16 +432,23 @@ public class StudyRepository {
     }
 
     private void generateCiteKeys(BibDatabaseContext existingEntries, BibDatabase targetEntries) {
-        CitationKeyGenerator citationKeyGenerator = new CitationKeyGenerator(existingEntries,
-                preferencesService.getCitationKeyPatternPreferences());
-        targetEntries.getEntries().stream().filter(bibEntry -> !bibEntry.hasCitationKey()).forEach(citationKeyGenerator::generateAndSetKey);
+        CitationKeyGenerator citationKeyGenerator =
+                new CitationKeyGenerator(existingEntries, preferencesService.getCitationKeyPatternPreferences());
+        targetEntries.getEntries().stream()
+                .filter(bibEntry -> !bibEntry.hasCitationKey())
+                .forEach(citationKeyGenerator::generateAndSetKey);
     }
 
     private void writeResultToFile(Path pathToFile, BibDatabaseContext context) throws SaveException {
         try (AtomicFileWriter fileWriter = new AtomicFileWriter(pathToFile, StandardCharsets.UTF_8)) {
-            SelfContainedSaveConfiguration saveConfiguration = (SelfContainedSaveConfiguration) new SelfContainedSaveConfiguration()
-                    .withSaveOrder(context.getMetaData().getSaveOrder().map(so -> SelfContainedSaveOrder.of(so)).orElse(SaveOrder.getDefaultSaveOrder()))
-                    .withReformatOnSave(preferencesService.getLibraryPreferences().shouldAlwaysReformatOnSave());
+            SelfContainedSaveConfiguration saveConfiguration =
+                    (SelfContainedSaveConfiguration) new SelfContainedSaveConfiguration()
+                            .withSaveOrder(context.getMetaData()
+                                    .getSaveOrder()
+                                    .map(so -> SelfContainedSaveOrder.of(so))
+                                    .orElse(SaveOrder.getDefaultSaveOrder()))
+                            .withReformatOnSave(
+                                    preferencesService.getLibraryPreferences().shouldAlwaysReformatOnSave());
             BibWriter bibWriter = new BibWriter(fileWriter, OS.NEWLINE);
             BibtexDatabaseWriter databaseWriter = new BibtexDatabaseWriter(
                     bibWriter,
@@ -446,7 +465,9 @@ public class StudyRepository {
     }
 
     private Path getPathToFetcherResultFile(String query, String fetcherName) {
-        return repositoryPath.resolve(trimNameAndAddID(query)).resolve(FileNameCleaner.cleanFileName(fetcherName) + ".bib");
+        return repositoryPath
+                .resolve(trimNameAndAddID(query))
+                .resolve(FileNameCleaner.cleanFileName(fetcherName) + ".bib");
     }
 
     private Path getPathToQueryResultFile(String query) {

@@ -20,7 +20,12 @@ public class MoveFieldValueAction extends SimpleCommand {
 
     private final boolean overwriteToFieldContent;
 
-    public MoveFieldValueAction(Field fromField, Field toField, List<BibEntry> entries, NamedCompound edits, boolean overwriteToFieldContent) {
+    public MoveFieldValueAction(
+            Field fromField,
+            Field toField,
+            List<BibEntry> entries,
+            NamedCompound edits,
+            boolean overwriteToFieldContent) {
         this.fromField = fromField;
         this.toField = toField;
         this.entries = entries;

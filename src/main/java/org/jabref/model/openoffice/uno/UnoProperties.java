@@ -19,16 +19,14 @@ import com.sun.star.lang.WrappedTargetException;
  */
 public class UnoProperties {
 
-    private UnoProperties() {
-    }
+    private UnoProperties() {}
 
     public static Optional<XPropertySet> asPropertySet(XPropertyContainer propertyContainer) {
         return UnoCast.cast(XPropertySet.class, propertyContainer);
     }
 
     public static Optional<XPropertySetInfo> getPropertySetInfo(XPropertySet propertySet) {
-        return Optional.ofNullable(propertySet)
-                        .flatMap(e -> Optional.ofNullable(e.getPropertySetInfo()));
+        return Optional.ofNullable(propertySet).flatMap(e -> Optional.ofNullable(e.getPropertySetInfo()));
     }
 
     public static Optional<XPropertySetInfo> getPropertySetInfo(XPropertyContainer propertyContainer) {
@@ -37,9 +35,7 @@ public class UnoProperties {
 
     public static List<String> getPropertyNames(Property[] properties) {
         Objects.requireNonNull(properties);
-        return Arrays.stream(properties)
-                      .map(p -> p.Name)
-                      .collect(Collectors.toList());
+        return Arrays.stream(properties).map(p -> p.Name).collect(Collectors.toList());
     }
 
     public static List<String> getPropertyNames(XPropertySetInfo propertySetInfo) {
@@ -57,8 +53,7 @@ public class UnoProperties {
     }
 
     public static Optional<Object> getValueAsObject(XPropertySet propertySet, String property)
-            throws
-            WrappedTargetException {
+            throws WrappedTargetException {
         Objects.requireNonNull(propertySet);
         Objects.requireNonNull(property);
         try {
@@ -69,8 +64,7 @@ public class UnoProperties {
     }
 
     public static Optional<Object> getValueAsObject(XPropertyContainer propertyContainer, String property)
-            throws
-            WrappedTargetException {
+            throws WrappedTargetException {
         Optional<XPropertySet> propertySet = asPropertySet(propertyContainer);
         if (propertySet.isEmpty()) {
             return Optional.empty();

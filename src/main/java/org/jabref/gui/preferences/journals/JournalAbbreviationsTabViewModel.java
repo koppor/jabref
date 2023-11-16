@@ -37,8 +37,10 @@ public class JournalAbbreviationsTabViewModel implements PreferenceTabViewModel 
 
     private final Logger LOGGER = LoggerFactory.getLogger(JournalAbbreviationsTabViewModel.class);
 
-    private final SimpleListProperty<AbbreviationsFileViewModel> journalFiles = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final SimpleListProperty<AbbreviationViewModel> abbreviations = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final SimpleListProperty<AbbreviationsFileViewModel> journalFiles =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final SimpleListProperty<AbbreviationViewModel> abbreviations =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
     private final SimpleIntegerProperty abbreviationsCount = new SimpleIntegerProperty();
 
     private final SimpleObjectProperty<AbbreviationsFileViewModel> currentFile = new SimpleObjectProperty<>();
@@ -57,10 +59,11 @@ public class JournalAbbreviationsTabViewModel implements PreferenceTabViewModel 
     private final JournalAbbreviationRepository journalAbbreviationRepository;
     private boolean shouldWriteLists;
 
-    public JournalAbbreviationsTabViewModel(JournalAbbreviationPreferences abbreviationsPreferences,
-                                            DialogService dialogService,
-                                            TaskExecutor taskExecutor,
-                                            JournalAbbreviationRepository journalAbbreviationRepository) {
+    public JournalAbbreviationsTabViewModel(
+            JournalAbbreviationPreferences abbreviationsPreferences,
+            DialogService dialogService,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository) {
         this.dialogService = Objects.requireNonNull(dialogService);
         this.taskExecutor = Objects.requireNonNull(taskExecutor);
         this.journalAbbreviationRepository = Objects.requireNonNull(journalAbbreviationRepository);
@@ -69,7 +72,8 @@ public class JournalAbbreviationsTabViewModel implements PreferenceTabViewModel 
         abbreviationsCount.bind(abbreviations.sizeProperty());
         currentAbbreviation.addListener((observable, oldValue, newValue) -> {
             boolean isAbbreviation = (newValue != null) && !newValue.isPseudoAbbreviation();
-            boolean isEditableFile = (currentFile.get() != null) && !currentFile.get().isBuiltInListProperty().get();
+            boolean isEditableFile = (currentFile.get() != null)
+                    && !currentFile.get().isBuiltInListProperty().get();
             isEditableAndRemovable.set(isEditableFile);
             isAbbreviationEditableAndRemovable.set(isAbbreviation && isEditableFile);
         });
@@ -97,7 +101,11 @@ public class JournalAbbreviationsTabViewModel implements PreferenceTabViewModel 
         journalFiles.addListener((ListChangeListener<AbbreviationsFileViewModel>) lcl -> {
             if (lcl.next()) {
                 if (!lcl.wasReplaced()) {
-                    if (lcl.wasAdded() && !lcl.getAddedSubList().get(0).isBuiltInListProperty().get()) {
+                    if (lcl.wasAdded()
+                            && !lcl.getAddedSubList()
+                                    .get(0)
+                                    .isBuiltInListProperty()
+                                    .get()) {
                         currentFile.set(lcl.getAddedSubList().get(0));
                     }
                 }
@@ -137,15 +145,14 @@ public class JournalAbbreviationsTabViewModel implements PreferenceTabViewModel 
      * This will load the built in abbreviation files and add it to the list of journal abbreviation files.
      */
     public void addBuiltInList() {
-        BackgroundTask
-                .wrap(journalAbbreviationRepository::getAllLoaded)
+        BackgroundTask.wrap(journalAbbreviationRepository::getAllLoaded)
                 .onRunning(() -> isLoading.setValue(true))
                 .onSuccess(result -> {
                     isLoading.setValue(false);
-                    List<AbbreviationViewModel> builtInViewModels = result.stream()
-                                                                          .map(AbbreviationViewModel::new)
-                                                                          .collect(Collectors.toList());
-                    journalFiles.add(new AbbreviationsFileViewModel(builtInViewModels, Localization.lang("JabRef built in list")));
+                    List<AbbreviationViewModel> builtInViewModels =
+                            result.stream().map(AbbreviationViewModel::new).collect(Collectors.toList());
+                    journalFiles.add(new AbbreviationsFileViewModel(
+                            builtInViewModels, Localization.lang("JabRef built in list")));
                     selectLastJournalFile();
                 })
                 .onFailure(dialogService::showErrorDialogAndWait)
@@ -174,7 +181,8 @@ public class JournalAbbreviationsTabViewModel implements PreferenceTabViewModel 
     private void openFile(Path filePath) {
         AbbreviationsFileViewModel abbreviationsFile = new AbbreviationsFileViewModel(filePath);
         if (journalFiles.contains(abbreviationsFile)) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Duplicated Journal File"),
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Duplicated Journal File"),
                     Localization.lang("Journal file %s already added", filePath.toString()));
             return;
         }
@@ -218,8 +226,11 @@ public class JournalAbbreviationsTabViewModel implements PreferenceTabViewModel 
     public void addAbbreviation(Abbreviation abbreviationObject) {
         AbbreviationViewModel abbreviationViewModel = new AbbreviationViewModel(abbreviationObject);
         if (abbreviations.contains(abbreviationViewModel)) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Duplicated Journal Abbreviation"),
-                    Localization.lang("Abbreviation '%0' for journal '%1' already defined.", abbreviationObject.getAbbreviation(), abbreviationObject.getName()));
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Duplicated Journal Abbreviation"),
+                    Localization.lang(
+                            "Abbreviation '%0' for journal '%1' already defined.",
+                            abbreviationObject.getAbbreviation(), abbreviationObject.getName()));
         } else {
             abbreviations.add(abbreviationViewModel);
             currentAbbreviation.set(abbreviationViewModel);
@@ -244,8 +255,11 @@ public class JournalAbbreviationsTabViewModel implements PreferenceTabViewModel 
                 if (abbViewModel.equals(currentAbbreviation.get())) {
                     setCurrentAbbreviationNameAndAbbreviationIfValid(abbreviationObject);
                 } else {
-                    dialogService.showErrorDialogAndWait(Localization.lang("Duplicated Journal Abbreviation"),
-                            Localization.lang("Abbreviation '%0' for journal '%1' already defined.", abbreviationObject.getAbbreviation(), abbreviationObject.getName()));
+                    dialogService.showErrorDialogAndWait(
+                            Localization.lang("Duplicated Journal Abbreviation"),
+                            Localization.lang(
+                                    "Abbreviation '%0' for journal '%1' already defined.",
+                                    abbreviationObject.getAbbreviation(), abbreviationObject.getName()));
                 }
             } else {
                 setCurrentAbbreviationNameAndAbbreviationIfValid(abbreviationObject);
@@ -325,13 +339,15 @@ public class JournalAbbreviationsTabViewModel implements PreferenceTabViewModel 
      */
     @Override
     public void storeSettings() {
-        BackgroundTask
-                .wrap(() -> {
+        BackgroundTask.wrap(() -> {
                     List<String> journalStringList = journalFiles.stream()
-                                                                 .filter(path -> !path.isBuiltInListProperty().get())
-                                                                 .filter(path -> path.getAbsolutePath().isPresent())
-                                                                 .map(path -> path.getAbsolutePath().get().toAbsolutePath().toString())
-                                                                 .collect(Collectors.toList());
+                            .filter(path -> !path.isBuiltInListProperty().get())
+                            .filter(path -> path.getAbsolutePath().isPresent())
+                            .map(path -> path.getAbsolutePath()
+                                    .get()
+                                    .toAbsolutePath()
+                                    .toString())
+                            .collect(Collectors.toList());
 
                     abbreviationsPreferences.setExternalJournalLists(journalStringList);
                     abbreviationsPreferences.setUseFJournalField(useFJournal.get());

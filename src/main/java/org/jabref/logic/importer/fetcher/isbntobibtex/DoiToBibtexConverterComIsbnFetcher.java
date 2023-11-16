@@ -40,7 +40,8 @@ public class DoiToBibtexConverterComIsbnFetcher extends AbstractIsbnFetcher {
     }
 
     @Override
-    public URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getUrlForIdentifier(String identifier)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         this.ensureThatIsbnIsValid(identifier);
         return new URIBuilder(BASE_URL)
                 .setPathSegments("getInfo.php")
@@ -69,8 +70,7 @@ public class DoiToBibtexConverterComIsbnFetcher extends AbstractIsbnFetcher {
     }
 
     @Override
-    public void doPostCleanup(BibEntry entry) {
-    }
+    public void doPostCleanup(BibEntry entry) {}
 
     private BibEntry jsonItemToBibEntry(JSONObject item) throws ParseException {
         try {
@@ -93,16 +93,16 @@ public class DoiToBibtexConverterComIsbnFetcher extends AbstractIsbnFetcher {
 
     private String getElementFromJSONArrayByKey(JSONArray jsonArray, String key) {
         return IntStream.range(0, jsonArray.length())
-                        .mapToObj(jsonArray::getJSONObject)
-                        .map(obj -> obj.getString(key))
-                        .findFirst()
-                        .orElse("");
+                .mapToObj(jsonArray::getJSONObject)
+                .map(obj -> obj.getString(key))
+                .findFirst()
+                .orElse("");
     }
 
     private StandardEntryType evaluateBibEntryTypeFromString(String type) {
         return Stream.of(StandardEntryType.values())
-                     .filter(entryType -> entryType.name().equalsIgnoreCase(type))
-                     .findAny()
-                     .orElse(StandardEntryType.Book);
+                .filter(entryType -> entryType.name().equalsIgnoreCase(type))
+                .findAny()
+                .orElse(StandardEntryType.Book);
     }
 }

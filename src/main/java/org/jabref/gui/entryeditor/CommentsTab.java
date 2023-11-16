@@ -28,16 +28,18 @@ public class CommentsTab extends FieldsEditorTab {
     public static final String NAME = "Comments";
 
     private final String defaultOwner;
-    public CommentsTab(PreferencesService preferences,
-                       BibDatabaseContext databaseContext,
-                       SuggestionProviders suggestionProviders,
-                       UndoManager undoManager,
-                       DialogService dialogService,
-                       StateManager stateManager,
-                       ThemeManager themeManager,
-                       IndexingTaskManager indexingTaskManager,
-                       TaskExecutor taskExecutor,
-                       JournalAbbreviationRepository journalAbbreviationRepository) {
+
+    public CommentsTab(
+            PreferencesService preferences,
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            DialogService dialogService,
+            StateManager stateManager,
+            ThemeManager themeManager,
+            IndexingTaskManager indexingTaskManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository) {
         super(
                 false,
                 databaseContext,
@@ -49,8 +51,7 @@ public class CommentsTab extends FieldsEditorTab {
                 themeManager,
                 taskExecutor,
                 journalAbbreviationRepository,
-                indexingTaskManager
-        );
+                indexingTaskManager);
         this.defaultOwner = preferences.getOwnerPreferences().getDefaultOwner();
         setText(Localization.lang("Comments"));
         setGraphic(IconTheme.JabRefIcons.COMMENT.getGraphicNode());
@@ -64,9 +65,9 @@ public class CommentsTab extends FieldsEditorTab {
         Set<Field> comments = new LinkedHashSet<>(Set.of(defaultCommentField, StandardField.COMMENT));
 
         comments.addAll(entry.getFields().stream()
-                             .filter(field -> field instanceof UserSpecificCommentField ||
-                                     field.getName().toLowerCase().contains("comment"))
-                             .collect(Collectors.toSet()));
+                .filter(field -> field instanceof UserSpecificCommentField
+                        || field.getName().toLowerCase().contains("comment"))
+                .collect(Collectors.toSet()));
 
         return comments;
     }

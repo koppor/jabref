@@ -25,31 +25,42 @@ public class CollectionOfComputerScienceBibliographiesParserTest {
 
     @Test
     public void parseEntriesReturnsEmptyListIfXmlHasNoResults() throws Exception {
-        parseXmlAndCheckResults("collection_of_computer_science_bibliographies_empty_result.xml", Collections.emptyList());
+        parseXmlAndCheckResults(
+                "collection_of_computer_science_bibliographies_empty_result.xml", Collections.emptyList());
     }
 
     @Disabled("Parse/fetcher remote side does not return anything valid for the link")
     @Test
     public void parseEntriesReturnsOneBibEntryInListIfXmlHasSingleResult() throws Exception {
-        parseXmlAndCheckResults("collection_of_computer_science_bibliographies_single_result.xml", Collections.singletonList("collection_of_computer_science_bibliographies_single_result.bib"));
+        parseXmlAndCheckResults(
+                "collection_of_computer_science_bibliographies_single_result.xml",
+                Collections.singletonList("collection_of_computer_science_bibliographies_single_result.bib"));
     }
 
     @Test
     public void parseEntriesReturnsMultipleBibEntriesInListIfXmlHasMultipleResults() throws Exception {
-        parseXmlAndCheckResults("collection_of_computer_science_bibliographies_multiple_results.xml", Arrays.asList("collection_of_computer_science_bibliographies_multiple_results_first_result.bib", "collection_of_computer_science_bibliographies_multiple_results_second_result.bib"));
+        parseXmlAndCheckResults(
+                "collection_of_computer_science_bibliographies_multiple_results.xml",
+                Arrays.asList(
+                        "collection_of_computer_science_bibliographies_multiple_results_first_result.bib",
+                        "collection_of_computer_science_bibliographies_multiple_results_second_result.bib"));
     }
 
     private void parseXmlAndCheckResults(String xmlName, List<String> resourceNames) throws Exception {
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator())
+                .thenReturn(',');
 
         InputStream is = CollectionOfComputerScienceBibliographiesParserTest.class.getResourceAsStream(xmlName);
-        CollectionOfComputerScienceBibliographiesParser parser = new CollectionOfComputerScienceBibliographiesParser(importFormatPreferences);
+        CollectionOfComputerScienceBibliographiesParser parser =
+                new CollectionOfComputerScienceBibliographiesParser(importFormatPreferences);
         List<BibEntry> entries = parser.parseEntries(is);
         assertEquals(resourceNames.size(), entries.size());
         assertNotNull(entries);
         for (int i = 0; i < resourceNames.size(); i++) {
-            BibEntryAssert.assertEquals(CollectionOfComputerScienceBibliographiesParserTest.class, resourceNames.get(i), entries.get(i));
+            BibEntryAssert.assertEquals(
+                    CollectionOfComputerScienceBibliographiesParserTest.class, resourceNames.get(i), entries.get(i));
         }
     }
 }

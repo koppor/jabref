@@ -17,7 +17,8 @@ import org.controlsfx.control.PopOver;
 
 public class PopOverUtil {
 
-    public static void showJournalInfo(Button button, BibEntry entry, DialogService dialogService, TaskExecutor taskExecutor) {
+    public static void showJournalInfo(
+            Button button, BibEntry entry, DialogService dialogService, TaskExecutor taskExecutor) {
         Optional<String> optionalIssn = entry.getField(StandardField.ISSN);
         Optional<String> optionalJournalName = entry.getFieldOrAlias(StandardField.JOURNAL);
 
@@ -32,16 +33,16 @@ public class PopOverUtil {
             popOver.setArrowSize(0);
             popOver.show(button, 0);
 
-            BackgroundTask
-                    .wrap(() -> new JournalInfoView().populateJournalInformation(optionalIssn.orElse(""), optionalJournalName.orElse("")))
+            BackgroundTask.wrap(() -> new JournalInfoView()
+                            .populateJournalInformation(optionalIssn.orElse(""), optionalJournalName.orElse("")))
                     .onSuccess(updatedNode -> {
                         popOver.setContentNode(updatedNode);
                         popOver.show(button, 0);
                     })
                     .onFailure(exception -> {
                         popOver.hide();
-                        String message = Localization.lang("Error while fetching journal information: %0",
-                                exception.getMessage());
+                        String message = Localization.lang(
+                                "Error while fetching journal information: %0", exception.getMessage());
                         dialogService.notify(message);
                     })
                     .executeWith(taskExecutor);

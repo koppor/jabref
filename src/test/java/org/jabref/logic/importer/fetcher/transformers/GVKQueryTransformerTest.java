@@ -38,7 +38,8 @@ class GVKQueryTransformerTest extends InfixTransformerTest<GVKQueryTransformer> 
     @Override
     public void convertYearField() throws Exception {
         String queryString = "year:2018";
-        QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
+        QueryNode luceneQuery =
+                new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         Optional<String> query = getTransformer().transformLuceneQuery(luceneQuery);
 
         Optional<String> expected = Optional.of("ver:2018");
@@ -47,6 +48,5 @@ class GVKQueryTransformerTest extends InfixTransformerTest<GVKQueryTransformer> 
 
     @Disabled("Not supported by GVK")
     @Override
-    public void convertYearRangeField() throws Exception {
-    }
+    public void convertYearRangeField() throws Exception {}
 }

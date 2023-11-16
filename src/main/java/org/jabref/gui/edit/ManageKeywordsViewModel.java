@@ -24,7 +24,8 @@ public class ManageKeywordsViewModel {
     private final List<BibEntry> entries;
     private final KeywordList sortedKeywordsOfAllEntriesBeforeUpdateByUser = new KeywordList();
     private final BibEntryPreferences bibEntryPreferences;
-    private final ObjectProperty<ManageKeywordsDisplayType> displayType = new SimpleObjectProperty<>(ManageKeywordsDisplayType.CONTAINED_IN_ALL_ENTRIES);
+    private final ObjectProperty<ManageKeywordsDisplayType> displayType =
+            new SimpleObjectProperty<>(ManageKeywordsDisplayType.CONTAINED_IN_ALL_ENTRIES);
     private final ObservableList<String> keywords;
 
     public ManageKeywordsViewModel(BibEntryPreferences bibEntryPreferences, List<BibEntry> entries) {
@@ -108,8 +109,8 @@ public class ManageKeywordsViewModel {
         // TODO: bp.getUndoManager().addEdit(ce);
     }
 
-    private NamedCompound updateKeywords(List<BibEntry> entries, KeywordList keywordsToAdd,
-                                         KeywordList keywordsToRemove) {
+    private NamedCompound updateKeywords(
+            List<BibEntry> entries, KeywordList keywordsToAdd, KeywordList keywordsToRemove) {
         Character keywordSeparator = bibEntryPreferences.getKeywordSeparator();
 
         NamedCompound ce = new NamedCompound(Localization.lang("Update keywords"));

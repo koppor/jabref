@@ -17,13 +17,14 @@ public class ProxyPreferences {
     private final StringProperty password;
     private final BooleanProperty persistPassword;
 
-    public ProxyPreferences(Boolean useProxy,
-                            String hostname,
-                            String port,
-                            Boolean useAuthentication,
-                            String username,
-                            String password,
-                            boolean persistPassword) {
+    public ProxyPreferences(
+            Boolean useProxy,
+            String hostname,
+            String port,
+            Boolean useAuthentication,
+            String username,
+            String password,
+            boolean persistPassword) {
         this.useProxy = new SimpleBooleanProperty(useProxy);
         this.hostname = new SimpleStringProperty(hostname);
         this.port = new SimpleStringProperty(port);

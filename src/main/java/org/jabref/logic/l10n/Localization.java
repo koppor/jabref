@@ -39,8 +39,7 @@ public class Localization {
     private static Locale locale;
     private static LocalizationBundle localizedMessages;
 
-    private Localization() {
-    }
+    private Localization() {}
 
     /**
      * Public access to all messages that are not menu-entries
@@ -68,7 +67,8 @@ public class Localization {
         Optional<Locale> knownLanguage = Language.convertToSupportedLocale(language);
         final Locale defaultLocale = Locale.getDefault();
         if (knownLanguage.isEmpty()) {
-            LoggerFactory.getLogger(Localization.class).warn("Language {} is not supported by JabRef (Default: {})", language, defaultLocale);
+            LoggerFactory.getLogger(Localization.class)
+                    .warn("Language {} is not supported by JabRef (Default: {})", language, defaultLocale);
             setLanguage(Language.ENGLISH);
             return;
         }
@@ -84,7 +84,8 @@ public class Localization {
             createResourceBundles(locale);
         } catch (MissingResourceException ex) {
             // should not happen as we have scripts to enforce this
-            LoggerFactory.getLogger(Localization.class).warn("Could not find bundles for language " + locale + ", switching to full english language", ex);
+            LoggerFactory.getLogger(Localization.class)
+                    .warn("Could not find bundles for language " + locale + ", switching to full english language", ex);
             setLanguage(Language.ENGLISH);
         }
     }
@@ -123,12 +124,11 @@ public class Localization {
      */
     private static Map<String, String> createLookupMap(ResourceBundle baseBundle) {
         final ArrayList<String> baseKeys = Collections.list(baseBundle.getKeys());
-        return new HashMap<>(baseKeys.stream().collect(
-                Collectors.toMap(
+        return new HashMap<>(baseKeys.stream()
+                .collect(Collectors.toMap(
                         // not required to unescape content, because that is already done by the ResourceBundle itself
                         key -> key,
-                        baseBundle::getString)
-        ));
+                        baseBundle::getString)));
     }
 
     /**
@@ -145,7 +145,8 @@ public class Localization {
 
         String translation = bundle.containsKey(key) ? bundle.getString(key) : "";
         if (translation.isEmpty()) {
-            LoggerFactory.getLogger(Localization.class).warn("Warning: could not get translation for \"{}\" for locale {}", key, Locale.getDefault());
+            LoggerFactory.getLogger(Localization.class)
+                    .warn("Warning: could not get translation for \"{}\" for locale {}", key, Locale.getDefault());
             translation = key;
         }
         return new LocalizationKeyParams(translation, params).replacePlaceholders();
@@ -165,8 +166,7 @@ public class Localization {
         @Override
         public final Object handleGetObject(String key) {
             Objects.requireNonNull(key);
-            return Optional.ofNullable(lookup.get(key))
-                           .orElse(key);
+            return Optional.ofNullable(lookup.get(key)).orElse(key);
         }
 
         @Override
@@ -186,4 +186,3 @@ public class Localization {
         }
     }
 }
-

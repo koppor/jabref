@@ -16,21 +16,32 @@ import jakarta.inject.Inject;
 public class CreateModifyExporterDialogView extends BaseDialog<ExporterViewModel> {
 
     private final ExporterViewModel exporter;
-    @FXML private TextField name;
-    @FXML private TextField fileName;
-    @FXML private TextField extension;
-    @FXML private ButtonType saveExporter;
-    @Inject private DialogService dialogService;
-    @Inject private PreferencesService preferences;
+
+    @FXML
+    private TextField name;
+
+    @FXML
+    private TextField fileName;
+
+    @FXML
+    private TextField extension;
+
+    @FXML
+    private ButtonType saveExporter;
+
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private PreferencesService preferences;
+
     private CreateModifyExporterDialogViewModel viewModel;
 
     public CreateModifyExporterDialogView(ExporterViewModel exporter) {
         this.setTitle(Localization.lang("Customize Export Formats"));
         this.exporter = exporter;
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         this.setResultConverter(button -> {
             if (button == saveExporter) {

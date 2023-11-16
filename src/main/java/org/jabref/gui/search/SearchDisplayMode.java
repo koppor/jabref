@@ -8,7 +8,6 @@ import org.jabref.logic.l10n.Localization;
  * Collects the possible search modes
  */
 public enum SearchDisplayMode {
-
     FLOAT(() -> Localization.lang("Float"), () -> Localization.lang("Gray out non-hits")),
     FILTER(() -> Localization.lang("Filter"), () -> Localization.lang("Hide non-hits"));
 

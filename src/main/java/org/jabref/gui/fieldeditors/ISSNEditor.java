@@ -23,25 +23,38 @@ import com.airhacks.afterburner.views.ViewLoader;
 import jakarta.inject.Inject;
 
 public class ISSNEditor extends HBox implements FieldEditorFX {
-    @FXML private ISSNEditorViewModel viewModel;
-    @FXML private EditorTextArea textArea;
-    @FXML private Button journalInfoButton;
-    @FXML private Button fetchInformationByIdentifierButton;
+    @FXML
+    private ISSNEditorViewModel viewModel;
 
-    @Inject private DialogService dialogService;
-    @Inject private PreferencesService preferencesService;
-    @Inject private UndoManager undoManager;
-    @Inject private TaskExecutor taskExecutor;
-    @Inject private StateManager stateManager;
+    @FXML
+    private EditorTextArea textArea;
+
+    @FXML
+    private Button journalInfoButton;
+
+    @FXML
+    private Button fetchInformationByIdentifierButton;
+
+    @Inject
+    private DialogService dialogService;
+
+    @Inject
+    private PreferencesService preferencesService;
+
+    @Inject
+    private UndoManager undoManager;
+
+    @Inject
+    private TaskExecutor taskExecutor;
+
+    @Inject
+    private StateManager stateManager;
+
     private Optional<BibEntry> entry = Optional.empty();
 
-    public ISSNEditor(Field field,
-                      SuggestionProvider<?> suggestionProvider,
-                      FieldCheckers fieldCheckers) {
+    public ISSNEditor(Field field, SuggestionProvider<?> suggestionProvider, FieldCheckers fieldCheckers) {
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
 
         this.viewModel = new ISSNEditorViewModel(
                 field,
@@ -56,7 +69,8 @@ public class ISSNEditor extends HBox implements FieldEditorFX {
         textArea.textProperty().bindBidirectional(viewModel.textProperty());
         textArea.initContextMenu(new DefaultMenu(textArea));
 
-        new EditorValidator(preferencesService).configureValidation(viewModel.getFieldValidator().getValidationStatus(), textArea);
+        new EditorValidator(preferencesService)
+                .configureValidation(viewModel.getFieldValidator().getValidationStatus(), textArea);
     }
 
     public ISSNEditorViewModel getViewModel() {
@@ -86,7 +100,8 @@ public class ISSNEditor extends HBox implements FieldEditorFX {
 
     @FXML
     private void showJournalInfo() {
-        if (JournalInfoOptInDialogHelper.isJournalInfoEnabled(dialogService, preferencesService.getEntryEditorPreferences())) {
+        if (JournalInfoOptInDialogHelper.isJournalInfoEnabled(
+                dialogService, preferencesService.getEntryEditorPreferences())) {
             viewModel.showJournalInfo(journalInfoButton);
         }
     }

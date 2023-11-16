@@ -591,7 +591,8 @@ public class MedlineImporter extends Importer implements Parser {
         investigatorList.add(new Investigator(lastName, foreName, affiliationList));
     }
 
-    private void parsePersonalNameSubject(XMLStreamReader reader, List<PersonalNameSubject> personalNameSubjectList, String startElement)
+    private void parsePersonalNameSubject(
+            XMLStreamReader reader, List<PersonalNameSubject> personalNameSubjectList, String startElement)
             throws XMLStreamException {
         String lastName = "";
         String foreName = "";
@@ -847,8 +848,7 @@ public class MedlineImporter extends Importer implements Parser {
                 "DateCompleted", "completed",
                 "DateRevised", "revised",
                 "ContributionDate", "contribution",
-                "PubDate", ""
-        );
+                "PubDate", "");
 
         while (reader.hasNext()) {
             reader.next();
@@ -882,8 +882,8 @@ public class MedlineImporter extends Importer implements Parser {
         }
 
         Optional<Date> date = Date.parse(year, month, day);
-        date.ifPresent(dateValue ->
-                fields.put(new UnknownField(dateFieldMap.get(startElement)), dateValue.getNormalized()));
+        date.ifPresent(
+                dateValue -> fields.put(new UnknownField(dateFieldMap.get(startElement)), dateValue.getNormalized()));
     }
 
     private void addArticleIdList(Map<Field, String> fields, List<ArticleId> articleIdList) {
@@ -892,7 +892,8 @@ public class MedlineImporter extends Importer implements Parser {
                 if ("pubmed".equals(id.idType())) {
                     fields.computeIfAbsent(StandardField.PMID, k -> id.content());
                 } else {
-                    fields.computeIfAbsent(FieldFactory.parseField(StandardEntryType.Article, id.idType()), k -> id.content());
+                    fields.computeIfAbsent(
+                            FieldFactory.parseField(StandardEntryType.Article, id.idType()), k -> id.content());
                 }
             }
         }
@@ -998,7 +999,8 @@ public class MedlineImporter extends Importer implements Parser {
         }
     }
 
-    private void addPubDate(XMLStreamReader reader, Map<Field, String> fields, String startElement) throws XMLStreamException {
+    private void addPubDate(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+            throws XMLStreamException {
         while (reader.hasNext()) {
             reader.next();
             if (isStartXMLEvent(reader)) {
@@ -1020,7 +1022,8 @@ public class MedlineImporter extends Importer implements Parser {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
                             Optional<Month> month = Month.parse(reader.getText());
-                            month.ifPresent(monthValue -> fields.put(StandardField.MONTH, monthValue.getJabRefFormat()));
+                            month.ifPresent(
+                                    monthValue -> fields.put(StandardField.MONTH, monthValue.getJabRefFormat()));
                         }
                     }
                     case "Season" -> {
@@ -1151,7 +1154,8 @@ public class MedlineImporter extends Importer implements Parser {
         return medlineDate.substring(0, 4);
     }
 
-    private void handleAuthorList(XMLStreamReader reader, Map<Field, String> fields, String startElement) throws XMLStreamException {
+    private void handleAuthorList(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+            throws XMLStreamException {
         List<String> authorNames = new ArrayList<>();
 
         while (reader.hasNext()) {
@@ -1256,8 +1260,9 @@ public class MedlineImporter extends Importer implements Parser {
     @Override
     public List<BibEntry> parseEntries(InputStream inputStream) throws ParseException {
         try {
-            return importDatabase(
-                    new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))).getDatabase().getEntries();
+            return importDatabase(new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)))
+                    .getDatabase()
+                    .getEntries();
         } catch (IOException e) {
             LOGGER.error(e.getLocalizedMessage(), e);
         }

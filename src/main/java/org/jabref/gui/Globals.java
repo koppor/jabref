@@ -68,8 +68,7 @@ public class Globals {
 
     private static DefaultFileUpdateMonitor fileUpdateMonitor;
 
-    private Globals() {
-    }
+    private Globals() {}
 
     // Key binding preferences
     public static synchronized KeyBindingRepository getKeyPrefs() {
@@ -88,10 +87,7 @@ public class Globals {
 
     public static synchronized ThemeManager getThemeManager() {
         if (themeManager == null) {
-            themeManager = new ThemeManager(
-                    prefs.getWorkspacePreferences(),
-                    getFileUpdateMonitor(),
-                    Runnable::run);
+            themeManager = new ThemeManager(prefs.getWorkspacePreferences(), getFileUpdateMonitor(), Runnable::run);
         }
         return themeManager;
     }
@@ -107,12 +103,13 @@ public class Globals {
     // Background tasks
     public static void startBackgroundTasks() {
         // TODO Currently deactivated due to incompatibilities in XML
-      /*  if (Globals.prefs.getTelemetryPreferences().shouldCollectTelemetry() && !GraphicsEnvironment.isHeadless()) {
+        /*  if (Globals.prefs.getTelemetryPreferences().shouldCollectTelemetry() && !GraphicsEnvironment.isHeadless()) {
             Telemetry.start(prefs.getTelemetryPreferences());
         } */
         RemotePreferences remotePreferences = prefs.getRemotePreferences();
         if (remotePreferences.useRemoteServer()) {
-            Globals.REMOTE_LISTENER.openAndStart(new CLIMessageHandler(prefs, fileUpdateMonitor, entryTypesManager), remotePreferences.getPort());
+            Globals.REMOTE_LISTENER.openAndStart(
+                    new CLIMessageHandler(prefs, fileUpdateMonitor, entryTypesManager), remotePreferences.getPort());
         }
     }
 

@@ -32,8 +32,9 @@ class OOCalcDatabase {
     private static final Field REPORT_TYPE_FIELD = new UnknownField("reporttype");
 
     private final List<BibEntry> entries = new ArrayList<>();
-    private final List<Field> toExportFields = Stream.concat(FieldFactory.getStandardFieldsWithCitationKey().stream(), Stream.of(REPORT_TYPE_FIELD))
-                                                     .collect(Collectors.toList());
+    private final List<Field> toExportFields = Stream.concat(
+                    FieldFactory.getStandardFieldsWithCitationKey().stream(), Stream.of(REPORT_TYPE_FIELD))
+            .collect(Collectors.toList());
 
     public OOCalcDatabase(BibDatabase bibtex, List<BibEntry> entries) {
         this.entries.addAll(entries != null ? entries : bibtex.getEntries());
@@ -76,10 +77,15 @@ class OOCalcDatabase {
     private void addEntryRow(BibEntry entry, Element table, Document document) {
         final Element row = document.createElement("table:table-row");
 
-        addTableCell(document, row, new GetOpenOfficeType().format(entry.getType().getName()));
+        addTableCell(
+                document, row, new GetOpenOfficeType().format(entry.getType().getName()));
         toExportFields.forEach(field -> {
             if (field.equals(StandardField.TITLE)) {
-                addTableCell(document, row, new RemoveWhitespace().format(new RemoveBrackets().format(getField(entry, StandardField.TITLE))));
+                addTableCell(
+                        document,
+                        row,
+                        new RemoveWhitespace()
+                                .format(new RemoveBrackets().format(getField(entry, StandardField.TITLE))));
             } else {
                 addTableCell(document, row, getField(entry, field));
             }

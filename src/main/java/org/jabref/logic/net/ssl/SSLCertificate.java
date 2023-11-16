@@ -27,7 +27,14 @@ public class SSLCertificate {
     private final String signatureAlgorithm;
     private final Integer version;
 
-    public SSLCertificate(byte[] encoded, String serialNumber, String issuer, LocalDate validFrom, LocalDate validTo, String signatureAlgorithm, Integer version) {
+    public SSLCertificate(
+            byte[] encoded,
+            String serialNumber,
+            String issuer,
+            LocalDate validFrom,
+            LocalDate validTo,
+            String signatureAlgorithm,
+            Integer version) {
         this.serialNumber = serialNumber;
         this.issuer = issuer;
         this.validFrom = validFrom;
@@ -71,7 +78,9 @@ public class SSLCertificate {
     public static Optional<SSLCertificate> fromX509(X509Certificate x509Certificate) {
         Objects.requireNonNull(x509Certificate);
         try {
-            return Optional.of(new SSLCertificate(x509Certificate.getEncoded(), x509Certificate.getSerialNumber().toString(),
+            return Optional.of(new SSLCertificate(
+                    x509Certificate.getEncoded(),
+                    x509Certificate.getSerialNumber().toString(),
                     x509Certificate.getIssuerX500Principal().getName(),
                     LocalDate.ofInstant(x509Certificate.getNotBefore().toInstant(), ZoneId.systemDefault()),
                     LocalDate.ofInstant(x509Certificate.getNotAfter().toInstant(), ZoneId.systemDefault()),
@@ -87,7 +96,8 @@ public class SSLCertificate {
         Objects.requireNonNull(certPath);
         try {
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X509");
-            return fromX509((X509Certificate) certificateFactory.generateCertificate(new FileInputStream(certPath.toFile())));
+            return fromX509(
+                    (X509Certificate) certificateFactory.generateCertificate(new FileInputStream(certPath.toFile())));
         } catch (CertificateException e) {
             LOGGER.warn("Certificate doesn't follow X.509 format", e);
         } catch (FileNotFoundException e) {

@@ -55,7 +55,9 @@ public class WebSearchPaneView extends VBox {
         ActionFactory factory = new ActionFactory(preferences.getKeyBindingRepository());
         EasyBind.subscribe(viewModel.selectedFetcherProperty(), fetcher -> {
             if ((fetcher != null) && fetcher.getHelpPage().isPresent()) {
-                Button helpButton = factory.createIconButton(StandardActions.HELP, new HelpAction(fetcher.getHelpPage().get(), dialogService, preferences.getFilePreferences()));
+                Button helpButton = factory.createIconButton(
+                        StandardActions.HELP,
+                        new HelpAction(fetcher.getHelpPage().get(), dialogService, preferences.getFilePreferences()));
                 helpButtonContainer.getChildren().setAll(helpButton);
             } else {
                 helpButtonContainer.getChildren().clear();
@@ -69,16 +71,19 @@ public class WebSearchPaneView extends VBox {
         query.getStyleClass().add("searchBar");
 
         viewModel.queryProperty().bind(query.textProperty());
-        EasyBind.subscribe(viewModel.queryValidationStatus().validProperty(),
-                valid -> {
-                    if (!valid && viewModel.queryValidationStatus().getHighestMessage().isPresent()) {
-                        query.setTooltip(new Tooltip(viewModel.queryValidationStatus().getHighestMessage().get().getMessage()));
-                        query.pseudoClassStateChanged(QUERY_INVALID, true);
-                    } else {
-                        query.setTooltip(null);
-                        query.pseudoClassStateChanged(QUERY_INVALID, false);
-                    }
-                });
+        EasyBind.subscribe(viewModel.queryValidationStatus().validProperty(), valid -> {
+            if (!valid && viewModel.queryValidationStatus().getHighestMessage().isPresent()) {
+                query.setTooltip(new Tooltip(viewModel
+                        .queryValidationStatus()
+                        .getHighestMessage()
+                        .get()
+                        .getMessage()));
+                query.pseudoClassStateChanged(QUERY_INVALID, true);
+            } else {
+                query.setTooltip(null);
+                query.pseudoClassStateChanged(QUERY_INVALID, false);
+            }
+        });
 
         // Allows triggering search on pressing enter
         query.setOnKeyPressed(event -> {

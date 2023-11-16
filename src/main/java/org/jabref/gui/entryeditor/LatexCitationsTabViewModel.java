@@ -56,16 +56,20 @@ public class LatexCitationsTabViewModel extends AbstractViewModel {
     private LatexParserResult latexParserResult;
     private BibEntry currentEntry;
 
-    public LatexCitationsTabViewModel(BibDatabaseContext databaseContext,
-                                      PreferencesService preferencesService,
-                                      TaskExecutor taskExecutor,
-                                      DialogService dialogService) {
+    public LatexCitationsTabViewModel(
+            BibDatabaseContext databaseContext,
+            PreferencesService preferencesService,
+            TaskExecutor taskExecutor,
+            DialogService dialogService) {
         this.databaseContext = databaseContext;
         this.preferencesService = preferencesService;
         this.taskExecutor = taskExecutor;
         this.dialogService = dialogService;
-        this.directory = new SimpleObjectProperty<>(databaseContext.getMetaData().getLatexFileDirectory(preferencesService.getFilePreferences().getUserAndHost())
-                                                                   .orElse(FileUtil.getInitialDirectory(databaseContext, preferencesService.getFilePreferences().getWorkingDirectory())));
+        this.directory = new SimpleObjectProperty<>(databaseContext
+                .getMetaData()
+                .getLatexFileDirectory(preferencesService.getFilePreferences().getUserAndHost())
+                .orElse(FileUtil.getInitialDirectory(
+                        databaseContext, preferencesService.getFilePreferences().getWorkingDirectory())));
         this.citationList = FXCollections.observableArrayList();
         this.status = new SimpleObjectProperty<>(Status.IN_PROGRESS);
         this.searchError = new SimpleStringProperty("");
@@ -103,16 +107,16 @@ public class LatexCitationsTabViewModel extends AbstractViewModel {
 
     private void startSearch(String citeKey) {
         searchTask = BackgroundTask.wrap(() -> searchAndParse(citeKey))
-                                   .onRunning(() -> status.set(Status.IN_PROGRESS))
-                                   .onSuccess(result -> {
-                                       citationList.setAll(result);
-                                       status.set(citationList.isEmpty() ? Status.NO_RESULTS : Status.CITATIONS_FOUND);
-                                   })
-                                   .onFailure(error -> {
-                                       searchError.set(error.getMessage());
-                                       status.set(Status.ERROR);
-                                   })
-                                   .executeWith(taskExecutor);
+                .onRunning(() -> status.set(Status.IN_PROGRESS))
+                .onSuccess(result -> {
+                    citationList.setAll(result);
+                    status.set(citationList.isEmpty() ? Status.NO_RESULTS : Status.CITATIONS_FOUND);
+                })
+                .onFailure(error -> {
+                    searchError.set(error.getMessage());
+                    status.set(Status.ERROR);
+                })
+                .executeWith(taskExecutor);
     }
 
     private void cancelSearch() {
@@ -126,8 +130,11 @@ public class LatexCitationsTabViewModel extends AbstractViewModel {
 
     private Collection<Citation> searchAndParse(String citeKey) throws IOException {
         // we need to check whether the user meanwhile set the LaTeX file directory or the database changed locations
-        Path newDirectory = databaseContext.getMetaData().getLatexFileDirectory(preferencesService.getFilePreferences().getUserAndHost())
-                                           .orElse(FileUtil.getInitialDirectory(databaseContext, preferencesService.getFilePreferences().getWorkingDirectory()));
+        Path newDirectory = databaseContext
+                .getMetaData()
+                .getLatexFileDirectory(preferencesService.getFilePreferences().getUserAndHost())
+                .orElse(FileUtil.getInitialDirectory(
+                        databaseContext, preferencesService.getFilePreferences().getWorkingDirectory()));
 
         if (latexParserResult == null || !newDirectory.equals(directory.get())) {
             directory.set(newDirectory);
@@ -151,9 +158,9 @@ public class LatexCitationsTabViewModel extends AbstractViewModel {
         LOGGER.debug("Searching directory {}", directory);
         try {
             return Files.walk(directory)
-                        .filter(Files::isRegularFile)
-                        .filter(path -> path.toString().endsWith(TEX_EXT))
-                        .toList();
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith(TEX_EXT))
+                    .toList();
         } catch (IOException e) {
             LOGGER.error("Error while searching files", e);
             return List.of();
@@ -162,10 +169,16 @@ public class LatexCitationsTabViewModel extends AbstractViewModel {
 
     public void setLatexDirectory() {
         DirectoryDialogConfiguration directoryDialogConfiguration = new DirectoryDialogConfiguration.Builder()
-                .withInitialDirectory(directory.get()).build();
+                .withInitialDirectory(directory.get())
+                .build();
 
-        dialogService.showDirectorySelectionDialog(directoryDialogConfiguration).ifPresent(selectedDirectory ->
-                databaseContext.getMetaData().setLatexFileDirectory(preferencesService.getFilePreferences().getUserAndHost(), selectedDirectory.toAbsolutePath()));
+        dialogService
+                .showDirectorySelectionDialog(directoryDialogConfiguration)
+                .ifPresent(selectedDirectory -> databaseContext
+                        .getMetaData()
+                        .setLatexFileDirectory(
+                                preferencesService.getFilePreferences().getUserAndHost(),
+                                selectedDirectory.toAbsolutePath()));
 
         init(currentEntry);
     }

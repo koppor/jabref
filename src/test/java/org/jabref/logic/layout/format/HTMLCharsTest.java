@@ -22,11 +22,12 @@ public class HTMLCharsTest {
 
         assertEquals("hallo", layout.format("hallo"));
 
-        assertEquals("Réflexions sur le timing de la quantité",
-                layout.format("Réflexions sur le timing de la quantité"));
+        assertEquals(
+                "Réflexions sur le timing de la quantité", layout.format("Réflexions sur le timing de la quantité"));
 
         assertEquals("%%%", layout.format("\\%\\%\\%"));
-        assertEquals("People remember 10%, 20%…Oh Really?", layout.format("{{People remember 10\\%, 20\\%…Oh Really?}}"));
+        assertEquals(
+                "People remember 10%, 20%…Oh Really?", layout.format("{{People remember 10\\%, 20\\%…Oh Really?}}"));
 
         assertEquals("h&aacute;llo", layout.format("h\\'allo"));
 
@@ -72,8 +73,7 @@ public class HTMLCharsTest {
     public void testEquations() {
         assertEquals("&dollar;", layout.format("\\$"));
         assertEquals("&sigma;", layout.format("$\\sigma$"));
-        assertEquals("A 32&nbsp;mA &Sigma;&Delta;-modulator",
-                layout.format("A 32~{mA} {$\\Sigma\\Delta$}-modulator"));
+        assertEquals("A 32&nbsp;mA &Sigma;&Delta;-modulator", layout.format("A 32~{mA} {$\\Sigma\\Delta$}-modulator"));
     }
 
     @Test

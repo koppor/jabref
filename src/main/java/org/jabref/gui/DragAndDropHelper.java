@@ -20,7 +20,10 @@ public class DragAndDropHelper {
         if (!dragboard.hasFiles()) {
             return Collections.emptyList();
         } else {
-            return dragboard.getFiles().stream().map(File::toPath).filter(FileUtil::isBibFile).collect(Collectors.toList());
+            return dragboard.getFiles().stream()
+                    .map(File::toPath)
+                    .filter(FileUtil::isBibFile)
+                    .collect(Collectors.toList());
         }
     }
 

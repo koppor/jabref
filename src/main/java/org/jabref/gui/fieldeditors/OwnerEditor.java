@@ -18,25 +18,29 @@ import jakarta.inject.Inject;
 
 public class OwnerEditor extends HBox implements FieldEditorFX {
 
-    @FXML private OwnerEditorViewModel viewModel;
-    @FXML private EditorTextArea textArea;
+    @FXML
+    private OwnerEditorViewModel viewModel;
 
-    @Inject private PreferencesService preferencesService;
-    @Inject private UndoManager undoManager;
+    @FXML
+    private EditorTextArea textArea;
 
-    public OwnerEditor(Field field,
-                       SuggestionProvider<?> suggestionProvider,
-                       FieldCheckers fieldCheckers) {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+    @Inject
+    private PreferencesService preferencesService;
 
-        this.viewModel = new OwnerEditorViewModel(field, suggestionProvider, preferencesService, fieldCheckers, undoManager);
+    @Inject
+    private UndoManager undoManager;
+
+    public OwnerEditor(Field field, SuggestionProvider<?> suggestionProvider, FieldCheckers fieldCheckers) {
+        ViewLoader.view(this).root(this).load();
+
+        this.viewModel =
+                new OwnerEditorViewModel(field, suggestionProvider, preferencesService, fieldCheckers, undoManager);
 
         textArea.textProperty().bindBidirectional(viewModel.textProperty());
         textArea.initContextMenu(EditorMenus.getNameMenu(textArea));
 
-        new EditorValidator(preferencesService).configureValidation(viewModel.getFieldValidator().getValidationStatus(), textArea);
+        new EditorValidator(preferencesService)
+                .configureValidation(viewModel.getFieldValidator().getValidationStatus(), textArea);
     }
 
     public OwnerEditorViewModel getViewModel() {

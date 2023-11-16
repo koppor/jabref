@@ -25,10 +25,13 @@ import static org.jabref.gui.util.FieldsUtil.FIELD_STRING_CONVERTER;
 public class RenameFieldTabView extends AbstractAutomaticFieldEditorTabView implements AutomaticFieldEditorTab {
     @FXML
     private Button renameButton;
+
     @FXML
     private ComboBox<Field> fieldComboBox;
+
     @FXML
     private TextField newFieldNameTextField;
+
     private final List<BibEntry> selectedEntries;
     private final BibDatabase database;
     private final StateManager stateManager;
@@ -41,9 +44,7 @@ public class RenameFieldTabView extends AbstractAutomaticFieldEditorTabView impl
         this.database = database;
         this.stateManager = stateManager;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @FXML

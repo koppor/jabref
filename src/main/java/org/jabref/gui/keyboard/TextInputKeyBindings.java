@@ -13,7 +13,8 @@ public class TextInputKeyBindings {
     public static void call(Scene scene, KeyEvent event) {
         if (scene.focusOwnerProperty().get() instanceof TextInputControl) {
             KeyBindingRepository keyBindingRepository = Globals.getKeyPrefs();
-            TextInputControl focusedTextField = (TextInputControl) scene.focusOwnerProperty().get();
+            TextInputControl focusedTextField =
+                    (TextInputControl) scene.focusOwnerProperty().get();
             keyBindingRepository.mapToKeyBinding(event).ifPresent(binding -> {
                 switch (binding) {
                     case EDITOR_DELETE -> {
@@ -46,7 +47,8 @@ public class TextInputKeyBindings {
                     }
                     case EDITOR_CAPITALIZE -> {
                         int pos = focusedTextField.getCaretPosition();
-                        String text = focusedTextField.getText(0, focusedTextField.getText().length());
+                        String text = focusedTextField.getText(
+                                0, focusedTextField.getText().length());
                         ResultingStringState res = StringManipulator.capitalize(pos, text);
                         focusedTextField.setText(res.text);
                         focusedTextField.positionCaret(res.caretPosition);
@@ -54,7 +56,8 @@ public class TextInputKeyBindings {
                     }
                     case EDITOR_LOWERCASE -> {
                         int pos = focusedTextField.getCaretPosition();
-                        String text = focusedTextField.getText(0, focusedTextField.getText().length());
+                        String text = focusedTextField.getText(
+                                0, focusedTextField.getText().length());
                         ResultingStringState res = StringManipulator.lowercase(pos, text);
                         focusedTextField.setText(res.text);
                         focusedTextField.positionCaret(res.caretPosition);
@@ -62,7 +65,8 @@ public class TextInputKeyBindings {
                     }
                     case EDITOR_UPPERCASE -> {
                         int pos = focusedTextField.getCaretPosition();
-                        String text = focusedTextField.getText(0, focusedTextField.getText().length());
+                        String text = focusedTextField.getText(
+                                0, focusedTextField.getText().length());
                         ResultingStringState res = StringManipulator.uppercase(pos, text);
                         focusedTextField.setText(res.text);
                         focusedTextField.positionCaret(res.caretPosition);
@@ -76,7 +80,8 @@ public class TextInputKeyBindings {
                     }
                     case EDITOR_KILL_WORD -> {
                         int pos = focusedTextField.getCaretPosition();
-                        String text = focusedTextField.getText(0, focusedTextField.getText().length());
+                        String text = focusedTextField.getText(
+                                0, focusedTextField.getText().length());
                         ResultingStringState res = StringManipulator.killWord(pos, text);
                         focusedTextField.setText(res.text);
                         focusedTextField.positionCaret(res.caretPosition);
@@ -84,7 +89,8 @@ public class TextInputKeyBindings {
                     }
                     case EDITOR_KILL_WORD_BACKWARD -> {
                         int pos = focusedTextField.getCaretPosition();
-                        String text = focusedTextField.getText(0, focusedTextField.getText().length());
+                        String text = focusedTextField.getText(
+                                0, focusedTextField.getText().length());
                         ResultingStringState res = StringManipulator.backwardKillWord(pos, text);
                         focusedTextField.setText(res.text);
                         focusedTextField.positionCaret(res.caretPosition);

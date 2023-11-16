@@ -42,7 +42,8 @@ public class ClipBoardManager {
         this(Clipboard.getSystemClipboard(), Toolkit.getDefaultToolkit().getSystemSelection(), preferencesService);
     }
 
-    public ClipBoardManager(Clipboard clipboard, java.awt.datatransfer.Clipboard primary, PreferencesService preferencesService) {
+    public ClipBoardManager(
+            Clipboard clipboard, java.awt.datatransfer.Clipboard primary, PreferencesService preferencesService) {
         ClipBoardManager.clipboard = clipboard;
         ClipBoardManager.primary = primary;
         this.preferencesService = preferencesService;
@@ -59,14 +60,15 @@ public class ClipBoardManager {
      * text over clipboards</a>
      */
     public static void addX11Support(TextInputControl input) {
-        input.selectedTextProperty().addListener(
-                // using InvalidationListener because of https://bugs.openjdk.java.net/browse/JDK-8176270
-                observable -> Platform.runLater(() -> {
-                    String newValue = input.getSelectedText();
-                    if (!newValue.isEmpty() && (primary != null)) {
-                        primary.setContents(new StringSelection(newValue), null);
-                    }
-                }));
+        input.selectedTextProperty()
+                .addListener(
+                        // using InvalidationListener because of https://bugs.openjdk.java.net/browse/JDK-8176270
+                        observable -> Platform.runLater(() -> {
+                            String newValue = input.getSelectedText();
+                            if (!newValue.isEmpty() && (primary != null)) {
+                                primary.setContents(new StringSelection(newValue), null);
+                            }
+                        }));
         input.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.MIDDLE) {
                 input.insertText(input.getCaretPosition(), getContentsPrimary());
@@ -144,10 +146,12 @@ public class ClipBoardManager {
 
     public void setContent(List<BibEntry> entries, BibEntryTypesManager entryTypesManager) throws IOException {
         final ClipboardContent content = new ClipboardContent();
-        BibEntryWriter writer = new BibEntryWriter(new FieldWriter(preferencesService.getFieldPreferences()), entryTypesManager);
+        BibEntryWriter writer =
+                new BibEntryWriter(new FieldWriter(preferencesService.getFieldPreferences()), entryTypesManager);
         String serializedEntries = writer.serializeAll(entries, BibDatabaseMode.BIBTEX);
         // BibEntry is not Java serializable. Thus, we need to do the serialization manually
-        // At reading of the clipboard in JabRef, we parse the plain string in all cases, so we don't need to flag we put BibEntries here
+        // At reading of the clipboard in JabRef, we parse the plain string in all cases, so we don't need to flag we
+        // put BibEntries here
         // Furthermore, storing a string also enables other applications to work with the data
         content.putString(serializedEntries);
         clipboard.setContent(content);

@@ -33,7 +33,6 @@ public class WrapContentTest {
                 Arguments.of(null, null, "Eds.,Ed."),
                 Arguments.of("", "", "Eds.,Ed."),
                 Arguments.of("Bob Bruce and Jolly Jumper", "Bob Bruce and Jolly Jumper", ""),
-                Arguments.of("Bob Bruce and Jolly Jumper", "Bob Bruce and Jolly Jumper", "Eds.")
-        );
+                Arguments.of("Bob Bruce and Jolly Jumper", "Bob Bruce and Jolly Jumper", "Eds."));
     }
 }

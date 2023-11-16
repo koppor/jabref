@@ -27,7 +27,8 @@ public class GrobidOptInDialogHelper {
         }
         boolean grobidEnabled = dialogService.showConfirmationDialogWithOptOutAndWait(
                 Localization.lang("Remote services"),
-                Localization.lang("Allow sending PDF files and raw citation strings to a JabRef online service (Grobid) to determine Metadata. This produces better results."),
+                Localization.lang(
+                        "Allow sending PDF files and raw citation strings to a JabRef online service (Grobid) to determine Metadata. This produces better results."),
                 Localization.lang("Do not ask again"),
                 optOut -> preferences.grobidOptOutProperty().setValue(optOut));
         preferences.grobidEnabledProperty().setValue(grobidEnabled);

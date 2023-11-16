@@ -25,7 +25,8 @@ class DatabaseFileLookupTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        ParserResult result = new BibtexImporter(mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS), new DummyFileUpdateMonitor())
+        ParserResult result = new BibtexImporter(
+                        mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS), new DummyFileUpdateMonitor())
                 .importDatabase(ImportDataTest.UNLINKED_FILES_TEST_BIB);
         database = result.getDatabase();
         entries = database.getEntries();

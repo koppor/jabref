@@ -33,8 +33,7 @@ public class EntryLinkListTest {
     }
 
     private BibEntry create(String citeKey) {
-        BibEntry entry = new BibEntry()
-                .withCitationKey(citeKey);
+        BibEntry entry = new BibEntry().withCitationKey(citeKey);
         database.insertEntry(entry);
         return entry;
     }
@@ -62,8 +61,8 @@ public class EntryLinkListTest {
 
     @Test
     public void givenBibEntryWhenParsingThenExpectLink() {
-      ParsedEntryLink expected = new ParsedEntryLink(new BibEntry().withCitationKey("key"));
-      assertFalse(expected.getLinkedEntry().isEmpty());
+        ParsedEntryLink expected = new ParsedEntryLink(new BibEntry().withCitationKey("key"));
+        assertFalse(expected.getLinkedEntry().isEmpty());
     }
 
     @Test

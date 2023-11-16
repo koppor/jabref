@@ -23,7 +23,9 @@ public class OpenLibraryIsbnFetcherTest extends AbstractIsbnFetcherTest {
     @BeforeEach
     public void setUp() {
         bibEntryEffectiveJava = new BibEntry(StandardEntryType.Book)
-                .withField(StandardField.TITLE, "Effective Java(TM) Programming Language Guide (2nd Edition) (The Java Series)")
+                .withField(
+                        StandardField.TITLE,
+                        "Effective Java(TM) Programming Language Guide (2nd Edition) (The Java Series)")
                 .withField(StandardField.PUBLISHER, "Prentice Hall PTR")
                 .withField(StandardField.YEAR, "2007")
                 .withField(StandardField.AUTHOR, "Bloch, Joshua")

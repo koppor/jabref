@@ -46,13 +46,15 @@ public class CffImporterTest {
 
     @Test
     public void testGetDescription() {
-        assertEquals("Importer for the CFF format. Is only used to cite software, one entry per file.",
+        assertEquals(
+                "Importer for the CFF format. Is only used to cite software, one entry per file.",
                 importer.getDescription());
     }
 
     @Test
     public void testIsRecognizedFormat() throws IOException, URISyntaxException {
-        Path file = Path.of(CffImporterTest.class.getResource("CffImporterTestValid.cff").toURI());
+        Path file = Path.of(
+                CffImporterTest.class.getResource("CffImporterTestValid.cff").toURI());
         assertTrue(importer.isRecognizedFormat(file));
     }
 
@@ -68,7 +70,8 @@ public class CffImporterTest {
 
     @Test
     public void testImportEntriesBasic() throws IOException, URISyntaxException {
-        Path file = Path.of(CffImporterTest.class.getResource("CffImporterTestValid.cff").toURI());
+        Path file = Path.of(
+                CffImporterTest.class.getResource("CffImporterTestValid.cff").toURI());
         List<BibEntry> bibEntries = importer.importDatabase(file).getDatabase().getEntries();
         BibEntry entry = bibEntries.get(0);
 
@@ -79,7 +82,9 @@ public class CffImporterTest {
 
     @Test
     public void testImportEntriesMultipleAuthors() throws IOException, URISyntaxException {
-        Path file = Path.of(CffImporterTest.class.getResource("CffImporterTestValidMultAuthors.cff").toURI());
+        Path file = Path.of(CffImporterTest.class
+                .getResource("CffImporterTestValidMultAuthors.cff")
+                .toURI());
         List<BibEntry> bibEntries = importer.importDatabase(file).getDatabase().getEntries();
         BibEntry entry = bibEntries.get(0);
 
@@ -90,29 +95,36 @@ public class CffImporterTest {
 
     @Test
     public void testImportEntriesSwhIdSelect1() throws IOException, URISyntaxException {
-        Path file = Path.of(CffImporterTest.class.getResource("CffImporterTestValidSwhIdSelect1.cff").toURI());
+        Path file = Path.of(CffImporterTest.class
+                .getResource("CffImporterTestValidSwhIdSelect1.cff")
+                .toURI());
         List<BibEntry> bibEntries = importer.importDatabase(file).getDatabase().getEntries();
         BibEntry entry = bibEntries.get(0);
 
-        BibEntry expected = getPopulatedEntry().withField(BiblatexSoftwareField.SWHID, "swh:1:rel:22ece559cc7cc2364edc5e5593d63ae8bd229f9f");
+        BibEntry expected = getPopulatedEntry()
+                .withField(BiblatexSoftwareField.SWHID, "swh:1:rel:22ece559cc7cc2364edc5e5593d63ae8bd229f9f");
 
         assertEquals(entry, expected);
     }
 
     @Test
     public void testImportEntriesSwhIdSelect2() throws IOException, URISyntaxException {
-        Path file = Path.of(CffImporterTest.class.getResource("CffImporterTestValidSwhIdSelect2.cff").toURI());
+        Path file = Path.of(CffImporterTest.class
+                .getResource("CffImporterTestValidSwhIdSelect2.cff")
+                .toURI());
         List<BibEntry> bibEntries = importer.importDatabase(file).getDatabase().getEntries();
         BibEntry entry = bibEntries.get(0);
 
-        BibEntry expected = getPopulatedEntry().withField(BiblatexSoftwareField.SWHID, "swh:1:cnt:94a9ed024d3859793618152ea559a168bbcbb5e2");
+        BibEntry expected = getPopulatedEntry()
+                .withField(BiblatexSoftwareField.SWHID, "swh:1:cnt:94a9ed024d3859793618152ea559a168bbcbb5e2");
 
         assertEquals(entry, expected);
     }
 
     @Test
     public void testImportEntriesDataset() throws IOException, URISyntaxException {
-        Path file = Path.of(CffImporterTest.class.getResource("CffImporterTestDataset.cff").toURI());
+        Path file = Path.of(
+                CffImporterTest.class.getResource("CffImporterTestDataset.cff").toURI());
         List<BibEntry> bibEntries = importer.importDatabase(file).getDatabase().getEntries();
         BibEntry entry = bibEntries.get(0);
 
@@ -124,7 +136,9 @@ public class CffImporterTest {
 
     @Test
     public void testImportEntriesDoiSelect() throws IOException, URISyntaxException {
-        Path file = Path.of(CffImporterTest.class.getResource("CffImporterTestDoiSelect.cff").toURI());
+        Path file = Path.of(CffImporterTest.class
+                .getResource("CffImporterTestDoiSelect.cff")
+                .toURI());
         List<BibEntry> bibEntries = importer.importDatabase(file).getDatabase().getEntries();
         BibEntry entry = bibEntries.get(0);
 
@@ -135,7 +149,9 @@ public class CffImporterTest {
 
     @Test
     public void testImportEntriesUnknownFields() throws IOException, URISyntaxException {
-        Path file = Path.of(CffImporterTest.class.getResource("CffImporterTestUnknownFields.cff").toURI());
+        Path file = Path.of(CffImporterTest.class
+                .getResource("CffImporterTestUnknownFields.cff")
+                .toURI());
         List<BibEntry> bibEntries = importer.importDatabase(file).getDatabase().getEntries();
         BibEntry entry = bibEntries.get(0);
 

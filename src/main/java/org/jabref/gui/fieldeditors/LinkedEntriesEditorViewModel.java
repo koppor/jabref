@@ -20,7 +20,12 @@ public class LinkedEntriesEditorViewModel extends AbstractEditorViewModel {
     private final BibDatabaseContext databaseContext;
     private final ListProperty<ParsedEntryLink> linkedEntries;
 
-    public LinkedEntriesEditorViewModel(Field field, SuggestionProvider<?> suggestionProvider, BibDatabaseContext databaseContext, FieldCheckers fieldCheckers, UndoManager undoManager) {
+    public LinkedEntriesEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            BibDatabaseContext databaseContext,
+            FieldCheckers fieldCheckers,
+            UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
 
         this.databaseContext = databaseContext;
@@ -57,7 +62,8 @@ public class LinkedEntriesEditorViewModel extends AbstractEditorViewModel {
         // TODO: Implement jump to entry
         // TODO: Add toolitp for tag: Localization.lang("Jump to entry")
         // This feature was removed while converting the linked entries editor to JavaFX
-        // Right now there is no nice way to re-implement it as we have no good interface to control the focus of the main table
+        // Right now there is no nice way to re-implement it as we have no good interface to control the focus of the
+        // main table
         // (except directly using the JabRefFrame class as below)
         // parsedEntryLink.getLinkedEntry().ifPresent(
         //        e -> frame.getCurrentBasePanel().highlightEntry(e)

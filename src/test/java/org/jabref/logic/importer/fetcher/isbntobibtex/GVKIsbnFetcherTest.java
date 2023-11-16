@@ -25,7 +25,9 @@ public class GVKIsbnFetcherTest extends AbstractIsbnFetcherTest {
     @BeforeEach
     public void setUp() {
         bibEntryEffectiveJava = new BibEntry(StandardEntryType.Book)
-                .withField(StandardField.TITLE, "Effective Java(TM) Programming Language Guide (2nd Edition) (The Java Series)")
+                .withField(
+                        StandardField.TITLE,
+                        "Effective Java(TM) Programming Language Guide (2nd Edition) (The Java Series)")
                 .withField(StandardField.PUBLISHER, "Prentice Hall PTR")
                 .withField(StandardField.YEAR, "2007")
                 .withField(StandardField.AUTHOR, "Bloch, Joshua")
@@ -98,11 +100,13 @@ public class GVKIsbnFetcherTest extends AbstractIsbnFetcherTest {
     public void testIsbnNeitherAvailableOnEbookDeNorOrViaOpenLibrary() throws Exception {
         // In this test, the ISBN needs to be a valid (syntax+checksum) ISBN number
         // However, the ISBN number must not be assigned to a real book
-       assertEquals(Optional.empty(), fetcher.performSearchById("9785646216541"));
+        assertEquals(Optional.empty(), fetcher.performSearchById("9785646216541"));
     }
 
     @Test
     void testEResourceIsbnIsReturnedAsBoook() throws Exception {
-        assertEquals(Optional.of(StandardEntryType.Book), fetcher.performSearchById("978-0-8229-4557-4").map(BibEntry::getType));
+        assertEquals(
+                Optional.of(StandardEntryType.Book),
+                fetcher.performSearchById("978-0-8229-4557-4").map(BibEntry::getType));
     }
 }

@@ -36,13 +36,13 @@ import static org.mockito.Mockito.when;
 
 class ImportHandlerTest {
 
-
     private ImportHandler importHandler;
     private BibDatabaseContext bibDatabaseContext;
     private BibEntry testEntry;
 
     @Mock
     private PreferencesService preferencesService;
+
     @Mock
     private DuplicateCheck duplicateCheck;
 
@@ -50,7 +50,8 @@ class ImportHandlerTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(preferencesService.getImportFormatPreferences()).thenReturn(importFormatPreferences);
         when(preferencesService.getFilePreferences()).thenReturn(mock(FilePreferences.class));
 
@@ -66,8 +67,7 @@ class ImportHandlerTest {
                 mock(UndoManager.class),
                 mock(StateManager.class),
                 mock(DialogService.class),
-                new CurrentThreadTaskExecutor()
-                );
+                new CurrentThreadTaskExecutor());
 
         testEntry = new BibEntry(StandardEntryType.Article)
                 .withCitationKey("Test2023")
@@ -76,7 +76,8 @@ class ImportHandlerTest {
 
     @Test
     void handleBibTeXData() {
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
 
         PreferencesService preferencesService = mock(PreferencesService.class);
         when(preferencesService.getImportFormatPreferences()).thenReturn(importFormatPreferences);
@@ -91,7 +92,8 @@ class ImportHandlerTest {
                 mock(DialogService.class),
                 new CurrentThreadTaskExecutor());
 
-        List<BibEntry> bibEntries = importHandler.handleBibTeXData("""
+        List<BibEntry> bibEntries = importHandler.handleBibTeXData(
+                """
                 @InProceedings{Wen2013,
                   library          = {Tagungen\\2013\\KWTK45\\},
                 }
@@ -127,7 +129,8 @@ class ImportHandlerTest {
         BibDatabase bibDatabase = bibDatabaseContext.getDatabase();
         bibDatabase.insertEntry(duplicateEntry); // Simulate that the duplicate entry is already in the database
 
-        DuplicateDecisionResult decisionResult = new DuplicateDecisionResult(DuplicateResolverDialog.DuplicateResolverResult.KEEP_RIGHT, null);
+        DuplicateDecisionResult decisionResult =
+                new DuplicateDecisionResult(DuplicateResolverDialog.DuplicateResolverResult.KEEP_RIGHT, null);
         importHandler = Mockito.spy(new ImportHandler(
                 bibDatabaseContext,
                 preferencesService,
@@ -135,13 +138,16 @@ class ImportHandlerTest {
                 mock(UndoManager.class),
                 mock(StateManager.class),
                 mock(DialogService.class),
-                new CurrentThreadTaskExecutor()
-        ));
+                new CurrentThreadTaskExecutor()));
         // Mock the behavior of getDuplicateDecision to return KEEP_RIGHT
-        Mockito.doReturn(decisionResult).when(importHandler).getDuplicateDecision(testEntry, duplicateEntry, bibDatabaseContext);
+        Mockito.doReturn(decisionResult)
+                .when(importHandler)
+                .getDuplicateDecision(testEntry, duplicateEntry, bibDatabaseContext);
 
         // Act
-        BibEntry result = importHandler.handleDuplicates(bibDatabaseContext, testEntry, duplicateEntry).get();
+        BibEntry result = importHandler
+                .handleDuplicates(bibDatabaseContext, testEntry, duplicateEntry)
+                .get();
 
         // Assert that the duplicate entry was removed from the database
         assertFalse(bibDatabase.getEntries().contains(duplicateEntry));
@@ -159,7 +165,8 @@ class ImportHandlerTest {
         BibDatabase bibDatabase = bibDatabaseContext.getDatabase();
         bibDatabase.insertEntry(duplicateEntry); // Simulate that the duplicate entry is already in the database
 
-        DuplicateDecisionResult decisionResult = new DuplicateDecisionResult(DuplicateResolverDialog.DuplicateResolverResult.KEEP_BOTH, null);
+        DuplicateDecisionResult decisionResult =
+                new DuplicateDecisionResult(DuplicateResolverDialog.DuplicateResolverResult.KEEP_BOTH, null);
         importHandler = Mockito.spy(new ImportHandler(
                 bibDatabaseContext,
                 preferencesService,
@@ -167,16 +174,21 @@ class ImportHandlerTest {
                 mock(UndoManager.class),
                 mock(StateManager.class),
                 mock(DialogService.class),
-                new CurrentThreadTaskExecutor()
-        ));
+                new CurrentThreadTaskExecutor()));
         // Mock the behavior of getDuplicateDecision to return KEEP_BOTH
-        Mockito.doReturn(decisionResult).when(importHandler).getDuplicateDecision(testEntry, duplicateEntry, bibDatabaseContext);
+        Mockito.doReturn(decisionResult)
+                .when(importHandler)
+                .getDuplicateDecision(testEntry, duplicateEntry, bibDatabaseContext);
 
         // Act
-        BibEntry result = importHandler.handleDuplicates(bibDatabaseContext, testEntry, duplicateEntry).get();
+        BibEntry result = importHandler
+                .handleDuplicates(bibDatabaseContext, testEntry, duplicateEntry)
+                .get();
 
         // Assert
-        assertTrue(bibDatabase.getEntries().contains(duplicateEntry)); // Assert that the duplicate entry is still in the database
+        assertTrue(bibDatabase
+                .getEntries()
+                .contains(duplicateEntry)); // Assert that the duplicate entry is still in the database
         assertEquals(testEntry, result); // Assert that the original entry is returned
     }
 
@@ -194,7 +206,8 @@ class ImportHandlerTest {
         BibDatabase bibDatabase = bibDatabaseContext.getDatabase();
         bibDatabase.insertEntry(duplicateEntry); // Simulate that the duplicate entry is already in the database
 
-        DuplicateDecisionResult decisionResult = new DuplicateDecisionResult(DuplicateResolverDialog.DuplicateResolverResult.KEEP_MERGE, mergedEntry);
+        DuplicateDecisionResult decisionResult =
+                new DuplicateDecisionResult(DuplicateResolverDialog.DuplicateResolverResult.KEEP_MERGE, mergedEntry);
         importHandler = Mockito.spy(new ImportHandler(
                 bibDatabaseContext,
                 preferencesService,
@@ -202,20 +215,24 @@ class ImportHandlerTest {
                 mock(UndoManager.class),
                 mock(StateManager.class),
                 mock(DialogService.class),
-                new CurrentThreadTaskExecutor()
-        ));
+                new CurrentThreadTaskExecutor()));
         // Mock the behavior of getDuplicateDecision to return KEEP_MERGE
-        Mockito.doReturn(decisionResult).when(importHandler).getDuplicateDecision(testEntry, duplicateEntry, bibDatabaseContext);
+        Mockito.doReturn(decisionResult)
+                .when(importHandler)
+                .getDuplicateDecision(testEntry, duplicateEntry, bibDatabaseContext);
 
         // Act
-        BibEntry result = importHandler.handleDuplicates(bibDatabaseContext, testEntry, duplicateEntry)
-                                       .orElseGet(() -> {
-                                           // create and return a default BibEntry or do other computations
-                                           return new BibEntry();
-                                       });
+        BibEntry result = importHandler
+                .handleDuplicates(bibDatabaseContext, testEntry, duplicateEntry)
+                .orElseGet(() -> {
+                    // create and return a default BibEntry or do other computations
+                    return new BibEntry();
+                });
 
         // Assert
-        assertFalse(bibDatabase.getEntries().contains(duplicateEntry)); // Assert that the duplicate entry was removed from the database
+        assertFalse(bibDatabase
+                .getEntries()
+                .contains(duplicateEntry)); // Assert that the duplicate entry was removed from the database
         assertEquals(mergedEntry, result); // Assert that the merged entry is returned
     }
 }

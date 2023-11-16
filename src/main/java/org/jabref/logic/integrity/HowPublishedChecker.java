@@ -11,7 +11,8 @@ import org.jabref.model.strings.StringUtil;
 
 public class HowPublishedChecker implements ValueChecker {
 
-    private static final Predicate<String> FIRST_LETTER_CAPITALIZED = Pattern.compile("^[^a-z]").asPredicate();
+    private static final Predicate<String> FIRST_LETTER_CAPITALIZED =
+            Pattern.compile("^[^a-z]").asPredicate();
 
     private final BibDatabaseContext databaseContext;
 

@@ -25,8 +25,7 @@ public class ThreeWayMergeCellViewModelTest {
                 Arguments.of(true, false, true, false),
                 Arguments.of(false, false, true, false),
                 Arguments.of(true, true, false, true),
-                Arguments.of(false, true, false, true)
-        );
+                Arguments.of(false, true, false, true));
     }
 
     private static Stream<Arguments> isEvenShouldReturnTrueIfRowIndexIsEven() {
@@ -36,8 +35,7 @@ public class ThreeWayMergeCellViewModelTest {
                 Arguments.of(1, false),
                 Arguments.of(2, true),
                 Arguments.of(9999, false),
-                Arguments.of(Integer.MAX_VALUE, false)
-        );
+                Arguments.of(Integer.MAX_VALUE, false));
     }
 
     private static Stream<Arguments> isOddShouldReturnTrueIfRowIndexIsOdd() {
@@ -48,8 +46,7 @@ public class ThreeWayMergeCellViewModelTest {
                 Arguments.of(7777, true),
                 Arguments.of(9999, true),
                 Arguments.of(Integer.MAX_VALUE, true),
-                Arguments.of(0, false)
-        );
+                Arguments.of(0, false));
     }
 
     private static Stream<Arguments> getTextAndSetTextShouldBeConsistent() {
@@ -59,8 +56,7 @@ public class ThreeWayMergeCellViewModelTest {
                 Arguments.of("World"),
                 Arguments.of("" + null),
                 Arguments.of("Hello, World"),
-                Arguments.of("عربي")
-        );
+                Arguments.of("عربي"));
     }
 
     @ParameterizedTest

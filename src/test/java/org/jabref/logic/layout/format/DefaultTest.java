@@ -30,7 +30,6 @@ public class DefaultTest {
                 Arguments.of("DEFAULT TEXT", "", "DEFAULT TEXT"),
                 Arguments.of("Bob Bruce and Jolly Jumper", "Bob Bruce and Jolly Jumper", ""),
                 Arguments.of("", null, ""),
-                Arguments.of("", "", "")
-        );
+                Arguments.of("", "", ""));
     }
 }

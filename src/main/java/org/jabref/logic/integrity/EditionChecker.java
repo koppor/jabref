@@ -11,10 +11,12 @@ import org.jabref.model.strings.StringUtil;
 
 public class EditionChecker implements ValueChecker {
 
-    private static final Predicate<String> FIRST_LETTER_CAPITALIZED = Pattern.compile("^[A-Z]").asPredicate();
-    private static final Predicate<String> ONLY_NUMERALS_OR_LITERALS = Pattern.compile("^([0-9]+|[^0-9].+)$")
-                                                                              .asPredicate();
-    private static final Predicate<String> ONLY_NUMERALS = Pattern.compile("[0-9]+").asPredicate();
+    private static final Predicate<String> FIRST_LETTER_CAPITALIZED =
+            Pattern.compile("^[A-Z]").asPredicate();
+    private static final Predicate<String> ONLY_NUMERALS_OR_LITERALS =
+            Pattern.compile("^([0-9]+|[^0-9].+)$").asPredicate();
+    private static final Predicate<String> ONLY_NUMERALS =
+            Pattern.compile("[0-9]+").asPredicate();
     private static final String FIRST_EDITION = "1";
 
     private final BibDatabaseContext bibDatabaseContextEdition;

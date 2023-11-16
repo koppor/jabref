@@ -29,6 +29,7 @@ public class FieldChecker implements EntryChecker {
             return Collections.emptyList();
         }
 
-        return OptionalUtil.toList(checker.checkValue(value.get()).map(message -> new IntegrityMessage(message, entry, field)));
+        return OptionalUtil.toList(
+                checker.checkValue(value.get()).map(message -> new IntegrityMessage(message, entry, field)));
     }
 }

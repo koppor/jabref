@@ -56,7 +56,9 @@ class XmpUtilWriterTest {
 
     private final BibEntry toral2006 = new BibEntry(StandardEntryType.InProceedings)
             .withField(StandardField.AUTHOR, "Antonio Toral and Rafael Munoz")
-            .withField(StandardField.TITLE, "A proposal to automatically build and maintain gazetteers for Named Entity Recognition by using Wikipedia")
+            .withField(
+                    StandardField.TITLE,
+                    "A proposal to automatically build and maintain gazetteers for Named Entity Recognition by using Wikipedia")
             .withField(StandardField.BOOKTITLE, "Proceedings of EACL")
             .withField(StandardField.PAGES, "56--61")
             .withField(StandardField.EPRINTTYPE, "asdf")
@@ -149,23 +151,20 @@ class XmpUtilWriterTest {
     @Test
     void proctingBracesAreRemovedAtTitle(@TempDir Path tempDir) throws Exception {
         Path pdfFile = this.createDefaultFile("JabRef_writeBraces.pdf", tempDir);
-        BibEntry original = new BibEntry()
-                .withField(StandardField.TITLE, "Some {P}rotected {T}erm");
+        BibEntry original = new BibEntry().withField(StandardField.TITLE, "Some {P}rotected {T}erm");
         new XmpUtilWriter(xmpPreferences).writeXmp(pdfFile.toAbsolutePath(), List.of(original), null);
         List<BibEntry> entryList = new XmpUtilReader().readXmp(pdfFile.toAbsolutePath(), xmpPreferences);
 
         entryList.forEach(entry -> entry.clearField(StandardField.FILE));
 
-        BibEntry expected = new BibEntry()
-                .withField(StandardField.TITLE, "Some Protected Term");
+        BibEntry expected = new BibEntry().withField(StandardField.TITLE, "Some Protected Term");
         assertEquals(List.of(expected), entryList);
     }
 
     @Test
     void proctingBracesAreKeptAtPages(@TempDir Path tempDir) throws Exception {
         Path pdfFile = this.createDefaultFile("JabRef_writeBraces.pdf", tempDir);
-        BibEntry original = new BibEntry()
-                .withField(StandardField.PAGES, "{55}-{99}");
+        BibEntry original = new BibEntry().withField(StandardField.PAGES, "{55}-{99}");
         new XmpUtilWriter(xmpPreferences).writeXmp(pdfFile.toAbsolutePath(), List.of(original), null);
         List<BibEntry> entryList = new XmpUtilReader().readXmp(pdfFile.toAbsolutePath(), xmpPreferences);
 
@@ -177,8 +176,7 @@ class XmpUtilWriterTest {
     @Test
     void doubleDashAtPageNumberIsKept(@TempDir Path tempDir) throws Exception {
         Path pdfFile = this.createDefaultFile("JabRef_writeBraces.pdf", tempDir);
-        BibEntry original = new BibEntry()
-                .withField(StandardField.PAGES, "2--33");
+        BibEntry original = new BibEntry().withField(StandardField.PAGES, "2--33");
         new XmpUtilWriter(xmpPreferences).writeXmp(pdfFile.toAbsolutePath(), List.of(original), null);
         List<BibEntry> entryList = new XmpUtilReader().readXmp(pdfFile.toAbsolutePath(), xmpPreferences);
 

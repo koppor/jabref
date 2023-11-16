@@ -12,13 +12,11 @@ import com.sun.star.util.InvalidStateException;
  */
 public class UnoUndo {
 
-    private UnoUndo() {
-    }
+    private UnoUndo() {}
 
     public static Optional<XUndoManager> getXUndoManager(XTextDocument doc) {
         // https://www.openoffice.org/api/docs/common/ref/com/sun/star/document/XUndoManager.html
-        return UnoCast.cast(XUndoManagerSupplier.class, doc)
-                       .map(XUndoManagerSupplier::getUndoManager);
+        return UnoCast.cast(XUndoManagerSupplier.class, doc).map(XUndoManagerSupplier::getUndoManager);
     }
 
     /**

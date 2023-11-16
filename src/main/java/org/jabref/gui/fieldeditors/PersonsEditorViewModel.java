@@ -21,7 +21,12 @@ public class PersonsEditorViewModel extends AbstractEditorViewModel {
 
     private final AutoCompletePreferences preferences;
 
-    public PersonsEditorViewModel(Field field, SuggestionProvider<?> suggestionProvider, AutoCompletePreferences preferences, FieldCheckers fieldCheckers, UndoManager undoManager) {
+    public PersonsEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            AutoCompletePreferences preferences,
+            FieldCheckers fieldCheckers,
+            UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
         this.preferences = preferences;
     }

@@ -184,8 +184,8 @@ public class RepecNepImporter extends Importer {
             startOfMessage.append(tmpLine);
             tmpLine = reader.readLine();
         }
-        return startOfMessage.toString().contains("NEP: New Economics Papers") || startOfMessage.toString().contains(
-                "nep.repec.org");
+        return startOfMessage.toString().contains("NEP: New Economics Papers")
+                || startOfMessage.toString().contains("nep.repec.org");
     }
 
     private boolean startsWithKeyword(Collection<String> keywords) {
@@ -220,7 +220,10 @@ public class RepecNepImporter extends Importer {
     private String readMultipleLines(BufferedReader in) throws IOException {
         StringBuilder result = new StringBuilder(this.lastLine.trim());
         readLine(in);
-        while ((this.lastLine != null) && !this.lastLine.trim().isEmpty() && !startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS) && !isStartOfWorkingPaper()) {
+        while ((this.lastLine != null)
+                && !this.lastLine.trim().isEmpty()
+                && !startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS)
+                && !isStartOfWorkingPaper()) {
             result.append(this.lastLine.isEmpty() ? this.lastLine.trim() : " " + this.lastLine.trim());
             readLine(in);
         }
@@ -247,7 +250,9 @@ public class RepecNepImporter extends Importer {
         // read authors and institutions
         List<String> authors = new ArrayList<>();
         StringBuilder institutions = new StringBuilder();
-        while ((this.lastLine != null) && !this.lastLine.isEmpty() && !startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS)) {
+        while ((this.lastLine != null)
+                && !this.lastLine.isEmpty()
+                && !startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS)) {
             // read single author
             String author;
             StringBuilder institution = new StringBuilder();
@@ -255,12 +260,13 @@ public class RepecNepImporter extends Importer {
             if (this.lastLine.indexOf('(') >= 0) {
                 author = this.lastLine.substring(0, this.lastLine.indexOf('(')).trim();
                 institutionDone = this.lastLine.indexOf(')') >= 1;
-                institution
-                        .append(this.lastLine.substring(this.lastLine.indexOf('(') + 1,
-                                institutionDone && (this.lastLine
-                                        .indexOf(')') > (this.lastLine.indexOf('(') + 1)) ? this.lastLine
-                                        .indexOf(')') : this.lastLine.length())
-                                             .trim());
+                institution.append(this.lastLine
+                        .substring(
+                                this.lastLine.indexOf('(') + 1,
+                                institutionDone && (this.lastLine.indexOf(')') > (this.lastLine.indexOf('(') + 1))
+                                        ? this.lastLine.indexOf(')')
+                                        : this.lastLine.length())
+                        .trim());
             } else {
                 author = this.lastLine.trim();
                 institutionDone = true;
@@ -270,15 +276,15 @@ public class RepecNepImporter extends Importer {
             while (!institutionDone && (this.lastLine != null)) {
                 institutionDone = this.lastLine.indexOf(')') >= 1;
                 institution.append(this.lastLine
-                        .substring(0, institutionDone ? this.lastLine.indexOf(')') : this.lastLine.length()).trim());
+                        .substring(0, institutionDone ? this.lastLine.indexOf(')') : this.lastLine.length())
+                        .trim());
                 readLine(in);
             }
 
             authors.add(author);
 
             if (!institution.isEmpty()) {
-                institutions.append(
-                        institutions.isEmpty() ? institution.toString() : " and " + institution.toString());
+                institutions.append(institutions.isEmpty() ? institution.toString() : " and " + institution.toString());
             }
         }
 
@@ -316,17 +322,24 @@ public class RepecNepImporter extends Importer {
         }
 
         // read other fields
-        while ((this.lastLine != null) && !isStartOfWorkingPaper() && (startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS) || "".equals(this.lastLine))) {
+        while ((this.lastLine != null)
+                && !isStartOfWorkingPaper()
+                && (startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS) || "".equals(this.lastLine))) {
             // if multiple lines for a field are allowed and field consists of multiple lines, join them
-            String keyword = "".equals(this.lastLine) ? "" : this.lastLine.substring(0, this.lastLine.indexOf(':')).trim();
+            String keyword = "".equals(this.lastLine)
+                    ? ""
+                    : this.lastLine.substring(0, this.lastLine.indexOf(':')).trim();
             // skip keyword
-            this.lastLine = "".equals(this.lastLine) ? "" : this.lastLine.substring(this.lastLine.indexOf(':') + 1).trim();
+            this.lastLine = "".equals(this.lastLine)
+                    ? ""
+                    : this.lastLine.substring(this.lastLine.indexOf(':') + 1).trim();
 
             if ("Keywords".equals(keyword)) {
                 // parse keywords field
                 String content = readMultipleLines(in);
                 String[] keywords = content.split("[,;]");
-                be.addKeywords(Arrays.asList(keywords),
+                be.addKeywords(
+                        Arrays.asList(keywords),
                         importFormatPreferences.bibEntryPreferences().getKeywordSeparator());
             } else if ("JEL".equals(keyword)) {
                 // parse JEL field
@@ -359,7 +372,9 @@ public class RepecNepImporter extends Importer {
      * section, we have a working paper entry we are interested in
      */
     private boolean isStartOfWorkingPaper() {
-        return this.lastLine.matches("\\d+\\.\\s.*") && !this.inOverviewSection && this.preLine.trim().isEmpty();
+        return this.lastLine.matches("\\d+\\.\\s.*")
+                && !this.inOverviewSection
+                && this.preLine.trim().isEmpty();
     }
 
     @Override

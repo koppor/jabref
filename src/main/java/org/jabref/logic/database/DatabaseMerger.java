@@ -56,9 +56,11 @@ public class DatabaseMerger {
     private void mergeEntries(BibDatabase target, BibDatabase other) {
         DuplicateCheck duplicateCheck = new DuplicateCheck(new BibEntryTypesManager());
         List<BibEntry> newEntries = other.getEntries().stream()
-                                         // Remove all entries that are already part of the database (duplicate)
-                                         .filter(entry -> duplicateCheck.containsDuplicate(target, entry, BibDatabaseModeDetection.inferMode(target)).isEmpty())
-                                         .collect(Collectors.toList());
+                // Remove all entries that are already part of the database (duplicate)
+                .filter(entry -> duplicateCheck
+                        .containsDuplicate(target, entry, BibDatabaseModeDetection.inferMode(target))
+                        .isEmpty())
+                .collect(Collectors.toList());
         target.insertEntries(newEntries);
     }
 
@@ -67,9 +69,14 @@ public class DatabaseMerger {
             String bibtexStringName = bibtexString.getName();
             if (target.hasStringByName(bibtexStringName)) {
                 String importedContent = bibtexString.getContent();
-                String existingContent = target.getStringByName(bibtexStringName).get().getContent();
+                String existingContent =
+                        target.getStringByName(bibtexStringName).get().getContent();
                 if (!importedContent.equals(existingContent)) {
-                    LOGGER.info("String contents differ for {}: {} != {}", bibtexStringName, importedContent, existingContent);
+                    LOGGER.info(
+                            "String contents differ for {}: {} != {}",
+                            bibtexStringName,
+                            importedContent,
+                            existingContent);
                     int suffix = 1;
                     String newName = bibtexStringName + "_" + suffix;
                     while (target.hasStringByName(newName)) {
@@ -103,7 +110,8 @@ public class DatabaseMerger {
     }
 
     private void mergeGroups(MetaData target, MetaData other, String otherFilename, List<BibEntry> allOtherEntries) {
-        // Adds the specified node as a child of the current root. The group contained in <b>newGroups</b> must not be of
+        // Adds the specified node as a child of the current root. The group contained in <b>newGroups</b> must not be
+        // of
         // type AllEntriesGroup, since every tree has exactly one AllEntriesGroup (its root). The <b>newGroups</b> are
         // inserted directly, i.e. they are not deepCopy()'d.
         other.getGroups().ifPresent(newGroups -> {
@@ -116,19 +124,18 @@ public class DatabaseMerger {
                     // There will be group where the two groups are merged
                     String newGroupName = otherFilename;
                     ExplicitGroup group = new ExplicitGroup(
-                            "Imported " + newGroupName,
-                            GroupHierarchyType.INDEPENDENT,
-                            keywordDelimiter);
+                            "Imported " + newGroupName, GroupHierarchyType.INDEPENDENT, keywordDelimiter);
                     newGroups.setGroup(group);
                     group.add(allOtherEntries);
                 } catch (IllegalArgumentException e) {
                     LOGGER.error("Problem appending entries to group", e);
                 }
             }
-            target.getGroups().ifPresentOrElse(
-                    newGroups::moveTo,
-                    // target does not contain any groups, so we can just use the new groups
-                    () -> target.setGroups(newGroups));
+            target.getGroups()
+                    .ifPresentOrElse(
+                            newGroups::moveTo,
+                            // target does not contain any groups, so we can just use the new groups
+                            () -> target.setGroups(newGroups));
         });
     }
 

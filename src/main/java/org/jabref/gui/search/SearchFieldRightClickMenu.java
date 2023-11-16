@@ -17,33 +17,40 @@ import org.jabref.logic.l10n.Localization;
 import org.controlsfx.control.textfield.CustomTextField;
 
 public class SearchFieldRightClickMenu {
-    public static ContextMenu create(KeyBindingRepository keyBindingRepository,
-                                     StateManager stateManager,
-                                     CustomTextField searchField,
-                                     JabRefFrame frame) {
+    public static ContextMenu create(
+            KeyBindingRepository keyBindingRepository,
+            StateManager stateManager,
+            CustomTextField searchField,
+            JabRefFrame frame) {
         ActionFactory factory = new ActionFactory(keyBindingRepository);
         ContextMenu contextMenu = new ContextMenu();
 
-        contextMenu.getItems().addAll(
-                factory.createMenuItem(StandardActions.UNDO, new EditAction(StandardActions.UNDO, frame, stateManager)),
-                factory.createMenuItem(StandardActions.REDO, new EditAction(StandardActions.REDO, frame, stateManager)),
-                factory.createMenuItem(StandardActions.CUT, new EditAction(StandardActions.CUT, frame, stateManager)),
-                factory.createMenuItem(StandardActions.COPY, new EditAction(StandardActions.COPY, frame, stateManager)),
-                factory.createMenuItem(StandardActions.PASTE, new EditAction(StandardActions.PASTE, frame, stateManager)),
-                factory.createMenuItem(StandardActions.DELETE, new EditAction(StandardActions.DELETE, frame, stateManager)),
-
-                new SeparatorMenuItem(),
-
-                factory.createMenuItem(StandardActions.SELECT_ALL, new EditAction(StandardActions.SELECT_ALL, null, stateManager)),
-                createSearchFromHistorySubMenu(factory, stateManager, searchField)
-        );
+        contextMenu
+                .getItems()
+                .addAll(
+                        factory.createMenuItem(
+                                StandardActions.UNDO, new EditAction(StandardActions.UNDO, frame, stateManager)),
+                        factory.createMenuItem(
+                                StandardActions.REDO, new EditAction(StandardActions.REDO, frame, stateManager)),
+                        factory.createMenuItem(
+                                StandardActions.CUT, new EditAction(StandardActions.CUT, frame, stateManager)),
+                        factory.createMenuItem(
+                                StandardActions.COPY, new EditAction(StandardActions.COPY, frame, stateManager)),
+                        factory.createMenuItem(
+                                StandardActions.PASTE, new EditAction(StandardActions.PASTE, frame, stateManager)),
+                        factory.createMenuItem(
+                                StandardActions.DELETE, new EditAction(StandardActions.DELETE, frame, stateManager)),
+                        new SeparatorMenuItem(),
+                        factory.createMenuItem(
+                                StandardActions.SELECT_ALL,
+                                new EditAction(StandardActions.SELECT_ALL, null, stateManager)),
+                        createSearchFromHistorySubMenu(factory, stateManager, searchField));
 
         return contextMenu;
     }
 
-    private static Menu createSearchFromHistorySubMenu(ActionFactory factory,
-                                                       StateManager stateManager,
-                                                       CustomTextField searchField) {
+    private static Menu createSearchFromHistorySubMenu(
+            ActionFactory factory, StateManager stateManager, CustomTextField searchField) {
         Menu searchFromHistorySubMenu = factory.createMenu(() -> Localization.lang("Search from history..."));
 
         int num = stateManager.getLastSearchHistory(10).size();
@@ -53,12 +60,14 @@ public class SearchFieldRightClickMenu {
         } else {
             for (int i = 0; i < num; i++) {
                 int finalI = i;
-                MenuItem item = factory.createMenuItem(() -> stateManager.getLastSearchHistory(10).get(finalI), new SimpleCommand() {
-                    @Override
-                    public void execute() {
-                        searchField.setText(stateManager.getLastSearchHistory(10).get(finalI));
-                    }
-                });
+                MenuItem item = factory.createMenuItem(
+                        () -> stateManager.getLastSearchHistory(10).get(finalI), new SimpleCommand() {
+                            @Override
+                            public void execute() {
+                                searchField.setText(
+                                        stateManager.getLastSearchHistory(10).get(finalI));
+                            }
+                        });
                 searchFromHistorySubMenu.getItems().addAll(item);
             }
             MenuItem clear = factory.createMenuItem(() -> Localization.lang("Clear history"), new SimpleCommand() {

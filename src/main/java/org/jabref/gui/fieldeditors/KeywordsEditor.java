@@ -9,11 +9,12 @@ import org.jabref.preferences.PreferencesService;
 
 public class KeywordsEditor extends SimpleEditor implements FieldEditorFX {
 
-    public KeywordsEditor(Field field,
-                          SuggestionProvider<?> suggestionProvider,
-                          FieldCheckers fieldCheckers,
-                          PreferencesService preferences,
-                          UndoManager undoManager) {
+    public KeywordsEditor(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            PreferencesService preferences,
+            UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, preferences, undoManager);
     }
 

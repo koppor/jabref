@@ -24,8 +24,8 @@ public class UnicodeToLatexFormatter extends Formatter implements LayoutFormatte
         }
 
         // Standard symbols
-        for (Map.Entry<String, String> unicodeLatexPair : HTMLUnicodeConversionMaps.UNICODE_LATEX_CONVERSION_MAP
-                .entrySet()) {
+        for (Map.Entry<String, String> unicodeLatexPair :
+                HTMLUnicodeConversionMaps.UNICODE_LATEX_CONVERSION_MAP.entrySet()) {
             result = result.replace(unicodeLatexPair.getKey(), unicodeLatexPair.getValue());
         }
 
@@ -44,7 +44,11 @@ public class UnicodeToLatexFormatter extends Formatter implements LayoutFormatte
                     }
                     sb.appendCodePoint(cpCurrent);
                 } else {
-                    sb.append("{\\").append(code).append('{').append((char) cpCurrent).append("}}");
+                    sb.append("{\\")
+                            .append(code)
+                            .append('{')
+                            .append((char) cpCurrent)
+                            .append("}}");
                     consumed = true;
                 }
             } else {

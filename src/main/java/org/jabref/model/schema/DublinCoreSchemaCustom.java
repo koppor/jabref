@@ -35,8 +35,8 @@ public class DublinCoreSchemaCustom extends DublinCoreSchema {
         try {
             DublinCoreSchemaCustom dublinCoreSchemaCustom = new DublinCoreSchemaCustom(dcSchema.getMetadata());
             FieldUtils.writeField(dublinCoreSchemaCustom, "container", dcSchema.getContainer(), true);
-            FieldUtils.writeField(dublinCoreSchemaCustom, "attributes",
-                    FieldUtils.readField(dcSchema, "attributes", true), true);
+            FieldUtils.writeField(
+                    dublinCoreSchemaCustom, "attributes", FieldUtils.readField(dcSchema, "attributes", true), true);
             return dublinCoreSchemaCustom;
         } catch (Exception e) {
             LOGGER.error("Error making custom DC Schema. Using the default", e);
@@ -53,11 +53,10 @@ public class DublinCoreSchemaCustom extends DublinCoreSchema {
         AbstractField abstractProperty = getAbstractProperty(seqName);
         if (abstractProperty instanceof ArrayProperty) {
             if ("date".equals(seqName)) {
-                return ((ArrayProperty) abstractProperty).getContainer()
-                        .getAllProperties()
-                        .stream()
-                        .map(field -> (String) ((DateType) field).getRawValue())
-                        .collect(Collectors.toList());
+                return ((ArrayProperty) abstractProperty)
+                        .getContainer().getAllProperties().stream()
+                                .map(field -> (String) ((DateType) field).getRawValue())
+                                .collect(Collectors.toList());
             }
             return ((ArrayProperty) abstractProperty).getElementsAsString();
         }

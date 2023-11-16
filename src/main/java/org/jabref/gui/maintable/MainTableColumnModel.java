@@ -140,7 +140,8 @@ public class MainTableColumnModel {
     }
 
     public String getDisplayName() {
-        if ((Type.ICON_COLUMNS.contains(typeProperty.getValue()) && qualifierProperty.getValue().isBlank())
+        if ((Type.ICON_COLUMNS.contains(typeProperty.getValue())
+                        && qualifierProperty.getValue().isBlank())
                 || (typeProperty.getValue() == Type.INDEX)) {
             return typeProperty.getValue().getDisplayName();
         } else {
@@ -221,9 +222,7 @@ public class MainTableColumnModel {
         Type type = Type.fromString(splittedName[0]);
         String qualifier = "";
 
-        if ((type == Type.NORMALFIELD)
-                || (type == Type.SPECIALFIELD)
-                || (type == Type.EXTRAFILE)) {
+        if ((type == Type.NORMALFIELD) || (type == Type.SPECIALFIELD) || (type == Type.EXTRAFILE)) {
             if (splittedName.length == 1) {
                 qualifier = splittedName[0]; // By default the rawColumnName is parsed as NORMALFIELD
             } else {

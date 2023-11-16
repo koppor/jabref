@@ -43,7 +43,9 @@ interface SearchBasedFetcherCapabilityTest {
             String author = bibEntry.getField(StandardField.AUTHOR).orElse("");
 
             // The co-authors differ, thus we check for the author present at all papers
-            getTestAuthors().forEach(expectedAuthor -> Assertions.assertTrue(author.contains(expectedAuthor.replace("\"", ""))));
+            getTestAuthors()
+                    .forEach(
+                            expectedAuthor -> Assertions.assertTrue(author.contains(expectedAuthor.replace("\"", ""))));
         });
     }
 
@@ -55,11 +57,11 @@ interface SearchBasedFetcherCapabilityTest {
         List<BibEntry> result = getFetcher().performSearch("year:" + getTestYear());
         ImportCleanup.targeting(BibDatabaseMode.BIBTEX).doPostCleanup(result);
         List<String> differentYearsInResult = result.stream()
-                                                    .map(bibEntry -> bibEntry.getField(StandardField.YEAR))
-                                                    .filter(Optional::isPresent)
-                                                    .map(Optional::get)
-                                                    .distinct()
-                                                    .collect(Collectors.toList());
+                .map(bibEntry -> bibEntry.getField(StandardField.YEAR))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .distinct()
+                .collect(Collectors.toList());
 
         assertEquals(Collections.singletonList(getTestYear().toString()), differentYearsInResult);
     }
@@ -74,11 +76,11 @@ interface SearchBasedFetcherCapabilityTest {
         List<BibEntry> result = getFetcher().performSearch("year-range:2018-2020");
         ImportCleanup.targeting(BibDatabaseMode.BIBTEX).doPostCleanup(result);
         List<String> differentYearsInResult = result.stream()
-                                                    .map(bibEntry -> bibEntry.getField(StandardField.YEAR))
-                                                    .filter(Optional::isPresent)
-                                                    .map(Optional::get)
-                                                    .distinct()
-                                                    .collect(Collectors.toList());
+                .map(bibEntry -> bibEntry.getField(StandardField.YEAR))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .distinct()
+                .collect(Collectors.toList());
         assertFalse(result.isEmpty());
         assertTrue(yearsInYearRange.containsAll(differentYearsInResult));
     }

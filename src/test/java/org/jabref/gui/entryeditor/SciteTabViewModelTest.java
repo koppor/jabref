@@ -22,6 +22,7 @@ public class SciteTabViewModelTest {
 
     @Mock
     private PreferencesService preferencesService;
+
     @Mock
     private TaskExecutor taskExecutor;
 

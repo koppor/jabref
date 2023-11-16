@@ -39,7 +39,8 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SemanticScholar implements FulltextFetcher, PagedSearchBasedParserFetcher, EntryBasedFetcher, CustomizableKeyFetcher {
+public class SemanticScholar
+        implements FulltextFetcher, PagedSearchBasedParserFetcher, EntryBasedFetcher, CustomizableKeyFetcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SemanticScholar.class);
 
@@ -74,14 +75,12 @@ public class SemanticScholar implements FulltextFetcher, PagedSearchBasedParserF
                 // Retrieve PDF link
                 String source = SOURCE_ID_SEARCH + doi.get().getDOI();
                 var jsoupRequest = Jsoup.connect(getURLBySource(source))
-                                        .userAgent(URLDownload.USER_AGENT)
-                                        .referrer("https://www.google.com")
-                                        .ignoreHttpErrors(true);
-                importerPreferences.getApiKey(getName()).ifPresent(
-                        key -> jsoupRequest.header("x-api-key", key));
+                        .userAgent(URLDownload.USER_AGENT)
+                        .referrer("https://www.google.com")
+                        .ignoreHttpErrors(true);
+                importerPreferences.getApiKey(getName()).ifPresent(key -> jsoupRequest.header("x-api-key", key));
                 html = jsoupRequest.get();
-            } catch (
-                    IOException e) {
+            } catch (IOException e) {
                 LOGGER.info("Error for pdf lookup with DOI");
             }
         }
@@ -93,11 +92,10 @@ public class SemanticScholar implements FulltextFetcher, PagedSearchBasedParserF
             }
             String source = SOURCE_ID_SEARCH + arXivString;
             var jsoupRequest = Jsoup.connect(getURLBySource(source))
-                                    .userAgent(URLDownload.USER_AGENT)
-                                    .referrer("https://www.google.com")
-                                    .ignoreHttpErrors(true);
-            importerPreferences.getApiKey(getName()).ifPresent(
-                    key -> jsoupRequest.header("x-api-key", key));
+                    .userAgent(URLDownload.USER_AGENT)
+                    .referrer("https://www.google.com")
+                    .ignoreHttpErrors(true);
+            importerPreferences.getApiKey(getName()).ifPresent(key -> jsoupRequest.header("x-api-key", key));
             html = jsoupRequest.get();
         }
         if (html == null) {
@@ -136,9 +134,12 @@ public class SemanticScholar implements FulltextFetcher, PagedSearchBasedParserF
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder(SOURCE_WEB_SEARCH);
-        uriBuilder.addParameter("query", new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
+        uriBuilder.addParameter(
+                "query",
+                new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
         uriBuilder.addParameter("offset", String.valueOf(pageNumber * getPageSize()));
         uriBuilder.addParameter("limit", String.valueOf(Math.min(getPageSize(), 10000 - pageNumber * getPageSize())));
         // All fields need to be specified
@@ -153,7 +154,6 @@ public class SemanticScholar implements FulltextFetcher, PagedSearchBasedParserF
     @Override
     public Parser getParser() {
         return inputStream -> {
-
             JSONObject response = JsonReader.toJsonObject(inputStream);
             LOGGER.debug("Response for Parser: {}", response);
             if (response.isEmpty()) {
@@ -196,11 +196,12 @@ public class SemanticScholar implements FulltextFetcher, PagedSearchBasedParserF
             entry.setField(StandardField.VENUE, item.optString("venue"));
             entry.setField(StandardField.YEAR, item.optString("year"));
 
-            entry.setField(StandardField.AUTHOR,
+            entry.setField(
+                    StandardField.AUTHOR,
                     IntStream.range(0, item.optJSONArray("authors").length())
-                             .mapToObj(item.optJSONArray("authors")::getJSONObject)
-                             .map(author -> author.has("name") ? author.getString("name") : "")
-                             .collect(Collectors.joining(" and ")));
+                            .mapToObj(item.optJSONArray("authors")::getJSONObject)
+                            .map(author -> author.has("name") ? author.getString("name") : "")
+                            .collect(Collectors.joining(" and ")));
 
             JSONObject externalIds = item.optJSONObject("externalIds");
             entry.setField(StandardField.DOI, externalIds.optString("DOI"));

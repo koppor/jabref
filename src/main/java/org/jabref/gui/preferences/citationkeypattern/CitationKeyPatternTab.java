@@ -18,24 +18,44 @@ import org.jabref.logic.l10n.Localization;
 
 import com.airhacks.afterburner.views.ViewLoader;
 
-public class CitationKeyPatternTab extends AbstractPreferenceTabView<CitationKeyPatternTabViewModel> implements PreferencesTab {
+public class CitationKeyPatternTab extends AbstractPreferenceTabView<CitationKeyPatternTabViewModel>
+        implements PreferencesTab {
 
-    @FXML private CheckBox overwriteAllow;
-    @FXML private CheckBox overwriteWarning;
-    @FXML private CheckBox generateOnSave;
-    @FXML private RadioButton letterStartA;
-    @FXML private RadioButton letterStartB;
-    @FXML private RadioButton letterAlwaysAdd;
-    @FXML private TextField keyPatternRegex;
-    @FXML private TextField keyPatternReplacement;
-    @FXML private TextField unwantedCharacters;
-    @FXML private Button keyPatternHelp;
-    @FXML private CitationKeyPatternPanel bibtexKeyPatternTable;
+    @FXML
+    private CheckBox overwriteAllow;
+
+    @FXML
+    private CheckBox overwriteWarning;
+
+    @FXML
+    private CheckBox generateOnSave;
+
+    @FXML
+    private RadioButton letterStartA;
+
+    @FXML
+    private RadioButton letterStartB;
+
+    @FXML
+    private RadioButton letterAlwaysAdd;
+
+    @FXML
+    private TextField keyPatternRegex;
+
+    @FXML
+    private TextField keyPatternReplacement;
+
+    @FXML
+    private TextField unwantedCharacters;
+
+    @FXML
+    private Button keyPatternHelp;
+
+    @FXML
+    private CitationKeyPatternPanel bibtexKeyPatternTable;
 
     public CitationKeyPatternTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -60,14 +80,18 @@ public class CitationKeyPatternTab extends AbstractPreferenceTabView<CitationKey
         bibtexKeyPatternTable.defaultKeyPatternProperty().bindBidirectional(viewModel.defaultKeyPatternProperty());
 
         ActionFactory actionFactory = new ActionFactory(Globals.getKeyPrefs());
-        actionFactory.configureIconButton(StandardActions.HELP_KEY_PATTERNS, new HelpAction(HelpFile.CITATION_KEY_PATTERN, dialogService, preferencesService.getFilePreferences()), keyPatternHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP_KEY_PATTERNS,
+                new HelpAction(HelpFile.CITATION_KEY_PATTERN, dialogService, preferencesService.getFilePreferences()),
+                keyPatternHelp);
     }
 
     @Override
     public void setValues() {
         viewModel.setValues();
         bibtexKeyPatternTable.setValues(
-                Globals.entryTypesManager.getAllTypes(preferencesService.getLibraryPreferences().getDefaultBibDatabaseMode()),
+                Globals.entryTypesManager.getAllTypes(
+                        preferencesService.getLibraryPreferences().getDefaultBibDatabaseMode()),
                 preferencesService.getCitationKeyPatternPreferences().getKeyPattern());
     }
 

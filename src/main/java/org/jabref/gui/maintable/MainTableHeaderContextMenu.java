@@ -62,7 +62,8 @@ public class MainTableHeaderContextMenu extends ContextMenu {
             // Remove from remaining common columns pool
             MainTableColumn searchCol = (MainTableColumn<?>) column;
             if (isACommonColumn(searchCol)) {
-                commonColumns.removeIf(tableCol -> ((MainTableColumn) tableCol).getModel().equals(searchCol.getModel()));
+                commonColumns.removeIf(
+                        tableCol -> ((MainTableColumn) tableCol).getModel().equals(searchCol.getModel()));
             }
         }
 
@@ -122,7 +123,9 @@ public class MainTableHeaderContextMenu extends ContextMenu {
      */
     @SuppressWarnings("rawtypes")
     private void removeColumn(MainTableColumn tableColumn) {
-        mainTable.getColumns().removeIf(tableCol -> ((MainTableColumn) tableCol).getModel().equals(tableColumn.getModel()));
+        mainTable
+                .getColumns()
+                .removeIf(tableCol -> ((MainTableColumn) tableCol).getModel().equals(tableColumn.getModel()));
     }
 
     /**
@@ -135,9 +138,9 @@ public class MainTableHeaderContextMenu extends ContextMenu {
     /**
      * Determines if a list of TableColumns contains the searched column.
      */
-    private boolean isColumnInList(MainTableColumn searchColumn, List<TableColumn<BibEntryTableViewModel, ?>> tableColumns) {
-        for (TableColumn<BibEntryTableViewModel, ?> column:
-        tableColumns) {
+    private boolean isColumnInList(
+            MainTableColumn searchColumn, List<TableColumn<BibEntryTableViewModel, ?>> tableColumns) {
+        for (TableColumn<BibEntryTableViewModel, ?> column : tableColumns) {
             MainTableColumnModel model = ((MainTableColumn) column).getModel();
             if (model.equals(searchColumn.getModel())) {
                 return true;
@@ -176,7 +179,7 @@ public class MainTableHeaderContextMenu extends ContextMenu {
 
         // Create the Table Columns from the models using factory methods.
         List<TableColumn<BibEntryTableViewModel, ?>> commonTableColumns = new ArrayList<>();
-        for (MainTableColumnModel columnModel: commonColumns) {
+        for (MainTableColumnModel columnModel : commonColumns) {
             TableColumn<BibEntryTableViewModel, ?> tableColumn = factory.createColumn(columnModel);
             commonTableColumns.add(tableColumn);
         }

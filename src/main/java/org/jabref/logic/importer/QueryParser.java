@@ -34,8 +34,10 @@ public class QueryParser {
             StandardQueryParser parser = new StandardQueryParser();
             Query luceneQuery = parser.parse(query, "default");
             Set<Term> terms = new HashSet<>();
-            // This implementation collects all terms from the leaves of the query tree independent of the internal boolean structure
-            // If further capabilities are required in the future the visitor and ComplexSearchQuery has to be adapted accordingly.
+            // This implementation collects all terms from the leaves of the query tree independent of the internal
+            // boolean structure
+            // If further capabilities are required in the future the visitor and ComplexSearchQuery has to be adapted
+            // accordingly.
             QueryVisitor visitor = QueryVisitor.termCollector(terms);
             luceneQuery.visit(visitor);
 

@@ -56,14 +56,16 @@ public class PdfXmpImporterTest {
     @Disabled("XMP reader prints warnings to the logger when parsing does not work")
     @Test
     public void importEncryptedFileReturnsError() throws URISyntaxException {
-        Path file = Path.of(PdfXmpImporterTest.class.getResource("/pdfs/encrypted.pdf").toURI());
+        Path file = Path.of(
+                PdfXmpImporterTest.class.getResource("/pdfs/encrypted.pdf").toURI());
         ParserResult result = importer.importDatabase(file);
         assertTrue(result.hasWarnings());
     }
 
     @Test
     public void testImportEntries() throws URISyntaxException {
-        Path file = Path.of(PdfXmpImporterTest.class.getResource("annotated.pdf").toURI());
+        Path file =
+                Path.of(PdfXmpImporterTest.class.getResource("annotated.pdf").toURI());
         List<BibEntry> bibEntries = importer.importDatabase(file).getDatabase().getEntries();
 
         assertEquals(1, bibEntries.size());
@@ -77,7 +79,8 @@ public class PdfXmpImporterTest {
 
     @Test
     public void testIsRecognizedFormat() throws IOException, URISyntaxException {
-        Path file = Path.of(PdfXmpImporterTest.class.getResource("annotated.pdf").toURI());
+        Path file =
+                Path.of(PdfXmpImporterTest.class.getResource("annotated.pdf").toURI());
         assertTrue(importer.isRecognizedFormat(file));
     }
 

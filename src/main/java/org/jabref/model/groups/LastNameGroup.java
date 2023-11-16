@@ -21,18 +21,19 @@ public class LastNameGroup extends KeywordGroup {
 
     static List<String> getAsLastNamesLatexFree(Field field, BibEntry bibEntry) {
         return bibEntry.getField(field).stream()
-                       .map(AuthorList::parse)
-                       .map(AuthorList::latexFree)
-                       .map(AuthorList::getAuthors)
-                       .flatMap(Collection::stream)
-                       .map(Author::getLast)
-                       .flatMap(Optional::stream)
-                       .collect(Collectors.toList());
+                .map(AuthorList::parse)
+                .map(AuthorList::latexFree)
+                .map(AuthorList::getAuthors)
+                .flatMap(Collection::stream)
+                .map(Author::getLast)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
     }
 
     @Override
     public boolean contains(BibEntry entry) {
-        return getAsLastNamesLatexFree(getSearchField(), entry).stream().anyMatch(name -> name.equals(getSearchExpression()));
+        return getAsLastNamesLatexFree(getSearchField(), entry).stream()
+                .anyMatch(name -> name.equals(getSearchExpression()));
     }
 
     @Override

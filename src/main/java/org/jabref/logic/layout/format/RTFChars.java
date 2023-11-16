@@ -47,8 +47,7 @@ public class RTFChars implements LayoutFormatter {
                 currentCommand = new StringBuilder();
             } else if (!incommand && ((c == '{') || (c == '}'))) {
                 // Swallow the brace.
-            } else if (Character.isLetter(c)
-                    || StringUtil.SPECIAL_COMMAND_CHARS.contains(String.valueOf(c))) {
+            } else if (Character.isLetter(c) || StringUtil.SPECIAL_COMMAND_CHARS.contains(String.valueOf(c))) {
                 escaped = false;
                 if (incommand) {
                     // Else we are in a command, and should not keep the letter.
@@ -120,7 +119,9 @@ public class RTFChars implements LayoutFormatter {
                         String command = currentCommand.toString();
                         // Then test if we are dealing with a italics or bold
                         // command. If so, handle.
-                        if ("em".equals(command) || "emph".equals(command) || "textit".equals(command)
+                        if ("em".equals(command)
+                                || "emph".equals(command)
+                                || "textit".equals(command)
                                 || "it".equals(command)) {
                             StringInt part = getPart(field, i, c == '{');
                             i += part.i;
@@ -156,8 +157,11 @@ public class RTFChars implements LayoutFormatter {
             }
         }
 
-        return sb.toString().replace("---", "{\\emdash}").replace("--", "{\\endash}").replace("``", "{\\ldblquote}")
-                 .replace("''", "{\\rdblquote}");
+        return sb.toString()
+                .replace("---", "{\\emdash}")
+                .replace("--", "{\\endash}")
+                .replace("``", "{\\ldblquote}")
+                .replace("''", "{\\rdblquote}");
     }
 
     /**

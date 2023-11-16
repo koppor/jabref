@@ -18,8 +18,8 @@ public class OOPreFormatter implements LayoutFormatter {
     public String format(String field) {
         int i;
         String finalResult = field.replaceAll("&|\\\\&", "&") // Replace & and \& with &
-                                  .replace("\\$", "&dollar;") // Replace \$ with &dollar;
-                                  .replaceAll("\\$([^$]*)\\$", "\\{$1\\}"); // Replace $...$ with {...} to simplify conversion
+                .replace("\\$", "&dollar;") // Replace \$ with &dollar;
+                .replaceAll("\\$([^$]*)\\$", "\\{$1\\}"); // Replace $...$ with {...} to simplify conversion
 
         StringBuilder sb = new StringBuilder();
         StringBuilder currentCommand = null;
@@ -45,7 +45,8 @@ public class OOPreFormatter implements LayoutFormatter {
                 currentCommand = new StringBuilder();
             } else if (!incommand && ((c == '{') || (c == '}'))) {
                 // Swallow braces, necessary for replacing encoded characters
-            } else if (Character.isLetter(c) || (c == '%')
+            } else if (Character.isLetter(c)
+                    || (c == '%')
                     || StringUtil.SPECIAL_COMMAND_CHARS.contains(String.valueOf(c))) {
                 escaped = false;
 
@@ -86,7 +87,8 @@ public class OOPreFormatter implements LayoutFormatter {
                         if ((i + 1) == finalResult.length()) {
                             String command = currentCommand.toString();
                             String result = OOPreFormatter.CHARS.get(command);
-                            // If found, then use translated version. If not, then keep the text of the parameter intact.
+                            // If found, then use translated version. If not, then keep the text of the parameter
+                            // intact.
                             sb.append(Objects.requireNonNullElse(result, command));
                         }
                     }
@@ -104,7 +106,13 @@ public class OOPreFormatter implements LayoutFormatter {
                     if (!tag.isEmpty()) {
                         String part = StringUtil.getPart(finalResult, i, true);
                         i += part.length();
-                        sb.append('<').append(tag).append('>').append(part).append("</").append(tag).append('>');
+                        sb.append('<')
+                                .append(tag)
+                                .append('>')
+                                .append(part)
+                                .append("</")
+                                .append(tag)
+                                .append('>');
                     } else if (c == '{') {
                         String part = StringUtil.getPart(finalResult, i, true);
                         i += part.length();
@@ -147,17 +155,18 @@ public class OOPreFormatter implements LayoutFormatter {
     private String getHTMLTag(String latexCommand) {
         String result = "";
         switch (latexCommand) {
-            // Should really separate between emphasized and italic but since in later stages both are converted to italic...
-            case "textit", "it", "emph", "em" -> result = "i";  // Italic
-            case "textbf", "bf" -> result = "b";                // Bold font
-            case "textsc" -> result = "smallcaps";              // Small caps
-                                                                // Not a proper HTML tag, but used here for convenience
-            case "underline" -> result = "u";                   // Underline
-            case "sout" -> result = "s";                        // Strikeout
-                                                                // sout is the "standard" command, although it is actually based on the package ulem
-            case "texttt" -> result = "tt";                     // Monospace font
-            case "textsuperscript" -> result = "sup";           // Superscript
-            case "textsubscript" -> result = "sub";             // Subscript
+                // Should really separate between emphasized and italic but since in later stages both are converted to
+                // italic...
+            case "textit", "it", "emph", "em" -> result = "i"; // Italic
+            case "textbf", "bf" -> result = "b"; // Bold font
+            case "textsc" -> result = "smallcaps"; // Small caps
+                // Not a proper HTML tag, but used here for convenience
+            case "underline" -> result = "u"; // Underline
+            case "sout" -> result = "s"; // Strikeout
+                // sout is the "standard" command, although it is actually based on the package ulem
+            case "texttt" -> result = "tt"; // Monospace font
+            case "textsuperscript" -> result = "sup"; // Superscript
+            case "textsubscript" -> result = "sub"; // Subscript
         }
         return result;
     }

@@ -23,8 +23,7 @@ class Codec52 {
             // citationType is always "1" "2" or "3"
             Pattern.compile(BIB_CITATION + "(\\d*)_([123])_(.*)");
 
-    private Codec52() {
-    }
+    private Codec52() {}
 
     /**
      * This is what we get back from parsing a refMarkName.
@@ -83,9 +82,8 @@ class Codec52 {
      *                     <p>
      *                     Or the first unused in this series, after removals.
      */
-    public static String getUniqueMarkName(Set<String> usedNames,
-                                           List<String> citationKeys,
-                                           CitationType citationType) {
+    public static String getUniqueMarkName(
+            Set<String> usedNames, List<String> citationKeys, CitationType citationType) {
 
         String citationKeysPart = String.join(",", citationKeys);
 
@@ -130,8 +128,6 @@ class Codec52 {
      * @param names The list to be filtered.
      */
     public static List<String> filterIsJabRefReferenceMarkName(List<String> names) {
-        return names.stream()
-                     .filter(Codec52::isJabRefReferenceMarkName)
-                     .collect(Collectors.toList());
+        return names.stream().filter(Codec52::isJabRefReferenceMarkName).collect(Collectors.toList());
     }
 }

@@ -54,7 +54,8 @@ public class TrustStoreManager {
 
         try {
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X509");
-            store.setCertificateEntry(alias, certificateFactory.generateCertificate(new FileInputStream(certPath.toFile())));
+            store.setCertificateEntry(
+                    alias, certificateFactory.generateCertificate(new FileInputStream(certPath.toFile())));
         } catch (KeyStoreException | CertificateException | IOException e) {
             LOGGER.warn("Error while adding a new certificate to the truststore: {}", alias, e);
         }
@@ -122,11 +123,11 @@ public class TrustStoreManager {
 
     public List<SSLCertificate> getCustomCertificates() {
         return aliases().stream()
-                        .filter(this::isCustomCertificate)
-                        .map(this::getCertificate)
-                        .map(SSLCertificate::fromX509)
-                        .flatMap(Optional::stream)
-                        .collect(Collectors.toList());
+                .filter(this::isCustomCertificate)
+                .map(this::getCertificate)
+                .map(SSLCertificate::fromX509)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
     }
 
     public X509Certificate getCertificate(String alias) {
@@ -148,7 +149,9 @@ public class TrustStoreManager {
         try {
             LOGGER.debug("Trust store path: {}", storePath.toAbsolutePath());
             if (Files.notExists(storePath)) {
-                Path storeResourcePath = Path.of(TrustStoreManager.class.getResource("/ssl/truststore.jks").toURI());
+                Path storeResourcePath = Path.of(TrustStoreManager.class
+                        .getResource("/ssl/truststore.jks")
+                        .toURI());
                 Files.createDirectories(storePath.getParent());
                 Files.copy(storeResourcePath, storePath);
             }
@@ -166,8 +169,9 @@ public class TrustStoreManager {
     }
 
     // based on https://stackoverflow.com/a/62586564/3450689
-    private static void configureTrustStore(Path myStorePath) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException,
-        CertificateException, IOException {
+    private static void configureTrustStore(Path myStorePath)
+            throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, CertificateException,
+                    IOException {
         X509TrustManager jreTrustManager = getJreTrustManager();
         X509TrustManager myTrustManager = getJabRefTrustManager(myStorePath);
 
@@ -179,8 +183,8 @@ public class TrustStoreManager {
         return findDefaultTrustManager(null);
     }
 
-    private static X509TrustManager getJabRefTrustManager(Path myStorePath) throws KeyStoreException, IOException,
-        NoSuchAlgorithmException, CertificateException {
+    private static X509TrustManager getJabRefTrustManager(Path myStorePath)
+            throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
         // Adapt to load your keystore
         try (InputStream myKeys = Files.newInputStream(myStorePath)) {
             KeyStore myTrustStore = KeyStore.getInstance("jks");
@@ -191,7 +195,7 @@ public class TrustStoreManager {
     }
 
     private static X509TrustManager findDefaultTrustManager(KeyStore keyStore)
-        throws NoSuchAlgorithmException, KeyStoreException {
+            throws NoSuchAlgorithmException, KeyStoreException {
         TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init(keyStore); // If keyStore is null, tmf will be initialized with the default trust store
 
@@ -203,8 +207,8 @@ public class TrustStoreManager {
         return null;
     }
 
-    private static X509TrustManager createMergedTrustManager(X509TrustManager jreTrustManager,
-                                                             X509TrustManager customTrustManager) {
+    private static X509TrustManager createMergedTrustManager(
+            X509TrustManager jreTrustManager, X509TrustManager customTrustManager) {
         return new X509TrustManager() {
             @Override
             public X509Certificate[] getAcceptedIssuers() {
@@ -233,7 +237,7 @@ public class TrustStoreManager {
     }
 
     private static void setSystemTrustManager(X509TrustManager mergedTrustManager)
-        throws NoSuchAlgorithmException, KeyManagementException {
+            throws NoSuchAlgorithmException, KeyManagementException {
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, new TrustManager[] {mergedTrustManager}, null);
 

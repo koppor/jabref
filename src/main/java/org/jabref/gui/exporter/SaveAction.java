@@ -13,7 +13,11 @@ import org.jabref.preferences.PreferencesService;
  */
 public class SaveAction extends SimpleCommand {
 
-    public enum SaveMethod { SAVE, SAVE_AS, SAVE_SELECTED }
+    public enum SaveMethod {
+        SAVE,
+        SAVE_AS,
+        SAVE_SELECTED
+    }
 
     private final SaveMethod saveMethod;
     private final LibraryTabContainer tabContainer;
@@ -21,11 +25,12 @@ public class SaveAction extends SimpleCommand {
     private final DialogService dialogService;
     private final PreferencesService preferencesService;
 
-    public SaveAction(SaveMethod saveMethod,
-                      LibraryTabContainer tabContainer,
-                      DialogService dialogService,
-                      PreferencesService preferencesService,
-                      StateManager stateManager) {
+    public SaveAction(
+            SaveMethod saveMethod,
+            LibraryTabContainer tabContainer,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            StateManager stateManager) {
         this.saveMethod = saveMethod;
         this.tabContainer = tabContainer;
         this.dialogService = dialogService;
@@ -41,10 +46,7 @@ public class SaveAction extends SimpleCommand {
     @Override
     public void execute() {
         SaveDatabaseAction saveDatabaseAction = new SaveDatabaseAction(
-                tabContainer.getCurrentLibraryTab(),
-                dialogService,
-                preferencesService,
-                Globals.entryTypesManager);
+                tabContainer.getCurrentLibraryTab(), dialogService, preferencesService, Globals.entryTypesManager);
 
         switch (saveMethod) {
             case SAVE -> saveDatabaseAction.save();

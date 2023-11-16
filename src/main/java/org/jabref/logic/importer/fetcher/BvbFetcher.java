@@ -34,7 +34,9 @@ public class BvbFetcher implements SearchBasedParserFetcher {
         uriBuilder.addParameter("version", "1.1");
         uriBuilder.addParameter("recordSchema", "marcxml");
         uriBuilder.addParameter("operation", "searchRetrieve");
-        uriBuilder.addParameter("query", new DefaultQueryTransformer().transformLuceneQuery(query).orElse(""));
+        uriBuilder.addParameter(
+                "query",
+                new DefaultQueryTransformer().transformLuceneQuery(query).orElse(""));
         uriBuilder.addParameter("maximumRecords", "30");
         return uriBuilder.build().toURL();
     }

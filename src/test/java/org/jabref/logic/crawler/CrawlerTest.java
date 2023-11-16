@@ -39,6 +39,7 @@ import static org.mockito.Mockito.when;
 class CrawlerTest {
     @TempDir
     Path tempRepositoryDirectory;
+
     ImportFormatPreferences importFormatPreferences;
     ImporterPreferences importerPreferences;
     SaveConfiguration saveConfiguration;
@@ -73,7 +74,8 @@ class CrawlerTest {
         saveConfiguration = mock(SaveConfiguration.class, Answers.RETURNS_DEEP_STUBS);
         when(saveConfiguration.getSaveOrder()).thenReturn(SaveOrder.getDefaultSaveOrder());
         when(importerPreferences.getApiKeys()).thenReturn(FXCollections.emptyObservableSet());
-        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
+        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator())
+                .thenReturn(',');
 
         when(preferencesService.getCitationKeyPatternPreferences()).thenReturn(citationKeyPatternPreferences);
 
@@ -81,16 +83,10 @@ class CrawlerTest {
     }
 
     private void setUpRepository() throws Exception {
-        Git git = Git.init()
-                     .setDirectory(tempRepositoryDirectory.toFile())
-                     .call();
+        Git git = Git.init().setDirectory(tempRepositoryDirectory.toFile()).call();
         setUpTestStudyDefinitionFile();
-        git.add()
-           .addFilepattern(".")
-           .call();
-        git.commit()
-           .setMessage("Initialize")
-           .call();
+        git.add().addFilepattern(".").call();
+        git.commit().setMessage("Initialize").call();
         git.close();
     }
 
@@ -102,7 +98,8 @@ class CrawlerTest {
 
     @Test
     public void testWhetherAllFilesAreCreated() throws Exception {
-        Crawler testCrawler = new Crawler(getPathToStudyDefinitionFile(),
+        Crawler testCrawler = new Crawler(
+                getPathToStudyDefinitionFile(),
                 gitHandler,
                 preferencesService,
                 entryTypesManager,
@@ -111,14 +108,16 @@ class CrawlerTest {
         testCrawler.performCrawl();
 
         assertTrue(Files.exists(Path.of(tempRepositoryDirectory.toString(), hashCodeQuantum + " - Quantum")));
-        assertTrue(Files.exists(Path.of(tempRepositoryDirectory.toString(), hashCodeCloudComputing + " - Cloud Computing")));
+        assertTrue(Files.exists(
+                Path.of(tempRepositoryDirectory.toString(), hashCodeCloudComputing + " - Cloud Computing")));
 
         List<String> filesToAssert = List.of("ArXiv.bib", "Springer.bib", "result.bib", "Medline_PubMed.bib");
-        filesToAssert.forEach(
-                fileName -> {
-                    assertTrue(Files.exists(Path.of(tempRepositoryDirectory.toString(), hashCodeQuantum + " - Quantum", fileName)));
-                    assertTrue(Files.exists(Path.of(tempRepositoryDirectory.toString(), hashCodeCloudComputing + " - Cloud Computing", fileName)));
-                });
+        filesToAssert.forEach(fileName -> {
+            assertTrue(Files.exists(
+                    Path.of(tempRepositoryDirectory.toString(), hashCodeQuantum + " - Quantum", fileName)));
+            assertTrue(Files.exists(Path.of(
+                    tempRepositoryDirectory.toString(), hashCodeCloudComputing + " - Cloud Computing", fileName)));
+        });
         assertTrue(Files.exists(Path.of(tempRepositoryDirectory.toString(), "studyResult.bib")));
     }
 

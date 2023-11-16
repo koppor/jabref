@@ -18,13 +18,14 @@ public class CitationKeyEditorViewModel extends AbstractEditorViewModel {
     private final UndoManager undoManager;
     private final DialogService dialogService;
 
-    public CitationKeyEditorViewModel(Field field,
-                                      SuggestionProvider<?> suggestionProvider,
-                                      FieldCheckers fieldCheckers,
-                                      PreferencesService preferencesService,
-                                      BibDatabaseContext databaseContext,
-                                      UndoManager undoManager,
-                                      DialogService dialogService) {
+    public CitationKeyEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            PreferencesService preferencesService,
+            BibDatabaseContext databaseContext,
+            UndoManager undoManager,
+            DialogService dialogService) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
         this.preferencesService = preferencesService;
         this.databaseContext = databaseContext;
@@ -33,6 +34,7 @@ public class CitationKeyEditorViewModel extends AbstractEditorViewModel {
     }
 
     public Command getGenerateCiteKeyCommand() {
-        return new GenerateCitationKeySingleAction(entry, databaseContext, dialogService, preferencesService, undoManager);
+        return new GenerateCitationKeySingleAction(
+                entry, databaseContext, dialogService, preferencesService, undoManager);
     }
 }

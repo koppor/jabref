@@ -34,17 +34,19 @@ public class LinkedFilesEditDialogViewModel extends AbstractViewModel {
     private static final Pattern REMOTE_LINK_PATTERN = Pattern.compile("[a-z]+://.*");
     private final StringProperty link = new SimpleStringProperty("");
     private final StringProperty description = new SimpleStringProperty("");
-    private final ListProperty<ExternalFileType> allExternalFileTypes = new SimpleListProperty<>(FXCollections.emptyObservableList());
+    private final ListProperty<ExternalFileType> allExternalFileTypes =
+            new SimpleListProperty<>(FXCollections.emptyObservableList());
     private final ObjectProperty<ExternalFileType> selectedExternalFileType = new SimpleObjectProperty<>();
     private final ObservableOptionalValue<ExternalFileType> monadicSelectedExternalFileType;
     private final BibDatabaseContext database;
     private final DialogService dialogService;
     private final FilePreferences filePreferences;
 
-    public LinkedFilesEditDialogViewModel(LinkedFile linkedFile,
-                                          BibDatabaseContext database,
-                                          DialogService dialogService,
-                                          FilePreferences filePreferences) {
+    public LinkedFilesEditDialogViewModel(
+            LinkedFile linkedFile,
+            BibDatabaseContext database,
+            DialogService dialogService,
+            FilePreferences filePreferences) {
         this.database = database;
         this.dialogService = dialogService;
         this.filePreferences = filePreferences;
@@ -59,13 +61,13 @@ public class LinkedFilesEditDialogViewModel extends AbstractViewModel {
             // Check if this looks like a remote link:
             if (REMOTE_LINK_PATTERN.matcher(link).matches()) {
                 ExternalFileTypes.getExternalFileTypeByExt("html", filePreferences)
-                                 .ifPresent(selectedExternalFileType::setValue);
+                        .ifPresent(selectedExternalFileType::setValue);
             }
 
             // Try to guess the file type:
             String theLink = link.trim();
             ExternalFileTypes.getExternalFileTypeForName(theLink, filePreferences)
-                             .ifPresent(selectedExternalFileType::setValue);
+                    .ifPresent(selectedExternalFileType::setValue);
         }
     }
 
@@ -103,7 +105,8 @@ public class LinkedFilesEditDialogViewModel extends AbstractViewModel {
         selectedExternalFileType.setValue(null);
 
         // See what is a reasonable selection for the type combobox:
-        Optional<ExternalFileType> fileType = ExternalFileTypes.getExternalFileTypeByLinkedFile(linkedFile, false, filePreferences);
+        Optional<ExternalFileType> fileType =
+                ExternalFileTypes.getExternalFileTypeByLinkedFile(linkedFile, false, filePreferences);
         if (fileType.isPresent() && !(fileType.get() instanceof UnknownExternalFileType)) {
             selectedExternalFileType.setValue(fileType.get());
         } else if ((linkedFile.getLink() != null) && (!linkedFile.getLink().isEmpty())) {
@@ -128,7 +131,10 @@ public class LinkedFilesEditDialogViewModel extends AbstractViewModel {
     }
 
     public LinkedFile getNewLinkedFile() {
-        String fileType = monadicSelectedExternalFileType.getValue().map(ExternalFileType::toString).orElse("");
+        String fileType = monadicSelectedExternalFileType
+                .getValue()
+                .map(ExternalFileType::toString)
+                .orElse("");
 
         if (LinkedFile.isOnlineLink(link.getValue())) {
             try {

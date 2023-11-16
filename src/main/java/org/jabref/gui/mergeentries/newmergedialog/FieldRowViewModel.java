@@ -60,7 +60,12 @@ public class FieldRowViewModel {
 
     private final CompoundEdit fieldsMergedEdit = new CompoundEdit();
 
-    public FieldRowViewModel(Field field, BibEntry leftEntry, BibEntry rightEntry, BibEntry mergedEntry, FieldMergerFactory fieldMergerFactory) {
+    public FieldRowViewModel(
+            Field field,
+            BibEntry leftEntry,
+            BibEntry rightEntry,
+            BibEntry mergedEntry,
+            FieldMergerFactory fieldMergerFactory) {
         this.field = field;
         this.leftEntry = leftEntry;
         this.rightEntry = rightEntry;
@@ -85,7 +90,8 @@ public class FieldRowViewModel {
             }
         });
 
-        hasEqualLeftAndRight = Bindings.createBooleanBinding(this::hasEqualLeftAndRightValues, leftFieldValueProperty(), rightFieldValueProperty());
+        hasEqualLeftAndRight = Bindings.createBooleanBinding(
+                this::hasEqualLeftAndRightValues, leftFieldValueProperty(), rightFieldValueProperty());
 
         selectNonEmptyValue();
 

@@ -67,19 +67,26 @@ public class TimeStampToModificationDate implements CleanupJob {
     public List<FieldChange> cleanup(BibEntry entry) {
         // Query entries for their timestamp field entries
         if (entry.getField(timeStampField).isPresent()) {
-            Optional<String> formattedTimeStamp = formatTimeStamp(entry.getField(timeStampField).get());
+            Optional<String> formattedTimeStamp =
+                    formatTimeStamp(entry.getField(timeStampField).get());
             if (formattedTimeStamp.isEmpty()) {
                 // In case the timestamp could not be parsed, do nothing to not lose data
                 return Collections.emptyList();
             }
-            // Setting the EventSource is necessary to circumvent the update of the modification date during timestamp migration
+            // Setting the EventSource is necessary to circumvent the update of the modification date during timestamp
+            // migration
             entry.clearField(timeStampField, EntriesEventSource.CLEANUP_TIMESTAMP);
             List<FieldChange> changeList = new ArrayList<>();
             FieldChange changeTo;
             // Add removal of timestamp field
             changeList.add(new FieldChange(entry, StandardField.TIMESTAMP, formattedTimeStamp.get(), ""));
-            entry.setField(StandardField.MODIFICATIONDATE, formattedTimeStamp.get(), EntriesEventSource.CLEANUP_TIMESTAMP);
-            changeTo = new FieldChange(entry, StandardField.MODIFICATIONDATE, entry.getField(StandardField.MODIFICATIONDATE).orElse(""), formattedTimeStamp.get());
+            entry.setField(
+                    StandardField.MODIFICATIONDATE, formattedTimeStamp.get(), EntriesEventSource.CLEANUP_TIMESTAMP);
+            changeTo = new FieldChange(
+                    entry,
+                    StandardField.MODIFICATIONDATE,
+                    entry.getField(StandardField.MODIFICATIONDATE).orElse(""),
+                    formattedTimeStamp.get());
             changeList.add(changeTo);
             return changeList;
         }

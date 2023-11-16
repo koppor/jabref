@@ -62,8 +62,13 @@ public class GrammarBasedSearchRule implements SearchRule {
         public static final ThrowingErrorListener INSTANCE = new ThrowingErrorListener();
 
         @Override
-        public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol,
-                                int line, int charPositionInLine, String msg, RecognitionException e)
+        public void syntaxError(
+                Recognizer<?, ?> recognizer,
+                Object offendingSymbol,
+                int line,
+                int charPositionInLine,
+                String msg,
+                RecognitionException e)
                 throws ParseCancellationException {
             throw new ParseCancellationException("line " + line + ":" + charPositionInLine + " " + msg);
         }
@@ -125,7 +130,9 @@ public class GrammarBasedSearchRule implements SearchRule {
 
     @Override
     public PdfSearchResults getFulltextResults(String query, BibEntry bibEntry) {
-        return new PdfSearchResults(searchResults.stream().filter(searchResult -> searchResult.isResultFor(bibEntry)).collect(Collectors.toList()));
+        return new PdfSearchResults(searchResults.stream()
+                .filter(searchResult -> searchResult.isResultFor(bibEntry))
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -144,7 +151,9 @@ public class GrammarBasedSearchRule implements SearchRule {
     }
 
     public enum ComparisonOperator {
-        EXACT, CONTAINS, DOES_NOT_CONTAIN;
+        EXACT,
+        CONTAINS,
+        DOES_NOT_CONTAIN;
 
         public static ComparisonOperator build(String value) {
             if ("CONTAINS".equalsIgnoreCase(value) || "=".equals(value)) {
@@ -167,8 +176,16 @@ public class GrammarBasedSearchRule implements SearchRule {
             this.operator = operator;
 
             int option = searchFlags.contains(SearchRules.SearchFlags.CASE_SENSITIVE) ? 0 : Pattern.CASE_INSENSITIVE;
-            this.fieldPattern = Pattern.compile(searchFlags.contains(SearchRules.SearchFlags.REGULAR_EXPRESSION) ? StringUtil.stripAccents(field) : "\\Q" + StringUtil.stripAccents(field) + "\\E", option);
-            this.valuePattern = Pattern.compile(searchFlags.contains(SearchRules.SearchFlags.REGULAR_EXPRESSION) ? StringUtil.stripAccents(value) : "\\Q" + StringUtil.stripAccents(value) + "\\E", option);
+            this.fieldPattern = Pattern.compile(
+                    searchFlags.contains(SearchRules.SearchFlags.REGULAR_EXPRESSION)
+                            ? StringUtil.stripAccents(field)
+                            : "\\Q" + StringUtil.stripAccents(field) + "\\E",
+                    option);
+            this.valuePattern = Pattern.compile(
+                    searchFlags.contains(SearchRules.SearchFlags.REGULAR_EXPRESSION)
+                            ? StringUtil.stripAccents(value)
+                            : "\\Q" + StringUtil.stripAccents(value) + "\\E",
+                    option);
         }
 
         public boolean compare(BibEntry entry) {
@@ -255,7 +272,8 @@ public class GrammarBasedSearchRule implements SearchRule {
 
             Optional<SearchParser.NameContext> fieldDescriptor = Optional.ofNullable(context.left);
             if (fieldDescriptor.isPresent()) {
-                return comparison(fieldDescriptor.get().getText(), ComparisonOperator.build(context.operator.getText()), right);
+                return comparison(
+                        fieldDescriptor.get().getText(), ComparisonOperator.build(context.operator.getText()), right);
             } else {
                 return SearchRules.getSearchRule(searchFlags).applyRule(right, entry);
             }

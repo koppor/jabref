@@ -23,12 +23,12 @@ public class ChangeScanner {
 
     private final DatabaseChangeResolverFactory databaseChangeResolverFactory;
 
-    public ChangeScanner(BibDatabaseContext database,
-                         DialogService dialogService,
-                         PreferencesService preferencesService) {
+    public ChangeScanner(
+            BibDatabaseContext database, DialogService dialogService, PreferencesService preferencesService) {
         this.database = database;
         this.preferencesService = preferencesService;
-        this.databaseChangeResolverFactory = new DatabaseChangeResolverFactory(dialogService, database, preferencesService);
+        this.databaseChangeResolverFactory =
+                new DatabaseChangeResolverFactory(dialogService, database, preferencesService);
     }
 
     public List<DatabaseChange> scanForChanges() {
@@ -40,7 +40,8 @@ public class ChangeScanner {
             // Parse the modified file
             // Important: apply all post-load actions
             ImportFormatPreferences importFormatPreferences = preferencesService.getImportFormatPreferences();
-            ParserResult result = OpenDatabase.loadDatabase(database.getDatabasePath().get(), importFormatPreferences, new DummyFileUpdateMonitor());
+            ParserResult result = OpenDatabase.loadDatabase(
+                    database.getDatabasePath().get(), importFormatPreferences, new DummyFileUpdateMonitor());
             BibDatabaseContext databaseOnDisk = result.getDatabaseContext();
 
             return DatabaseChangeList.compareAndGetChanges(database, databaseOnDisk, databaseChangeResolverFactory);

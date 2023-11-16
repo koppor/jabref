@@ -60,7 +60,13 @@ public abstract class Exporter {
      */
     public abstract void export(BibDatabaseContext databaseContext, Path file, List<BibEntry> entries) throws Exception;
 
-    public void export(BibDatabaseContext databaseContext, Path file, List<BibEntry> entries, List<Path> fileDirForDatabase, JournalAbbreviationRepository abbreviationRepository) throws Exception {
+    public void export(
+            BibDatabaseContext databaseContext,
+            Path file,
+            List<BibEntry> entries,
+            List<Path> fileDirForDatabase,
+            JournalAbbreviationRepository abbreviationRepository)
+            throws Exception {
         export(databaseContext, file, entries);
     }
 
@@ -75,18 +81,25 @@ public abstract class Exporter {
      * @return whether any file was written on
      * @throws Exception if the writing fails
      */
-    public boolean exportToAllFilesOfEntry(BibDatabaseContext databaseContext,
-                                           FilePreferences filePreferences,
-                                           BibEntry entryToWriteOn,
-                                           List<BibEntry> entriesToWrite,
-                                           JournalAbbreviationRepository abbreviationRepository) throws Exception {
+    public boolean exportToAllFilesOfEntry(
+            BibDatabaseContext databaseContext,
+            FilePreferences filePreferences,
+            BibEntry entryToWriteOn,
+            List<BibEntry> entriesToWrite,
+            JournalAbbreviationRepository abbreviationRepository)
+            throws Exception {
         boolean writtenToAFile = false;
 
         for (LinkedFile file : entryToWriteOn.getFiles()) {
             if (file.getFileType().equals(fileType.getName())) {
                 Optional<Path> filePath = file.findIn(databaseContext, filePreferences);
                 if (filePath.isPresent()) {
-                    export(databaseContext, filePath.get(), entriesToWrite, Collections.emptyList(), abbreviationRepository);
+                    export(
+                            databaseContext,
+                            filePath.get(),
+                            entriesToWrite,
+                            Collections.emptyList(),
+                            abbreviationRepository);
                     writtenToAFile = true;
                 }
             }
@@ -108,10 +121,12 @@ public abstract class Exporter {
      * @return whether the file was written on at least once
      * @throws Exception if the writing fails
      */
-    public boolean exportToFileByPath(BibDatabaseContext databaseContext,
-                                      FilePreferences filePreferences,
-                                      Path filePath,
-                                      JournalAbbreviationRepository abbreviationRepository) throws Exception {
+    public boolean exportToFileByPath(
+            BibDatabaseContext databaseContext,
+            FilePreferences filePreferences,
+            Path filePath,
+            JournalAbbreviationRepository abbreviationRepository)
+            throws Exception {
         if (!Files.exists(filePath)) {
             return false;
         }
@@ -119,9 +134,17 @@ public abstract class Exporter {
         for (BibEntry entry : databaseContext.getEntries()) {
             for (LinkedFile linkedFile : entry.getFiles()) {
                 if (linkedFile.getFileType().equals(fileType.getName())) {
-                    Optional<Path> linkedFilePath = linkedFile.findIn(databaseContext.getFileDirectories(filePreferences));
-                    if (linkedFilePath.isPresent() && Files.exists(linkedFilePath.get()) && Files.isSameFile(linkedFilePath.get(), filePath)) {
-                        export(databaseContext, filePath, List.of(entry), Collections.emptyList(), abbreviationRepository);
+                    Optional<Path> linkedFilePath =
+                            linkedFile.findIn(databaseContext.getFileDirectories(filePreferences));
+                    if (linkedFilePath.isPresent()
+                            && Files.exists(linkedFilePath.get())
+                            && Files.isSameFile(linkedFilePath.get(), filePath)) {
+                        export(
+                                databaseContext,
+                                filePath,
+                                List.of(entry),
+                                Collections.emptyList(),
+                                abbreviationRepository);
                         writtenABibEntry = true;
                     }
                 }

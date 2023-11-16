@@ -19,9 +19,10 @@ class StudyCatalogToFetcherConverter {
     private final ImportFormatPreferences importFormatPreferences;
     private final ImporterPreferences importerPreferences;
 
-    public StudyCatalogToFetcherConverter(List<StudyDatabase> libraryEntries,
-                                          ImportFormatPreferences importFormatPreferences,
-                                          ImporterPreferences importerPreferences) {
+    public StudyCatalogToFetcherConverter(
+            List<StudyDatabase> libraryEntries,
+            ImportFormatPreferences importFormatPreferences,
+            ImporterPreferences importerPreferences) {
         this.libraryEntries = libraryEntries;
         this.importFormatPreferences = importFormatPreferences;
         this.importerPreferences = importerPreferences;
@@ -46,9 +47,9 @@ class StudyCatalogToFetcherConverter {
      */
     private List<SearchBasedFetcher> getFetchersFromLibraryEntries(List<StudyDatabase> libraryEntries) {
         return libraryEntries.parallelStream()
-                             .map(this::createFetcherFromLibraryEntry)
-                             .filter(Objects::nonNull)
-                             .collect(Collectors.toList());
+                .map(this::createFetcherFromLibraryEntry)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -58,11 +59,12 @@ class StudyCatalogToFetcherConverter {
      * @return An instance of the fetcher defined by the library entry.
      */
     private SearchBasedFetcher createFetcherFromLibraryEntry(StudyDatabase studyDatabase) {
-        Set<SearchBasedFetcher> searchBasedFetchers = WebFetchers.getSearchBasedFetchers(importFormatPreferences, importerPreferences);
+        Set<SearchBasedFetcher> searchBasedFetchers =
+                WebFetchers.getSearchBasedFetchers(importFormatPreferences, importerPreferences);
         String libraryNameFromFetcher = studyDatabase.getName();
         return searchBasedFetchers.stream()
-                                  .filter(searchBasedFetcher -> searchBasedFetcher.getName().equalsIgnoreCase(libraryNameFromFetcher))
-                                  .findAny()
-                                  .orElse(null);
+                .filter(searchBasedFetcher -> searchBasedFetcher.getName().equalsIgnoreCase(libraryNameFromFetcher))
+                .findAny()
+                .orElse(null);
     }
 }

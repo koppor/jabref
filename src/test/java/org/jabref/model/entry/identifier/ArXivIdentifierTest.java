@@ -168,6 +168,8 @@ class ArXivIdentifierTest {
     @Test
     public void constructCorrectURLForEprint() throws Exception {
         Optional<ArXivIdentifier> parsed = ArXivIdentifier.parse("0706.0001v1");
-        assertEquals(Optional.of(new URI("https://arxiv.org/abs/0706.0001v1")), parsed.get().getExternalURI());
+        assertEquals(
+                Optional.of(new URI("https://arxiv.org/abs/0706.0001v1")),
+                parsed.get().getExternalURI());
     }
 }

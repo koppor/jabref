@@ -66,12 +66,14 @@ class SaveDatabaseActionTest {
         when(preferences.getFilePreferences()).thenReturn(filePreferences);
         when(preferences.getExportPreferences()).thenReturn(mock(ExportPreferences.class));
         when(jabRefFrame.getDialogService()).thenReturn(dialogService);
-        saveDatabaseAction = spy(new SaveDatabaseAction(libraryTab, dialogService, preferences, mock(BibEntryTypesManager.class)));
+        saveDatabaseAction =
+                spy(new SaveDatabaseAction(libraryTab, dialogService, preferences, mock(BibEntryTypesManager.class)));
     }
 
     @Test
     public void saveAsShouldSetWorkingDirectory() {
-        when(dialogService.showFileSaveDialog(any(FileDialogConfiguration.class))).thenReturn(Optional.of(file));
+        when(dialogService.showFileSaveDialog(any(FileDialogConfiguration.class)))
+                .thenReturn(Optional.of(file));
         doReturn(true).when(saveDatabaseAction).saveAs(any());
 
         saveDatabaseAction.saveAs();
@@ -81,7 +83,8 @@ class SaveDatabaseActionTest {
 
     @Test
     public void saveAsShouldNotSetWorkingDirectoryIfNotSelected() {
-        when(dialogService.showFileSaveDialog(any(FileDialogConfiguration.class))).thenReturn(Optional.empty());
+        when(dialogService.showFileSaveDialog(any(FileDialogConfiguration.class)))
+                .thenReturn(Optional.empty());
         doReturn(false).when(saveDatabaseAction).saveAs(any());
 
         saveDatabaseAction.saveAs();
@@ -112,7 +115,8 @@ class SaveDatabaseActionTest {
         dbContext = mock(BibDatabaseContext.class);
         libraryTab = mock(LibraryTab.class);
         MetaData metaData = mock(MetaData.class);
-        when(saveConfiguration.withSaveType(any(BibDatabaseWriter.SaveType.class))).thenReturn(saveConfiguration);
+        when(saveConfiguration.withSaveType(any(BibDatabaseWriter.SaveType.class)))
+                .thenReturn(saveConfiguration);
         when(saveConfiguration.getSaveOrder()).thenReturn(SaveOrder.getDefaultSaveOrder());
         GlobalCitationKeyPattern emptyGlobalCitationKeyPattern = GlobalCitationKeyPattern.fromPattern("");
         when(metaData.getCiteKeyPattern(any(GlobalCitationKeyPattern.class))).thenReturn(emptyGlobalCitationKeyPattern);
@@ -131,7 +135,8 @@ class SaveDatabaseActionTest {
         when(libraryTab.getBibDatabaseContext()).thenReturn(dbContext);
         when(libraryTab.getUndoManager()).thenReturn(mock(CountingUndoManager.class));
         when(libraryTab.getBibDatabaseContext()).thenReturn(dbContext);
-        saveDatabaseAction = new SaveDatabaseAction(libraryTab, dialogService, preferences, mock(BibEntryTypesManager.class));
+        saveDatabaseAction =
+                new SaveDatabaseAction(libraryTab, dialogService, preferences, mock(BibEntryTypesManager.class));
         return saveDatabaseAction;
     }
 
@@ -146,9 +151,11 @@ class SaveDatabaseActionTest {
         saveDatabaseAction = createSaveDatabaseActionForBibDatabase(database);
         saveDatabaseAction.save();
 
-        assertEquals(database
-                        .getEntries().stream()
-                        .map(BibEntry::hasChanged).filter(changed -> false).collect(Collectors.toList()),
+        assertEquals(
+                database.getEntries().stream()
+                        .map(BibEntry::hasChanged)
+                        .filter(changed -> false)
+                        .collect(Collectors.toList()),
                 Collections.emptyList());
     }
 

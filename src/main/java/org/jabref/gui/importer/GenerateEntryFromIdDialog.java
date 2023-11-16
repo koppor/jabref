@@ -20,11 +20,17 @@ import org.controlsfx.control.PopOver;
 
 public class GenerateEntryFromIdDialog {
 
-    @FXML DialogPane dialogPane;
-    @FXML TextField idTextField;
-    @FXML Button generateButton;
+    @FXML
+    DialogPane dialogPane;
 
-    @Inject private FileUpdateMonitor fileUpdateMonitor;
+    @FXML
+    TextField idTextField;
+
+    @FXML
+    Button generateButton;
+
+    @Inject
+    private FileUpdateMonitor fileUpdateMonitor;
 
     private final PreferencesService preferencesService;
     private final DialogService dialogService;
@@ -34,7 +40,12 @@ public class GenerateEntryFromIdDialog {
 
     private PopOver entryFromIdPopOver;
 
-    public GenerateEntryFromIdDialog(LibraryTab libraryTab, DialogService dialogService, PreferencesService preferencesService, TaskExecutor taskExecutor, StateManager stateManager) {
+    public GenerateEntryFromIdDialog(
+            LibraryTab libraryTab,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            TaskExecutor taskExecutor,
+            StateManager stateManager) {
         ViewLoader.view(this).load();
         this.preferencesService = preferencesService;
         this.dialogService = dialogService;
@@ -45,7 +56,8 @@ public class GenerateEntryFromIdDialog {
         this.generateButton.setDefaultButton(true);
     }
 
-    @FXML private void generateEntry() {
+    @FXML
+    private void generateEntry() {
         if (idTextField.getText().isEmpty()) {
             dialogService.notify(Localization.lang("Enter a valid ID"));
             return;
@@ -61,8 +73,7 @@ public class GenerateEntryFromIdDialog {
                 entryFromIdPopOver,
                 idTextField.getText(),
                 stateManager,
-                fileUpdateMonitor
-        );
+                fileUpdateMonitor);
         generateEntryFromIdAction.execute();
     }
 

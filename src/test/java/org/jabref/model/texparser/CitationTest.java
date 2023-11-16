@@ -27,17 +27,11 @@ public class CitationTest {
     }
 
     private static Stream<Arguments> colStartColEndNotInBounds() {
-        return Stream.of(
-                arguments(-1, 2),
-                arguments(1, 9)
-        );
+        return Stream.of(arguments(-1, 2), arguments(1, 9));
     }
 
     private static Stream<Arguments> colStartColEndInBounds() {
-        return Stream.of(
-                arguments(0, 2),
-                arguments(1, 8)
-        );
+        return Stream.of(arguments(0, 2), arguments(1, 8));
     }
 
     @ParameterizedTest
@@ -56,7 +50,8 @@ public class CitationTest {
     @ParameterizedTest
     @MethodSource("colStartColEndNotInBounds")
     public void constructorColStartColEndNotInBoundsTest(int colStart, int colEnd) {
-        Exception e = assertThrows(IllegalArgumentException.class, () -> new Citation(path, 10, colStart, colEnd, "lineText"));
+        Exception e = assertThrows(
+                IllegalArgumentException.class, () -> new Citation(path, 10, colStart, colEnd, "lineText"));
         assertEquals("Citation has to be between 0 and line length.", e.getMessage());
     }
 

@@ -21,10 +21,13 @@ public class FileHistoryMenuTest {
     private static final String BIBTEX_LIBRARY_PATH = "src/test/resources/org/jabref/";
 
     private FileHistoryMenu fileHistoryMenu;
+
     @Mock
     private FileHistory fileHistory;
+
     @Mock
     private DialogService dialogService;
+
     @Mock
     private OpenDatabaseAction openDatabaseAction;
 

@@ -23,7 +23,11 @@ public class SystematicLiteratureReviewStudyEntryTypeDefinitions {
      */
     private static final BibEntryType STUDY_ENTRY = new BibEntryTypeBuilder()
             .withType(SystematicLiteratureReviewStudyEntryType.STUDY_ENTRY)
-            .withRequiredFields(StandardField.AUTHOR, new UnknownField("lastsearchdate"), new UnknownField("name"), new UnknownField("researchquestions"))
+            .withRequiredFields(
+                    StandardField.AUTHOR,
+                    new UnknownField("lastsearchdate"),
+                    new UnknownField("name"),
+                    new UnknownField("researchquestions"))
             .build();
 
     /**
@@ -55,6 +59,5 @@ public class SystematicLiteratureReviewStudyEntryTypeDefinitions {
 
     public static final List<BibEntryType> ALL = Arrays.asList(STUDY_ENTRY, SEARCH_QUERY_ENTRY, LIBRARY_ENTRY);
 
-    private SystematicLiteratureReviewStudyEntryTypeDefinitions() {
-    }
+    private SystematicLiteratureReviewStudyEntryTypeDefinitions() {}
 }

@@ -40,7 +40,8 @@ public class JournalInformationFetcher implements WebFetcher {
         return JournalInformationFetcher.NAME;
     }
 
-    public Optional<JournalInformation> getJournalInformation(String issnString, String journalName) throws FetcherException {
+    public Optional<JournalInformation> getJournalInformation(String issnString, String journalName)
+            throws FetcherException {
         ISSN issn = new ISSN(issnString);
         String cleanedISSN = "";
 
@@ -55,9 +56,9 @@ public class JournalInformationFetcher implements WebFetcher {
         JSONObject postData = buildPostData(cleanedISSN, journalName);
 
         HttpResponse<JsonNode> httpResponse = Unirest.post(API_URL)
-                                                     .header("Content-Type", "application/json")
-                                                     .body(postData)
-                                                     .asJson();
+                .header("Content-Type", "application/json")
+                .body(postData)
+                .asJson();
 
         if (httpResponse.getBody() != null) {
             JSONObject responseJsonObject = httpResponse.getBody().getObject();
@@ -122,8 +123,10 @@ public class JournalInformationFetcher implements WebFetcher {
                         citableDocsPrevious3Years = parseCitationInfo(citationInfo, "citableDocsPrevious3Years");
                         citesOutgoing = parseCitationInfo(citationInfo, "citesOutgoing");
                         citesOutgoingPerDoc = parseCitationInfo(citationInfo, "citesOutgoingPerDoc");
-                        citesIncomingByRecentlyPublished = parseCitationInfo(citationInfo, "citesIncomingByRecentlyPublished");
-                        citesIncomingPerDocByRecentlyPublished = parseCitationInfo(citationInfo, "citesIncomingPerDocByRecentlyPublished");
+                        citesIncomingByRecentlyPublished =
+                                parseCitationInfo(citationInfo, "citesIncomingByRecentlyPublished");
+                        citesIncomingPerDocByRecentlyPublished =
+                                parseCitationInfo(citationInfo, "citesIncomingPerDocByRecentlyPublished");
                         sjrArray = parseCitationInfo(citationInfo, "sjrIndex");
                         snipArray = parseCitationInfo(citationInfo, "snipIndex");
                     }
@@ -156,8 +159,7 @@ public class JournalInformationFetcher implements WebFetcher {
                 citesOutgoing,
                 citesOutgoingPerDoc,
                 citesIncomingByRecentlyPublished,
-                citesIncomingPerDocByRecentlyPublished
-        );
+                citesIncomingPerDocByRecentlyPublished);
     }
 
     private static String getConcatenatedString(JSONObject jsonObject, String key) {
@@ -170,7 +172,8 @@ public class JournalInformationFetcher implements WebFetcher {
     }
 
     private JSONObject buildPostData(String issn, String journalName) {
-        String query = """
+        String query =
+                """
                 query GetJournal($issn: String, $name: String) {
                   journal(issn: $issn, name: $name) {
                     id

@@ -19,12 +19,13 @@ public class GroupEditor extends SimpleEditor {
 
     private Optional<BibEntry> bibEntry;
 
-    public GroupEditor(final Field field,
-                       final SuggestionProvider<?> suggestionProvider,
-                       final FieldCheckers fieldCheckers,
-                       final PreferencesService preferences,
-                       final boolean isMultiLine,
-                       final UndoManager undoManager) {
+    public GroupEditor(
+            final Field field,
+            final SuggestionProvider<?> suggestionProvider,
+            final FieldCheckers fieldCheckers,
+            final PreferencesService preferences,
+            final boolean isMultiLine,
+            final UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, preferences, isMultiLine, undoManager);
 
         this.setOnDragOver(event -> {
@@ -37,12 +38,17 @@ public class GroupEditor extends SimpleEditor {
         this.setOnDragDropped(event -> {
             boolean success = false;
             if (event.getDragboard().hasContent(DragAndDropDataFormats.GROUP)) {
-                List<String> draggedGroups = (List<String>) event.getDragboard().getContent(DragAndDropDataFormats.GROUP);
+                List<String> draggedGroups =
+                        (List<String>) event.getDragboard().getContent(DragAndDropDataFormats.GROUP);
                 if (bibEntry.isPresent() && draggedGroups.get(0) != null) {
                     String newGroup = bibEntry.map(entry -> entry.getField(StandardField.GROUPS)
-                                                                     .map(oldGroups -> oldGroups + (preferences.getBibEntryPreferences().getKeywordSeparator()) + (draggedGroups.get(0)))
-                                                                     .orElse(draggedGroups.get(0)))
-                                                  .orElse(null);
+                                    .map(oldGroups -> oldGroups
+                                            + (preferences
+                                                    .getBibEntryPreferences()
+                                                    .getKeywordSeparator())
+                                            + (draggedGroups.get(0)))
+                                    .orElse(draggedGroups.get(0)))
+                            .orElse(null);
                     bibEntry.map(entry -> entry.setField(StandardField.GROUPS, newGroup));
                     success = true;
                 }

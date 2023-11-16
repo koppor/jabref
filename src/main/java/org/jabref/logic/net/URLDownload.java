@@ -67,7 +67,8 @@ import org.slf4j.LoggerFactory;
  */
 public class URLDownload {
 
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36";
+    public static final String USER_AGENT =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36";
     private static final Logger LOGGER = LoggerFactory.getLogger(URLDownload.class);
     private static final Duration DEFAULT_CONNECT_TIMEOUT = Duration.ofSeconds(30);
 
@@ -110,20 +111,20 @@ public class URLDownload {
         LOGGER.warn("Fix SSL exceptions by accepting ALL certificates");
 
         // Create a trust manager that does not validate certificate chains
-        TrustManager[] trustAllCerts = {new X509TrustManager() {
-            @Override
-            public void checkClientTrusted(X509Certificate[] chain, String authType) {
-            }
+        TrustManager[] trustAllCerts = {
+            new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(X509Certificate[] chain, String authType) {}
 
-            @Override
-            public void checkServerTrusted(X509Certificate[] chain, String authType) {
-            }
+                @Override
+                public void checkServerTrusted(X509Certificate[] chain, String authType) {}
 
-            @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return new X509Certificate[0];
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
             }
-        }};
+        };
 
         try {
             // Install all-trusting trust manager
@@ -158,12 +159,19 @@ public class URLDownload {
     }
 
     public String getMimeType() {
-        Unirest.config().setDefaultHeader("User-Agent", "Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6");
+        Unirest.config()
+                .setDefaultHeader(
+                        "User-Agent",
+                        "Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6");
 
         String contentType;
         // Try to use HEAD request to avoid downloading the whole file
         try {
-            contentType = Unirest.head(source.toString()).asString().getHeaders().get("Content-Type").get(0);
+            contentType = Unirest.head(source.toString())
+                    .asString()
+                    .getHeaders()
+                    .get("Content-Type")
+                    .get(0);
             if ((contentType != null) && !contentType.isEmpty()) {
                 return contentType;
             }
@@ -173,7 +181,11 @@ public class URLDownload {
 
         // Use GET request as alternative if no HEAD request is available
         try {
-            contentType = Unirest.get(source.toString()).asString().getHeaders().get("Content-Type").get(0);
+            contentType = Unirest.get(source.toString())
+                    .asString()
+                    .getHeaders()
+                    .get("Content-Type")
+                    .get(0);
             if ((contentType != null) && !contentType.isEmpty()) {
                 return contentType;
             }
@@ -204,11 +216,11 @@ public class URLDownload {
      */
     public boolean canBeReached() throws UnirestException {
 
-        // Set a custom Apache Client Builder to be able to allow circular redirects, otherwise downloads from springer might not work
-        Unirest.config().httpClient(new ApacheClient.Builder()
-                                    .withRequestConfig((c, r) -> RequestConfig.custom()
-                                                       .setCircularRedirectsAllowed(true)
-                                                       .build()));
+        // Set a custom Apache Client Builder to be able to allow circular redirects, otherwise downloads from springer
+        // might not work
+        Unirest.config().httpClient(new ApacheClient.Builder().withRequestConfig((c, r) -> RequestConfig.custom()
+                .setCircularRedirectsAllowed(true)
+                .build()));
 
         Unirest.config().setDefaultHeader("User-Agent", USER_AGENT);
 
@@ -279,7 +291,7 @@ public class URLDownload {
     public static String asString(Charset encoding, URLConnection connection) throws IOException {
 
         try (InputStream input = new BufferedInputStream(connection.getInputStream());
-             Writer output = new StringWriter()) {
+                Writer output = new StringWriter()) {
             copy(input, output, encoding);
             return output.toString();
         }
@@ -321,8 +333,12 @@ public class URLDownload {
     public ProgressInputStream asInputStream() throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) this.openConnection();
 
-        if ((urlConnection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) || (urlConnection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST)) {
-            LOGGER.error("Response message {} returned for url {}", urlConnection.getResponseMessage(), urlConnection.getURL());
+        if ((urlConnection.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND)
+                || (urlConnection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST)) {
+            LOGGER.error(
+                    "Response message {} returned for url {}",
+                    urlConnection.getResponseMessage(),
+                    urlConnection.getURL());
             return new ProgressInputStream(new ByteArrayInputStream(new byte[0]), 0);
         }
         long fileSize = urlConnection.getContentLengthLong();
@@ -341,7 +357,8 @@ public class URLDownload {
         // Take everything after the last '/' as name + extension
         String fileNameWithExtension = sourcePath.substring(sourcePath.lastIndexOf('/') + 1);
         String fileName = "jabref-" + FileUtil.getBaseName(fileNameWithExtension);
-        String extension = "." + FileUtil.getFileExtension(fileNameWithExtension).orElse("tmp");
+        String extension =
+                "." + FileUtil.getFileExtension(fileNameWithExtension).orElse("tmp");
 
         // Create temporary file and download to it
         Path file = Files.createTempFile(fileName, extension);
@@ -391,8 +408,8 @@ public class URLDownload {
             int status = lConnection.getResponseCode();
 
             if ((status == HttpURLConnection.HTTP_MOVED_TEMP)
-                || (status == HttpURLConnection.HTTP_MOVED_PERM)
-                || (status == HttpURLConnection.HTTP_SEE_OTHER)) {
+                    || (status == HttpURLConnection.HTTP_MOVED_PERM)
+                    || (status == HttpURLConnection.HTTP_SEE_OTHER)) {
                 // get redirect url from "location" header field
                 String newUrl = connection.getHeaderField("location");
                 // open the new connection again

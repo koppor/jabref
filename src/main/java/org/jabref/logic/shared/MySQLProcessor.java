@@ -24,23 +24,24 @@ public class MySQLProcessor extends DBMSProcessor {
      */
     @Override
     public void setUp() throws SQLException {
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE IF NOT EXISTS `JABREF_ENTRY` (" +
-                        "`SHARED_ID` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, " +
-                        "`TYPE` VARCHAR(255) NOT NULL, " +
-                        "`VERSION` INT(11) DEFAULT 1)");
+        connection
+                .createStatement()
+                .executeUpdate("CREATE TABLE IF NOT EXISTS `JABREF_ENTRY` ("
+                        + "`SHARED_ID` INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, "
+                        + "`TYPE` VARCHAR(255) NOT NULL, "
+                        + "`VERSION` INT(11) DEFAULT 1)");
 
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE IF NOT EXISTS `JABREF_FIELD` (" +
-                        "`ENTRY_SHARED_ID` INT(11) NOT NULL, " +
-                        "`NAME` VARCHAR(255) NOT NULL, " +
-                        "`VALUE` TEXT DEFAULT NULL, " +
-                        "FOREIGN KEY (`ENTRY_SHARED_ID`) REFERENCES `JABREF_ENTRY`(`SHARED_ID`) ON DELETE CASCADE)");
+        connection
+                .createStatement()
+                .executeUpdate("CREATE TABLE IF NOT EXISTS `JABREF_FIELD` (" + "`ENTRY_SHARED_ID` INT(11) NOT NULL, "
+                        + "`NAME` VARCHAR(255) NOT NULL, "
+                        + "`VALUE` TEXT DEFAULT NULL, "
+                        + "FOREIGN KEY (`ENTRY_SHARED_ID`) REFERENCES `JABREF_ENTRY`(`SHARED_ID`) ON DELETE CASCADE)");
 
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE IF NOT EXISTS `JABREF_METADATA` (" +
-                        "`KEY` varchar(255) NOT NULL," +
-                        "`VALUE` text NOT NULL)");
+        connection
+                .createStatement()
+                .executeUpdate("CREATE TABLE IF NOT EXISTS `JABREF_METADATA` (" + "`KEY` varchar(255) NOT NULL,"
+                        + "`VALUE` text NOT NULL)");
 
         Map<String, String> metadata = getSharedMetaData();
 
@@ -58,9 +59,15 @@ public class MySQLProcessor extends DBMSProcessor {
             // We can to migrate from old table in new table
             if (CURRENT_VERSION_DB_STRUCT == 1 && checkTableAvailability("ENTRY", "FIELD", "METADATA")) {
                 LOGGER.info("Migrating from VersionDBStructure == 0");
-                connection.createStatement().executeUpdate("INSERT INTO " + escape_Table("ENTRY") + " SELECT * FROM `ENTRY`");
-                connection.createStatement().executeUpdate("INSERT INTO " + escape_Table("FIELD") + " SELECT * FROM `FIELD`");
-                connection.createStatement().executeUpdate("INSERT INTO " + escape_Table("METADATA") + " SELECT * FROM `METADATA`");
+                connection
+                        .createStatement()
+                        .executeUpdate("INSERT INTO " + escape_Table("ENTRY") + " SELECT * FROM `ENTRY`");
+                connection
+                        .createStatement()
+                        .executeUpdate("INSERT INTO " + escape_Table("FIELD") + " SELECT * FROM `FIELD`");
+                connection
+                        .createStatement()
+                        .executeUpdate("INSERT INTO " + escape_Table("METADATA") + " SELECT * FROM `METADATA`");
                 metadata = getSharedMetaData();
             }
 

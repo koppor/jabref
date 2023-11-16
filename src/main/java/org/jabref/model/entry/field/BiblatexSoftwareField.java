@@ -8,7 +8,6 @@ import java.util.Set;
 import org.jabref.model.entry.types.BiblatexSoftwareEntryType;
 
 public enum BiblatexSoftwareField implements Field {
-
     HALID("hal_id"),
     HALVERSION("hal_version"),
     INTRODUCEDIN("introducedin"),
@@ -51,8 +50,8 @@ public enum BiblatexSoftwareField implements Field {
             return Optional.empty();
         }
         return Arrays.stream(BiblatexSoftwareField.values())
-                     .filter(field -> field.getName().equalsIgnoreCase(name))
-                     .findAny();
+                .filter(field -> field.getName().equalsIgnoreCase(name))
+                .findAny();
     }
 
     @Override

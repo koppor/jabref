@@ -21,10 +21,7 @@ public class FieldViewModel {
     private final BooleanProperty multiline = new SimpleBooleanProperty();
     private final ObjectProperty<FieldPriority> priorityProperty = new SimpleObjectProperty<>();
 
-    public FieldViewModel(Field field,
-                          Mandatory required,
-                          FieldPriority priorityProperty,
-                          boolean multiline) {
+    public FieldViewModel(Field field, Mandatory required, FieldPriority priorityProperty, boolean multiline) {
         this.displayName.setValue(field.getDisplayName());
         this.required.setValue(required == Mandatory.REQUIRED);
         this.priorityProperty.setValue(priorityProperty);

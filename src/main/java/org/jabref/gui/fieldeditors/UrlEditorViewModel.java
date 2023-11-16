@@ -23,18 +23,18 @@ public class UrlEditorViewModel extends AbstractEditorViewModel {
     private final PreferencesService preferencesService;
     private final BooleanProperty validUrlIsNotPresent = new SimpleBooleanProperty(true);
 
-    public UrlEditorViewModel(Field field,
-                              SuggestionProvider<?> suggestionProvider,
-                              DialogService dialogService,
-                              PreferencesService preferencesService,
-                              FieldCheckers fieldCheckers, UndoManager undoManager) {
+    public UrlEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            FieldCheckers fieldCheckers,
+            UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
         this.dialogService = dialogService;
         this.preferencesService = preferencesService;
 
-        validUrlIsNotPresent.bind(
-                EasyBind.map(text, input -> StringUtil.isBlank(input) || !URLUtil.isURL(input))
-        );
+        validUrlIsNotPresent.bind(EasyBind.map(text, input -> StringUtil.isBlank(input) || !URLUtil.isURL(input)));
     }
 
     public boolean isValidUrlIsNotPresent() {

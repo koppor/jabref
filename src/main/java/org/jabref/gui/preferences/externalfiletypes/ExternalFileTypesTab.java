@@ -17,21 +17,35 @@ import com.airhacks.afterburner.views.ViewLoader;
 /**
  * Editor for external file types.
  */
-public class ExternalFileTypesTab extends AbstractPreferenceTabView<ExternalFileTypesTabViewModel> implements PreferencesTab {
+public class ExternalFileTypesTab extends AbstractPreferenceTabView<ExternalFileTypesTabViewModel>
+        implements PreferencesTab {
 
-    @FXML private TableColumn<ExternalFileTypeItemViewModel, JabRefIcon> fileTypesTableIconColumn;
-    @FXML private TableColumn<ExternalFileTypeItemViewModel, String> fileTypesTableNameColumn;
-    @FXML private TableColumn<ExternalFileTypeItemViewModel, String> fileTypesTableExtensionColumn;
-    @FXML private TableColumn<ExternalFileTypeItemViewModel, String> fileTypesTableMimeTypeColumn;
-    @FXML private TableColumn<ExternalFileTypeItemViewModel, String> fileTypesTableApplicationColumn;
-    @FXML private TableColumn<ExternalFileTypeItemViewModel, Boolean> fileTypesTableEditColumn;
-    @FXML private TableColumn<ExternalFileTypeItemViewModel, Boolean> fileTypesTableDeleteColumn;
-    @FXML private TableView<ExternalFileTypeItemViewModel> fileTypesTable;
+    @FXML
+    private TableColumn<ExternalFileTypeItemViewModel, JabRefIcon> fileTypesTableIconColumn;
+
+    @FXML
+    private TableColumn<ExternalFileTypeItemViewModel, String> fileTypesTableNameColumn;
+
+    @FXML
+    private TableColumn<ExternalFileTypeItemViewModel, String> fileTypesTableExtensionColumn;
+
+    @FXML
+    private TableColumn<ExternalFileTypeItemViewModel, String> fileTypesTableMimeTypeColumn;
+
+    @FXML
+    private TableColumn<ExternalFileTypeItemViewModel, String> fileTypesTableApplicationColumn;
+
+    @FXML
+    private TableColumn<ExternalFileTypeItemViewModel, Boolean> fileTypesTableEditColumn;
+
+    @FXML
+    private TableColumn<ExternalFileTypeItemViewModel, Boolean> fileTypesTableDeleteColumn;
+
+    @FXML
+    private TableView<ExternalFileTypeItemViewModel> fileTypesTable;
 
     public ExternalFileTypesTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -45,27 +59,32 @@ public class ExternalFileTypesTab extends AbstractPreferenceTabView<ExternalFile
 
         fileTypesTable.setItems(viewModel.getFileTypes());
 
-        fileTypesTableIconColumn.setCellValueFactory(cellData -> cellData.getValue().iconProperty());
+        fileTypesTableIconColumn.setCellValueFactory(
+                cellData -> cellData.getValue().iconProperty());
         new ValueTableCellFactory<ExternalFileTypeItemViewModel, JabRefIcon>()
                 .withGraphic(JabRefIcon::getGraphicNode)
                 .install(fileTypesTableIconColumn);
 
-        fileTypesTableNameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        fileTypesTableNameColumn.setCellValueFactory(
+                cellData -> cellData.getValue().nameProperty());
         new ValueTableCellFactory<ExternalFileTypeItemViewModel, String>()
                 .withText(name -> name)
                 .install(fileTypesTableNameColumn);
 
-        fileTypesTableExtensionColumn.setCellValueFactory(cellData -> cellData.getValue().extensionProperty());
+        fileTypesTableExtensionColumn.setCellValueFactory(
+                cellData -> cellData.getValue().extensionProperty());
         new ValueTableCellFactory<ExternalFileTypeItemViewModel, String>()
                 .withText(extension -> extension)
                 .install(fileTypesTableExtensionColumn);
 
-        fileTypesTableMimeTypeColumn.setCellValueFactory(cellData -> cellData.getValue().mimetypeProperty());
+        fileTypesTableMimeTypeColumn.setCellValueFactory(
+                cellData -> cellData.getValue().mimetypeProperty());
         new ValueTableCellFactory<ExternalFileTypeItemViewModel, String>()
                 .withText(mimetype -> mimetype)
                 .install(fileTypesTableMimeTypeColumn);
 
-        fileTypesTableApplicationColumn.setCellValueFactory(cellData -> cellData.getValue().applicationProperty());
+        fileTypesTableApplicationColumn.setCellValueFactory(
+                cellData -> cellData.getValue().applicationProperty());
         new ValueTableCellFactory<ExternalFileTypeItemViewModel, String>()
                 .withText(extension -> extension)
                 .install(fileTypesTableApplicationColumn);

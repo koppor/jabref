@@ -34,10 +34,14 @@ public class SmartConstrainedResizePolicy implements Callback<TableView.ResizeFe
     private Boolean initColumnSize(TableView<?> table) {
         double tableWidth = getContentWidth(table);
         List<? extends TableColumnBase<?, ?>> visibleLeafColumns = table.getVisibleLeafColumns();
-        double totalWidth = visibleLeafColumns.stream().mapToDouble(TableColumnBase::getWidth).sum();
+        double totalWidth = visibleLeafColumns.stream()
+                .mapToDouble(TableColumnBase::getWidth)
+                .sum();
 
         if (Math.abs(totalWidth - tableWidth) > 1) {
-            double totalPrefWidth = visibleLeafColumns.stream().mapToDouble(TableColumnBase::getPrefWidth).sum();
+            double totalPrefWidth = visibleLeafColumns.stream()
+                    .mapToDouble(TableColumnBase::getPrefWidth)
+                    .sum();
             double currPrefWidth = 0;
             if (totalPrefWidth > 0) {
                 for (TableColumnBase col : visibleLeafColumns) {
@@ -67,7 +71,10 @@ public class SmartConstrainedResizePolicy implements Callback<TableView.ResizeFe
             Method constrainedResize = clazz.getDeclaredMethod("resize", TableColumnBase.class, double.class);
             constrainedResize.setAccessible(true);
             constrainedResize.invoke(null, column, delta);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
+        } catch (NoSuchMethodException
+                | IllegalAccessException
+                | InvocationTargetException
+                | ClassNotFoundException e) {
             LOGGER.error("Could not invoke resize in TableUtil", e);
         }
     }
@@ -75,22 +82,27 @@ public class SmartConstrainedResizePolicy implements Callback<TableView.ResizeFe
     private Boolean constrainedResize(TableView.ResizeFeatures<?> prop) {
         TableView<?> table = prop.getTable();
         List<? extends TableColumnBase<?, ?>> visibleLeafColumns = table.getVisibleLeafColumns();
-        return constrainedResize(prop,
-                false,
-                getContentWidth(table) - 2,
-                visibleLeafColumns);
+        return constrainedResize(prop, false, getContentWidth(table) - 2, visibleLeafColumns);
     }
 
-    private Boolean constrainedResize(TableView.ResizeFeatures prop, Boolean isFirstRun, Double contentWidth, List<? extends TableColumnBase<?, ?>> visibleLeafColumns) {
+    private Boolean constrainedResize(
+            TableView.ResizeFeatures prop,
+            Boolean isFirstRun,
+            Double contentWidth,
+            List<? extends TableColumnBase<?, ?>> visibleLeafColumns) {
         // We have to use reflection since TableUtil is not visible to us
         try {
             // TODO: reflective access, should be removed
             Class<?> clazz = Class.forName("javafx.scene.control.TableUtil");
-            Method constrainedResize = clazz.getDeclaredMethod("constrainedResize", ResizeFeaturesBase.class, Boolean.TYPE, Double.TYPE, List.class);
+            Method constrainedResize = clazz.getDeclaredMethod(
+                    "constrainedResize", ResizeFeaturesBase.class, Boolean.TYPE, Double.TYPE, List.class);
             constrainedResize.setAccessible(true);
             Object returnValue = constrainedResize.invoke(null, prop, isFirstRun, contentWidth, visibleLeafColumns);
             return (Boolean) returnValue;
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
+        } catch (NoSuchMethodException
+                | IllegalAccessException
+                | InvocationTargetException
+                | ClassNotFoundException e) {
             LOGGER.error("Could not invoke constrainedResize in TableUtil", e);
             return false;
         }

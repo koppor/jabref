@@ -32,8 +32,7 @@ class ACSTest {
 
         assertEquals(
                 Optional.of(new URL("https://pubs.acs.org/doi/pdf/10.1021/bk-2006-STYG.ch014")),
-                finder.findFullText(entry)
-        );
+                finder.findFullText(entry));
     }
 
     @Test

@@ -59,12 +59,14 @@ public class Medra implements IdBasedParserFetcher {
             return new BibEntry(convertType(item.getString("type")))
                     .withField(StandardField.TITLE, item.getString("title"))
                     .withField(StandardField.AUTHOR, toAuthors(item.optJSONArray("author")))
-                    .withField(StandardField.YEAR,
+                    .withField(
+                            StandardField.YEAR,
                             Optional.ofNullable(item.optJSONObject("issued"))
                                     .map(array -> array.optJSONArray("date-parts"))
                                     .map(array -> array.optJSONArray(0))
                                     .map(array -> array.optInt(0))
-                                    .map(year -> Integer.toString(year)).orElse(""))
+                                    .map(year -> Integer.toString(year))
+                                    .orElse(""))
                     .withField(StandardField.DOI, item.getString("DOI"))
                     .withField(StandardField.PAGES, item.optString("page"))
                     .withField(StandardField.ISSN, item.optString("ISSN"))
@@ -87,12 +89,13 @@ public class Medra implements IdBasedParserFetcher {
         }
         // input: list of {"literal":"A."}
         return IntStream.range(0, authors.length())
-                        .mapToObj(authors::getJSONObject)
-                        .map(author -> author.has("literal") ? // quickly route through the literal string
-                                new Author(author.getString("literal"), "", "", "", "") :
-                                new Author(author.optString("given", ""), "", "", author.optString("family", ""), ""))
-                        .collect(AuthorList.collect())
-                        .getAsFirstLastNamesWithAnd();
+                .mapToObj(authors::getJSONObject)
+                .map(author -> author.has("literal")
+                        ? // quickly route through the literal string
+                        new Author(author.getString("literal"), "", "", "", "")
+                        : new Author(author.optString("given", ""), "", "", author.optString("family", ""), ""))
+                .collect(AuthorList.collect())
+                .getAsFirstLastNamesWithAnd();
     }
 
     @Override
@@ -103,7 +106,8 @@ public class Medra implements IdBasedParserFetcher {
     }
 
     @Override
-    public URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getUrlForIdentifier(String identifier)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         return new URL(API_URL + "/" + identifier);
     }
 

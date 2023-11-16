@@ -13,8 +13,7 @@ public class ColumnPreferences {
     private final ObservableList<MainTableColumnModel> columns;
     private final ObservableList<MainTableColumnModel> columnSortOrder;
 
-    public ColumnPreferences(List<MainTableColumnModel> columns,
-                             List<MainTableColumnModel> columnSortOrder) {
+    public ColumnPreferences(List<MainTableColumnModel> columns, List<MainTableColumnModel> columnSortOrder) {
         this.columns = FXCollections.observableArrayList(columns);
         this.columnSortOrder = FXCollections.observableArrayList(columnSortOrder);
     }

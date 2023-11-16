@@ -21,8 +21,8 @@ public class FallbackExceptionHandler implements Thread.UncaughtExceptionHandler
     public void uncaughtException(Thread thread, Throwable exception) {
         LOGGER.error("Uncaught exception occurred in " + thread, exception);
         DefaultTaskExecutor.runInJavaFXThread(() -> {
-                    DialogService dialogService = Injector.instantiateModelOrService(DialogService.class);
-                    dialogService.showErrorDialogAndWait("Uncaught exception occurred in " + thread, exception);
+            DialogService dialogService = Injector.instantiateModelOrService(DialogService.class);
+            dialogService.showErrorDialogAndWait("Uncaught exception occurred in " + thread, exception);
         });
     }
 }

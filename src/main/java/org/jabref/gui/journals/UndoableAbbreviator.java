@@ -17,7 +17,10 @@ public class UndoableAbbreviator {
     private final AbbreviationType abbreviationType;
     private final boolean useFJournalField;
 
-    public UndoableAbbreviator(JournalAbbreviationRepository journalAbbreviationRepository, AbbreviationType abbreviationType, boolean useFJournalField) {
+    public UndoableAbbreviator(
+            JournalAbbreviationRepository journalAbbreviationRepository,
+            AbbreviationType abbreviationType,
+            boolean useFJournalField) {
         this.journalAbbreviationRepository = journalAbbreviationRepository;
         this.abbreviationType = abbreviationType;
         this.useFJournalField = useFJournalField;

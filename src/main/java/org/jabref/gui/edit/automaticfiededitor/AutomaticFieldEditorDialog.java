@@ -49,9 +49,7 @@ public class AutomaticFieldEditorDialog extends BaseDialog<String> {
 
         this.setTitle(Localization.lang("Automatic field editor"));
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         setResultConverter(buttonType -> {
             if (buttonType != null && buttonType.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
@@ -65,8 +63,8 @@ public class AutomaticFieldEditorDialog extends BaseDialog<String> {
         // This will prevent all dialog buttons from having the same size
         // Read more: https://stackoverflow.com/questions/45866249/javafx-8-alert-different-button-sizes
         getDialogPane().getButtonTypes().stream()
-            .map(getDialogPane()::lookupButton)
-            .forEach(btn -> ButtonBar.setButtonUniformSize(btn, false));
+                .map(getDialogPane()::lookupButton)
+                .forEach(btn -> ButtonBar.setButtonUniformSize(btn, false));
     }
 
     @FXML
@@ -81,8 +79,7 @@ public class AutomaticFieldEditorDialog extends BaseDialog<String> {
 
         EasyBind.listen(stateManager.lastAutomaticFieldEditorEditProperty(), (obs, old, lastEdit) -> {
             viewModel.getDialogEdits().addEdit(lastEdit.getEdit());
-            notificationPanes.get(lastEdit.getTabIndex())
-                             .notify(lastEdit.getAffectedEntries(), selectedEntries.size());
+            notificationPanes.get(lastEdit.getTabIndex()).notify(lastEdit.getAffectedEntries(), selectedEntries.size());
         });
     }
 

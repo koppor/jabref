@@ -131,7 +131,8 @@ public class FieldValueCell extends ThreeWayMergeCell implements Toggle {
         FontIcon copyIcon = FontIcon.of(MaterialDesignC.CONTENT_COPY);
         copyIcon.getStyleClass().add("action-icon");
 
-        Button copyButton = factory.createIconButton(() -> Localization.lang("Copy"), new CopyFieldValueCommand(preferencesService, getText()));
+        Button copyButton = factory.createIconButton(
+                () -> Localization.lang("Copy"), new CopyFieldValueCommand(preferencesService, getText()));
         copyButton.setGraphic(copyIcon);
         copyButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         copyButton.setMaxHeight(Double.MAX_VALUE);
@@ -144,12 +145,18 @@ public class FieldValueCell extends ThreeWayMergeCell implements Toggle {
         Node openLinkIcon = IconTheme.JabRefIcons.OPEN_LINK.getGraphicNode();
         openLinkIcon.getStyleClass().add("action-icon");
 
-        Button openLinkButton = factory.createIconButton(() -> Localization.lang("Open Link"), new OpenExternalLinkAction(getText(), preferencesService.getFilePreferences()));
+        Button openLinkButton = factory.createIconButton(
+                () -> Localization.lang("Open Link"),
+                new OpenExternalLinkAction(getText(), preferencesService.getFilePreferences()));
         openLinkButton.setGraphic(openLinkIcon);
         openLinkButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         openLinkButton.setMaxHeight(Double.MAX_VALUE);
 
-        openLinkButton.visibleProperty().bind(EasyBind.map(textProperty(), input -> StringUtil.isNotBlank(input) && (URLUtil.isURL(input) || DOI.isValid(input))));
+        openLinkButton
+                .visibleProperty()
+                .bind(EasyBind.map(
+                        textProperty(),
+                        input -> StringUtil.isNotBlank(input) && (URLUtil.isURL(input) || DOI.isValid(input))));
 
         return openLinkButton;
     }
@@ -161,9 +168,9 @@ public class FieldValueCell extends ThreeWayMergeCell implements Toggle {
 
     private void preventTextSelectionViaMouseEvents() {
         label.addEventFilter(MouseEvent.ANY, e -> {
-            if ((e.getEventType() == MouseEvent.MOUSE_DRAGGED) ||
-                    (e.getEventType() == MouseEvent.DRAG_DETECTED) ||
-                    (e.getEventType() == MouseEvent.MOUSE_ENTERED)) {
+            if ((e.getEventType() == MouseEvent.MOUSE_DRAGGED)
+                    || (e.getEventType() == MouseEvent.DRAG_DETECTED)
+                    || (e.getEventType() == MouseEvent.MOUSE_ENTERED)) {
                 e.consume();
             } else if (e.getEventType() == MouseEvent.MOUSE_PRESSED) {
                 if (e.getClickCount() > 1) {

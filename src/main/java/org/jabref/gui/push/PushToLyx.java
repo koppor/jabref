@@ -43,9 +43,10 @@ public class PushToLyx extends AbstractPushToApplication {
     @Override
     public void onOperationCompleted() {
         if (couldNotPush) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"),
-                    Localization.lang("Verify that LyX is running and that the lyxpipe is valid.")
-                            + "[" + commandPath + "]");
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error pushing entries"),
+                    Localization.lang("Verify that LyX is running and that the lyxpipe is valid.") + "[" + commandPath
+                            + "]");
         } else if (couldNotCall) {
             dialogService.showErrorDialogAndWait(Localization.lang("Unable to write to %0.", commandPath + ".in"));
         } else {
@@ -54,7 +55,8 @@ public class PushToLyx extends AbstractPushToApplication {
     }
 
     @Override
-    public PushToApplicationSettings getSettings(PushToApplication application, PushToApplicationPreferences preferences) {
+    public PushToApplicationSettings getSettings(
+            PushToApplication application, PushToApplicationPreferences preferences) {
         return new PushToLyxSettings(application, dialogService, preferencesService.getFilePreferences(), preferences);
     }
 
@@ -64,7 +66,10 @@ public class PushToLyx extends AbstractPushToApplication {
         couldNotCall = false;
         notDefined = false;
 
-        commandPath = preferencesService.getPushToApplicationPreferences().getCommandPaths().get(this.getDisplayName());
+        commandPath = preferencesService
+                .getPushToApplicationPreferences()
+                .getCommandPaths()
+                .get(this.getDisplayName());
 
         if ((commandPath == null) || commandPath.trim().isEmpty()) {
             notDefined = true;
@@ -87,7 +92,8 @@ public class PushToLyx extends AbstractPushToApplication {
         final File lyxpipe = lp;
 
         JabRefExecutorService.INSTANCE.executeAndWait(() -> {
-            try (FileWriter fw = new FileWriter(lyxpipe, StandardCharsets.UTF_8); BufferedWriter lyxOut = new BufferedWriter(fw)) {
+            try (FileWriter fw = new FileWriter(lyxpipe, StandardCharsets.UTF_8);
+                    BufferedWriter lyxOut = new BufferedWriter(fw)) {
                 String citeStr = "LYXCMD:sampleclient:citation-insert:" + keyString;
                 lyxOut.write(citeStr + "\n");
             } catch (IOException excep) {

@@ -19,7 +19,8 @@ public class MergeEntriesAction extends SimpleCommand {
     private final StateManager stateManager;
     private final PreferencesService preferencesService;
 
-    public MergeEntriesAction(DialogService dialogService, StateManager stateManager, PreferencesService preferencesService) {
+    public MergeEntriesAction(
+            DialogService dialogService, StateManager stateManager, PreferencesService preferencesService) {
         this.dialogService = dialogService;
         this.stateManager = stateManager;
         this.preferencesService = preferencesService;
@@ -63,10 +64,12 @@ public class MergeEntriesAction extends SimpleCommand {
         dialog.setTitle(Localization.lang("Merge entries"));
 
         Optional<EntriesMergeResult> mergeResultOpt = dialogService.showCustomDialogAndWait(dialog);
-        mergeResultOpt.ifPresentOrElse(entriesMergeResult -> {
-            new MergeTwoEntriesAction(entriesMergeResult, stateManager).execute();
+        mergeResultOpt.ifPresentOrElse(
+                entriesMergeResult -> {
+                    new MergeTwoEntriesAction(entriesMergeResult, stateManager).execute();
 
-            dialogService.notify(Localization.lang("Merged entries"));
-        }, () -> dialogService.notify(Localization.lang("Canceled merging entries")));
+                    dialogService.notify(Localization.lang("Merged entries"));
+                },
+                () -> dialogService.notify(Localization.lang("Canceled merging entries")));
     }
 }

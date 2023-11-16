@@ -85,11 +85,11 @@ public class MultiMergeEntriesViewModel extends AbstractViewModel {
             isLoading.set(true);
 
             BackgroundTask.wrap(entrySupplier::get)
-                          .onSuccess(value -> {
-                              entry.set(value);
-                              isLoading.set(false);
-                          })
-                          .executeWith(taskExecutor);
+                    .onSuccess(value -> {
+                        entry.set(value);
+                        isLoading.set(false);
+                    })
+                    .executeWith(taskExecutor);
         }
 
         public EntrySource(String title, BibEntry entry) {

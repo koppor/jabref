@@ -49,21 +49,23 @@ public class EntryEditorPreferences {
     private final ObjectProperty<JournalPopupEnabled> enablementStatus;
     private final BooleanProperty shouldShowSciteTab;
 
-    public EntryEditorPreferences(Map<String, Set<Field>> entryEditorTabList,
-                                  Map<String, Set<Field>> defaultEntryEditorTabList,
-                                  boolean shouldOpenOnNewEntry,
-                                  boolean shouldShowRecommendationsTab,
-                                  boolean shouldShowLatexCitationsTab,
-                                  boolean showSourceTabByDefault,
-                                  boolean enableValidation,
-                                  boolean allowIntegerEditionBibtex,
-                                  double dividerPosition,
-                                  boolean autolinkFilesEnabled,
-                                  JournalPopupEnabled journalPopupEnabled,
-                                  boolean showSciteTab) {
+    public EntryEditorPreferences(
+            Map<String, Set<Field>> entryEditorTabList,
+            Map<String, Set<Field>> defaultEntryEditorTabList,
+            boolean shouldOpenOnNewEntry,
+            boolean shouldShowRecommendationsTab,
+            boolean shouldShowLatexCitationsTab,
+            boolean showSourceTabByDefault,
+            boolean enableValidation,
+            boolean allowIntegerEditionBibtex,
+            double dividerPosition,
+            boolean autolinkFilesEnabled,
+            JournalPopupEnabled journalPopupEnabled,
+            boolean showSciteTab) {
 
         this.entryEditorTabList = new SimpleMapProperty<>(FXCollections.observableMap(entryEditorTabList));
-        this.defaultEntryEditorTabList = new SimpleMapProperty<>(FXCollections.observableMap(defaultEntryEditorTabList));
+        this.defaultEntryEditorTabList =
+                new SimpleMapProperty<>(FXCollections.observableMap(defaultEntryEditorTabList));
         this.shouldOpenOnNewEntry = new SimpleBooleanProperty(shouldOpenOnNewEntry);
         this.shouldShowRecommendationsTab = new SimpleBooleanProperty(shouldShowRecommendationsTab);
         this.shouldShowLatexCitationsTab = new SimpleBooleanProperty(shouldShowLatexCitationsTab);

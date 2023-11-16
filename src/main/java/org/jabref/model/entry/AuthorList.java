@@ -145,7 +145,8 @@ public class AuthorList {
         return Collectors.collectingAndThen(Collectors.toUnmodifiableList(), AuthorList::new);
     }
 
-    private static String andCoordinatedConjunction(List<Author> authors, Function<Author, String> style, boolean oxfordComma) {
+    private static String andCoordinatedConjunction(
+            List<Author> authors, Function<Author, String> style, boolean oxfordComma) {
         var formattedAuthors = authors.stream().map(style).collect(Collectors.toUnmodifiableList());
         return andCoordinatedConjunction(formattedAuthors, oxfordComma);
     }
@@ -295,9 +296,8 @@ public class AuthorList {
      */
     public AuthorList latexFree() {
         if (latexFreeAuthors == null) {
-            latexFreeAuthors = new AuthorList(authors.stream()
-                                                     .map(Author::latexFree)
-                                                     .collect(Collectors.toUnmodifiableList()));
+            latexFreeAuthors =
+                    new AuthorList(authors.stream().map(Author::latexFree).collect(Collectors.toUnmodifiableList()));
             latexFreeAuthors.latexFreeAuthors = latexFreeAuthors;
         }
         return latexFreeAuthors;
@@ -386,8 +386,8 @@ public class AuthorList {
      */
     public String getAsLastFirstNamesWithAnd(boolean abbreviate) {
         return getAuthors().stream()
-                           .map(author -> author.getLastFirst(abbreviate))
-                           .collect(Collectors.joining(" and "));
+                .map(author -> author.getLastFirst(abbreviate))
+                .collect(Collectors.joining(" and "));
     }
 
     /**
@@ -400,12 +400,9 @@ public class AuthorList {
             case 0 -> "";
             case 1 -> authors.get(0).getLastFirst(abbreviate);
             default -> authors.stream()
-                              .skip(1)
-                              .map(author -> author.getFirstLast(abbreviate))
-                              .collect(Collectors.joining(
-                                      " and ",
-                                      authors.get(0).getLastFirst(abbreviate) + " and ",
-                                      ""));
+                    .skip(1)
+                    .map(author -> author.getFirstLast(abbreviate))
+                    .collect(Collectors.joining(" and ", authors.get(0).getLastFirst(abbreviate) + " and ", ""));
         };
     }
 
@@ -468,9 +465,7 @@ public class AuthorList {
      * @return formatted list of authors.
      */
     public String getAsFirstLastNamesWithAnd() {
-        return getAuthors().stream()
-                           .map(author -> author.getFirstLast(false))
-                           .collect(Collectors.joining(" and "));
+        return getAuthors().stream().map(author -> author.getFirstLast(false)).collect(Collectors.joining(" and "));
     }
 
     /**
@@ -483,8 +478,6 @@ public class AuthorList {
      * @return formatted list of authors
      */
     public String getForAlphabetization() {
-        return getAuthors().stream()
-                           .map(Author::getNameForAlphabetization)
-                           .collect(Collectors.joining(" and "));
+        return getAuthors().stream().map(Author::getNameForAlphabetization).collect(Collectors.joining(" and "));
     }
 }

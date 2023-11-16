@@ -18,17 +18,18 @@ public class OptionalFields2Tab extends OptionalFieldsTabBase {
 
     public static final String NAME = "Optional fields 2";
 
-    public OptionalFields2Tab(BibDatabaseContext databaseContext,
-                              SuggestionProviders suggestionProviders,
-                              UndoManager undoManager,
-                              DialogService dialogService,
-                              PreferencesService preferences,
-                              StateManager stateManager,
-                              ThemeManager themeManager,
-                              IndexingTaskManager indexingTaskManager,
-                              BibEntryTypesManager entryTypesManager,
-                              TaskExecutor taskExecutor,
-                              JournalAbbreviationRepository journalAbbreviationRepository) {
+    public OptionalFields2Tab(
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            DialogService dialogService,
+            PreferencesService preferences,
+            StateManager stateManager,
+            ThemeManager themeManager,
+            IndexingTaskManager indexingTaskManager,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository) {
         super(
                 Localization.lang("Optional fields 2"),
                 false,
@@ -42,7 +43,6 @@ public class OptionalFields2Tab extends OptionalFieldsTabBase {
                 indexingTaskManager,
                 entryTypesManager,
                 taskExecutor,
-                journalAbbreviationRepository
-        );
+                journalAbbreviationRepository);
     }
 }

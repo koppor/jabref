@@ -17,7 +17,12 @@ import org.jabref.model.strings.StringUtil;
 public class MonthEditorViewModel extends OptionEditorViewModel<Month> {
     private BibDatabaseMode databaseMode;
 
-    public MonthEditorViewModel(Field field, SuggestionProvider<?> suggestionProvider, BibDatabaseMode databaseMode, FieldCheckers fieldCheckers, UndoManager undoManager) {
+    public MonthEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            BibDatabaseMode databaseMode,
+            FieldCheckers fieldCheckers,
+            UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
         this.databaseMode = databaseMode;
     }

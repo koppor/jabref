@@ -63,7 +63,9 @@ class GroupSerializerTest {
         group.setColor(Color.ALICEBLUE);
         group.setDescription("test description");
         List<String> serialization = groupSerializer.serializeTree(GroupTreeNode.fromGroup(group));
-        assertEquals(Collections.singletonList("0 StaticGroup:myExplicitGroup;0;1;0xf0f8ffff;test icon;test description;"), serialization);
+        assertEquals(
+                Collections.singletonList("0 StaticGroup:myExplicitGroup;0;1;0xf0f8ffff;test icon;test description;"),
+                serialization);
     }
 
     @Test
@@ -76,49 +78,73 @@ class GroupSerializerTest {
 
     @Test
     void serializeSingleSimpleKeywordGroup() {
-        WordKeywordGroup group = new WordKeywordGroup("name", GroupHierarchyType.INDEPENDENT, StandardField.KEYWORDS, "test", false, ',', false);
+        WordKeywordGroup group = new WordKeywordGroup(
+                "name", GroupHierarchyType.INDEPENDENT, StandardField.KEYWORDS, "test", false, ',', false);
         List<String> serialization = groupSerializer.serializeTree(GroupTreeNode.fromGroup(group));
         assertEquals(Collections.singletonList("0 KeywordGroup:name;0;keywords;test;0;0;1;;;;"), serialization);
     }
 
     @Test
     void serializeSingleRegexKeywordGroup() {
-        KeywordGroup group = new RegexKeywordGroup("myExplicitGroup", GroupHierarchyType.REFINING, StandardField.AUTHOR, "asdf", false);
+        KeywordGroup group = new RegexKeywordGroup(
+                "myExplicitGroup", GroupHierarchyType.REFINING, StandardField.AUTHOR, "asdf", false);
         List<String> serialization = groupSerializer.serializeTree(GroupTreeNode.fromGroup(group));
-        assertEquals(Collections.singletonList("0 KeywordGroup:myExplicitGroup;1;author;asdf;0;1;1;;;;"), serialization);
+        assertEquals(
+                Collections.singletonList("0 KeywordGroup:myExplicitGroup;1;author;asdf;0;1;1;;;;"), serialization);
     }
 
     @Test
     void serializeSingleSearchGroup() {
-        SearchGroup group = new SearchGroup("myExplicitGroup", GroupHierarchyType.INDEPENDENT, "author=harrer", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION));
+        SearchGroup group = new SearchGroup(
+                "myExplicitGroup",
+                GroupHierarchyType.INDEPENDENT,
+                "author=harrer",
+                EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION));
         List<String> serialization = groupSerializer.serializeTree(GroupTreeNode.fromGroup(group));
-        assertEquals(Collections.singletonList("0 SearchGroup:myExplicitGroup;0;author=harrer;1;1;1;;;;"), serialization);
+        assertEquals(
+                Collections.singletonList("0 SearchGroup:myExplicitGroup;0;author=harrer;1;1;1;;;;"), serialization);
     }
 
     @Test
     void serializeSingleSearchGroupWithRegex() {
-        SearchGroup group = new SearchGroup("myExplicitGroup", GroupHierarchyType.INCLUDING, "author=\"harrer\"", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE));
+        SearchGroup group = new SearchGroup(
+                "myExplicitGroup",
+                GroupHierarchyType.INCLUDING,
+                "author=\"harrer\"",
+                EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE));
         List<String> serialization = groupSerializer.serializeTree(GroupTreeNode.fromGroup(group));
-        assertEquals(Collections.singletonList("0 SearchGroup:myExplicitGroup;2;author=\"harrer\";1;0;1;;;;"), serialization);
+        assertEquals(
+                Collections.singletonList("0 SearchGroup:myExplicitGroup;2;author=\"harrer\";1;0;1;;;;"),
+                serialization);
     }
 
     @Test
     void serializeSingleAutomaticKeywordGroup() {
-        AutomaticGroup group = new AutomaticKeywordGroup("myAutomaticGroup", GroupHierarchyType.INDEPENDENT, StandardField.KEYWORDS, ',', '>');
+        AutomaticGroup group = new AutomaticKeywordGroup(
+                "myAutomaticGroup", GroupHierarchyType.INDEPENDENT, StandardField.KEYWORDS, ',', '>');
         List<String> serialization = groupSerializer.serializeTree(GroupTreeNode.fromGroup(group));
-        assertEquals(Collections.singletonList("0 AutomaticKeywordGroup:myAutomaticGroup;0;keywords;,;>;1;;;;"), serialization);
+        assertEquals(
+                Collections.singletonList("0 AutomaticKeywordGroup:myAutomaticGroup;0;keywords;,;>;1;;;;"),
+                serialization);
     }
 
     @Test
     void serializeSingleAutomaticPersonGroup() {
-        AutomaticPersonsGroup group = new AutomaticPersonsGroup("myAutomaticGroup", GroupHierarchyType.INDEPENDENT, StandardField.AUTHOR);
+        AutomaticPersonsGroup group =
+                new AutomaticPersonsGroup("myAutomaticGroup", GroupHierarchyType.INDEPENDENT, StandardField.AUTHOR);
         List<String> serialization = groupSerializer.serializeTree(GroupTreeNode.fromGroup(group));
-        assertEquals(Collections.singletonList("0 AutomaticPersonsGroup:myAutomaticGroup;0;author;1;;;;"), serialization);
+        assertEquals(
+                Collections.singletonList("0 AutomaticPersonsGroup:myAutomaticGroup;0;author;1;;;;"), serialization);
     }
 
     @Test
     void serializeSingleTexGroup() throws Exception {
-        TexGroup group = TexGroup.create("myTexGroup", GroupHierarchyType.INDEPENDENT, Path.of("path", "To", "File"), new DefaultAuxParser(new BibDatabase()), new MetaData());
+        TexGroup group = TexGroup.create(
+                "myTexGroup",
+                GroupHierarchyType.INDEPENDENT,
+                Path.of("path", "To", "File"),
+                new DefaultAuxParser(new BibDatabase()),
+                new MetaData());
         List<String> serialization = groupSerializer.serializeTree(GroupTreeNode.fromGroup(group));
         assertEquals(Collections.singletonList("0 TexGroup:myTexGroup;0;path/To/File;1;;;;"), serialization);
     }
@@ -132,8 +158,7 @@ class GroupSerializerTest {
                 "0 AllEntriesGroup:",
                 "1 StaticGroup:ExplicitA;2;1;;;;",
                 "1 StaticGroup:ExplicitParent;0;1;;;;",
-                "2 StaticGroup:ExplicitNode;1;1;;;;"
-        );
+                "2 StaticGroup:ExplicitNode;1;1;;;;");
         assertEquals(expected, groupSerializer.serializeTree(root));
     }
 
@@ -156,8 +181,7 @@ class GroupSerializerTest {
                 "3 KeywordGroup:KeywordC;0;keywords;searchExpression;1;0;1;;;;",
                 "2 SearchGroup:SearchB;2;searchExpression;1;0;1;;;;",
                 "2 KeywordGroup:KeywordB;0;keywords;searchExpression;1;0;1;;;;",
-                "1 KeywordGroup:KeywordA;0;keywords;searchExpression;1;0;1;;;;"
-        );
+                "1 KeywordGroup:KeywordA;0;keywords;searchExpression;1;0;1;;;;");
         assertEquals(expected, groupSerializer.serializeTree(root));
     }
 }

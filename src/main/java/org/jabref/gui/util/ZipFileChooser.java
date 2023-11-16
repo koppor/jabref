@@ -41,13 +41,13 @@ public class ZipFileChooser extends BaseDialog<Path> {
         table.getColumns().add(nameColumn);
         table.getColumns().add(modifiedColumn);
         table.getColumns().add(sizeColumn);
-        nameColumn.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().toString()));
+        nameColumn.setCellValueFactory(
+                data -> new ReadOnlyStringWrapper(data.getValue().toString()));
         modifiedColumn.setCellValueFactory(data -> {
             try {
-                return new ReadOnlyStringWrapper(
-                        ZonedDateTime.ofInstant(Files.getLastModifiedTime(data.getValue()).toInstant(),
-                                ZoneId.systemDefault())
-                                     .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)));
+                return new ReadOnlyStringWrapper(ZonedDateTime.ofInstant(
+                                Files.getLastModifiedTime(data.getValue()).toInstant(), ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)));
             } catch (IOException e) {
                 // Ignore
                 return new ReadOnlyStringWrapper("");
@@ -65,10 +65,7 @@ public class ZipFileChooser extends BaseDialog<Path> {
 
         getDialogPane().setContent(table);
 
-        getDialogPane().getButtonTypes().setAll(
-                ButtonType.OK,
-                ButtonType.CANCEL
-        );
+        getDialogPane().getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
 
         setResultConverter(button -> {
             if (button == ButtonType.OK) {
@@ -89,8 +86,6 @@ public class ZipFileChooser extends BaseDialog<Path> {
         Path rootDir = zipFile.getRootDirectories().iterator().next();
 
         return FXCollections.observableArrayList(
-                Files.walk(rootDir)
-                     .filter(file -> file.endsWith(".class"))
-                     .collect(Collectors.toList()));
+                Files.walk(rootDir).filter(file -> file.endsWith(".class")).collect(Collectors.toList()));
     }
 }

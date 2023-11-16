@@ -37,7 +37,8 @@ class LayoutTest {
     private String layout(String layout, List<Path> fileDirForDatabase, BibEntry entry) throws IOException {
         StringReader layoutStringReader = new StringReader(layout.replace("__NEWLINE__", "\n"));
 
-        return new LayoutHelper(layoutStringReader, fileDirForDatabase, layoutFormatterPreferences, abbreviationRepository)
+        return new LayoutHelper(
+                        layoutStringReader, fileDirForDatabase, layoutFormatterPreferences, abbreviationRepository)
                 .getLayoutFromText()
                 .doLayout(entry, null);
     }
@@ -87,7 +88,8 @@ class LayoutTest {
 
     @Test
     void nameFormatter() throws IOException {
-        BibEntry entry = new BibEntry(StandardEntryType.Article).withField(StandardField.AUTHOR, "Joe Doe and Jane, Moon");
+        BibEntry entry =
+                new BibEntry(StandardEntryType.Article).withField(StandardField.AUTHOR, "Joe Doe and Jane, Moon");
 
         String layoutText = layout("\\begin{author}\\format[NameFormatter]{\\author}\\end{author}", entry);
 
@@ -96,8 +98,8 @@ class LayoutTest {
 
     @Test
     void HTMLCharsWithDotlessIAndTiled() throws IOException {
-        BibEntry entry = new BibEntry(StandardEntryType.Article)
-                .withField(StandardField.ABSTRACT, "\\~{n} \\~n \\'i \\i \\i");
+        BibEntry entry =
+                new BibEntry(StandardEntryType.Article).withField(StandardField.ABSTRACT, "\\~{n} \\~n \\'i \\i \\i");
 
         String layoutText = layout(
                 "<font face=\"arial\">\\begin{abstract}<BR><BR><b>Abstract: </b> \\format[HTMLChars]{\\abstract}\\end{abstract}</font>",
@@ -110,8 +112,7 @@ class LayoutTest {
 
     @Test
     void beginConditionals() throws IOException {
-        BibEntry entry = new BibEntry(StandardEntryType.Misc)
-                .withField(StandardField.AUTHOR, "Author");
+        BibEntry entry = new BibEntry(StandardEntryType.Misc).withField(StandardField.AUTHOR, "Author");
 
         // || (OR)
         String layoutText = layout("\\begin{editor||author}\\format[HTMLChars]{\\author}\\end{editor||author}", entry);
@@ -130,8 +131,9 @@ class LayoutTest {
 
         // combined (!a&&b)
         layoutText = layout(
-                "\\begin{!editor&&author}\\format[HTMLChars]{\\author}\\end{!editor&&author}" +
-                "\\begin{editor&&!author}\\format[HTMLChars]{\\editor} (eds.)\\end{editor&&!author}", entry);
+                "\\begin{!editor&&author}\\format[HTMLChars]{\\author}\\end{!editor&&author}"
+                        + "\\begin{editor&&!author}\\format[HTMLChars]{\\editor} (eds.)\\end{editor&&!author}",
+                entry);
 
         assertEquals("Author", layoutText);
     }
@@ -165,9 +167,12 @@ class LayoutTest {
 
     @Test
     void customNameFormatter() throws IOException {
-        when(layoutFormatterPreferences.getNameFormatterPreferences()).thenReturn(
-                new NameFormatterPreferences(Collections.singletonList("DCA"), Collections.singletonList("1@*@{ll}@@2@1..1@{ff}{ll}@2..2@ and {ff}{l}@@*@*@more")));
-        BibEntry entry = new BibEntry(StandardEntryType.Article).withField(StandardField.AUTHOR, "Joe Doe and Mary Jane");
+        when(layoutFormatterPreferences.getNameFormatterPreferences())
+                .thenReturn(new NameFormatterPreferences(
+                        Collections.singletonList("DCA"),
+                        Collections.singletonList("1@*@{ll}@@2@1..1@{ff}{ll}@2..2@ and {ff}{l}@@*@*@more")));
+        BibEntry entry =
+                new BibEntry(StandardEntryType.Article).withField(StandardField.AUTHOR, "Joe Doe and Mary Jane");
 
         String layoutText = layout("\\begin{author}\\format[DCA]{\\author}\\end{author}", entry);
 

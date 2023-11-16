@@ -27,9 +27,14 @@ public class WordKeywordGroup extends KeywordGroup implements GroupEntryChanger 
     private final SearchStrategy searchStrategy;
     private final boolean onlySplitWordsAtSeparator;
 
-    public WordKeywordGroup(String name, GroupHierarchyType context, Field searchField,
-                            String searchExpression, boolean caseSensitive, Character keywordSeparator,
-                            boolean onlySplitWordsAtSeparator) {
+    public WordKeywordGroup(
+            String name,
+            GroupHierarchyType context,
+            Field searchField,
+            String searchExpression,
+            boolean caseSensitive,
+            Character keywordSeparator,
+            boolean onlySplitWordsAtSeparator) {
         super(name, context, searchField, searchExpression, caseSensitive);
 
         this.keywordSeparator = keywordSeparator;
@@ -122,13 +127,20 @@ public class WordKeywordGroup extends KeywordGroup implements GroupEntryChanger 
 
     @Override
     public AbstractGroup deepCopy() {
-        return new WordKeywordGroup(getName(), getHierarchicalContext(), searchField, searchExpression,
-                caseSensitive, keywordSeparator, onlySplitWordsAtSeparator);
+        return new WordKeywordGroup(
+                getName(),
+                getHierarchicalContext(),
+                searchField,
+                searchExpression,
+                caseSensitive,
+                keywordSeparator,
+                onlySplitWordsAtSeparator);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(),
+        return Objects.hash(
+                getName(),
                 getHierarchicalContext(),
                 searchField,
                 searchExpression,
@@ -164,16 +176,14 @@ public class WordKeywordGroup extends KeywordGroup implements GroupEntryChanger 
         Set<EntryType> searchWords;
 
         TypeSearchStrategy() {
-            searchWords = KeywordList.parse(searchExpression, keywordSeparator)
-                                     .stream()
-                                     .map(word -> EntryTypeFactory.parse(word.get()))
-                                     .collect(Collectors.toSet());
+            searchWords = KeywordList.parse(searchExpression, keywordSeparator).stream()
+                    .map(word -> EntryTypeFactory.parse(word.get()))
+                    .collect(Collectors.toSet());
         }
 
         @Override
         public boolean contains(BibEntry entry) {
-            return searchWords.stream()
-                              .anyMatch(word -> entry.getType().equals(word));
+            return searchWords.stream().anyMatch(word -> entry.getType().equals(word));
         }
     }
 

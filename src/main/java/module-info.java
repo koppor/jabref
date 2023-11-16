@@ -14,30 +14,32 @@ open module org.jabref {
     requires javafx.fxml;
     requires afterburner.fx;
     requires com.dlsc.gemsfx;
+
     uses com.dlsc.gemsfx.TagsField;
+
     requires de.saxsys.mvvmfx;
     requires reactfx;
     requires org.fxmisc.flowless;
-
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.ikonli.materialdesign2;
+
     uses org.kordamp.ikonli.IkonHandler;
     uses org.kordamp.ikonli.IkonProvider;
 
-    provides org.kordamp.ikonli.IkonHandler
-            with org.jabref.gui.icon.JabRefIkonHandler;
-    provides org.kordamp.ikonli.IkonProvider
-            with org.jabref.gui.icon.JabrefIconProvider;
+    provides org.kordamp.ikonli.IkonHandler with
+            org.jabref.gui.icon.JabRefIkonHandler;
+    provides org.kordamp.ikonli.IkonProvider with
+            org.jabref.gui.icon.JabrefIconProvider;
 
     requires org.controlsfx.controls;
     requires org.fxmisc.richtext;
     requires com.tobiasdiez.easybind;
 
-    provides com.airhacks.afterburner.views.ResourceLocator
-            with org.jabref.gui.util.JabRefResourceLocator;
-    provides com.airhacks.afterburner.injection.PresenterFactory
-            with org.jabref.gui.DefaultInjector;
+    provides com.airhacks.afterburner.views.ResourceLocator with
+            org.jabref.gui.util.JabRefResourceLocator;
+    provides com.airhacks.afterburner.injection.PresenterFactory with
+            org.jabref.gui.DefaultInjector;
 
     // Logging
     requires org.slf4j;
@@ -47,8 +49,8 @@ open module org.jabref {
     requires org.tinylog.api.slf4j;
     requires org.tinylog.impl;
 
-    provides org.tinylog.writers.Writer
-    with org.jabref.gui.logging.GuiWriter;
+    provides org.tinylog.writers.Writer with
+            org.jabref.gui.logging.GuiWriter;
 
     // Preferences and XML
     requires java.prefs;
@@ -85,6 +87,7 @@ open module org.jabref {
     requires ojdbc10;
     requires org.postgresql.jdbc;
     requires org.mariadb.jdbc;
+
     uses org.mariadb.jdbc.credential.CredentialPlugin;
 
     // Apache Commons and other (similar) helper libraries
@@ -94,28 +97,20 @@ open module org.jabref {
     requires com.google.common;
     requires io.github.javadiffutils;
     requires java.string.similarity;
-
     requires com.github.tomtung.latex2unicode;
     requires fastparse;
-
     requires jbibtex;
     requires citeproc.java;
-
     requires snuggletex.core;
-
     requires org.apache.pdfbox;
     requires org.apache.xmpbox;
     requires com.ibm.icu;
-
     requires flexmark;
     requires flexmark.util.ast;
     requires flexmark.util.data;
-
     requires com.h2database.mvstore;
-
     requires java.keyring;
     requires org.freedesktop.dbus;
-
     requires org.jooq.jool;
 
     // fulltext search
@@ -124,15 +119,16 @@ open module org.jabref {
     uses org.apache.lucene.codecs.lucene95.Lucene95Codec;
 
     requires org.apache.lucene.queryparser;
+
     uses org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+
     requires org.apache.lucene.analysis.common;
     requires org.apache.lucene.highlighter;
-
     requires net.harawata.appdirs;
     requires com.sun.jna;
     requires com.sun.jna.platform;
-
     requires org.eclipse.jgit;
+
     uses org.eclipse.jgit.transport.SshSessionFactory;
     uses org.eclipse.jgit.lib.GpgSigner;
 

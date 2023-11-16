@@ -65,7 +65,7 @@ public abstract class FullTextSearchRule implements SearchRule {
         }
 
         return new PdfSearchResults(lastSearchResults.stream()
-                                                     .filter(searchResult -> searchResult.isResultFor(bibEntry))
-                                                     .collect(Collectors.toList()));
+                .filter(searchResult -> searchResult.isResultFor(bibEntry))
+                .collect(Collectors.toList()));
     }
 }

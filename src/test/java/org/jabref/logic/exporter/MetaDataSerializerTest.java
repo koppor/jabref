@@ -58,23 +58,19 @@ public class MetaDataSerializerTest {
 
     @Test
     public void serializeSingleSaveAction() {
-        FieldFormatterCleanups saveActions = new FieldFormatterCleanups(true,
+        FieldFormatterCleanups saveActions = new FieldFormatterCleanups(
+                true,
                 Collections.singletonList(new FieldFormatterCleanup(StandardField.TITLE, new LowerCaseFormatter())));
         metaData.setSaveActions(saveActions);
 
         Map<String, String> expectedSerialization = new TreeMap<>();
-        expectedSerialization.put("saveActions",
-                "enabled;" + OS.NEWLINE + "title[lower_case]" + OS.NEWLINE + ";");
+        expectedSerialization.put("saveActions", "enabled;" + OS.NEWLINE + "title[lower_case]" + OS.NEWLINE + ";");
         assertEquals(expectedSerialization, MetaDataSerializer.getSerializedStringMap(metaData, pattern));
     }
 
     @Test
     public void serializeSingleContentSelectors() {
-        List<String> values = List.of(
-                "approved",
-                "captured",
-                "received",
-                "status");
+        List<String> values = List.of("approved", "captured", "received", "status");
 
         metaData.addContentSelector(new ContentSelector(StandardField.PUBSTATE, values));
 
@@ -93,9 +89,7 @@ public class MetaDataSerializerTest {
     @Test
     void testParsingEmptyOptionalFieldsFieldsReturnsEmptyCollections() {
         newCustomType = new BibEntryType(
-                CUSTOM_TYPE,
-                Collections.emptySet(),
-                Collections.singleton(new OrFields(StandardField.AUTHOR)));
+                CUSTOM_TYPE, Collections.emptySet(), Collections.singleton(new OrFields(StandardField.AUTHOR)));
 
         String serialized = MetaDataSerializer.serializeCustomEntryTypes(newCustomType);
         Optional<BibEntryType> type = MetaDataParser.parseCustomEntryType(serialized);
@@ -111,28 +105,25 @@ public class MetaDataSerializerTest {
                         new BibEntryTypeBuilder()
                                 .withType(new UnknownEntryType("test"))
                                 .withRequiredFields(StandardField.AUTHOR, StandardField.TITLE),
-                        "jabref-entrytype: test: req[author;title] opt[]"
-                ),
+                        "jabref-entrytype: test: req[author;title] opt[]"),
                 Arguments.of(
                         new BibEntryTypeBuilder()
                                 .withType(new UnknownEntryType("test"))
                                 .withRequiredFields(StandardField.AUTHOR)
                                 .withImportantFields(StandardField.TITLE),
-                        "jabref-entrytype: test: req[author] opt[title]"
-                ),
+                        "jabref-entrytype: test: req[author] opt[title]"),
                 Arguments.of(
                         new BibEntryTypeBuilder()
                                 .withType(new UnknownEntryType("test"))
-                                .withRequiredFields(UnknownField.fromDisplayName("Test1"), UnknownField.fromDisplayName("Test2")),
-                        "jabref-entrytype: test: req[Test1;Test2] opt[]"
-                ),
+                                .withRequiredFields(
+                                        UnknownField.fromDisplayName("Test1"), UnknownField.fromDisplayName("Test2")),
+                        "jabref-entrytype: test: req[Test1;Test2] opt[]"),
                 Arguments.of(
                         new BibEntryTypeBuilder()
                                 .withType(new UnknownEntryType("test"))
-                                .withRequiredFields(UnknownField.fromDisplayName("tEST"), UnknownField.fromDisplayName("tEsT2")),
-                        "jabref-entrytype: test: req[tEST;tEsT2] opt[]"
-                )
-        );
+                                .withRequiredFields(
+                                        UnknownField.fromDisplayName("tEST"), UnknownField.fromDisplayName("tEsT2")),
+                        "jabref-entrytype: test: req[tEST;tEsT2] opt[]"));
     }
 
     @ParameterizedTest

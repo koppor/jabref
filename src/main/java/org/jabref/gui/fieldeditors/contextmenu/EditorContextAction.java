@@ -31,11 +31,16 @@ public class EditorContextAction extends SimpleCommand {
         this.textInputControl = textInputControl;
 
         BooleanProperty editableBinding = textInputControl.editableProperty();
-        BooleanBinding hasTextBinding = Bindings.createBooleanBinding(() -> textInputControl.getLength() > 0, textInputControl.textProperty());
-        BooleanBinding hasStringInClipboardBinding = (BooleanBinding) BindingsHelper.constantOf(Clipboard.getSystemClipboard().hasString());
-        BooleanBinding hasSelectionBinding = Bindings.createBooleanBinding(() -> textInputControl.getSelection().getLength() > 0, textInputControl.selectionProperty());
-        BooleanBinding allSelectedBinding = Bindings.createBooleanBinding(() -> textInputControl.getSelection().getLength() == textInputControl.getLength());
-        BooleanBinding maskTextBinding = (BooleanBinding) BindingsHelper.constantOf(textInputControl instanceof PasswordField); // (maskText("A") != "A");
+        BooleanBinding hasTextBinding =
+                Bindings.createBooleanBinding(() -> textInputControl.getLength() > 0, textInputControl.textProperty());
+        BooleanBinding hasStringInClipboardBinding = (BooleanBinding)
+                BindingsHelper.constantOf(Clipboard.getSystemClipboard().hasString());
+        BooleanBinding hasSelectionBinding = Bindings.createBooleanBinding(
+                () -> textInputControl.getSelection().getLength() > 0, textInputControl.selectionProperty());
+        BooleanBinding allSelectedBinding = Bindings.createBooleanBinding(
+                () -> textInputControl.getSelection().getLength() == textInputControl.getLength());
+        BooleanBinding maskTextBinding = (BooleanBinding)
+                BindingsHelper.constantOf(textInputControl instanceof PasswordField); // (maskText("A") != "A");
 
         this.executable.bind(
                 switch (command) {
@@ -69,21 +74,25 @@ public class EditorContextAction extends SimpleCommand {
     /**
      * Returns the default context menu items (except undo/redo)
      */
-    public static List<MenuItem> getDefaultContextMenuItems(TextInputControl textInputControl,
-                                                            KeyBindingRepository keyBindingRepository) {
+    public static List<MenuItem> getDefaultContextMenuItems(
+            TextInputControl textInputControl, KeyBindingRepository keyBindingRepository) {
         ActionFactory factory = new ActionFactory(keyBindingRepository);
 
-        MenuItem selectAllMenuItem = factory.createMenuItem(StandardActions.SELECT_ALL,
-                new EditorContextAction(StandardActions.SELECT_ALL, textInputControl));
+        MenuItem selectAllMenuItem = factory.createMenuItem(
+                StandardActions.SELECT_ALL, new EditorContextAction(StandardActions.SELECT_ALL, textInputControl));
         if (SHOW_HANDLES) {
             selectAllMenuItem.getProperties().put("refreshMenu", Boolean.TRUE);
         }
 
         return List.of(
-                factory.createMenuItem(StandardActions.CUT, new EditorContextAction(StandardActions.CUT, textInputControl)),
-                factory.createMenuItem(StandardActions.COPY, new EditorContextAction(StandardActions.COPY, textInputControl)),
-                factory.createMenuItem(StandardActions.PASTE, new EditorContextAction(StandardActions.PASTE, textInputControl)),
-                factory.createMenuItem(StandardActions.DELETE, new EditorContextAction(StandardActions.DELETE, textInputControl)),
+                factory.createMenuItem(
+                        StandardActions.CUT, new EditorContextAction(StandardActions.CUT, textInputControl)),
+                factory.createMenuItem(
+                        StandardActions.COPY, new EditorContextAction(StandardActions.COPY, textInputControl)),
+                factory.createMenuItem(
+                        StandardActions.PASTE, new EditorContextAction(StandardActions.PASTE, textInputControl)),
+                factory.createMenuItem(
+                        StandardActions.DELETE, new EditorContextAction(StandardActions.DELETE, textInputControl)),
                 selectAllMenuItem);
     }
 }

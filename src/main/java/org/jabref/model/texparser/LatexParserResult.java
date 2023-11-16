@@ -94,11 +94,9 @@ public class LatexParserResult {
 
     @Override
     public String toString() {
-        return String.format("TexParserResult{fileList=%s, nestedFiles=%s, bibFiles=%s, citations=%s}",
-                this.fileList,
-                this.nestedFiles,
-                this.bibFiles,
-                this.citations);
+        return String.format(
+                "TexParserResult{fileList=%s, nestedFiles=%s, bibFiles=%s, citations=%s}",
+                this.fileList, this.nestedFiles, this.bibFiles, this.citations);
     }
 
     @Override

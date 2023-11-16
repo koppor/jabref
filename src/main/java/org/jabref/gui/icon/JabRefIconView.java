@@ -17,6 +17,7 @@ public class JabRefIconView extends FontIcon {
      * (e.g. validation that parameter passed to "icon" is indeed of type {@link IconTheme.JabRefIcons}).
      */
     private final ObjectProperty<IconTheme.JabRefIcons> glyph;
+
     private final ObjectProperty<Number> glyphSize;
 
     public JabRefIconView(JabRefIcons icon, int size) {

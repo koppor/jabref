@@ -32,8 +32,7 @@ public class OpenAccessDoi implements FulltextFetcher {
     public Optional<URL> findFullText(BibEntry entry) throws IOException {
         Objects.requireNonNull(entry);
 
-        Optional<DOI> doi = entry.getField(StandardField.DOI)
-                                 .flatMap(DOI::parse);
+        Optional<DOI> doi = entry.getField(StandardField.DOI).flatMap(DOI::parse);
 
         if (!doi.isPresent()) {
             return Optional.empty();
@@ -53,24 +52,24 @@ public class OpenAccessDoi implements FulltextFetcher {
 
     public Optional<URL> findFullText(DOI doi) throws UnirestException {
         HttpResponse<JsonNode> request = Unirest.get(API_URL + doi.getDOI() + "?email=developers@jabref.org")
-                                                .header("accept", "application/json")
-                                                .asJson();
+                .header("accept", "application/json")
+                .asJson();
 
         return Optional.of(request)
-                       .map(HttpResponse::getBody)
-                       .filter(Objects::nonNull)
-                       .map(JsonNode::getObject)
-                       .filter(Objects::nonNull)
-                       .map(root -> root.optJSONObject("best_oa_location"))
-                       .filter(Objects::nonNull)
-                       .map(location -> location.optString("url"))
-                       .flatMap(url -> {
-                           try {
-                               return Optional.of(new URL(url));
-                           } catch (MalformedURLException e) {
-                               LOGGER.debug("Could not determine URL to fetch full text from", e);
-                               return Optional.empty();
-                           }
-                       });
+                .map(HttpResponse::getBody)
+                .filter(Objects::nonNull)
+                .map(JsonNode::getObject)
+                .filter(Objects::nonNull)
+                .map(root -> root.optJSONObject("best_oa_location"))
+                .filter(Objects::nonNull)
+                .map(location -> location.optString("url"))
+                .flatMap(url -> {
+                    try {
+                        return Optional.of(new URL(url));
+                    } catch (MalformedURLException e) {
+                        LOGGER.debug("Could not determine URL to fetch full text from", e);
+                        return Optional.empty();
+                    }
+                });
     }
 }

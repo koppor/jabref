@@ -7,7 +7,6 @@ import org.jabref.model.entry.BibEntry;
 /**
  * <code>EntryChangedEvent</code> is fired when a <code>BibEntry</code> has been changed.
  */
-
 public class EntryChangedEvent extends EntriesEvent {
 
     /**

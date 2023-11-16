@@ -19,7 +19,8 @@ public class SearchGroup extends AbstractGroup {
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchGroup.class);
     private final GroupSearchQuery query;
 
-    public SearchGroup(String name, GroupHierarchyType context, String searchExpression, EnumSet<SearchFlags> searchFlags) {
+    public SearchGroup(
+            String name, GroupHierarchyType context, String searchExpression, EnumSet<SearchFlags> searchFlags) {
         super(name, context);
         this.query = new GroupSearchQuery(searchExpression, searchFlags);
     }
@@ -38,9 +39,9 @@ public class SearchGroup extends AbstractGroup {
         }
         SearchGroup other = (SearchGroup) o;
         return Objects.equals(getName(), other.getName())
-               && Objects.equals(getHierarchicalContext(), other.getHierarchicalContext())
-               && Objects.equals(getSearchExpression(), other.getSearchExpression())
-               && Objects.equals(getSearchFlags(), other.getSearchFlags());
+                && Objects.equals(getHierarchicalContext(), other.getHierarchicalContext())
+                && Objects.equals(getSearchExpression(), other.getSearchExpression())
+                && Objects.equals(getSearchFlags(), other.getSearchFlags());
     }
 
     @Override
@@ -59,15 +60,19 @@ public class SearchGroup extends AbstractGroup {
         } catch (Throwable t) {
             // this should never happen, because the constructor obviously
             // succeeded in creating _this_ instance!
-            LOGGER.error("Internal error in SearchGroup.deepCopy(). "
-                    + "Please report this on https://github.com/JabRef/jabref/issues", t);
+            LOGGER.error(
+                    "Internal error in SearchGroup.deepCopy(). "
+                            + "Please report this on https://github.com/JabRef/jabref/issues",
+                    t);
             return null;
         }
     }
 
     @Override
     public String toString() {
-        return "SearchGroup [query=" + query + ", name=" + name + ", searchFlags=" + getSearchFlags() + ",  context=" + context + ", color=" + color + ", isExpanded=" + isExpanded + ", description=" + description + ", iconName=" + iconName + "]";
+        return "SearchGroup [query=" + query + ", name=" + name + ", searchFlags=" + getSearchFlags() + ",  context="
+                + context + ", color=" + color + ", isExpanded=" + isExpanded + ", description=" + description
+                + ", iconName=" + iconName + "]";
     }
 
     @Override

@@ -12,7 +12,8 @@ public class BstNameFormatterTest {
     public void testUmlautsFullNames() {
         AuthorList list = AuthorList.parse("Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
 
-        assertEquals("de~laVall{\\'e}e~PoussinCharles Louis Xavier~Joseph",
+        assertEquals(
+                "de~laVall{\\'e}e~PoussinCharles Louis Xavier~Joseph",
                 BstNameFormatter.formatName(list.getAuthor(0), "{vv}{ll}{jj}{ff}"));
     }
 
@@ -20,7 +21,8 @@ public class BstNameFormatterTest {
     public void testUmlautsAbbreviations() {
         AuthorList list = AuthorList.parse("Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
 
-        assertEquals("de~la Vall{\\'e}e~Poussin, C.~L. X.~J.",
+        assertEquals(
+                "de~la Vall{\\'e}e~Poussin, C.~L. X.~J.",
                 BstNameFormatter.formatName(list.getAuthor(0), "{vv~}{ll}{, jj}{, f.}"));
     }
 
@@ -28,7 +30,8 @@ public class BstNameFormatterTest {
     public void testUmlautsAbbreviationsWithQuestionMark() {
         AuthorList list = AuthorList.parse("Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
 
-        assertEquals("de~la Vall{\\'e}e~Poussin, C.~L. X.~J?",
+        assertEquals(
+                "de~la Vall{\\'e}e~Poussin, C.~L. X.~J?",
                 BstNameFormatter.formatName(list.getAuthor(0), "{vv~}{ll}{, jj}{, f}?"));
     }
 
@@ -49,8 +52,8 @@ public class BstNameFormatterTest {
         assertNameFormatC("Ulrich {\\\"{U}}nderwood", "Ulrich {\\\"{U}}nderwood and Ned {\\~N}et and Paul {\\={P}}ot");
         assertNameFormatA("Victor, P.~{\\'E}?", "Paul {\\'E}mile Victor and and de la Cierva y Codorn{\\’\\i}u, Juan");
         assertNameFormatB("P.~{\\'E}. Victor", "Paul {\\'E}mile Victor and and de la Cierva y Codorn{\\’\\i}u, Juan");
-        assertNameFormatC("Paul~{\\'E}mile Victor",
-                "Paul {\\'E}mile Victor and and de la Cierva y Codorn{\\’\\i}u, Juan");
+        assertNameFormatC(
+                "Paul~{\\'E}mile Victor", "Paul {\\'E}mile Victor and and de la Cierva y Codorn{\\’\\i}u, Juan");
     }
 
     private void assertNameFormat(String string, String string2, int which, String format) {

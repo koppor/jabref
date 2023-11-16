@@ -10,7 +10,6 @@ import org.jabref.model.entry.event.EntriesEventSource;
  * <code>EntriesRemovedEvent</code> is fired when at least one <code>BibEntry</code> is being removed
  * from the database.
  */
-
 public class EntriesRemovedEvent extends EntriesEvent {
 
     /**

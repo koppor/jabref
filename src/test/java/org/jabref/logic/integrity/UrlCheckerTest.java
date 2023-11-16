@@ -23,7 +23,9 @@ public class UrlCheckerTest {
 
     @Test
     void urlFieldAcceptsFullPathHttpAddress() {
-        assertEquals(Optional.empty(), checker.checkValue("http://scikit-learn.org/stable/modules/ensemble.html#random-forests"));
+        assertEquals(
+                Optional.empty(),
+                checker.checkValue("http://scikit-learn.org/stable/modules/ensemble.html#random-forests"));
     }
 
     @Test

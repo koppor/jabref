@@ -41,9 +41,9 @@ public abstract class AbstractQueryTransformer {
         }
 
         String result = query.getChildren().stream()
-                             .map(this::transform)
-                             .flatMap(Optional::stream)
-                             .collect(Collectors.joining(delimiter, "(", ")"));
+                .map(this::transform)
+                .flatMap(Optional::stream)
+                .collect(Collectors.joining(delimiter, "(", ")"));
         if ("()".equals(result)) {
             return Optional.empty();
         }

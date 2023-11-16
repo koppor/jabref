@@ -20,22 +20,39 @@ public class SearchQueryTest {
 
     @Test
     public void testToString() {
-        assertEquals("\"asdf\" (case sensitive, regular expression)", new SearchQuery("asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).toString());
-        assertEquals("\"asdf\" (case insensitive, plain text)", new SearchQuery("asdf", EnumSet.noneOf(SearchFlags.class)).toString());
+        assertEquals(
+                "\"asdf\" (case sensitive, regular expression)",
+                new SearchQuery(
+                                "asdf",
+                                EnumSet.of(
+                                        SearchRules.SearchFlags.CASE_SENSITIVE,
+                                        SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                        .toString());
+        assertEquals(
+                "\"asdf\" (case insensitive, plain text)",
+                new SearchQuery("asdf", EnumSet.noneOf(SearchFlags.class)).toString());
     }
 
     @Test
     public void testIsContainsBasedSearch() {
         assertTrue(new SearchQuery("asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE)).isContainsBasedSearch());
-        assertTrue(new SearchQuery("asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isContainsBasedSearch());
-        assertFalse(new SearchQuery("author=asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE)).isContainsBasedSearch());
+        assertTrue(new SearchQuery(
+                        "asdf",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isContainsBasedSearch());
+        assertFalse(new SearchQuery("author=asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE))
+                .isContainsBasedSearch());
     }
 
     @Test
     public void testIsGrammarBasedSearch() {
         assertFalse(new SearchQuery("asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE)).isGrammarBasedSearch());
-        assertFalse(new SearchQuery("asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isGrammarBasedSearch());
-        assertTrue(new SearchQuery("author=asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE)).isGrammarBasedSearch());
+        assertFalse(new SearchQuery(
+                        "asdf",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isGrammarBasedSearch());
+        assertTrue(new SearchQuery("author=asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE))
+                .isGrammarBasedSearch());
     }
 
     @Test
@@ -105,7 +122,8 @@ public class SearchQueryTest {
         e.setField(StandardField.TITLE, "Fruity features");
         e.setField(StandardField.KEYWORDS, "banana, pineapple, orange");
 
-        SearchQuery searchQuery = new SearchQuery("anyfield=fruit and keywords!=banana", EnumSet.noneOf(SearchFlags.class));
+        SearchQuery searchQuery =
+                new SearchQuery("anyfield=fruit and keywords!=banana", EnumSet.noneOf(SearchFlags.class));
         assertFalse(searchQuery.isMatch(e));
     }
 
@@ -115,7 +133,8 @@ public class SearchQueryTest {
         e.setField(StandardField.TITLE, "Fruity features");
         e.setField(StandardField.KEYWORDS, "banana, pineapple, orange");
 
-        SearchQuery searchQuery = new SearchQuery("anyfield=fruit and keywords=apple", EnumSet.noneOf(SearchFlags.class));
+        SearchQuery searchQuery =
+                new SearchQuery("anyfield=fruit and keywords=apple", EnumSet.noneOf(SearchFlags.class));
         assertTrue(searchQuery.isMatch(e));
     }
 
@@ -125,9 +144,18 @@ public class SearchQueryTest {
         entry.setType(StandardEntryType.Article);
         entry.setField(StandardField.AUTHOR, "asdf");
 
-        assertFalse(new SearchQuery("BiblatexEntryType", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isMatch(entry));
-        assertTrue(new SearchQuery("asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isMatch(entry));
-        assertTrue(new SearchQuery("author=asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isMatch(entry));
+        assertFalse(new SearchQuery(
+                        "BiblatexEntryType",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isMatch(entry));
+        assertTrue(new SearchQuery(
+                        "asdf",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isMatch(entry));
+        assertTrue(new SearchQuery(
+                        "author=asdf",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isMatch(entry));
     }
 
     @Test
@@ -142,32 +170,50 @@ public class SearchQueryTest {
 
     @Test
     public void testIsNotValidQueryContainsBracketNotAsRegEx() {
-        assertTrue(new SearchQuery("asdf[", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isValid());
+        assertTrue(new SearchQuery(
+                        "asdf[",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isValid());
     }
 
     @Test
     public void testIsValidQueryAsRegEx() {
-        assertTrue(new SearchQuery("asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isValid());
+        assertTrue(new SearchQuery(
+                        "asdf",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isValid());
     }
 
     @Test
     public void testIsValidQueryWithNumbersAsRegEx() {
-        assertTrue(new SearchQuery("123", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isValid());
+        assertTrue(new SearchQuery(
+                        "123",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isValid());
     }
 
     @Test
     public void testIsValidQueryContainsBracketAsRegEx() {
-        assertTrue(new SearchQuery("asdf[", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isValid());
+        assertTrue(new SearchQuery(
+                        "asdf[",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isValid());
     }
 
     @Test
     public void testIsValidQueryWithEqualSignAsRegEx() {
-        assertTrue(new SearchQuery("author=asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isValid());
+        assertTrue(new SearchQuery(
+                        "author=asdf",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isValid());
     }
 
     @Test
     public void testIsValidQueryWithNumbersAndEqualSignAsRegEx() {
-        assertTrue(new SearchQuery("author=123", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isValid());
+        assertTrue(new SearchQuery(
+                        "author=123",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isValid());
     }
 
     @Test
@@ -187,7 +233,10 @@ public class SearchQueryTest {
         entry.setField(StandardField.AUTHOR, "asdf");
         entry.setField(StandardField.ABSTRACT, "text");
 
-        assertTrue(new SearchQuery("text AND author=asdf", EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION)).isMatch(entry));
+        assertTrue(new SearchQuery(
+                        "text AND author=asdf",
+                        EnumSet.of(SearchRules.SearchFlags.CASE_SENSITIVE, SearchRules.SearchFlags.REGULAR_EXPRESSION))
+                .isMatch(entry));
     }
 
     @Test
@@ -204,7 +253,8 @@ public class SearchQueryTest {
         SearchQuery result = new SearchQuery(query, EnumSet.noneOf(SearchFlags.class));
         Pattern pattern = Pattern.compile("(\\Qprogress\\E)");
         // We can't directly compare the pattern objects
-        assertEquals(Optional.of(pattern.toString()), result.getPatternForWords().map(Pattern::toString));
+        assertEquals(
+                Optional.of(pattern.toString()), result.getPatternForWords().map(Pattern::toString));
     }
 
     @Test
@@ -212,7 +262,8 @@ public class SearchQueryTest {
         String queryText = "[a-c]\\d* \\d*";
         SearchQuery regexQuery = new SearchQuery(queryText, EnumSet.of(SearchRules.SearchFlags.REGULAR_EXPRESSION));
         Pattern pattern = Pattern.compile("([a-c]\\d* \\d*)");
-        assertEquals(Optional.of(pattern.toString()), regexQuery.getPatternForWords().map(Pattern::toString));
+        assertEquals(
+                Optional.of(pattern.toString()), regexQuery.getPatternForWords().map(Pattern::toString));
     }
 
     @Test
@@ -220,7 +271,9 @@ public class SearchQueryTest {
         String queryText = "[a-c]\\d* \\d*";
         SearchQuery regexQuery = new SearchQuery(queryText, EnumSet.of(SearchRules.SearchFlags.REGULAR_EXPRESSION));
         Pattern pattern = Pattern.compile("([a-c]\\d* \\d*)");
-        assertEquals(Optional.of(pattern.toString()), regexQuery.getJavaScriptPatternForWords().map(Pattern::toString));
+        assertEquals(
+                Optional.of(pattern.toString()),
+                regexQuery.getJavaScriptPatternForWords().map(Pattern::toString));
     }
 
     @Test
@@ -229,15 +282,20 @@ public class SearchQueryTest {
         String queryText = "<([{\\\\^-=$!|]})?*+.> word1 word2.";
         SearchQuery textQueryWithSpecialChars = new SearchQuery(queryText, EnumSet.noneOf(SearchFlags.class));
         String pattern = "(\\Q<([{\\^-=$!|]})?*+.>\\E)|(\\Qword1\\E)|(\\Qword2.\\E)";
-        assertEquals(Optional.of(pattern), textQueryWithSpecialChars.getPatternForWords().map(Pattern::toString));
+        assertEquals(
+                Optional.of(pattern),
+                textQueryWithSpecialChars.getPatternForWords().map(Pattern::toString));
     }
 
     @Test
     public void testEscapingInJavascriptPattern() {
-        // first word contain all javascript special regex characters that should be escaped individually in text based search
+        // first word contain all javascript special regex characters that should be escaped individually in text based
+        // search
         String queryText = "([{\\\\^$|]})?*+./ word1 word2.";
         SearchQuery textQueryWithSpecialChars = new SearchQuery(queryText, EnumSet.noneOf(SearchFlags.class));
         String pattern = "(\\(\\[\\{\\\\\\^\\$\\|\\]\\}\\)\\?\\*\\+\\.\\/)|(word1)|(word2\\.)";
-        assertEquals(Optional.of(pattern), textQueryWithSpecialChars.getJavaScriptPatternForWords().map(Pattern::toString));
+        assertEquals(
+                Optional.of(pattern),
+                textQueryWithSpecialChars.getJavaScriptPatternForWords().map(Pattern::toString));
     }
 }

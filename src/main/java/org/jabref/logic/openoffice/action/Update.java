@@ -21,24 +21,21 @@ import com.sun.star.text.XTextDocument;
  */
 public class Update {
 
-    private Update() {
-    }
+    private Update() {}
 
     /**
      * @return the list of unresolved citation keys
      */
-    private static List<String> updateDocument(XTextDocument doc,
-                                               OOFrontend frontend,
-                                               List<BibDatabase> databases,
-                                               OOBibStyle style,
-                                               FunctionalTextViewCursor fcursor,
-                                               boolean doUpdateBibliography,
-                                               boolean alwaysAddCitedOnPages)
-            throws
-            CreationException,
-            NoDocumentException,
-            WrappedTargetException,
-            com.sun.star.lang.IllegalArgumentException {
+    private static List<String> updateDocument(
+            XTextDocument doc,
+            OOFrontend frontend,
+            List<BibDatabase> databases,
+            OOBibStyle style,
+            FunctionalTextViewCursor fcursor,
+            boolean doUpdateBibliography,
+            boolean alwaysAddCitedOnPages)
+            throws CreationException, NoDocumentException, WrappedTargetException,
+                    com.sun.star.lang.IllegalArgumentException {
 
         final boolean useLockControllers = true;
 
@@ -53,11 +50,8 @@ public class Update {
             UpdateCitationMarkers.applyNewCitationMarkers(doc, frontend, style);
 
             if (doUpdateBibliography) {
-                UpdateBibliography.rebuildBibTextSection(doc,
-                        frontend,
-                        frontend.citationGroups.getBibliography().get(),
-                        style,
-                        alwaysAddCitedOnPages);
+                UpdateBibliography.rebuildBibTextSection(
+                        doc, frontend, frontend.citationGroups.getBibliography().get(), style, alwaysAddCitedOnPages);
             }
 
             return frontend.citationGroups.getUnresolvedKeys();
@@ -91,18 +85,17 @@ public class Update {
         }
     }
 
-    public static List<String> synchronizeDocument(XTextDocument doc,
-                                                   OOFrontend frontend,
-                                                   OOBibStyle style,
-                                                   FunctionalTextViewCursor fcursor,
-                                                   SyncOptions syncOptions)
-            throws
-            CreationException,
-            NoDocumentException,
-            WrappedTargetException,
-            com.sun.star.lang.IllegalArgumentException {
+    public static List<String> synchronizeDocument(
+            XTextDocument doc,
+            OOFrontend frontend,
+            OOBibStyle style,
+            FunctionalTextViewCursor fcursor,
+            SyncOptions syncOptions)
+            throws CreationException, NoDocumentException, WrappedTargetException,
+                    com.sun.star.lang.IllegalArgumentException {
 
-        return Update.updateDocument(doc,
+        return Update.updateDocument(
+                doc,
                 frontend,
                 syncOptions.databases,
                 style,
@@ -114,15 +107,10 @@ public class Update {
     /**
      * Reread document before sync
      */
-    public static List<String> resyncDocument(XTextDocument doc,
-                                              OOBibStyle style,
-                                              FunctionalTextViewCursor fcursor,
-                                              SyncOptions syncOptions)
-            throws
-            CreationException,
-            NoDocumentException,
-            WrappedTargetException,
-            com.sun.star.lang.IllegalArgumentException {
+    public static List<String> resyncDocument(
+            XTextDocument doc, OOBibStyle style, FunctionalTextViewCursor fcursor, SyncOptions syncOptions)
+            throws CreationException, NoDocumentException, WrappedTargetException,
+                    com.sun.star.lang.IllegalArgumentException {
 
         OOFrontend frontend = new OOFrontend(doc);
 

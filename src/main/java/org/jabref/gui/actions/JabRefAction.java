@@ -16,10 +16,10 @@ class JabRefAction extends org.controlsfx.control.action.Action {
 
     public JabRefAction(Action action, KeyBindingRepository keyBindingRepository) {
         super(action.getText());
-        action.getIcon()
-              .ifPresent(icon -> setGraphic(icon.getGraphicNode()));
-        action.getKeyBinding()
-              .ifPresent(keyBinding -> keyBindingRepository.getKeyCombination(keyBinding).ifPresent(combination -> setAccelerator(combination)));
+        action.getIcon().ifPresent(icon -> setGraphic(icon.getGraphicNode()));
+        action.getKeyBinding().ifPresent(keyBinding -> keyBindingRepository
+                .getKeyCombination(keyBinding)
+                .ifPresent(combination -> setAccelerator(combination)));
 
         setLongText(action.getDescription());
     }
@@ -70,14 +70,12 @@ class JabRefAction extends org.controlsfx.control.action.Action {
     }
 
     private void trackExecute(String actionName) {
-        Telemetry.getTelemetryClient()
-                 .ifPresent(telemetryClient -> telemetryClient.trackEvent(actionName));
+        Telemetry.getTelemetryClient().ifPresent(telemetryClient -> telemetryClient.trackEvent(actionName));
     }
 
     private void trackUserActionSource(String actionName, Sources source) {
-        Telemetry.getTelemetryClient().ifPresent(telemetryClient -> telemetryClient.trackEvent(
-                actionName,
-                Map.of("Source", source.toString()),
-                Map.of()));
+        Telemetry.getTelemetryClient()
+                .ifPresent(telemetryClient ->
+                        telemetryClient.trackEvent(actionName, Map.of("Source", source.toString()), Map.of()));
     }
 }

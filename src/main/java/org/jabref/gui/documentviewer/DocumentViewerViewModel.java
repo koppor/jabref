@@ -62,7 +62,7 @@ public class DocumentViewerViewModel extends AbstractViewModel {
 
         // we need to wrap this in run later so that the max pages number is correctly shown
         Platform.runLater(() -> maxPages.bindBidirectional(
-            EasyBind.wrapNullable(currentDocument).selectProperty(DocumentViewModel::maxPagesProperty)));
+                EasyBind.wrapNullable(currentDocument).selectProperty(DocumentViewModel::maxPagesProperty)));
         setCurrentEntries(this.stateManager.getSelectedEntries());
     }
 
@@ -118,9 +118,10 @@ public class DocumentViewerViewModel extends AbstractViewModel {
 
     public void switchToFile(LinkedFile file) {
         if (file != null) {
-            stateManager.getActiveDatabase()
-                        .flatMap(database -> file.findIn(database, preferencesService.getFilePreferences()))
-                        .ifPresent(this::setCurrentDocument);
+            stateManager
+                    .getActiveDatabase()
+                    .flatMap(database -> file.findIn(database, preferencesService.getFilePreferences()))
+                    .ifPresent(this::setCurrentDocument);
         }
     }
 

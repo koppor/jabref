@@ -25,7 +25,8 @@ public class RenamePdfCleanup implements CleanupJob {
     private final boolean onlyRelativePaths;
     private final FilePreferences filePreferences;
 
-    public RenamePdfCleanup(boolean onlyRelativePaths, BibDatabaseContext databaseContext, FilePreferences filePreferences) {
+    public RenamePdfCleanup(
+            boolean onlyRelativePaths, BibDatabaseContext databaseContext, FilePreferences filePreferences) {
         this.databaseContext = Objects.requireNonNull(databaseContext);
         this.onlyRelativePaths = onlyRelativePaths;
         this.filePreferences = filePreferences;

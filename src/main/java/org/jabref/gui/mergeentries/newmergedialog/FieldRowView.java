@@ -43,7 +43,14 @@ public class FieldRowView {
 
     private GridPane parent;
 
-    public FieldRowView(Field field, BibEntry leftEntry, BibEntry rightEntry, BibEntry mergedEntry, FieldMergerFactory fieldMergerFactory, PreferencesService preferencesService, int rowIndex) {
+    public FieldRowView(
+            Field field,
+            BibEntry leftEntry,
+            BibEntry rightEntry,
+            BibEntry mergedEntry,
+            FieldMergerFactory fieldMergerFactory,
+            PreferencesService preferencesService,
+            int rowIndex) {
         viewModel = new FieldRowViewModel(field, leftEntry, rightEntry, mergedEntry, fieldMergerFactory);
 
         fieldNameCell = new FieldNameCell(field.getDisplayName(), rowIndex);
@@ -156,7 +163,9 @@ public class FieldRowView {
     }
 
     public void showDiff(ShowDiffConfig diffConfig) {
-        if (!rightValueCell.isVisible() || StringUtil.isNullOrEmpty(viewModel.getLeftFieldValue()) || StringUtil.isNullOrEmpty(viewModel.getRightFieldValue())) {
+        if (!rightValueCell.isVisible()
+                || StringUtil.isNullOrEmpty(viewModel.getLeftFieldValue())
+                || StringUtil.isNullOrEmpty(viewModel.getRightFieldValue())) {
             return;
         }
         LOGGER.debug("Showing diffs...");
@@ -210,6 +219,8 @@ public class FieldRowView {
 
     @Override
     public String toString() {
-        return "FieldRowView [shouldShowDiffs=" + shouldShowDiffs.get() + ", fieldNameCell=" + fieldNameCell + ", leftValueCell=" + leftValueCell + ", rightValueCell=" + rightValueCell + ", mergedValueCell=" + mergedValueCell + "]";
+        return "FieldRowView [shouldShowDiffs=" + shouldShowDiffs.get() + ", fieldNameCell=" + fieldNameCell
+                + ", leftValueCell=" + leftValueCell + ", rightValueCell=" + rightValueCell + ", mergedValueCell="
+                + mergedValueCell + "]";
     }
 }

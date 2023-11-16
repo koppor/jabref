@@ -23,8 +23,7 @@ public class BibsonomyScraper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BibsonomyScraper.class);
 
-    private BibsonomyScraper() {
-    }
+    private BibsonomyScraper() {}
 
     /**
      * Return a BibEntry by looking up the given url from the BibSonomy scraper.
@@ -32,8 +31,12 @@ public class BibsonomyScraper {
     public static Optional<BibEntry> getEntry(String entryUrl, ImportFormatPreferences importFormatPreferences) {
         try {
             // Replace special characters by corresponding sequences:
-            String cleanURL = entryUrl.replace("%", "%25").replace(":", "%3A").replace("/", "%2F").replace("?", "%3F")
-                                      .replace("&", "%26").replace("=", "%3D");
+            String cleanURL = entryUrl.replace("%", "%25")
+                    .replace(":", "%3A")
+                    .replace("/", "%2F")
+                    .replace("?", "%3F")
+                    .replace("&", "%26")
+                    .replace("=", "%3D");
 
             URL url = new URL(BibsonomyScraper.BIBSONOMY_SCRAPER + cleanURL + BibsonomyScraper.BIBSONOMY_SCRAPER_POST);
             String bibtex = new URLDownload(url).asString();

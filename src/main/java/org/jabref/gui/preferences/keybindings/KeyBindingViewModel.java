@@ -69,7 +69,9 @@ public class KeyBindingViewModel {
         String[] parts = bind.split(" ");
         StringBuilder displayBind = new StringBuilder();
         for (String part : parts) {
-            displayBind.append(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, part)).append(" ");
+            displayBind
+                    .append(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, part))
+                    .append(" ");
         }
         this.shownBinding.set(displayBind.toString().trim().replace(" ", " + "));
     }
@@ -97,8 +99,12 @@ public class KeyBindingViewModel {
         // validate the shortcut is no modifier key
 
         KeyCode code = evt.getCode();
-        if (code.isModifierKey() || (code == KeyCode.BACK_SPACE) || (code == KeyCode.SPACE) || (code == KeyCode.TAB)
-                || (code == KeyCode.ENTER) || (code == KeyCode.UNDEFINED)) {
+        if (code.isModifierKey()
+                || (code == KeyCode.BACK_SPACE)
+                || (code == KeyCode.SPACE)
+                || (code == KeyCode.TAB)
+                || (code == KeyCode.ENTER)
+                || (code == KeyCode.UNDEFINED)) {
             return false;
         }
 

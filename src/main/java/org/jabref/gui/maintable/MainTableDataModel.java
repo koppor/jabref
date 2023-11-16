@@ -34,24 +34,27 @@ public class MainTableDataModel {
     private final NameDisplayPreferences nameDisplayPreferences;
     private final BibDatabaseContext bibDatabaseContext;
 
-    public MainTableDataModel(BibDatabaseContext context, PreferencesService preferencesService, StateManager stateManager) {
+    public MainTableDataModel(
+            BibDatabaseContext context, PreferencesService preferencesService, StateManager stateManager) {
         this.groupsPreferences = preferencesService.getGroupsPreferences();
         this.nameDisplayPreferences = preferencesService.getNameDisplayPreferences();
         this.bibDatabaseContext = context;
         this.fieldValueFormatter = new SimpleObjectProperty<>(
                 new MainTableFieldValueFormatter(nameDisplayPreferences, bibDatabaseContext));
 
-        ObservableList<BibEntry> allEntries = BindingsHelper.forUI(context.getDatabase().getEntries());
-        ObservableList<BibEntryTableViewModel> entriesViewModel = EasyBind.mapBacked(allEntries, entry ->
-                new BibEntryTableViewModel(entry, bibDatabaseContext, fieldValueFormatter));
+        ObservableList<BibEntry> allEntries =
+                BindingsHelper.forUI(context.getDatabase().getEntries());
+        ObservableList<BibEntryTableViewModel> entriesViewModel = EasyBind.mapBacked(
+                allEntries, entry -> new BibEntryTableViewModel(entry, bibDatabaseContext, fieldValueFormatter));
 
         entriesFiltered = new FilteredList<>(entriesViewModel);
-        entriesFiltered.predicateProperty().bind(
-                EasyBind.combine(stateManager.activeGroupProperty(),
+        entriesFiltered
+                .predicateProperty()
+                .bind(EasyBind.combine(
+                        stateManager.activeGroupProperty(),
                         stateManager.activeSearchQueryProperty(),
                         groupsPreferences.groupViewModeProperty(),
-                        (groups, query, groupViewMode) -> entry -> isMatched(groups, query, entry))
-        );
+                        (groups, query, groupViewMode) -> entry -> isMatched(groups, query, entry)));
 
         IntegerProperty resultSize = new SimpleIntegerProperty();
         resultSize.bind(Bindings.size(entriesFiltered));
@@ -60,13 +63,13 @@ public class MainTableDataModel {
         entriesFilteredAndSorted = new SortedList<>(entriesFiltered);
     }
 
-    private boolean isMatched(ObservableList<GroupTreeNode> groups, Optional<SearchQuery> query, BibEntryTableViewModel entry) {
+    private boolean isMatched(
+            ObservableList<GroupTreeNode> groups, Optional<SearchQuery> query, BibEntryTableViewModel entry) {
         return isMatchedByGroup(groups, entry) && isMatchedBySearch(query, entry);
     }
 
     private boolean isMatchedBySearch(Optional<SearchQuery> query, BibEntryTableViewModel entry) {
-        return query.map(matcher -> matcher.isMatch(entry.getEntry()))
-                    .orElse(true);
+        return query.map(matcher -> matcher.isMatch(entry.getEntry())).orElse(true);
     }
 
     private boolean isMatchedByGroup(ObservableList<GroupTreeNode> groups, BibEntryTableViewModel entry) {

@@ -13,8 +13,7 @@ import org.jabref.model.entry.field.InternalField;
 
 public class CanonicalBibEntry {
 
-    private CanonicalBibEntry() {
-    }
+    private CanonicalBibEntry() {}
 
     /**
      * This returns a canonical BibTeX serialization.
@@ -38,7 +37,8 @@ public class CanonicalBibEntry {
         String citeKey = entry.getCitationKey().orElse("");
         sb.append(String.format("@%s{%s,", entry.getType().getName(), citeKey)).append('\n');
 
-        // we have to introduce a new Map as fields are stored case-sensitive in JabRef (see https://github.com/koppor/jabref/issues/45).
+        // we have to introduce a new Map as fields are stored case-sensitive in JabRef (see
+        // https://github.com/koppor/jabref/issues/45).
         Map<String, String> mapFieldToValue = new HashMap<>();
 
         // determine sorted fields -- all fields lower case
@@ -61,7 +61,10 @@ public class CanonicalBibEntry {
             sj.add(line);
         }
 
-        sj.add(String.format("  _jabref_shared = {sharedId: %d, version: %d}", entry.getSharedBibEntryData().getSharedID(), entry.getSharedBibEntryData().getVersion()));
+        sj.add(String.format(
+                "  _jabref_shared = {sharedId: %d, version: %d}",
+                entry.getSharedBibEntryData().getSharedID(),
+                entry.getSharedBibEntryData().getVersion()));
 
         sb.append(sj);
 

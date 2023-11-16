@@ -44,20 +44,23 @@ public class PostgreSQLProcessor extends DBMSProcessor {
 
         connection.createStatement().executeUpdate("CREATE SCHEMA IF NOT EXISTS jabref");
 
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE IF NOT EXISTS " + escape_Table("ENTRY") + " (" +
-                        "\"SHARED_ID\" SERIAL PRIMARY KEY, " +
-                        "\"TYPE\" VARCHAR, " +
-                        "\"VERSION\" INTEGER DEFAULT 1)");
+        connection
+                .createStatement()
+                .executeUpdate("CREATE TABLE IF NOT EXISTS " + escape_Table("ENTRY") + " ("
+                        + "\"SHARED_ID\" SERIAL PRIMARY KEY, "
+                        + "\"TYPE\" VARCHAR, "
+                        + "\"VERSION\" INTEGER DEFAULT 1)");
 
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE IF NOT EXISTS " + escape_Table("FIELD") + " (" +
-                        "\"ENTRY_SHARED_ID\" INTEGER REFERENCES " + escape_Table("ENTRY") + "(\"SHARED_ID\") ON DELETE CASCADE, " +
-                        "\"NAME\" VARCHAR, " +
-                        "\"VALUE\" TEXT)");
+        connection
+                .createStatement()
+                .executeUpdate("CREATE TABLE IF NOT EXISTS " + escape_Table("FIELD") + " ("
+                        + "\"ENTRY_SHARED_ID\" INTEGER REFERENCES "
+                        + escape_Table("ENTRY") + "(\"SHARED_ID\") ON DELETE CASCADE, " + "\"NAME\" VARCHAR, "
+                        + "\"VALUE\" TEXT)");
 
-        connection.createStatement().executeUpdate(
-                "CREATE TABLE IF NOT EXISTS " + escape_Table("METADATA") + " ("
+        connection
+                .createStatement()
+                .executeUpdate("CREATE TABLE IF NOT EXISTS " + escape_Table("METADATA") + " ("
                         + "\"KEY\" VARCHAR,"
                         + "\"VALUE\" TEXT)");
 
@@ -66,7 +69,8 @@ public class PostgreSQLProcessor extends DBMSProcessor {
         if (metadata.get(MetaData.VERSION_DB_STRUCT) != null) {
             try {
                 // replace semicolon so we can parse it
-                VERSION_DB_STRUCT_DEFAULT = Integer.parseInt(metadata.get(MetaData.VERSION_DB_STRUCT).replace(";", ""));
+                VERSION_DB_STRUCT_DEFAULT = Integer.parseInt(
+                        metadata.get(MetaData.VERSION_DB_STRUCT).replace(";", ""));
             } catch (Exception e) {
                 LOGGER.warn("[VERSION_DB_STRUCT_DEFAULT] not Integer!");
             }
@@ -78,10 +82,19 @@ public class PostgreSQLProcessor extends DBMSProcessor {
             // We can to migrate from old table in new table
             if (VERSION_DB_STRUCT_DEFAULT == 0 && CURRENT_VERSION_DB_STRUCT == 1) {
                 LOGGER.info("Migrating from VersionDBStructure == 0");
-                connection.createStatement().executeUpdate("INSERT INTO " + escape_Table("ENTRY") + " SELECT * FROM \"ENTRY\"");
-                connection.createStatement().executeUpdate("INSERT INTO " + escape_Table("FIELD") + " SELECT * FROM \"FIELD\"");
-                connection.createStatement().executeUpdate("INSERT INTO " + escape_Table("METADATA") + " SELECT * FROM \"METADATA\"");
-                connection.createStatement().execute("SELECT setval(\'jabref.\"ENTRY_SHARED_ID_seq\"\', (select max(\"SHARED_ID\") from jabref.\"ENTRY\"))");
+                connection
+                        .createStatement()
+                        .executeUpdate("INSERT INTO " + escape_Table("ENTRY") + " SELECT * FROM \"ENTRY\"");
+                connection
+                        .createStatement()
+                        .executeUpdate("INSERT INTO " + escape_Table("FIELD") + " SELECT * FROM \"FIELD\"");
+                connection
+                        .createStatement()
+                        .executeUpdate("INSERT INTO " + escape_Table("METADATA") + " SELECT * FROM \"METADATA\"");
+                connection
+                        .createStatement()
+                        .execute(
+                                "SELECT setval(\'jabref.\"ENTRY_SHARED_ID_seq\"\', (select max(\"SHARED_ID\") from jabref.\"ENTRY\"))");
                 metadata = getSharedMetaData();
             }
 
@@ -100,10 +113,11 @@ public class PostgreSQLProcessor extends DBMSProcessor {
                 .append(") VALUES(?)");
         // Number of commas is bibEntries.size() - 1
         insertIntoEntryQuery.append(", (?)".repeat(Math.max(0, bibEntries.size() - 1)));
-        try (PreparedStatement preparedEntryStatement = connection.prepareStatement(insertIntoEntryQuery.toString(),
-                Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement preparedEntryStatement =
+                connection.prepareStatement(insertIntoEntryQuery.toString(), Statement.RETURN_GENERATED_KEYS)) {
             for (int i = 0; i < bibEntries.size(); i++) {
-                preparedEntryStatement.setString(i + 1, bibEntries.get(i).getType().getName());
+                preparedEntryStatement.setString(
+                        i + 1, bibEntries.get(i).getType().getName());
             }
             preparedEntryStatement.executeUpdate();
 

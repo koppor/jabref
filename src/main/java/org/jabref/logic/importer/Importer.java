@@ -63,7 +63,7 @@ public abstract class Importer implements Comparable<Importer> {
      */
     public boolean isRecognizedFormat(String data) throws IOException {
         try (StringReader stringReader = new StringReader(data);
-             BufferedReader bufferedReader = new BufferedReader(stringReader)) {
+                BufferedReader bufferedReader = new BufferedReader(stringReader)) {
             return isRecognizedFormat(bufferedReader);
         }
     }
@@ -114,7 +114,8 @@ public abstract class Importer implements Comparable<Importer> {
         Charset defaultCharSet = StandardCharsets.UTF_8;
 
         // This reads the first 8000 bytes only, thus the default size of 8192 of the bufferedInputStream is OK.
-        // See https://github.com/unicode-org/icu/blob/06ef8867f35befee7340e35082fefc9d3561d230/icu4j/main/classes/core/src/com/ibm/icu/text/CharsetDetector.java#L125 for details
+        // See
+        // https://github.com/unicode-org/icu/blob/06ef8867f35befee7340e35082fefc9d3561d230/icu4j/main/classes/core/src/com/ibm/icu/text/CharsetDetector.java#L125 for details
         CharsetDetector charsetDetector = new CharsetDetector();
         try {
             charsetDetector.setText(bufferedInputStream);
@@ -149,7 +150,7 @@ public abstract class Importer implements Comparable<Importer> {
      */
     public ParserResult importDatabase(String data) throws IOException {
         try (StringReader stringReader = new StringReader(data);
-             BufferedReader bufferedReader = new BufferedReader(stringReader)) {
+                BufferedReader bufferedReader = new BufferedReader(stringReader)) {
             return importDatabase(bufferedReader);
         }
     }

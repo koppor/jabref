@@ -45,10 +45,12 @@ public class ISSNEditorViewModel extends AbstractEditorViewModel {
     }
 
     public void fetchBibliographyInformation(BibEntry bibEntry) {
-        stateManager.getActiveDatabase().ifPresentOrElse(
-                databaseContext -> new FetchAndMergeEntry(databaseContext, taskExecutor, preferencesService, dialogService, undoManager)
-                        .fetchAndMerge(bibEntry, StandardField.ISSN),
-                () -> dialogService.notify(Localization.lang("No library selected"))
-        );
+        stateManager
+                .getActiveDatabase()
+                .ifPresentOrElse(
+                        databaseContext -> new FetchAndMergeEntry(
+                                        databaseContext, taskExecutor, preferencesService, dialogService, undoManager)
+                                .fetchAndMerge(bibEntry, StandardField.ISSN),
+                        () -> dialogService.notify(Localization.lang("No library selected")));
     }
 }

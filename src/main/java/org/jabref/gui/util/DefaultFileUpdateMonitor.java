@@ -35,7 +35,8 @@ public class DefaultFileUpdateMonitor implements Runnable, FileUpdateMonitor {
     private final Multimap<Path, FileUpdateListener> listeners = ArrayListMultimap.create(20, 4);
     private volatile WatchService watcher;
     private final AtomicBoolean notShutdown = new AtomicBoolean(true);
-    private final AtomicReference<Optional<JabRefException>> filesystemMonitorFailure = new AtomicReference<>(Optional.empty());
+    private final AtomicReference<Optional<JabRefException>> filesystemMonitorFailure =
+            new AtomicReference<>(Optional.empty());
 
     @Override
     public void run() {
@@ -57,7 +58,8 @@ public class DefaultFileUpdateMonitor implements Runnable, FileUpdateMonitor {
                     if (kind == StandardWatchEventKinds.OVERFLOW) {
                         Thread.yield();
                         continue;
-                    } else if (kind == StandardWatchEventKinds.ENTRY_CREATE || kind == StandardWatchEventKinds.ENTRY_MODIFY) {
+                    } else if (kind == StandardWatchEventKinds.ENTRY_CREATE
+                            || kind == StandardWatchEventKinds.ENTRY_MODIFY) {
                         // We only handle "ENTRY_CREATE" and "ENTRY_MODIFY" here, so the context is always a Path
                         @SuppressWarnings("unchecked")
                         WatchEvent<Path> ev = (WatchEvent<Path>) event;
@@ -69,8 +71,8 @@ public class DefaultFileUpdateMonitor implements Runnable, FileUpdateMonitor {
                 Thread.yield();
             }
         } catch (IOException e) {
-            JabRefException exception = new WatchServiceUnavailableException(
-                    e.getMessage(), e.getLocalizedMessage(), e.getCause());
+            JabRefException exception =
+                    new WatchServiceUnavailableException(e.getMessage(), e.getLocalizedMessage(), e.getCause());
             filesystemMonitorFailure.set(Optional.of(exception));
             LOGGER.warn("Error during watching", e);
         }
@@ -93,7 +95,8 @@ public class DefaultFileUpdateMonitor implements Runnable, FileUpdateMonitor {
             directory.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
             listeners.put(file, listener);
         } else {
-            LOGGER.warn("Not adding listener {} to file {} because the file update monitor isn't active", listener, file);
+            LOGGER.warn(
+                    "Not adding listener {} to file {} because the file update monitor isn't active", listener, file);
         }
     }
 

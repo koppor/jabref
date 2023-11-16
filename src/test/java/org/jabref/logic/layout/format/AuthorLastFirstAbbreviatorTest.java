@@ -52,7 +52,8 @@ class AuthorLastFirstAbbreviatorTest {
         assertEquals("", abbreviate(""));
         assertEquals("Someone, V. S.", abbreviate("Someone, Van Something"));
         assertEquals("Smith, J.", abbreviate("Smith, John"));
-        assertEquals("von Neumann, J. and Smith, J. and Black Brown, P.",
+        assertEquals(
+                "von Neumann, J. and Smith, J. and Black Brown, P.",
                 abbreviate("von Neumann, John and Smith, John and Black Brown, Peter"));
     }
 

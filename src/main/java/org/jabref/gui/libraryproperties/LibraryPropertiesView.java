@@ -17,10 +17,14 @@ import jakarta.inject.Inject;
 
 public class LibraryPropertiesView extends BaseDialog<LibraryPropertiesViewModel> {
 
-    @FXML private TabPane tabPane;
-    @FXML private ButtonType saveButton;
+    @FXML
+    private TabPane tabPane;
 
-    @Inject private ThemeManager themeManager;
+    @FXML
+    private ButtonType saveButton;
+
+    @Inject
+    private ThemeManager themeManager;
 
     private final BibDatabaseContext databaseContext;
     private LibraryPropertiesViewModel viewModel;
@@ -28,14 +32,14 @@ public class LibraryPropertiesView extends BaseDialog<LibraryPropertiesViewModel
     public LibraryPropertiesView(BibDatabaseContext databaseContext) {
         this.databaseContext = databaseContext;
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         ControlHelper.setAction(saveButton, getDialogPane(), event -> savePreferencesAndCloseDialog());
 
         if (databaseContext.getDatabasePath().isPresent()) {
-            setTitle(Localization.lang("%0 - Library properties", databaseContext.getDatabasePath().get().getFileName()));
+            setTitle(Localization.lang(
+                    "%0 - Library properties",
+                    databaseContext.getDatabasePath().get().getFileName()));
         } else {
             setTitle(Localization.lang("Library properties"));
         }

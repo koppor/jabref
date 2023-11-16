@@ -13,8 +13,8 @@ import org.jabref.logic.l10n.Localization;
 public class OrdinalsToSuperscriptFormatter extends Formatter {
 
     // find possible superscripts on word boundaries
-    private static final Pattern SUPERSCRIPT_DETECT_PATTERN = Pattern.compile("\\b(\\d+)(st|nd|rd|th)\\b",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    private static final Pattern SUPERSCRIPT_DETECT_PATTERN =
+            Pattern.compile("\\b(\\d+)(st|nd|rd|th)\\b", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     private static final String SUPERSCRIPT_REPLACE_PATTERN = "$1\\\\textsuperscript{$2}";
 

@@ -14,8 +14,8 @@ public class LayoutFormatterPreferences {
     private final StringProperty mainFileDirectoryProperty;
     private final Map<String, String> customExportNameFormatters = new HashMap<>();
 
-    public LayoutFormatterPreferences(NameFormatterPreferences nameFormatterPreferences,
-                                      StringProperty mainFileDirectoryProperty) {
+    public LayoutFormatterPreferences(
+            NameFormatterPreferences nameFormatterPreferences, StringProperty mainFileDirectoryProperty) {
         this.nameFormatterPreferences = nameFormatterPreferences;
         this.mainFileDirectoryProperty = mainFileDirectoryProperty;
     }

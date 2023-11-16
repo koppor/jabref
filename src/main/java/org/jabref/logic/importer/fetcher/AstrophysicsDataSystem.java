@@ -48,7 +48,10 @@ import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
  * Fetches data from the SAO/NASA Astrophysics Data System (<a href="https://ui.adsabs.harvard.edu/">https://ui.adsabs.harvard.edu/</a>)
  */
 public class AstrophysicsDataSystem
-        implements IdBasedParserFetcher, PagedSearchBasedParserFetcher, EntryBasedParserFetcher, CustomizableKeyFetcher {
+        implements IdBasedParserFetcher,
+                PagedSearchBasedParserFetcher,
+                EntryBasedParserFetcher,
+                CustomizableKeyFetcher {
 
     private static final String API_SEARCH_URL = "https://api.adsabs.harvard.edu/v1/search/query";
     private static final String API_EXPORT_URL = "https://api.adsabs.harvard.edu/v1/export/bibtexabs";
@@ -88,9 +91,12 @@ public class AstrophysicsDataSystem
      * @return URL which points to a search request for given query
      */
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder builder = new URIBuilder(API_SEARCH_URL);
-        builder.addParameter("q", new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
+        builder.addParameter(
+                "q",
+                new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
         builder.addParameter("fl", "bibcode");
         builder.addParameter("rows", String.valueOf(getPageSize()));
         builder.addParameter("start", String.valueOf(getPageSize() * pageNumber));
@@ -109,9 +115,9 @@ public class AstrophysicsDataSystem
         Optional<String> author = entry.getFieldOrAlias(StandardField.AUTHOR).map(a -> "author:\"" + a + "\"");
 
         if (title.isPresent()) {
-            stringBuilder.append(title.get())
-                         .append(author.map(s -> " AND " + s)
-                                       .orElse(""));
+            stringBuilder
+                    .append(title.get())
+                    .append(author.map(s -> " AND " + s).orElse(""));
         } else {
             stringBuilder.append(author.orElse(""));
         }
@@ -129,7 +135,8 @@ public class AstrophysicsDataSystem
      * @return URL which points to a search URL for given identifier
      */
     @Override
-    public URL getUrlForIdentifier(String identifier) throws FetcherException, URISyntaxException, MalformedURLException {
+    public URL getUrlForIdentifier(String identifier)
+            throws FetcherException, URISyntaxException, MalformedURLException {
         String query = "doi:\"" + identifier + "\" OR " + "bibcode:\"" + identifier + "\"";
         URIBuilder builder = new URIBuilder(API_SEARCH_URL);
         builder.addParameter("q", query);
@@ -160,21 +167,22 @@ public class AstrophysicsDataSystem
         // Move adsurl to url field
         new MoveFieldCleanup(new UnknownField("adsurl"), StandardField.URL).cleanup(entry);
         entry.getField(StandardField.ABSTRACT)
-             .filter("Not Available <P />"::equals)
-             .ifPresent(abstractText -> entry.clearField(StandardField.ABSTRACT));
+                .filter("Not Available <P />"::equals)
+                .ifPresent(abstractText -> entry.clearField(StandardField.ABSTRACT));
 
         entry.getField(StandardField.ABSTRACT)
-             .map(abstractText -> abstractText.replace("<P />", ""))
-             .map(abstractText -> abstractText.replace("\\textbackslash", ""))
-             .map(String::trim)
-             .ifPresent(abstractText -> entry.setField(StandardField.ABSTRACT, abstractText));
+                .map(abstractText -> abstractText.replace("<P />", ""))
+                .map(abstractText -> abstractText.replace("\\textbackslash", ""))
+                .map(String::trim)
+                .ifPresent(abstractText -> entry.setField(StandardField.ABSTRACT, abstractText));
         // The fetcher adds some garbage (number of found entries etc before)
         entry.setCommentsBeforeEntry("");
     }
 
     @Override
     public List<BibEntry> performSearch(BibEntry entry) throws FetcherException {
-        if (entry.getFieldOrAlias(StandardField.TITLE).isEmpty() && entry.getFieldOrAlias(StandardField.AUTHOR).isEmpty()) {
+        if (entry.getFieldOrAlias(StandardField.TITLE).isEmpty()
+                && entry.getFieldOrAlias(StandardField.AUTHOR).isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -241,14 +249,18 @@ public class AstrophysicsDataSystem
      * @return list of bibentries matching the bibcodes. Can be empty and differ in size to the size of requested bibcodes
      */
     private List<BibEntry> performSearchByIds(Collection<String> identifiers) throws FetcherException {
-        List<String> ids = identifiers.stream().filter(identifier -> !StringUtil.isBlank(identifier)).collect(Collectors.toList());
+        List<String> ids = identifiers.stream()
+                .filter(identifier -> !StringUtil.isBlank(identifier))
+                .collect(Collectors.toList());
         if (ids.isEmpty()) {
             return Collections.emptyList();
         }
         try {
             String postData = buildPostData(ids);
             URLDownload download = new URLDownload(getURLforExport());
-            download.addHeader("Authorization", "Bearer " + importerPreferences.getApiKey(getName()).orElse(API_KEY));
+            download.addHeader(
+                    "Authorization",
+                    "Bearer " + importerPreferences.getApiKey(getName()).orElse(API_KEY));
             download.addHeader("ContentType", "application/json");
             download.setPostData(postData);
             String content = download.asString();
@@ -308,7 +320,9 @@ public class AstrophysicsDataSystem
     @Override
     public URLDownload getUrlDownload(URL url) {
         URLDownload urlDownload = new URLDownload(url);
-        urlDownload.addHeader("Authorization", "Bearer " + importerPreferences.getApiKey(getName()).orElse(API_KEY));
+        urlDownload.addHeader(
+                "Authorization",
+                "Bearer " + importerPreferences.getApiKey(getName()).orElse(API_KEY));
         return urlDownload;
     }
 }

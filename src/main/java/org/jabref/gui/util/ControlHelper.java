@@ -21,7 +21,11 @@ public class ControlHelper {
     private static PseudoClass dragOverCenter = PseudoClass.getPseudoClass("dragOver-center");
     private static PseudoClass dragOverTop = PseudoClass.getPseudoClass("dragOver-top");
 
-    public enum EllipsisPosition { BEGINNING, CENTER, ENDING }
+    public enum EllipsisPosition {
+        BEGINNING,
+        CENTER,
+        ENDING
+    }
 
     public static void setAction(ButtonType buttonType, DialogPane dialogPane, Consumer<Event> consumer) {
         Button button = (Button) dialogPane.lookupButton(buttonType);
@@ -32,13 +36,14 @@ public class ControlHelper {
     }
 
     public static boolean childIsFocused(Parent node) {
-        return node.isFocused() || node.getChildrenUnmodifiable().stream().anyMatch(child -> {
-            if (child instanceof Parent) {
-                return childIsFocused((Parent) child);
-            } else {
-                return child.isFocused();
-            }
-        });
+        return node.isFocused()
+                || node.getChildrenUnmodifiable().stream().anyMatch(child -> {
+                    if (child instanceof Parent) {
+                        return childIsFocused((Parent) child);
+                    } else {
+                        return child.isFocused();
+                    }
+                });
     }
 
     /**
@@ -111,7 +116,8 @@ public class ControlHelper {
      * @param ellipsisPosition location in the given text where the truncation should be performed
      * @return the new, truncated string
      */
-    public static String truncateString(String text, int maxCharacters, String ellipsisString, EllipsisPosition ellipsisPosition) {
+    public static String truncateString(
+            String text, int maxCharacters, String ellipsisString, EllipsisPosition ellipsisPosition) {
         if (text == null || "".equals(text)) {
             return text; // return original
         }
@@ -133,7 +139,9 @@ public class ControlHelper {
                     return ellipsisString + text.substring(text.length() - (maxCharacters - ellipsisString.length()));
                 case CENTER:
                     int partialLength = (int) Math.floor((maxCharacters - ellipsisString.length()) / 2f);
-                    return text.substring(0, partialLength) + ellipsisString + text.substring(text.length() - partialLength);
+                    return text.substring(0, partialLength)
+                            + ellipsisString
+                            + text.substring(text.length() - partialLength);
                 case ENDING:
                     return text.substring(0, maxCharacters - ellipsisString.length()) + ellipsisString;
             }

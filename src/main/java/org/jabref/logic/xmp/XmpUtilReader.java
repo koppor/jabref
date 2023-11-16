@@ -31,7 +31,9 @@ public class XmpUtilReader {
 
     public XmpUtilReader() {
         // See: https://pdfbox.apache.org/2.0/getting-started.html
-        System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider"); // To get higher rendering speed on java 8 oder 9 for images
+        System.setProperty(
+                "sun.java2d.cmm",
+                "sun.java2d.cmm.kcms.KcmsServiceProvider"); // To get higher rendering speed on java 8 oder 9 for images
     }
 
     /**
@@ -57,8 +59,7 @@ public class XmpUtilReader {
      * @throws IOException Throws an IOException if the file cannot be read, so the user than remove a lock or cancel
      *                     the operation.
      */
-    public List<BibEntry> readXmp(Path path, XmpPreferences xmpPreferences)
-            throws IOException {
+    public List<BibEntry> readXmp(Path path, XmpPreferences xmpPreferences) throws IOException {
 
         List<BibEntry> result = new LinkedList<>();
 
@@ -68,9 +69,11 @@ public class XmpUtilReader {
             if (!xmpMetaList.isEmpty()) {
                 // Only support Dublin Core since JabRef 4.2
                 for (XMPMetadata xmpMeta : xmpMetaList) {
-                    DublinCoreSchema dcSchema = DublinCoreSchemaCustom.copyDublinCoreSchema(xmpMeta.getDublinCoreSchema());
+                    DublinCoreSchema dcSchema =
+                            DublinCoreSchemaCustom.copyDublinCoreSchema(xmpMeta.getDublinCoreSchema());
                     if (dcSchema != null) {
-                        DublinCoreExtractor dcExtractor = new DublinCoreExtractor(dcSchema, xmpPreferences, new BibEntry());
+                        DublinCoreExtractor dcExtractor =
+                                new DublinCoreExtractor(dcSchema, xmpPreferences, new BibEntry());
                         Optional<BibEntry> entry = dcExtractor.extractBibtexEntry();
                         entry.ifPresent(result::add);
                     }
@@ -112,14 +115,17 @@ public class XmpUtilReader {
         int startDescriptionSection = xmp.indexOf(START_TAG);
         int endDescriptionSection = xmp.lastIndexOf(END_TAG) + END_TAG.length();
 
-        if ((startDescriptionSection < 0) || (startDescriptionSection > endDescriptionSection) || (endDescriptionSection == (END_TAG.length() - 1))) {
+        if ((startDescriptionSection < 0)
+                || (startDescriptionSection > endDescriptionSection)
+                || (endDescriptionSection == (END_TAG.length() - 1))) {
             return metaList;
         }
 
         // XML header for the xmpDomParser
         String start = xmp.substring(0, startDescriptionSection);
         // descriptionArray - mid part of the textual metadata
-        String[] descriptionsArray = xmp.substring(startDescriptionSection, endDescriptionSection).split(END_TAG);
+        String[] descriptionsArray =
+                xmp.substring(startDescriptionSection, endDescriptionSection).split(END_TAG);
         // XML footer for the xmpDomParser
         String end = xmp.substring(endDescriptionSection);
 

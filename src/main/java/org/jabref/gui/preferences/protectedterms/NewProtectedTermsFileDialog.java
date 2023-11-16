@@ -23,7 +23,10 @@ public class NewProtectedTermsFileDialog extends BaseDialog<Void> {
     private final TextField newFile = new TextField();
     private final DialogService dialogService;
 
-    public NewProtectedTermsFileDialog(List<ProtectedTermsListItemModel> termsLists, DialogService dialogService, FilePreferences filePreferences) {
+    public NewProtectedTermsFileDialog(
+            List<ProtectedTermsListItemModel> termsLists,
+            DialogService dialogService,
+            FilePreferences filePreferences) {
         this.dialogService = dialogService;
 
         this.setTitle(Localization.lang("New protected terms file"));
@@ -35,24 +38,23 @@ public class NewProtectedTermsFileDialog extends BaseDialog<Void> {
                 .build();
 
         Button browse = new Button(Localization.lang("Browse"));
-        browse.setOnAction(event -> this.dialogService.showFileSaveDialog(fileDialogConfiguration)
-                                                      .ifPresent(file -> newFile.setText(file.toAbsolutePath().toString())));
+        browse.setOnAction(event -> this.dialogService
+                .showFileSaveDialog(fileDialogConfiguration)
+                .ifPresent(file -> newFile.setText(file.toAbsolutePath().toString())));
 
         TextField newDescription = new TextField();
-        VBox container = new VBox(10,
+        VBox container = new VBox(
+                10,
                 new VBox(5, new Label(Localization.lang("Description")), newDescription),
-                new VBox(5, new Label(Localization.lang("File")), new HBox(10, newFile, browse))
-        );
+                new VBox(5, new Label(Localization.lang("File")), new HBox(10, newFile, browse)));
         getDialogPane().setContent(container);
 
-        getDialogPane().getButtonTypes().setAll(
-                ButtonType.OK,
-                ButtonType.CANCEL
-        );
+        getDialogPane().getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
 
         setResultConverter(button -> {
             if (button == ButtonType.OK) {
-                ProtectedTermsList newList = new ProtectedTermsList(newDescription.getText(), new ArrayList<>(), newFile.getText(), false);
+                ProtectedTermsList newList =
+                        new ProtectedTermsList(newDescription.getText(), new ArrayList<>(), newFile.getText(), false);
                 newList.setEnabled(true);
                 newList.createAndWriteHeading(newDescription.getText());
                 termsLists.add(new ProtectedTermsListItemModel(newList));

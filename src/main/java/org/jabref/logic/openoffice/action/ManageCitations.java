@@ -13,24 +13,17 @@ import com.sun.star.text.XTextDocument;
 
 public class ManageCitations {
 
-    private ManageCitations() {
-    }
+    private ManageCitations() {}
 
     public static List<CitationEntry> getCitationEntries(XTextDocument doc)
-            throws
-            NoDocumentException,
-            WrappedTargetException {
+            throws NoDocumentException, WrappedTargetException {
         OOFrontend frontend = new OOFrontend(doc);
         return frontend.getCitationEntries(doc);
     }
 
     public static void applyCitationEntries(XTextDocument doc, List<CitationEntry> citationEntries)
-            throws
-            NoDocumentException,
-            PropertyVetoException,
-            IllegalTypeException,
-            WrappedTargetException,
-            IllegalArgumentException {
+            throws NoDocumentException, PropertyVetoException, IllegalTypeException, WrappedTargetException,
+                    IllegalArgumentException {
         OOFrontend frontend = new OOFrontend(doc);
         frontend.applyCitationEntries(doc, citationEntries);
     }

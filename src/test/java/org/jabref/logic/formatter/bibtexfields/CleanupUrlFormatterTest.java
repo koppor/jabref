@@ -19,14 +19,12 @@ class CleanupUrlFormatterTest {
 
     @Test
     void removeSpecialSymbolsFromURLLink() {
-        assertEquals("http://wikipedia.org",
-                formatter.format("http%3A%2F%2Fwikipedia.org"));
+        assertEquals("http://wikipedia.org", formatter.format("http%3A%2F%2Fwikipedia.org"));
     }
 
     @Test
     void extractURLFormLink() {
-        assertEquals("http://wikipedia.org",
-                formatter.format("away.php?to=http%3A%2F%2Fwikipedia.org&a=snippet"));
+        assertEquals("http://wikipedia.org", formatter.format("away.php?to=http%3A%2F%2Fwikipedia.org&a=snippet"));
     }
 
     @Test
@@ -36,7 +34,10 @@ class CleanupUrlFormatterTest {
 
     @Test
     void latexCommandsNotRemoved() {
-        assertEquals("http://pi.informatik.uni-siegen.de/stt/36\\_2/./03\\_Technische\\_Beitraege/ZEUS2016/beitrag\\_2.pdf", formatter.format("http://pi.informatik.uni-siegen.de/stt/36\\_2/./03\\_Technische\\_Beitraege/ZEUS2016/beitrag\\_2.pdf"));
+        assertEquals(
+                "http://pi.informatik.uni-siegen.de/stt/36\\_2/./03\\_Technische\\_Beitraege/ZEUS2016/beitrag\\_2.pdf",
+                formatter.format(
+                        "http://pi.informatik.uni-siegen.de/stt/36\\_2/./03\\_Technische\\_Beitraege/ZEUS2016/beitrag\\_2.pdf"));
     }
 
     @Test
@@ -47,8 +48,9 @@ class CleanupUrlFormatterTest {
 
     @Test
     void formatExample() {
-        assertEquals("http://www.focus.de/" +
-                        "gesundheit/ratgeber/herz/test/lebenserwartung-werden-sie-100-jahre-alt_aid_363828.html",
+        assertEquals(
+                "http://www.focus.de/"
+                        + "gesundheit/ratgeber/herz/test/lebenserwartung-werden-sie-100-jahre-alt_aid_363828.html",
                 formatter.format(formatter.getExampleInput()));
     }
 
@@ -56,7 +58,7 @@ class CleanupUrlFormatterTest {
     void shouldNotReplacePlusOperatorAsASignInURL() {
         assertEquals(
                 "https://www.chicago.gov/content/dam/city/depts/cdot/Red Light Cameras/2022/Sutton+Tilahun_Chicago-Camera-Ticket_Exec Summary-Final-Jan10.pdf",
-                formatter.format("https://www.chicago.gov/content/dam/city/depts/cdot/Red Light Cameras/2022/Sutton+Tilahun_Chicago-Camera-Ticket_Exec Summary-Final-Jan10.pdf")
-        );
+                formatter.format(
+                        "https://www.chicago.gov/content/dam/city/depts/cdot/Red Light Cameras/2022/Sutton+Tilahun_Chicago-Camera-Ticket_Exec Summary-Final-Jan10.pdf"));
     }
 }

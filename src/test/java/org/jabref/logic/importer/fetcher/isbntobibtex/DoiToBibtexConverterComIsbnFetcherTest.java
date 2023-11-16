@@ -27,14 +27,17 @@ public class DoiToBibtexConverterComIsbnFetcherTest extends AbstractIsbnFetcherT
     @BeforeEach
     public void setUp() {
         bibEntryEffectiveJava = new BibEntry(StandardEntryType.Book)
-                .withField(StandardField.TITLE, "Effective Java(TM) Programming Language Guide (2nd Edition) (The Java Series)")
+                .withField(
+                        StandardField.TITLE,
+                        "Effective Java(TM) Programming Language Guide (2nd Edition) (The Java Series)")
                 .withField(StandardField.PUBLISHER, "Prentice Hall PTR")
                 .withField(StandardField.YEAR, "2007")
                 .withField(StandardField.AUTHOR, "Bloch, Joshua")
                 .withField(StandardField.ISBN, "9780321356680")
                 .withField(StandardField.PAGES, "256");
 
-        fetcher = new DoiToBibtexConverterComIsbnFetcher(mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS));
+        fetcher =
+                new DoiToBibtexConverterComIsbnFetcher(mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS));
     }
 
     @Test

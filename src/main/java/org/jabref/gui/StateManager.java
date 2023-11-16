@@ -56,20 +56,36 @@ public class StateManager {
     private final CustomLocalDragboard localDragboard = new CustomLocalDragboard();
     private final ObservableList<BibDatabaseContext> openDatabases = FXCollections.observableArrayList();
     private final OptionalObjectProperty<BibDatabaseContext> activeDatabase = OptionalObjectProperty.empty();
-    private final ReadOnlyListWrapper<GroupTreeNode> activeGroups = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
+    private final ReadOnlyListWrapper<GroupTreeNode> activeGroups =
+            new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
     private final ObservableList<BibEntry> selectedEntries = FXCollections.observableArrayList();
-    private final ObservableMap<BibDatabaseContext, ObservableList<GroupTreeNode>> selectedGroups = FXCollections.observableHashMap();
+    private final ObservableMap<BibDatabaseContext, ObservableList<GroupTreeNode>> selectedGroups =
+            FXCollections.observableHashMap();
     private final OptionalObjectProperty<SearchQuery> activeSearchQuery = OptionalObjectProperty.empty();
-    private final ObservableMap<BibDatabaseContext, IntegerProperty> searchResultMap = FXCollections.observableHashMap();
+    private final ObservableMap<BibDatabaseContext, IntegerProperty> searchResultMap =
+            FXCollections.observableHashMap();
     private final OptionalObjectProperty<Node> focusOwner = OptionalObjectProperty.empty();
-    private final ObservableList<Pair<BackgroundTask<?>, Task<?>>> backgroundTasks = FXCollections.observableArrayList(task -> new Observable[]{task.getValue().progressProperty(), task.getValue().runningProperty()});
-    private final EasyBinding<Boolean> anyTaskRunning = EasyBind.reduce(backgroundTasks, tasks -> tasks.map(Pair::getValue).anyMatch(Task::isRunning));
-    private final EasyBinding<Boolean> anyTasksThatWillNotBeRecoveredRunning = EasyBind.reduce(backgroundTasks, tasks -> tasks.anyMatch(task -> !task.getKey().willBeRecoveredAutomatically() && task.getValue().isRunning()));
-    private final EasyBinding<Double> tasksProgress = EasyBind.reduce(backgroundTasks, tasks -> tasks.map(Pair::getValue).filter(Task::isRunning).mapToDouble(Task::getProgress).average().orElse(1));
+    private final ObservableList<Pair<BackgroundTask<?>, Task<?>>> backgroundTasks =
+            FXCollections.observableArrayList(task -> new Observable[] {
+                task.getValue().progressProperty(), task.getValue().runningProperty()
+            });
+    private final EasyBinding<Boolean> anyTaskRunning =
+            EasyBind.reduce(backgroundTasks, tasks -> tasks.map(Pair::getValue).anyMatch(Task::isRunning));
+    private final EasyBinding<Boolean> anyTasksThatWillNotBeRecoveredRunning = EasyBind.reduce(
+            backgroundTasks,
+            tasks -> tasks.anyMatch(task -> !task.getKey().willBeRecoveredAutomatically()
+                    && task.getValue().isRunning()));
+    private final EasyBinding<Double> tasksProgress =
+            EasyBind.reduce(backgroundTasks, tasks -> tasks.map(Pair::getValue)
+                    .filter(Task::isRunning)
+                    .mapToDouble(Task::getProgress)
+                    .average()
+                    .orElse(1));
     private final ObservableMap<String, DialogWindowState> dialogWindowStates = FXCollections.observableHashMap();
     private final ObservableList<SidePaneType> visibleSidePanes = FXCollections.observableArrayList();
 
-    private final ObjectProperty<LastAutomaticFieldEditorEdit> lastAutomaticFieldEditorEdit = new SimpleObjectProperty<>();
+    private final ObjectProperty<LastAutomaticFieldEditorEdit> lastAutomaticFieldEditorEdit =
+            new SimpleObjectProperty<>();
 
     private final ObservableList<String> searchHistory = FXCollections.observableArrayList();
 
@@ -102,7 +118,8 @@ public class StateManager {
     }
 
     public IntegerProperty getSearchResultSize() {
-        return searchResultMap.getOrDefault(activeDatabase.getValue().orElse(new BibDatabaseContext()), new SimpleIntegerProperty(0));
+        return searchResultMap.getOrDefault(
+                activeDatabase.getValue().orElse(new BibDatabaseContext()), new SimpleIntegerProperty(0));
     }
 
     public ReadOnlyListProperty<GroupTreeNode> activeGroupProperty() {
@@ -146,7 +163,7 @@ public class StateManager {
 
     public List<BibEntry> getEntriesInCurrentDatabase() {
         return OptionalUtil.flatMap(activeDatabase.get(), BibDatabaseContext::getEntries)
-                           .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     public void clearSearchQuery() {
@@ -208,10 +225,9 @@ public class StateManager {
     public List<String> collectAllDatabasePaths() {
         List<String> list = new ArrayList<>();
         getOpenDatabases().stream()
-                          .map(BibDatabaseContext::getDatabasePath)
-                          .forEachOrdered(pathOptional -> pathOptional.ifPresentOrElse(
-                                  path -> list.add(path.toAbsolutePath().toString()),
-                                  () -> list.add("")));
+                .map(BibDatabaseContext::getDatabasePath)
+                .forEachOrdered(pathOptional -> pathOptional.ifPresentOrElse(
+                        path -> list.add(path.toAbsolutePath().toString()), () -> list.add("")));
         return list;
     }
 

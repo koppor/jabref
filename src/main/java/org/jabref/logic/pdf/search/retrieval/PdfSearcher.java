@@ -48,8 +48,7 @@ public final class PdfSearcher {
      * @param maxHits      number of maximum search results, must be positive
      * @return a result set of all documents that have matches in any fields
      */
-    public PdfSearchResults search(final String searchString, final int maxHits)
-        throws IOException {
+    public PdfSearchResults search(final String searchString, final int maxHits) throws IOException {
         if (StringUtil.isBlank(Objects.requireNonNull(searchString, "The search string was null!"))) {
             return new PdfSearchResults();
         }

@@ -22,16 +22,17 @@ public class WorkspacePreferences {
     private final BooleanProperty warnAboutDuplicatesInInspection;
     private final BooleanProperty confirmDelete;
 
-    public WorkspacePreferences(Language language,
-                                boolean shouldOverrideDefaultFontSize,
-                                int mainFontSize,
-                                int defaultFontSize,
-                                Theme theme,
-                                boolean themeSyncOs,
-                                boolean shouldOpenLastEdited,
-                                boolean showAdvancedHints,
-                                boolean warnAboutDuplicatesInInspection,
-                                boolean confirmDelete) {
+    public WorkspacePreferences(
+            Language language,
+            boolean shouldOverrideDefaultFontSize,
+            int mainFontSize,
+            int defaultFontSize,
+            Theme theme,
+            boolean themeSyncOs,
+            boolean shouldOpenLastEdited,
+            boolean showAdvancedHints,
+            boolean warnAboutDuplicatesInInspection,
+            boolean confirmDelete) {
         this.language = new SimpleObjectProperty<>(language);
         this.shouldOverrideDefaultFontSize = new SimpleBooleanProperty(shouldOverrideDefaultFontSize);
         this.mainFontSize = new SimpleIntegerProperty(mainFontSize);

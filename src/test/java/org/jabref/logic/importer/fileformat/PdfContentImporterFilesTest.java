@@ -13,8 +13,7 @@ class PdfContentImporterFilesTest {
     private static final String FILE_ENDING = ".pdf";
 
     private static Stream<String> fileNames() throws IOException {
-        Predicate<String> fileName = name -> name.startsWith("LNCS-minimal")
-                && name.endsWith(FILE_ENDING);
+        Predicate<String> fileName = name -> name.startsWith("LNCS-minimal") && name.endsWith(FILE_ENDING);
         return ImporterTestEngine.getTestFiles(fileName).stream();
     }
 

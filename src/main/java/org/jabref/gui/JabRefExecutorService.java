@@ -43,8 +43,7 @@ public class JabRefExecutorService {
 
     private Thread remoteThread;
 
-    private JabRefExecutorService() {
-   }
+    private JabRefExecutorService() {}
 
     public void execute(Runnable command) {
         Objects.requireNonNull(command);
@@ -181,7 +180,9 @@ public class JabRefExecutorService {
             // This is non-blocking. See https://stackoverflow.com/a/57383461/873282.
             executorService.shutdown();
             if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                LOGGER.debug("One minute passed, {} still not completed. Trying forced shutdown.", executorService.toString());
+                LOGGER.debug(
+                        "One minute passed, {} still not completed. Trying forced shutdown.",
+                        executorService.toString());
                 // those threads will be interrupted in their current task
                 executorService.shutdownNow();
                 if (executorService.awaitTermination(60, TimeUnit.SECONDS)) {

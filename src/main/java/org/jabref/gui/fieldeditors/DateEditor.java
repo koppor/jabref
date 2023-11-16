@@ -20,23 +20,32 @@ import jakarta.inject.Inject;
 
 public class DateEditor extends HBox implements FieldEditorFX {
 
-    @FXML private DateEditorViewModel viewModel;
-    @FXML private TemporalAccessorPicker datePicker;
+    @FXML
+    private DateEditorViewModel viewModel;
 
-    @Inject private UndoManager undoManager;
-    @Inject private PreferencesService preferencesService;
+    @FXML
+    private TemporalAccessorPicker datePicker;
 
-    public DateEditor(Field field, DateTimeFormatter dateFormatter, SuggestionProvider<?> suggestionProvider, FieldCheckers fieldCheckers) {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+    @Inject
+    private UndoManager undoManager;
+
+    @Inject
+    private PreferencesService preferencesService;
+
+    public DateEditor(
+            Field field,
+            DateTimeFormatter dateFormatter,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers) {
+        ViewLoader.view(this).root(this).load();
 
         this.viewModel = new DateEditorViewModel(field, suggestionProvider, dateFormatter, fieldCheckers, undoManager);
 
         datePicker.setStringConverter(viewModel.getDateToStringConverter());
         datePicker.getEditor().textProperty().bindBidirectional(viewModel.textProperty());
 
-        new EditorValidator(preferencesService).configureValidation(viewModel.getFieldValidator().getValidationStatus(), datePicker.getEditor());
+        new EditorValidator(preferencesService)
+                .configureValidation(viewModel.getFieldValidator().getValidationStatus(), datePicker.getEditor());
     }
 
     public DateEditorViewModel getViewModel() {

@@ -36,13 +36,14 @@ public class BibtexExtractorViewModel {
     private final TaskExecutor taskExecutor;
     private final ImportHandler importHandler;
 
-    public BibtexExtractorViewModel(BibDatabaseContext bibdatabaseContext,
-                                    DialogService dialogService,
-                                    PreferencesService preferencesService,
-                                    FileUpdateMonitor fileUpdateMonitor,
-                                    TaskExecutor taskExecutor,
-                                    UndoManager undoManager,
-                                    StateManager stateManager) {
+    public BibtexExtractorViewModel(
+            BibDatabaseContext bibdatabaseContext,
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            FileUpdateMonitor fileUpdateMonitor,
+            TaskExecutor taskExecutor,
+            UndoManager undoManager,
+            StateManager stateManager) {
 
         this.dialogService = dialogService;
         this.preferencesService = preferencesService;
@@ -76,30 +77,35 @@ public class BibtexExtractorViewModel {
     }
 
     private void parseUsingGrobid() {
-        GrobidCitationFetcher grobidCitationFetcher = new GrobidCitationFetcher(preferencesService.getGrobidPreferences(), preferencesService.getImportFormatPreferences());
+        GrobidCitationFetcher grobidCitationFetcher = new GrobidCitationFetcher(
+                preferencesService.getGrobidPreferences(), preferencesService.getImportFormatPreferences());
         BackgroundTask.wrap(() -> grobidCitationFetcher.performSearch(inputTextProperty.getValue()))
-                      .onRunning(() -> dialogService.notify(Localization.lang("Your text is being parsed...")))
-                      .onFailure(e -> {
-                          if (e instanceof FetcherException) {
-                              String msg = Localization.lang("There are connection issues with a JabRef server. Detailed information: %0",
-                                      e.getMessage());
-                              dialogService.notify(msg);
-                          } else {
-                              LOGGER.warn("Missing exception handling.", e);
-                          }
-                      })
-                      .onSuccess(parsedEntries -> {
-                          dialogService.notify(Localization.lang("%0 entries were parsed from your query.", String.valueOf(parsedEntries.size())));
-                          importHandler.importEntries(parsedEntries);
-                          for (BibEntry bibEntry : parsedEntries) {
-                              trackNewEntry(bibEntry, "ParseWithGrobid");
-                          }
-                      }).executeWith(taskExecutor);
+                .onRunning(() -> dialogService.notify(Localization.lang("Your text is being parsed...")))
+                .onFailure(e -> {
+                    if (e instanceof FetcherException) {
+                        String msg = Localization.lang(
+                                "There are connection issues with a JabRef server. Detailed information: %0",
+                                e.getMessage());
+                        dialogService.notify(msg);
+                    } else {
+                        LOGGER.warn("Missing exception handling.", e);
+                    }
+                })
+                .onSuccess(parsedEntries -> {
+                    dialogService.notify(Localization.lang(
+                            "%0 entries were parsed from your query.", String.valueOf(parsedEntries.size())));
+                    importHandler.importEntries(parsedEntries);
+                    for (BibEntry bibEntry : parsedEntries) {
+                        trackNewEntry(bibEntry, "ParseWithGrobid");
+                    }
+                })
+                .executeWith(taskExecutor);
     }
 
     private void trackNewEntry(BibEntry bibEntry, String eventMessage) {
         Map<String, String> properties = new HashMap<>();
         properties.put("EntryType", bibEntry.typeProperty().getValue().getName());
-        Telemetry.getTelemetryClient().ifPresent(client -> client.trackEvent(eventMessage, properties, new HashMap<>()));
+        Telemetry.getTelemetryClient()
+                .ifPresent(client -> client.trackEvent(eventMessage, properties, new HashMap<>()));
     }
 }

@@ -46,7 +46,8 @@ import static org.mockito.Mockito.when;
 
 class XmpPdfExporterTest {
 
-    @TempDir static Path tempDir;
+    @TempDir
+    static Path tempDir;
 
     private static BibEntry olly2018 = new BibEntry(StandardEntryType.Article);
     private static BibEntry toral2006 = new BibEntry(StandardEntryType.Article);
@@ -86,7 +87,9 @@ class XmpPdfExporterTest {
         olly2018.setFiles(List.of(linkedFile));
 
         toral2006.setField(StandardField.AUTHOR, "Toral, Antonio and Munoz, Rafael");
-        toral2006.setField(StandardField.TITLE, "A proposal to automatically build and maintain gazetteers for Named Entity Recognition by using Wikipedia");
+        toral2006.setField(
+                StandardField.TITLE,
+                "A proposal to automatically build and maintain gazetteers for Named Entity Recognition by using Wikipedia");
         toral2006.setField(StandardField.BOOKTITLE, "Proceedings of EACL");
         toral2006.setField(StandardField.PAGES, "56--61");
         toral2006.setField(StandardField.EPRINTTYPE, "asdf");
@@ -110,14 +113,17 @@ class XmpPdfExporterTest {
     void setUp() throws IOException {
         abbreviationRepository = mock(JournalAbbreviationRepository.class);
         filePreferences = mock(FilePreferences.class);
-        when(filePreferences.getUserAndHost()).thenReturn(tempDir.toAbsolutePath().toString());
+        when(filePreferences.getUserAndHost())
+                .thenReturn(tempDir.toAbsolutePath().toString());
         when(filePreferences.shouldStoreFilesRelativeToBibFile()).thenReturn(false);
 
         xmpPreferences = new XmpPreferences(false, Collections.emptySet(), new SimpleObjectProperty<>(','));
         exporter = new XmpPdfExporter(xmpPreferences);
 
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.fieldPreferences().getNonWrappableFields()).thenReturn(FXCollections.emptyObservableList());
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        when(importFormatPreferences.fieldPreferences().getNonWrappableFields())
+                .thenReturn(FXCollections.emptyObservableList());
         importer = new PdfXmpImporter(xmpPreferences);
 
         databaseContext = new BibDatabaseContext();
@@ -143,13 +149,23 @@ class XmpPdfExporterTest {
     @ParameterizedTest
     @MethodSource("provideBibEntriesWithValidPdfFileLinks")
     void successfulExportToAllFilesOfEntry(BibEntry bibEntryWithValidPdfFileLink) throws Exception {
-        assertTrue(exporter.exportToAllFilesOfEntry(databaseContext, filePreferences, bibEntryWithValidPdfFileLink, List.of(olly2018), abbreviationRepository));
+        assertTrue(exporter.exportToAllFilesOfEntry(
+                databaseContext,
+                filePreferences,
+                bibEntryWithValidPdfFileLink,
+                List.of(olly2018),
+                abbreviationRepository));
     }
 
     @ParameterizedTest
     @MethodSource("provideBibEntriesWithInvalidPdfFileLinks")
     void unsuccessfulExportToAllFilesOfEntry(BibEntry bibEntryWithValidPdfFileLink) throws Exception {
-        assertFalse(exporter.exportToAllFilesOfEntry(databaseContext, filePreferences, bibEntryWithValidPdfFileLink, List.of(olly2018), abbreviationRepository));
+        assertFalse(exporter.exportToAllFilesOfEntry(
+                databaseContext,
+                filePreferences,
+                bibEntryWithValidPdfFileLink,
+                List.of(olly2018),
+                abbreviationRepository));
     }
 
     public static Stream<Arguments> provideBibEntriesWithValidPdfFileLinks() {
@@ -183,15 +199,18 @@ class XmpPdfExporterTest {
                 contentStream.beginText();
                 contentStream.newLineAtOffset(25, 500);
                 contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
-                contentStream.showText("This PDF was created by JabRef. It demonstrates the embedding of XMP data in PDF files. Please open the file metadata view of your PDF viewer to see the attached files. Note that the normal usage is to embed the BibTeX data in an existing PDF.");
+                contentStream.showText(
+                        "This PDF was created by JabRef. It demonstrates the embedding of XMP data in PDF files. Please open the file metadata view of your PDF viewer to see the attached files. Note that the normal usage is to embed the BibTeX data in an existing PDF.");
                 contentStream.endText();
             }
             document.save(path.toString());
         }
         new XmpUtilWriter(xmpPreferences).writeXmp(path, databaseContext.getEntries(), databaseContext.getDatabase());
 
-        List<BibEntry> importedEntries = importer.importDatabase(path).getDatabase().getEntries();
-        importedEntries.forEach(bibEntry -> new FieldFormatterCleanup(StandardField.AUTHOR, new NormalizeNamesFormatter()).cleanup(bibEntry));
+        List<BibEntry> importedEntries =
+                importer.importDatabase(path).getDatabase().getEntries();
+        importedEntries.forEach(bibEntry ->
+                new FieldFormatterCleanup(StandardField.AUTHOR, new NormalizeNamesFormatter()).cleanup(bibEntry));
 
         List<BibEntry> expectedEntries = databaseContext.getEntries();
         for (BibEntry entry : expectedEntries) {
@@ -221,7 +240,8 @@ class XmpPdfExporterTest {
         return createDefaultLinkedFile("", fileName, tempDir);
     }
 
-    private static LinkedFile createDefaultLinkedFile(String description, String fileName, Path tempDir) throws IOException {
+    private static LinkedFile createDefaultLinkedFile(String description, String fileName, Path tempDir)
+            throws IOException {
         Path pdfFile = tempDir.resolve(fileName);
         try (PDDocument pdf = new PDDocument()) {
             pdf.addPage(new PDPage());

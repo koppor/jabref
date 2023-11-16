@@ -49,13 +49,19 @@ class UpdateTimestampListenerTest {
 
         bibEntry.setField(StandardField.MODIFICATIONDATE, baseDate);
 
-        assertEquals(Optional.of(baseDate), bibEntry.getField(StandardField.MODIFICATIONDATE), "Initial timestamp not set correctly");
+        assertEquals(
+                Optional.of(baseDate),
+                bibEntry.getField(StandardField.MODIFICATIONDATE),
+                "Initial timestamp not set correctly");
 
         database.registerListener(new UpdateTimestampListener(preferencesMock));
 
         bibEntry.setField(new UnknownField("test"), "some value");
 
-        assertEquals(Optional.of(newDate), bibEntry.getField(StandardField.MODIFICATIONDATE), "Timestamp not set correctly after entry changed");
+        assertEquals(
+                Optional.of(newDate),
+                bibEntry.getField(StandardField.MODIFICATIONDATE),
+                "Timestamp not set correctly after entry changed");
     }
 
     @Test
@@ -67,12 +73,18 @@ class UpdateTimestampListenerTest {
 
         bibEntry.setField(StandardField.MODIFICATIONDATE, baseDate);
 
-        assertEquals(Optional.of(baseDate), bibEntry.getField(StandardField.MODIFICATIONDATE), "Initial timestamp not set correctly");
+        assertEquals(
+                Optional.of(baseDate),
+                bibEntry.getField(StandardField.MODIFICATIONDATE),
+                "Initial timestamp not set correctly");
 
         database.registerListener(new UpdateTimestampListener(preferencesMock));
 
         bibEntry.setField(new UnknownField("test"), "some value");
 
-        assertEquals(Optional.of(baseDate), bibEntry.getField(StandardField.MODIFICATIONDATE), "New timestamp set after entry changed even though updates were disabled");
+        assertEquals(
+                Optional.of(baseDate),
+                bibEntry.getField(StandardField.MODIFICATIONDATE),
+                "New timestamp set after entry changed even though updates were disabled");
     }
 }

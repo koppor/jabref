@@ -39,9 +39,11 @@ public class DOABFetcher implements SearchBasedParserFetcher {
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(QueryNode luceneQuery)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder builder = new URIBuilder(SEARCH_URL);
-        String query = new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse("");
+        String query =
+                new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse("");
         // adding quotations for the query for more specified results
         // without the quotation the results returned are not relevant to the query
         query = ("\"".concat(query)).concat("\"");
@@ -64,7 +66,8 @@ public class DOABFetcher implements SearchBasedParserFetcher {
             }
             if (response.length() == 1) {
                 // the information used for bibtex entries are in an array inside the resulting jsonarray
-                // see this query for reference https://directory.doabooks.org/rest/search?query="i open fire"&expand=metadata
+                // see this query for reference https://directory.doabooks.org/rest/search?query="i open
+                // fire"&expand=metadata
                 JSONArray metadataArray = response.getJSONObject(0).getJSONArray("metadata");
                 JSONArray bitstreamArray = response.getJSONObject(0).getJSONArray("bitstreams");
                 BibEntry entry = jsonToBibEntry(metadataArray, bitstreamArray);
@@ -90,7 +93,8 @@ public class DOABFetcher implements SearchBasedParserFetcher {
 
         // Get the ISBN within the BITSTREAM. See the link below:
         // https://directory.doabooks.org/rest/search?query=handle:%2220.500.12854/26303%22&expand=metadata,bitstreams
-        // Note that in many cases, an ISBN cannot be obtained in the metadata, even in the BITSTREAM. See the link below:
+        // Note that in many cases, an ISBN cannot be obtained in the metadata, even in the BITSTREAM. See the link
+        // below:
         // https://directory.doabooks.org/rest/search?query=%22i%20open%20fire%22&expand=metadata,bitstreams
         for (int i = 0; i < bitstreamArray.length(); i++) {
             JSONObject bitstreamObject = bitstreamArray.getJSONObject(i);
@@ -111,18 +115,16 @@ public class DOABFetcher implements SearchBasedParserFetcher {
             switch (dataObject.getString("key")) {
                 case "dc.contributor.author" -> {
                     if (dataObject.getString("value").contains("(Ed.)")) {
-                       editorsList.add(toAuthor(namePreprocessing(dataObject.getString("value"))));
+                        editorsList.add(toAuthor(namePreprocessing(dataObject.getString("value"))));
                     } else {
                         authorsList.add(toAuthor(dataObject.getString("value")));
                     }
                 }
                 case "dc.type" -> entry.setType(StandardEntryType.Book);
-                case "dc.date.issued" -> entry.setField(StandardField.DATE, String.valueOf(
-                        dataObject.getString("value")));
-                case "oapen.identifier.doi" -> entry.setField(StandardField.DOI,
-                        dataObject.getString("value"));
-                case "dc.title" -> entry.setField(StandardField.TITLE,
-                        dataObject.getString("value"));
+                case "dc.date.issued" -> entry.setField(
+                        StandardField.DATE, String.valueOf(dataObject.getString("value")));
+                case "oapen.identifier.doi" -> entry.setField(StandardField.DOI, dataObject.getString("value"));
+                case "dc.title" -> entry.setField(StandardField.TITLE, dataObject.getString("value"));
                 case "oapen.pages" -> {
                     try {
                         entry.setField(StandardField.PAGES, String.valueOf(dataObject.getInt("value")));
@@ -130,27 +132,21 @@ public class DOABFetcher implements SearchBasedParserFetcher {
                         entry.setField(StandardField.PAGES, dataObject.getString("value"));
                     }
                 }
-                case "dc.description.abstract" -> entry.setField(StandardField.ABSTRACT,
-                        dataObject.getString("value"));
-                case "dc.language" -> entry.setField(StandardField.LANGUAGE,
-                        dataObject.getString("value"));
-                case "publisher.name" -> entry.setField(StandardField.PUBLISHER,
-                        dataObject.getString("value"));
-                case "dc.identifier.uri" -> entry.setField(StandardField.URI,
-                        dataObject.getString("value"));
+                case "dc.description.abstract" -> entry.setField(StandardField.ABSTRACT, dataObject.getString("value"));
+                case "dc.language" -> entry.setField(StandardField.LANGUAGE, dataObject.getString("value"));
+                case "publisher.name" -> entry.setField(StandardField.PUBLISHER, dataObject.getString("value"));
+                case "dc.identifier.uri" -> entry.setField(StandardField.URI, dataObject.getString("value"));
                 case "dc.identifier" -> {
                     if (dataObject.getString("value").contains("http")) {
-                       entry.setField(StandardField.URL, dataObject.getString("value"));
+                        entry.setField(StandardField.URL, dataObject.getString("value"));
                     }
                 }
                 case "dc.subject.other" -> keywordJoiner.add(dataObject.getString("value"));
                 case "dc.contributor.editor" -> editorsList.add(toAuthor(dataObject.getString("value")));
-                case "oapen.volume" -> entry.setField(StandardField.VOLUME,
-                        dataObject.getString("value"));
-                case "oapen.relation.isbn", "dc.identifier.isbn" -> entry.setField(StandardField.ISBN,
-                        dataObject.getString("value"));
-                case "dc.title.alternative" -> entry.setField(StandardField.SUBTITLE,
-                        dataObject.getString("value"));
+                case "oapen.volume" -> entry.setField(StandardField.VOLUME, dataObject.getString("value"));
+                case "oapen.relation.isbn", "dc.identifier.isbn" -> entry.setField(
+                        StandardField.ISBN, dataObject.getString("value"));
+                case "dc.title.alternative" -> entry.setField(StandardField.SUBTITLE, dataObject.getString("value"));
                 case "oapen.imprint" -> publisherImprint = dataObject.getString("value");
             }
         }

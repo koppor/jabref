@@ -28,11 +28,23 @@ public class PreviewWithSourceTab {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PreviewWithSourceTab.class);
 
-    public TabPane getPreviewWithSourceTab(BibEntry entry, BibDatabaseContext bibDatabaseContext, PreferencesService preferencesService, BibEntryTypesManager entryTypesManager, PreviewViewer previewViewer) {
-        return getPreviewWithSourceTab(entry, bibDatabaseContext, preferencesService, entryTypesManager, previewViewer, "");
+    public TabPane getPreviewWithSourceTab(
+            BibEntry entry,
+            BibDatabaseContext bibDatabaseContext,
+            PreferencesService preferencesService,
+            BibEntryTypesManager entryTypesManager,
+            PreviewViewer previewViewer) {
+        return getPreviewWithSourceTab(
+                entry, bibDatabaseContext, preferencesService, entryTypesManager, previewViewer, "");
     }
 
-    public TabPane getPreviewWithSourceTab(BibEntry entry, BibDatabaseContext bibDatabaseContext, PreferencesService preferencesService, BibEntryTypesManager entryTypesManager, PreviewViewer previewViewer, String label) {
+    public TabPane getPreviewWithSourceTab(
+            BibEntry entry,
+            BibDatabaseContext bibDatabaseContext,
+            PreferencesService preferencesService,
+            BibEntryTypesManager entryTypesManager,
+            PreviewViewer previewViewer,
+            String label) {
         previewViewer.setLayout(preferencesService.getPreviewPreferences().getSelectedPreviewLayout());
         previewViewer.setEntry(entry);
 
@@ -52,18 +64,25 @@ public class PreviewWithSourceTab {
         }
 
         try {
-            codeArea.appendText(getSourceString(entry, bibDatabaseContext.getMode(), preferencesService.getFieldPreferences(), entryTypesManager));
+            codeArea.appendText(getSourceString(
+                    entry, bibDatabaseContext.getMode(), preferencesService.getFieldPreferences(), entryTypesManager));
         } catch (IOException e) {
             LOGGER.error("Error getting Bibtex: {}", entry);
         }
         codeArea.setEditable(false);
-        Tab codeTab = new Tab(Localization.lang("%0 source", bibDatabaseContext.getMode().getFormattedName()), codeArea);
+        Tab codeTab = new Tab(
+                Localization.lang("%0 source", bibDatabaseContext.getMode().getFormattedName()), codeArea);
 
         tabPanePreviewCode.getTabs().addAll(previewTab, codeTab);
         return tabPanePreviewCode;
     }
 
-    private String getSourceString(BibEntry entry, BibDatabaseMode type, FieldPreferences fieldPreferences, BibEntryTypesManager entryTypesManager) throws IOException {
+    private String getSourceString(
+            BibEntry entry,
+            BibDatabaseMode type,
+            FieldPreferences fieldPreferences,
+            BibEntryTypesManager entryTypesManager)
+            throws IOException {
         StringWriter writer = new StringWriter();
         BibWriter bibWriter = new BibWriter(writer, OS.NEWLINE);
         FieldWriter fieldWriter = FieldWriter.buildIgnoreHashes(fieldPreferences);

@@ -21,9 +21,9 @@ public class LibrariesResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String get() {
         List<String> fileNamesWithUniqueSuffix = preferences.getGuiPreferences().getLastFilesOpened().stream()
-                                                            .map(java.nio.file.Path::of)
-                                                            .map(p -> p.getFileName() + "-" + BackupFileUtil.getUniqueFilePrefix(p))
-                                                            .toList();
+                .map(java.nio.file.Path::of)
+                .map(p -> p.getFileName() + "-" + BackupFileUtil.getUniqueFilePrefix(p))
+                .toList();
         return new Gson().toJson(fileNamesWithUniqueSuffix);
     }
 }

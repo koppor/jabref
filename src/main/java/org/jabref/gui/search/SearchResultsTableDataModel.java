@@ -29,28 +29,33 @@ public class SearchResultsTableDataModel {
     private final NameDisplayPreferences nameDisplayPreferences;
     private final BibDatabaseContext bibDatabaseContext;
 
-    public SearchResultsTableDataModel(BibDatabaseContext bibDatabaseContext, PreferencesService preferencesService, StateManager stateManager) {
+    public SearchResultsTableDataModel(
+            BibDatabaseContext bibDatabaseContext, PreferencesService preferencesService, StateManager stateManager) {
         this.nameDisplayPreferences = preferencesService.getNameDisplayPreferences();
         this.bibDatabaseContext = bibDatabaseContext;
-        this.fieldValueFormatter = new SimpleObjectProperty<>(new MainTableFieldValueFormatter(nameDisplayPreferences, bibDatabaseContext));
+        this.fieldValueFormatter = new SimpleObjectProperty<>(
+                new MainTableFieldValueFormatter(nameDisplayPreferences, bibDatabaseContext));
 
         ObservableList<BibEntryTableViewModel> entriesViewModel = FXCollections.observableArrayList();
         for (BibDatabaseContext context : stateManager.getOpenDatabases()) {
             ObservableList<BibEntry> entriesForDb = context.getDatabase().getEntries();
-            List<BibEntryTableViewModel> viewModelForDb = EasyBind.mapBacked(entriesForDb, entry -> new BibEntryTableViewModel(entry, context, fieldValueFormatter));
+            List<BibEntryTableViewModel> viewModelForDb = EasyBind.mapBacked(
+                    entriesForDb, entry -> new BibEntryTableViewModel(entry, context, fieldValueFormatter));
             entriesViewModel.addAll(viewModelForDb);
         }
 
         entriesFiltered = new FilteredList<>(entriesViewModel);
-        entriesFiltered.predicateProperty().bind(EasyBind.map(stateManager.activeSearchQueryProperty(), query -> entry -> isMatchedBySearch(query, entry)));
+        entriesFiltered
+                .predicateProperty()
+                .bind(EasyBind.map(
+                        stateManager.activeSearchQueryProperty(), query -> entry -> isMatchedBySearch(query, entry)));
 
         // We need to wrap the list since otherwise sorting in the table does not work
         entriesSorted = new SortedList<>(entriesFiltered);
     }
 
     private boolean isMatchedBySearch(Optional<SearchQuery> query, BibEntryTableViewModel entry) {
-        return query.map(matcher -> matcher.isMatch(entry.getEntry()))
-                    .orElse(true);
+        return query.map(matcher -> matcher.isMatch(entry.getEntry())).orElse(true);
     }
 
     public SortedList<BibEntryTableViewModel> getEntriesFilteredAndSorted() {

@@ -17,8 +17,7 @@ public class UnoTextDocument {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UnoTextDocument.class);
 
-    private UnoTextDocument() {
-    }
+    private UnoTextDocument() {}
 
     /**
      * @return True if we cannot reach the current document.
@@ -79,8 +78,7 @@ public class UnoTextDocument {
 
     static Optional<XDocumentProperties> getDocumentProperties(XTextDocument doc) {
         return Optional.ofNullable(doc)
-                        .flatMap(e -> UnoCast.cast(XDocumentPropertiesSupplier.class, e))
-                        .map(XDocumentPropertiesSupplier::getDocumentProperties);
+                .flatMap(e -> UnoCast.cast(XDocumentPropertiesSupplier.class, e))
+                .map(XDocumentPropertiesSupplier::getDocumentProperties);
     }
 }
-

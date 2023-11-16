@@ -32,8 +32,12 @@ public class MsBibImporterTest {
     @Test
     public final void testIsNotRecognizedFormat() throws Exception {
         MsBibImporter testImporter = new MsBibImporter();
-        List<String> notAccepted = Arrays.asList("CopacImporterTest1.txt", "IsiImporterTest1.isi",
-                "IsiImporterTestInspec.isi", "emptyFile.xml", "IsiImporterTestWOS.isi");
+        List<String> notAccepted = Arrays.asList(
+                "CopacImporterTest1.txt",
+                "IsiImporterTest1.isi",
+                "IsiImporterTestInspec.isi",
+                "emptyFile.xml",
+                "IsiImporterTestWOS.isi");
         for (String s : notAccepted) {
             Path file = Path.of(MsBibImporter.class.getResource(s).toURI());
             assertFalse(testImporter.isRecognizedFormat(file));
@@ -43,7 +47,8 @@ public class MsBibImporterTest {
     @Test
     public final void testImportEntriesEmpty() throws IOException, URISyntaxException {
         MsBibImporter testImporter = new MsBibImporter();
-        Path file = Path.of(MsBibImporter.class.getResource("EmptyMsBib_Test.xml").toURI());
+        Path file =
+                Path.of(MsBibImporter.class.getResource("EmptyMsBib_Test.xml").toURI());
         List<BibEntry> entries = testImporter.importDatabase(file).getDatabase().getEntries();
         assertEquals(Collections.emptyList(), entries);
     }
@@ -51,7 +56,8 @@ public class MsBibImporterTest {
     @Test
     public final void testImportEntriesNotRecognizedFormat() throws IOException, URISyntaxException {
         MsBibImporter testImporter = new MsBibImporter();
-        Path file = Path.of(MsBibImporter.class.getResource("CopacImporterTest1.txt").toURI());
+        Path file = Path.of(
+                MsBibImporter.class.getResource("CopacImporterTest1.txt").toURI());
         List<BibEntry> entries = testImporter.importDatabase(file).getDatabase().getEntries();
         assertEquals(0, entries.size());
     }

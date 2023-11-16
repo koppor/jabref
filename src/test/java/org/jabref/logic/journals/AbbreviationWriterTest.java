@@ -18,9 +18,7 @@ class AbbreviationWriterTest {
     void shortestUniqueAbbreviationWrittenIfItDiffers(@TempDir Path tempDir) throws Exception {
         Abbreviation abbreviation = new Abbreviation("Full", "Abbr", "A");
         Path csvFile = tempDir.resolve("test.csv");
-        AbbreviationWriter.writeOrCreate(
-                csvFile,
-                List.of(abbreviation));
+        AbbreviationWriter.writeOrCreate(csvFile, List.of(abbreviation));
         assertEquals(List.of("Full,Abbr,A"), Files.readAllLines(csvFile));
     }
 
@@ -28,9 +26,7 @@ class AbbreviationWriterTest {
     void doNotWriteShortestUniqueAbbreviationWrittenIfItDiffers(@TempDir Path tempDir) throws Exception {
         Abbreviation abbreviation = new Abbreviation("Full", "Abbr");
         Path csvFile = tempDir.resolve("test.csv");
-        AbbreviationWriter.writeOrCreate(
-                csvFile,
-                List.of(abbreviation));
+        AbbreviationWriter.writeOrCreate(csvFile, List.of(abbreviation));
         assertEquals(List.of("Full,Abbr"), Files.readAllLines(csvFile));
     }
 }

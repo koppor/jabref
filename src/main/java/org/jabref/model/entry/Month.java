@@ -9,7 +9,6 @@ import org.jabref.model.strings.StringUtil;
  * Represents a Month of the Year.
  */
 public enum Month {
-
     JANUARY("January", "jan", 1),
     FEBRUARY("February", "feb", 2),
     MARCH("March", "mar", 3),
@@ -176,7 +175,9 @@ public enum Month {
      * @return Month in JabRef format
      */
     public String getJabRefFormat() {
-        return String.format(FieldWriter.BIBTEX_STRING_START_END_SYMBOL + "%s" + FieldWriter.BIBTEX_STRING_START_END_SYMBOL, shortName);
+        return String.format(
+                FieldWriter.BIBTEX_STRING_START_END_SYMBOL + "%s" + FieldWriter.BIBTEX_STRING_START_END_SYMBOL,
+                shortName);
     }
 
     /**

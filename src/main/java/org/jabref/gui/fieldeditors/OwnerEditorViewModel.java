@@ -10,11 +10,12 @@ import org.jabref.preferences.PreferencesService;
 public class OwnerEditorViewModel extends AbstractEditorViewModel {
     private final PreferencesService preferences;
 
-    public OwnerEditorViewModel(Field field,
-                                SuggestionProvider<?> suggestionProvider,
-                                PreferencesService preferences,
-                                FieldCheckers fieldCheckers,
-                                UndoManager undoManager) {
+    public OwnerEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            PreferencesService preferences,
+            FieldCheckers fieldCheckers,
+            UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
         this.preferences = preferences;
     }

@@ -41,10 +41,12 @@ public class EntryTabViewModel implements PreferenceTabViewModel {
 
     @Override
     public void setValues() {
-        keywordSeparatorProperty.setValue(bibEntryPreferences.getKeywordSeparator().toString());
+        keywordSeparatorProperty.setValue(
+                bibEntryPreferences.getKeywordSeparator().toString());
 
         resolveStringsProperty.setValue(fieldPreferences.shouldResolveStrings());
-        resolveStringsForFieldsProperty.setValue(FieldFactory.serializeFieldsList(fieldPreferences.getResolvableFields()));
+        resolveStringsForFieldsProperty.setValue(
+                FieldFactory.serializeFieldsList(fieldPreferences.getResolvableFields()));
         nonWrappableFieldsProperty.setValue(FieldFactory.serializeFieldsList(fieldPreferences.getNonWrappableFields()));
 
         markOwnerProperty.setValue(ownerPreferences.isUseOwner());
@@ -57,11 +59,15 @@ public class EntryTabViewModel implements PreferenceTabViewModel {
 
     @Override
     public void storeSettings() {
-        bibEntryPreferences.keywordSeparatorProperty().setValue(keywordSeparatorProperty.getValue().charAt(0));
+        bibEntryPreferences
+                .keywordSeparatorProperty()
+                .setValue(keywordSeparatorProperty.getValue().charAt(0));
 
         fieldPreferences.setResolveStrings(resolveStringsProperty.getValue());
-        fieldPreferences.setResolvableFields(FieldFactory.parseFieldList(resolveStringsForFieldsProperty.getValue().trim()));
-        fieldPreferences.setNonWrappableFields(FieldFactory.parseFieldList(nonWrappableFieldsProperty.getValue().trim()));
+        fieldPreferences.setResolvableFields(FieldFactory.parseFieldList(
+                resolveStringsForFieldsProperty.getValue().trim()));
+        fieldPreferences.setNonWrappableFields(FieldFactory.parseFieldList(
+                nonWrappableFieldsProperty.getValue().trim()));
 
         ownerPreferences.setUseOwner(markOwnerProperty.getValue());
         ownerPreferences.setDefaultOwner(markOwnerNameProperty.getValue());

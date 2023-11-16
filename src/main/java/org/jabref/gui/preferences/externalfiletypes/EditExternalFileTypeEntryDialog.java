@@ -20,19 +20,40 @@ import jakarta.inject.Inject;
 
 public class EditExternalFileTypeEntryDialog extends BaseDialog<Void> {
 
-    @FXML private RadioButton defaultApplication;
-    @FXML private ToggleGroup applicationToggleGroup;
-    @FXML private TextField extension;
-    @FXML private TextField name;
-    @FXML private TextField mimeType;
-    @FXML private RadioButton customApplication;
-    @FXML private TextField selectedApplication;
-    @FXML private Button btnBrowse;
-    @FXML private Label icon;
-    @Inject private DialogService dialogService;
+    @FXML
+    private RadioButton defaultApplication;
+
+    @FXML
+    private ToggleGroup applicationToggleGroup;
+
+    @FXML
+    private TextField extension;
+
+    @FXML
+    private TextField name;
+
+    @FXML
+    private TextField mimeType;
+
+    @FXML
+    private RadioButton customApplication;
+
+    @FXML
+    private TextField selectedApplication;
+
+    @FXML
+    private Button btnBrowse;
+
+    @FXML
+    private Label icon;
+
+    @Inject
+    private DialogService dialogService;
 
     private final NativeDesktop nativeDesktop = OS.getNativeDesktop();
-    private final FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder().withInitialDirectory(nativeDesktop.getApplicationDirectory()).build();
+    private final FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
+            .withInitialDirectory(nativeDesktop.getApplicationDirectory())
+            .build();
 
     private final ExternalFileTypeItemViewModel item;
 
@@ -43,9 +64,7 @@ public class EditExternalFileTypeEntryDialog extends BaseDialog<Void> {
 
         this.setTitle(dialogTitle);
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         this.setResultConverter(button -> {
             if (button == ButtonType.OK) {
@@ -74,6 +93,8 @@ public class EditExternalFileTypeEntryDialog extends BaseDialog<Void> {
 
     @FXML
     private void openFileChooser(ActionEvent event) {
-        dialogService.showFileOpenDialog(fileDialogConfiguration).ifPresent(path -> viewModel.selectedApplicationProperty().setValue(path.toAbsolutePath().toString()));
+        dialogService.showFileOpenDialog(fileDialogConfiguration).ifPresent(path -> viewModel
+                .selectedApplicationProperty()
+                .setValue(path.toAbsolutePath().toString()));
     }
 }

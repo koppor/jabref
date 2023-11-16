@@ -30,7 +30,9 @@ public class ProtectedTermsParser {
 
     public void readTermsFromResource(String resourceFileName, String descriptionString) {
         try {
-            Path path = Path.of(Objects.requireNonNull(ProtectedTermsLoader.class.getResource(Objects.requireNonNull(resourceFileName))).toURI());
+            Path path = Path.of(Objects.requireNonNull(
+                            ProtectedTermsLoader.class.getResource(Objects.requireNonNull(resourceFileName)))
+                    .toURI());
             readTermsList(path);
             description = descriptionString;
             location = resourceFileName;
@@ -50,7 +52,8 @@ public class ProtectedTermsParser {
             return;
         }
         try (Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)) {
-            this.terms.addAll(lines.map(this::setDescription).filter(Objects::nonNull).collect(Collectors.toList()));
+            this.terms.addAll(
+                    lines.map(this::setDescription).filter(Objects::nonNull).collect(Collectors.toList()));
         } catch (IOException e) {
             LOGGER.warn("Could not read terms from file {}", path, e);
         }

@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
  * Our representation of the type of the FileAnnotation. This is needed as some FileAnnotationTypes require special
  * handling (e.g., Highlight or Underline), because of the linked FileAnnotations.
  */
-
 public enum FileAnnotationType {
     TEXT("Text", false),
     HIGHLIGHT("Highlight", true),
@@ -47,7 +46,9 @@ public enum FileAnnotationType {
         try {
             return FileAnnotationType.valueOf(annotation.getSubtype().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            LOGGER.info(String.format("FileAnnotationType %s is not supported and was converted into 'Unknown'!", annotation.getSubtype()));
+            LOGGER.info(String.format(
+                    "FileAnnotationType %s is not supported and was converted into 'Unknown'!",
+                    annotation.getSubtype()));
             return UNKNOWN;
         }
     }

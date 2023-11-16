@@ -33,12 +33,14 @@ public interface DialogService {
      *
      * @implNote The implementation should accept {@code null} for {@code defaultChoice}, but callers should use {@link #showChoiceDialogAndWait(String, String, String, Collection)}.
      */
-    <T> Optional<T> showChoiceDialogAndWait(String title, String content, String okButtonLabel, T defaultChoice, Collection<T> choices);
+    <T> Optional<T> showChoiceDialogAndWait(
+            String title, String content, String okButtonLabel, T defaultChoice, Collection<T> choices);
 
     /**
      * This will create and display new {@link ChoiceDialog} of type T with a collection of possible choices
      */
-    default <T> Optional<T> showChoiceDialogAndWait(String title, String content, String okButtonLabel, Collection<T> choices) {
+    default <T> Optional<T> showChoiceDialogAndWait(
+            String title, String content, String okButtonLabel, Collection<T> choices) {
         return showChoiceDialogAndWait(title, content, okButtonLabel, null, choices);
     }
 
@@ -146,8 +148,8 @@ public interface DialogService {
      *
      * @return true if the use clicked "YES" otherwise false
      */
-    boolean showConfirmationDialogWithOptOutAndWait(String title, String content,
-                                                    String optOutMessage, Consumer<Boolean> optOutAction);
+    boolean showConfirmationDialogWithOptOutAndWait(
+            String title, String content, String optOutMessage, Consumer<Boolean> optOutAction);
 
     /**
      * Create and display a new confirmation dialog.
@@ -158,9 +160,13 @@ public interface DialogService {
      *
      * @return true if the use clicked "YES" otherwise false
      */
-    boolean showConfirmationDialogWithOptOutAndWait(String title, String content,
-                                                    String okButtonLabel, String cancelButtonLabel,
-                                                    String optOutMessage, Consumer<Boolean> optOutAction);
+    boolean showConfirmationDialogWithOptOutAndWait(
+            String title,
+            String content,
+            String okButtonLabel,
+            String cancelButtonLabel,
+            String optOutMessage,
+            Consumer<Boolean> optOutAction);
 
     /**
      * This will create and display new {@link CustomPasswordField} that doesn't show the text, and two buttons
@@ -184,8 +190,8 @@ public interface DialogService {
      *
      * @return Optional with the pressed Button as ButtonType
      */
-    Optional<ButtonType> showCustomButtonDialogAndWait(Alert.AlertType type, String title, String content,
-                                                       ButtonType... buttonTypes);
+    Optional<ButtonType> showCustomButtonDialogAndWait(
+            Alert.AlertType type, String title, String content, ButtonType... buttonTypes);
 
     /**
      * This will create and display a new dialog showing a custom {@link DialogPane}
@@ -221,7 +227,8 @@ public interface DialogService {
      * @param content      message to show below the list of background tasks
      * @param stateManager The {@link StateManager} which contains the background tasks
      */
-    <V> Optional<ButtonType> showBackgroundProgressDialogAndWait(String title, String content, StateManager stateManager);
+    <V> Optional<ButtonType> showBackgroundProgressDialogAndWait(
+            String title, String content, StateManager stateManager);
 
     /**
      * Notify the user in a non-blocking way (i.e., in form of toast in a snackbar).

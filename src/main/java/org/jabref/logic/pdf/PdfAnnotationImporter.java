@@ -55,7 +55,8 @@ public class PdfAnnotationImporter implements AnnotationImporter {
                         annotationsList.add(createMarkedAnnotations(pageIndex, page, annotation));
                     } else {
                         FileAnnotation fileAnnotation = new FileAnnotation(annotation, pageIndex + 1);
-                        if ((fileAnnotation.getContent() != null) && !fileAnnotation.getContent().isEmpty()) {
+                        if ((fileAnnotation.getContent() != null)
+                                && !fileAnnotation.getContent().isEmpty()) {
                             annotationsList.add(fileAnnotation);
                         }
                     }
@@ -76,23 +77,31 @@ public class PdfAnnotationImporter implements AnnotationImporter {
             return false;
         }
         try {
-            if (!Arrays.asList(FileAnnotationType.values()).contains(FileAnnotationType.valueOf(annotation.getSubtype()))) {
+            if (!Arrays.asList(FileAnnotationType.values())
+                    .contains(FileAnnotationType.valueOf(annotation.getSubtype()))) {
                 return false;
             }
         } catch (IllegalArgumentException e) {
-            LOGGER.debug(String.format("Could not parse the FileAnnotation %s into any known FileAnnotationType. It was %s!", annotation, annotation.getSubtype()));
+            LOGGER.debug(String.format(
+                    "Could not parse the FileAnnotation %s into any known FileAnnotationType. It was %s!",
+                    annotation, annotation.getSubtype()));
         }
         return true;
     }
 
     private FileAnnotation createMarkedAnnotations(int pageIndex, PDPage page, PDAnnotation annotation) {
         FileAnnotation annotationBelongingToMarking = new FileAnnotation(
-                annotation.getCOSObject().getString(COSName.T), FileAnnotation.extractModifiedTime(annotation.getModifiedDate()),
-                pageIndex + 1, annotation.getContents(), FileAnnotationType.valueOf(annotation.getSubtype().toUpperCase(Locale.ROOT)), Optional.empty());
+                annotation.getCOSObject().getString(COSName.T),
+                FileAnnotation.extractModifiedTime(annotation.getModifiedDate()),
+                pageIndex + 1,
+                annotation.getContents(),
+                FileAnnotationType.valueOf(annotation.getSubtype().toUpperCase(Locale.ROOT)),
+                Optional.empty());
 
         if (annotationBelongingToMarking.getAnnotationType().isLinkedFileAnnotationType()) {
             try {
-                COSArray boundingBoxes = (COSArray) annotation.getCOSObject().getDictionaryObject(COSName.getPDFName("QuadPoints"));
+                COSArray boundingBoxes =
+                        (COSArray) annotation.getCOSObject().getDictionaryObject(COSName.getPDFName("QuadPoints"));
                 annotation.setContents(new TextExtractor(page, boundingBoxes).extractMarkedText());
             } catch (IOException e) {
                 annotation.setContents("JabRef: Could not extract any marked text!");

@@ -23,6 +23,4 @@ public record JournalInformation(
         List<Pair<Integer, Double>> citesOutgoing,
         List<Pair<Integer, Double>> citesOutgoingPerDoc,
         List<Pair<Integer, Double>> citesIncomingByRecentlyPublished,
-        List<Pair<Integer, Double>> citesIncomingPerDocByRecentlyPublished
-) {
-}
+        List<Pair<Integer, Double>> citesIncomingPerDocByRecentlyPublished) {}

@@ -35,7 +35,9 @@ public class UndoableFieldChange extends AbstractUndoableJabRefEdit {
 
     @Override
     public String getPresentationName() {
-        return Localization.lang("change field %0 of entry %1 from %2 to %3", StringUtil.boldHTML(field.getDisplayName()),
+        return Localization.lang(
+                "change field %0 of entry %1 from %2 to %3",
+                StringUtil.boldHTML(field.getDisplayName()),
                 StringUtil.boldHTML(entry.getCitationKey().orElse(Localization.lang("undefined"))),
                 StringUtil.boldHTML(oldValue, Localization.lang("undefined")),
                 StringUtil.boldHTML(newValue, Localization.lang("undefined")));

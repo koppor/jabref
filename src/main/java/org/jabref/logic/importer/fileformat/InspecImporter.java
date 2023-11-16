@@ -82,17 +82,14 @@ public class InspecImporter extends Importer {
                 String f3 = s.substring(0, 2);
                 String frest = s.substring(5);
                 switch (f3) {
-                    case "TI" ->
-                            h.put(StandardField.TITLE, frest);
-                    case "PY" ->
-                            h.put(StandardField.YEAR, frest);
-                    case "AU" ->
-                            h.put(StandardField.AUTHOR,
-                                    AuthorList.fixAuthorLastNameFirst(frest.replace(",-", ", ").replace(";", " and ")));
-                    case "AB" ->
-                            h.put(StandardField.ABSTRACT, frest);
-                    case "ID" ->
-                            h.put(StandardField.KEYWORDS, frest);
+                    case "TI" -> h.put(StandardField.TITLE, frest);
+                    case "PY" -> h.put(StandardField.YEAR, frest);
+                    case "AU" -> h.put(
+                            StandardField.AUTHOR,
+                            AuthorList.fixAuthorLastNameFirst(
+                                    frest.replace(",-", ", ").replace(";", " and ")));
+                    case "AB" -> h.put(StandardField.ABSTRACT, frest);
+                    case "ID" -> h.put(StandardField.KEYWORDS, frest);
                     case "SO" -> {
                         int m = frest.indexOf('.');
                         if (m >= 0) {
@@ -118,7 +115,8 @@ public class InspecImporter extends Importer {
                         frest = frest.trim();
                         if ("Journal-Paper".equals(frest)) {
                             type = StandardEntryType.Article;
-                        } else if ("Conference-Paper".equals(frest) || "Conference-Paper; Journal-Paper".equals(frest)) {
+                        } else if ("Conference-Paper".equals(frest)
+                                || "Conference-Paper; Journal-Paper".equals(frest)) {
                             type = StandardEntryType.InProceedings;
                         } else {
                             type = EntryTypeFactory.parse(frest.replace(" ", ""));

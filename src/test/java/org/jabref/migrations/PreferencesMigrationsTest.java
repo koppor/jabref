@@ -26,10 +26,9 @@ class PreferencesMigrationsTest {
     private JabRefPreferences prefs;
     private Preferences mainPrefsNode;
 
-    private final String[] oldStylePatterns = new String[]{"\\bibtexkey",
-            "\\bibtexkey\\begin{title} - \\format[RemoveBrackets]{\\title}\\end{title}"};
-    private final String[] newStylePatterns = new String[]{"[citationkey]",
-            "[citationkey] - [title]"};
+    private final String[] oldStylePatterns =
+            new String[] {"\\bibtexkey", "\\bibtexkey\\begin{title} - \\format[RemoveBrackets]{\\title}\\end{title}"};
+    private final String[] newStylePatterns = new String[] {"[citationkey]", "[citationkey] - [title]"};
 
     @BeforeEach
     void setUp() {
@@ -97,7 +96,8 @@ class PreferencesMigrationsTest {
 
     @Test
     void testUpgradeColumnPreferencesAlreadyMigrated() {
-        List<String> columnNames = Arrays.asList("entrytype", "author/editor", "title", "year", "journal/booktitle", "citationkey", "printed");
+        List<String> columnNames = Arrays.asList(
+                "entrytype", "author/editor", "title", "year", "journal/booktitle", "citationkey", "printed");
         List<String> columnWidths = Arrays.asList("75", "300", "470", "60", "130", "100", "30");
 
         when(prefs.getStringList(JabRefPreferences.COLUMN_NAMES)).thenReturn(columnNames);
@@ -111,11 +111,32 @@ class PreferencesMigrationsTest {
 
     @Test
     void testUpgradeColumnPreferencesFromWithoutTypes() {
-        List<String> columnNames = Arrays.asList("entrytype", "author/editor", "title", "year", "journal/booktitle", "citationkey", "printed");
+        List<String> columnNames = Arrays.asList(
+                "entrytype", "author/editor", "title", "year", "journal/booktitle", "citationkey", "printed");
         List<String> columnWidths = Arrays.asList("75", "300", "470", "60", "130", "100", "30");
-        List<String> updatedNames = Arrays.asList("groups", "files", "linked_id", "field:entrytype", "field:author/editor", "field:title", "field:year", "field:journal/booktitle", "field:citationkey", "special:printed");
+        List<String> updatedNames = Arrays.asList(
+                "groups",
+                "files",
+                "linked_id",
+                "field:entrytype",
+                "field:author/editor",
+                "field:title",
+                "field:year",
+                "field:journal/booktitle",
+                "field:citationkey",
+                "special:printed");
         List<String> updatedWidths = Arrays.asList("28", "28", "28", "75", "300", "470", "60", "130", "100", "30");
-        List<String> newSortTypes = Arrays.asList("ASCENDING", "ASCENDING", "ASCENDING", "ASCENDING", "ASCENDING", "ASCENDING", "ASCENDING", "ASCENDING", "ASCENDING", "ASCENDING");
+        List<String> newSortTypes = Arrays.asList(
+                "ASCENDING",
+                "ASCENDING",
+                "ASCENDING",
+                "ASCENDING",
+                "ASCENDING",
+                "ASCENDING",
+                "ASCENDING",
+                "ASCENDING",
+                "ASCENDING",
+                "ASCENDING");
 
         when(prefs.getStringList(JabRefPreferences.COLUMN_NAMES)).thenReturn(columnNames);
         when(prefs.getStringList(JabRefPreferences.COLUMN_WIDTHS)).thenReturn(columnWidths);
@@ -129,7 +150,8 @@ class PreferencesMigrationsTest {
 
     @Test
     void testChangeColumnPreferencesVariableNamesFor51() {
-        List<String> columnNames = Arrays.asList("entrytype", "author/editor", "title", "year", "journal/booktitle", "citationkey", "printed");
+        List<String> columnNames = Arrays.asList(
+                "entrytype", "author/editor", "title", "year", "journal/booktitle", "citationkey", "printed");
         List<String> columnWidths = Arrays.asList("75", "300", "470", "60", "130", "100", "30");
 
         // The variable names have to be hardcoded, because they have changed between 5.0 and 5.1
@@ -153,7 +175,8 @@ class PreferencesMigrationsTest {
 
     @Test
     void testChangeColumnPreferencesVariableNamesBackwardsCompatibility() {
-        List<String> columnNames = Arrays.asList("entrytype", "author/editor", "title", "year", "journal/booktitle", "citationkey", "printed");
+        List<String> columnNames = Arrays.asList(
+                "entrytype", "author/editor", "title", "year", "journal/booktitle", "citationkey", "printed");
         List<String> columnWidths = Arrays.asList("75", "300", "470", "60", "130", "100", "30");
 
         // The variable names have to be hardcoded, because they have changed between 5.0 and 5.1
@@ -177,8 +200,19 @@ class PreferencesMigrationsTest {
 
     @Test
     void testRestoreColumnVariablesForBackwardCompatibility() {
-        List<String> updatedNames = Arrays.asList("groups", "files", "linked_id", "field:entrytype", "field:author/editor", "field:title", "field:year", "field:journal/booktitle", "field:citationkey", "special:printed");
-        List<String> columnNames = Arrays.asList("entrytype", "author/editor", "title", "year", "journal/booktitle", "citationkey", "printed");
+        List<String> updatedNames = Arrays.asList(
+                "groups",
+                "files",
+                "linked_id",
+                "field:entrytype",
+                "field:author/editor",
+                "field:title",
+                "field:year",
+                "field:journal/booktitle",
+                "field:citationkey",
+                "special:printed");
+        List<String> columnNames = Arrays.asList(
+                "entrytype", "author/editor", "title", "year", "journal/booktitle", "citationkey", "printed");
         List<String> columnWidths = Arrays.asList("100", "100", "100", "100", "100", "100", "100");
 
         when(prefs.getStringList(JabRefPreferences.COLUMN_NAMES)).thenReturn(updatedNames);
@@ -201,7 +235,8 @@ class PreferencesMigrationsTest {
         final String V5_9_FETCHER_CUSTOM_KEYS = "fetcherCustomKeys";
         final Keyring keyring = mock(Keyring.class);
 
-        when(prefs.getStringList(V5_9_FETCHER_CUSTOM_KEY_NAMES)).thenReturn(List.of("FetcherA", "FetcherB", "FetcherC"));
+        when(prefs.getStringList(V5_9_FETCHER_CUSTOM_KEY_NAMES))
+                .thenReturn(List.of("FetcherA", "FetcherB", "FetcherC"));
         when(prefs.getStringList(V5_9_FETCHER_CUSTOM_KEYS)).thenReturn(List.of("KeyA", "KeyB", "KeyC"));
         when(prefs.getInternalPreferences().getUserAndHost()).thenReturn("user-host");
 

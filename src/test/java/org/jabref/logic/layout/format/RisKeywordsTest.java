@@ -30,7 +30,8 @@ public class RisKeywordsTest {
 
     @Test
     public void testMultipleKeywords() {
-        assertEquals("KW  - abcd" + OS.NEWLINE + "KW  - efg" + OS.NEWLINE + "KW  - hij" + OS.NEWLINE
-                + "KW  - klm", new RisKeywords().format("abcd, efg, hij, klm"));
+        assertEquals(
+                "KW  - abcd" + OS.NEWLINE + "KW  - efg" + OS.NEWLINE + "KW  - hij" + OS.NEWLINE + "KW  - klm",
+                new RisKeywords().format("abcd, efg, hij, klm"));
     }
 }

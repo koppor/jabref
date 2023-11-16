@@ -11,8 +11,8 @@ public class AuthorLF_FFTest {
      */
     @Test
     public void testFormat() {
-        assertEquals("von Neumann, John and John Smith and Peter Black Brown, Jr",
-                new AuthorLF_FF()
-                        .format("von Neumann,,John and John Smith and Black Brown, Jr, Peter"));
+        assertEquals(
+                "von Neumann, John and John Smith and Peter Black Brown, Jr",
+                new AuthorLF_FF().format("von Neumann,,John and John Smith and Black Brown, Jr, Peter"));
     }
 }

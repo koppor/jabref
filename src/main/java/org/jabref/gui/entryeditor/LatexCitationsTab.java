@@ -33,9 +33,13 @@ public class LatexCitationsTab extends EntryEditorTab {
     private final ProgressIndicator progressIndicator;
     private final CitationsDisplay citationsDisplay;
 
-    public LatexCitationsTab(BibDatabaseContext databaseContext, PreferencesService preferencesService,
-                             TaskExecutor taskExecutor, DialogService dialogService) {
-        this.viewModel = new LatexCitationsTabViewModel(databaseContext, preferencesService, taskExecutor, dialogService);
+    public LatexCitationsTab(
+            BibDatabaseContext databaseContext,
+            PreferencesService preferencesService,
+            TaskExecutor taskExecutor,
+            DialogService dialogService) {
+        this.viewModel =
+                new LatexCitationsTabViewModel(databaseContext, preferencesService, taskExecutor, dialogService);
         this.searchPane = new GridPane();
         this.progressIndicator = new ProgressIndicator();
         this.citationsDisplay = new CitationsDisplay();

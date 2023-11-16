@@ -18,7 +18,8 @@ public class MainTableFieldValueFormatter {
     private final AbbreviationStyle abbreviationStyle;
     private final BibDatabase bibDatabase;
 
-    public MainTableFieldValueFormatter(NameDisplayPreferences nameDisplayPreferences, BibDatabaseContext bibDatabaseContext) {
+    public MainTableFieldValueFormatter(
+            NameDisplayPreferences nameDisplayPreferences, BibDatabaseContext bibDatabaseContext) {
         this.displayStyle = nameDisplayPreferences.getDisplayStyle();
         this.abbreviationStyle = nameDisplayPreferences.getAbbreviationStyle();
         this.bibDatabase = bibDatabaseContext.getDatabase();
@@ -65,20 +66,17 @@ public class MainTableFieldValueFormatter {
 
         AuthorList authors = AuthorList.parse(nameToFormat);
 
-        if (((displayStyle == DisplayStyle.FIRSTNAME_LASTNAME)
-                || (displayStyle == DisplayStyle.LASTNAME_FIRSTNAME))
+        if (((displayStyle == DisplayStyle.FIRSTNAME_LASTNAME) || (displayStyle == DisplayStyle.LASTNAME_FIRSTNAME))
                 && (abbreviationStyle == AbbreviationStyle.LASTNAME_ONLY)) {
             return authors.latexFree().getAsLastNames(false);
         }
 
         return switch (displayStyle) {
             default -> nameToFormat;
-            case FIRSTNAME_LASTNAME -> authors.latexFree().getAsFirstLastNames(
-                    abbreviationStyle == AbbreviationStyle.FULL,
-                    false);
-            case LASTNAME_FIRSTNAME -> authors.latexFree().getAsLastFirstNames(
-                    abbreviationStyle == AbbreviationStyle.FULL,
-                    false);
+            case FIRSTNAME_LASTNAME -> authors.latexFree()
+                    .getAsFirstLastNames(abbreviationStyle == AbbreviationStyle.FULL, false);
+            case LASTNAME_FIRSTNAME -> authors.latexFree()
+                    .getAsLastFirstNames(abbreviationStyle == AbbreviationStyle.FULL, false);
             case NATBIB -> authors.latexFree().getAsNatbib();
         };
     }

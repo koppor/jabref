@@ -24,12 +24,14 @@ public class LocalizationKeyParamsTest {
                 Arguments.of("biblatex mode", new LocalizationKeyParams("%0 mode", "biblatex")),
                 Arguments.of("C:\\bla mode", new LocalizationKeyParams("%0 mode", "C:\\bla")),
                 Arguments.of("What \n : %e %c a b", new LocalizationKeyParams("What \n : %e %c %0 %1", "a", "b")),
-                Arguments.of("What \n : %e %c_a b", new LocalizationKeyParams("What \n : %e %c_%0 %1", "a", "b"))
-        );
+                Arguments.of("What \n : %e %c_a b", new LocalizationKeyParams("What \n : %e %c_%0 %1", "a", "b")));
     }
 
     @Test
     public void testTooManyParams() {
-        assertThrows(IllegalStateException.class, () -> new LocalizationKeyParams("", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"));
+        assertThrows(
+                IllegalStateException.class,
+                () -> new LocalizationKeyParams(
+                        "", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"));
     }
 }

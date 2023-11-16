@@ -38,8 +38,12 @@ public class CoarseChangeFilter {
             // If editing has started
             boolean isNewEdit = lastFieldChanged.isEmpty() || lastEntryChanged.isEmpty();
 
-            boolean isChangedField = lastFieldChanged.filter(f -> !f.equals(fieldChange.getField())).isPresent();
-            boolean isChangedEntry = lastEntryChanged.filter(e -> !e.equals(fieldChange.getBibEntry())).isPresent();
+            boolean isChangedField = lastFieldChanged
+                    .filter(f -> !f.equals(fieldChange.getField()))
+                    .isPresent();
+            boolean isChangedEntry = lastEntryChanged
+                    .filter(e -> !e.equals(fieldChange.getBibEntry()))
+                    .isPresent();
             boolean isEditChanged = !isNewEdit && (isChangedField || isChangedEntry);
             // Only deltas of 1 when typing in manually, major change means pasting something (more than one character)
             boolean isMajorChange = fieldChange.getMajorCharacterChange() > 1;

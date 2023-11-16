@@ -58,7 +58,8 @@ public class EntryEditorTabViewModel implements PreferenceTabViewModel {
         enableLatexCitationsTabProperty.setValue(entryEditorPreferences.shouldShowLatexCitationsTab());
         enableValidationProperty.setValue(entryEditorPreferences.shouldEnableValidation());
         allowIntegerEditionProperty.setValue(entryEditorPreferences.shouldAllowIntegerEditionBibtex());
-        journalPopupProperty.setValue(entryEditorPreferences.shouldEnableJournalPopup() == EntryEditorPreferences.JournalPopupEnabled.ENABLED);
+        journalPopupProperty.setValue(entryEditorPreferences.shouldEnableJournalPopup()
+                == EntryEditorPreferences.JournalPopupEnabled.ENABLED);
         autoLinkEnabledProperty.setValue(entryEditorPreferences.autoLinkFilesEnabled());
         enableSciteTabProperty.setValue(entryEditorPreferences.shouldShowSciteTab());
 
@@ -92,9 +93,10 @@ public class EntryEditorTabViewModel implements PreferenceTabViewModel {
         entryEditorPreferences.setShowSourceTabByDefault(defaultSourceProperty.getValue());
         entryEditorPreferences.setEnableValidation(enableValidationProperty.getValue());
         entryEditorPreferences.setAllowIntegerEditionBibtex(allowIntegerEditionProperty.getValue());
-        entryEditorPreferences.setEnableJournalPopup(journalPopupProperty.getValue()
-                ? EntryEditorPreferences.JournalPopupEnabled.ENABLED
-                : EntryEditorPreferences.JournalPopupEnabled.DISABLED);
+        entryEditorPreferences.setEnableJournalPopup(
+                journalPopupProperty.getValue()
+                        ? EntryEditorPreferences.JournalPopupEnabled.ENABLED
+                        : EntryEditorPreferences.JournalPopupEnabled.DISABLED);
         // entryEditorPreferences.setDividerPosition();
         entryEditorPreferences.setAutoLinkFilesEnabled(autoLinkEnabledProperty.getValue());
         entryEditorPreferences.setShouldShowSciteTab(enableSciteTabProperty.getValue());
@@ -119,7 +121,8 @@ public class EntryEditorTabViewModel implements PreferenceTabViewModel {
             if (!testString.equals(parts[1])) {
                 dialogService.showInformationDialogAndWait(
                         Localization.lang("Error"),
-                        Localization.lang("Field names are not allowed to contain white spaces or certain characters (%0).",
+                        Localization.lang(
+                                "Field names are not allowed to contain white spaces or certain characters (%0).",
                                 "# { } ( ) ~ , ^ & - \" ' ` ʹ \\"));
                 return;
             }

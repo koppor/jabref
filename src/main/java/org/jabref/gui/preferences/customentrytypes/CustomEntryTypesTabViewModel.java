@@ -41,11 +41,13 @@ import de.saxsys.mvvmfx.utils.validation.Validator;
 
 public class CustomEntryTypesTabViewModel implements PreferenceTabViewModel {
 
-    private final ObservableList<Field> fieldsForAdding = FXCollections.observableArrayList(FieldFactory.getStandardFieldsWithCitationKey());
+    private final ObservableList<Field> fieldsForAdding =
+            FXCollections.observableArrayList(FieldFactory.getStandardFieldsWithCitationKey());
     private final ObjectProperty<EntryTypeViewModel> selectedEntryType = new SimpleObjectProperty<>();
     private final StringProperty entryTypeToAdd = new SimpleStringProperty("");
     private final ObjectProperty<Field> newFieldToAdd = new SimpleObjectProperty<>();
-    private final ObservableList<EntryTypeViewModel> entryTypesWithFields = FXCollections.observableArrayList(extractor -> new Observable[]{extractor.entryType(), extractor.fields()});
+    private final ObservableList<EntryTypeViewModel> entryTypesWithFields = FXCollections.observableArrayList(
+            extractor -> new Observable[] {extractor.entryType(), extractor.fields()});
     private final List<BibEntryType> entryTypesToDelete = new ArrayList<>();
 
     private final PreferencesService preferencesService;
@@ -57,12 +59,14 @@ public class CustomEntryTypesTabViewModel implements PreferenceTabViewModel {
     private final Validator fieldValidator;
     private final Set<Field> multiLineFields = new HashSet<>();
 
-    Predicate<Field> isMultiline = field -> this.multiLineFields.contains(field) || field.getProperties().contains(FieldProperty.MULTILINE_TEXT);
+    Predicate<Field> isMultiline = field ->
+            this.multiLineFields.contains(field) || field.getProperties().contains(FieldProperty.MULTILINE_TEXT);
 
-    public CustomEntryTypesTabViewModel(BibDatabaseMode mode,
-                                        BibEntryTypesManager entryTypesManager,
-                                        DialogService dialogService,
-                                        PreferencesService preferencesService) {
+    public CustomEntryTypesTabViewModel(
+            BibDatabaseMode mode,
+            BibEntryTypesManager entryTypesManager,
+            DialogService dialogService,
+            PreferencesService preferencesService) {
         this.preferencesService = preferencesService;
         this.entryTypesManager = entryTypesManager;
         this.dialogService = dialogService;
@@ -106,16 +110,17 @@ public class CustomEntryTypesTabViewModel implements PreferenceTabViewModel {
             List<FieldViewModel> allFields = typeViewModel.fields();
 
             multilineFields.addAll(allFields.stream()
-                                            .filter(FieldViewModel::isMultiline)
-                                            .map(FieldViewModel::toField)
-                                            .toList());
+                    .filter(FieldViewModel::isMultiline)
+                    .map(FieldViewModel::toField)
+                    .toList());
 
             List<OrFields> required = allFields.stream()
-                                               .filter(FieldViewModel::isRequired)
-                                               .map(FieldViewModel::toField)
-                                               .map(OrFields::new)
-                                               .collect(Collectors.toList());
-            List<BibField> fields = allFields.stream().map(FieldViewModel::toBibField).collect(Collectors.toList());
+                    .filter(FieldViewModel::isRequired)
+                    .map(FieldViewModel::toField)
+                    .map(OrFields::new)
+                    .collect(Collectors.toList());
+            List<BibField> fields =
+                    allFields.stream().map(FieldViewModel::toBibField).collect(Collectors.toList());
 
             BibEntryType newType = new BibEntryType(type.getType(), fields, required);
             entryTypesManager.addCustomOrModifiedType(newType, bibDatabaseMode);
@@ -151,21 +156,23 @@ public class CustomEntryTypesTabViewModel implements PreferenceTabViewModel {
         if (fieldExists) {
             dialogService.showWarningDialogAndWait(
                     Localization.lang("Duplicate fields"),
-                    Localization.lang("Warning: You added field \"%0\" twice. Only one will be kept.", field.getDisplayName()));
+                    Localization.lang(
+                            "Warning: You added field \"%0\" twice. Only one will be kept.", field.getDisplayName()));
         } else {
-            this.selectedEntryType.getValue().addField(new FieldViewModel(
-                    field,
-                    FieldViewModel.Mandatory.REQUIRED,
-                    FieldPriority.IMPORTANT,
-                    false));
+            this.selectedEntryType
+                    .getValue()
+                    .addField(new FieldViewModel(
+                            field, FieldViewModel.Mandatory.REQUIRED, FieldPriority.IMPORTANT, false));
         }
         newFieldToAddProperty().setValue(null);
     }
 
     public boolean displayNameExists(String displayName) {
-        ObservableList<FieldViewModel> entryFields = this.selectedEntryType.getValue().fields();
-        return entryFields.stream().anyMatch(fieldViewModel ->
-                fieldViewModel.displayNameProperty().getValue().equals(displayName));
+        ObservableList<FieldViewModel> entryFields =
+                this.selectedEntryType.getValue().fields();
+        return entryFields.stream()
+                .anyMatch(fieldViewModel ->
+                        fieldViewModel.displayNameProperty().getValue().equals(displayName));
     }
 
     public void removeField(FieldViewModel focusedItem) {

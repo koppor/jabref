@@ -82,7 +82,9 @@ public class URLDownloadTest {
     @Test
     @DisabledOnCIServer("CI Server is apparently blocked")
     public void downloadOfFTPSucceeds() throws IOException {
-        URLDownload ftp = new URLDownload(new URL("ftp://ftp.informatik.uni-stuttgart.de/pub/library/ncstrl.ustuttgart_fi/INPROC-2016-15/INPROC-2016-15.pdf"));
+        URLDownload ftp = new URLDownload(
+                new URL(
+                        "ftp://ftp.informatik.uni-stuttgart.de/pub/library/ncstrl.ustuttgart_fi/INPROC-2016-15/INPROC-2016-15.pdf"));
 
         Path path = ftp.toTemporaryFile();
         assertNotNull(path);

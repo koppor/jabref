@@ -22,7 +22,11 @@ public abstract class MapBasedEditorViewModel<T> extends OptionEditorViewModel<T
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapBasedEditorViewModel.class);
 
-    public MapBasedEditorViewModel(Field field, SuggestionProvider<?> suggestionProvider, FieldCheckers fieldCheckers, UndoManager undoManager) {
+    public MapBasedEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
     }
 
@@ -36,7 +40,11 @@ public abstract class MapBasedEditorViewModel<T> extends OptionEditorViewModel<T
                 if (object == null) {
                     return null;
                 } else {
-                    return getItemMap().inverse().getOrDefault(object, object.toString()); // if the object is not found we simply return itself as string
+                    return getItemMap()
+                            .inverse()
+                            .getOrDefault(
+                                    object,
+                                    object.toString()); // if the object is not found we simply return itself as string
                 }
             }
 
@@ -62,7 +70,11 @@ public abstract class MapBasedEditorViewModel<T> extends OptionEditorViewModel<T
         try {
             return (T) string;
         } catch (ClassCastException ex) {
-            LOGGER.error(String.format("Could not cast string to type %1$s. Try overriding the method in a subclass and provide a conversion from string to the concrete type %1$s", string.getClass()), ex);
+            LOGGER.error(
+                    String.format(
+                            "Could not cast string to type %1$s. Try overriding the method in a subclass and provide a conversion from string to the concrete type %1$s",
+                            string.getClass()),
+                    ex);
         }
         return null;
     }

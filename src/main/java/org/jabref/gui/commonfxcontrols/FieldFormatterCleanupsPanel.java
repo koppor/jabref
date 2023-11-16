@@ -27,20 +27,31 @@ import com.airhacks.afterburner.views.ViewLoader;
 
 public class FieldFormatterCleanupsPanel extends VBox {
 
-    @FXML private CheckBox cleanupsEnabled;
-    @FXML private TableView<FieldFormatterCleanup> cleanupsList;
-    @FXML private TableColumn<FieldFormatterCleanup, Field> fieldColumn;
-    @FXML private TableColumn<FieldFormatterCleanup, Formatter> formatterColumn;
-    @FXML private TableColumn<FieldFormatterCleanup, Field> actionsColumn;
-    @FXML private ComboBox<Field> addableFields;
-    @FXML private ComboBox<Formatter> addableFormatters;
+    @FXML
+    private CheckBox cleanupsEnabled;
+
+    @FXML
+    private TableView<FieldFormatterCleanup> cleanupsList;
+
+    @FXML
+    private TableColumn<FieldFormatterCleanup, Field> fieldColumn;
+
+    @FXML
+    private TableColumn<FieldFormatterCleanup, Formatter> formatterColumn;
+
+    @FXML
+    private TableColumn<FieldFormatterCleanup, Field> actionsColumn;
+
+    @FXML
+    private ComboBox<Field> addableFields;
+
+    @FXML
+    private ComboBox<Formatter> addableFormatters;
 
     private FieldFormatterCleanupsPanelViewModel viewModel;
 
     public FieldFormatterCleanupsPanel() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @FXML
@@ -57,21 +68,25 @@ public class FieldFormatterCleanupsPanel extends VBox {
 
         // ToDo: To be editable the list needs a view model wrapper for FieldFormatterCleanup
 
-        fieldColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getField()));
+        fieldColumn.setCellValueFactory(
+                cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getField()));
         new ValueTableCellFactory<FieldFormatterCleanup, Field>()
                 .withText(Field::getDisplayName)
                 .install(fieldColumn);
 
-        formatterColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getFormatter()));
+        formatterColumn.setCellValueFactory(
+                cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getFormatter()));
         new ValueTableCellFactory<FieldFormatterCleanup, Formatter>()
                 .withText(Formatter::getName)
                 .install(formatterColumn);
 
-        actionsColumn.setCellValueFactory(cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getField()));
+        actionsColumn.setCellValueFactory(
+                cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue().getField()));
         new ValueTableCellFactory<FieldFormatterCleanup, Field>()
                 .withGraphic(field -> IconTheme.JabRefIcons.DELETE_ENTRY.getGraphicNode())
                 .withTooltip(field -> Localization.lang("Remove formatter for %0", field.getDisplayName()))
-                .withOnMouseClickedEvent(item -> event -> viewModel.removeCleanup(cleanupsList.getSelectionModel().getSelectedItem()))
+                .withOnMouseClickedEvent(item -> event ->
+                        viewModel.removeCleanup(cleanupsList.getSelectionModel().getSelectedItem()))
                 .install(actionsColumn);
 
         viewModel.selectedCleanupProperty().setValue(cleanupsList.getSelectionModel());
@@ -84,9 +99,7 @@ public class FieldFormatterCleanupsPanel extends VBox {
     }
 
     private void setupCombos() {
-        new ViewModelListCellFactory<Field>()
-                .withText(Field::getDisplayName)
-                .install(addableFields);
+        new ViewModelListCellFactory<Field>().withText(Field::getDisplayName).install(addableFields);
         addableFields.setConverter(FieldsUtil.FIELD_STRING_CONVERTER);
         addableFields.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.TAB || event.getCode() == KeyCode.ENTER) {
@@ -108,7 +121,8 @@ public class FieldFormatterCleanupsPanel extends VBox {
     }
 
     private void setupBindings() {
-        BindingsHelper.bindBidirectional((ObservableValue<Boolean>) cleanupsEnabled.selectedProperty(),
+        BindingsHelper.bindBidirectional(
+                (ObservableValue<Boolean>) cleanupsEnabled.selectedProperty(),
                 viewModel.cleanupsDisableProperty(),
                 disabled -> cleanupsEnabled.selectedProperty().setValue(!disabled),
                 selected -> viewModel.cleanupsDisableProperty().setValue(!selected));

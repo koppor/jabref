@@ -26,10 +26,11 @@ public class CopyFilesAction extends SimpleCommand {
     private final StateManager stateManager;
     private final TaskExecutor taskExecutor;
 
-    public CopyFilesAction(DialogService dialogService,
-                           PreferencesService preferencesService,
-                           StateManager stateManager,
-                           TaskExecutor taskExecutor) {
+    public CopyFilesAction(
+            DialogService dialogService,
+            PreferencesService preferencesService,
+            StateManager stateManager,
+            TaskExecutor taskExecutor) {
         this.dialogService = dialogService;
         this.preferencesService = preferencesService;
         this.stateManager = stateManager;
@@ -40,7 +41,9 @@ public class CopyFilesAction extends SimpleCommand {
 
     private void showDialog(List<CopyFilesResultItemViewModel> data) {
         if (data.isEmpty()) {
-            dialogService.showInformationDialogAndWait(Localization.lang("Copy linked files to folder..."), Localization.lang("No linked files found for export."));
+            dialogService.showInformationDialogAndWait(
+                    Localization.lang("Copy linked files to folder..."),
+                    Localization.lang("No linked files found for export."));
             return;
         }
         dialogService.showCustomDialogAndWait(new CopyFilesDialogView(new CopyFilesResultListDependency(data)));
@@ -48,7 +51,8 @@ public class CopyFilesAction extends SimpleCommand {
 
     @Override
     public void execute() {
-        BibDatabaseContext database = stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
+        BibDatabaseContext database =
+                stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
         List<BibEntry> entries = stateManager.getSelectedEntries();
 
         DirectoryDialogConfiguration dirDialogConfiguration = new DirectoryDialogConfiguration.Builder()
@@ -56,7 +60,8 @@ public class CopyFilesAction extends SimpleCommand {
                 .build();
         Optional<Path> exportPath = dialogService.showDirectorySelectionDialog(dirDialogConfiguration);
         exportPath.ifPresent(path -> {
-            Task<List<CopyFilesResultItemViewModel>> exportTask = new CopyFilesTask(database, entries, path, preferencesService);
+            Task<List<CopyFilesResultItemViewModel>> exportTask =
+                    new CopyFilesTask(database, entries, path, preferencesService);
             dialogService.showProgressDialog(
                     Localization.lang("Copy linked files to folder..."),
                     Localization.lang("Copy linked files to folder..."),

@@ -33,18 +33,19 @@ import com.tobiasdiez.easybind.EasyBind;
  */
 public abstract class BackgroundTask<V> {
 
-    public static ImmutableMap<String, Node> iconMap = ImmutableMap.of(
-            Localization.lang("Downloading"), IconTheme.JabRefIcons.DOWNLOAD.getGraphicNode()
-    );
+    public static ImmutableMap<String, Node> iconMap =
+            ImmutableMap.of(Localization.lang("Downloading"), IconTheme.JabRefIcons.DOWNLOAD.getGraphicNode());
 
     private Runnable onRunning;
     private Consumer<V> onSuccess;
     private Consumer<Exception> onException;
     private Runnable onFinished;
     private final BooleanProperty isCanceled = new SimpleBooleanProperty(false);
-    private final ObjectProperty<BackgroundProgress> progress = new SimpleObjectProperty<>(new BackgroundProgress(0, 0));
+    private final ObjectProperty<BackgroundProgress> progress =
+            new SimpleObjectProperty<>(new BackgroundProgress(0, 0));
     private final StringProperty message = new SimpleStringProperty("");
-    private final StringProperty title = new SimpleStringProperty(this.getClass().getSimpleName());
+    private final StringProperty title =
+            new SimpleStringProperty(this.getClass().getSimpleName());
     private final DoubleProperty workDonePercentage = new SimpleDoubleProperty(0);
     private final BooleanProperty showToUser = new SimpleBooleanProperty(false);
     private final BooleanProperty willBeRecoveredAutomatically = new SimpleBooleanProperty(false);

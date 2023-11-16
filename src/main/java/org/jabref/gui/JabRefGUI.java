@@ -50,11 +50,12 @@ public class JabRefGUI {
     private final List<ParserResult> failed = new ArrayList<>();
     private final List<ParserResult> toOpenTab = new ArrayList<>();
 
-    public JabRefGUI(Stage mainStage,
-                     List<ParserResult> databases,
-                     boolean isBlank,
-                     PreferencesService preferencesService,
-                     FileUpdateMonitor fileUpdateMonitor) {
+    public JabRefGUI(
+            Stage mainStage,
+            List<ParserResult> databases,
+            boolean isBlank,
+            PreferencesService preferencesService,
+            FileUpdateMonitor fileUpdateMonitor) {
         this.parserResults = databases;
         this.isBlank = isBlank;
         this.preferencesService = preferencesService;
@@ -69,10 +70,11 @@ public class JabRefGUI {
 
         EasyBind.subscribe(preferencesService.getInternalPreferences().versionCheckEnabledProperty(), enabled -> {
             if (enabled) {
-                new VersionWorker(Globals.BUILD_INFO.version,
-                        mainFrame.getDialogService(),
-                        Globals.TASK_EXECUTOR,
-                        preferencesService)
+                new VersionWorker(
+                                Globals.BUILD_INFO.version,
+                                mainFrame.getDialogService(),
+                                Globals.TASK_EXECUTOR,
+                                preferencesService)
                         .checkForNewVersionDelayed();
             }
         });
@@ -87,7 +89,8 @@ public class JabRefGUI {
         }
 
         if (preferencesService.getProxyPreferences().shouldPersistPassword()
-                && StringUtil.isNotBlank(preferencesService.getProxyPreferences().getPassword())) {
+                && StringUtil.isNotBlank(
+                        preferencesService.getProxyPreferences().getPassword())) {
             ProxyRegisterer.register(preferencesService.getProxyPreferences());
             return;
         }
@@ -169,10 +172,11 @@ public class JabRefGUI {
         Platform.runLater(this::openDatabases);
 
         if (!(fileUpdateMonitor.isActive())) {
-            getMainFrame().getDialogService()
-                          .showErrorDialogAndWait(Localization.lang("Unable to monitor file changes. Please close files " +
-                                  "and processes and restart. You may encounter errors if you continue " +
-                                  "with this session."));
+            getMainFrame()
+                    .getDialogService()
+                    .showErrorDialogAndWait(Localization.lang("Unable to monitor file changes. Please close files "
+                            + "and processes and restart. You may encounter errors if you continue "
+                            + "with this session."));
         }
     }
 
@@ -188,25 +192,26 @@ public class JabRefGUI {
         // From here on, the libraries provided by command line arguments are treated
 
         // Remove invalid databases
-        List<ParserResult> invalidDatabases = parserResults.stream()
-                                                           .filter(ParserResult::isInvalid)
-                                                           .toList();
+        List<ParserResult> invalidDatabases =
+                parserResults.stream().filter(ParserResult::isInvalid).toList();
         failed.addAll(invalidDatabases);
         parserResults.removeAll(invalidDatabases);
 
         // passed file (we take the first one) should be focused
         Path focusedFile = parserResults.stream()
-                                        .findFirst()
-                                        .flatMap(ParserResult::getPath)
-                                        .orElse(preferencesService.getGuiPreferences()
-                                                                 .getLastFocusedFile())
-                                        .toAbsolutePath();
+                .findFirst()
+                .flatMap(ParserResult::getPath)
+                .orElse(preferencesService.getGuiPreferences().getLastFocusedFile())
+                .toAbsolutePath();
 
         // Add all bibDatabases databases to the frame:
         boolean first = false;
         for (ParserResult parserResult : parserResults) {
             // Define focused tab
-            if (parserResult.getPath().filter(path -> path.toAbsolutePath().equals(focusedFile)).isPresent()) {
+            if (parserResult
+                    .getPath()
+                    .filter(path -> path.toAbsolutePath().equals(focusedFile))
+                    .isPresent()) {
                 first = true;
             }
 
@@ -222,16 +227,18 @@ public class JabRefGUI {
                             fileUpdateMonitor,
                             mainFrame.getUndoManager(),
                             Globals.TASK_EXECUTOR);
-                } catch (SQLException |
-                        DatabaseNotSupportedException |
-                        InvalidDBMSConnectionPropertiesException |
-                        NotASharedDatabaseException e) {
+                } catch (SQLException
+                        | DatabaseNotSupportedException
+                        | InvalidDBMSConnectionPropertiesException
+                        | NotASharedDatabaseException e) {
 
                     LOGGER.error("Connection error", e);
-                    mainFrame.getDialogService().showErrorDialogAndWait(
-                            Localization.lang("Connection error"),
-                            Localization.lang("A local copy will be opened."),
-                            e);
+                    mainFrame
+                            .getDialogService()
+                            .showErrorDialogAndWait(
+                                    Localization.lang("Connection error"),
+                                    Localization.lang("A local copy will be opened."),
+                                    e);
                     toOpenTab.add(parserResult);
                 }
             } else if (parserResult.toOpenTab()) {
@@ -251,9 +258,10 @@ public class JabRefGUI {
         }
 
         for (ParserResult pr : failed) {
-            String message = Localization.lang("Error opening file '%0'",
-                    pr.getPath().map(Path::toString).orElse("(File name unknown)")) + "\n" +
-                    pr.getErrorMessage();
+            String message = Localization.lang(
+                            "Error opening file '%0'",
+                            pr.getPath().map(Path::toString).orElse("(File name unknown)"))
+                    + "\n" + pr.getErrorMessage();
 
             mainFrame.getDialogService().showErrorDialogAndWait(Localization.lang("Error opening file"), message);
         }
@@ -301,12 +309,12 @@ public class JabRefGUI {
      */
     private void debugLogWindowState(Stage mainStage) {
         if (LOGGER.isDebugEnabled()) {
-            String debugLogString = "SCREEN DATA:" +
-                    "mainStage.WINDOW_MAXIMISED: " + mainStage.isMaximized() + "\n" +
-                    "mainStage.POS_X: " + mainStage.getX() + "\n" +
-                    "mainStage.POS_Y: " + mainStage.getY() + "\n" +
-                    "mainStage.SIZE_X: " + mainStage.getWidth() + "\n" +
-                    "mainStages.SIZE_Y: " + mainStage.getHeight() + "\n";
+            String debugLogString = "SCREEN DATA:" + "mainStage.WINDOW_MAXIMISED: "
+                    + mainStage.isMaximized() + "\n" + "mainStage.POS_X: "
+                    + mainStage.getX() + "\n" + "mainStage.POS_Y: "
+                    + mainStage.getY() + "\n" + "mainStage.SIZE_X: "
+                    + mainStage.getWidth() + "\n" + "mainStages.SIZE_Y: "
+                    + mainStage.getHeight() + "\n";
             LOGGER.debug(debugLogString);
         }
     }
@@ -317,9 +325,11 @@ public class JabRefGUI {
      * @return outbounds
      */
     private boolean isWindowPositionOutOfBounds() {
-        return !Screen.getPrimary().getBounds().contains(
-                preferencesService.getGuiPreferences().getPositionX(),
-                preferencesService.getGuiPreferences().getPositionY());
+        return !Screen.getPrimary()
+                .getBounds()
+                .contains(
+                        preferencesService.getGuiPreferences().getPositionX(),
+                        preferencesService.getGuiPreferences().getPositionY());
     }
 
     private void openLastEditedDatabases() {

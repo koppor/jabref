@@ -19,13 +19,13 @@ public class MetaDataParserTest {
 
     @ParameterizedTest
     @CsvSource({
-            "C:\\temp\\test,                 C:\\temp\\test",
-            "\\\\servername\\path\\to\\file, \\\\\\\\servername\\\\path\\\\to\\\\file",
-            "\\\\servername\\path\\to\\file, \\\\servername\\path\\to\\file",
-            "//servername/path/to/file,      //servername/path/to/file",
-            ".\\pdfs,                        .\\pdfs,",
-            ".\\pdfs,                        .\\\\pdfs,",
-            ".,                              .",
+        "C:\\temp\\test,                 C:\\temp\\test",
+        "\\\\servername\\path\\to\\file, \\\\\\\\servername\\\\path\\\\to\\\\file",
+        "\\\\servername\\path\\to\\file, \\\\servername\\path\\to\\file",
+        "//servername/path/to/file,      //servername/path/to/file",
+        ".\\pdfs,                        .\\pdfs,",
+        ".\\pdfs,                        .\\\\pdfs,",
+        ".,                              .",
     })
     void parseDirectory(String expected, String input) {
         assertEquals(expected, MetaDataParser.parseDirectory(input));
@@ -39,16 +39,15 @@ public class MetaDataParserTest {
                 Arguments.of(
                         new BibEntryTypeBuilder()
                                 .withType(new UnknownEntryType("test"))
-                                .withRequiredFields(UnknownField.fromDisplayName("Test1"), UnknownField.fromDisplayName("Test2")),
-                        "jabref-entrytype: test: req[Test1;Test2] opt[]"
-                ),
+                                .withRequiredFields(
+                                        UnknownField.fromDisplayName("Test1"), UnknownField.fromDisplayName("Test2")),
+                        "jabref-entrytype: test: req[Test1;Test2] opt[]"),
                 Arguments.of(
                         new BibEntryTypeBuilder()
                                 .withType(new UnknownEntryType("test"))
-                                .withRequiredFields(UnknownField.fromDisplayName("tEST"), UnknownField.fromDisplayName("tEsT2")),
-                        "jabref-entrytype: test: req[tEST;tEsT2] opt[]"
-                )
-        );
+                                .withRequiredFields(
+                                        UnknownField.fromDisplayName("tEST"), UnknownField.fromDisplayName("tEsT2")),
+                        "jabref-entrytype: test: req[tEST;tEsT2] opt[]"));
     }
 
     @ParameterizedTest

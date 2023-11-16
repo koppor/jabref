@@ -40,10 +40,7 @@ public class TreeCollector<T> implements Collector<T, ObservableList<T>, Observa
     }
 
     public static <T extends TreeNode<T>> TreeCollector<T> mergeIntoTree(BiPredicate<T, T> equivalence) {
-        return new TreeCollector<>(
-                TreeNode::getChildren,
-                (parent, child) -> child.moveTo(parent),
-                equivalence);
+        return new TreeCollector<>(TreeNode::getChildren, (parent, child) -> child.moveTo(parent), equivalence);
     }
 
     @Override
@@ -55,8 +52,7 @@ public class TreeCollector<T> implements Collector<T, ObservableList<T>, Observa
     public BiConsumer<ObservableList<T>, T> accumulator() {
         return (alreadyProcessed, newItem) -> {
             // Check if the node is already in the tree
-            Optional<T> sameItemInTree = alreadyProcessed
-                    .stream()
+            Optional<T> sameItemInTree = alreadyProcessed.stream()
                     .filter(item -> equivalence.test(item, newItem))
                     .findFirst();
             if (sameItemInTree.isPresent()) {
@@ -70,8 +66,7 @@ public class TreeCollector<T> implements Collector<T, ObservableList<T>, Observa
     }
 
     private void merge(T target, T node) {
-        Optional<T> sameItemInTree = getChildren
-                .apply(target).stream()
+        Optional<T> sameItemInTree = getChildren.apply(target).stream()
                 .filter(item -> equivalence.test(item, node))
                 .findFirst();
         if (sameItemInTree.isPresent()) {

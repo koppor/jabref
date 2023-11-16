@@ -26,15 +26,29 @@ import org.controlsfx.control.table.TableFilter;
 
 public class IntegrityCheckDialog extends BaseDialog<Void> {
 
-    @FXML private TableView<IntegrityMessage> messagesTable;
-    @FXML private TableColumn<IntegrityMessage, String> keyColumn;
-    @FXML private TableColumn<IntegrityMessage, String> fieldColumn;
-    @FXML private TableColumn<IntegrityMessage, String> messageColumn;
-    @FXML private MenuButton keyFilterButton;
-    @FXML private MenuButton fieldFilterButton;
-    @FXML private MenuButton messageFilterButton;
+    @FXML
+    private TableView<IntegrityMessage> messagesTable;
 
-    @Inject private ThemeManager themeManager;
+    @FXML
+    private TableColumn<IntegrityMessage, String> keyColumn;
+
+    @FXML
+    private TableColumn<IntegrityMessage, String> fieldColumn;
+
+    @FXML
+    private TableColumn<IntegrityMessage, String> messageColumn;
+
+    @FXML
+    private MenuButton keyFilterButton;
+
+    @FXML
+    private MenuButton fieldFilterButton;
+
+    @FXML
+    private MenuButton messageFilterButton;
+
+    @Inject
+    private ThemeManager themeManager;
 
     private final List<IntegrityMessage> messages;
     private final LibraryTab libraryTab;
@@ -47,17 +61,16 @@ public class IntegrityCheckDialog extends BaseDialog<Void> {
         this.setTitle(Localization.lang("Check integrity"));
         this.initModality(Modality.NONE);
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         themeManager.updateFontStyle(getDialogPane().getScene());
     }
 
     private void onSelectionChanged(ListChangeListener.Change<? extends IntegrityMessage> change) {
         if (change.next()) {
-            change.getAddedSubList().stream().findFirst().ifPresent(message ->
-                    libraryTab.editEntryAndFocusField(message.getEntry(), message.getField()));
+            change.getAddedSubList().stream()
+                    .findFirst()
+                    .ifPresent(message -> libraryTab.editEntryAndFocusField(message.getEntry(), message.getField()));
         }
     }
 
@@ -71,17 +84,19 @@ public class IntegrityCheckDialog extends BaseDialog<Void> {
 
         messagesTable.getSelectionModel().getSelectedItems().addListener(this::onSelectionChanged);
         messagesTable.setItems(viewModel.getMessages());
-        keyColumn.setCellValueFactory(row -> new ReadOnlyStringWrapper(row.getValue().getEntry().getCitationKey().orElse("")));
-        fieldColumn.setCellValueFactory(row -> new ReadOnlyStringWrapper(row.getValue().getField().getDisplayName()));
-        messageColumn.setCellValueFactory(row -> new ReadOnlyStringWrapper(row.getValue().getMessage()));
+        keyColumn.setCellValueFactory(row -> new ReadOnlyStringWrapper(
+                row.getValue().getEntry().getCitationKey().orElse("")));
+        fieldColumn.setCellValueFactory(
+                row -> new ReadOnlyStringWrapper(row.getValue().getField().getDisplayName()));
+        messageColumn.setCellValueFactory(
+                row -> new ReadOnlyStringWrapper(row.getValue().getMessage()));
 
         new ValueTableCellFactory<IntegrityMessage, String>()
                 .withText(Function.identity())
                 .withTooltip(Function.identity())
                 .install(messageColumn);
 
-        tableFilter = TableFilter.forTableView(messagesTable)
-                                 .apply();
+        tableFilter = TableFilter.forTableView(messagesTable).apply();
 
         tableFilter.getColumnFilter(keyColumn).ifPresent(columnFilter -> {
             ContextMenu keyContextMenu = keyColumn.getContextMenu();

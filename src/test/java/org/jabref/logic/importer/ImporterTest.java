@@ -105,8 +105,10 @@ public class ImporterTest {
         // all classes implementing {@link Importer}
         // sorted alphabetically
 
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator())
+                .thenReturn(',');
         XmpPreferences xmpPreferences = mock(XmpPreferences.class);
         // @formatter:off
         return Stream.of(
@@ -126,8 +128,7 @@ public class ImporterTest {
                 new RepecNepImporter(importFormatPreferences),
                 new RisImporter(),
                 new SilverPlatterImporter(),
-                new CitaviXmlImporter()
-        );
+                new CitaviXmlImporter());
         // @formatter:on
     }
 }

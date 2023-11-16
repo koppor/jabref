@@ -25,15 +25,16 @@ public class RepecNepImporterTest {
 
     @BeforeEach
     public void setUp() {
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator())
+                .thenReturn(',');
 
         testImporter = new RepecNepImporter(importFormatPreferences);
     }
 
     private static Stream<String> fileNames() throws IOException {
-        Predicate<String> fileName = name -> name.startsWith("RepecNepImporter")
-                && name.endsWith(FILE_ENDING);
+        Predicate<String> fileName = name -> name.startsWith("RepecNepImporter") && name.endsWith(FILE_ENDING);
         return ImporterTestEngine.getTestFiles(fileName).stream();
     }
 
@@ -77,7 +78,7 @@ public class RepecNepImporterTest {
 
     @Test
     public final void testGetDescription() {
-        assertEquals("Imports a New Economics Papers-Message from the REPEC-NEP Service.",
-                testImporter.getDescription());
+        assertEquals(
+                "Imports a New Economics Papers-Message from the REPEC-NEP Service.", testImporter.getDescription());
     }
 }

@@ -31,8 +31,7 @@ public class UnoUserDefinedProperty {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UnoUserDefinedProperty.class);
 
-    private UnoUserDefinedProperty() {
-    }
+    private UnoUserDefinedProperty() {}
 
     public static Optional<XPropertyContainer> getPropertyContainer(XTextDocument doc) {
         return UnoTextDocument.getDocumentProperties(doc).map(XDocumentProperties::getUserDefinedProperties);
@@ -40,8 +39,8 @@ public class UnoUserDefinedProperty {
 
     public static List<String> getListOfNames(XTextDocument doc) {
         return UnoUserDefinedProperty.getPropertyContainer(doc)
-                                      .map(UnoProperties::getPropertyNames)
-                                      .orElse(new ArrayList<>());
+                .map(UnoProperties::getPropertyNames)
+                .orElse(new ArrayList<>());
     }
 
     /**
@@ -49,11 +48,9 @@ public class UnoUserDefinedProperty {
      * @return The value of the property or Optional.empty()
      * These properties are used to store extra data about individual citation. In particular, the `pageInfo` part.
      */
-    public static Optional<String> getStringValue(XTextDocument doc, String property)
-            throws
-            WrappedTargetException {
-        Optional<XPropertySet> propertySet = UnoUserDefinedProperty.getPropertyContainer(doc)
-                                                                    .flatMap(UnoProperties::asPropertySet);
+    public static Optional<String> getStringValue(XTextDocument doc, String property) throws WrappedTargetException {
+        Optional<XPropertySet> propertySet =
+                UnoUserDefinedProperty.getPropertyContainer(doc).flatMap(UnoProperties::asPropertySet);
         if (propertySet.isEmpty()) {
             throw new java.lang.IllegalArgumentException("getting UserDefinedProperties as XPropertySet failed");
         }
@@ -70,10 +67,7 @@ public class UnoUserDefinedProperty {
      * @param value    The value to be stored.
      */
     public static void setStringProperty(XTextDocument doc, String property, String value)
-            throws
-            IllegalTypeException,
-            PropertyVetoException,
-            WrappedTargetException {
+            throws IllegalTypeException, PropertyVetoException, WrappedTargetException {
 
         Objects.requireNonNull(property);
         Objects.requireNonNull(value);
@@ -103,7 +97,8 @@ public class UnoUserDefinedProperty {
         try {
             container.get().addProperty(property, PropertyAttribute.REMOVEABLE, new Any(Type.STRING, value));
         } catch (PropertyExistException ex) {
-            throw new java.lang.IllegalStateException("Caught PropertyExistException for property assumed not to exist");
+            throw new java.lang.IllegalStateException(
+                    "Caught PropertyExistException for property assumed not to exist");
         }
     }
 
@@ -112,9 +107,7 @@ public class UnoUserDefinedProperty {
      *                 <p>
      *                 Logs warning if does not exist.
      */
-    public static void remove(XTextDocument doc, String property)
-            throws
-            NotRemoveableException {
+    public static void remove(XTextDocument doc, String property) throws NotRemoveableException {
 
         Objects.requireNonNull(property);
 
@@ -127,8 +120,8 @@ public class UnoUserDefinedProperty {
         try {
             container.get().removeProperty(property);
         } catch (UnknownPropertyException ex) {
-            LOGGER.warn(String.format("UnoUserDefinedProperty.remove(%s) This property was not there to remove",
-                    property));
+            LOGGER.warn(
+                    String.format("UnoUserDefinedProperty.remove(%s) This property was not there to remove", property));
         }
     }
 
@@ -137,9 +130,7 @@ public class UnoUserDefinedProperty {
      *                 <p>
      *                 Keep silent if property did not exist.
      */
-    public static void removeIfExists(XTextDocument doc, String property)
-            throws
-            NotRemoveableException {
+    public static void removeIfExists(XTextDocument doc, String property) throws NotRemoveableException {
 
         Objects.requireNonNull(property);
 

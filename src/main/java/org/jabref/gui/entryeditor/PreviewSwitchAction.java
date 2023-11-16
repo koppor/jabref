@@ -8,7 +8,10 @@ import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 
 public class PreviewSwitchAction extends SimpleCommand {
 
-    public enum Direction { PREVIOUS, NEXT }
+    public enum Direction {
+        PREVIOUS,
+        NEXT
+    }
 
     private final JabRefFrame frame;
     private final Direction direction;

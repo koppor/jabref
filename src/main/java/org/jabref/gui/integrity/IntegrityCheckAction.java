@@ -30,12 +30,13 @@ public class IntegrityCheckAction extends SimpleCommand {
     private final StateManager stateManager;
     private final JournalAbbreviationRepository abbreviationRepository;
 
-    public IntegrityCheckAction(JabRefFrame frame,
-                                PreferencesService preferencesService,
-                                DialogService dialogService,
-                                StateManager stateManager,
-                                TaskExecutor taskExecutor,
-                                JournalAbbreviationRepository abbreviationRepository) {
+    public IntegrityCheckAction(
+            JabRefFrame frame,
+            PreferencesService preferencesService,
+            DialogService dialogService,
+            StateManager stateManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository abbreviationRepository) {
         this.frame = frame;
         this.stateManager = stateManager;
         this.taskExecutor = taskExecutor;
@@ -48,8 +49,10 @@ public class IntegrityCheckAction extends SimpleCommand {
 
     @Override
     public void execute() {
-        BibDatabaseContext database = stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
-        IntegrityCheck check = new IntegrityCheck(database,
+        BibDatabaseContext database =
+                stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
+        IntegrityCheck check = new IntegrityCheck(
+                database,
                 preferencesService.getFilePreferences(),
                 preferencesService.getCitationKeyPatternPreferences(),
                 abbreviationRepository,
@@ -84,9 +87,7 @@ public class IntegrityCheckAction extends SimpleCommand {
         task.setOnFailed(event -> dialogService.showErrorDialogAndWait("Integrity check failed.", task.getException()));
 
         dialogService.showProgressDialog(
-                Localization.lang("Checking integrity..."),
-                Localization.lang("Checking integrity..."),
-                task);
+                Localization.lang("Checking integrity..."), Localization.lang("Checking integrity..."), task);
         taskExecutor.execute(task);
     }
 }

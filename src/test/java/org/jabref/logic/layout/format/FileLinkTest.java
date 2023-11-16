@@ -38,7 +38,6 @@ public class FileLinkTest {
                 Arguments.of("test.pdf", "paper:test.pdf:PDF", ""),
                 Arguments.of("test.pdf", "paper:test.pdf:PDF;presentation:pres.ppt:PPT", ""),
                 Arguments.of("pres.ppt", "paper:test.pdf:PDF;presentation:pres.ppt:PPT", "ppt"),
-                Arguments.of("", "paper:test.pdf:PDF;presentation:pres.ppt:PPT", "doc")
-        );
+                Arguments.of("", "paper:test.pdf:PDF;presentation:pres.ppt:PPT", "doc"));
     }
 }

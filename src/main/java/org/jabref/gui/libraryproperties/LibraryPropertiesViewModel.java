@@ -21,8 +21,7 @@ public class LibraryPropertiesViewModel {
                 new KeyPatternPropertiesView(databaseContext),
                 new ConstantsPropertiesView(databaseContext),
                 new ContentSelectorView(databaseContext),
-                new PreamblePropertiesView(databaseContext)
-        );
+                new PreamblePropertiesView(databaseContext));
     }
 
     public void setValues() {

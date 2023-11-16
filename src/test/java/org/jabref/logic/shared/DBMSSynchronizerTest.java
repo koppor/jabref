@@ -111,8 +111,7 @@ public class DBMSSynchronizerTest {
 
         List<BibEntry> actualEntries = dbmsProcessor.getSharedEntries();
 
-        BibEntry expectedBibEntry = createExampleBibEntry(1)
-                .withField(StandardField.AUTHOR, "Brad L and Gilson");
+        BibEntry expectedBibEntry = createExampleBibEntry(1).withField(StandardField.AUTHOR, "Brad L and Gilson");
 
         assertEquals(Collections.singletonList(expectedBibEntry), actualEntries);
     }
@@ -189,8 +188,7 @@ public class DBMSSynchronizerTest {
         bibDatabase.insertEntry(bibEntry);
         assertEquals(List.of(bibEntry), bibDatabase.getEntries());
 
-        BibEntry modifiedBibEntry = createExampleBibEntry(1)
-                .withField(new UnknownField("custom"), "custom value");
+        BibEntry modifiedBibEntry = createExampleBibEntry(1).withField(new UnknownField("custom"), "custom value");
         modifiedBibEntry.clearField(StandardField.TITLE);
         modifiedBibEntry.setType(StandardEntryType.Article);
 
@@ -208,8 +206,7 @@ public class DBMSSynchronizerTest {
         bibDatabase.insertEntry(bibEntry);
         assertEquals(List.of(bibEntry), bibDatabase.getEntries());
 
-        BibEntry modifiedBibEntry = createExampleBibEntry(1)
-                .withField(new UnknownField("custom"), "custom value");
+        BibEntry modifiedBibEntry = createExampleBibEntry(1).withField(new UnknownField("custom"), "custom value");
         modifiedBibEntry.clearField(StandardField.TITLE);
         modifiedBibEntry.setType(StandardEntryType.Article);
 
@@ -225,11 +222,14 @@ public class DBMSSynchronizerTest {
         bibDatabase.insertEntry(bibEntry);
 
         MetaData testMetaData = new MetaData();
-        testMetaData.setSaveActions(new FieldFormatterCleanups(true, Collections.singletonList(new FieldFormatterCleanup(StandardField.AUTHOR, new LowerCaseFormatter()))));
+        testMetaData.setSaveActions(new FieldFormatterCleanups(
+                true,
+                Collections.singletonList(new FieldFormatterCleanup(StandardField.AUTHOR, new LowerCaseFormatter()))));
         dbmsSynchronizer.setMetaData(testMetaData);
 
         dbmsSynchronizer.applyMetaData();
 
-        assertEquals("wirthlin, michael j1", bibEntry.getField(StandardField.AUTHOR).get());
+        assertEquals(
+                "wirthlin, michael j1", bibEntry.getField(StandardField.AUTHOR).get());
     }
 }

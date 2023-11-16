@@ -24,8 +24,8 @@ public class GroupMerger implements FieldMerger {
             return groupsA;
         } else {
             return Arrays.stream(GROUPS_SEPARATOR_REGEX.split(groupsA + GROUPS_SEPARATOR + groupsB))
-                         .distinct()
-                         .collect(Collectors.joining(GROUPS_SEPARATOR));
+                    .distinct()
+                    .collect(Collectors.joining(GROUPS_SEPARATOR));
         }
     }
 }

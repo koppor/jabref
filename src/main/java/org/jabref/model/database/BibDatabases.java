@@ -8,8 +8,7 @@ import org.jabref.model.entry.BibEntry;
 
 public class BibDatabases {
 
-    private BibDatabases() {
-    }
+    private BibDatabases() {}
 
     /**
      * Receives a Collection of BibEntry instances, iterates through them, and
@@ -17,8 +16,6 @@ public class BibDatabases {
      * an unsucessful import (wrong format) that returns a number of empty entries.
      */
     public static List<BibEntry> purgeEmptyEntries(Collection<BibEntry> entries) {
-        return entries.stream()
-                      .filter(entry -> !entry.getFields().isEmpty())
-                      .collect(Collectors.toList());
+        return entries.stream().filter(entry -> !entry.getFields().isEmpty()).collect(Collectors.toList());
     }
 }

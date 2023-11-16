@@ -24,15 +24,19 @@ import org.jabref.model.entry.field.FieldFactory;
 public class FieldFormatterCleanupsPanelViewModel {
 
     private final BooleanProperty cleanupsDisableProperty = new SimpleBooleanProperty();
-    private final ListProperty<FieldFormatterCleanup> cleanupsListProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ObjectProperty<SelectionModel<FieldFormatterCleanup>> selectedCleanupProperty = new SimpleObjectProperty<>(new NoSelectionModel<>());
-    private final ListProperty<Field> availableFieldsProperty = new SimpleListProperty<>(new SortedList<>(FXCollections.observableArrayList(FieldFactory.getCommonFields()), Comparator.comparing(Field::getDisplayName)));
+    private final ListProperty<FieldFormatterCleanup> cleanupsListProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ObjectProperty<SelectionModel<FieldFormatterCleanup>> selectedCleanupProperty =
+            new SimpleObjectProperty<>(new NoSelectionModel<>());
+    private final ListProperty<Field> availableFieldsProperty = new SimpleListProperty<>(new SortedList<>(
+            FXCollections.observableArrayList(FieldFactory.getCommonFields()),
+            Comparator.comparing(Field::getDisplayName)));
     private final ObjectProperty<Field> selectedFieldProperty = new SimpleObjectProperty<>();
-    private final ListProperty<Formatter> availableFormattersProperty = new SimpleListProperty<>(new SortedList<>(FXCollections.observableArrayList(Formatters.getAll()), Comparator.comparing(Formatter::getName)));
+    private final ListProperty<Formatter> availableFormattersProperty = new SimpleListProperty<>(new SortedList<>(
+            FXCollections.observableArrayList(Formatters.getAll()), Comparator.comparing(Formatter::getName)));
     private final ObjectProperty<Formatter> selectedFormatterProperty = new SimpleObjectProperty<>();
 
-    public FieldFormatterCleanupsPanelViewModel() {
-    }
+    public FieldFormatterCleanupsPanelViewModel() {}
 
     public void resetToRecommended() {
         Globals.stateManager.getActiveDatabase().ifPresent(databaseContext -> {
@@ -53,9 +57,8 @@ public class FieldFormatterCleanupsPanelViewModel {
             return;
         }
 
-        FieldFormatterCleanup cleanup = new FieldFormatterCleanup(
-                selectedFieldProperty.getValue(),
-                selectedFormatterProperty.getValue());
+        FieldFormatterCleanup cleanup =
+                new FieldFormatterCleanup(selectedFieldProperty.getValue(), selectedFormatterProperty.getValue());
 
         if (cleanupsListProperty.stream().noneMatch(item -> item.equals(cleanup))) {
             cleanupsListProperty.add(cleanup);

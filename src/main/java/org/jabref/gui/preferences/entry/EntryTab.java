@@ -22,28 +22,41 @@ import jakarta.inject.Inject;
 
 public class EntryTab extends AbstractPreferenceTabView<EntryTabViewModel> implements PreferencesTab {
 
+    @FXML
+    private TextField keywordSeparator;
 
+    @FXML
+    private CheckBox resolveStrings;
 
-    @FXML private TextField keywordSeparator;
+    @FXML
+    private TextField resolveStringsForFields;
 
-    @FXML private CheckBox resolveStrings;
-    @FXML private TextField resolveStringsForFields;
-    @FXML private TextField nonWrappableFields;
+    @FXML
+    private TextField nonWrappableFields;
 
-    @FXML private CheckBox markOwner;
-    @FXML private TextField markOwnerName;
-    @FXML private CheckBox markOwnerOverwrite;
-    @FXML private Button markOwnerHelp;
+    @FXML
+    private CheckBox markOwner;
 
-    @FXML private CheckBox addCreationDate;
-    @FXML private CheckBox addModificationDate;
+    @FXML
+    private TextField markOwnerName;
 
-    @Inject private KeyBindingRepository keyBindingRepository;
+    @FXML
+    private CheckBox markOwnerOverwrite;
+
+    @FXML
+    private Button markOwnerHelp;
+
+    @FXML
+    private CheckBox addCreationDate;
+
+    @FXML
+    private CheckBox addModificationDate;
+
+    @Inject
+    private KeyBindingRepository keyBindingRepository;
 
     public EntryTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     public void initialize() {
@@ -76,7 +89,10 @@ public class EntryTab extends AbstractPreferenceTabView<EntryTabViewModel> imple
         addModificationDate.selectedProperty().bindBidirectional(viewModel.addModificationDateProperty());
 
         ActionFactory actionFactory = new ActionFactory(keyBindingRepository);
-        actionFactory.configureIconButton(StandardActions.HELP, new HelpAction(HelpFile.OWNER, dialogService, preferencesService.getFilePreferences()), markOwnerHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP,
+                new HelpAction(HelpFile.OWNER, dialogService, preferencesService.getFilePreferences()),
+                markOwnerHelp);
     }
 
     @Override

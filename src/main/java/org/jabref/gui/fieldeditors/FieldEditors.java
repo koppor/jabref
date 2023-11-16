@@ -34,18 +34,20 @@ public class FieldEditors {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FieldEditors.class);
 
-    public static FieldEditorFX getForField(final Field field,
-                                            final TaskExecutor taskExecutor,
-                                            final DialogService dialogService,
-                                            final JournalAbbreviationRepository journalAbbreviationRepository,
-                                            final PreferencesService preferences,
-                                            final BibDatabaseContext databaseContext,
-                                            final EntryType entryType,
-                                            final SuggestionProviders suggestionProviders,
-                                            final UndoManager undoManager) {
+    public static FieldEditorFX getForField(
+            final Field field,
+            final TaskExecutor taskExecutor,
+            final DialogService dialogService,
+            final JournalAbbreviationRepository journalAbbreviationRepository,
+            final PreferencesService preferences,
+            final BibDatabaseContext databaseContext,
+            final EntryType entryType,
+            final SuggestionProviders suggestionProviders,
+            final UndoManager undoManager) {
         final Set<FieldProperty> fieldProperties = field.getProperties();
 
-        final SuggestionProvider<?> suggestionProvider = getSuggestionProvider(field, suggestionProviders, databaseContext.getMetaData());
+        final SuggestionProvider<?> suggestionProvider =
+                getSuggestionProvider(field, suggestionProviders, databaseContext.getMetaData());
 
         final FieldCheckers fieldCheckers = new FieldCheckers(
                 databaseContext,
@@ -53,17 +55,26 @@ public class FieldEditors {
                 journalAbbreviationRepository,
                 preferences.getEntryEditorPreferences().shouldAllowIntegerEditionBibtex());
 
-        boolean isMultiLine = FieldFactory.isMultiLineField(field, preferences.getFieldPreferences().getNonWrappableFields());
+        boolean isMultiLine = FieldFactory.isMultiLineField(
+                field, preferences.getFieldPreferences().getNonWrappableFields());
 
         if (preferences.getTimestampPreferences().getTimestampField().equals(field)) {
-            return new DateEditor(field, DateTimeFormatter.ofPattern(preferences.getTimestampPreferences().getTimestampFormat()), suggestionProvider, fieldCheckers);
+            return new DateEditor(
+                    field,
+                    DateTimeFormatter.ofPattern(
+                            preferences.getTimestampPreferences().getTimestampFormat()),
+                    suggestionProvider,
+                    fieldCheckers);
         } else if (fieldProperties.contains(FieldProperty.DATE)) {
-            return new DateEditor(field, DateTimeFormatter.ofPattern("[uuuu][-MM][-dd]"), suggestionProvider, fieldCheckers);
+            return new DateEditor(
+                    field, DateTimeFormatter.ofPattern("[uuuu][-MM][-dd]"), suggestionProvider, fieldCheckers);
         } else if (fieldProperties.contains(FieldProperty.EXTERNAL)) {
             return new UrlEditor(field, suggestionProvider, fieldCheckers);
         } else if (fieldProperties.contains(FieldProperty.JOURNAL_NAME)) {
             return new JournalEditor(field, suggestionProvider, fieldCheckers);
-        } else if (fieldProperties.contains(FieldProperty.DOI) || fieldProperties.contains(FieldProperty.EPRINT) || fieldProperties.contains(FieldProperty.ISBN)) {
+        } else if (fieldProperties.contains(FieldProperty.DOI)
+                || fieldProperties.contains(FieldProperty.EPRINT)
+                || fieldProperties.contains(FieldProperty.ISBN)) {
             return new IdentifierEditor(field, suggestionProvider, fieldCheckers);
         } else if (fieldProperties.contains(FieldProperty.ISSN)) {
             return new ISSNEditor(field, suggestionProvider, fieldCheckers);
@@ -76,23 +87,30 @@ public class FieldEditors {
         } else if (fieldProperties.contains(FieldProperty.YES_NO)) {
             return new OptionEditor<>(new YesNoEditorViewModel(field, suggestionProvider, fieldCheckers, undoManager));
         } else if (fieldProperties.contains(FieldProperty.MONTH)) {
-            return new OptionEditor<>(new MonthEditorViewModel(field, suggestionProvider, databaseContext.getMode(), fieldCheckers, undoManager));
+            return new OptionEditor<>(new MonthEditorViewModel(
+                    field, suggestionProvider, databaseContext.getMode(), fieldCheckers, undoManager));
         } else if (fieldProperties.contains(FieldProperty.GENDER)) {
             return new OptionEditor<>(new GenderEditorViewModel(field, suggestionProvider, fieldCheckers, undoManager));
         } else if (fieldProperties.contains(FieldProperty.EDITOR_TYPE)) {
-            return new OptionEditor<>(new EditorTypeEditorViewModel(field, suggestionProvider, fieldCheckers, undoManager));
+            return new OptionEditor<>(
+                    new EditorTypeEditorViewModel(field, suggestionProvider, fieldCheckers, undoManager));
         } else if (fieldProperties.contains(FieldProperty.PAGINATION)) {
-            return new OptionEditor<>(new PaginationEditorViewModel(field, suggestionProvider, fieldCheckers, undoManager));
+            return new OptionEditor<>(
+                    new PaginationEditorViewModel(field, suggestionProvider, fieldCheckers, undoManager));
         } else if (fieldProperties.contains(FieldProperty.TYPE)) {
             if (entryType.equals(IEEETranEntryType.Patent)) {
-                return new OptionEditor<>(new PatentTypeEditorViewModel(field, suggestionProvider, fieldCheckers, undoManager));
+                return new OptionEditor<>(
+                        new PatentTypeEditorViewModel(field, suggestionProvider, fieldCheckers, undoManager));
             } else {
-                return new OptionEditor<>(new TypeEditorViewModel(field, suggestionProvider, fieldCheckers, undoManager));
+                return new OptionEditor<>(
+                        new TypeEditorViewModel(field, suggestionProvider, fieldCheckers, undoManager));
             }
         } else if (fieldProperties.contains(FieldProperty.SINGLE_ENTRY_LINK)) {
-            return new LinkedEntriesEditor(field, databaseContext, (SuggestionProvider<BibEntry>) suggestionProvider, fieldCheckers);
+            return new LinkedEntriesEditor(
+                    field, databaseContext, (SuggestionProvider<BibEntry>) suggestionProvider, fieldCheckers);
         } else if (fieldProperties.contains(FieldProperty.MULTIPLE_ENTRY_LINK)) {
-            return new LinkedEntriesEditor(field, databaseContext, (SuggestionProvider<BibEntry>) suggestionProvider, fieldCheckers);
+            return new LinkedEntriesEditor(
+                    field, databaseContext, (SuggestionProvider<BibEntry>) suggestionProvider, fieldCheckers);
         } else if (fieldProperties.contains(FieldProperty.PERSON_NAMES)) {
             return new PersonsEditor(field, suggestionProvider, preferences, fieldCheckers, isMultiLine, undoManager);
         } else if (StandardField.KEYWORDS == field) {
@@ -105,16 +123,19 @@ public class FieldEditors {
         }
     }
 
-    private static SuggestionProvider<?> getSuggestionProvider(Field field, SuggestionProviders suggestionProviders, MetaData metaData) {
+    private static SuggestionProvider<?> getSuggestionProvider(
+            Field field, SuggestionProviders suggestionProviders, MetaData metaData) {
         SuggestionProvider<?> suggestionProvider = suggestionProviders.getForField(field);
 
         List<String> contentSelectorValues = metaData.getContentSelectorValuesForField(field);
         if (!contentSelectorValues.isEmpty()) {
             // Enrich auto completion by content selector values
             try {
-                return new ContentSelectorSuggestionProvider((SuggestionProvider<String>) suggestionProvider, contentSelectorValues);
+                return new ContentSelectorSuggestionProvider(
+                        (SuggestionProvider<String>) suggestionProvider, contentSelectorValues);
             } catch (ClassCastException exception) {
-                LOGGER.error("Content selectors are only supported for normal fields with string-based auto completion.");
+                LOGGER.error(
+                        "Content selectors are only supported for normal fields with string-based auto completion.");
                 return suggestionProvider;
             }
         } else {

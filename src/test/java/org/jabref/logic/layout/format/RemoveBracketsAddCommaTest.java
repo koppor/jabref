@@ -29,7 +29,6 @@ public class RemoveBracketsAddCommaTest {
         return Stream.of(
                 Arguments.of("some text,", "{some text}"),
                 Arguments.of("some text", "{some text"),
-                Arguments.of("some text,", "some text}")
-        );
+                Arguments.of("some text,", "some text}"));
     }
 }

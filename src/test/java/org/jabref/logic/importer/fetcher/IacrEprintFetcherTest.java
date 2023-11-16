@@ -49,11 +49,15 @@ public class IacrEprintFetcherTest {
         abram2017 = new BibEntry(StandardEntryType.Misc)
                 .withCitationKey("cryptoeprint:2017/1118")
                 .withField(StandardField.ABSTRACT, "dummy")
-                .withField(StandardField.AUTHOR, "Ittai Abraham and Dahlia Malkhi and Kartik Nayak and Ling Ren and Alexander Spiegelman")
+                .withField(
+                        StandardField.AUTHOR,
+                        "Ittai Abraham and Dahlia Malkhi and Kartik Nayak and Ling Ren and Alexander Spiegelman")
                 .withField(StandardField.DATE, "2017-11-24")
                 .withField(StandardField.HOWPUBLISHED, "Cryptology ePrint Archive, Paper 2017/1118")
                 .withField(StandardField.NOTE, "\\url{https://eprint.iacr.org/2017/1118}")
-                .withField(StandardField.TITLE, "Solida: A Blockchain Protocol Based on Reconfigurable Byzantine Consensus")
+                .withField(
+                        StandardField.TITLE,
+                        "Solida: A Blockchain Protocol Based on Reconfigurable Byzantine Consensus")
                 .withField(StandardField.URL, "https://eprint.iacr.org/2017/1118/20171124:064527")
                 .withField(StandardField.VERSION, "20171124:064527")
                 .withField(StandardField.YEAR, "2017");
@@ -61,11 +65,15 @@ public class IacrEprintFetcherTest {
         abram2017noVersion = new BibEntry(StandardEntryType.Misc)
                 .withCitationKey("cryptoeprint:2017/1118")
                 .withField(StandardField.ABSTRACT, "dummy")
-                .withField(StandardField.AUTHOR, "Ittai Abraham and Dahlia Malkhi and Kartik Nayak and Ling Ren and Alexander Spiegelman")
+                .withField(
+                        StandardField.AUTHOR,
+                        "Ittai Abraham and Dahlia Malkhi and Kartik Nayak and Ling Ren and Alexander Spiegelman")
                 .withField(StandardField.DATE, "2017-11-24")
                 .withField(StandardField.HOWPUBLISHED, "Cryptology ePrint Archive, Paper 2017/1118")
                 .withField(StandardField.NOTE, "\\url{https://eprint.iacr.org/2017/1118}")
-                .withField(StandardField.TITLE, "Solida: A Blockchain Protocol Based on Reconfigurable Byzantine Consensus")
+                .withField(
+                        StandardField.TITLE,
+                        "Solida: A Blockchain Protocol Based on Reconfigurable Byzantine Consensus")
                 .withField(StandardField.URL, "https://eprint.iacr.org/2017/1118")
                 .withField(StandardField.YEAR, "2017");
 
@@ -77,7 +85,8 @@ public class IacrEprintFetcherTest {
                 .withField(StandardField.DOI, "10.1007/978-3-662-53018-4_23")
                 .withField(StandardField.HOWPUBLISHED, "Cryptology ePrint Archive, Paper 2016/119")
                 .withField(StandardField.NOTE, "\\url{https://eprint.iacr.org/2016/119}")
-                .withField(StandardField.TITLE, "Lightweight Multiplication in GF(2^n) with Applications to MDS Matrices")
+                .withField(
+                        StandardField.TITLE, "Lightweight Multiplication in GF(2^n) with Applications to MDS Matrices")
                 .withField(StandardField.URL, "https://eprint.iacr.org/2016/119/20170217:150415")
                 .withField(StandardField.VERSION, "20170217:150415")
                 .withField(StandardField.YEAR, "2016");
@@ -85,7 +94,9 @@ public class IacrEprintFetcherTest {
         delgado2017 = new BibEntry(StandardEntryType.Misc)
                 .withCitationKey("cryptoeprint:2017/1095")
                 .withField(StandardField.ABSTRACT, "dummy")
-                .withField(StandardField.AUTHOR, "Sergi Delgado-Segura and Cristina Pérez-Solà and Guillermo Navarro-Arribas and Jordi Herrera-Joancomartí")
+                .withField(
+                        StandardField.AUTHOR,
+                        "Sergi Delgado-Segura and Cristina Pérez-Solà and Guillermo Navarro-Arribas and Jordi Herrera-Joancomartí")
                 .withField(StandardField.DATE, "2018-01-19")
                 .withField(StandardField.HOWPUBLISHED, "Cryptology ePrint Archive, Paper 2017/1095")
                 .withField(StandardField.NOTE, "\\url{https://eprint.iacr.org/2017/1095}")
@@ -167,9 +178,17 @@ public class IacrEprintFetcherTest {
     public void searchByIdWithOldHtmlFormatWithoutDateCheck(String id) throws FetcherException {
         Optional<BibEntry> fetchedEntry = fetcher.performSearchById(id);
         assertTrue(fetchedEntry.isPresent(), "Expected to get an entry for id " + id);
-        assertNotEquals(Optional.empty(), fetchedEntry.get().getField(StandardField.DATE), "Expected non empty date field, entry is\n" + fetchedEntry.toString());
-        assertTrue(fetchedEntry.get().getField(StandardField.DATE).get().length() == 10, "Expected yyyy-MM-dd date format, entry is\n" + fetchedEntry.toString());
-        assertNotEquals(Optional.empty(), fetchedEntry.get().getField(StandardField.ABSTRACT), "Expected non empty abstract field, entry is\n" + fetchedEntry.toString());
+        assertNotEquals(
+                Optional.empty(),
+                fetchedEntry.get().getField(StandardField.DATE),
+                "Expected non empty date field, entry is\n" + fetchedEntry.toString());
+        assertTrue(
+                fetchedEntry.get().getField(StandardField.DATE).get().length() == 10,
+                "Expected yyyy-MM-dd date format, entry is\n" + fetchedEntry.toString());
+        assertNotEquals(
+                Optional.empty(),
+                fetchedEntry.get().getField(StandardField.ABSTRACT),
+                "Expected non empty abstract field, entry is\n" + fetchedEntry.toString());
     }
 
     /**
@@ -203,7 +222,8 @@ public class IacrEprintFetcherTest {
     @Test
     public void getFulltextWithVersion() throws FetcherException, IOException {
         Optional<URL> pdfUrl = fetcher.findFullText(abram2017);
-        assertEquals(Optional.of("https://eprint.iacr.org/archive/2017/1118/1511505927.pdf"), pdfUrl.map(URL::toString));
+        assertEquals(
+                Optional.of("https://eprint.iacr.org/archive/2017/1118/1511505927.pdf"), pdfUrl.map(URL::toString));
     }
 
     @Test

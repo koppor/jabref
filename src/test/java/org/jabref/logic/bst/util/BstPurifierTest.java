@@ -23,10 +23,13 @@ public class BstPurifierTest {
                 Arguments.of("Hi Hi ", "Hi Hi "),
                 Arguments.of("oe", "{\\oe}"),
                 Arguments.of("Hi oeHi ", "Hi {\\oe   }Hi "),
-                Arguments.of("Jonathan Meyer and Charles Louis Xavier Joseph de la Vallee Poussin", "Jonathan Meyer and Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin"),
+                Arguments.of(
+                        "Jonathan Meyer and Charles Louis Xavier Joseph de la Vallee Poussin",
+                        "Jonathan Meyer and Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin"),
                 Arguments.of("e", "{\\'e}"),
                 Arguments.of("Edouard Masterly", "{\\'{E}}douard Masterly"),
-                Arguments.of("Ulrich Underwood and Ned Net and Paul Pot", "Ulrich {\\\"{U}}nderwood and Ned {\\~N}et and Paul {\\={P}}ot")
-        );
+                Arguments.of(
+                        "Ulrich Underwood and Ned Net and Paul Pot",
+                        "Ulrich {\\\"{U}}nderwood and Ned {\\~N}et and Paul {\\={P}}ot"));
     }
 }

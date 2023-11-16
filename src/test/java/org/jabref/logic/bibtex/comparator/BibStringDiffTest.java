@@ -20,7 +20,8 @@ public class BibStringDiffTest {
 
     private final BibDatabase originalDataBase = mock(BibDatabase.class);
     private final BibDatabase newDataBase = mock(BibDatabase.class);
-    private final BibStringDiff diff = new BibStringDiff(new BibtexString("name2", "content2"), new BibtexString("name2", "content3"));
+    private final BibStringDiff diff =
+            new BibStringDiff(new BibtexString("name2", "content2"), new BibtexString("name2", "content3"));
 
     @BeforeEach
     void setUp() {
@@ -30,8 +31,10 @@ public class BibStringDiffTest {
 
     @Test
     void compareTest() {
-        when(originalDataBase.getStringValues()).thenReturn(List.of(new BibtexString("name", "content"), new BibtexString("name2", "content2")));
-        when(newDataBase.getStringValues()).thenReturn(List.of(new BibtexString("name", "content"), new BibtexString("name2", "content3")));
+        when(originalDataBase.getStringValues())
+                .thenReturn(List.of(new BibtexString("name", "content"), new BibtexString("name2", "content2")));
+        when(newDataBase.getStringValues())
+                .thenReturn(List.of(new BibtexString("name", "content"), new BibtexString("name2", "content3")));
 
         List<BibStringDiff> result = BibStringDiff.compare(originalDataBase, newDataBase);
         assertEquals(List.of(diff), result);
@@ -90,7 +93,8 @@ public class BibStringDiffTest {
         when(newDataBase.getStringValues()).thenReturn(List.of(new BibtexString("name2", "content")));
 
         List<BibStringDiff> result = BibStringDiff.compare(originalDataBase, newDataBase);
-        BibStringDiff expectedDiff = new BibStringDiff(new BibtexString("name", "content"), new BibtexString("name2", "content"));
+        BibStringDiff expectedDiff =
+                new BibStringDiff(new BibtexString("name", "content"), new BibtexString("name2", "content"));
         assertEquals(List.of(expectedDiff), result);
     }
 

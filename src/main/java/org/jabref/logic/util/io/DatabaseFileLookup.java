@@ -34,7 +34,7 @@ public class DatabaseFileLookup {
     public DatabaseFileLookup(BibDatabaseContext databaseContext, FilePreferences filePreferences) {
         Objects.requireNonNull(databaseContext);
         possibleFilePaths = Optional.ofNullable(databaseContext.getFileDirectories(filePreferences))
-                                    .orElse(new ArrayList<>());
+                .orElse(new ArrayList<>());
 
         for (BibEntry entry : databaseContext.getDatabase().getEntries()) {
             fileCache.addAll(parseFileField(entry));
@@ -63,11 +63,11 @@ public class DatabaseFileLookup {
         Objects.requireNonNull(entry);
 
         return entry.getFiles().stream()
-                    .filter(file -> !file.isOnlineLink()) // Do not query external file links (huge performance leak)
-                    .map(file -> file.findIn(possibleFilePaths))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+                .filter(file -> !file.isOnlineLink()) // Do not query external file links (huge performance leak)
+                .map(file -> file.findIn(possibleFilePaths))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     /**

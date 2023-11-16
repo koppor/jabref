@@ -41,7 +41,10 @@ import org.slf4j.LoggerFactory;
  */
 public class ExportCommand extends SimpleCommand {
 
-    public enum ExportMethod { EXPORT_ALL, EXPORT_SELECTED }
+    public enum ExportMethod {
+        EXPORT_ALL,
+        EXPORT_SELECTED
+    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExportCommand.class);
 
@@ -54,14 +57,15 @@ public class ExportCommand extends SimpleCommand {
     private final JournalAbbreviationRepository abbreviationRepository;
     private final TaskExecutor taskExecutor;
 
-    public ExportCommand(ExportMethod exportMethod,
-                         JabRefFrame frame,
-                         StateManager stateManager,
-                         DialogService dialogService,
-                         PreferencesService preferences,
-                         BibEntryTypesManager entryTypesManager,
-                         JournalAbbreviationRepository abbreviationRepository,
-                         TaskExecutor taskExecutor) {
+    public ExportCommand(
+            ExportMethod exportMethod,
+            JabRefFrame frame,
+            StateManager stateManager,
+            DialogService dialogService,
+            PreferencesService preferences,
+            BibEntryTypesManager entryTypesManager,
+            JournalAbbreviationRepository abbreviationRepository,
+            TaskExecutor taskExecutor) {
         this.exportMethod = exportMethod;
         this.frame = frame;
         this.stateManager = stateManager;
@@ -71,52 +75,55 @@ public class ExportCommand extends SimpleCommand {
         this.abbreviationRepository = abbreviationRepository;
         this.taskExecutor = taskExecutor;
 
-        this.executable.bind(exportMethod == ExportMethod.EXPORT_SELECTED
-                ? ActionHelper.needsEntriesSelected(stateManager)
-                : ActionHelper.needsDatabase(stateManager));
+        this.executable.bind(
+                exportMethod == ExportMethod.EXPORT_SELECTED
+                        ? ActionHelper.needsEntriesSelected(stateManager)
+                        : ActionHelper.needsDatabase(stateManager));
     }
 
     @Override
     public void execute() {
         // Get list of exporters and sort before adding to file dialog
-        ExporterFactory exporterFactory = ExporterFactory.create(
-                preferences,
-                entryTypesManager);
+        ExporterFactory exporterFactory = ExporterFactory.create(preferences, entryTypesManager);
         List<Exporter> exporters = exporterFactory.getExporters().stream()
-                                                  .sorted(Comparator.comparing(Exporter::getName))
-                                                  .collect(Collectors.toList());
+                .sorted(Comparator.comparing(Exporter::getName))
+                .collect(Collectors.toList());
 
         FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
                 .addExtensionFilter(FileFilterConverter.exporterToExtensionFilter(exporters))
                 .withDefaultExtension(preferences.getExportPreferences().getLastExportExtension())
                 .withInitialDirectory(preferences.getExportPreferences().getExportWorkingDirectory())
                 .build();
-        dialogService.showFileSaveDialog(fileDialogConfiguration)
-                     .ifPresent(path -> export(path, fileDialogConfiguration.getSelectedExtensionFilter(), exporters));
+        dialogService
+                .showFileSaveDialog(fileDialogConfiguration)
+                .ifPresent(path -> export(path, fileDialogConfiguration.getSelectedExtensionFilter(), exporters));
     }
 
     private void export(Path file, FileChooser.ExtensionFilter selectedExtensionFilter, List<Exporter> exporters) {
-        String selectedExtension = selectedExtensionFilter.getExtensions().get(0).replace("*", "");
+        String selectedExtension =
+                selectedExtensionFilter.getExtensions().get(0).replace("*", "");
         if (!file.endsWith(selectedExtension)) {
             FileUtil.addExtension(file, selectedExtension);
         }
 
         final Exporter format = FileFilterConverter.getExporter(selectedExtensionFilter, exporters)
-                                                   .orElseThrow(() -> new IllegalStateException("User didn't selected a file type for the extension"));
+                .orElseThrow(() -> new IllegalStateException("User didn't selected a file type for the extension"));
         List<BibEntry> entries;
         if (exportMethod == ExportMethod.EXPORT_SELECTED) {
             // Selected entries
             entries = stateManager.getSelectedEntries();
         } else {
             // All entries
-            entries = stateManager.getActiveDatabase()
-                                  .map(BibDatabaseContext::getEntries)
-                                  .orElse(Collections.emptyList());
+            entries = stateManager
+                    .getActiveDatabase()
+                    .map(BibDatabaseContext::getEntries)
+                    .orElse(Collections.emptyList());
         }
 
-        List<Path> fileDirForDatabase = stateManager.getActiveDatabase()
-                                                       .map(db -> db.getFileDirectories(preferences.getFilePreferences()))
-                                                       .orElse(List.of(preferences.getFilePreferences().getWorkingDirectory()));
+        List<Path> fileDirForDatabase = stateManager
+                .getActiveDatabase()
+                .map(db -> db.getFileDirectories(preferences.getFilePreferences()))
+                .orElse(List.of(preferences.getFilePreferences().getWorkingDirectory()));
 
         // Make sure we remember which filter was used, to set
         // the default for next time:
@@ -125,23 +132,26 @@ public class ExportCommand extends SimpleCommand {
 
         final List<BibEntry> finEntries = entries;
 
-        BackgroundTask
-                .wrap(() -> {
-                    format.export(stateManager.getActiveDatabase().get(),
+        BackgroundTask.wrap(() -> {
+                    format.export(
+                            stateManager.getActiveDatabase().get(),
                             file,
                             finEntries,
                             fileDirForDatabase,
                             abbreviationRepository);
-                    return null; // can not use BackgroundTask.wrap(Runnable) because Runnable.run() can't throw Exceptions
+                    return null; // can not use BackgroundTask.wrap(Runnable) because Runnable.run() can't throw
+                                 // Exceptions
                 })
                 .onSuccess(save -> {
-                    LibraryTab.DatabaseNotification notificationPane = frame.getCurrentLibraryTab().getNotificationPane();
+                    LibraryTab.DatabaseNotification notificationPane =
+                            frame.getCurrentLibraryTab().getNotificationPane();
                     notificationPane.notify(
                             IconTheme.JabRefIcons.FOLDER.getGraphicNode(),
                             Localization.lang("Export operation finished successfully."),
                             List.of(new Action(Localization.lang("Reveal in File Explorer"), event -> {
                                 try {
-                                    JabRefDesktop.openFolderAndSelectFile(file, preferences.getExternalApplicationsPreferences(), dialogService);
+                                    JabRefDesktop.openFolderAndSelectFile(
+                                            file, preferences.getExternalApplicationsPreferences(), dialogService);
                                 } catch (IOException e) {
                                     LOGGER.error("Could not open export folder.", e);
                                 }
@@ -157,6 +167,7 @@ public class ExportCommand extends SimpleCommand {
         LOGGER.warn("Problem exporting", ex);
         dialogService.notify(Localization.lang("Could not save file."));
         // Need to warn the user that saving failed!
-        dialogService.showErrorDialogAndWait(Localization.lang("Save library"), Localization.lang("Could not save file."), ex);
+        dialogService.showErrorDialogAndWait(
+                Localization.lang("Save library"), Localization.lang("Could not save file."), ex);
     }
 }

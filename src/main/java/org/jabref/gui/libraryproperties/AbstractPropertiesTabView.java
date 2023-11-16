@@ -8,9 +8,11 @@ import org.jabref.model.database.BibDatabaseContext;
 
 import jakarta.inject.Inject;
 
-public abstract class AbstractPropertiesTabView<T extends PropertiesTabViewModel> extends VBox implements PropertiesTab {
+public abstract class AbstractPropertiesTabView<T extends PropertiesTabViewModel> extends VBox
+        implements PropertiesTab {
 
-    @Inject protected DialogService dialogService;
+    @Inject
+    protected DialogService dialogService;
 
     protected BibDatabaseContext databaseContext;
     protected T viewModel;

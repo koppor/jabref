@@ -83,27 +83,27 @@ public final class DocumentReader {
      */
     public List<Document> readLinkedPdfs(BibDatabaseContext databaseContext) {
         return entry.getFiles().stream()
-                    .map(pdf -> readLinkedPdf(databaseContext, pdf))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .flatMap(List::stream)
-                    .collect(Collectors.toList());
+                .map(pdf -> readLinkedPdf(databaseContext, pdf))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     private List<Document> readPdfContents(LinkedFile pdf, Path resolvedPdfPath) {
         List<Document> pages = new ArrayList<>();
         try (PDDocument pdfDocument = Loader.loadPDF(resolvedPdfPath.toFile())) {
-                for (int pageNumber = 0; pageNumber < pdfDocument.getNumberOfPages(); pageNumber++) {
-                    Document newDocument = new Document();
-                    addIdentifiers(newDocument, pdf.getLink());
-                    addMetaData(newDocument, resolvedPdfPath, pageNumber);
-                    try {
-                        addContentIfNotEmpty(pdfDocument, newDocument, pageNumber);
-                    } catch (IOException e) {
-                        LOGGER.warn("Could not read page {} of  {}", pageNumber, resolvedPdfPath.toAbsolutePath(), e);
-                    }
-                    pages.add(newDocument);
+            for (int pageNumber = 0; pageNumber < pdfDocument.getNumberOfPages(); pageNumber++) {
+                Document newDocument = new Document();
+                addIdentifiers(newDocument, pdf.getLink());
+                addMetaData(newDocument, resolvedPdfPath, pageNumber);
+                try {
+                    addContentIfNotEmpty(pdfDocument, newDocument, pageNumber);
+                } catch (IOException e) {
+                    LOGGER.warn("Could not read page {} of  {}", pageNumber, resolvedPdfPath.toAbsolutePath(), e);
                 }
+                pages.add(newDocument);
+            }
         } catch (IOException e) {
             LOGGER.warn("Could not read {}", resolvedPdfPath.toAbsolutePath(), e);
         }
@@ -119,7 +119,10 @@ public final class DocumentReader {
     private void addMetaData(Document newDocument, Path resolvedPdfPath, int pageNumber) {
         try {
             BasicFileAttributes attributes = Files.readAttributes(resolvedPdfPath, BasicFileAttributes.class);
-            addStringField(newDocument, MODIFIED, String.valueOf(attributes.lastModifiedTime().to(TimeUnit.SECONDS)));
+            addStringField(
+                    newDocument,
+                    MODIFIED,
+                    String.valueOf(attributes.lastModifiedTime().to(TimeUnit.SECONDS)));
         } catch (IOException e) {
             LOGGER.error("Could not read timestamp for {}", resolvedPdfPath, e);
         }
@@ -153,9 +156,13 @@ public final class DocumentReader {
             newDocument.add(new TextField(CONTENT, mergeLines(pdfContent), Field.Store.YES));
         }
         PDPage page = pdfDocument.getPage(pageNumber);
-        List<String> annotations = page.getAnnotations().stream().filter(annotation -> annotation.getContents() != null).map(PDAnnotation::getContents).collect(Collectors.toList());
+        List<String> annotations = page.getAnnotations().stream()
+                .filter(annotation -> annotation.getContents() != null)
+                .map(PDAnnotation::getContents)
+                .collect(Collectors.toList());
         if (!annotations.isEmpty()) {
-            newDocument.add(new TextField(ANNOTATIONS, annotations.stream().collect(Collectors.joining("\n")), Field.Store.YES));
+            newDocument.add(new TextField(
+                    ANNOTATIONS, annotations.stream().collect(Collectors.joining("\n")), Field.Store.YES));
         }
     }
 

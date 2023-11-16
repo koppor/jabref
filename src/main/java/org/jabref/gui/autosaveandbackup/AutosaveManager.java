@@ -45,8 +45,8 @@ public class AutosaveManager {
         this.executor.scheduleAtFixedRate(
                 () -> {
                     if (needsSave) {
-                       eventBus.post(new AutosaveEvent());
-                       needsSave = false;
+                        eventBus.post(new AutosaveEvent());
+                        needsSave = false;
                     }
                 },
                 DELAY_BETWEEN_AUTOSAVE_ATTEMPTS_IN_SECONDS,
@@ -84,11 +84,13 @@ public class AutosaveManager {
      * @param bibDatabaseContext Associated {@link BibDatabaseContext}
      */
     public static void shutdown(BibDatabaseContext bibDatabaseContext) {
-        runningInstances.stream().filter(instance -> instance.bibDatabaseContext == bibDatabaseContext).findAny()
-                        .ifPresent(instance -> {
-                            instance.shutdown();
-                            runningInstances.remove(instance);
-                        });
+        runningInstances.stream()
+                .filter(instance -> instance.bibDatabaseContext == bibDatabaseContext)
+                .findAny()
+                .ifPresent(instance -> {
+                    instance.shutdown();
+                    runningInstances.remove(instance);
+                });
     }
 
     public void registerListener(Object listener) {

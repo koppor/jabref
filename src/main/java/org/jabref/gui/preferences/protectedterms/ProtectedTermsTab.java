@@ -28,20 +28,32 @@ import jakarta.inject.Inject;
  * Dialog for managing term list files.
  */
 public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsTabViewModel> implements PreferencesTab {
-    @FXML private TableView<ProtectedTermsListItemModel> filesTable;
-    @FXML private TableColumn<ProtectedTermsListItemModel, Boolean> filesTableEnabledColumn;
-    @FXML private TableColumn<ProtectedTermsListItemModel, String> filesTableDescriptionColumn;
-    @FXML private TableColumn<ProtectedTermsListItemModel, String> filesTableFileColumn;
-    @FXML private TableColumn<ProtectedTermsListItemModel, Boolean> filesTableEditColumn;
-    @FXML private TableColumn<ProtectedTermsListItemModel, Boolean> filesTableDeleteColumn;
+    @FXML
+    private TableView<ProtectedTermsListItemModel> filesTable;
 
-    @Inject private ProtectedTermsLoader termsLoader;
-    @Inject private KeyBindingRepository keyBindingRepository;
+    @FXML
+    private TableColumn<ProtectedTermsListItemModel, Boolean> filesTableEnabledColumn;
+
+    @FXML
+    private TableColumn<ProtectedTermsListItemModel, String> filesTableDescriptionColumn;
+
+    @FXML
+    private TableColumn<ProtectedTermsListItemModel, String> filesTableFileColumn;
+
+    @FXML
+    private TableColumn<ProtectedTermsListItemModel, Boolean> filesTableEditColumn;
+
+    @FXML
+    private TableColumn<ProtectedTermsListItemModel, Boolean> filesTableDeleteColumn;
+
+    @Inject
+    private ProtectedTermsLoader termsLoader;
+
+    @Inject
+    private KeyBindingRepository keyBindingRepository;
 
     public ProtectedTermsTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -58,7 +70,8 @@ public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsT
                 .install(filesTable);
         filesTableEnabledColumn.setCellFactory(CheckBoxTableCell.forTableColumn(filesTableEnabledColumn));
         filesTableEnabledColumn.setCellValueFactory(data -> data.getValue().enabledProperty());
-        filesTableDescriptionColumn.setCellValueFactory(data -> BindingsHelper.constantOf(data.getValue().getTermsList().getDescription()));
+        filesTableDescriptionColumn.setCellValueFactory(
+                data -> BindingsHelper.constantOf(data.getValue().getTermsList().getDescription()));
 
         filesTableFileColumn.setCellValueFactory(data -> {
             ProtectedTermsList list = data.getValue().getTermsList();
@@ -69,14 +82,16 @@ public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsT
             }
         });
 
-        filesTableEditColumn.setCellValueFactory(data -> data.getValue().internalProperty().not());
+        filesTableEditColumn.setCellValueFactory(
+                data -> data.getValue().internalProperty().not());
         new ValueTableCellFactory<ProtectedTermsListItemModel, Boolean>()
                 .withGraphic(none -> IconTheme.JabRefIcons.EDIT.getGraphicNode())
                 .withVisibleExpression(ReadOnlyBooleanWrapper::new)
                 .withOnMouseClickedEvent((item, none) -> event -> viewModel.edit(item))
                 .install(filesTableEditColumn);
 
-        filesTableDeleteColumn.setCellValueFactory(data -> data.getValue().internalProperty().not());
+        filesTableDeleteColumn.setCellValueFactory(
+                data -> data.getValue().internalProperty().not());
         new ValueTableCellFactory<ProtectedTermsListItemModel, Boolean>()
                 .withGraphic(none -> IconTheme.JabRefIcons.DELETE_ENTRY.getGraphicNode())
                 .withVisibleExpression(ReadOnlyBooleanWrapper::new)
@@ -90,12 +105,21 @@ public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsT
     private ContextMenu createContextMenu(ProtectedTermsListItemModel file) {
         ActionFactory factory = new ActionFactory(keyBindingRepository);
         ContextMenu contextMenu = new ContextMenu();
-        contextMenu.getItems().addAll(
-                factory.createMenuItem(StandardActions.EDIT_LIST, new ProtectedTermsTab.ContextAction(StandardActions.EDIT_LIST, file)),
-                factory.createMenuItem(StandardActions.VIEW_LIST, new ProtectedTermsTab.ContextAction(StandardActions.VIEW_LIST, file)),
-                factory.createMenuItem(StandardActions.REMOVE_LIST, new ProtectedTermsTab.ContextAction(StandardActions.REMOVE_LIST, file)),
-                factory.createMenuItem(StandardActions.RELOAD_LIST, new ProtectedTermsTab.ContextAction(StandardActions.RELOAD_LIST, file))
-        );
+        contextMenu
+                .getItems()
+                .addAll(
+                        factory.createMenuItem(
+                                StandardActions.EDIT_LIST,
+                                new ProtectedTermsTab.ContextAction(StandardActions.EDIT_LIST, file)),
+                        factory.createMenuItem(
+                                StandardActions.VIEW_LIST,
+                                new ProtectedTermsTab.ContextAction(StandardActions.VIEW_LIST, file)),
+                        factory.createMenuItem(
+                                StandardActions.REMOVE_LIST,
+                                new ProtectedTermsTab.ContextAction(StandardActions.REMOVE_LIST, file)),
+                        factory.createMenuItem(
+                                StandardActions.RELOAD_LIST,
+                                new ProtectedTermsTab.ContextAction(StandardActions.RELOAD_LIST, file)));
         contextMenu.getItems().forEach(item -> item.setGraphic(null));
         contextMenu.getStyleClass().add("context-menu");
 
@@ -123,7 +147,9 @@ public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsT
 
             this.executable.bind(BindingsHelper.constantOf(
                     switch (command) {
-                        case EDIT_LIST, REMOVE_LIST, RELOAD_LIST -> !itemModel.getTermsList().isInternalList();
+                        case EDIT_LIST, REMOVE_LIST, RELOAD_LIST -> !itemModel
+                                .getTermsList()
+                                .isInternalList();
                         default -> true;
                     }));
         }

@@ -109,6 +109,7 @@ public class ToggleMergeUnmergeButton extends Button {
     }
 
     public enum FieldState {
-        MERGED, UNMERGED
+        MERGED,
+        UNMERGED
     }
 }

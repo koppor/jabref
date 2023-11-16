@@ -38,7 +38,8 @@ public class ConstantsPropertiesViewModel implements PropertiesTabViewModel {
     private final DialogService dialogService;
     private final FilePreferences filePreferences;
 
-    public ConstantsPropertiesViewModel(BibDatabaseContext databaseContext, DialogService dialogService, FilePreferences filePreferences) {
+    public ConstantsPropertiesViewModel(
+            BibDatabaseContext databaseContext, DialogService dialogService, FilePreferences filePreferences) {
         this.databaseContext = databaseContext;
         this.dialogService = dialogService;
         this.filePreferences = filePreferences;
@@ -51,9 +52,9 @@ public class ConstantsPropertiesViewModel implements PropertiesTabViewModel {
     @Override
     public void setValues() {
         stringsListProperty.addAll(databaseContext.getDatabase().getStringValues().stream()
-                                                  .sorted(new BibtexStringComparator(false))
-                                                  .map(this::convertFromBibTexString)
-                                                  .toList());
+                .sorted(new BibtexStringComparator(false))
+                .map(this::convertFromBibTexString)
+                .toList());
     }
 
     public void addNewString() {
@@ -77,7 +78,8 @@ public class ConstantsPropertiesViewModel implements PropertiesTabViewModel {
 
     public void resortStrings() {
         // Resort the strings list in the same order as setValues() does
-        stringsListProperty.sort(Comparator.comparing(c -> c.labelProperty().get().toLowerCase(Locale.ROOT)));
+        stringsListProperty.sort(
+                Comparator.comparing(c -> c.labelProperty().get().toLowerCase(Locale.ROOT)));
     }
 
     private ConstantsItemModel convertFromBibTexString(BibtexString bibtexString) {
@@ -86,9 +88,11 @@ public class ConstantsPropertiesViewModel implements PropertiesTabViewModel {
 
     @Override
     public void storeSettings() {
-        databaseContext.getDatabase().setStrings(stringsListProperty.stream()
-                                                                    .map(this::fromBibtexStringViewModel)
-                                                                    .collect(Collectors.toList()));
+        databaseContext
+                .getDatabase()
+                .setStrings(stringsListProperty.stream()
+                        .map(this::fromBibtexStringViewModel)
+                        .collect(Collectors.toList()));
     }
 
     private BibtexString fromBibtexStringViewModel(ConstantsItemModel viewModel) {
@@ -99,8 +103,8 @@ public class ConstantsPropertiesViewModel implements PropertiesTabViewModel {
 
     public Optional<ConstantsItemModel> labelAlreadyExists(String label) {
         return stringsListProperty.stream()
-                                  .filter(item -> item.labelProperty().getValue().equals(label))
-                                  .findFirst();
+                .filter(item -> item.labelProperty().getValue().equals(label))
+                .findFirst();
     }
 
     public void openHelpPage() {

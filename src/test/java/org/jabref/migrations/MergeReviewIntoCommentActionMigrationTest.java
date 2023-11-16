@@ -32,7 +32,9 @@ class MergeReviewIntoCommentActionMigrationTest {
 
         action.performMigration(actualParserResult);
 
-        assertEquals(entry, actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
+        assertEquals(
+                entry,
+                actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
     }
 
     @Test
@@ -44,7 +46,9 @@ class MergeReviewIntoCommentActionMigrationTest {
 
         action.performMigration(actualParserResult);
 
-        assertEquals(expectedEntry, actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
+        assertEquals(
+                expectedEntry,
+                actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
     }
 
     @Test
@@ -54,7 +58,9 @@ class MergeReviewIntoCommentActionMigrationTest {
 
         action.performMigration(actualParserResult);
 
-        assertEquals(entry, actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
+        assertEquals(
+                entry,
+                actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
     }
 
     @Test
@@ -68,11 +74,14 @@ class MergeReviewIntoCommentActionMigrationTest {
 
         action.performMigration(actualParserResult);
 
-        assertEquals(expectedEntry, actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
+        assertEquals(
+                expectedEntry,
+                actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
     }
 
     @Test
-    @Disabled("Re-enable if the MergeReviewIntoCommentMigration.mergeCommentFieldIfPresent() does not block and wait for user input.")
+    @Disabled(
+            "Re-enable if the MergeReviewIntoCommentMigration.mergeCommentFieldIfPresent() does not block and wait for user input.")
     public void reviewAndCommentField() {
         entry.setField(StandardField.REVIEW, "My Review");
         entry.setField(StandardField.COMMENT, "My Comment");
@@ -83,7 +92,9 @@ class MergeReviewIntoCommentActionMigrationTest {
 
         action.performMigration(actualParserResult);
 
-        assertEquals(expectedEntry, actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
+        assertEquals(
+                expectedEntry,
+                actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
     }
 
     private BibEntry createMinimalBibEntry() {

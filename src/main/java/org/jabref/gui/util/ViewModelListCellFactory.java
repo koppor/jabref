@@ -70,7 +70,8 @@ public class ViewModelListCellFactory<T> implements Callback<ListView<T>, ListCe
     }
 
     public ViewModelListCellFactory<T> withIcon(Callback<T, JabRefIcon> toIcon, Callback<T, Color> toColor) {
-        this.toGraphic = viewModel -> toIcon.call(viewModel).withColor(toColor.call(viewModel)).getGraphicNode();
+        this.toGraphic = viewModel ->
+                toIcon.call(viewModel).withColor(toColor.call(viewModel)).getGraphicNode();
         return this;
     }
 
@@ -100,7 +101,8 @@ public class ViewModelListCellFactory<T> implements Callback<ListView<T>, ListCe
         return this;
     }
 
-    public ViewModelListCellFactory<T> withOnMouseClickedEvent(BiConsumer<T, ? super MouseEvent> toOnMouseClickedEvent) {
+    public ViewModelListCellFactory<T> withOnMouseClickedEvent(
+            BiConsumer<T, ? super MouseEvent> toOnMouseClickedEvent) {
         this.toOnMouseClickedEvent = toOnMouseClickedEvent;
         return this;
     }
@@ -130,7 +132,8 @@ public class ViewModelListCellFactory<T> implements Callback<ListView<T>, ListCe
         return this;
     }
 
-    public ViewModelListCellFactory<T> withPseudoClass(PseudoClass pseudoClass, Callback<T, ObservableValue<Boolean>> toCondition) {
+    public ViewModelListCellFactory<T> withPseudoClass(
+            PseudoClass pseudoClass, Callback<T, ObservableValue<Boolean>> toCondition) {
         this.pseudoClasses.putIfAbsent(pseudoClass, toCondition);
         return this;
     }
@@ -203,22 +206,26 @@ public class ViewModelListCellFactory<T> implements Callback<ListView<T>, ListCe
                     if (toOnDragOver != null) {
                         setOnDragOver(event -> toOnDragOver.accept(viewModel, event));
                     }
-                    for (Map.Entry<PseudoClass, Callback<T, ObservableValue<Boolean>>> pseudoClassWithCondition : pseudoClasses.entrySet()) {
-                        ObservableValue<Boolean> condition = pseudoClassWithCondition.getValue().call(viewModel);
+                    for (Map.Entry<PseudoClass, Callback<T, ObservableValue<Boolean>>> pseudoClassWithCondition :
+                            pseudoClasses.entrySet()) {
+                        ObservableValue<Boolean> condition =
+                                pseudoClassWithCondition.getValue().call(viewModel);
                         subscriptions.add(BindingsHelper.includePseudoClassWhen(
-                                this,
-                                pseudoClassWithCondition.getKey(),
-                                condition));
+                                this, pseudoClassWithCondition.getKey(), condition));
                     }
                     if (validationStatusProperty != null) {
-                        validationStatusProperty.call(viewModel)
-                                                .getHighestMessage()
-                                                .ifPresent(message -> setTooltip(new Tooltip(message.getMessage())));
+                        validationStatusProperty
+                                .call(viewModel)
+                                .getHighestMessage()
+                                .ifPresent(message -> setTooltip(new Tooltip(message.getMessage())));
 
                         subscriptions.add(BindingsHelper.includePseudoClassWhen(
                                 this,
                                 INVALID_PSEUDO_CLASS,
-                                validationStatusProperty.call(viewModel).validProperty().not()));
+                                validationStatusProperty
+                                        .call(viewModel)
+                                        .validProperty()
+                                        .not()));
                     }
                 }
             }

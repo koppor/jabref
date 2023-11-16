@@ -55,7 +55,8 @@ public class KeyChangeListener {
         }
     }
 
-    private void replaceKeyInMultiplesKeyField(String newKey, String oldKey, BibEntry entry, Field field, String fieldContent) {
+    private void replaceKeyInMultiplesKeyField(
+            String newKey, String oldKey, BibEntry entry, Field field, String fieldContent) {
         List<String> keys = new ArrayList<>(Arrays.asList(fieldContent.split(",")));
         int index = keys.indexOf(oldKey);
         if (index != -1) {
@@ -68,7 +69,8 @@ public class KeyChangeListener {
         }
     }
 
-    private void replaceSingleKeyInField(String newKey, String oldKey, BibEntry entry, Field field, String fieldContent) {
+    private void replaceSingleKeyInField(
+            String newKey, String oldKey, BibEntry entry, Field field, String fieldContent) {
         if (fieldContent.equals(oldKey)) {
             if (newKey == null) {
                 entry.clearField(field);

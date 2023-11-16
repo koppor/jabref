@@ -51,13 +51,17 @@ public class TemporalAccessorPicker extends DatePicker {
         setConverter(new InternalConverter());
 
         // Synchronize changes of the underlying date value with the temporalAccessorValue
-        BindingsHelper.bindBidirectional(valueProperty(), temporalAccessorValue,
+        BindingsHelper.bindBidirectional(
+                valueProperty(),
+                temporalAccessorValue,
                 TemporalAccessorPicker::addCurrentTime,
                 TemporalAccessorPicker::getDate);
 
         getEditor().setOnContextMenuRequested(event -> {
             ContextMenu contextMenu = new ContextMenu();
-            contextMenu.getItems().setAll(EditorContextAction.getDefaultContextMenuItems(getEditor(), Globals.getKeyPrefs()));
+            contextMenu
+                    .getItems()
+                    .setAll(EditorContextAction.getDefaultContextMenuItems(getEditor(), Globals.getKeyPrefs()));
             TextInputControlBehavior.showContextMenu(getEditor(), contextMenu, event);
         });
     }
@@ -145,7 +149,9 @@ public class TemporalAccessorPicker extends DatePicker {
             TemporalAccessor value = getTemporalAccessorValue();
 
             // Keeps the original text when it is an invalid date
-            return value != null ? getStringConverter().toString(value) : getEditor().getText();
+            return value != null
+                    ? getStringConverter().toString(value)
+                    : getEditor().getText();
         }
 
         @Override

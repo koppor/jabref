@@ -60,13 +60,14 @@ public class MainTableColumnFactory {
     private final TaskExecutor taskExecutor;
     private final StateManager stateManager;
 
-    public MainTableColumnFactory(BibDatabaseContext database,
-                                  PreferencesService preferencesService,
-                                  ColumnPreferences abstractColumnPrefs,
-                                  UndoManager undoManager,
-                                  DialogService dialogService,
-                                  StateManager stateManager,
-                                  TaskExecutor taskExecutor) {
+    public MainTableColumnFactory(
+            BibDatabaseContext database,
+            PreferencesService preferencesService,
+            ColumnPreferences abstractColumnPrefs,
+            UndoManager undoManager,
+            DialogService dialogService,
+            StateManager stateManager,
+            TaskExecutor taskExecutor) {
         this.database = Objects.requireNonNull(database);
         this.preferencesService = Objects.requireNonNull(preferencesService);
         this.columnPreferences = abstractColumnPrefs;
@@ -106,7 +107,8 @@ public class MainTableColumnFactory {
                     if (field instanceof SpecialField) {
                         returnColumn = createSpecialFieldColumn(column);
                     } else {
-                        LOGGER.warn("Special field type '{}' is unknown. Using normal column type.", column.getQualifier());
+                        LOGGER.warn(
+                                "Special field type '{}' is unknown. Using normal column type.", column.getQualifier());
                         returnColumn = createFieldColumn(column);
                     }
                 }
@@ -178,8 +180,8 @@ public class MainTableColumnFactory {
 
     private Node createGroupColorRegion(BibEntryTableViewModel entry, List<AbstractGroup> matchedGroups) {
         List<Color> groupColors = matchedGroups.stream()
-                                               .flatMap(group -> group.getColor().stream())
-                                               .toList();
+                .flatMap(group -> group.getColor().stream())
+                .toList();
 
         if (!groupColors.isEmpty()) {
             HBox container = new HBox();
@@ -199,10 +201,11 @@ public class MainTableColumnFactory {
             });
 
             String matchedGroupsString = matchedGroups.stream()
-                                                      .distinct()
-                                                      .map(AbstractGroup::getName)
-                                                      .collect(Collectors.joining(", "));
-            Tooltip tooltip = new Tooltip(Localization.lang("Entry is contained in the following groups:") + "\n" + matchedGroupsString);
+                    .distinct()
+                    .map(AbstractGroup::getName)
+                    .collect(Collectors.joining(", "));
+            Tooltip tooltip = new Tooltip(
+                    Localization.lang("Entry is contained in the following groups:") + "\n" + matchedGroupsString);
             Tooltip.install(container, tooltip);
             return container;
         }
@@ -219,14 +222,17 @@ public class MainTableColumnFactory {
     /**
      * Creates a clickable icons column for DOIs, URLs, URIs and EPrints.
      */
-    private TableColumn<BibEntryTableViewModel, Map<Field, String>> createIdentifierColumn(MainTableColumnModel columnModel) {
-        return new LinkedIdentifierColumn(columnModel, cellFactory, database, dialogService, preferencesService, stateManager);
+    private TableColumn<BibEntryTableViewModel, Map<Field, String>> createIdentifierColumn(
+            MainTableColumnModel columnModel) {
+        return new LinkedIdentifierColumn(
+                columnModel, cellFactory, database, dialogService, preferencesService, stateManager);
     }
 
     /**
      * Creates a column that displays a {@link SpecialField}
      */
-    private TableColumn<BibEntryTableViewModel, Optional<SpecialFieldValueViewModel>> createSpecialFieldColumn(MainTableColumnModel columnModel) {
+    private TableColumn<BibEntryTableViewModel, Optional<SpecialFieldValueViewModel>> createSpecialFieldColumn(
+            MainTableColumnModel columnModel) {
         return new SpecialFieldColumn(columnModel, preferencesService, undoManager);
     }
 
@@ -235,23 +241,16 @@ public class MainTableColumnFactory {
      * #createExtraFileColumn(MainTableColumnModel)} createExtraFileColumn} does, this creates one single column collecting all file links.
      */
     private TableColumn<BibEntryTableViewModel, List<LinkedFile>> createFilesColumn(MainTableColumnModel columnModel) {
-        return new FileColumn(columnModel,
-                database,
-                dialogService,
-                preferencesService,
-                taskExecutor);
+        return new FileColumn(columnModel, database, dialogService, preferencesService, taskExecutor);
     }
 
     /**
      * Creates a column for all the linked files of a single file type.
      */
-    private TableColumn<BibEntryTableViewModel, List<LinkedFile>> createExtraFileColumn(MainTableColumnModel columnModel) {
-        return new FileColumn(columnModel,
-                database,
-                dialogService,
-                preferencesService,
-                columnModel.getQualifier(),
-                taskExecutor);
+    private TableColumn<BibEntryTableViewModel, List<LinkedFile>> createExtraFileColumn(
+            MainTableColumnModel columnModel) {
+        return new FileColumn(
+                columnModel, database, dialogService, preferencesService, columnModel.getQualifier(), taskExecutor);
     }
 
     /**

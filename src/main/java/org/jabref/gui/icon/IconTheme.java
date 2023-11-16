@@ -56,7 +56,8 @@ public class IconTheme {
     public static final Color SELECTED_COLOR = Color.web("#50618F");
     private static final String DEFAULT_ICON_PATH = "/images/external/red.png";
     private static final Logger LOGGER = LoggerFactory.getLogger(IconTheme.class);
-    private static final Map<String, String> KEY_TO_ICON = readIconThemeFile(IconTheme.class.getResource("/images/Icons.properties"), "/images/external/");
+    private static final Map<String, String> KEY_TO_ICON =
+            readIconThemeFile(IconTheme.class.getResource("/images/Icons.properties"), "/images/external/");
     private static final Set<Ikon> ICON_NAMES = new HashSet<>();
 
     public static Color getDefaultGroupColor() {
@@ -67,8 +68,10 @@ public class IconTheme {
         if (ICON_NAMES.isEmpty()) {
             loadAllIkons();
         }
-        return ICON_NAMES.stream().filter(icon -> icon.toString().equals(code.toUpperCase(Locale.ENGLISH)))
-                         .map(internalMat -> new InternalMaterialDesignIcon(internalMat).withColor(color)).findFirst();
+        return ICON_NAMES.stream()
+                .filter(icon -> icon.toString().equals(code.toUpperCase(Locale.ENGLISH)))
+                .map(internalMat -> new InternalMaterialDesignIcon(internalMat).withColor(color))
+                .findFirst();
     }
 
     public static Image getJabRefImage() {
@@ -105,7 +108,7 @@ public class IconTheme {
         String key = Objects.requireNonNull(name, "icon name");
         if (!KEY_TO_ICON.containsKey(key)) {
             LOGGER.warn("Could not find icon url by name " + name + ", so falling back on default icon "
-                        + DEFAULT_ICON_PATH);
+                    + DEFAULT_ICON_PATH);
         }
         String path = KEY_TO_ICON.getOrDefault(key, DEFAULT_ICON_PATH);
         return Objects.requireNonNull(IconTheme.class.getResource(path), "Path must not be null for key " + key);
@@ -128,8 +131,8 @@ public class IconTheme {
 
         Map<String, String> result = new HashMap<>();
 
-        try (BufferedReader in = new BufferedReader(
-                new InputStreamReader(url.openStream(), StandardCharsets.ISO_8859_1))) {
+        try (BufferedReader in =
+                new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.ISO_8859_1))) {
             String line;
             while ((line = in.readLine()) != null) {
                 if (!line.contains("=")) {
@@ -161,7 +164,6 @@ public class IconTheme {
     }
 
     public enum JabRefIcons implements JabRefIcon {
-
         ADD(MaterialDesignP.PLUS_CIRCLE_OUTLINE),
         ADD_FILLED(MaterialDesignP.PLUS_CIRCLE),
         ADD_NOBOX(MaterialDesignP.PLUS),
@@ -212,11 +214,36 @@ public class IconTheme {
         PRIORITY_LOW(Color.rgb(111, 204, 117), MaterialDesignF.FLAG),
         PRINTED(MaterialDesignP.PRINTER),
         RANKING(MaterialDesignS.STAR),
-        RANK1(MaterialDesignS.STAR, MaterialDesignS.STAR_OUTLINE, MaterialDesignS.STAR_OUTLINE, MaterialDesignS.STAR_OUTLINE, MaterialDesignS.STAR_OUTLINE),
-        RANK2(MaterialDesignS.STAR, MaterialDesignS.STAR, MaterialDesignS.STAR_OUTLINE, MaterialDesignS.STAR_OUTLINE, MaterialDesignS.STAR_OUTLINE),
-        RANK3(MaterialDesignS.STAR, MaterialDesignS.STAR, MaterialDesignS.STAR, MaterialDesignS.STAR_OUTLINE, MaterialDesignS.STAR_OUTLINE),
-        RANK4(MaterialDesignS.STAR, MaterialDesignS.STAR, MaterialDesignS.STAR, MaterialDesignS.STAR, MaterialDesignS.STAR_OUTLINE),
-        RANK5(MaterialDesignS.STAR, MaterialDesignS.STAR, MaterialDesignS.STAR, MaterialDesignS.STAR, MaterialDesignS.STAR),
+        RANK1(
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR_OUTLINE,
+                MaterialDesignS.STAR_OUTLINE,
+                MaterialDesignS.STAR_OUTLINE,
+                MaterialDesignS.STAR_OUTLINE),
+        RANK2(
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR_OUTLINE,
+                MaterialDesignS.STAR_OUTLINE,
+                MaterialDesignS.STAR_OUTLINE),
+        RANK3(
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR_OUTLINE,
+                MaterialDesignS.STAR_OUTLINE),
+        RANK4(
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR_OUTLINE),
+        RANK5(
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR,
+                MaterialDesignS.STAR),
         WWW(MaterialDesignW.WEB),
         GROUP_INCLUDING(MaterialDesignF.FILTER_OUTLINE),
         GROUP_REFINING(MaterialDesignF.FILTER),

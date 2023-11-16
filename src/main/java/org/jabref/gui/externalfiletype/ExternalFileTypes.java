@@ -24,8 +24,7 @@ public class ExternalFileTypes {
     private static final String FILE_TYPE_REMOVED_FLAG = "REMOVED";
     private static final ExternalFileType HTML_FALLBACK_TYPE = StandardExternalFileType.URL;
 
-    private ExternalFileTypes() {
-    }
+    private ExternalFileTypes() {}
 
     public static List<ExternalFileType> getDefaultExternalFileTypes() {
         return Arrays.asList(StandardExternalFileType.values());
@@ -38,7 +37,9 @@ public class ExternalFileTypes {
      * @return The ExternalFileType registered, or null if none.
      */
     public static Optional<ExternalFileType> getExternalFileTypeByName(String name, FilePreferences filePreferences) {
-        Optional<ExternalFileType> externalFileType = filePreferences.getExternalFileTypes().stream().filter(type -> type.getName().equals(name)).findFirst();
+        Optional<ExternalFileType> externalFileType = filePreferences.getExternalFileTypes().stream()
+                .filter(type -> type.getName().equals(name))
+                .findFirst();
         if (externalFileType.isPresent()) {
             return externalFileType;
         }
@@ -52,9 +53,12 @@ public class ExternalFileTypes {
      * @param extension The file extension.
      * @return The ExternalFileType registered, or null if none.
      */
-    public static Optional<ExternalFileType> getExternalFileTypeByExt(String extension, FilePreferences filePreferences) {
+    public static Optional<ExternalFileType> getExternalFileTypeByExt(
+            String extension, FilePreferences filePreferences) {
         String extensionCleaned = extension.replace(".", "").replace("*", "");
-        return filePreferences.getExternalFileTypes().stream().filter(type -> type.getExtension().equalsIgnoreCase(extensionCleaned)).findFirst();
+        return filePreferences.getExternalFileTypes().stream()
+                .filter(type -> type.getExtension().equalsIgnoreCase(extensionCleaned))
+                .findFirst();
     }
 
     /**
@@ -64,7 +68,8 @@ public class ExternalFileTypes {
      * @return true if an ExternalFileType with the extension exists, false otherwise
      */
     public static boolean isExternalFileTypeByExt(String extension, FilePreferences filePreferences) {
-        return filePreferences.getExternalFileTypes().stream().anyMatch(type -> type.getExtension().equalsIgnoreCase(extension));
+        return filePreferences.getExternalFileTypes().stream()
+                .anyMatch(type -> type.getExtension().equalsIgnoreCase(extension));
     }
 
     /**
@@ -73,11 +78,14 @@ public class ExternalFileTypes {
      * @param filename The name of the file whose type to look up.
      * @return The ExternalFileType registered, or null if none.
      */
-    public static Optional<ExternalFileType> getExternalFileTypeForName(String filename, FilePreferences filePreferences) {
+    public static Optional<ExternalFileType> getExternalFileTypeForName(
+            String filename, FilePreferences filePreferences) {
         int longestFound = -1;
         ExternalFileType foundType = null;
         for (ExternalFileType type : filePreferences.getExternalFileTypes()) {
-            if (!type.getExtension().isEmpty() && filename.toLowerCase(Locale.ROOT).endsWith(type.getExtension().toLowerCase(Locale.ROOT))
+            if (!type.getExtension().isEmpty()
+                    && filename.toLowerCase(Locale.ROOT)
+                            .endsWith(type.getExtension().toLowerCase(Locale.ROOT))
                     && (type.getExtension().length() > longestFound)) {
                 longestFound = type.getExtension().length();
                 foundType = type;
@@ -93,8 +101,10 @@ public class ExternalFileTypes {
      * @return The ExternalFileType registered, or null if none. For the mime type "text/html", a valid file type is
      *         guaranteed to be returned.
      */
-    public static Optional<ExternalFileType> getExternalFileTypeByMimeType(String mimeType, FilePreferences filePreferences) {
-        // Ignores parameters according to link: (https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types)
+    public static Optional<ExternalFileType> getExternalFileTypeByMimeType(
+            String mimeType, FilePreferences filePreferences) {
+        // Ignores parameters according to link:
+        // (https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types)
         if (mimeType.indexOf(';') != -1) {
             mimeType = mimeType.substring(0, mimeType.indexOf(';')).trim();
         }
@@ -116,20 +126,22 @@ public class ExternalFileTypes {
         return extension.flatMap(ext -> getExternalFileTypeByExt(ext, filePreferences));
     }
 
-    public static Optional<ExternalFileType> getExternalFileTypeByLinkedFile(LinkedFile linkedFile, boolean deduceUnknownType, FilePreferences filePreferences) {
+    public static Optional<ExternalFileType> getExternalFileTypeByLinkedFile(
+            LinkedFile linkedFile, boolean deduceUnknownType, FilePreferences filePreferences) {
         Optional<ExternalFileType> type = getExternalFileTypeByName(linkedFile.getFileType(), filePreferences);
         boolean isUnknownType = type.isEmpty() || (type.get() instanceof UnknownExternalFileType);
 
         if (isUnknownType && deduceUnknownType) {
             // No file type was recognized. Try to find a usable file type based on mime type:
-            Optional<ExternalFileType> mimeType = getExternalFileTypeByMimeType(linkedFile.getFileType(), filePreferences);
+            Optional<ExternalFileType> mimeType =
+                    getExternalFileTypeByMimeType(linkedFile.getFileType(), filePreferences);
             if (mimeType.isPresent()) {
                 return mimeType;
             }
 
             // No type could be found from mime type. Try based on the extension:
             return FileUtil.getFileExtension(linkedFile.getLink())
-                             .flatMap(extension -> getExternalFileTypeByExt(extension, filePreferences));
+                    .flatMap(extension -> getExternalFileTypeByExt(extension, filePreferences));
         } else {
             return type;
         }

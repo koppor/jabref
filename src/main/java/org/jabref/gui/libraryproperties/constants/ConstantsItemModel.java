@@ -16,7 +16,7 @@ import de.saxsys.mvvmfx.utils.validation.Validator;
 
 public class ConstantsItemModel {
 
-    private final static Pattern IS_NUMBER = Pattern.compile("-?\\d+(\\.\\d+)?");
+    private static final Pattern IS_NUMBER = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     private final StringProperty labelProperty = new SimpleStringProperty();
     private final StringProperty contentProperty = new SimpleStringProperty();
@@ -70,7 +70,8 @@ public class ConstantsItemModel {
         } else if (IS_NUMBER.matcher(input).matches()) {
             return ValidationMessage.error(Localization.lang("The label of the string cannot be a number."));
         } else if (input.contains("#")) {
-            return ValidationMessage.error(Localization.lang("The label of the string cannot contain the '#' character."));
+            return ValidationMessage.error(
+                    Localization.lang("The label of the string cannot contain the '#' character."));
         } else if (input.contains(" ")) {
             return ValidationMessage.error(Localization.lang("The label of the string cannot contain spaces."));
         } else {

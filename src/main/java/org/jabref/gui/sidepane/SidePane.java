@@ -29,15 +29,16 @@ public class SidePane extends VBox {
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final Map<SidePaneType, BooleanBinding> visibleBindings = new HashMap<>();
 
-    public SidePane(LibraryTabContainer tabContainer,
-                    PreferencesService preferencesService,
-                    JournalAbbreviationRepository abbreviationRepository,
-                    TaskExecutor taskExecutor,
-                    DialogService dialogService,
-                    StateManager stateManager,
-                    FileUpdateMonitor fileUpdateMonitor,
-                    BibEntryTypesManager entryTypesManager,
-                    UndoManager undoManager) {
+    public SidePane(
+            LibraryTabContainer tabContainer,
+            PreferencesService preferencesService,
+            JournalAbbreviationRepository abbreviationRepository,
+            TaskExecutor taskExecutor,
+            DialogService dialogService,
+            StateManager stateManager,
+            FileUpdateMonitor fileUpdateMonitor,
+            BibEntryTypesManager entryTypesManager,
+            UndoManager undoManager) {
         this.stateManager = stateManager;
         this.preferencesService = preferencesService;
         this.viewModel = new SidePaneViewModel(
@@ -55,13 +56,13 @@ public class SidePane extends VBox {
         updateView();
     }
 
-     private void updateView() {
+    private void updateView() {
         getChildren().clear();
-         for (SidePaneType type : stateManager.getVisibleSidePaneComponents()) {
-             SidePaneComponent view = viewModel.getSidePaneComponent(type);
-             getChildren().add(view);
-         }
-     }
+        for (SidePaneType type : stateManager.getVisibleSidePaneComponents()) {
+            SidePaneComponent view = viewModel.getSidePaneComponent(type);
+            getChildren().add(view);
+        }
+    }
 
     public BooleanBinding paneVisibleBinding(SidePaneType pane) {
         BooleanBinding visibility = Bindings.createBooleanBinding(

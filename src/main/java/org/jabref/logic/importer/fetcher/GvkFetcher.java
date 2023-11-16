@@ -31,7 +31,8 @@ public class GvkFetcher extends AbstractIsbnFetcher implements SearchBasedParser
      * Searchkeys are used to specify a search request. For example "tit" stands for "title".
      * If no searchkey is used, the default searchkey "all" is used.
      */
-    private final Collection<String> searchKeys = Arrays.asList("all", "tit", "per", "thm", "slw", "txt", "num", "kon", "ppn", "bkl", "erj");
+    private final Collection<String> searchKeys =
+            Arrays.asList("all", "tit", "per", "thm", "slw", "txt", "num", "kon", "ppn", "bkl", "erj");
 
     public GvkFetcher(ImportFormatPreferences importFormatPreferences) {
         super(importFormatPreferences);
@@ -48,11 +49,14 @@ public class GvkFetcher extends AbstractIsbnFetcher implements SearchBasedParser
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getURLForQuery(QueryNode luceneQuery)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         URIBuilder uriBuilder = new URIBuilder(URL_PATTERN);
         uriBuilder.addParameter("version", "1.1");
         uriBuilder.addParameter("operation", "searchRetrieve");
-        uriBuilder.addParameter("query", new GVKQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
+        uriBuilder.addParameter(
+                "query",
+                new GVKQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
         uriBuilder.addParameter("maximumRecords", "50");
         uriBuilder.addParameter("recordSchema", "picaxml");
         uriBuilder.addParameter("sortKeys", "Year,,1");
@@ -62,7 +66,8 @@ public class GvkFetcher extends AbstractIsbnFetcher implements SearchBasedParser
     }
 
     @Override
-    public URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getUrlForIdentifier(String identifier)
+            throws URISyntaxException, MalformedURLException, FetcherException {
         this.ensureThatIsbnIsValid(identifier);
         URIBuilder uriBuilder = new URIBuilder(URL_PATTERN);
         uriBuilder.addParameter("version", "1.1");
@@ -86,8 +91,8 @@ public class GvkFetcher extends AbstractIsbnFetcher implements SearchBasedParser
         super.doPostCleanup(entry);
 
         // Fetcher returns page numbers as "30 Seiten" -> remove every non-digit character in the PAGETOTAL field
-        entry.getField(StandardField.PAGETOTAL).ifPresent(pages ->
-                entry.setField(StandardField.PAGETOTAL, pages.replaceAll("[\\D]", "")));
+        entry.getField(StandardField.PAGETOTAL)
+                .ifPresent(pages -> entry.setField(StandardField.PAGETOTAL, pages.replaceAll("[\\D]", "")));
         new FieldFormatterCleanup(StandardField.PAGETOTAL, new NormalizePagesFormatter()).cleanup(entry);
         new FieldFormatterCleanup(StandardField.AUTHOR, new NormalizeNamesFormatter()).cleanup(entry);
     }
