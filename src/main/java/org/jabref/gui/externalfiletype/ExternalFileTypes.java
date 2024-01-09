@@ -11,9 +11,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.jabref.logic.bibtex.FileFieldWriter;
+import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.strings.StringUtil;
-import org.jabref.model.util.FileHelper;
 import org.jabref.preferences.FilePreferences;
 
 // Do not make this class final, as it otherwise can't be mocked for tests
@@ -112,7 +112,7 @@ public class ExternalFileTypes {
 
     public static Optional<ExternalFileType> getExternalFileTypeByFile(Path file, FilePreferences filePreferences) {
         final String filePath = file.toString();
-        final Optional<String> extension = FileHelper.getFileExtension(filePath);
+        final Optional<String> extension = FileUtil.getFileExtension(filePath);
         return extension.flatMap(ext -> getExternalFileTypeByExt(ext, filePreferences));
     }
 
@@ -128,7 +128,7 @@ public class ExternalFileTypes {
             }
 
             // No type could be found from mime type. Try based on the extension:
-            return FileHelper.getFileExtension(linkedFile.getLink())
+            return FileUtil.getFileExtension(linkedFile.getLink())
                              .flatMap(extension -> getExternalFileTypeByExt(extension, filePreferences));
         } else {
             return type;
@@ -148,10 +148,10 @@ public class ExternalFileTypes {
 
         for (ExternalFileType type : fileTypes) {
             results.add(type);
-            // See if we can find a type with matching name in the default type list:
+            // See if we can find a type with matching extension in the default type list:
             ExternalFileType found = null;
             for (ExternalFileType defType : defTypes) {
-                if (defType.getName().equals(type.getName())) {
+                if (defType.getExtension().equals(type.getExtension())) {
                     found = defType;
                     break;
                 }
@@ -221,11 +221,11 @@ public class ExternalFileTypes {
             } else {
                 // A new or modified entry type. Construct it from the string array:
                 ExternalFileType type = CustomExternalFileType.buildFromArgs(val);
-                // Check if there is a default type with the same name. If so, this is a
+                // Check if there is a default type with the same extension. If so, this is a
                 // modification of that type, so remove the default one:
                 ExternalFileType toRemove = null;
                 for (ExternalFileType defType : types) {
-                    if (type.getName().equals(defType.getName())) {
+                    if (type.getExtension().equals(defType.getExtension())) {
                         toRemove = defType;
                         break;
                     }

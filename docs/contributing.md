@@ -3,11 +3,10 @@ nav_order: 2
 ---
 # Contributing
 
-After reading through this guide, check out some good first issues to contribute to by clicking here: [Good First Issues](https://github.com/JabRef/jabref/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
-
-In case you are aiming to contribute other improvements, please head over to our general [JabRef contribution page](https://docs.jabref.org/faqcontributing).
-
-In case you are an instructor and want to use **JabRef as a software engineering example**, please head to [https://devdocs.jabref.org/teaching](https://devdocs.jabref.org/teaching).
+* After reading through this guide, check out some good first issues to contribute to by going to our [list of good first issues](https://github.com/orgs/JabRef/projects/5/views/1).
+  We offer small issues perfect for aspiring developers. These tasks provide an opportunity to learn how to set up your local workspace, create your first pull request on GitHub, and contribute towards solving minor problems or making small enhancements in JabRef. It is essential to note that the issues vary in difficulty. Some are simpler, while others are more complex. Our primary aim is to guide you through the code, ensuring that the understanding scope remains manageable. Sometimes, grasping the code might demand more effort than actually writing lines of code.
+* In case you are aiming to contribute other improvements, please head over to our [general JabRef contribution page](https://docs.jabref.org/faqcontributing).
+* In case you are an instructor and want to use **JabRef as a software engineering example**, please head to [https://devdocs.jabref.org/teaching](https://devdocs.jabref.org/teaching).
 
 ## Contribute code
 
@@ -15,15 +14,16 @@ In case you are an instructor and want to use **JabRef as a software engineering
 
 We welcome contributions to JabRef and encourage you to follow the GitHub workflow specified below. If you are not familiar with this type of workflow, take a look at GitHub's excellent overview on the [GitHub flow](https://guides.github.com/introduction/flow/index.html) and the explanation of [Feature Branch Workflow](https://atlassian.com/git/tutorials/comparing-workflows#feature-branch-workflow) for the idea behind this kind of development.
 
-1. Get the JabRef code on your local machine. Detailed instructions about this step can be found in our [guidelines for setting up a local workspace](getting-into-the-code/guidelines-for-setting-up-a-local-workspace.md).
+1. Get the JabRef code on your local machine. Detailed instructions about this step can be found in our [guidelines for setting up a local workspace](getting-into-the-code/guidelines-for-setting-up-a-local-workspace/).
    1. Fork the JabRef into your GitHub account.
    2. Clone your forked repository on your local machine.
 2. **Create a new branch** (such as `fix-for-issue-121`). Be sure to create a **separate branch** for each improvement you implement.
-3. Do your work on the **new branch — not the `main` branch.** Refer to our [code how-tos](https://devdocs.jabref.org/getting-into-the-code/code-howtos) if you have questions about your implementation.
+3. Work on the **new branch — not the `main` branch.** Refer to our [code how-tos](https://devdocs.jabref.org/code-howtos) if you have questions about your implementation.
 4. Create a pull request. For an overview of pull requests, take a look at GitHub's [pull request help documentation](https://help.github.com/articles/about-pull-requests/).
-5. In case your pull request is not yet complete or not yet ready for review, consider creating a [draft pull request](https://github.blog/2019-02-14-introducing-draft-pull-requests/) instead.
+5. In case your pull request is not yet complete or not yet ready for review, create a [draft pull request](https://github.blog/2019-02-14-introducing-draft-pull-requests/) instead.
 
-In case you have any questions, do not hesitate to write one of our [JabRef developers](https://github.com/orgs/JabRef/teams/developers) an email. We should also be online at [gitter](https://gitter.im/JabRef/jabref).
+In case you have any questions, please comment on the issue - or show up in our [gitter chat](https://gitter.im/JabRef/jabref).
+Please also help others in case of general questions there.
 
 ### Formal requirements for a pull request
 
@@ -54,7 +54,7 @@ Your contribution is considered being made under [MIT license](https://tldrlegal
 
 #### Write a good commit message
 
-See [good commit message](https://github.com/joelparkerhenderson/git\_commit\_message) or [commit guidelines section of Pro Git](http://git-scm.com/book/en/Distributed-Git-Contributing-to-a-Project#Commit-Guidelines). The first line of your commit message is automatically taken as the title for the pull-request. All other lines make up the body of the pull request. Add the words `fixes #xxx` to your PR to auto-close the corresponding issue.
+See [good commit message](https://github.com/joelparkerhenderson/git-commit-message) or [commit guidelines section of Pro Git](http://git-scm.com/book/en/Distributed-Git-Contributing-to-a-Project#Commit-Guidelines). For the curious: [Why good commit messages matter!](https://cbea.ms/git-commit/). The first line of your commit message is automatically taken as the title for the pull-request. All other lines make up the body of the pull request. Add the words `fixes #xxx` to your PR to auto-close the corresponding issue.
 
 #### Test your code
 
@@ -66,7 +66,7 @@ Add new `Localization.lang("KEY")` to a Java file. The tests will fail. In the t
 
 Example:
 
-```
+```text
 java.lang.AssertionError: DETECTED LANGUAGE KEYS WHICH ARE NOT IN THE ENGLISH LANGUAGE FILE
 PASTE THESE INTO THE ENGLISH LANGUAGE FILE
 [
@@ -78,7 +78,7 @@ Actual   :[Opens\ JabRef's\ Twitter\ page (src\main\java\org\jabref\gui\JabRefFr
 
 Add the above snippet to the English translation file located at `src/main/resources/l10n/JabRef_en.properties`. [Crowdin](https://crowdin.com/project/jabref) will automatically pick up the new string and add it to the other translations.
 
-You can also directly run the specific test in your IDE. The test "LocalizationConsistencyTest" is placed under `src/test/java/net.sf.jabref.logic.l10n/LocalizationConsistencyTest.java`. Find more information in the [JabRef developer docs](https://devdocs.jabref.org/getting-into-the-code/code-howtos#using-localization-correctly).
+You can also directly run the specific test in your IDE. The test "LocalizationConsistencyTest" is placed under `src/test/java/org.jabref.logic.l10n/LocalizationConsistencyTest.java`. Find more information in the [JabRef developer docs](code-howtos/localization.md).
 
 #### When adding a library
 
@@ -92,7 +92,7 @@ We simply ask to create a new markdown file in `docs/adr` following the template
 
 In case you want to directly add a comment to a class, simply use the following template (based on [sustainable architectural decisions](https://www.infoq.com/articles/sustainable-architectural-design-decisions)):
 
-```
+```text
 In the context of <use case/user story u>,
 facing <concern c>
 we decided for <option o>
@@ -112,11 +112,3 @@ If you want to indicate that a pull request is not yet complete **before** creat
 
 For improving developer's documentation, go on at the [docs/ subdirectory of JabRef's code](https://github.com/JabRef/jabref/tree/main/docs) and edit the file.
 GitHub offers a good guide at [Editing files in another user's repository](https://help.github.com/en/github/managing-files-in-a-repository/editing-files-in-another-users-repository).
-
-You can also host Jekyll locally.
-
-    docker run --rm -it \
-      --volume="$pwd:/srv/jekyll" \
-      jekyll/builder:latest /bin/bash -c "gem install && bundle exec jekyll build && bundle exec rake search:init && jekyll serve"
-
-Then, you can see a near-to-reality rendering of the development documentation at <http://localhost:4000>.

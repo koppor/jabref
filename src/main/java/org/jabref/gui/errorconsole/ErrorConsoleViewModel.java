@@ -14,10 +14,12 @@ import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.ClipBoardManager;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.desktop.JabRefDesktop;
+import org.jabref.gui.util.BindingsHelper;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.logging.LogMessages;
 import org.jabref.logic.util.BuildInfo;
 import org.jabref.logic.util.OS;
+import org.jabref.preferences.PreferencesService;
 
 import com.tobiasdiez.easybind.EasyBind;
 import org.apache.http.client.utils.URIBuilder;
@@ -25,18 +27,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ErrorConsoleViewModel extends AbstractViewModel {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorConsoleViewModel.class);
 
     private final DialogService dialogService;
+    private final PreferencesService preferencesService;
     private final ClipBoardManager clipBoardManager;
     private final BuildInfo buildInfo;
     private final ListProperty<LogEventViewModel> allMessagesData;
 
-    public ErrorConsoleViewModel(DialogService dialogService, ClipBoardManager clipBoardManager, BuildInfo buildInfo) {
+    public ErrorConsoleViewModel(DialogService dialogService, PreferencesService preferencesService, ClipBoardManager clipBoardManager, BuildInfo buildInfo) {
         this.dialogService = Objects.requireNonNull(dialogService);
+        this.preferencesService = Objects.requireNonNull(preferencesService);
         this.clipBoardManager = Objects.requireNonNull(clipBoardManager);
         this.buildInfo = Objects.requireNonNull(buildInfo);
-        ObservableList<LogEventViewModel> eventViewModels = EasyBind.map(LogMessages.getInstance().getMessages(), LogEventViewModel::new);
+        ObservableList<LogEventViewModel> eventViewModels = EasyBind.map(BindingsHelper.forUI(LogMessages.getInstance().getMessages()), LogEventViewModel::new);
         allMessagesData = new ReadOnlyListWrapper<>(eventViewModels);
     }
 
@@ -45,7 +50,7 @@ public class ErrorConsoleViewModel extends AbstractViewModel {
     }
 
     /**
-     * Concatenates the formatted message of the given {@link LogEvent}s by using the a new line separator.
+     * Concatenates the formatted message of the given {@link LogEventViewModel}s by using a new line separator.
      *
      * @return all messages as String
      */
@@ -63,7 +68,7 @@ public class ErrorConsoleViewModel extends AbstractViewModel {
     }
 
     /**
-     * Copies the given list of {@link LogEvent}s to the clipboard.
+     * Copies the given list of {@link LogEventViewModel}s to the clipboard.
      */
     public void copyLog(List<LogEventViewModel> messages) {
         if (messages.isEmpty()) {
@@ -108,7 +113,7 @@ public class ErrorConsoleViewModel extends AbstractViewModel {
                     .setScheme("https").setHost("github.com")
                     .setPath("/JabRef/jabref/issues/new")
                     .setParameter("body", issueBody);
-            JabRefDesktop.openBrowser(uriBuilder.build().toString());
+            JabRefDesktop.openBrowser(uriBuilder.build().toString(), preferencesService.getFilePreferences());
         } catch (IOException | URISyntaxException e) {
             LOGGER.error("Problem opening url", e);
         }

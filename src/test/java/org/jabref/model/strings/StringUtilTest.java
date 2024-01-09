@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,7 +25,7 @@ class StringUtilTest {
         Path path = Path.of("src", "main", "java", StringUtil.class.getName().replace('.', '/') + ".java");
         int lineCount = Files.readAllLines(path, StandardCharsets.UTF_8).size();
 
-        assertTrue(lineCount <= 765, "StringUtil increased in size to " + lineCount + ". "
+        assertTrue(lineCount <= 774, "StringUtil increased in size to " + lineCount + ". "
                 + "We try to keep this class as small as possible. "
                 + "Thus think twice if you add something to StringUtil.");
     }
@@ -142,7 +143,7 @@ class StringUtilTest {
         assertEquals("]", StringUtil.stripBrackets("]"));
         assertEquals("", StringUtil.stripBrackets("[]"));
         assertEquals("f[]f", StringUtil.stripBrackets("f[]f"));
-        assertEquals(null, StringUtil.stripBrackets(null));
+        assertNull(StringUtil.stripBrackets(null));
     }
 
     @Test

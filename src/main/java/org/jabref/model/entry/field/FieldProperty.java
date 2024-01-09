@@ -10,10 +10,12 @@ public enum FieldProperty {
     FILE_EDITOR,
     GENDER,
     ISBN,
+    ISSN,
     JOURNAL_NAME,
     LANGUAGE,
     MONTH,
     MULTIPLE_ENTRY_LINK,
+    MULTILINE_TEXT,
     NUMERIC,
     PAGES,
     PAGINATION,
@@ -21,5 +23,7 @@ public enum FieldProperty {
     PUBLICATION_STATE,
     SINGLE_ENTRY_LINK,
     TYPE,
-    VERBATIM, YES_NO
+    VERBATIM,
+    YES_NO,
+    COMMENT
 }

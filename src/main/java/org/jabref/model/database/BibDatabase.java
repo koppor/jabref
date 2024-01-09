@@ -80,12 +80,12 @@ public class BibDatabase {
     }
 
     /**
+     * Returns a text with references resolved according to an optionally given database.
+     *
      * @param toResolve maybenull The text to resolve.
      * @param database  maybenull The database to use for resolving the text.
      * @return The resolved text or the original text if either the text or the database are null
      * @deprecated use  {@link BibDatabase#resolveForStrings(String)}
-     * <p>
-     * Returns a text with references resolved according to an optionally given database.
      */
     @Deprecated
     public static String getText(String toResolve, BibDatabase database) {
@@ -112,10 +112,9 @@ public class BibDatabase {
     /**
      * Returns the list of entries sorted by the given comparator.
      */
-    public synchronized List<BibEntry> getEntriesSorted(Comparator<BibEntry> comparator) {
+    public List<BibEntry> getEntriesSorted(Comparator<BibEntry> comparator) {
         List<BibEntry> entriesSorted = new ArrayList<>(entries);
         entriesSorted.sort(comparator);
-
         return entriesSorted;
     }
 
@@ -149,12 +148,7 @@ public class BibDatabase {
      * Returns the entry with the given citation key.
      */
     public synchronized Optional<BibEntry> getEntryByCitationKey(String key) {
-        for (BibEntry entry : entries) {
-            if (key.equals(entry.getCitationKey().orElse(null))) {
-                return Optional.of(entry);
-            }
-        }
-        return Optional.empty();
+        return entries.stream().filter(entry -> Objects.equals(entry.getCitationKey().orElse(null), key)).findFirst();
     }
 
     /**
@@ -176,11 +170,6 @@ public class BibDatabase {
         return result;
     }
 
-    /**
-     * Inserts the entry.
-     *
-     * @param entry entry to insert
-     */
     public synchronized void insertEntry(BibEntry entry) {
         insertEntry(entry, EntriesEventSource.LOCAL);
     }
@@ -408,9 +397,9 @@ public class BibDatabase {
      * references.
      *
      * @param entriesToResolve A collection of BibtexEntries in which all strings of the form
-     *                #xxx# will be resolved against the hash map of string
-     *                references stored in the database.
-     * @param inPlace If inPlace is true then the given BibtexEntries will be modified, if false then copies of the BibtexEntries are made before resolving the strings.
+     *                         #xxx# will be resolved against the hash map of string
+     *                         references stored in the database.
+     * @param inPlace          If inPlace is true then the given BibtexEntries will be modified, if false then copies of the BibtexEntries are made before resolving the strings.
      * @return a list of bibtexentries, with all strings resolved. It is dependent on the value of inPlace whether copies are made or the given BibtexEntries are modified.
      */
     public List<BibEntry> resolveForStrings(Collection<BibEntry> entriesToResolve, boolean inPlace) {
@@ -554,7 +543,7 @@ public class BibDatabase {
     /**
      * Registers a listener object (subscriber) to the internal event bus.
      * The following events are posted:
-     *
+     * <p>
      * - {@link EntriesAddedEvent}
      * - {@link EntryChangedEvent}
      * - {@link EntriesRemovedEvent}
@@ -633,8 +622,6 @@ public class BibDatabase {
 
     /**
      * Set the newline separator.
-     *
-     * @param newLineSeparator
      */
     public void setNewLineSeparator(String newLineSeparator) {
         this.newLineSeparator = newLineSeparator;

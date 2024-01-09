@@ -1,9 +1,9 @@
 package org.jabref.gui;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
@@ -30,10 +30,11 @@ import org.jabref.logic.search.SearchQuery;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.groups.GroupTreeNode;
-import org.jabref.model.util.OptionalUtil;
 
 import com.tobiasdiez.easybind.EasyBind;
 import com.tobiasdiez.easybind.EasyBinding;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class manages the GUI-state of JabRef, including:
@@ -49,6 +50,7 @@ import com.tobiasdiez.easybind.EasyBinding;
  */
 public class StateManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(StateManager.class);
     private final CustomLocalDragboard localDragboard = new CustomLocalDragboard();
     private final ObservableList<BibDatabaseContext> openDatabases = FXCollections.observableArrayList();
     private final OptionalObjectProperty<BibDatabaseContext> activeDatabase = OptionalObjectProperty.empty();
@@ -58,7 +60,7 @@ public class StateManager {
     private final OptionalObjectProperty<SearchQuery> activeSearchQuery = OptionalObjectProperty.empty();
     private final ObservableMap<BibDatabaseContext, IntegerProperty> searchResultMap = FXCollections.observableHashMap();
     private final OptionalObjectProperty<Node> focusOwner = OptionalObjectProperty.empty();
-    private final ObservableList<Pair<BackgroundTask, Task<?>>> backgroundTasks = FXCollections.observableArrayList(task -> new Observable[] {task.getValue().progressProperty(), task.getValue().runningProperty()});
+    private final ObservableList<Pair<BackgroundTask<?>, Task<?>>> backgroundTasks = FXCollections.observableArrayList(task -> new Observable[]{task.getValue().progressProperty(), task.getValue().runningProperty()});
     private final EasyBinding<Boolean> anyTaskRunning = EasyBind.reduce(backgroundTasks, tasks -> tasks.map(Pair::getValue).anyMatch(Task::isRunning));
     private final EasyBinding<Boolean> anyTasksThatWillNotBeRecoveredRunning = EasyBind.reduce(backgroundTasks, tasks -> tasks.anyMatch(task -> !task.getKey().willBeRecoveredAutomatically() && task.getValue().isRunning()));
     private final EasyBinding<Double> tasksProgress = EasyBind.reduce(backgroundTasks, tasks -> tasks.map(Pair::getValue).filter(Task::isRunning).mapToDouble(Task::getProgress).average().orElse(1));
@@ -66,6 +68,8 @@ public class StateManager {
     private final ObservableList<SidePaneType> visibleSidePanes = FXCollections.observableArrayList();
 
     private final ObjectProperty<LastAutomaticFieldEditorEdit> lastAutomaticFieldEditorEdit = new SimpleObjectProperty<>();
+
+    private final ObservableList<String> searchHistory = FXCollections.observableArrayList();
 
     public StateManager() {
         activeGroups.bind(Bindings.valueAt(selectedGroups, activeDatabase.orElseOpt(null)));
@@ -129,9 +133,13 @@ public class StateManager {
         return activeDatabase.get();
     }
 
-    public List<BibEntry> getEntriesInCurrentDatabase() {
-        return OptionalUtil.flatMap(activeDatabase.get(), BibDatabaseContext::getEntries)
-                           .collect(Collectors.toList());
+    public void setActiveDatabase(BibDatabaseContext database) {
+        if (database == null) {
+            LOGGER.info("No open database detected");
+            activeDatabaseProperty().set(Optional.empty());
+        } else {
+            activeDatabaseProperty().set(Optional.of(database));
+        }
     }
 
     public void clearSearchQuery() {
@@ -154,7 +162,7 @@ public class StateManager {
         return EasyBind.map(backgroundTasks, Pair::getValue);
     }
 
-    public void addBackgroundTask(BackgroundTask backgroundTask, Task<?> task) {
+    public void addBackgroundTask(BackgroundTask<?> backgroundTask, Task<?> task) {
         this.backgroundTasks.add(0, new Pair<>(backgroundTask, task));
     }
 
@@ -188,5 +196,36 @@ public class StateManager {
 
     public void setLastAutomaticFieldEditorEdit(LastAutomaticFieldEditorEdit automaticFieldEditorEdit) {
         lastAutomaticFieldEditorEditProperty().set(automaticFieldEditorEdit);
+    }
+
+    public List<String> collectAllDatabasePaths() {
+        List<String> list = new ArrayList<>();
+        getOpenDatabases().stream()
+                          .map(BibDatabaseContext::getDatabasePath)
+                          .forEachOrdered(pathOptional -> pathOptional.ifPresentOrElse(
+                                  path -> list.add(path.toAbsolutePath().toString()),
+                                  () -> list.add("")));
+        return list;
+    }
+
+    public void addSearchHistory(String search) {
+        searchHistory.remove(search);
+        searchHistory.add(search);
+    }
+
+    public ObservableList<String> getWholeSearchHistory() {
+        return searchHistory;
+    }
+
+    public List<String> getLastSearchHistory(int size) {
+        int sizeSearches = searchHistory.size();
+        if (size < sizeSearches) {
+            return searchHistory.subList(sizeSearches - size, sizeSearches);
+        }
+        return searchHistory;
+    }
+
+    public void clearSearchHistory() {
+        searchHistory.clear();
     }
 }

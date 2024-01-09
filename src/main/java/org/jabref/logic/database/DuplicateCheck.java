@@ -123,7 +123,7 @@ public class DuplicateCheck {
         if (optionalFields.isEmpty()) {
             return req[0] >= DuplicateCheck.DUPLICATE_THRESHOLD;
         }
-        final double[] opt = DuplicateCheck.compareFieldSet(optionalFields.stream().map(BibField::getField).collect(Collectors.toSet()), one, two);
+        final double[] opt = DuplicateCheck.compareFieldSet(optionalFields.stream().map(BibField::field).collect(Collectors.toSet()), one, two);
         final double numerator = (DuplicateCheck.REQUIRED_WEIGHT * req[0] * req[1]) + (opt[0] * opt[1]);
         final double denominator = (req[1] * DuplicateCheck.REQUIRED_WEIGHT) + opt[1];
         final double totValue = numerator / denominator;
@@ -154,14 +154,14 @@ public class DuplicateCheck {
     }
 
     private static int compareSingleField(final Field field, final BibEntry one, final BibEntry two) {
-        final Optional<String> optionalStringOne = one.getField(field);
-        final Optional<String> optionalStringTwo = two.getField(field);
-        if (!optionalStringOne.isPresent()) {
-            if (!optionalStringTwo.isPresent()) {
+        final Optional<String> optionalStringOne = one.getFieldLatexFree(field);
+        final Optional<String> optionalStringTwo = two.getFieldLatexFree(field);
+        if (optionalStringOne.isEmpty()) {
+            if (optionalStringTwo.isEmpty()) {
                 return EMPTY_IN_BOTH;
             }
             return EMPTY_IN_ONE;
-        } else if (!optionalStringTwo.isPresent()) {
+        } else if (optionalStringTwo.isEmpty()) {
             return EMPTY_IN_TWO;
         }
 
@@ -171,11 +171,11 @@ public class DuplicateCheck {
 
         if (field.getProperties().contains(FieldProperty.PERSON_NAMES)) {
             return compareAuthorField(stringOne, stringTwo);
-        } else if (StandardField.PAGES.equals(field)) {
+        } else if (StandardField.PAGES == field) {
             return comparePagesField(stringOne, stringTwo);
-        } else if (StandardField.JOURNAL.equals(field)) {
+        } else if (StandardField.JOURNAL == field) {
             return compareJournalField(stringOne, stringTwo);
-        } else if (StandardField.CHAPTER.equals(field)) {
+        } else if (StandardField.CHAPTER == field) {
             return compareChapterField(stringOne, stringTwo);
         }
 
@@ -264,8 +264,8 @@ public class DuplicateCheck {
         if (stringOne.isEmpty() || stringTwo.isEmpty()) {
             return false;
         }
-        return (StringUtil.unifyLineBreaks(stringOne.get(), OS.NEWLINE).equals(
-                StringUtil.unifyLineBreaks(stringTwo.get(), OS.NEWLINE)));
+        return StringUtil.unifyLineBreaks(stringOne.get(), OS.NEWLINE).equals(
+                StringUtil.unifyLineBreaks(stringTwo.get(), OS.NEWLINE));
     }
 
     /**

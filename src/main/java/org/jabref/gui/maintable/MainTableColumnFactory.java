@@ -31,6 +31,7 @@ import org.jabref.gui.maintable.columns.LinkedIdentifierColumn;
 import org.jabref.gui.maintable.columns.MainTableColumn;
 import org.jabref.gui.maintable.columns.SpecialFieldColumn;
 import org.jabref.gui.specialfields.SpecialFieldValueViewModel;
+import org.jabref.gui.util.TaskExecutor;
 import org.jabref.gui.util.ValueTableCellFactory;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
@@ -39,7 +40,6 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.SpecialField;
 import org.jabref.model.groups.AbstractGroup;
-import org.jabref.model.util.OptionalUtil;
 import org.jabref.preferences.PreferencesService;
 
 import org.slf4j.Logger;
@@ -57,6 +57,7 @@ public class MainTableColumnFactory {
     private final CellFactory cellFactory;
     private final UndoManager undoManager;
     private final DialogService dialogService;
+    private final TaskExecutor taskExecutor;
     private final StateManager stateManager;
 
     public MainTableColumnFactory(BibDatabaseContext database,
@@ -64,60 +65,67 @@ public class MainTableColumnFactory {
                                   ColumnPreferences abstractColumnPrefs,
                                   UndoManager undoManager,
                                   DialogService dialogService,
-                                  StateManager stateManager) {
+                                  StateManager stateManager,
+                                  TaskExecutor taskExecutor) {
         this.database = Objects.requireNonNull(database);
         this.preferencesService = Objects.requireNonNull(preferencesService);
         this.columnPreferences = abstractColumnPrefs;
         this.dialogService = dialogService;
+        this.taskExecutor = taskExecutor;
         this.cellFactory = new CellFactory(preferencesService, undoManager);
         this.undoManager = undoManager;
         this.stateManager = stateManager;
+    }
+
+    public TableColumn<BibEntryTableViewModel, ?> createColumn(MainTableColumnModel column) {
+        TableColumn<BibEntryTableViewModel, ?> returnColumn = null;
+        switch (column.getType()) {
+            case INDEX:
+                returnColumn = createIndexColumn(column);
+                break;
+            case GROUPS:
+                returnColumn = createGroupColumn(column);
+                break;
+            case FILES:
+                returnColumn = createFilesColumn(column);
+                break;
+            case LINKED_IDENTIFIER:
+                returnColumn = createIdentifierColumn(column);
+                break;
+            case LIBRARY_NAME:
+                returnColumn = createLibraryColumn(column);
+                break;
+            case EXTRAFILE:
+                if (!column.getQualifier().isBlank()) {
+                    returnColumn = createExtraFileColumn(column);
+                }
+                break;
+            case SPECIALFIELD:
+                if (!column.getQualifier().isBlank()) {
+                    Field field = FieldFactory.parseField(column.getQualifier());
+                    if (field instanceof SpecialField) {
+                        returnColumn = createSpecialFieldColumn(column);
+                    } else {
+                        LOGGER.warn("Special field type '{}' is unknown. Using normal column type.", column.getQualifier());
+                        returnColumn = createFieldColumn(column);
+                    }
+                }
+                break;
+            default:
+            case NORMALFIELD:
+                if (!column.getQualifier().isBlank()) {
+                    returnColumn = createFieldColumn(column);
+                }
+                break;
+        }
+        return returnColumn;
     }
 
     public List<TableColumn<BibEntryTableViewModel, ?>> createColumns() {
         List<TableColumn<BibEntryTableViewModel, ?>> columns = new ArrayList<>();
 
         columnPreferences.getColumns().forEach(column -> {
-
-            switch (column.getType()) {
-                case INDEX:
-                    columns.add(createIndexColumn(column));
-                    break;
-                case GROUPS:
-                    columns.add(createGroupColumn(column));
-                    break;
-                case FILES:
-                    columns.add(createFilesColumn(column));
-                    break;
-                case LINKED_IDENTIFIER:
-                    columns.add(createIdentifierColumn(column));
-                    break;
-                case LIBRARY_NAME:
-                    columns.add(createLibraryColumn(column));
-                    break;
-                case EXTRAFILE:
-                    if (!column.getQualifier().isBlank()) {
-                        columns.add(createExtraFileColumn(column));
-                    }
-                    break;
-                case SPECIALFIELD:
-                    if (!column.getQualifier().isBlank()) {
-                        Field field = FieldFactory.parseField(column.getQualifier());
-                        if (field instanceof SpecialField) {
-                            columns.add(createSpecialFieldColumn(column));
-                        } else {
-                            LOGGER.warn("Special field type '{}' is unknown. Using normal column type.", column.getQualifier());
-                            columns.add(createFieldColumn(column));
-                        }
-                    }
-                    break;
-                default:
-                case NORMALFIELD:
-                    if (!column.getQualifier().isBlank()) {
-                        columns.add(createFieldColumn(column));
-                    }
-                    break;
-            }
+            columns.add(createColumn(column));
         });
 
         return columns;
@@ -170,8 +178,8 @@ public class MainTableColumnFactory {
 
     private Node createGroupColorRegion(BibEntryTableViewModel entry, List<AbstractGroup> matchedGroups) {
         List<Color> groupColors = matchedGroups.stream()
-                                               .flatMap(group -> OptionalUtil.toStream(group.getColor()))
-                                               .collect(Collectors.toList());
+                                               .flatMap(group -> group.getColor().stream())
+                                               .toList();
 
         if (!groupColors.isEmpty()) {
             HBox container = new HBox();
@@ -230,7 +238,8 @@ public class MainTableColumnFactory {
         return new FileColumn(columnModel,
                 database,
                 dialogService,
-                preferencesService);
+                preferencesService,
+                taskExecutor);
     }
 
     /**
@@ -241,7 +250,8 @@ public class MainTableColumnFactory {
                 database,
                 dialogService,
                 preferencesService,
-                columnModel.getQualifier());
+                columnModel.getQualifier(),
+                taskExecutor);
     }
 
     /**

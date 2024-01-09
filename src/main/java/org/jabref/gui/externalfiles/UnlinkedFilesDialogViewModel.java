@@ -35,7 +35,6 @@ import org.jabref.gui.util.DirectoryDialogConfiguration;
 import org.jabref.gui.util.FileDialogConfiguration;
 import org.jabref.gui.util.FileNodeViewModel;
 import org.jabref.gui.util.TaskExecutor;
-import org.jabref.logic.importer.ImportFormatReader;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.StandardFileType;
 import org.jabref.model.database.BibDatabaseContext;
@@ -85,8 +84,7 @@ public class UnlinkedFilesDialogViewModel {
                                         FileUpdateMonitor fileUpdateMonitor,
                                         PreferencesService preferences,
                                         StateManager stateManager,
-                                        TaskExecutor taskExecutor,
-                                        ImportFormatReader importFormatReader) {
+                                        TaskExecutor taskExecutor) {
         this.preferences = preferences;
         this.dialogService = dialogService;
         this.taskExecutor = taskExecutor;
@@ -98,11 +96,12 @@ public class UnlinkedFilesDialogViewModel {
                 undoManager,
                 stateManager,
                 dialogService,
-                importFormatReader);
+                taskExecutor);
 
         this.fileFilterList = FXCollections.observableArrayList(
                 new FileExtensionViewModel(StandardFileType.ANY_FILE, preferences.getFilePreferences()),
-                new FileExtensionViewModel(StandardFileType.BIBTEX_DB, preferences.getFilePreferences()),
+                new FileExtensionViewModel(StandardFileType.HTML, preferences.getFilePreferences()),
+                new FileExtensionViewModel(StandardFileType.MARKDOWN, preferences.getFilePreferences()),
                 new FileExtensionViewModel(StandardFileType.PDF, preferences.getFilePreferences()));
 
         this.dateFilterList = FXCollections.observableArrayList(DateRange.values());
@@ -174,7 +173,7 @@ public class UnlinkedFilesDialogViewModel {
         List<Path> fileList = checkedFileListProperty.stream()
                                                      .map(item -> item.getValue().getPath())
                                                      .filter(path -> path.toFile().isFile())
-                                                     .collect(Collectors.toList());
+                                                     .toList();
         if (fileList.isEmpty()) {
             LOGGER.warn("There are no valid files checked");
             return;

@@ -7,9 +7,9 @@ import java.net.Socket;
 import javafx.util.Pair;
 
 import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.remote.Protocol;
+import org.jabref.logic.remote.RemoteMessage;
 import org.jabref.logic.remote.RemotePreferences;
-import org.jabref.logic.remote.shared.Protocol;
-import org.jabref.logic.remote.shared.RemoteMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class RemoteClient {
             protocol.sendMessage(RemoteMessage.PING);
             Pair<RemoteMessage, Object> response = protocol.receiveMessage();
 
-            if (response.getKey() == RemoteMessage.PONG && Protocol.IDENTIFIER.equals(response.getValue())) {
+            if ((response.getKey() == RemoteMessage.PONG) && Protocol.IDENTIFIER.equals(response.getValue())) {
                 return true;
             } else {
                 String port = String.valueOf(this.port);
@@ -39,7 +39,7 @@ public class RemoteClient {
                 return false;
             }
         } catch (IOException e) {
-            LOGGER.debug("Could not ping server at port " + port, e);
+            LOGGER.debug("Could not ping server at port {}", port, e);
             return false;
         }
     }
@@ -56,7 +56,7 @@ public class RemoteClient {
             Pair<RemoteMessage, Object> response = protocol.receiveMessage();
             return response.getKey() == RemoteMessage.OK;
         } catch (IOException e) {
-            LOGGER.debug("Could not send args " + String.join(", ", args) + " to the server at port " + port, e);
+            LOGGER.debug("Could not send args {} to the server at port {}", String.join(", ", args), port, e);
             return false;
         }
     }

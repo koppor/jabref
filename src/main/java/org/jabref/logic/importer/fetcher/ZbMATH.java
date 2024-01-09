@@ -20,9 +20,9 @@ import org.jabref.logic.importer.fetcher.transformers.ZbMathQueryTransformer;
 import org.jabref.logic.importer.fileformat.BibtexParser;
 import org.jabref.model.entry.AuthorList;
 import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.AMSField;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
-import org.jabref.model.util.DummyFileUpdateMonitor;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -89,7 +89,7 @@ public class ZbMATH implements SearchBasedParserFetcher, IdBasedParserFetcher, E
             JSONArray result = response.getBody()
                                        .getObject()
                                        .getJSONArray("results");
-            if (result.length() > 0) {
+            if (!result.isEmpty()) {
                 zblid = result.getJSONObject(0)
                               .get("zbl_id")
                               .toString();
@@ -124,13 +124,13 @@ public class ZbMATH implements SearchBasedParserFetcher, IdBasedParserFetcher, E
 
     @Override
     public Parser getParser() {
-        return new BibtexParser(preferences, new DummyFileUpdateMonitor());
+        return new BibtexParser(preferences);
     }
 
     @Override
     public void doPostCleanup(BibEntry entry) {
         new MoveFieldCleanup(new UnknownField("msc2010"), StandardField.KEYWORDS).cleanup(entry);
-        new MoveFieldCleanup(new UnknownField("fjournal"), StandardField.JOURNAL).cleanup(entry);
+        new MoveFieldCleanup(AMSField.FJOURNAL, StandardField.JOURNAL).cleanup(entry);
         new FieldFormatterCleanup(StandardField.JOURNAL, new RemoveBracesFormatter()).cleanup(entry);
         new FieldFormatterCleanup(StandardField.TITLE, new RemoveBracesFormatter()).cleanup(entry);
     }

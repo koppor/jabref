@@ -17,13 +17,15 @@ By using JabRef as training object in exercises and labs, students can level-up 
 
 1. Choose task from the board [Candidates for university projects](https://github.com/orgs/JabRef/projects/3/views/3).
    There, new functionality is categorized in small, medium, and large effort.
-   Morevoer, categorization on the main focus (UI, logic, or both),
+   Moreover, categorization on the main focus (UI, logic, or both),
    implementation effort, testing effort, and "issue understanding effort".
-   The latter category is important, because some issues are "quick wins" and others need thorough thinking.   
+   The latter category is important, because some issues are "quick wins" and others need thorough thinking.
+
    In general, all issues of JabRef are free to take.
    Be aware that the difficulty of bugs and feature vary.
-   For the brave, the [Bug Board](https://github.com/JabRef/jabref/projects/5) or the [Feature Board](https://github.com/JabRef/jabref/projects/7) provide other issue sources.
+   For the brave, the [Bug Board](https://github.com/orgs/JabRef/projects/7) or the [Feature Board](https://github.com/JabRef/jabref/projects/6) provide other issue sources.
    Especially for Master students, these are excellent boards to find issues that train maintenance knowledge (which is essential for industry work).
+   Finally, there is a [collection of good first issues](https://github.com/orgs/JabRef/projects/5), if you search for something to start guiding you though a focused aspect of JabRef's code.
 2. Get in touch with the JabRef team to reserve issues for your student group and possibly to discuss details. We offer email, skype, [gitter.im](https://gitter.im/JabRef/jabref), discord. Get in touch with [@koppor](https://github.com/koppor/) to find the right channel and to start forming the success of your course.
 3. Schedule tasks with students
 4. Students implement code
@@ -31,7 +33,7 @@ By using JabRef as training object in exercises and labs, students can level-up 
 6. Students address review feedback
 7. Students submit pull request
 8. Code reviews by JabRef maintainers
-9. Students address feedback and learn more about good coding practices by incoporating feedback
+9. Students address feedback and learn more about good coding practices by incorporating feedback
 10. Students update their pull request
 11. Pull request is merged
 
@@ -47,19 +49,19 @@ There is no special process for student contributions. We want to discuss it nev
 
 The process for accepting contributions is as below. The syntax is [BPMN](https://en.wikipedia.org/wiki/Business\_Process\_Model\_and\_Notation) modeled using [bpmn.io](https://bpmn.io).
 
-[![process](<images/contribution-process-reviews.svg>)](https://github.com/JabRef/jabref/tree/ed275b62fe7dac57a086e43802e36deb93c63e31/docs/images/contribution-process-reviews.svg)
+[![process](images/contribution-process-reviews.svg)](https://raw.githubusercontent.com/JabRef/jabref/main/docs/images/contribution-process-reviews.svg)
 
 In short, the contribution is **reviewed by two JabRef developers**. Typically, they have constructive feedback on their contribution. This means, that the contributors get comments on their contribution enabling them to level-up their coding skill. Incorporating improvements takes time, too. The benefit is two-fold: a) contributors improve their coding skills and b) JabRef's code quality improves. All in all, we ask to respect the aims of the JabRef team and to reserve time to incorporate the reviewer's comments.
 
 GitHub describes that in their page [Understanding the GitHub flow](https://guides.github.com/introduction/flow/):
 
-[![GitHub flow](<images/github-flow.png>)](https://github.com/JabRef/jabref/tree/ed275b62fe7dac57a086e43802e36deb93c63e31/docs/images/github-flow.png)
+[![GitHub flow](images/github-flow.png)](https://raw.githubusercontent.com/JabRef/jabref/main/docs/images/github-flow.png)
 
 ## Process for Java newcomers
 
 Newcomers contributing in the context of a university teaching experience are invited to follow the process described above. In case the capacity of the instructing university allows, we propose a three-step approach. First, the contributors prepare their contribution as usual. Then, they submit the pull request _to a separate repository_. There, the instructor reviews the pull request and provides feedback. This happens in a loop until the instructor shows the green light. Then, the pull request can be submitted to the main JabRef repository. This will help to reduce the load on the JabRef team and improve the quality of the initial pull request.
 
-[![process with instructor](<images/contribution-process-reviews-with-instructor.svg>)](https://github.com/JabRef/jabref/tree/ed275b62fe7dac57a086e43802e36deb93c63e31/docs/images/contribution-process-reviews-with-instructor.svg)
+[![process with instructor](images/contribution-process-reviews-with-instructor.svg)](https://raw.githubusercontent.com/JabRef/jabref/main/docs/images/contribution-process-reviews-with-instructor.svg)
 
 ## Past courses
 
@@ -73,6 +75,15 @@ Course: Open Source Software Development
 
 * Summary: In this course, students will be introduced to the processes and tools specific to Open Source Software development, and they will analyze existing projects to understand the architecture and processes of these projects. Besides, students will attempt to contribute source code to a large existing Open Source Software project.
 * Course offered in 2018 and 2019. Examples of merged pull requests: [4217](https://github.com/JabRef/jabref/pull/4217), [4255](https://github.com/JabRef/jabref/pull/4255), [4227](https://github.com/JabRef/jabref/pull/4227), [4260](https://github.com/JabRef/jabref/pull/4260), [5150](https://github.com/JabRef/jabref/pull/5150)
+
+#### King's College London
+
+Course: BSc Computer Science Individual Project
+
+* Summary: Students experience the procedure of finding and fixing small and medium issues in an open source project.
+* Successfully run in 2022/2023
+
+Do you have additions/suggestions for improvement?
 
 #### Northern Arizona University (NAU), USA
 
@@ -88,7 +99,7 @@ Course [CS499 - Open Source Software Development](https://github.com/igorsteinma
 Course [10915-01: Software Engineering](https://dmi.unibas.ch/de/studium/computer-science-informatik/lehrangebot-hs18/vorlesung-software-engineering/)
 
 * Lecture Materials: [https://github.com/unibas-marcelluethi/software-engineering](https://github.com/unibas-marcelluethi/software-engineering)
-* Successfully run Q3 2019.
+* Successfully run 2019 to 2022.
 * Excercise touching JabRef:
   * General idea: identify a feature missing in JabRef and develop the specification, system design, and implementation of the feature.
   * Introduction to JabRef's code: [Exercise 5](https://github.com/unibas-marcelluethi/software-engineering/blob/master/docs/week5/exercises/practical-exercises.md): Introduction into JabRef code.
@@ -96,7 +107,7 @@ Course [10915-01: Software Engineering](https://dmi.unibas.ch/de/studium/compute
 
 #### University of Stuttgart, Germany
 
-Course "Softwarepraktikum" as part of the [BSc Informatik](https://www.f05.uni-stuttgart.de/informatik/interessierte/bachelor/informatik/)
+Course "Softwarepraktikum" as part of the [BSc Informatik](https://www.uni-stuttgart.de/studium/bachelor/informatik-b.sc./)
 
 * Summary: A group of three students experienced the full software engineering process within one semester. They worked part-time for the project.
 * Successfully run in 2012
@@ -117,7 +128,7 @@ Course "Programming and Software Development" as part of the [BSc Software Engin
 
 Course [DD2480 Software Engineering Fundamentals](https://www.kth.se/student/kurser/kurs/DD2480?l=en)
 
-* Summary: Groups of students from three to five persons experienced the whole software engineering process within a week: From the requirements specification to the final pull request.
+* Summary: Groups of students from three to five persons experienced the whole software engineering process within a week: From the requirements' specification to the final pull request.
 * Successfully run in 2020
 
 ### Portuguese
@@ -140,3 +151,5 @@ Course [Open Source Software](https://github.com/igorsteinmacher/DSL-UTFPR)
 ## References
 
 [1](teaching.md#a1): [@ayaankazerouni](https://github.com/ayaankazerouni): [Developing Procrastination Feedback for Student Software Developers](https://medium.com/@ayaankazerouni/developing-procrastination-feedback-for-student-software-developers-1652de60db7f) [2](teaching.md#a2): Lientz B., Swanson E., 1980: Software Maintenance Management. Addison Wesley, Reading, MA.
+
+<!-- markdownlint-disable-file MD012 -->

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jabref.gui.DialogService;
-import org.jabref.gui.desktop.JabRefDesktop;
 import org.jabref.gui.desktop.os.NativeDesktop;
 import org.jabref.gui.util.DirectoryDialogConfiguration;
 import org.jabref.logic.l10n.Localization;
@@ -14,7 +13,6 @@ import org.jabref.logic.openoffice.OpenOfficePreferences;
 import org.jabref.logic.util.OS;
 import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.strings.StringUtil;
-import org.jabref.preferences.PreferencesService;
 
 /**
  * Tools for automatically detecting OpenOffice or LibreOffice installations.
@@ -23,12 +21,10 @@ public class DetectOpenOfficeInstallation {
 
     private final OpenOfficePreferences openOfficePreferences;
     private final DialogService dialogService;
-    private final PreferencesService preferencesService;
 
-    public DetectOpenOfficeInstallation(PreferencesService preferencesService, DialogService dialogService) {
-        this.preferencesService = preferencesService;
+    public DetectOpenOfficeInstallation(OpenOfficePreferences openOfficePreferences, DialogService dialogService) {
         this.dialogService = dialogService;
-        this.openOfficePreferences = preferencesService.getOpenOfficePreferences();
+        this.openOfficePreferences = openOfficePreferences;
     }
 
     public boolean isExecutablePathDefined() {
@@ -36,7 +32,7 @@ public class DetectOpenOfficeInstallation {
     }
 
     public Optional<Path> selectInstallationPath() {
-        final NativeDesktop nativeDesktop = JabRefDesktop.getNativeDesktop();
+        final NativeDesktop nativeDesktop = OS.getNativeDesktop();
 
         dialogService.showInformationDialogAndWait(Localization.lang("Could not find OpenOffice/LibreOffice installation"),
                 Localization.lang("Unable to autodetect OpenOffice/LibreOffice installation. Please choose the installation directory manually."));
@@ -71,7 +67,6 @@ public class DetectOpenOfficeInstallation {
 
         if (execPath.isPresent()) {
             openOfficePreferences.setExecutablePath(execPath.get().toString());
-            preferencesService.setOpenOfficePreferences(openOfficePreferences);
             return true;
         }
 

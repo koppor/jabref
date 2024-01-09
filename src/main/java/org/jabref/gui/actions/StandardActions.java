@@ -1,5 +1,6 @@
 package org.jabref.gui.actions;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.jabref.gui.icon.IconTheme;
@@ -12,7 +13,7 @@ public enum StandardActions implements Action {
     COPY_MORE(Localization.lang("Copy") + "..."),
     COPY_TITLE(Localization.lang("Copy title"), KeyBinding.COPY_TITLE),
     COPY_KEY(Localization.lang("Copy citation key"), KeyBinding.COPY_CITATION_KEY),
-    COPY_CITE_KEY(Localization.lang("Copy \\cite{citation key}"), KeyBinding.COPY_CITE_CITATION_KEY),
+    COPY_CITE_KEY(Localization.lang("Copy citation key with configured cite command"), KeyBinding.COPY_CITE_CITATION_KEY),
     COPY_KEY_AND_TITLE(Localization.lang("Copy citation key and title"), KeyBinding.COPY_CITATION_KEY_AND_TITLE),
     COPY_KEY_AND_LINK(Localization.lang("Copy citation key and link"), KeyBinding.COPY_CITATION_KEY_AND_LINK),
     COPY_CITATION_HTML(Localization.lang("Copy citation (html)"), KeyBinding.COPY_PREVIEW),
@@ -25,13 +26,16 @@ public enum StandardActions implements Action {
     CUT(Localization.lang("Cut"), IconTheme.JabRefIcons.CUT, KeyBinding.CUT),
     DELETE(Localization.lang("Delete"), IconTheme.JabRefIcons.DELETE_ENTRY),
     DELETE_ENTRY(Localization.lang("Delete entry"), IconTheme.JabRefIcons.DELETE_ENTRY, KeyBinding.DELETE_ENTRY),
-    SEND_AS_EMAIL(Localization.lang("Send as email"), IconTheme.JabRefIcons.EMAIL),
+    SEND(Localization.lang("Send"), IconTheme.JabRefIcons.EMAIL),
+    SEND_AS_EMAIL(Localization.lang("As Email")),
+    SEND_TO_KINDLE(Localization.lang("To Kindle")),
     REBUILD_FULLTEXT_SEARCH_INDEX(Localization.lang("Rebuild fulltext search index"), IconTheme.JabRefIcons.FILE),
     OPEN_EXTERNAL_FILE(Localization.lang("Open file"), IconTheme.JabRefIcons.FILE, KeyBinding.OPEN_FILE),
     OPEN_URL(Localization.lang("Open URL or DOI"), IconTheme.JabRefIcons.WWW, KeyBinding.OPEN_URL_OR_DOI),
     SEARCH_SHORTSCIENCE(Localization.lang("Search ShortScience")),
     MERGE_WITH_FETCHED_ENTRY(Localization.lang("Get bibliographic data from %0", "DOI/ISBN/...")),
     ATTACH_FILE(Localization.lang("Attach file"), IconTheme.JabRefIcons.ATTACH_FILE),
+    ATTACH_FILE_FROM_URL(Localization.lang("Attach file from URL"), IconTheme.JabRefIcons.DOWNLOAD_FILE),
     PRIORITY(Localization.lang("Priority"), IconTheme.JabRefIcons.PRIORITY),
     CLEAR_PRIORITY(Localization.lang("Clear priority")),
     PRIORITY_HIGH(Localization.lang("Set priority to high"), IconTheme.JabRefIcons.PRIORITY_HIGH),
@@ -69,7 +73,7 @@ public enum StandardActions implements Action {
     EXPORT_SELECTED(Localization.lang("Export selected entries"), KeyBinding.EXPORT_SELECTED),
     CONNECT_TO_SHARED_DB(Localization.lang("Connect to shared database"), IconTheme.JabRefIcons.CONNECT_DB),
     PULL_CHANGES_FROM_SHARED_DB(Localization.lang("Pull changes from shared database"), KeyBinding.PULL_CHANGES_FROM_SHARED_DATABASE),
-    CLOSE_LIBRARY(Localization.lang("Close"), Localization.lang("Close the current library"), IconTheme.JabRefIcons.CLOSE, KeyBinding.CLOSE_DATABASE),
+    CLOSE_LIBRARY(Localization.lang("Close library"), Localization.lang("Close the current library"), IconTheme.JabRefIcons.CLOSE, KeyBinding.CLOSE_DATABASE),
     CLOSE_OTHER_LIBRARIES(Localization.lang("Close others"), Localization.lang("Close other libraries"), IconTheme.JabRefIcons.CLOSE),
     CLOSE_ALL_LIBRARIES(Localization.lang("Close all"), Localization.lang("Close all libraries"), IconTheme.JabRefIcons.CLOSE),
     QUIT(Localization.lang("Quit"), Localization.lang("Quit JabRef"), IconTheme.JabRefIcons.CLOSE_JABREF, KeyBinding.QUIT_JABREF),
@@ -81,7 +85,7 @@ public enum StandardActions implements Action {
 
     AUTOMATIC_FIELD_EDITOR(Localization.lang("Automatic field editor")),
     TOGGLE_GROUPS(Localization.lang("Groups"), IconTheme.JabRefIcons.TOGGLE_GROUPS, KeyBinding.TOGGLE_GROUPS_INTERFACE),
-    TOOGLE_OO(Localization.lang("OpenOffice/LibreOffice"), IconTheme.JabRefIcons.FILE_OPENOFFICE, KeyBinding.OPEN_OPEN_OFFICE_LIBRE_OFFICE_CONNECTION),
+    TOGGLE_OO(Localization.lang("OpenOffice/LibreOffice"), IconTheme.JabRefIcons.FILE_OPENOFFICE, KeyBinding.OPEN_OPEN_OFFICE_LIBRE_OFFICE_CONNECTION),
     TOGGLE_WEB_SEARCH(Localization.lang("Web search"), Localization.lang("Toggle web search interface"), IconTheme.JabRefIcons.WWW, KeyBinding.WEB_SEARCH),
 
     PARSE_LATEX(Localization.lang("Search for citations in LaTeX files..."), IconTheme.JabRefIcons.LATEX_CITATIONS),
@@ -100,9 +104,9 @@ public enum StandardActions implements Action {
     COPY_DOI(Localization.lang("Copy DOI")),
     COPY_DOI_URL(Localization.lang("Copy DOI url")),
     ABBREVIATE(Localization.lang("Abbreviate journal names")),
-    ABBREVIATE_DEFAULT("DEFAULT", Localization.lang("Abbreviate journal names of the selected entries (DEFAULT abbreviation)"), KeyBinding.ABBREVIATE),
-    ABBREVIATE_MEDLINE("MEDLINE", Localization.lang("Abbreviate journal names of the selected entries (MEDLINE abbreviation)")),
-    ABBREVIATE_SHORTEST_UNIQUE("SHORTEST UNIQUE", Localization.lang("Abbreviate journal names of the selected entries (SHORTEST UNIQUE abbreviation)")),
+    ABBREVIATE_DEFAULT(Localization.lang("default"), Localization.lang("Abbreviate journal names of the selected entries (DEFAULT abbreviation)"), KeyBinding.ABBREVIATE),
+    ABBREVIATE_DOTLESS(Localization.lang("dotless"), Localization.lang("Abbreviate journal names of the selected entries (DOTLESS abbreviation)")),
+    ABBREVIATE_SHORTEST_UNIQUE(Localization.lang("shortest unique"), Localization.lang("Abbreviate journal names of the selected entries (SHORTEST UNIQUE abbreviation)")),
     UNABBREVIATE(Localization.lang("Unabbreviate journal names"), Localization.lang("Unabbreviate journal names of the selected entries"), KeyBinding.UNABBREVIATE),
 
     MANAGE_CUSTOM_EXPORTS(Localization.lang("Manage custom exports")),
@@ -114,7 +118,6 @@ public enum StandardActions implements Action {
     SHOW_PREFS(Localization.lang("Preferences"), IconTheme.JabRefIcons.PREFERENCES),
     MANAGE_JOURNALS(Localization.lang("Manage journal abbreviations")),
     CUSTOMIZE_KEYBINDING(Localization.lang("Customize key bindings"), IconTheme.JabRefIcons.KEY_BINDINGS),
-    MANAGE_CONTENT_SELECTORS(Localization.lang("Manage content selectors"), IconTheme.JabRefIcons.SELECTORS),
 
     EDIT_ENTRY(Localization.lang("Open entry editor"), IconTheme.JabRefIcons.EDIT_ENTRY, KeyBinding.EDIT_ENTRY),
     SHOW_PDF_VIEWER(Localization.lang("Open document viewer"), IconTheme.JabRefIcons.PDF_FILE),
@@ -155,10 +158,12 @@ public enum StandardActions implements Action {
     DELETE_FILE(Localization.lang("Permanently delete local file"), IconTheme.JabRefIcons.DELETE_FILE, KeyBinding.DELETE_ENTRY),
 
     HELP(Localization.lang("Online help"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
+    HELP_GROUPS(Localization.lang("Open Help page"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
     HELP_KEY_PATTERNS(Localization.lang("Help on key patterns"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
     HELP_REGEX_SEARCH(Localization.lang("Help on regular expression search"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
     HELP_NAME_FORMATTER(Localization.lang("Help on Name Formatting"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
     HELP_SPECIAL_FIELDS(Localization.lang("Help on special fields"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
+    HELP_PUSH_TO_APPLICATION(Localization.lang("Help on external applications"), IconTheme.JabRefIcons.HELP, KeyBinding.HELP),
     WEB_MENU(Localization.lang("JabRef resources")),
     OPEN_WEBPAGE(Localization.lang("Website"), Localization.lang("Opens JabRef's website"), IconTheme.JabRefIcons.HOME),
     OPEN_FACEBOOK("Facebook", Localization.lang("Opens JabRef's Facebook page"), IconTheme.JabRefIcons.FACEBOOK),
@@ -176,9 +181,22 @@ public enum StandardActions implements Action {
     EDIT_LIST(Localization.lang("Edit"), IconTheme.JabRefIcons.EDIT),
     VIEW_LIST(Localization.lang("View"), IconTheme.JabRefIcons.FILE),
     REMOVE_LIST(Localization.lang("Remove"), IconTheme.JabRefIcons.REMOVE),
-    RELOAD_LIST(Localization.lang("Reload"), IconTheme.JabRefIcons.REFRESH);
+    RELOAD_LIST(Localization.lang("Reload"), IconTheme.JabRefIcons.REFRESH),
 
-    private final String text;
+    GROUP_REMOVE(Localization.lang("Remove group")),
+    GROUP_REMOVE_KEEP_SUBGROUPS(Localization.lang("Keep subgroups")),
+    GROUP_REMOVE_WITH_SUBGROUPS(Localization.lang("Also remove subgroups")),
+    GROUP_EDIT(Localization.lang("Edit group")),
+    GROUP_SUBGROUP_ADD(Localization.lang("Add subgroup")),
+    GROUP_SUBGROUP_REMOVE(Localization.lang("Remove subgroups")),
+    GROUP_SUBGROUP_SORT(Localization.lang("Sort subgroups A-Z")),
+    GROUP_SUBGROUP_SORT_REVERSE(Localization.lang("Sort subgroups Z-A")),
+    GROUP_SUBGROUP_SORT_ENTRIES(Localization.lang("Sort subgroups by # of entries (Descending)")),
+    GROUP_SUBGROUP_SORT_ENTRIES_REVERSE(Localization.lang("Sort subgroups by # of entries (Ascending)")),
+    GROUP_ENTRIES_ADD(Localization.lang("Add selected entries to this group")),
+    GROUP_ENTRIES_REMOVE(Localization.lang("Remove selected entries from this group"));
+
+    private String text;
     private final String description;
     private final Optional<JabRefIcon> icon;
     private final Optional<KeyBinding> keyBinding;
@@ -254,5 +272,10 @@ public enum StandardActions implements Action {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    public Action withText(String text) {
+        this.text = Objects.requireNonNull(text);
+        return this;
     }
 }

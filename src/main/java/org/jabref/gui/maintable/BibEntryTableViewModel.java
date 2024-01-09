@@ -61,12 +61,14 @@ public class BibEntryTableViewModel {
                 entry.getFieldBinding(StandardField.DOI),
                 entry.getFieldBinding(StandardField.URI),
                 entry.getFieldBinding(StandardField.EPRINT),
-                (url, doi, uri, eprint) -> {
+                entry.getFieldBinding(StandardField.ISBN),
+                (url, doi, uri, eprint, isbn) -> {
                     Map<Field, String> identifiers = new HashMap<>();
                     url.ifPresent(value -> identifiers.put(StandardField.URL, value));
                     doi.ifPresent(value -> identifiers.put(StandardField.DOI, value));
                     uri.ifPresent(value -> identifiers.put(StandardField.URI, value));
                     eprint.ifPresent(value -> identifiers.put(StandardField.EPRINT, value));
+                    isbn.ifPresent(value -> identifiers.put(StandardField.ISBN, value));
                     return identifiers;
                 });
     }
@@ -104,13 +106,24 @@ public class BibEntryTableViewModel {
 
     public ObservableValue<Optional<SpecialFieldValueViewModel>> getSpecialField(SpecialField field) {
         OptionalBinding<SpecialFieldValueViewModel> value = specialFieldValues.get(field);
+        // Fetch possibly updated value from BibEntry entry
+        Optional<String> currentValue = this.entry.getField(field);
         if (value != null) {
-            return value;
+            if (currentValue.isEmpty() && value.getValue().isEmpty()) {
+                var zeroValue = getField(field).flatMapOpt(fieldValue -> field.parseValue("CLEAR_RANK").map(SpecialFieldValueViewModel::new));
+                specialFieldValues.put(field, zeroValue);
+                return zeroValue;
+            } else if (value.getValue().isEmpty() || !value.getValue().get().getValue().getFieldValue().equals(currentValue)) {
+                // specialFieldValues value and BibEntry value differ => Set specialFieldValues value to BibEntry value
+                value = getField(field).flatMapOpt(fieldValue -> field.parseValue(fieldValue).map(SpecialFieldValueViewModel::new));
+                specialFieldValues.put(field, value);
+                return value;
+            }
         } else {
             value = getField(field).flatMapOpt(fieldValue -> field.parseValue(fieldValue).map(SpecialFieldValueViewModel::new));
             specialFieldValues.put(field, value);
-            return value;
         }
+        return value;
     }
 
     public ObservableValue<String> getFields(OrFields fields) {
