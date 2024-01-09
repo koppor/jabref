@@ -93,7 +93,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 21.0.1
-          distribution: 'adopt-openj9'
+          distribution: 'semeru'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
       - name: Prepare merged jars and modules dir (macOS)
