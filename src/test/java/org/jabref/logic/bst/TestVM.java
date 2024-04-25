@@ -38,6 +38,16 @@ public class TestVM {
     }
 
     @Test
+    public void testIeee() throws RecognitionException, IOException {
+        VM vm = new VM(new File("src/main/resources/bst/IEEEtran.bst"));
+        List<BibEntry> v = List.of(t1BibtexEntry());
+
+        String expected = "\\begin{thebibliography}{1}\\bibitem{canh05}K.~Crowston, H.~Annabi, J.~Howison, and C.~Masango.\\newblock Effective work practices for floss development: A model and  propositions.\\newblock In {\\em Hawaii International Conference On System Sciences (HICSS)}, 2005.\\end{thebibliography}";
+
+        assertEquals(expected.replaceAll("\\s", ""), vm.run(v).replaceAll("\\s", ""));
+    }
+
+    @Test
     public void testVMSimple() throws RecognitionException, IOException {
 
         VM vm = new VM("ENTRY  { " + "  address " + "  author " + "  title " + "  type "
