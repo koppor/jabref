@@ -500,6 +500,12 @@ javadoc {
     }
 }
 
+task generateDocs(type: Javadoc) {
+    group = 'documentation'
+    source = sourceSets.main.allJava
+    destinationDir = reporting.file("jabref-docs")
+}
+
 test {
     useJUnitPlatform {
         excludeTags 'DatabaseTest', 'FetcherTest', 'GUITest'
