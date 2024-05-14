@@ -29,6 +29,8 @@ plugins {
     id 'idea'
 
     id 'org.openrewrite.rewrite' version '6.12.0'
+
+   id 'org.cyclonedx.bom' version '1.8.2'
 }
 
 // Enable following for debugging
@@ -827,4 +829,17 @@ jmh {
     warmupIterations = 5
     iterations = 10
     fork = 2
+}
+
+cyclonedxBom {
+    includeConfigs = ["runtimeClasspath"]
+    skipConfigs = ["compileClasspath", "testCompileClasspath"]
+    projectType = "application"
+    schemaVersion = "1.5"
+    destination = file("build/reports")
+    outputName = "bom"
+    outputFormat = "json"
+    includeBomSerialNumber = false
+    includeLicenseText = false
+    componentVersion = "2.0.0"
 }
