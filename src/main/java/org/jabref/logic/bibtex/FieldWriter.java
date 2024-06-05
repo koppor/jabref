@@ -162,7 +162,7 @@ public class FieldWriter {
             }
         }
 
-        return formatter.format(stringBuilder, field);
+        return formatter.format(stringBuilder, field) + " ";
     }
 
     private boolean shouldResolveStrings(Field field) {
