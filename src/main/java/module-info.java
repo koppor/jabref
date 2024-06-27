@@ -142,6 +142,7 @@ open module org.jabref {
     uses org.eclipse.jgit.lib.GpgSigner;
 
     requires transitive org.jspecify;
+    requires org.checkerframework.checker.qual;
 
     // other libraries
     requires org.antlr.antlr4.runtime;
