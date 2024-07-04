@@ -98,11 +98,11 @@ application {
 modularity.disableEffectiveArgumentsAdjustment()
 
 // Required as workaround for  https://github.com/langchain4j/langchain4j/issues/1066
-modularity.patchModule("langchain4j", "langchain4j-core-0.31.0.jar")
-modularity.patchModule("langchain4j", "langchain4j-embeddings-0.31.0.jar")
-modularity.patchModule("langchain4j", "langchain4j-embeddings-all-minilm-l6-v2-0.31.0.jar")
-modularity.patchModule("langchain4j", "langchain4j-embeddings-all-minilm-l6-v2-q-0.31.0.jar")
-modularity.patchModule("langchain4j", "langchain4j-open-ai-0.31.0.jar")
+modularity.patchModule("langchain4j", "langchain4j-core-0.32.0.jar")
+modularity.patchModule("langchain4j", "langchain4j-embeddings-0.32.0.jar")
+modularity.patchModule("langchain4j", "langchain4j-embeddings-all-minilm-l6-v2-0.32.0.jar")
+modularity.patchModule("langchain4j", "langchain4j-embeddings-all-minilm-l6-v2-q-0.32.0.jar")
+modularity.patchModule("langchain4j", "langchain4j-open-ai-0.32.0.jar")
 
 sourceSets {
     main {
@@ -165,7 +165,7 @@ dependencies {
         exclude group: 'commons-logging'
     }
 
-    def luceneVersion = "9.11.0"
+    def luceneVersion = "9.11.1"
     implementation "org.apache.lucene:lucene-core:$luceneVersion"
     implementation "org.apache.lucene:lucene-queryparser:$luceneVersion"
     implementation "org.apache.lucene:lucene-queries:$luceneVersion"
@@ -232,7 +232,7 @@ dependencies {
         exclude group: 'org.openjfx'
     }
     implementation 'org.fxmisc.flowless:flowless:0.7.3'
-    implementation 'org.fxmisc.richtext:richtextfx:0.11.2'
+    implementation 'org.fxmisc.richtext:richtextfx:0.11.3'
     implementation (group: 'com.dlsc.gemsfx', name: 'gemsfx', version: '2.32.0') {
         exclude module: 'javax.inject' // Split package, use only jakarta.inject
         exclude module: 'commons-lang3'
@@ -321,10 +321,10 @@ dependencies {
     implementation 'org.yaml:snakeyaml:2.2'
 
     // AI
-    implementation 'dev.langchain4j:langchain4j:0.31.0'
-    implementation 'dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2:0.31.0'
-    implementation 'dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2-q:0.31.0'
-    implementation('dev.langchain4j:langchain4j-open-ai:0.31.0') {
+    implementation 'dev.langchain4j:langchain4j:0.32.0'
+    implementation 'dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2:0.32.0'
+    implementation 'dev.langchain4j:langchain4j-embeddings-all-minilm-l6-v2-q:0.32.0'
+    implementation('dev.langchain4j:langchain4j-open-ai:0.32.0') {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
     }
     // openai depends on okhttp, which needs kotlin - see https://github.com/square/okhttp/issues/5299 for details
@@ -340,8 +340,8 @@ dependencies {
     implementation 'commons-io:commons-io:2.16.1'
 
     testImplementation 'io.github.classgraph:classgraph:4.8.174'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
-    testImplementation 'org.junit.platform:junit-platform-launcher:1.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
+    testImplementation 'org.junit.platform:junit-platform-launcher:1.10.3'
 
     testImplementation 'org.mockito:mockito-core:5.12.0'
     testImplementation 'org.xmlunit:xmlunit-core:2.10.0'
