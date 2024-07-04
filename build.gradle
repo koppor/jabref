@@ -10,7 +10,7 @@ plugins {
 
     id 'me.champeau.jmh' version '0.7.2'
 
-    id 'org.javamodularity.moduleplugin' version '1.8.15'
+    id 'org.javamodularity.moduleplugin' version '1.8.16-SNAPSHOT'
 
     id 'org.openjfx.javafxplugin' version '0.1.0'
 
