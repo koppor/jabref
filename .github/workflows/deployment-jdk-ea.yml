@@ -36,7 +36,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest, buildjet-4vcpu-ubuntu-2204-arm]
-        jdk: [22]
+        jdk: [23] # must match the Valhalla version presented at https://jdk.java.net/valhalla/
         javafx: [23]
         include:
           - os: ubuntu-latest
@@ -92,11 +92,11 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3.0.0
 
       # JDK
-      - name: 'Set up JDK ${{ matrix.jdk }}'
-        uses: actions/setup-java@v4
+      - name: 'Set up jdk.java.net valhalla'
+        uses: oracle-actions/setup-java@v1
         with:
-          java-version: ${{ matrix.jdk }}
-          distribution: 'temurin'
+          website: jdk.java.net
+          release: valhalla # or loom, panama, ...
       - name: 'Set JDK${{ matrix.jdk }} env var'
         shell: bash
         run: echo "JDK${{ matrix.jdk }}=$JAVA_HOME" >> $GITHUB_ENV
@@ -185,7 +185,7 @@ jobs:
           sed -i "/javafx {/{n;s#version = \".*\"#version = \"${JAVAFX}\"#}" build.gradle && cat build.gradle
 
       # Gradle
-      - name: Set up JDK
+      - name: Set up JDK (for Gradle)
         uses: actions/setup-java@v4
         with:
           java-version: 21
