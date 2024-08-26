@@ -55,8 +55,7 @@ public class PdfIndexer {
 
     private final FilePreferences filePreferences;
 
-    @Nullable
-    private final Directory indexDirectory;
+    private final @Nullable Directory indexDirectory;
 
     private IndexReader reader;
 

@@ -25,6 +25,9 @@ plugins {
 
     id 'checkstyle'
 
+    // Homepage: https://github.com/kelloggm/checkerframework-gradle-plugin
+    id 'org.checkerframework' version '0.6.40'
+
     id 'project-report'
 
     id 'idea'
@@ -38,6 +41,8 @@ plugins {
 apply plugin: XjcPlugin
 
 apply from: 'eclipse.gradle'
+
+apply plugin: 'org.checkerframework'
 
 group = "org.jabref"
 version = project.findProperty('projVersion') ?: '100.0.0'
@@ -368,6 +373,11 @@ dependencies {
     rewrite("org.openrewrite.recipe:rewrite-testing-frameworks")
     rewrite("org.openrewrite.recipe:rewrite-migrate-java")
 
+    // checker framework
+    compileOnly 'org.checkerframework:checker-qual:3.44.0'
+    testCompileOnly 'org.checkerframework:checker-qual:3.44.0'
+    checkerFramework 'org.checkerframework:checker:3.44.0'
+
     configurations.checkstyle {
         resolutionStrategy.capabilitiesResolution.withCapability("com.google.collections:google-collections") {
             select("com.google.guava:guava:0")
@@ -669,6 +679,13 @@ jacocoTestReport {
 checkstyle {
     // will only run when called explicitly from the command line
     sourceSets = []
+}
+
+checkerFramework {
+    checkers = [
+        'org.checkerframework.checker.nullness.NullnessChecker'
+    ]
+    excludeTests = true
 }
 
 rewrite {
