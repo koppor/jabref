@@ -90,10 +90,11 @@ open module org.jabref {
     requires org.glassfish.hk2.api;
 
     // region: http clients
-    requires unirest.java.core;
-    requires unirest.modules.gson;
+    requires htmlunit;
     requires org.apache.httpcomponents.core5.httpcore5;
     requires org.jsoup;
+    requires unirest.java.core;
+    requires unirest.modules.gson;
     // endregion
 
     // region: SQL databases

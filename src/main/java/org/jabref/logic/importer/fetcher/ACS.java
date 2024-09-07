@@ -10,6 +10,9 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.identifier.DOI;
 
+import org.htmlunit.BrowserVersion;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,34 +28,37 @@ public class ACS implements FulltextFetcher {
     private static final String SOURCE = "https://pubs.acs.org/doi/abs/%s";
 
     /**
-     * Tries to find a fulltext URL for a given BibTex entry.
-     * <p>
-     * Currently only uses the DOI if found.
-     *
-     * @param entry The Bibtex entry
-     * @return The fulltext PDF URL Optional, if found, or an empty Optional if not found.
-     * @throws NullPointerException if no BibTex entry is given
-     * @throws java.io.IOException
+     * Tries to find a fulltext URL for a given BibTeX entry.
+     * Requires the entry to have a DOI field.
+     * In case no DOI is present, an empty Optional is returned.
      */
     @Override
     public Optional<URL> findFullText(BibEntry entry) throws IOException {
         Objects.requireNonNull(entry);
-
-        // DOI search
         Optional<DOI> doi = entry.getField(StandardField.DOI).flatMap(DOI::parse);
-
         if (!doi.isPresent()) {
             return Optional.empty();
         }
 
         String source = SOURCE.formatted(doi.get().getDOI());
-        // Retrieve PDF link
-        Document html = Jsoup.connect(source).ignoreHttpErrors(true).get();
-        Element link = html.select("a.button_primary").first();
 
-        if (link != null) {
-            LOGGER.info("Fulltext PDF found @ ACS.");
-            return Optional.of(new URL(source.replaceFirst("/abs/", "/pdf/")));
+        try (final WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
+            webClient.getOptions().setSSLClientProtocols("TLSv1.3", "TLSv1.2");
+            // inspired by https://www.innoq.com/en/blog/2016/01/webscraping/
+            webClient.getCookieManager().setCookiesEnabled(true);
+            webClient.getOptions().setJavaScriptEnabled(true);
+            webClient.getOptions().setTimeout(10_000);
+            webClient.waitForBackgroundJavaScript(5000);
+            webClient.getOptions().setThrowExceptionOnScriptError(false);
+            webClient.getOptions().setPrintContentOnFailingStatusCode(true);
+
+            HtmlPage page = webClient.getPage(source);
+            boolean pdfButtonExists = page.querySelectorAll("a[title=\"PDF\"].article__btn__secondary").isEmpty();
+            if (pdfButtonExists) {
+                LOGGER.info("Fulltext PDF found at ACS.");
+                // We "guess" the URL instead of parsing the HTML for the actual link
+                return Optional.of(new URL(source.replaceFirst("/abs/", "/pdf/")));
+            }
         }
         return Optional.empty();
     }
