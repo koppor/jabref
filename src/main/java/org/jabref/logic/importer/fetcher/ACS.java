@@ -10,17 +10,21 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.identifier.DOI;
 
-import org.htmlunit.BrowserVersion;
-import org.htmlunit.WebClient;
-import org.htmlunit.html.HtmlPage;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import me.friwi.jcefmaven.CefAppBuilder;
+import me.friwi.jcefmaven.MavenCefAppHandlerAdapter;
+import org.cef.CefApp;
+import org.cef.CefClient;
+import org.cef.CefSettings;
+import org.cef.browser.CefBrowser;
+import org.cef.browser.CefFrame;
+import org.cef.callback.CefStringVisitor;
+import org.cef.handler.CefDisplayHandlerAdapter;
+import org.cef.handler.CefLoadHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * FulltextFetcher implementation that attempts to find a PDF URL at ACS.
+ * FulltextFetcher implementation that attempts to find a PDF URL at <a href="https://pubs.acs.org/">ACS</a>.
  */
 public class ACS implements FulltextFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(ACS.class);
@@ -42,24 +46,51 @@ public class ACS implements FulltextFetcher {
 
         String source = SOURCE.formatted(doi.get().getDOI());
 
-        try (final WebClient webClient = new WebClient(BrowserVersion.CHROME)) {
-            webClient.getOptions().setSSLClientProtocols("TLSv1.3", "TLSv1.2");
-            // inspired by https://www.innoq.com/en/blog/2016/01/webscraping/
-            webClient.getCookieManager().setCookiesEnabled(true);
-            webClient.getOptions().setJavaScriptEnabled(true);
-            webClient.getOptions().setTimeout(10_000);
-            webClient.waitForBackgroundJavaScript(5000);
-            webClient.getOptions().setThrowExceptionOnScriptError(false);
-            webClient.getOptions().setPrintContentOnFailingStatusCode(true);
-
-            HtmlPage page = webClient.getPage(source);
-            boolean pdfButtonExists = page.querySelectorAll("a[title=\"PDF\"].article__btn__secondary").isEmpty();
-            if (pdfButtonExists) {
-                LOGGER.info("Fulltext PDF found at ACS.");
-                // We "guess" the URL instead of parsing the HTML for the actual link
-                return Optional.of(new URL(source.replaceFirst("/abs/", "/pdf/")));
-            }
+        CefAppBuilder builder = new CefAppBuilder();
+        builder.setAppHandler(new MavenCefAppHandlerAdapter(){});
+        CefApp cefApp;
+        try {
+            cefApp = builder.build();
+        } catch (Exception e) {
+            LOGGER.error("Could not initialize CEF", e);
+            throw new IOException(e);
         }
+
+        CefClient client = cefApp.createClient();
+        CefBrowser browser = client.createBrowser(source, false, false);
+
+        client.addLoadHandler(new CefLoadHandlerAdapter() {
+            @Override
+            public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
+                System.out.println("lalala");
+                if (frame.isMain()) {
+                    frame.executeJavaScript(
+                            "document.documentElement.outerHTML;",
+                            frame.getURL(),
+                            0
+                    );
+                }
+            }
+        });
+
+        client.addDisplayHandler(new CefDisplayHandlerAdapter() {
+            @Override
+            public boolean onConsoleMessage(CefBrowser browser, CefSettings.LogSeverity level, String message, String source, int line) {
+                // Capture the result of the JavaScript execution in the console message
+                System.out.println("Page HTML content:\n" + message);
+                return true;
+            }
+        });
+
+        browser.loadURL(source);
+
+        try {
+            Thread.sleep(5000);
+        } catch (
+                InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         return Optional.empty();
     }
 

@@ -3,7 +3,10 @@ src/main/gen/
 src/main/generated/
 src-gen/
 
+
 .lycheecache
+
+jcef-bundle/
 
 javafx/javafx-sdk-*
 javafx/javafx-jmods-*
