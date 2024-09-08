@@ -77,11 +77,6 @@ application {
         '--add-exports=javafx.base/com.sun.javafx.event=org.jabref.merged.module',
         '--add-exports=javafx.controls/com.sun.javafx.scene.control=org.jabref.merged.module',
 
-        // Required by https://github.com/jcefmaven/jcefmaven?tab=readme-ov-file#limitations
-        '--add-exports=java.base/java.lang=org.jabref.merged.module',
-        '--add-exports=java.desktop/sun.awt=org.jabref.merged.module',
-        '--add-exports=java.desktop/sun.java2d=org.jabref.merged.module',
-
         // Fix for https://github.com/JabRef/jabref/issues/11198
         '--add-opens=javafx.graphics/javafx.scene=org.jabref.merged.module',
         '--add-opens=javafx.controls/javafx.scene.control=org.jabref.merged.module',
@@ -261,7 +256,7 @@ dependencies {
     implementation 'org.controlsfx:controlsfx:11.2.1'
 
     // region HTTP clients
-    implementation 'me.friwi:jcefmaven:126.2.0' // used for web scraping; https://github.com/jcefmaven/jcefmaven
+    implementation 'com.machinepublishers:jbrowserdriver:1.1.1' // used for web scraping; https://github.com/jcefmaven/jcefmaven
     implementation 'org.jsoup:jsoup:1.18.1'
     implementation 'com.konghq:unirest-java-core:4.4.4'
     implementation 'com.konghq:unirest-modules-gson:4.4.4'

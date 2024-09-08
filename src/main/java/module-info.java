@@ -90,7 +90,10 @@ open module org.jabref {
     requires org.glassfish.hk2.api;
 
     // region: http clients
-    requires jcefmaven;
+    requires transitive jbrowserdriver;
+    requires org.openqa.selenium.core;
+    requires org.openqa.grid.selenium;
+    requires org.openqa.selenium.remote;
     requires org.apache.httpcomponents.core5.httpcore5;
     requires org.jsoup;
     requires unirest.java.core;
@@ -184,6 +187,5 @@ open module org.jabref {
     requires mslinks;
     requires org.antlr.antlr4.runtime;
     requires org.libreoffice.uno;
-    requires jcef;
     // endregion
 }
