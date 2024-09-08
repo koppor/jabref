@@ -1,11 +1,13 @@
 package org.jabref.logic.importer.fetcher;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+
+import javax.swing.SwingUtilities;
 
 import org.jabref.logic.importer.FulltextFetcher;
 import org.jabref.model.entry.BibEntry;
@@ -13,12 +15,13 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.identifier.DOI;
 
 import me.friwi.jcefmaven.CefAppBuilder;
+import me.friwi.jcefmaven.MavenCefAppHandlerAdapter;
 import org.cef.CefApp;
 import org.cef.CefClient;
 import org.cef.CefSettings;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
-import org.cef.handler.CefAppHandlerAdapter;
+import org.cef.browser.CefMessageRouter;
 import org.cef.handler.CefDisplayHandlerAdapter;
 import org.cef.handler.CefLoadHandlerAdapter;
 import org.cef.network.CefRequest;
@@ -51,10 +54,44 @@ public class ACS implements FulltextFetcher {
 
         String source = SOURCE.formatted(doi.get().getDOI());
 
+        CompletableFuture<Void> result = new CompletableFuture<>();
+
+        System.out.println(Thread.currentThread().getName());
+            try {
+                SwingUtilities.invokeAndWait(() -> {
+                    try {
+                        startBrowser(result);
+                    } catch (
+                            IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            } catch (
+                    InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (
+                    InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+
+        try {
+            Thread.sleep(10000);
+        } catch (
+                InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return Optional.empty();
+    }
+
+    private static void startBrowser(CompletableFuture<Void> result) throws IOException {
         CefAppBuilder builder = new CefAppBuilder();
-        CefApp.addAppHandler(new CefAppHandlerAdapter(null) {
+
+        // Set an app handler. Do not use CefApp.addAppHandler(...), it will break your code on MacOSX!
+        builder.setAppHandler(new MavenCefAppHandlerAdapter() {
             @Override
-            public void stateHasChanged(org.cef.CefApp.CefAppState state) {
+            public void stateHasChanged(CefApp.CefAppState state) {
+                System.out.println(state);
                 // Shutdown the app if the native CEF part is terminated
                 if (state == CefApp.CefAppState.TERMINATED) {
                      // calling System.exit(0) appears to be causing assert errors,
@@ -64,7 +101,7 @@ public class ACS implements FulltextFetcher {
             }
         });
 
-        builder.getCefSettings().windowless_rendering_enabled = false;
+        // builder.getCefSettings().windowless_rendering_enabled = true;
 
         CefApp cefApp;
         try {
@@ -74,26 +111,39 @@ public class ACS implements FulltextFetcher {
             throw new IOException(e);
         }
 
-        CefClient client = cefApp.createClient();
-        CefBrowser browser = client.createBrowser("about:blank", false, false);
+        /*
+        new Thread(() -> {
+            while (true) {
+                try {
+                    cefApp.doMessageLoopWork(100);
+                    Thread.sleep(10); // Sleep for 10ms between calls
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        */
 
-        CompletableFuture<Void> result = new CompletableFuture<>();
+        CefClient client = cefApp.createClient();
+        CefMessageRouter msgRouter = CefMessageRouter.create();
+        client.addMessageRouter(msgRouter);
+
+        CefBrowser browser = client.createBrowser("ftps://lalala.notfound", true, false);
+        // (3) Create a simple message router to receive messages from CEF.
+
         client.addLoadHandler(new CefLoadHandlerAdapter() {
             @Override
             public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
-                super.onLoadingStateChange(browser, isLoading, canGoBack, canGoForward);
                 System.out.println("Loading state changed is loading " + isLoading);
             }
 
             @Override
             public void onLoadStart(CefBrowser browser, CefFrame frame, CefRequest.TransitionType transitionType) {
-                super.onLoadStart(browser, frame, transitionType);
                 System.out.println("Load start");
             }
 
             @Override
             public void onLoadError(CefBrowser browser, CefFrame frame, ErrorCode errorCode, String errorText, String failedUrl) {
-                super.onLoadError(browser, frame, errorCode, errorText, failedUrl);
                 System.out.println("Load error");
             }
 
@@ -120,22 +170,12 @@ public class ACS implements FulltextFetcher {
             }
         });
 
+        // cefApp.doMessageLoopWork();
+
         // browser.loadURL(source);
-        browser.loadURL("https://www.jabref.org");
+        browser.loadURL("ftps://lalala.notfound");
 
-        cefApp.doMessageLoopWork(1000);
-
-        try {
-            result.get();
-        } catch (
-                InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (
-                ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-
-        return Optional.empty();
+        // cefApp.doMessageLoopWork(1000);
     }
 
     @Override
