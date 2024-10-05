@@ -585,8 +585,10 @@ public class GroupTreeViewModel extends AbstractViewModel {
 
         group.getGroupNode().addEntriesToGroup(stateManager.getSelectedEntries());
 
+        String message = Localization.lang("change assignment of entries");
+
         // TODO: Add undo
-        // NamedCompound undoAll = new NamedCompound(Localization.lang("change assignment of entries"));
+        // NamedCompound undoAll = new NamedCompound(message);
         // if (!undoAdd.isEmpty()) { undo.addEdit(UndoableChangeEntriesOfGroup.getUndoableEdit(node, undoAdd)); }
         // panel.getUndoManager().addEdit(undoAll);
 
