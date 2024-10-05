@@ -12,9 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21.0.2
+          distribution: 'temurin'
       - uses: axel-op/googlejavaformat-action@v3
         with:
-          args: "--skip-sorting-imports --replace --aosp"
+          args: "--skip-reflowing-long-strings --replace --aosp"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
