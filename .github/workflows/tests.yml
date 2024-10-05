@@ -43,6 +43,9 @@ jobs:
         with:
           args: "-r -a --skip-reflowing-long-strings --skip-javadoc-formatting --set-exit-if-changed"
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run git diff on failure
+        if: failure()
+        run: git diff
       - name: Run checkstyle reporter
         uses: dbelyaev/action-checkstyle@master
         with:
