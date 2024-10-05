@@ -30,6 +30,24 @@ Change "Code style" to "Android Open Source Project (AOSP) style".
 ![Enable GJF AOSP](guidelines-intellij-gfm-aosp.png)
 {% endfigure %}
 
+The google-java-format plugin uses some internal classes that are not available
+without extra configuration. To use the plugin, you need to
+[add some options to your IDE's Java runtime](https://www.jetbrains.com/help/idea/tuning-the-ide.html#procedure-jvm-options).
+To do that, go to `Help→Edit Custom VM Options...` and paste in these lines:
+
+```
+--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
+```
+
+Once you have done that, restart the IDE.
+
+(This howto is based on the [google-java-format plugin documentation](https://github.com/google/google-java-format/blob/master/README.md#intellij-jre-config).)
+
 ## Checkstyle
 
 ## Install checkstyle plugin
