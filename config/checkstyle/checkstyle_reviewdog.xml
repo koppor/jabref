@@ -107,22 +107,20 @@
 
         <module name="NeedBraces"/>
 
+        <!-- not working, therefore disabled
         <module name="EmptyBlock">
             <property name="option" value="text"/>
         </module>
+        -->
 
         <!-- Disallows empty catch blocks (not even having a comment): https://checkstyle.sourceforge.io/config_blocks.html#EmptyCatchBlock -->
         <module name="EmptyCatchBlock"/>
 
         <!--
-            following rule enforces that there are no one line statements such as
-
-              public String getTabName() { return Localization.lang("XMP metadata"); }
-
-        -->
+          following are enforced by the formatter
         <module name="LeftCurly"/>
-
         <module name="RightCurly"/>
+        -->
 
         <!-- coding - https://checkstyle.sourceforge.io/config_coding.html -->
 
