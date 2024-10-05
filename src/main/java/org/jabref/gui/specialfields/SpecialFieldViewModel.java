@@ -3,33 +3,34 @@ package org.jabref.gui.specialfields;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.swing.undo.UndoManager;
 
 import org.jabref.gui.DialogService;
-import org.jabref.gui.JabRefFrame;
+import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.Action;
 import org.jabref.gui.actions.StandardActions;
 import org.jabref.gui.icon.JabRefIcon;
 import org.jabref.gui.undo.UndoableFieldChange;
+import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.logic.util.UpdateField;
 import org.jabref.model.FieldChange;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.SpecialField;
 import org.jabref.model.entry.field.SpecialFieldValue;
-import org.jabref.preferences.PreferencesService;
 
 public class SpecialFieldViewModel {
 
     private final SpecialField field;
-    private final PreferencesService preferencesService;
+    private final CliPreferences preferences;
     private final UndoManager undoManager;
 
-    public SpecialFieldViewModel(SpecialField field, PreferencesService preferencesService, UndoManager undoManager) {
+    public SpecialFieldViewModel(SpecialField field, CliPreferences preferences, UndoManager undoManager) {
         this.field = Objects.requireNonNull(field);
-        this.preferencesService = Objects.requireNonNull(preferencesService);
+        this.preferences = Objects.requireNonNull(preferences);
         this.undoManager = Objects.requireNonNull(undoManager);
     }
 
@@ -38,24 +39,24 @@ public class SpecialFieldViewModel {
     }
 
     public SpecialFieldAction getSpecialFieldAction(SpecialFieldValue value,
-                                                    JabRefFrame frame,
+                                                    Supplier<LibraryTab> tabSupplier,
                                                     DialogService dialogService,
                                                     StateManager stateManager) {
         return new SpecialFieldAction(
-                frame,
+                tabSupplier,
                 field,
                 value.getFieldValue().orElse(null),
                 // if field contains only one value, it has to be nulled, as another setting does not empty the field
                 field.getValues().size() == 1,
                 getLocalization(),
                 dialogService,
-                preferencesService,
+                preferences,
                 undoManager,
                 stateManager);
     }
 
     public JabRefIcon getIcon() {
-        return getAction().getIcon().orElse(null);
+        return getAction().getIcon().get();
     }
 
     public String getLocalization() {
@@ -90,6 +91,6 @@ public class SpecialFieldViewModel {
     }
 
     public void toggle(BibEntry entry) {
-        setSpecialFieldValue(entry, getField().getValues().get(0));
+        setSpecialFieldValue(entry, getField().getValues().getFirst());
     }
 }

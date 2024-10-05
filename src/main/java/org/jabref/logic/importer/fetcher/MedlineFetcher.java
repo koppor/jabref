@@ -35,7 +35,7 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
 
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Fetch or search from PubMed <a href="http://www.ncbi.nlm.nih.gov/sites/entrez/">www.ncbi.nlm.nih.gov</a>
  * The MedlineFetcher fetches the entries from the PubMed database.
- * See <a href="https://docs.jabref.org/import-export/medlineris">docs.jabref.org</a> for a detailed documentation of the available fields.
+ * See <a href="https://docs.jabref.org/collect/import-using-online-bibliographic-database#medline-pubmed">docs.jabref.org</a> for a detailed documentation of the available fields.
  */
 public class MedlineFetcher implements IdBasedParserFetcher, SearchBasedFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(MedlineFetcher.class);
@@ -126,7 +126,7 @@ public class MedlineFetcher implements IdBasedParserFetcher, SearchBasedFetcher 
     }
 
     @Override
-    public URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException, FetcherException {
+    public URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException {
         URIBuilder uriBuilder = new URIBuilder(ID_URL);
         uriBuilder.addParameter("db", "pubmed");
         uriBuilder.addParameter("retmode", "xml");
@@ -204,8 +204,7 @@ public class MedlineFetcher implements IdBasedParserFetcher, SearchBasedFetcher 
                 return Collections.emptyList();
             }
             if (numberOfResultsFound > NUMBER_TO_FETCH) {
-                LOGGER.info(
-                        numberOfResultsFound + " results found. Only 50 relevant results will be fetched by default.");
+                LOGGER.info("{} results found. Only 50 relevant results will be fetched by default.", numberOfResultsFound);
             }
 
             // pass the list of ids to fetchMedline to download them. like a id fetcher for mutliple ids

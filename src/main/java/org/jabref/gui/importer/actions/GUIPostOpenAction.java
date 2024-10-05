@@ -1,7 +1,8 @@
 package org.jabref.gui.importer.actions;
 
-import org.jabref.gui.LibraryTab;
+import org.jabref.gui.DialogService;
 import org.jabref.logic.importer.ParserResult;
+import org.jabref.logic.preferences.CliPreferences;
 
 /**
  * This interface defines potential actions that may need to be taken after
@@ -21,7 +22,7 @@ public interface GUIPostOpenAction {
      * @param pr The result of the BIB parse operation.
      * @return true if the action should be called, false otherwise.
      */
-    boolean isActionNecessary(ParserResult pr);
+    boolean isActionNecessary(ParserResult pr, CliPreferences preferences);
 
     /**
      * This method is called after the new database has been added to the GUI, if
@@ -31,8 +32,7 @@ public interface GUIPostOpenAction {
      *       important that all implementations of this method do not return
      *       until the operation is finished.
      *
-     * @param panel The BasePanel where the database is shown.
      * @param pr    The result of the BIB parse operation.
      */
-    void performAction(LibraryTab panel, ParserResult pr);
+    void performAction(ParserResult pr, DialogService dialogService, CliPreferences preferences);
 }

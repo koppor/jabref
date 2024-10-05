@@ -3,14 +3,15 @@ package org.jabref.logic.net;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ProxyTest {
-   /**
-    * The test checks if ProxyPreference class is still able to store password and use it from memory,
-    * even though it's no longer stored in register.
-    */
-   @Test
-   public void testProxyPreferencesStorePassword() {
+class ProxyTest {
+    /**
+     * The test checks if ProxyPreference class is still able to store password and use it from memory,
+     * even though it's no longer stored in register.
+     */
+    @Test
+    void proxyPreferencesStorePassword() {
        // mock data
        boolean useProxy = true;
        String hostname = "testName";
@@ -31,10 +32,10 @@ public class ProxyTest {
                persist);
 
        // Check if mock data is stored in object memory and can be extracted
-       assertEquals(proxyPref.shouldUseProxy(), true);
+       assertTrue(proxyPref.shouldUseProxy());
        assertEquals(proxyPref.getHostname(), hostname);
        assertEquals(proxyPref.getPort(), port);
-       assertEquals(proxyPref.shouldUseAuthentication(), true);
+       assertTrue(proxyPref.shouldUseAuthentication());
        assertEquals(proxyPref.getUsername(), username);
        assertEquals(proxyPref.getPassword(), password);
        assertEquals(proxyPref.shouldPersistPassword(), persist);

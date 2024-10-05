@@ -4,16 +4,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.jabref.logic.FilePreferences;
 import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
-import org.jabref.preferences.FilePreferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +71,7 @@ public class LinkedFileHandler {
         Files.move(oldFile.get(), targetPath);
 
         // Update path
-        fileEntry.setLink(relativize(targetPath));
+        fileEntry.setLink(FileUtil.relativize(targetPath, databaseContext, filePreferences).toString());
         return true;
     }
 
@@ -110,14 +109,9 @@ public class LinkedFileHandler {
         }
 
         // Update path
-        fileEntry.setLink(relativize(newPath));
+        fileEntry.setLink(FileUtil.relativize(newPath, databaseContext, filePreferences).toString());
 
         return true;
-    }
-
-    private String relativize(Path path) {
-        List<Path> fileDirectories = databaseContext.getFileDirectories(filePreferences);
-        return FileUtil.relativize(path, fileDirectories).toString();
     }
 
     public String getSuggestedFileName() {
@@ -142,11 +136,11 @@ public class LinkedFileHandler {
      * @return First identified path that matches an existing file.  This name can be used in subsequent calls to
      * override the existing file.
      */
-    public Optional<Path> findExistingFile(LinkedFile flEntry, BibEntry entry, String targetFileName) {
+    public Optional<Path> findExistingFile(LinkedFile linkedFile, BibEntry entry, String targetFileName) {
         // The .get() is legal without check because the method will always return a value.
-        Path targetFilePath = flEntry.findIn(databaseContext, filePreferences)
+        Path targetFilePath = linkedFile.findIn(databaseContext, filePreferences)
                                      .get().getParent().resolve(targetFileName);
-        Path oldFilePath = flEntry.findIn(databaseContext, filePreferences).get();
+        Path oldFilePath = linkedFile.findIn(databaseContext, filePreferences).get();
         // Check if file already exists in directory with different case.
         // This is necessary because other entries may have such a file.
         Optional<Path> matchedByDiffCase = Optional.empty();

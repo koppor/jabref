@@ -44,17 +44,6 @@ class PdfMergeMetadataImporterTest {
     }
 
     @Test
-    void testsGetExtensions() {
-        assertEquals(StandardFileType.PDF, importer.getFileType());
-    }
-
-    @Test
-    void testGetDescription() {
-        assertEquals("PdfMergeMetadataImporter imports metadata from a PDF using multiple strategies and merging the result.",
-                     importer.getDescription());
-    }
-
-    @Test
     void doesNotHandleEncryptedPdfs() throws Exception {
         Path file = Path.of(PdfMergeMetadataImporter.class.getResource("/pdfs/encrypted.pdf").toURI());
         List<BibEntry> result = importer.importDatabase(file).getDatabase().getEntries();

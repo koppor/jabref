@@ -2,45 +2,51 @@ package org.jabref.gui.cleanup;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
+
+import javax.swing.undo.UndoManager;
 
 import org.jabref.gui.DialogService;
-import org.jabref.gui.JabRefFrame;
+import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.ActionHelper;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.undo.NamedCompound;
 import org.jabref.gui.undo.UndoableFieldChange;
-import org.jabref.gui.util.BackgroundTask;
-import org.jabref.gui.util.TaskExecutor;
+import org.jabref.logic.cleanup.CleanupPreferences;
 import org.jabref.logic.cleanup.CleanupWorker;
 import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.preferences.CliPreferences;
+import org.jabref.logic.util.BackgroundTask;
+import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.FieldChange;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.preferences.CleanupPreferences;
-import org.jabref.preferences.PreferencesService;
 
 public class CleanupAction extends SimpleCommand {
 
-    private final JabRefFrame frame;
-    private final PreferencesService preferences;
+    private final Supplier<LibraryTab> tabSupplier;
+    private final CliPreferences preferences;
     private final DialogService dialogService;
     private final StateManager stateManager;
     private final TaskExecutor taskExecutor;
+    private final UndoManager undoManager;
 
     private boolean isCanceled;
     private int modifiedEntriesCount;
 
-    public CleanupAction(JabRefFrame frame,
-                         PreferencesService preferences,
+    public CleanupAction(Supplier<LibraryTab> tabSupplier,
+                         CliPreferences preferences,
                          DialogService dialogService,
                          StateManager stateManager,
-                         TaskExecutor taskExecutor) {
-        this.frame = frame;
+                         TaskExecutor taskExecutor,
+                         UndoManager undoManager) {
+        this.tabSupplier = tabSupplier;
         this.preferences = preferences;
         this.dialogService = dialogService;
         this.stateManager = stateManager;
         this.taskExecutor = taskExecutor;
+        this.undoManager = undoManager;
 
         this.executable.bind(ActionHelper.needsEntriesSelected(stateManager));
     }
@@ -55,9 +61,6 @@ public class CleanupAction extends SimpleCommand {
             dialogService.showInformationDialogAndWait(Localization.lang("Cleanup entry"), Localization.lang("First select entries to clean up."));
             return;
         }
-
-        dialogService.notify(Localization.lang("Doing a cleanup for %0 entries...",
-                Integer.toString(stateManager.getSelectedEntries().size())));
 
         isCanceled = false;
         modifiedEntriesCount = 0;
@@ -118,8 +121,8 @@ public class CleanupAction extends SimpleCommand {
         }
 
         if (modifiedEntriesCount > 0) {
-            frame.getCurrentLibraryTab().updateEntryEditorIfShowing();
-            frame.getCurrentLibraryTab().markBaseChanged();
+            tabSupplier.get().updateEntryEditorIfShowing();
+            tabSupplier.get().markBaseChanged();
         }
 
         if (modifiedEntriesCount == 0) {
@@ -141,7 +144,7 @@ public class CleanupAction extends SimpleCommand {
             ce.end();
             if (ce.hasEdits()) {
                 modifiedEntriesCount++;
-                frame.getUndoManager().addEdit(ce);
+                undoManager.addEdit(ce);
             }
         }
     }

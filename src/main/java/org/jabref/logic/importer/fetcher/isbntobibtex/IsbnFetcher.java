@@ -34,14 +34,13 @@ public class IsbnFetcher implements EntryBasedFetcher, IdBasedFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(IsbnFetcher.class);
     private static final Pattern NEWLINE_SPACE_PATTERN = Pattern.compile("\\n|\\r\\n|\\s");
     protected final ImportFormatPreferences importFormatPreferences;
-    private final OpenLibraryIsbnFetcher openLibraryIsbnFetcher;
     private final List<AbstractIsbnFetcher> retryIsbnFetcher;
-    private final GvkFetcher gvkIbsnFetcher;
+    private final GvkFetcher gvkIsbnFetcher;
 
     public IsbnFetcher(ImportFormatPreferences importFormatPreferences) {
         this.importFormatPreferences = importFormatPreferences;
-        this.openLibraryIsbnFetcher = new OpenLibraryIsbnFetcher(importFormatPreferences);
-        this.gvkIbsnFetcher = new GvkFetcher(importFormatPreferences);
+        OpenLibraryIsbnFetcher openLibraryIsbnFetcher = new OpenLibraryIsbnFetcher(importFormatPreferences);
+        this.gvkIsbnFetcher = new GvkFetcher(importFormatPreferences);
         this.retryIsbnFetcher = new ArrayList<>();
         this.addRetryFetcher(openLibraryIsbnFetcher);
     }
@@ -64,7 +63,7 @@ public class IsbnFetcher implements EntryBasedFetcher, IdBasedFetcher {
             identifier = removeNewlinesAndSpacesFromIdentifier(identifier);
             Optional<ISBN> isbn = ISBN.parse(identifier);
             if (isbn.isPresent()) {
-                bibEntry = gvkIbsnFetcher.performSearchById(isbn.get().getNormalized());
+                bibEntry = gvkIsbnFetcher.performSearchById(isbn.get().getNormalized());
             }
         } catch (FetcherException ex) {
             LOGGER.debug("Got a fetcher exception for IBSN search", ex);

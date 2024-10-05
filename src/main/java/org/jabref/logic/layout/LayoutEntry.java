@@ -144,8 +144,8 @@ class LayoutEntry {
         this.fileDirForDatabase = Objects.requireNonNullElse(fileDirForDatabase, Collections.emptyList());
 
         List<LayoutEntry> tmpEntries = new ArrayList<>();
-        String blockStart = parsedEntries.get(0).s;
-        String blockEnd = parsedEntries.get(parsedEntries.size() - 1).s;
+        String blockStart = parsedEntries.getFirst().s;
+        String blockEnd = parsedEntries.getLast().s;
 
         if (!blockStart.equals(blockEnd)) {
             LOGGER.warn("Field start and end entry must be equal.");
@@ -236,9 +236,7 @@ class LayoutEntry {
         if (InternalField.TYPE_HEADER.getName().equals(text)) {
             fieldEntry = bibtex.getType().getDisplayName();
         } else if (InternalField.OBSOLETE_TYPE_HEADER.getName().equals(text)) {
-            LOGGER.warn("'" + InternalField.OBSOLETE_TYPE_HEADER
-                    + "' is an obsolete name for the entry type. Please update your layout to use '"
-                    + InternalField.TYPE_HEADER + "' instead.");
+            LOGGER.warn("'{}' is an obsolete name for the entry type. Please update your layout to use '{}' instead.", InternalField.OBSOLETE_TYPE_HEADER, InternalField.TYPE_HEADER);
             fieldEntry = bibtex.getType().getDisplayName();
         } else {
             // changed section begin - arudert
@@ -392,9 +390,9 @@ class LayoutEntry {
         List<String> v = StringUtil.tokenizeToList(s, "\n");
 
         if (v.size() == 1) {
-            text = v.get(0);
+            text = v.getFirst();
         } else {
-            text = v.get(0).trim();
+            text = v.getFirst().trim();
 
             option = getOptionalLayout(v.get(1));
             // See if there was an undefined formatter:
@@ -443,7 +441,7 @@ class LayoutEntry {
             case "CreateDocBook5Editors" -> new CreateDocBook5Editors();
             case "CurrentDate" -> new CurrentDate();
             case "DateFormatter" -> new DateFormatter();
-            case "DOICheck" -> new DOICheck();
+            case "DOICheck" -> new DOICheck(preferences.getDoiPreferences());
             case "DOIStrip" -> new DOIStrip();
             case "EntryTypeFormatter" -> new EntryTypeFormatter();
             case "FirstPage" -> new FirstPage();
@@ -498,7 +496,7 @@ class LayoutEntry {
         List<LayoutFormatter> results = new ArrayList<>(formatterStrings.size());
         Map<String, String> userNameFormatter = NameFormatter.getNameFormatters(preferences.getNameFormatterPreferences());
         for (List<String> strings : formatterStrings) {
-            String nameFormatterName = strings.get(0).trim();
+            String nameFormatterName = strings.getFirst().trim();
 
             // Check if this is a name formatter defined by this export filter:
             Optional<String> contents = preferences.getCustomExportNameFormatter(nameFormatterName);

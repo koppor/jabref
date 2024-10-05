@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DOITest {
+class DOITest {
 
     private static Stream<Arguments> testData() {
         return Stream.of(
@@ -123,6 +123,24 @@ public class DOITest {
                 Arguments.of("10/gf4gqc", DOI.parse("�https : \n  ␛ / / doi.org / \t 10 / \r gf4gqc�␛").get().getDOI()),
                 Arguments.of("10/gf4gqc", DOI.parse(" 10 / gf4gqc ").get().getDOI()),
                 Arguments.of("10.3218/3846-0", DOI.parse(" �10.3218\n/384␛6-0�").get().getDOI()),
+                // parse DOI with backslashes
+                Arguments.of("10.1007/978-3-030-02671-4_7", DOI.parse("10.1007/978-3-030-02671-4\\_7").get().getDOI()),
+                Arguments.of("10.1007/978-3-030-02671-4_7", DOI.parse("10.1007/\\978-3-03\\0-02671-4\\_7").get().getDOI()),
+                Arguments.of("https://doi.org/10.1007/978-3-030-02671-4_7", DOI.parse("https://doi.org/10.\\\\1007/9\\\\78-3\\\\-030-026\\\\\\71-4_7").get().getURIAsASCIIString()),
+                // parse DOI with {}
+                Arguments.of("10.1007/978-3-030-02671-4_7", DOI.parse("10.1007/9{}78{-3{-03{0-0}}}26}{71-4}_7").get().getDOI()),
+                // parse DOI with `
+                Arguments.of("10.1007/978-3-030-02671-4_7", DOI.parse("10.1007/9`78`-3`-03`0-0``26````71-4}_7").get().getDOI()),
+                // parse DOI with |
+                Arguments.of("10.1007/978-3-030-02671-4_7", DOI.parse("10.1007/9||78|-3|-03|0-0|26|71-4|||_7").get().getDOI()),
+                // parse DOI with ~
+                Arguments.of("10.1007/978-3-030-02671-4_7", DOI.parse("10.1007/9~~~78~-3~-03~0-0~26~71-4~_7").get().getDOI()),
+                // parse DOI with []
+                Arguments.of("10.1007/978-3-030-02671-4_7", DOI.parse("10.1007/][9[][]78-3-03[[]0-02671-4_7").get().getDOI()),
+                // parse DOI with ^
+                Arguments.of("10.1007/978-3-030-02671-4_7", DOI.parse("^^^10.10^07/978-3^-0^30-02671-4_7").get().getDOI()),
+                // parse DOI with special characters
+                Arguments.of("10.1007/978-3-030-02671-4_7", DOI.parse("10.1^00^^7/9|~^]`7^8-3~[[[]]-0^3]~0-0~26``71-4~||_7").get().getDOI()),
                 // parse already-cleaned DOI
                 Arguments.of("10.3218/3846-0", DOI.parse("10.3218/3846-0").get().getDOI()),
 
@@ -168,6 +186,11 @@ public class DOITest {
                 Arguments.of("10.1006/rwei.1999 .0001", new DOI("http://doi.org/10.1006/rwei.1999%20.0001").getDOI()),
                 // ? -> (%3F)
                 Arguments.of("10.1006/rwei.1999?.0001", new DOI("http://doi.org/10.1006/rwei.1999%3F.0001").getDOI()),
+                // <,> -> (%3C, %3E)
+                Arguments.of("10.1175/1520-0493(2002)130<1913:EDAWPO>2.0.CO;2", new DOI("https://doi.org/10.1175/1520-0493(2002)130%3C1913:EDAWPO%3E2.0.CO;2").getDOI()),
+
+                // acceptDoiWithSpecialCharacters
+                Arguments.of("10.1175/1520-0493(2002)130<1913:EDAWPO>2.0.CO;2", new DOI("https://doi.org/10.1175/1520-0493(2002)130<1913:EDAWPO>2.0.CO;2").getDOI()),
 
                 // findDoiInsideArbitraryText
                 Arguments.of("10.1006/jmbi.1998.2354",
@@ -177,7 +200,7 @@ public class DOITest {
                 Arguments.of("10.1007/s10549-018-4743-9",
                         DOI.findInText("Breast Cancer Res Treat. 2018 July ; 170(1): 77–87. doi:10.1007/s10549-018-4743-9, ").get().getDOI()),
                 Arguments.of("10.1007/s10549-018-4743-9",
-                        DOI.findInText("Breast Cancer Res Treat. 2018 July ; 170(1): 77–87. doi:10.1007/s10549-018-4743-9;something else").get().getDOI()),
+                        DOI.findInText("Breast Cancer Res Treat. 2018 July ; 170(1): 77–87. doi:10.1007/s10549-018-4743-9; something else").get().getDOI()),
                 Arguments.of("10.1007/s10549-018-4743-9.1234",
                         DOI.findInText("bla doi:10.1007/s10549-018-4743-9.1234 with . in doi").get().getDOI()),
 
@@ -202,28 +225,32 @@ public class DOITest {
                 Arguments.of("10/abcde", DOI.findInText("other stuff https://www.doi.org/abcde end").get().getDOI()),
                 Arguments.of("10/abcde", DOI.findInText("other stuff https://doi.org/abcde end").get().getDOI()),
                 Arguments.of("10.5220/0010404301780189", DOI.findInText("https://www.scitepress.org/Link.aspx?doi=10.5220/0010404301780189").get().getDOI()),
-                Arguments.of("10.5220/0010404301780189", DOI.findInText("10.5220/0010404301780189").get().getDOI())
+                Arguments.of("10.5220/0010404301780189", DOI.findInText("10.5220/0010404301780189").get().getDOI()),
+
+                // findDoiWithSpecialCharactersInText
+                Arguments.of("10.1175/1520-0493(2002)130%3C1913:EDAWPO%3E2.0.CO;2",
+                        DOI.findInText("https://doi.org/10.1175/1520-0493(2002)130%3C1913:EDAWPO%3E2.0.CO;2").get().getDOI())
         );
     }
 
     @ParameterizedTest
     @MethodSource("testData")
-    public void testEquals(String expected, String input) {
+    void equals(String expected, String input) {
         assertEquals(expected, input);
     }
 
     @Test
-    public void equalsWorksFor2017Doi() {
+    void equalsWorksFor2017Doi() {
         assertEquals(new DOI("10.1109/cloud.2017.89"), new DOI("10.1109/CLOUD.2017.89"));
     }
 
     @Test
-    public void isShortDoiShouldReturnTrueWhenItIsShortDoi() {
+    void isShortDoiShouldReturnTrueWhenItIsShortDoi() {
         assertTrue(new DOI("10/abcde").isShortDoi());
     }
 
     @Test
-    public void noDOIFoundInsideArbitraryText() {
+    void noDOIFoundInsideArbitraryText() {
         assertEquals(Optional.empty(), DOI.findInText("text without 28282 a doi"));
         assertEquals(Optional.empty(), DOI.findInText("It's 10:30 o'clock"));
         assertEquals(Optional.empty(), DOI.findInText("...archive number 10/XYZ/123..."));
@@ -231,24 +258,24 @@ public class DOITest {
     }
 
     @Test
-    public void rejectURLShortDoi() {
+    void rejectURLShortDoi() {
         assertThrows(IllegalArgumentException.class, () -> new DOI("http://www.cs.utexas.edu/users/kaufmann/itp-trusted-extensions-aug-2010/summary/summary.pdf"));
         assertThrows(IllegalArgumentException.class, () -> new DOI("http://www.cs.utexas.edu/users/kaufmann/itp-trusted-extensions-aug-20/10/summary/summary.pdf"));
         assertThrows(IllegalArgumentException.class, () -> new DOI("http://www.boi.org/10/2010bingbong"));
     }
 
     @Test
-    public void isShortDoiShouldReturnFalseWhenItIsDoi() {
+    void isShortDoiShouldReturnFalseWhenItIsDoi() {
         assertFalse(new DOI("10.1006/jmbi.1998.2354").isShortDoi());
     }
 
     @Test
-    public void rejectEmbeddedDoi() {
+    void rejectEmbeddedDoi() {
         assertThrows(IllegalArgumentException.class, () -> new DOI("other stuff 10.1006/jmbi.1998.2354 end"));
     }
 
     @Test
-    public void rejectEmbeddedShortDoi() {
+    void rejectEmbeddedShortDoi() {
         assertThrows(IllegalArgumentException.class, () -> new DOI("other stuff 10/gf4gqc end"));
         assertThrows(IllegalArgumentException.class, () -> new DOI("10/2021/01"));
         assertThrows(IllegalArgumentException.class, () -> new DOI("01/10/2021"));
@@ -256,36 +283,41 @@ public class DOITest {
     }
 
     @Test
-    public void rejectInvalidDirectoryIndicator() {
+    void rejectInvalidDirectoryIndicator() {
         // wrong directory indicator
         assertThrows(IllegalArgumentException.class, () -> new DOI("12.1006/jmbi.1998.2354 end"));
     }
 
     @Test
-    public void rejectInvalidDirectoryIndicatorInShortDoi() {
+    void rejectInvalidDirectoryIndicatorInShortDoi() {
         assertThrows(IllegalArgumentException.class, () -> new DOI("20/abcd"));
     }
 
     @Test
-    public void emptyOrUndescoreOnlyReturnsEmpty() {
+    void emptyOrUndescoreOnlyReturnsEmpty() {
        assertEquals(Optional.empty(), DOI.parse("_"));
        assertEquals(Optional.empty(), DOI.parse("\t_"));
        assertEquals(Optional.empty(), DOI.parse("___"));
     }
 
     @Test
-    public void rejectInvalidDoiUri() {
+    void rejectInvalidDoiUri() {
         assertThrows(IllegalArgumentException.class, () -> new DOI("https://thisisnouri"));
     }
 
     @Test
-    public void rejectMissingDivider() {
+    void rejectMissingDivider() {
         // missing divider
         assertThrows(IllegalArgumentException.class, () -> new DOI("10.1006jmbi.1998.2354 end"));
     }
 
     @Test
-    public void rejectMissingDividerInShortDoi() {
+    void rejectMissingDividerInShortDoi() {
         assertThrows(IllegalArgumentException.class, () -> new DOI("10gf4gqc end"));
+    }
+
+    @Test
+    void rejectNullDoiParameter() {
+        assertThrows(NullPointerException.class, () -> new DOI(null));
     }
 }

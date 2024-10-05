@@ -18,7 +18,7 @@ env:
   JAVA_OPTS: -Xmx4g
 
 concurrency:
-  group: tests-${{ github.head_ref }}
+  group: "${{ github.workflow }}-${{ github.head_ref || github.ref }}"
   cancel-in-progress: true
 
 permissions:
@@ -35,38 +35,28 @@ jobs:
           submodules: 'true'
           show-progress: 'false'
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: 21.0.1
-          distribution: 'liberica'
-          cache: 'gradle'
+          java-version: 21.0.2
+          distribution: 'temurin'
       - uses: axel-op/googlejavaformat-action@v3
         with:
-          args: "--skip-sorting-imports --replace"
+          args: "--set-exit-if-changed"
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run checkstyle reporter
-        uses: nikitasavinov/checkstyle-action@master
+        uses: dbelyaev/action-checkstyle@master
         with:
           reporter: github-pr-review
           github_token: ${{ secrets.GITHUB_TOKEN }}
           checkstyle_config: 'config/checkstyle/checkstyle_reviewdog.xml'
-          checkstyle_version: '10.3'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-home-cache-cleanup: true
       - name: Run checkstyle using gradle
         run: ./gradlew checkstyleMain checkstyleTest checkstyleJmh
-      - name: Add comment on pull request
-        if: ${{ failure() }}
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: >
-              Your code currently does not meet JabRef's code guidelines.
-              We use [Checkstyle](https://checkstyle.sourceforge.io/) to identify issues.
-              The tool reviewdog already placed comments on GitHub to indicate the places. See the tab "Files" in you PR.
-              Please carefully follow [the setup guide for the codestyle](https://devdocs.jabref.org/getting-into-the-code/guidelines-for-setting-up-a-local-workspace/intellij-13-code-style.html).
-              Afterwards, please run checkstyle locally and fix the issues.
 
 
-              More information on code quality in JabRef is available at <https://devdocs.jabref.org/getting-into-the-code/development-strategy.html>.
-          comment_tag: checkstyle
   openrewrite:
     name: OpenRewrite
     runs-on: ubuntu-latest
@@ -77,27 +67,18 @@ jobs:
           submodules: 'true'
           show-progress: 'false'
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: 21.0.1
-          distribution: 'liberica'
-          cache: 'gradle'
+          java-version: 21.0.2
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-home-cache-cleanup: true
       - name: Run OpenRewrite
         run: |
           ./gradlew rewriteDryRun
-      - name: Add comment on pull request
-        if: ${{ failure() }}
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: >
-              Your code currently does not meet JabRef's code guidelines.
-              We use [OpenRewrite](https://docs.openrewrite.org/) to ensure "modern" Java coding practices.
-              The issues found can be **automatically fixed**.
-              Please execute the gradle task *`rewriteRun`*, check the results, commit, and push.
 
-
-              You can check the detailed error output at the tab "Checks", section "Tests" (on the left), subsection "OpenRewrite".
-          comment_tag: openrewrite
   modernizer:
     name: Modernizer
     runs-on: ubuntu-latest
@@ -108,28 +89,20 @@ jobs:
           submodules: 'true'
           show-progress: 'false'
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: 21.0.1
-          distribution: 'liberica'
-          cache: 'gradle'
+          java-version: 21.0.2
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-home-cache-cleanup: true
       - name: Run modernizer
         run: |
           # enable failing of this task if modernizer complains
           sed -i "s/failOnViolations = false/failOnViolations = true/" build.gradle
           ./gradlew modernizer
-      - name: Add comment on pull request
-        if: ${{ failure() }}
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: >
-              Your code currently does not meet JabRef's code guidelines.
-              We use [Gradle Modernizer Plugin](https://github.com/andygoossens/gradle-modernizer-plugin#gradle-modernizer-plugin) to ensure "modern" Java coding practices.
-              Please fix the detected errors, commit, and push.
 
-
-              You can check the detailed error output at the tab "Checks", section "Tests" (on the left), subsection "Modernizer".
-          comment_tag: modernizer
   markdown:
     name: Markdown
     runs-on: ubuntu-latest
@@ -140,23 +113,13 @@ jobs:
           submodules: 'false'
           show-progress: 'false'
       - name: markdownlint-cli2-action
-        uses: DavidAnson/markdownlint-cli2-action@v13
+        uses: DavidAnson/markdownlint-cli2-action@v17
         with:
           globs: |
             *.md
             docs/**/*.md
-      - name: Add comment on pull request
-        if: ${{ failure() }}
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: >
-              You modified Markdown (*.md) files.
-              To ensure consistent styling, we have [markdown-lint](https://github.com/DavidAnson/markdownlint) in place.
-              [Markdown lint's rules](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md#rules) help to keep our Markdown files consistent within this repository and consistent with the Markdown files outside here.
 
-              You can check the detailed error output at the tab "Checks", section "Tests" (on the left), subsection "Markdown".
-          comment_tag: markdown
-  changelog-non-frozen:
+  changelog:
     name: CHANGELOG.md
     runs-on: ubuntu-latest
     steps:
@@ -165,41 +128,45 @@ jobs:
         with:
           submodules: 'false'
           show-progress: 'false'
-          fetch-depth: 0
       - name: Lint CHANGELOG.md
         run: |
           # Install jbang
           curl -Ls https://sh.jbang.dev | bash -s - app setup
           export PATH=$PATH:$HOME/.jbang/bin
 
-          # ensure that refs are available
-          BRANCH=`git rev-parse HEAD`
-          git checkout main
-
           # run heylogs verification
-          jbang --repos jitpack,central -m nbbrd.heylogs.cli.HeylogsCommand com.github.koppor.heylogs:heylogs-cli:jitpack-SNAPSHOT check CHANGELOG.md --gitdiff main...$BRANCH > heylogs.txt || true
+          jbang com.github.nbbrd.heylogs:heylogs-cli:0.7.2:bin check CHANGELOG.md > heylogs.txt || true
 
           # improve output
-          sed -i 's/consistent-separator/consistent-separator (ignored)/' heylogs.txt
           sed -i 's/all-h2-contain-a-version/all-h2-contain-a-version (ignored)/' heylogs.txt
 
           cat heylogs.txt
 
           # exit 1 in case of error
-          # We have 2 "valid" issues in CHANGELOG.md
-          grep -q "2 problems" heylogs.txt || exit 1
-      - name: Add comment on pull request
-        if: ${{ failure() }}
-        uses: thollander/actions-comment-pull-request@v2
+          # We have 1 "valid" issue in CHANGELOG.md
+          grep -q "1 problem" heylogs.txt || exit 1
+
+  changelog-unreleased-only:
+    name: CHANGELOG.md - only unreleased touched
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
         with:
-          message: >
-              While the PR was in progress, JabRef released a new version.
-              You have to merge `upstream/main` and move your entry in `CHANGELOG.md` to section `## [Unreleased]`.
+          submodules: 'false'
+          show-progress: 'false'
+          fetch-depth: 0
+      - name: Install clparse
+        run: |
+          curl -LO https://github.com/marcaddeo/clparse/releases/download/0.9.1/clparse-0.9.1-x86_64-unknown-linux-musl.tar.gz
+          tar xzvf clparse-0.9.1-x86_64-unknown-linux-musl.tar.gz
+          sudo mv clparse /usr/local/bin/clparse
+      - name: Check CHANGELOG.md diff
+        run: |
+          diff \
+            <(git show origin/main:CHANGELOG.md | clparse --format=json --separator=– - | jq '.releases[] | select(.version != null)') \
+            <(git show HEAD:CHANGELOG.md | clparse --format=json --separator=– - | jq '.releases[] | select(.version != null)')
 
-
-              It might also be that another CHANGELOG.md issue arose.
-              You can check the detailed error output at the tab "Checks", section "Tests" (on the left), subsection "CHANGELOG.md".
-          comment_tag: changelog
   tests:
     name: Unit tests
     runs-on: ubuntu-latest
@@ -210,20 +177,28 @@ jobs:
           submodules: 'true'
           show-progress: 'false'
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: 21.0.1
-          distribution: 'liberica'
-          cache: 'gradle'
+          java-version: 21.0.2
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-home-cache-cleanup: true
       - name: Run tests
         run: xvfb-run --auto-servernum ./gradlew check -x checkstyleJmh -x checkstyleMain -x checkstyleTest -x modernizer
         env:
           CI: "true"
+      - name: Prepare format failed test results
+        if: failure()
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: xml-twig-tools xsltproc
+          version: 1.0
       - name: Format failed test results
         if: failure()
-        run: |
-          sudo apt-get install -qq -y xml-twig-tools xsltproc
-          scripts/after-failure.sh
+        run: scripts/after-failure.sh
+
   databasetests:
     name: Database tests
     runs-on: ubuntu-latest
@@ -245,11 +220,14 @@ jobs:
           submodules: 'true'
           show-progress: 'false'
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: 21.0.1
-          distribution: 'liberica'
-          cache: 'gradle'
+          java-version: 21.0.2
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-home-cache-cleanup: true
       - name: Run tests on PostgreSQL
         run: ./gradlew databaseTest --rerun-tasks
         env:
@@ -272,6 +250,7 @@ jobs:
         env:
           CI: "true"
           DBMS: "mysql"
+
   guitests:
     name: GUI tests
     runs-on: ubuntu-latest
@@ -282,15 +261,19 @@ jobs:
           submodules: 'true'
           show-progress: 'false'
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: 21.0.1
-          distribution: 'liberica'
-          cache: 'gradle'
+          java-version: 21.0.2
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-home-cache-cleanup: true
       - name: Run GUI tests
         run: xvfb-run --auto-servernum ./gradlew guiTest
         env:
           CI: "true"
+
   codecoverage:
     name: Code coverage
     runs-on: ubuntu-latest
@@ -308,33 +291,67 @@ jobs:
     steps:
       - name: Check secrets presence
         id: checksecrets
+        if: github.ref == 'refs/heads/main'
         shell: bash
         run: |
           if [ "$CODECOV_TOKEN" == "" ]; then
             echo "secretspresent=NO" >> $GITHUB_OUTPUT
+            echo "❌ Secret CODECOV_TOKEN not present"
           else
             echo "secretspresent=YES" >> $GITHUB_OUTPUT
+            echo "✔️ Secret CODECOV_TOKEN present"
           fi
         env:
-          SNAPCRAFT_LOGIN_FILE: ${{ secrets.CODECOV_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Checkout source
+        if: github.ref == 'refs/heads/main'
         uses: actions/checkout@v4
         with:
           submodules: 'true'
           show-progress: 'false'
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        if: github.ref == 'refs/heads/main'
+        uses: actions/setup-java@v4
         with:
-          java-version: 21.0.1
-          distribution: 'liberica'
-          cache: 'gradle'
+          java-version: 21.0.2
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-home-cache-cleanup: true
       - name: Update test coverage metrics
-        if: steps.checksecrets.outputs.secretspresent == 'YES'
-        run: xvfb-run --auto-servernum ./gradlew jacocoTestReport && bash <(curl -s https://codecov.io/bash);
+        if: (github.ref == 'refs/heads/main') && (steps.checksecrets.outputs.secretspresent == 'YES')
+        run: xvfb-run --auto-servernum ./gradlew jacocoTestReport
         env:
           CI: "true"
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           DBMS: "postgresql"
+      - uses: codecov/codecov-action@v4
+        if: (github.ref == 'refs/heads/main') && (steps.checksecrets.outputs.secretspresent == 'YES')
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload Codacy report
+        if: (github.ref == 'refs/heads/main') && (steps.checksecrets.outputs.secretspresent == 'YES')
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh)
+        env:
+          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+
+  requirements_coverage:
+    name: "Validate requiremenet coverage"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          show-progress: 'false'
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21.0.2
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew traceRequirements
+
   # This is https://github.com/marketplace/actions/gradle-wrapper-validation
   # It ensures that the jar file is from gradle and not by a strange third party.
   gradlevalidation:
@@ -344,7 +361,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           show-progress: 'false'
-      - uses: gradle/wrapper-validation-action@v1
+      - uses: gradle/actions/wrapper-validation@v4
+
   # This ensures that no git merge conflict markers (<<<, ...) are contained
   merge_conflict_job:
     name: Find merge conflicts
@@ -355,3 +373,23 @@ jobs:
           show-progress: 'false'
       - name: Merge Conflict finder
         uses: olivernybroe/action-conflict-finder@v4.0
+
+  other_than_main:
+    name: Source branch is other than "main"
+    runs-on: ubuntu-latest
+    steps:
+      - if: github.head_ref == 'main'
+        uses: actions/github-script@v7
+        with:
+          script: |
+              core.setFailed('Pull requests should come from a branch other than "main"\n\n👉 Please read https://devdocs.jabref.org/contributing again carefully. 👈')
+
+  upload-pr-number:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create pr_number.txt
+        run: echo "${{ github.event.number }}" > pr_number.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pr_number
+          path: pr_number.txt

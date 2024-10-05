@@ -1,7 +1,7 @@
 package org.jabref.logic.importer.fetcher;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 
 @FetcherTest
 @DisabledOnCIServer("Blocked by Cloudflare")
-public class ResearchGateTest {
+class ResearchGateTest {
 
     private static final String URL_PDF = "https://www.researchgate.net/profile/Abdurrazzak-Gehani/publication/4207355_Paranoid_a_global_secure_file_access_control_system/links/5457747d0cf2cf516480995e/Paranoid-a-global-secure-file-access-control-system.pdf";
     private final String URL_PAGE = "https://www.researchgate.net/publication/4207355_Paranoid_a_global_secure_file_access_control_system";
@@ -35,7 +35,7 @@ public class ResearchGateTest {
     private BibEntry entry;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         fetcher = new ResearchGate(mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS));
         entry = new BibEntry(StandardEntryType.InProceedings);
         entry.setField(StandardField.DOI, "10.1109/CSAC.2005.42");
@@ -45,7 +45,7 @@ public class ResearchGateTest {
     @Test
     @DisabledOnCIServer("CI server is unreliable")
     void fullTextFoundByDOI() throws IOException, FetcherException {
-        assertEquals(Optional.of(new URL(URL_PDF)), fetcher.findFullText(entry));
+        assertEquals(Optional.of(URI.create(URL_PDF).toURL()), fetcher.findFullText(entry));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class ResearchGateTest {
     }
 
     @Test
-    void getDocumentByTitle() throws IOException, NullPointerException {
+    void getDocumentByTitle() throws Exception {
         Optional<String> source = fetcher.getURLByString(entry.getTitle().get());
         assertTrue(source.isPresent() && source.get().startsWith(URL_PAGE));
     }

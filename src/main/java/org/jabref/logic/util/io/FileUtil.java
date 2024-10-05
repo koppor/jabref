@@ -7,7 +7,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,12 +22,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jabref.logic.FilePreferences;
 import org.jabref.logic.citationkeypattern.BracketedPattern;
 import org.jabref.logic.util.StandardFileType;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.preferences.FilePreferences;
+import org.jabref.model.entry.LinkedFile;
+import org.jabref.model.entry.field.StandardField;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +115,7 @@ public class FileUtil {
         if (nameWithoutExtension.length() > MAXIMUM_FILE_NAME_LENGTH) {
             Optional<String> extension = getFileExtension(fileName);
             String shortName = nameWithoutExtension.substring(0, MAXIMUM_FILE_NAME_LENGTH - extension.map(s -> s.length() + 1).orElse(0));
-            LOGGER.info(String.format("Truncated the too long filename '%s' (%d characters) to '%s'.", fileName, fileName.length(), shortName));
+            LOGGER.info("Truncated the too long filename '%s' (%d characters) to '%s'.".formatted(fileName, fileName.length(), shortName));
             return extension.map(s -> shortName + "." + s).orElse(shortName);
         }
 
@@ -225,9 +227,8 @@ public class FileUtil {
             return false;
         }
         try {
-            // Preserve Hard Links with OpenOption defaults included for clarity
-            Files.write(pathToDestinationFile, Files.readAllBytes(pathToSourceFile),
-                        StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            // This should also preserve Hard Links
+            Files.copy(pathToSourceFile, pathToDestinationFile, StandardCopyOption.REPLACE_EXISTING);
             return true;
         } catch (IOException e) {
             LOGGER.error("Copying Files failed.", e);
@@ -256,6 +257,41 @@ public class FileUtil {
             }
         }
         return file;
+    }
+
+    /**
+     * Converts an absolute file to a relative one, if possible. Returns the parameter file itself if no shortening is
+     * possible.
+     *
+     * @param path the file path to be shortened
+     */
+    public static Path relativize(Path path, BibDatabaseContext databaseContext, FilePreferences filePreferences) {
+        List<Path> fileDirectories = databaseContext.getFileDirectories(filePreferences);
+        return relativize(path, fileDirectories);
+    }
+
+    /**
+     * Relativizes all BibEntries given to (!) the given database context
+     * <p>
+     * ⚠ Modifies the entries in the list ⚠
+     */
+    public static List<BibEntry> relativize(List<BibEntry> entries, BibDatabaseContext databaseContext, FilePreferences filePreferences) {
+        List<Path> fileDirectories = databaseContext.getFileDirectories(filePreferences);
+
+        return entries.stream()
+                      .map(entry -> {
+                          if (entry.hasField(StandardField.FILE)) {
+                              List<LinkedFile> updatedLinkedFiles = entry.getFiles().stream().map(linkedFile -> {
+                                  if (!linkedFile.isOnlineLink()) {
+                                      String newPath = FileUtil.relativize(Path.of(linkedFile.getLink()), fileDirectories).toString();
+                                      linkedFile.setLink(newPath);
+                                  }
+                                  return linkedFile;
+                              }).toList();
+                              entry.setFiles(updatedLinkedFiles);
+                          }
+                          return entry;
+                      }).toList();
     }
 
     /**
@@ -330,7 +366,7 @@ public class FileUtil {
                              .filter(f -> f.getFileName().toString().equals(filename))
                              .findFirst();
         } catch (UncheckedIOException | IOException ex) {
-            LOGGER.error("Error trying to locate the file " + filename + " inside the directory " + rootDirectory);
+            LOGGER.error("Error trying to locate the file {} inside the directory {}", filename, rootDirectory);
         }
         return Optional.empty();
     }
@@ -376,7 +412,7 @@ public class FileUtil {
         Objects.requireNonNull(directory);
 
         if (detectBadFileName(fileName)) {
-            LOGGER.error("Invalid characters in path for file {} ", fileName);
+            LOGGER.error("Invalid characters in path for file {}", fileName);
             return Optional.empty();
         }
 

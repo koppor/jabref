@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.swing.undo.UndoManager;
 
 import javafx.collections.ListChangeListener;
+import javafx.css.PseudoClass;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -24,11 +25,12 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 
+import org.jabref.architecture.AllowedToUseClassGetResource;
 import org.jabref.gui.ClipBoardManager;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.DragAndDropDataFormats;
-import org.jabref.gui.Globals;
 import org.jabref.gui.LibraryTab;
+import org.jabref.gui.LibraryTabContainer;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.StandardActions;
 import org.jabref.gui.edit.EditAction;
@@ -37,92 +39,93 @@ import org.jabref.gui.keyboard.KeyBinding;
 import org.jabref.gui.keyboard.KeyBindingRepository;
 import org.jabref.gui.maintable.columns.LibraryColumn;
 import org.jabref.gui.maintable.columns.MainTableColumn;
+import org.jabref.gui.preferences.GuiPreferences;
+import org.jabref.gui.preview.ClipboardContentGenerator;
+import org.jabref.gui.search.MatchCategory;
 import org.jabref.gui.util.ControlHelper;
 import org.jabref.gui.util.CustomLocalDragboard;
-import org.jabref.gui.util.DefaultTaskExecutor;
-import org.jabref.gui.util.TaskExecutor;
+import org.jabref.gui.util.UiTaskExecutor;
 import org.jabref.gui.util.ViewModelTableRowFactory;
-import org.jabref.logic.importer.FetcherClientException;
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.FetcherServerException;
-import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.FilePreferences;
+import org.jabref.logic.citationstyle.CitationStyleOutputFormat;
+import org.jabref.logic.journals.JournalAbbreviationRepository;
+import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.database.event.EntriesAddedEvent;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
-import org.jabref.model.util.FileUpdateMonitor;
-import org.jabref.preferences.PreferencesService;
 
+import com.airhacks.afterburner.injection.Injector;
 import com.google.common.eventbus.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@AllowedToUseClassGetResource("JavaFX internally handles the passed URLs properly.")
 public class MainTable extends TableView<BibEntryTableViewModel> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainTable.class);
+    private static final PseudoClass MATCHING_SEARCH_AND_GROUPS = PseudoClass.getPseudoClass("matching-search-and-groups");
+    private static final PseudoClass MATCHING_SEARCH_NOT_GROUPS = PseudoClass.getPseudoClass("matching-search-not-groups");
+    private static final PseudoClass MATCHING_GROUPS_NOT_SEARCH = PseudoClass.getPseudoClass("matching-groups-not-search");
+    private static final PseudoClass NOT_MATCHING_SEARCH_AND_GROUPS = PseudoClass.getPseudoClass("not-matching-search-and-groups");
 
     private final LibraryTab libraryTab;
-    private final DialogService dialogService;
     private final StateManager stateManager;
     private final BibDatabaseContext database;
     private final MainTableDataModel model;
-
-    private final ImportHandler importHandler;
     private final CustomLocalDragboard localDragboard;
-    private final ClipBoardManager clipBoardManager;
-    private final BibEntryTypesManager entryTypesManager;
     private final TaskExecutor taskExecutor;
+    private final UndoManager undoManager;
+    private final FilePreferences filePreferences;
+    private final ImportHandler importHandler;
+    private final ClipboardContentGenerator clipboardContentGenerator;
+
     private long lastKeyPressTime;
     private String columnSearchTerm;
 
     public MainTable(MainTableDataModel model,
                      LibraryTab libraryTab,
+                     LibraryTabContainer tabContainer,
                      BibDatabaseContext database,
-                     PreferencesService preferencesService,
+                     GuiPreferences preferences,
                      DialogService dialogService,
                      StateManager stateManager,
                      KeyBindingRepository keyBindingRepository,
                      ClipBoardManager clipBoardManager,
                      BibEntryTypesManager entryTypesManager,
                      TaskExecutor taskExecutor,
-                     FileUpdateMonitor fileUpdateMonitor) {
+                     ImportHandler importHandler) {
         super();
 
         this.libraryTab = libraryTab;
-        this.dialogService = dialogService;
         this.stateManager = stateManager;
         this.database = Objects.requireNonNull(database);
         this.model = model;
-        this.clipBoardManager = clipBoardManager;
-        this.entryTypesManager = entryTypesManager;
         this.taskExecutor = taskExecutor;
-        UndoManager undoManager = libraryTab.getUndoManager();
-        MainTablePreferences mainTablePreferences = preferencesService.getMainTablePreferences();
+        this.undoManager = libraryTab.getUndoManager();
+        this.filePreferences = preferences.getFilePreferences();
+        this.importHandler = importHandler;
+        this.clipboardContentGenerator = new ClipboardContentGenerator(preferences.getPreviewPreferences(), preferences.getLayoutFormatterPreferences(), Injector.instantiateModelOrService(JournalAbbreviationRepository.class));
 
-        importHandler = new ImportHandler(
-                database,
-                preferencesService,
-                fileUpdateMonitor,
-                undoManager,
-                stateManager,
-                dialogService,
-                taskExecutor);
+        MainTablePreferences mainTablePreferences = preferences.getMainTablePreferences();
 
         localDragboard = stateManager.getLocalDragboard();
 
         this.setOnDragOver(this::handleOnDragOverTableView);
         this.setOnDragDropped(this::handleOnDragDroppedTableView);
 
-        this.getColumns().addAll(
-                new MainTableColumnFactory(
-                        database,
-                        preferencesService,
-                        preferencesService.getMainTableColumnPreferences(),
-                        libraryTab.getUndoManager(),
-                        dialogService,
-                        stateManager,
-                        taskExecutor).createColumns());
+        this.getStyleClass().add("main-table");
 
+        MainTableColumnFactory mainTableColumnFactory = new MainTableColumnFactory(
+                database,
+                preferences,
+                preferences.getMainTableColumnPreferences(),
+                undoManager,
+                dialogService,
+                stateManager,
+                taskExecutor);
+
+        this.getColumns().addAll(mainTableColumnFactory.createColumns());
         this.getColumns().removeIf(LibraryColumn.class::isInstance);
 
         new ViewModelTableRowFactory<BibEntryTableViewModel>()
@@ -136,12 +139,16 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
                         libraryTab,
                         dialogService,
                         stateManager,
-                        preferencesService,
+                        preferences,
                         undoManager,
                         clipBoardManager,
                         taskExecutor,
-                        Globals.journalAbbreviationRepository,
+                        Injector.instantiateModelOrService(JournalAbbreviationRepository.class),
                         entryTypesManager))
+                .withPseudoClass(MATCHING_SEARCH_AND_GROUPS, entry -> entry.matchCategory().isEqualTo(MatchCategory.MATCHING_SEARCH_AND_GROUPS))
+                .withPseudoClass(MATCHING_SEARCH_NOT_GROUPS, entry -> entry.matchCategory().isEqualTo(MatchCategory.MATCHING_SEARCH_NOT_GROUPS))
+                .withPseudoClass(MATCHING_GROUPS_NOT_SEARCH, entry -> entry.matchCategory().isEqualTo(MatchCategory.MATCHING_GROUPS_NOT_SEARCH))
+                .withPseudoClass(NOT_MATCHING_SEARCH_AND_GROUPS, entry -> entry.matchCategory().isEqualTo(MatchCategory.NOT_MATCHING_SEARCH_AND_GROUPS))
                 .setOnDragDetected(this::handleOnDragDetected)
                 .setOnDragDropped(this::handleOnDragDropped)
                 .setOnDragOver(this::handleOnDragOver)
@@ -151,13 +158,21 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
 
         this.getSortOrder().clear();
 
+        // force match category column to be the first sort order, (match_category column is always the first column)
+        this.getSortOrder().addFirst(getColumns().getFirst());
+        this.getSortOrder().addListener((ListChangeListener<TableColumn<BibEntryTableViewModel, ?>>) change -> {
+                if (!this.getSortOrder().getFirst().equals(getColumns().getFirst())) {
+                    this.getSortOrder().addFirst(getColumns().getFirst());
+                }
+            });
+
         mainTablePreferences.getColumnPreferences().getColumnSortOrder().forEach(columnModel ->
                 this.getColumns().stream()
                     .map(column -> (MainTableColumn<?>) column)
                     .filter(column -> column.getModel().equals(columnModel))
                     .findFirst()
                     .ifPresent(column -> {
-                        LOGGER.debug("Adding sort order for col {} ", column);
+                        LOGGER.trace("Adding sort order for col {} ", column);
                         this.getSortOrder().add(column);
                     }));
 
@@ -172,42 +187,36 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
         // Enable sorting
         model.getEntriesFilteredAndSorted().comparatorProperty().bind(this.comparatorProperty());
 
-        this.getStylesheets().add(MainTable.class.getResource("MainTable.css").toExternalForm());
-
         // Store visual state
         new PersistenceVisualStateTable(this, mainTablePreferences.getColumnPreferences()).addListeners();
 
         setupKeyBindings(keyBindingRepository);
 
         this.setOnKeyTyped(key -> {
-            if (this.getSortOrder().isEmpty()) {
+            if (this.getSortOrder().size() <= 1) {
                 return;
             }
-            this.jumpToSearchKey(getSortOrder().get(0), key);
+            // skip match category column
+            this.jumpToSearchKey(getSortOrder().get(1), key);
         });
 
         database.getDatabase().registerListener(this);
 
-        MainTableColumnFactory rightClickMenuFactory = new MainTableColumnFactory(
-                database,
-                preferencesService,
-                preferencesService.getMainTableColumnPreferences(),
-                libraryTab.getUndoManager(),
-                dialogService,
-                stateManager,
-                taskExecutor);
-
         // Enable the header right-click menu.
-        new MainTableHeaderContextMenu(this, rightClickMenuFactory).show(true);
+        new MainTableHeaderContextMenu(this, mainTableColumnFactory, tabContainer, dialogService).show(true);
     }
 
     /**
      * This is called, if a user starts typing some characters into the keyboard with focus on main table. The {@link MainTable} will scroll to the cell with the same starting column value and typed string
+     * If the user presses any other special key as well, e.g. alt or shift we don't jump
      *
      * @param sortedColumn The sorted column in {@link MainTable}
      * @param keyEvent     The pressed character
      */
     private void jumpToSearchKey(TableColumn<BibEntryTableViewModel, ?> sortedColumn, KeyEvent keyEvent) {
+        if (keyEvent.isAltDown() || keyEvent.isControlDown() || keyEvent.isMetaDown() || keyEvent.isShiftDown()) {
+            return;
+        }
         if ((keyEvent.getCharacter() == null) || (sortedColumn == null)) {
             return;
         }
@@ -228,14 +237,15 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
                                     .startsWith(columnSearchTerm))
             .findFirst()
             .ifPresent(item -> {
-                this.scrollTo(item);
-                this.clearAndSelect(item.getEntry());
+                getSelectionModel().clearSelection();
+                getSelectionModel().select(item);
+                scrollTo(item);
             });
     }
 
     @Subscribe
     public void listen(EntriesAddedEvent event) {
-        DefaultTaskExecutor.runInJavaFXThread(() -> clearAndSelect(event.getFirstEntry()));
+        UiTaskExecutor.runInJavaFXThread(() -> clearAndSelect(event.getFirstEntry()));
     }
 
     public void clearAndSelect(BibEntry bibEntry) {
@@ -246,29 +256,50 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
         });
     }
 
-    public void copy() {
-        List<BibEntry> selectedEntries = getSelectedEntries();
+    private void scrollToNextMatchCategory() {
+        BibEntryTableViewModel selectedEntry = getSelectionModel().getSelectedItem();
+        if (selectedEntry == null) {
+            return;
+        }
 
-        if (!selectedEntries.isEmpty()) {
-            try {
-                clipBoardManager.setContent(selectedEntries, entryTypesManager);
-                dialogService.notify(libraryTab.formatOutputMessage(Localization.lang("Copied"), selectedEntries.size()));
-            } catch (IOException e) {
-                LOGGER.error("Error while copying selected entries to clipboard", e);
+        MatchCategory currentMatchCategory = selectedEntry.matchCategory().get();
+        for (int i = getSelectionModel().getSelectedIndex(); i < getItems().size(); i++) {
+            if (getItems().get(i).matchCategory().get() != currentMatchCategory) {
+                getSelectionModel().clearSelection();
+                getSelectionModel().select(i);
+                scrollTo(i);
+                return;
             }
         }
     }
 
-    public void cut() {
-        copy();
-        libraryTab.delete(true);
+    private void scrollToPreviousMatchCategory() {
+        BibEntryTableViewModel selectedEntry = getSelectionModel().getSelectedItem();
+        if (selectedEntry == null) {
+            return;
+        }
+
+        MatchCategory currentMatchCategory = selectedEntry.matchCategory().get();
+        for (int i = getSelectionModel().getSelectedIndex(); i >= 0; i--) {
+            if (getItems().get(i).matchCategory().get() != currentMatchCategory) {
+                MatchCategory targetMatchCategory = getItems().get(i).matchCategory().get();
+                // found the previous category, scroll to the first entry of that category
+                while ((i >= 0) && getItems().get(i).matchCategory().get() == targetMatchCategory) {
+                    i--;
+                }
+                getSelectionModel().clearSelection();
+                getSelectionModel().select(i + 1);
+                scrollTo(i + 1);
+                return;
+            }
+        }
     }
 
     private void setupKeyBindings(KeyBindingRepository keyBindings) {
-        EditAction pasteAction = new EditAction(StandardActions.PASTE, libraryTab.frame(), stateManager);
-        EditAction copyAction = new EditAction(StandardActions.COPY, libraryTab.frame(), stateManager);
-        EditAction cutAction = new EditAction(StandardActions.CUT, libraryTab.frame(), stateManager);
-        EditAction deleteAction = new EditAction(StandardActions.DELETE_ENTRY, libraryTab.frame(), stateManager);
+        EditAction pasteAction = new EditAction(StandardActions.PASTE, () -> libraryTab, stateManager, undoManager);
+        EditAction copyAction = new EditAction(StandardActions.COPY, () -> libraryTab, stateManager, undoManager);
+        EditAction cutAction = new EditAction(StandardActions.CUT, () -> libraryTab, stateManager, undoManager);
+        EditAction deleteAction = new EditAction(StandardActions.DELETE_ENTRY, () -> libraryTab, stateManager, undoManager);
 
         this.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ENTER) {
@@ -306,6 +337,14 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
                         deleteAction.execute();
                         event.consume();
                         break;
+                    case SCROLL_TO_NEXT_MATCH_CATEGORY:
+                        scrollToNextMatchCategory();
+                        event.consume();
+                        break;
+                    case SCROLL_TO_PREVIOUS_MATCH_CATEGORY:
+                         scrollToPreviousMatchCategory();
+                        event.consume();
+                        break;
                     default:
                         // Pass other keys to parent
                 }
@@ -323,42 +362,6 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
         getSelectionModel().clearSelection();
         getSelectionModel().selectLast();
         scrollTo(getItems().size() - 1);
-    }
-
-    public void paste() {
-        List<BibEntry> entriesToAdd;
-        String content = ClipBoardManager.getContents();
-        entriesToAdd = importHandler.handleBibTeXData(content);
-        if (entriesToAdd.isEmpty()) {
-            entriesToAdd = handleNonBibTeXStringData(content);
-        }
-        if (entriesToAdd.isEmpty()) {
-            return;
-        }
-        for (BibEntry entry : entriesToAdd) {
-            importHandler.importEntryWithDuplicateCheck(database, entry);
-        }
-    }
-
-    private List<BibEntry> handleNonBibTeXStringData(String data) {
-        try {
-            return this.importHandler.handleStringData(data);
-        } catch (FetcherException exception) {
-            if (exception instanceof FetcherClientException) {
-                dialogService.showInformationDialogAndWait(Localization.lang("Look up identifier"), Localization.lang("No data was found for the identifier"));
-            } else if (exception instanceof FetcherServerException) {
-                dialogService.showInformationDialogAndWait(Localization.lang("Look up identifier"), Localization.lang("Server not available"));
-            } else {
-                dialogService.showErrorDialogAndWait(exception);
-            }
-            return List.of();
-        }
-    }
-
-    public void dropEntry(List<BibEntry> entriesToAdd) {
-        for (BibEntry entry : entriesToAdd) {
-            importHandler.importEntryWithDuplicateCheck(database, (BibEntry) entry.clone());
-        }
     }
 
     private void handleOnDragOver(TableRow<BibEntryTableViewModel> row, BibEntryTableViewModel item, DragEvent event) {
@@ -395,12 +398,18 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
 
         List<BibEntry> entries = getSelectionModel().getSelectedItems().stream().map(BibEntryTableViewModel::getEntry).collect(Collectors.toList());
 
-        // The following is necessary to initiate the drag and drop in JavaFX,
-        // although we don't need the contents, it does not work without
-        // Drag'n'drop to other tabs use COPY TransferMode, drop to group sidepane use MOVE
-        ClipboardContent content = new ClipboardContent();
-        Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
+        ClipboardContent content;
+        try {
+            content = clipboardContentGenerator.generate(entries, CitationStyleOutputFormat.HTML, database);
+        } catch (IOException e) {
+            LOGGER.warn("Could not generate clipboard content. Falling back to empty clipboard", e);
+            content = new ClipboardContent();
+        }
+        // Required to be able to drop the entries inside JabRef
         content.put(DragAndDropDataFormats.ENTRIES, "");
+
+        // Drag'n'drop to other tabs use COPY TransferMode, drop to group sidepane use MOVE
+        Dragboard dragboard = startDragAndDrop(TransferMode.COPY_OR_MOVE);
         dragboard.setContent(content);
 
         if (!entries.isEmpty()) {
@@ -421,7 +430,7 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
             // Center -> link files to entry
             // Depending on the pressed modifier, move/copy/link files to drop target
             switch (ControlHelper.getDroppingMouseLocation(row, event)) {
-                case TOP, BOTTOM -> importHandler.importFilesInBackground(files).executeWith(taskExecutor);
+                case TOP, BOTTOM -> importHandler.importFilesInBackground(files, database, filePreferences).executeWith(taskExecutor);
                 case CENTER -> {
                     BibEntry entry = target.getEntry();
                     switch (event.getTransferMode()) {
@@ -431,11 +440,11 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
                         }
                         case MOVE -> {
                             LOGGER.debug("Mode MOVE"); // alt on win
-                            importHandler.getLinker().moveFilesToFileDirRenameAndAddToEntry(entry, files, libraryTab.getIndexingTaskManager());
+                            importHandler.getLinker().moveFilesToFileDirRenameAndAddToEntry(entry, files, libraryTab.getLuceneManager());
                         }
                         case COPY -> {
                             LOGGER.debug("Mode Copy"); // ctrl on win
-                            importHandler.getLinker().copyFilesToFileDirAndAddToEntry(entry, files, libraryTab.getIndexingTaskManager());
+                            importHandler.getLinker().copyFilesToFileDirAndAddToEntry(entry, files, libraryTab.getLuceneManager());
                         }
                     }
                 }
@@ -452,9 +461,8 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
         boolean success = false;
 
         if (event.getDragboard().hasFiles()) {
-            List<Path> files = event.getDragboard().getFiles().stream().map(File::toPath).collect(Collectors.toList());
-            importHandler.importFilesInBackground(files).executeWith(taskExecutor);
-
+            List<Path> files = event.getDragboard().getFiles().stream().map(File::toPath).toList();
+            importHandler.importFilesInBackground(files, this.database, filePreferences).executeWith(taskExecutor);
             success = true;
         }
 
@@ -470,10 +478,6 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
         return model;
     }
 
-    public BibEntry getEntryAt(int row) {
-        return model.getEntriesFilteredAndSorted().get(row).getEntry();
-    }
-
     public List<BibEntry> getSelectedEntries() {
         return getSelectionModel()
                 .getSelectedItems()
@@ -487,12 +491,5 @@ public class MainTable extends TableView<BibEntryTableViewModel> {
                     .stream()
                     .filter(viewModel -> viewModel.getEntry().equals(entry))
                     .findFirst();
-    }
-
-    public static List<MainTableColumnModel> toColumnModels(List<TableColumn<BibEntryTableViewModel, ?>> columns) {
-        return columns.stream()
-                      .filter(col -> col instanceof MainTableColumn<?>)
-                      .map(column -> ((MainTableColumn<?>) column).getModel())
-                      .collect(Collectors.toList());
     }
 }

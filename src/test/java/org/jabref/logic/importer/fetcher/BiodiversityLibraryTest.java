@@ -13,7 +13,7 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.testutils.category.FetcherTest;
 
-import kong.unirest.json.JSONObject;
+import kong.unirest.core.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @FetcherTest
-public class BiodiversityLibraryTest {
+class BiodiversityLibraryTest {
     private final String BASE_URL = "https://www.biodiversitylibrary.org/api3?";
     private final String RESPONSE_FORMAT = "&format=json";
     private final BuildInfo buildInfo = new BuildInfo();
@@ -41,20 +41,20 @@ public class BiodiversityLibraryTest {
     }
 
     @Test
-    public void testGetName() {
+    void getName() {
         assertEquals("Biodiversity Heritage", fetcher.getName());
         assertNotEquals("Biodiversity Heritage Library", fetcher.getName());
         assertNotEquals("Biodiversity Library", fetcher.getName());
     }
 
     @Test
-    public void biodiversityHeritageApiKeyIsNotEmpty() {
+    void biodiversityHeritageApiKeyIsNotEmpty() {
         BuildInfo buildInfo = new BuildInfo();
         assertNotNull(buildInfo.biodiversityHeritageApiKey);
     }
 
     @Test
-    public void baseURLConstruction() throws MalformedURLException, URISyntaxException {
+    void baseURLConstruction() throws MalformedURLException, URISyntaxException {
         String expected = fetcher
                 .getTestUrl()
                 .concat(buildInfo.biodiversityHeritageApiKey)
@@ -65,7 +65,7 @@ public class BiodiversityLibraryTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"1234", "331", "121"})
-    public void getPartMetadaUrl(String id) throws MalformedURLException, URISyntaxException {
+    void getPartMetadaUrl(String id) throws MalformedURLException, URISyntaxException {
         String expected = fetcher
                 .getTestUrl()
                 .concat(buildInfo.biodiversityHeritageApiKey)
@@ -78,7 +78,7 @@ public class BiodiversityLibraryTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"1234", "4321", "331"})
-    public void getItemMetadaUrl(String id) throws MalformedURLException, URISyntaxException {
+    void getItemMetadaUrl(String id) throws MalformedURLException, URISyntaxException {
         String expected = fetcher
                 .getTestUrl()
                 .concat(buildInfo.biodiversityHeritageApiKey)
@@ -90,7 +90,7 @@ public class BiodiversityLibraryTest {
     }
 
     @Test
-    public void testPerformSearch() throws FetcherException {
+    void performSearch() throws FetcherException {
         BibEntry expected = new BibEntry(StandardEntryType.Article)
             .withField(StandardField.AUTHOR, "Clark, John L. (John Littner)  and Neill, David A. ")
             .withField(StandardField.JOURNALTITLE, "PhytoKeys")
@@ -100,14 +100,14 @@ public class BiodiversityLibraryTest {
             .withField(StandardField.URL, "https://www.biodiversitylibrary.org/part/356490")
             .withField(StandardField.DATE, "2023")
             .withField(StandardField.VOLUME, "227")
-            .withField(StandardField.PAGES, "89-97")
+            .withField(StandardField.PAGES, "89--97")
             .withField(StandardField.DOI, "10.3897/phytokeys.227.104703");
 
-        assertEquals(expected, fetcher.performSearch("Amanoa condorensis (Phyllanthaceae)").get(0));
+        assertEquals(expected, fetcher.performSearch("Amanoa condorensis (Phyllanthaceae)").getFirst());
     }
 
     @Test
-    public void jsonResultToBibEntry() {
+    void jsonResultToBibEntry() {
         JSONObject input = new JSONObject("{\n\"BHLType\": \"Part\",\n\"FoundIn\": \"Metadata\",\n\"Volume\": \"3\",\n\"Authors\": [\n{\n\"Name\": \"Dimmock, George,\"\n}\n],\n\"PartUrl\": \"https://www.biodiversitylibrary.org/part/181199\",\n\"PartID\": \"181199\",\n\"Genre\": \"Article\",\n\"Title\": \"The Cocoons of Cionus Scrophulariae\",\n\"ContainerTitle\": \"Psyche.\",\n\"Date\": \"1882\",\n\"PageRange\": \"411--413\"\n}");
         BibEntry expected = new BibEntry(StandardEntryType.Article)
                 .withField(StandardField.TITLE, "The Cocoons of Cionus Scrophulariae")

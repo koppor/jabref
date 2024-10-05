@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class DoiResolution implements FulltextFetcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoiResolution.class);
-    private DOIPreferences doiPreferences;
+    private final DOIPreferences doiPreferences;
 
     public DoiResolution(DOIPreferences doiPreferences) {
         super();
@@ -61,7 +61,7 @@ public class DoiResolution implements FulltextFetcher {
 
         String doiLink;
         if (doiPreferences.isUseCustom()) {
-            base = new URL(doiPreferences.getDefaultBaseURI());
+            base = URI.create(doiPreferences.getDefaultBaseURI()).toURL();
             doiLink = doi.get()
                          .getExternalURIWithCustomBase(base.toString())
                          .map(URI::toASCIIString)
@@ -110,25 +110,25 @@ public class DoiResolution implements FulltextFetcher {
                 // See https://github.com/lehner/LocalCopy for more scrape ideas
                 // link with "PDF" in title tag
                 if (element.attr("title").toLowerCase(Locale.ENGLISH).contains("pdf") && new URLDownload(href).isPdf()) {
-                    return Optional.of(new URL(href));
+                    return Optional.of(URI.create(href).toURL());
                 }
 
                 if (href.contains("pdf") || hrefText.contains("pdf") && new URLDownload(href).isPdf()) {
-                    links.add(new URL(href));
+                    links.add(URI.create(href).toURL());
                 }
             }
 
             // return if only one link was found (high accuracy)
             if (links.size() == 1) {
                 LOGGER.info("Fulltext PDF found @ {}", doiLink);
-                return Optional.of(links.get(0));
+                return Optional.of(links.getFirst());
             }
             // return if links are equal
             return findDistinctLinks(links);
         } catch (UnsupportedMimeTypeException type) {
             // this might be the PDF already as we follow redirects
             if (type.getMimeType().startsWith("application/pdf")) {
-                return Optional.of(new URL(type.getUrl()));
+                return Optional.of(URI.create(type.getUrl()).toURL());
             }
             LOGGER.warn("DoiResolution fetcher failed: ", type);
         } catch (IOException e) {
@@ -148,7 +148,7 @@ public class DoiResolution implements FulltextFetcher {
 
         if (citationPdfUrl.isPresent()) {
             try {
-                return Optional.of(new URL(citationPdfUrl.get()));
+                return Optional.of(URI.create(citationPdfUrl.get()).toURL());
             } catch (MalformedURLException e) {
                 return Optional.empty();
             }
@@ -181,7 +181,7 @@ public class DoiResolution implements FulltextFetcher {
         }
         // equal
         if (distinctLinks.size() == 1) {
-            return Optional.of(distinctLinks.get(0));
+            return Optional.of(distinctLinks.getFirst());
         }
 
         return Optional.empty();

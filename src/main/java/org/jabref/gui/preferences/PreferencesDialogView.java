@@ -1,6 +1,7 @@
 package org.jabref.gui.preferences;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
@@ -10,7 +11,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
 
 import org.jabref.gui.DialogService;
-import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.keyboard.KeyBinding;
 import org.jabref.gui.theme.ThemeManager;
@@ -18,7 +18,6 @@ import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.ControlHelper;
 import org.jabref.gui.util.ViewModelListCellFactory;
 import org.jabref.logic.l10n.Localization;
-import org.jabref.preferences.PreferencesService;
 
 import com.airhacks.afterburner.views.ViewLoader;
 import com.tobiasdiez.easybind.EasyBind;
@@ -39,15 +38,15 @@ public class PreferencesDialogView extends BaseDialog<PreferencesDialogViewModel
     @FXML private ToggleButton memoryStickMode;
 
     @Inject private DialogService dialogService;
-    @Inject private PreferencesService preferencesService;
+    @Inject private GuiPreferences preferences;
     @Inject private ThemeManager themeManager;
 
-    private final JabRefFrame frame;
     private PreferencesDialogViewModel viewModel;
+    private final Class<? extends PreferencesTab> preferencesTabToSelectClass;
 
-    public PreferencesDialogView(JabRefFrame frame) {
-        this.frame = frame;
+    public PreferencesDialogView(Class<? extends PreferencesTab> preferencesTabToSelectClass) {
         this.setTitle(Localization.lang("JabRef preferences"));
+        this.preferencesTabToSelectClass = preferencesTabToSelectClass;
 
         ViewLoader.view(this)
                   .load()
@@ -71,13 +70,13 @@ public class PreferencesDialogView extends BaseDialog<PreferencesDialogViewModel
 
     @FXML
     private void initialize() {
-        viewModel = new PreferencesDialogViewModel(dialogService, preferencesService, frame);
+        viewModel = new PreferencesDialogViewModel(dialogService, preferences);
 
         preferenceTabList.itemsProperty().setValue(viewModel.getPreferenceTabs());
 
         // The list view does not respect the listener for the dialog and needs its own
         preferenceTabList.setOnKeyReleased(key -> {
-            if (preferencesService.getKeyBindingRepository().checkKeyCombinationEquality(KeyBinding.CLOSE, key)) {
+            if (preferences.getKeyBindingRepository().checkKeyCombinationEquality(KeyBinding.CLOSE, key)) {
                 this.closeDialog();
             }
         });
@@ -102,7 +101,16 @@ public class PreferencesDialogView extends BaseDialog<PreferencesDialogViewModel
             }
         });
 
-        preferenceTabList.getSelectionModel().selectFirst();
+        if (this.preferencesTabToSelectClass != null) {
+            Optional<PreferencesTab> tabToSelectIfExist = preferenceTabList.getItems()
+                                                                           .stream()
+                                                                           .filter(prefTab -> prefTab.getClass().equals(preferencesTabToSelectClass))
+                                                                           .findFirst();
+            tabToSelectIfExist.ifPresent(preferencesTab -> preferenceTabList.getSelectionModel().select(preferencesTab));
+        } else {
+            preferenceTabList.getSelectionModel().selectFirst();
+        }
+
         new ViewModelListCellFactory<PreferencesTab>()
                 .withText(PreferencesTab::getTabName)
                 .install(preferenceTabList);

@@ -40,6 +40,8 @@ public class EntryEditorPreferences {
     private final MapProperty<String, Set<Field>> defaultEntryEditorTabList;
     private final BooleanProperty shouldOpenOnNewEntry;
     private final BooleanProperty shouldShowRecommendationsTab;
+    private final BooleanProperty shouldShowAiSummaryTab;
+    private final BooleanProperty shouldShowAiChatTab;
     private final BooleanProperty shouldShowLatexCitationsTab;
     private final BooleanProperty showSourceTabByDefault;
     private final BooleanProperty enableValidation;
@@ -47,23 +49,33 @@ public class EntryEditorPreferences {
     private final DoubleProperty dividerPosition;
     private final BooleanProperty autoLinkFiles;
     private final ObjectProperty<JournalPopupEnabled> enablementStatus;
+    private final BooleanProperty shouldShowSciteTab;
+    private final BooleanProperty showUserCommentsFields;
+    private final DoubleProperty previewWidthDividerPosition;
 
     public EntryEditorPreferences(Map<String, Set<Field>> entryEditorTabList,
                                   Map<String, Set<Field>> defaultEntryEditorTabList,
                                   boolean shouldOpenOnNewEntry,
                                   boolean shouldShowRecommendationsTab,
+                                  boolean shouldShowAiSummaryTab,
+                                  boolean shouldShowAiChatTab,
                                   boolean shouldShowLatexCitationsTab,
                                   boolean showSourceTabByDefault,
                                   boolean enableValidation,
                                   boolean allowIntegerEditionBibtex,
                                   double dividerPosition,
                                   boolean autolinkFilesEnabled,
-                                  JournalPopupEnabled journalPopupEnabled) {
+                                  JournalPopupEnabled journalPopupEnabled,
+                                  boolean showSciteTab,
+                                  boolean showUserCommentsFields,
+                                  double previewWidthDividerPosition) {
 
         this.entryEditorTabList = new SimpleMapProperty<>(FXCollections.observableMap(entryEditorTabList));
         this.defaultEntryEditorTabList = new SimpleMapProperty<>(FXCollections.observableMap(defaultEntryEditorTabList));
         this.shouldOpenOnNewEntry = new SimpleBooleanProperty(shouldOpenOnNewEntry);
         this.shouldShowRecommendationsTab = new SimpleBooleanProperty(shouldShowRecommendationsTab);
+        this.shouldShowAiSummaryTab = new SimpleBooleanProperty(shouldShowAiSummaryTab);
+        this.shouldShowAiChatTab = new SimpleBooleanProperty(shouldShowAiChatTab);
         this.shouldShowLatexCitationsTab = new SimpleBooleanProperty(shouldShowLatexCitationsTab);
         this.showSourceTabByDefault = new SimpleBooleanProperty(showSourceTabByDefault);
         this.enableValidation = new SimpleBooleanProperty(enableValidation);
@@ -71,6 +83,9 @@ public class EntryEditorPreferences {
         this.dividerPosition = new SimpleDoubleProperty(dividerPosition);
         this.autoLinkFiles = new SimpleBooleanProperty(autolinkFilesEnabled);
         this.enablementStatus = new SimpleObjectProperty<>(journalPopupEnabled);
+        this.shouldShowSciteTab = new SimpleBooleanProperty(showSciteTab);
+        this.showUserCommentsFields = new SimpleBooleanProperty(showUserCommentsFields);
+        this.previewWidthDividerPosition = new SimpleDoubleProperty(previewWidthDividerPosition);
     }
 
     public ObservableMap<String, Set<Field>> getEntryEditorTabs() {
@@ -111,6 +126,30 @@ public class EntryEditorPreferences {
 
     public void setShouldShowRecommendationsTab(boolean shouldShowRecommendationsTab) {
         this.shouldShowRecommendationsTab.set(shouldShowRecommendationsTab);
+    }
+
+    public boolean shouldShowAiSummaryTab() {
+        return shouldShowAiSummaryTab.get();
+    }
+
+    public BooleanProperty shouldShowAiSummaryTabProperty() {
+        return shouldShowAiSummaryTab;
+    }
+
+    public void setShouldShowAiSummaryTab(boolean shouldShowAiSummaryTab) {
+        this.shouldShowAiSummaryTab.set(shouldShowAiSummaryTab);
+    }
+
+    public boolean shouldShowAiChatTab() {
+        return shouldShowAiChatTab.get();
+    }
+
+    public BooleanProperty shouldShowAiChatTabProperty() {
+        return shouldShowAiChatTab;
+    }
+
+    public void setShouldShowAiChatTab(boolean shouldShowAiChatTab) {
+        this.shouldShowAiChatTab.set(shouldShowAiChatTab);
     }
 
     public boolean shouldShowLatexCitationsTab() {
@@ -195,5 +234,44 @@ public class EntryEditorPreferences {
 
     public void setEnableJournalPopup(JournalPopupEnabled journalPopupEnabled) {
         this.enablementStatus.set(journalPopupEnabled);
+    }
+
+    public boolean shouldShowSciteTab() {
+        return this.shouldShowSciteTab.get();
+    }
+
+    public BooleanProperty shouldShowLSciteTabProperty() {
+        return this.shouldShowSciteTab;
+    }
+
+    public void setShouldShowSciteTab(boolean shouldShowSciteTab) {
+        this.shouldShowSciteTab.set(shouldShowSciteTab);
+    }
+
+    public boolean shouldShowUserCommentsFields() {
+        return showUserCommentsFields.get();
+    }
+
+    public BooleanProperty showUserCommentsFieldsProperty() {
+        return showUserCommentsFields;
+    }
+
+    public void setShowUserCommentsFields(boolean showUserCommentsFields) {
+        this.showUserCommentsFields.set(showUserCommentsFields);
+    }
+
+    public void setPreviewWidthDividerPosition(double previewWidthDividerPosition) {
+        this.previewWidthDividerPosition.set(previewWidthDividerPosition);
+    }
+
+    /**
+     * Holds the horizontal divider position when the Preview is shown in the entry editor
+     */
+    public DoubleProperty previewWidthDividerPositionProperty() {
+        return previewWidthDividerPosition;
+    }
+
+    public Double getPreviewWidthDividerPosition() {
+        return previewWidthDividerPosition.get();
     }
 }

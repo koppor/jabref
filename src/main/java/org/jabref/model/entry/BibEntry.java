@@ -6,14 +6,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.SequencedSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javafx.beans.Observable;
@@ -43,6 +46,7 @@ import org.jabref.model.strings.LatexToUnicodeAdapter;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.model.util.MultiKeyMap;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.EventBus;
 import com.tobiasdiez.easybind.EasyBind;
 import com.tobiasdiez.easybind.optional.OptionalBinding;
@@ -52,25 +56,23 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents a Bib(La)TeX entry, which can be BibTeX or BibLaTeX.
  * <p>
- *     Example:
+ * Example:
  *
- *     <pre>{@code
+ * <pre>{@code
  * Some commment
  * @misc{key,
  *   fieldName = {fieldValue},
- *   otherFieldName = {otherVieldValue}
+ *   otherFieldName = {otherFieldValue}
  * }
- *     }</pre>
- *
- *     Then,
+ * }</pre>
+ * <p>
+ * Then,
  *     <ul>
  *         <li>"Some comment" is the comment before the entry,</li>
  *         <li>"misc" is the entry type</li>
  *         <li>"key" the citation key</li>
  *         <li>"fieldName" and "otherFieldName" the fields of the BibEntry</li>
  *     </ul>
- * </p>
- * <p>
  * A BibTeX entry has following properties:
  * <ul>
  *     <li>comments before entry</li>
@@ -87,7 +89,7 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * </p>
  * <p>
- * In case you search for a builder as described in Item 2 of the book "Effective Java", you won't find one. Please use the methods {@link #withCitationKey(String)} and {@link #withField(Field, String)}.
+ * In case you search for a builder as described in Item 2 of the book "Effective Java", you won't find one. Please use the methods {@link #withCitationKey(String)} and {@link #withField(Field, String)}. All these methods set {@link #hasChanged()} to <code>false</code>. In case <code>changed</code>, use {@link #withChanged(boolean)}.
  * </p>
  */
 @AllowedToUseLogic("because it needs access to parser and writers")
@@ -144,6 +146,11 @@ public class BibEntry implements Cloneable {
         this(DEFAULT_TYPE);
     }
 
+    public BibEntry(String citationKey) {
+        this();
+        this.setCitationKey(citationKey);
+    }
+
     /**
      * Constructs a new BibEntry. The internal ID is set to IdGenerator.next()
      */
@@ -151,6 +158,11 @@ public class BibEntry implements Cloneable {
         this.id = IdGenerator.next();
         setType(type);
         this.sharedBibEntryData = new SharedBibEntryData();
+    }
+
+    public BibEntry(EntryType type, String citationKey) {
+        this(type);
+        this.setCitationKey(citationKey);
     }
 
     public Optional<FieldChange> setMonth(Month parsedMonth) {
@@ -343,19 +355,22 @@ public class BibEntry implements Cloneable {
     }
 
     /**
-     * Returns this entry's ID.
+     * Returns this entry's ID. It is used internally to distinguish different BibTeX entries.
+     * <p>
+     * It is <emph>not</emph> the citation key (which is stored in the {@link InternalField#KEY_FIELD} and also known as BibTeX key).
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Sets this entry's identifier (ID). It is used internally  to distinguish different BibTeX entries. It is <emph>not</emph> the citation key. The BibTexKey is the {@link InternalField#KEY_FIELD}.
+     * Sets this entry's identifier (ID).
      * <p>
      * The entry is also updated in the shared database - provided the database containing it doesn't veto the change.
      *
      * @param id The ID to be used
      */
+    @VisibleForTesting
     public void setId(String id) {
         Objects.requireNonNull(id, "Every BibEntry must have an ID");
 
@@ -382,6 +397,9 @@ public class BibEntry implements Cloneable {
         return this;
     }
 
+    /**
+     * If not present, {@link BibEntry#getAuthorTitleYear(int)} can be used
+     */
     public Optional<String> getCitationKey() {
         String key = fields.get(InternalField.KEY_FIELD);
         if (StringUtil.isBlank(key)) {
@@ -434,12 +452,17 @@ public class BibEntry implements Cloneable {
     }
 
     /**
-     * Returns an {@link Collections#unmodifiableSet(Set)} containing the names of all fields that are set for this particular entry.
-     *
-     * @return a set of existing field names
+     * Returns an unmodifiable sequence containing the names of all fields that are set for this particular entry.
      */
-    public Set<Field> getFields() {
-        return Collections.unmodifiableSet(fields.keySet());
+    public SequencedSet<Field> getFields() {
+        return new LinkedHashSet<>(fields.keySet());
+    }
+
+    /**
+     * Returns an unmodifiable sequence containing the names of all fields that are a) set for this particular entry and b) matching the given predicate
+     */
+    public SequencedSet<Field> getFields(Predicate<Field> selector) {
+        return getFields().stream().filter(selector).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -564,7 +587,7 @@ public class BibEntry implements Cloneable {
     }
 
     /**
-     * Return the LaTeX-free contents of the given field or its alias an an Optional
+     * Return the LaTeX-free contents of the given field or its alias an Optional
      * <p>
      * For details see also {@link #getFieldOrAlias(Field)}
      *
@@ -594,7 +617,7 @@ public class BibEntry implements Cloneable {
      */
     public Optional<FieldChange> setField(Field field, String value, EntriesEventSource eventSource) {
         Objects.requireNonNull(field, "field name must not be null");
-        Objects.requireNonNull(value, "field value must not be null");
+        Objects.requireNonNull(value, "field value for field " + field.getName() + " must not be null");
         Objects.requireNonNull(eventSource, "field eventSource must not be null");
 
         if (value.isEmpty()) {
@@ -602,11 +625,11 @@ public class BibEntry implements Cloneable {
         }
 
         String oldValue = getField(field).orElse(null);
-        boolean isNewField = oldValue == null;
         if (value.equals(oldValue)) {
             return Optional.empty();
         }
 
+        boolean isNewField = oldValue == null;
         changed = true;
 
         invalidateFieldCache(field);
@@ -680,6 +703,7 @@ public class BibEntry implements Cloneable {
     /**
      * Returns a clone of this entry. Useful for copying.
      * This will set a new ID for the cloned entry to be able to distinguish both copies.
+     * Does <em>not</em> port the listeners.
      */
     @Override
     public Object clone() {
@@ -698,13 +722,23 @@ public class BibEntry implements Cloneable {
      * to a) enable debugging the internal representation and b) save time at this method.
      * <p>
      * Serializes all fields, even the JabRef internal ones. Does NOT serialize "KEY_FIELD" as field, but as key.
+     * <p>
+     * Alternative for some more readable output: {@link #getAuthorTitleYear(int)}
      */
     @Override
     public String toString() {
         return CanonicalBibEntry.getCanonicalRepresentation(this);
     }
 
+    public String getAuthorTitleYear() {
+        return getAuthorTitleYear(0);
+    }
+
     /**
+     * Creates a short textual description of the entry in the format: <code>Author1, Author2: Title (Year)</code>
+     *
+     * If <code>0</code> is passed as <code>maxCharacters</code>, the description is not truncated.
+     *
      * @param maxCharacters The maximum number of characters (additional
      *                      characters are replaced with "..."). Set to 0 to disable truncation.
      * @return A short textual description of the entry in the format:
@@ -918,7 +952,7 @@ public class BibEntry implements Cloneable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(commentsBeforeEntry, type.getValue(), fields);
+        return Objects.hash(type.getValue(), fields, commentsBeforeEntry);
     }
 
     public void registerListener(Object object) {
@@ -945,6 +979,7 @@ public class BibEntry implements Cloneable {
      */
     public BibEntry withFields(Map<Field, String> content) {
         this.fields = FXCollections.observableMap(new HashMap<>(content));
+        this.setChanged(false);
         return this;
     }
 
@@ -969,6 +1004,7 @@ public class BibEntry implements Cloneable {
 
     public BibEntry withUserComments(String commentsBeforeEntry) {
         this.commentsBeforeEntry = commentsBeforeEntry;
+        this.setChanged(false);
         return this;
     }
 
@@ -1039,19 +1075,25 @@ public class BibEntry implements Cloneable {
         return this.setField(StandardField.FILE, newValue);
     }
 
+    public BibEntry withFiles(List<LinkedFile> files) {
+        setFiles(files);
+        this.setChanged(false);
+        return this;
+    }
+
     /**
      * Gets a list of linked files.
      *
      * @return the list of linked files, is never null but can be empty.
-     * Changes to the underlying list will have no effect on the entry itself. Use {@link #addFile(LinkedFile)}
+     * Changes to the underlying list will have no effect on the entry itself. Use {@link #addFile(LinkedFile)}.
      */
     public List<LinkedFile> getFiles() {
-        // Extract the path
         Optional<String> oldValue = getField(StandardField.FILE);
         if (oldValue.isEmpty()) {
             return new ArrayList<>(); // Return new ArrayList because emptyList is immutable
         }
 
+        // Extract the path
         return FileFieldParser.parse(oldValue.get());
     }
 
@@ -1122,7 +1164,7 @@ public class BibEntry implements Cloneable {
             i++;
         }
         if (oldFileIndex == -1) {
-            linkedFiles.add(0, downloadedFile);
+            linkedFiles.addFirst(downloadedFile);
         } else {
             linkedFiles.set(oldFileIndex, downloadedFile);
         }

@@ -7,37 +7,38 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 import javax.swing.undo.UndoManager;
 
+import org.jabref.gui.ClipBoardManager;
 import org.jabref.gui.DialogService;
-import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.LibraryTab;
+import org.jabref.gui.LibraryTabContainer;
 import org.jabref.gui.StateManager;
-import org.jabref.gui.Telemetry;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.autosaveandbackup.BackupManager;
 import org.jabref.gui.dialogs.BackupUIManager;
+import org.jabref.gui.preferences.GuiPreferences;
 import org.jabref.gui.shared.SharedDatabaseUIManager;
 import org.jabref.gui.undo.CountingUndoManager;
-import org.jabref.gui.util.BackgroundTask;
-import org.jabref.gui.util.DefaultTaskExecutor;
 import org.jabref.gui.util.FileDialogConfiguration;
-import org.jabref.gui.util.TaskExecutor;
+import org.jabref.gui.util.UiTaskExecutor;
+import org.jabref.logic.ai.AiService;
 import org.jabref.logic.importer.OpenDatabase;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.logic.shared.DatabaseNotSupportedException;
 import org.jabref.logic.shared.exception.InvalidDBMSConnectionPropertiesException;
 import org.jabref.logic.shared.exception.NotASharedDatabaseException;
+import org.jabref.logic.util.BackgroundTask;
 import org.jabref.logic.util.StandardFileType;
+import org.jabref.logic.util.TaskExecutor;
 import org.jabref.logic.util.io.FileHistory;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
-import org.jabref.preferences.PreferencesService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,46 +55,47 @@ public class OpenDatabaseAction extends SimpleCommand {
             // Warning for migrating the Review into the Comment field
             new MergeReviewIntoCommentAction(),
             // Check for new custom entry types loaded from the BIB file:
-            new CheckForNewEntryTypesAction());
+            new CheckForNewEntryTypesAction(),
+            // Migrate search groups from Search.g4 to Lucene syntax
+            new SearchGroupsMigrationAction());
 
-    private final JabRefFrame frame;
-    private final PreferencesService preferencesService;
+    private final LibraryTabContainer tabContainer;
+    private final GuiPreferences preferences;
+    private final AiService aiService;
     private final StateManager stateManager;
     private final FileUpdateMonitor fileUpdateMonitor;
     private final DialogService dialogService;
     private final BibEntryTypesManager entryTypesManager;
     private final CountingUndoManager undoManager;
+    private final ClipBoardManager clipboardManager;
     private final TaskExecutor taskExecutor;
 
-    public OpenDatabaseAction(JabRefFrame frame,
-                              PreferencesService preferencesService,
+    public OpenDatabaseAction(LibraryTabContainer tabContainer,
+                              GuiPreferences preferences,
+                              AiService aiService,
                               DialogService dialogService,
                               StateManager stateManager,
                               FileUpdateMonitor fileUpdateMonitor,
                               BibEntryTypesManager entryTypesManager,
                               CountingUndoManager undoManager,
+                              ClipBoardManager clipBoardManager,
                               TaskExecutor taskExecutor) {
-        this.frame = frame;
-        this.preferencesService = preferencesService;
+        this.tabContainer = tabContainer;
+        this.preferences = preferences;
+        this.aiService = aiService;
         this.dialogService = dialogService;
         this.stateManager = stateManager;
         this.fileUpdateMonitor = fileUpdateMonitor;
         this.entryTypesManager = entryTypesManager;
         this.undoManager = undoManager;
+        this.clipboardManager = clipBoardManager;
         this.taskExecutor = taskExecutor;
     }
 
-    /**
-     * Go through the list of post open actions, and perform those that need to be performed.
-     *
-     * @param libraryTab The BasePanel where the database is shown.
-     * @param result     The result of the BIB file parse operation.
-     */
-    public static void performPostOpenActions(LibraryTab libraryTab, ParserResult result) {
+    public static void performPostOpenActions(ParserResult result, DialogService dialogService, CliPreferences preferences) {
         for (GUIPostOpenAction action : OpenDatabaseAction.POST_OPEN_ACTIONS) {
-            if (action.isActionNecessary(result)) {
-                action.performAction(libraryTab, result);
-                libraryTab.frame().showLibraryTab(libraryTab);
+            if (action.isActionNecessary(result, preferences)) {
+                action.performAction(result, dialogService, preferences);
             }
         }
     }
@@ -107,18 +109,18 @@ public class OpenDatabaseAction extends SimpleCommand {
                 .build();
 
         List<Path> filesToOpen = dialogService.showFileOpenDialogAndGetMultipleFiles(fileDialogConfiguration);
-        openFiles(filesToOpen);
+        openFiles(new ArrayList<>(filesToOpen));
     }
 
     /**
      * @return Path of current panel database directory or the working directory
      */
     private Path getInitialDirectory() {
-        if (frame.getLibraryTabs().isEmpty()) {
-            return preferencesService.getFilePreferences().getWorkingDirectory();
+        if (tabContainer.getLibraryTabs().isEmpty()) {
+            return preferences.getFilePreferences().getWorkingDirectory();
         } else {
-            Optional<Path> databasePath = frame.getCurrentLibraryTab().getBibDatabaseContext().getDatabasePath();
-            return databasePath.map(Path::getParent).orElse(preferencesService.getFilePreferences().getWorkingDirectory());
+            Optional<Path> databasePath = tabContainer.getCurrentLibraryTab().getBibDatabaseContext().getDatabasePath();
+            return databasePath.map(Path::getParent).orElse(preferences.getFilePreferences().getWorkingDirectory());
         }
     }
 
@@ -146,8 +148,7 @@ public class OpenDatabaseAction extends SimpleCommand {
         // Check if any of the files are already open:
         for (Iterator<Path> iterator = filesToOpen.iterator(); iterator.hasNext(); ) {
             Path file = iterator.next();
-            for (int i = 0; i < frame.getLibraryTabs().size(); i++) {
-                LibraryTab libraryTab = frame.getLibraryTabAt(i);
+            for (LibraryTab libraryTab : tabContainer.getLibraryTabs()) {
                 if ((libraryTab.getBibDatabaseContext().getDatabasePath().isPresent())
                         && libraryTab.getBibDatabaseContext().getDatabasePath().get().equals(file)) {
                     iterator.remove();
@@ -166,21 +167,24 @@ public class OpenDatabaseAction extends SimpleCommand {
         // Run the actual open in a thread to prevent the program
         // locking until the file is loaded.
         if (!filesToOpen.isEmpty()) {
-            FileHistory fileHistory = preferencesService.getGuiPreferences().getFileHistory();
+            FileHistory fileHistory = preferences.getLastFilesOpenedPreferences().getFileHistory();
             filesToOpen.forEach(theFile -> {
                 // This method will execute the concrete file opening and loading in a background thread
                 openTheFile(theFile);
                 fileHistory.newFile(theFile);
             });
-        } else if (toRaise != null) {
+        } else if (toRaise != null && tabContainer.getCurrentLibraryTab() == null) {
             // If no files are remaining to open, this could mean that a file was
             // already open. If so, we may have to raise the correct tab:
-            frame.showLibraryTab(toRaise);
+            // If there is already a library focused, do not show this library
+            tabContainer.showLibraryTab(toRaise);
         }
     }
 
     /**
      * This is the real file opening. Should be called via {@link #openFile(Path)}
+     *
+     * Similar method: {@link org.jabref.gui.frame.JabRefFrame#addTab(org.jabref.model.database.BibDatabaseContext, boolean)}.
      *
      * @param file the file, may be NOT null, but may not be existing
      */
@@ -196,14 +200,15 @@ public class OpenDatabaseAction extends SimpleCommand {
                 backgroundTask,
                 file,
                 dialogService,
-                preferencesService,
+                preferences,
                 stateManager,
-                frame,
+                tabContainer,
                 fileUpdateMonitor,
                 entryTypesManager,
                 undoManager,
+                clipboardManager,
                 taskExecutor);
-        backgroundTask.onFinished(() -> trackOpenNewDatabase(newTab));
+        tabContainer.addTab(newTab, true);
     }
 
     private ParserResult loadDatabase(Path file) throws Exception {
@@ -211,14 +216,14 @@ public class OpenDatabaseAction extends SimpleCommand {
 
         dialogService.notify(Localization.lang("Opening") + ": '" + file + "'");
 
-        preferencesService.getFilePreferences().setWorkingDirectory(fileToLoad.getParent());
-        Path backupDir = preferencesService.getFilePreferences().getBackupDirectory();
+        preferences.getFilePreferences().setWorkingDirectory(fileToLoad.getParent());
+        Path backupDir = preferences.getFilePreferences().getBackupDirectory();
 
         ParserResult parserResult = null;
         if (BackupManager.backupFileDiffers(fileToLoad, backupDir)) {
             // In case the backup differs, ask the user what to do.
             // In case the user opted for restoring a backup, the content of the backup is contained in parserResult.
-            parserResult = BackupUIManager.showRestoreBackupDialog(dialogService, fileToLoad, preferencesService, fileUpdateMonitor)
+            parserResult = BackupUIManager.showRestoreBackupDialog(dialogService, fileToLoad, preferences, fileUpdateMonitor, undoManager, stateManager)
                                           .orElse(null);
         }
 
@@ -226,14 +231,14 @@ public class OpenDatabaseAction extends SimpleCommand {
             if (parserResult == null) {
                 // No backup was restored, do the "normal" loading
                 parserResult = OpenDatabase.loadDatabase(fileToLoad,
-                        preferencesService.getImportFormatPreferences(),
+                        preferences.getImportFormatPreferences(),
                         fileUpdateMonitor);
             }
 
             if (parserResult.hasWarnings()) {
                 String content = Localization.lang("Please check your library file for wrong syntax.")
                         + "\n\n" + parserResult.getErrorMessage();
-                DefaultTaskExecutor.runInJavaFXThread(() ->
+                UiTaskExecutor.runInJavaFXThread(() ->
                         dialogService.showWarningDialogAndWait(Localization.lang("Open library error"), content));
             }
         } catch (IOException e) {
@@ -244,44 +249,43 @@ public class OpenDatabaseAction extends SimpleCommand {
         if (parserResult.getDatabase().isShared()) {
                          openSharedDatabase(
                                  parserResult,
-                                 frame,
+                                 tabContainer,
                                  dialogService,
-                                 preferencesService,
+                                 preferences,
+                                 aiService,
                                  stateManager,
                                  entryTypesManager,
                                  fileUpdateMonitor,
                                  undoManager,
+                                 clipboardManager,
                                  taskExecutor);
         }
         return parserResult;
     }
 
-    private void trackOpenNewDatabase(LibraryTab libraryTab) {
-        Telemetry.getTelemetryClient().ifPresent(client -> client.trackEvent(
-                "OpenNewDatabase",
-                Map.of(),
-                Map.of("NumberOfEntries", (double) libraryTab.getBibDatabaseContext().getDatabase().getEntryCount())));
-    }
-
     public static void openSharedDatabase(ParserResult parserResult,
-                                          JabRefFrame frame,
+                                          LibraryTabContainer tabContainer,
                                           DialogService dialogService,
-                                          PreferencesService preferencesService,
+                                          GuiPreferences preferences,
+                                          AiService aiService,
                                           StateManager stateManager,
                                           BibEntryTypesManager entryTypesManager,
                                           FileUpdateMonitor fileUpdateMonitor,
                                           UndoManager undoManager,
+                                          ClipBoardManager clipBoardManager,
                                           TaskExecutor taskExecutor)
             throws SQLException, DatabaseNotSupportedException, InvalidDBMSConnectionPropertiesException, NotASharedDatabaseException {
         try {
             new SharedDatabaseUIManager(
-                    frame,
+                    tabContainer,
                     dialogService,
-                    preferencesService,
+                    preferences,
+                    aiService,
                     stateManager,
                     entryTypesManager,
                     fileUpdateMonitor,
                     undoManager,
+                    clipBoardManager,
                     taskExecutor)
                     .openSharedDatabaseFromParserResult(parserResult);
         } catch (SQLException | DatabaseNotSupportedException | InvalidDBMSConnectionPropertiesException |

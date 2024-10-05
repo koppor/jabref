@@ -12,8 +12,7 @@ import javafx.collections.ObservableList;
 
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.DialogService;
-import org.jabref.gui.Globals;
-import org.jabref.gui.JabRefFrame;
+import org.jabref.gui.preferences.ai.AiTab;
 import org.jabref.gui.preferences.autocompletion.AutoCompletionTab;
 import org.jabref.gui.preferences.citationkeypattern.CitationKeyPatternTab;
 import org.jabref.gui.preferences.customentrytypes.CustomEntryTypesTab;
@@ -40,9 +39,9 @@ import org.jabref.gui.util.FileDialogConfiguration;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.StandardFileType;
-import org.jabref.preferences.PreferencesFilter;
-import org.jabref.preferences.PreferencesService;
+import org.jabref.model.entry.BibEntryTypesManager;
 
+import com.airhacks.afterburner.injection.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,20 +52,19 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
     private final SimpleBooleanProperty memoryStickProperty = new SimpleBooleanProperty();
 
     private final DialogService dialogService;
-    private final PreferencesService preferences;
+    private final GuiPreferences preferences;
     private final ObservableList<PreferencesTab> preferenceTabs;
-    private final JabRefFrame frame;
 
-    public PreferencesDialogViewModel(DialogService dialogService, PreferencesService preferences, JabRefFrame frame) {
+    public PreferencesDialogViewModel(DialogService dialogService, GuiPreferences preferences) {
         this.dialogService = dialogService;
         this.preferences = preferences;
-        this.frame = frame;
 
         preferenceTabs = FXCollections.observableArrayList(
                 new GeneralTab(),
                 new KeyBindingsTab(),
                 new GroupsTab(),
                 new WebSearchTab(),
+                new AiTab(),
                 new EntryTab(),
                 new TableTab(),
                 new PreviewTab(),
@@ -102,7 +100,7 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
                      .ifPresent(file -> {
                          try {
                              preferences.importPreferences(file);
-                             updateAfterPreferenceChanges();
+                             setValues();
 
                              dialogService.showWarningDialogAndWait(Localization.lang("Import preferences"),
                                      Localization.lang("You must restart JabRef for this to come into effect."));
@@ -146,25 +144,14 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
         if (resetPreferencesConfirmed) {
             try {
                 preferences.clear();
-
                 dialogService.showWarningDialogAndWait(Localization.lang("Reset preferences"),
                         Localization.lang("You must restart JabRef for this to come into effect."));
             } catch (BackingStoreException ex) {
                 LOGGER.error("Error while resetting preferences", ex);
                 dialogService.showErrorDialogAndWait(Localization.lang("Reset preferences"), ex);
             }
-
-            updateAfterPreferenceChanges();
+            setValues();
         }
-    }
-
-    /**
-     * Reloads the preferences into the UI
-     */
-    private void updateAfterPreferenceChanges() {
-        setValues();
-
-        frame.getLibraryTabs().forEach(panel -> panel.getMainTable().getTableModel().refresh());
     }
 
     /**
@@ -180,16 +167,13 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
     }
 
     public void storeAllSettings() {
-        List<String> restartWarnings = new ArrayList<>();
-
-        // Run validation checks
         if (!validSettings()) {
             return;
         }
 
         // Store settings
         preferences.getInternalPreferences().setMemoryStickMode(memoryStickProperty.get());
-
+        List<String> restartWarnings = new ArrayList<>();
         for (PreferencesTab tab : preferenceTabs) {
             tab.storeSettings();
             restartWarnings.addAll(tab.getRestartWarnings());
@@ -203,12 +187,8 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
                             + Localization.lang("You must restart JabRef for this to come into effect."));
         }
 
-        frame.setupAllTables();
-        frame.getGlobalSearchBar().updateHintVisibility();
-        Globals.entryTypesManager = preferences.getCustomEntryTypesRepository();
+        Injector.setModelOrService(BibEntryTypesManager.class, preferences.getCustomEntryTypesRepository());
         dialogService.notify(Localization.lang("Preferences recorded."));
-
-        updateAfterPreferenceChanges();
     }
 
     /**

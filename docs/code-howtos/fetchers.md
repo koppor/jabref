@@ -5,15 +5,16 @@ parent: Code Howtos
 
 Fetchers are the implementation of the [search using online services](https://docs.jabref.org/collect/import-using-online-bibliographic-database). Some fetchers require API keys to get them working. To get the fetchers running in a JabRef development setup, the keys need to be placed in the respective environment variable. The following table lists the respective fetchers, where to get the key from and the environment variable where the key has to be placed.
 
-| Service                                                                                                                                              | Key Source                                                                                                     | Environment Variable           | Rate Limit                       |
-|:-----------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|--------------------------------|----------------------------------|
-| [IEEEXplore](https://docs.jabref.org/collect/import-using-online-bibliographic-database#ieeexplore)                                                  | [IEEE Xplore API portal](https://developer.ieee.org)                                                           | `IEEEAPIKey`                   | 200 calls/day                    |
-| [MathSciNet](http://www.ams.org/mathscinet)                                                                                                          | (none)                                                                                                         | (none)                         | Depending on the current network |
-| [SAO/NASA Astrophysics Data System](https://docs.jabref.org/collect/import-using-online-bibliographic-database#sao-nasa-astrophysics-data-system)    | [ADS UI](https://ui.adsabs.harvard.edu/user/settings/token)                                                    | `AstrophysicsDataSystemAPIKey` | 5000 calls/day                   |
-| [ScienceDirect](https://www.sciencedirect.com)                                                                                                       |                                                                                                                | `ScienceDirectApiKey`          |                                  |
-| [Springer Nature](https://docs.jabref.org/collect/import-using-online-bibliographic-database#springer)                                               | [Springer Nature API Portal](https://dev.springernature.com)                                                   | `SpringerNatureAPIKey`         | 5000 calls/day                   |
-| [Zentralblatt Math](https://www.zbmath.org)                                                                                                          | (none)                                                                                                         | (none)                         | Depending on the current network |
-| [Biodiversity Heritage Library](https://www.biodiversitylibrary.org/)                                                                                | [Biodiversitylibrary](https://about.biodiversitylibrary.org/tools-and-services/developer-and-data-tools/#APIs) | `BiodiversityHeritageApiKey`   |  -                               |
+| Service                                                                                                                                           | Key Source                                                                                                     | Environment Variable           | Rate Limit                       |
+|:--------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|--------------------------------|----------------------------------|
+| [IEEEXplore](https://docs.jabref.org/collect/import-using-online-bibliographic-database#ieeexplore)                                               | [IEEE Xplore API portal](https://developer.ieee.org)                                                           | `IEEEAPIKey`                   | 200 calls/day                    |
+| [MathSciNet](http://www.ams.org/mathscinet)                                                                                                       | (none)                                                                                                         | (none)                         | Depending on the current network |
+| [SAO/NASA Astrophysics Data System](https://docs.jabref.org/collect/import-using-online-bibliographic-database#sao-nasa-astrophysics-data-system) | [ADS UI](https://ui.adsabs.harvard.edu/user/settings/token)                                                    | `AstrophysicsDataSystemAPIKey` | 5000 calls/day                   |
+| [ScienceDirect](https://www.sciencedirect.com)                                                                                                    |                                                                                                                | `ScienceDirectApiKey`          |                                  |
+| [SemanticScholar](https://www.semanticscholar.org/)                                                                                               | <https://www.semanticscholar.org/product/api#api-key-form>                                                     | `SemanticScholarApiKey`        |                                  |
+| [Springer Nature](https://docs.jabref.org/collect/import-using-online-bibliographic-database#springer)                                            | [Springer Nature API Portal](https://dev.springernature.com)                                                   | `SpringerNatureAPIKey`         | 5000 calls/day                   |
+| [Zentralblatt Math](https://www.zbmath.org)                                                                                                       | (none)                                                                                                         | (none)                         | Depending on the current network |
+| [Biodiversity Heritage Library](https://www.biodiversitylibrary.org/)                                                                             | [Biodiversitylibrary](https://about.biodiversitylibrary.org/tools-and-services/developer-and-data-tools/#APIs) | `BiodiversityHeritageApiKey`   | -                                |
 
 "Depending on the current network" means that it depends on whether your request is routed through a network having paid access. For instance, some universities have subscriptions to MathSciNet.
 
@@ -72,7 +73,7 @@ springerNatureAPIKey=${springerNatureAPIKey}
 In `build.gradle`, these variables are filled:
 
 ```groovy
-"springerNatureAPIKey": System.getenv('SpringerNatureAPIKey')
+"springerNatureAPIKey" : System.getenv('SpringerNatureAPIKey')
 ```
 
 The `BuildInfo` class reads from that file.
@@ -82,3 +83,10 @@ new BuildInfo().springerNatureAPIKey
 ```
 
 When executing `./gradlew run`, gradle executes `processResources` and populates `build/build.properties` accordingly. However, when working directly in the IDE, Eclipse keeps reading `build.properties` from `src/main/resources`. In IntelliJ, the task `JabRef Main` is executing `./gradlew processResources` before running JabRef from the IDE to ensure the `build.properties` is properly populated.
+
+## Committing and pushing changes to fetcher files
+
+Fetcher tests are run when a PR contains changes touching any file in the `src/main/java/org/jabref/logic/importer/fetcher/` directory.
+Since these tests rely on remote services, some of them may fail due to the network or the external server.
+
+To learn more about doing fetcher tests locally, see Fetchers in tests in [Testing](https://devdocs.jabref.org/code-howtos/testing.html).

@@ -5,22 +5,24 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import javax.swing.undo.UndoManager;
+
 import org.jabref.gui.DialogService;
-import org.jabref.gui.Globals;
-import org.jabref.gui.JabRefExecutorService;
-import org.jabref.gui.JabRefFrame;
+import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.ActionHelper;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.actions.StandardActions;
 import org.jabref.gui.undo.NamedCompound;
-import org.jabref.gui.util.BackgroundTask;
-import org.jabref.gui.util.TaskExecutor;
 import org.jabref.logic.journals.JournalAbbreviationPreferences;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.util.BackgroundTask;
+import org.jabref.logic.util.HeadlessExecutorService;
+import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.FieldFactory;
@@ -36,35 +38,38 @@ public class AbbreviateAction extends SimpleCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbbreviateAction.class);
 
     private final StandardActions action;
-    private final JabRefFrame frame;
+    private final Supplier<LibraryTab> tabSupplier;
     private final DialogService dialogService;
     private final StateManager stateManager;
     private final JournalAbbreviationPreferences journalAbbreviationPreferences;
     private final JournalAbbreviationRepository abbreviationRepository;
     private final TaskExecutor taskExecutor;
+    private final UndoManager undoManager;
 
     private AbbreviationType abbreviationType;
 
     public AbbreviateAction(StandardActions action,
-                            JabRefFrame frame,
+                            Supplier<LibraryTab> tabSupplier,
                             DialogService dialogService,
                             StateManager stateManager,
                             JournalAbbreviationPreferences abbreviationPreferences,
                             JournalAbbreviationRepository abbreviationRepository,
-                            TaskExecutor taskExecutor) {
+                            TaskExecutor taskExecutor,
+                            UndoManager undoManager) {
         this.action = action;
-        this.frame = frame;
+        this.tabSupplier = tabSupplier;
         this.dialogService = dialogService;
         this.stateManager = stateManager;
         this.journalAbbreviationPreferences = abbreviationPreferences;
         this.abbreviationRepository = abbreviationRepository;
         this.taskExecutor = taskExecutor;
+        this.undoManager = undoManager;
 
         switch (action) {
             case ABBREVIATE_DEFAULT -> abbreviationType = AbbreviationType.DEFAULT;
             case ABBREVIATE_DOTLESS -> abbreviationType = AbbreviationType.DOTLESS;
             case ABBREVIATE_SHORTEST_UNIQUE -> abbreviationType = AbbreviationType.SHORTEST_UNIQUE;
-            default -> LOGGER.debug("Unknown action: " + action.name());
+            default -> LOGGER.debug("Unknown action: {}", action.name());
         }
 
         this.executable.bind(ActionHelper.needsEntriesSelected(stateManager));
@@ -87,7 +92,7 @@ public class AbbreviateAction extends SimpleCommand {
                                   .onSuccess(dialogService::notify)
                                   .executeWith(taskExecutor));
         } else {
-            LOGGER.debug("Unknown action: " + action.name());
+            LOGGER.debug("Unknown action: {}", action.name());
         }
     }
 
@@ -106,7 +111,7 @@ public class AbbreviateAction extends SimpleCommand {
                 .collect(Collectors.toSet());
 
         // Execute the callables and wait for the results.
-        List<Future<Boolean>> futures = JabRefExecutorService.INSTANCE.executeAll(tasks);
+        List<Future<Boolean>> futures = HeadlessExecutorService.INSTANCE.executeAll(tasks);
 
         // Evaluate the results of the callables.
         long count = futures.stream().filter(future -> {
@@ -123,13 +128,13 @@ public class AbbreviateAction extends SimpleCommand {
         }
 
         ce.end();
-        frame.getUndoManager().addEdit(ce);
-        frame.getCurrentLibraryTab().markBaseChanged();
+        undoManager.addEdit(ce);
+        tabSupplier.get().markBaseChanged();
         return Localization.lang("Abbreviated %0 journal names.", String.valueOf(count));
     }
 
     private String unabbreviate(BibDatabaseContext databaseContext, List<BibEntry> entries) {
-        UndoableUnabbreviator undoableAbbreviator = new UndoableUnabbreviator(Globals.journalAbbreviationRepository);
+        UndoableUnabbreviator undoableAbbreviator = new UndoableUnabbreviator(abbreviationRepository);
 
         NamedCompound ce = new NamedCompound(Localization.lang("Unabbreviate journal names"));
         int count = entries.stream().mapToInt(entry ->
@@ -140,8 +145,8 @@ public class AbbreviateAction extends SimpleCommand {
         }
 
         ce.end();
-        frame.getUndoManager().addEdit(ce);
-        frame.getCurrentLibraryTab().markBaseChanged();
+        undoManager.addEdit(ce);
+        tabSupplier.get().markBaseChanged();
         return Localization.lang("Unabbreviated %0 journal names.", String.valueOf(count));
     }
 }

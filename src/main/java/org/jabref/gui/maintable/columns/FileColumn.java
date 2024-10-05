@@ -19,12 +19,12 @@ import org.jabref.gui.maintable.BibEntryTableViewModel;
 import org.jabref.gui.maintable.ColumnPreferences;
 import org.jabref.gui.maintable.MainTableColumnFactory;
 import org.jabref.gui.maintable.MainTableColumnModel;
-import org.jabref.gui.util.TaskExecutor;
+import org.jabref.gui.preferences.GuiPreferences;
 import org.jabref.gui.util.ValueTableCellFactory;
 import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.LinkedFile;
-import org.jabref.preferences.PreferencesService;
 
 /**
  * A column that draws a clickable symbol for either all the files of a defined file type
@@ -34,7 +34,7 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
 
     private final DialogService dialogService;
     private final BibDatabaseContext database;
-    private final PreferencesService preferencesService;
+    private final GuiPreferences preferences;
     private final TaskExecutor taskExecutor;
 
     /**
@@ -43,12 +43,12 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
     public FileColumn(MainTableColumnModel model,
                       BibDatabaseContext database,
                       DialogService dialogService,
-                      PreferencesService preferencesService,
+                      GuiPreferences preferences,
                       TaskExecutor taskExecutor) {
         super(model);
         this.database = Objects.requireNonNull(database);
         this.dialogService = dialogService;
-        this.preferencesService = preferencesService;
+        this.preferences = preferences;
         this.taskExecutor = taskExecutor;
 
         setCommonSettings();
@@ -64,12 +64,12 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
                 .withOnMouseClickedEvent((entry, linkedFiles) -> event -> {
                     if ((event.getButton() == MouseButton.PRIMARY) && (linkedFiles.size() == 1)) {
                         // Only one linked file -> open directly
-                        LinkedFileViewModel linkedFileViewModel = new LinkedFileViewModel(linkedFiles.get(0),
+                        LinkedFileViewModel linkedFileViewModel = new LinkedFileViewModel(linkedFiles.getFirst(),
                                 entry.getEntry(),
                                 database,
                                 taskExecutor,
                                 dialogService,
-                                preferencesService);
+                                preferences);
                         linkedFileViewModel.open();
                     }
                 })
@@ -82,23 +82,23 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
     public FileColumn(MainTableColumnModel model,
                       BibDatabaseContext database,
                       DialogService dialogService,
-                      PreferencesService preferencesService,
+                      GuiPreferences preferences,
                       String fileType,
                       TaskExecutor taskExecutor) {
         super(model);
         this.database = Objects.requireNonNull(database);
         this.dialogService = dialogService;
-        this.preferencesService = preferencesService;
+        this.preferences = preferences;
         this.taskExecutor = taskExecutor;
 
         setCommonSettings();
 
-        this.setGraphic(ExternalFileTypes.getExternalFileTypeByName(fileType, preferencesService.getFilePreferences())
+        this.setGraphic(ExternalFileTypes.getExternalFileTypeByName(fileType, preferences.getExternalApplicationsPreferences())
                                          .map(ExternalFileType::getIcon).orElse(IconTheme.JabRefIcons.FILE)
                                          .getGraphicNode());
 
         new ValueTableCellFactory<BibEntryTableViewModel, List<LinkedFile>>()
-                .withGraphic(linkedFiles -> createFileIcon(linkedFiles.stream().filter(linkedFile ->
+                .withGraphic((entry, linkedFiles) -> createFileIcon(entry, linkedFiles.stream().filter(linkedFile ->
                                 linkedFile.getFileType().equalsIgnoreCase(fileType)).collect(Collectors.toList())))
                 .install(this);
     }
@@ -112,7 +112,7 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
 
     private String createFileTooltip(List<LinkedFile> linkedFiles) {
         if (!linkedFiles.isEmpty()) {
-            return Localization.lang("Open file %0", linkedFiles.get(0).getLink());
+            return Localization.lang("Open file %0", linkedFiles.getFirst().getLink());
         }
         return null;
     }
@@ -130,7 +130,7 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
                     database,
                     taskExecutor,
                     dialogService,
-                    preferencesService);
+                    preferences);
 
             MenuItem menuItem = new MenuItem(linkedFileViewModel.getTruncatedDescriptionAndLink(),
                     linkedFileViewModel.getTypeIcon().getGraphicNode());
@@ -141,11 +141,14 @@ public class FileColumn extends MainTableColumn<List<LinkedFile>> {
         return contextMenu;
     }
 
-    private Node createFileIcon(List<LinkedFile> linkedFiles) {
+    private Node createFileIcon(BibEntryTableViewModel entry, List<LinkedFile> linkedFiles) {
+        if (entry.hasFullTextResultsProperty().get()) {
+            return IconTheme.JabRefIcons.FILE_SEARCH.getGraphicNode();
+        }
         if (linkedFiles.size() > 1) {
             return IconTheme.JabRefIcons.FILE_MULTIPLE.getGraphicNode();
         } else if (linkedFiles.size() == 1) {
-            return ExternalFileTypes.getExternalFileTypeByLinkedFile(linkedFiles.get(0), true, preferencesService.getFilePreferences())
+            return ExternalFileTypes.getExternalFileTypeByLinkedFile(linkedFiles.getFirst(), true, preferences.getExternalApplicationsPreferences())
                                     .map(ExternalFileType::getIcon)
                                     .orElse(IconTheme.JabRefIcons.FILE)
                                     .getGraphicNode();

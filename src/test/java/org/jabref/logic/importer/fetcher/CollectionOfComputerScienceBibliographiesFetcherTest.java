@@ -20,6 +20,7 @@ import org.jabref.testutils.category.FetcherTest;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeParseException;
 import org.apache.lucene.queryparser.flexible.standard.parser.StandardSyntaxParser;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 
@@ -27,31 +28,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Disabled("https://github.com/JabRef/jabref-issue-melting-pot/issues/259")
 @FetcherTest
 class CollectionOfComputerScienceBibliographiesFetcherTest {
     private CollectionOfComputerScienceBibliographiesFetcher fetcher;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
         fetcher = new CollectionOfComputerScienceBibliographiesFetcher(importFormatPreferences);
     }
 
     @Test
-    public void getNameReturnsCorrectName() {
+    void getNameReturnsCorrectName() {
         assertEquals("Collection of Computer Science Bibliographies", fetcher.getName());
     }
 
     @Test
-    public void getUrlForQueryReturnsCorrectUrl() throws MalformedURLException, URISyntaxException, FetcherException, QueryNodeParseException {
+    void getUrlForQueryReturnsCorrectUrl() throws MalformedURLException, URISyntaxException, FetcherException, QueryNodeParseException {
         String query = "java jdk";
         URL url = fetcher.getURLForQuery(new StandardSyntaxParser().parse(query, AbstractQueryTransformer.NO_EXPLICIT_FIELD));
         assertEquals("http://liinwww.ira.uka.de/bibliography/rss?query=java+jdk&sort=score", url.toString());
     }
 
     @Test
-    public void performSearchReturnsMatchingMultipleEntries() throws FetcherException {
+    void performSearchReturnsMatchingMultipleEntries() throws FetcherException {
         List<BibEntry> searchResult = fetcher.performSearch("jabref");
 
         BibEntry secondBibEntry = new BibEntry(StandardEntryType.Article)
@@ -105,7 +107,7 @@ class CollectionOfComputerScienceBibliographiesFetcherTest {
     }
 
     @Test
-    public void performSearchReturnsEmptyListForEmptySearch() throws FetcherException {
+    void performSearchReturnsEmptyListForEmptySearch() throws FetcherException {
         List<BibEntry> searchResult = fetcher.performSearch("");
         assertEquals(Collections.emptyList(), searchResult);
     }

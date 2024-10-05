@@ -41,12 +41,12 @@ public class KeyBindingsTab extends AbstractPreferenceTabView<KeyBindingsTabView
 
     @Override
     public String getTabName() {
-        return Localization.lang("Key bindings");
+        return Localization.lang("Keyboard shortcuts");
     }
 
     @FXML
     private void initialize() {
-        viewModel = new KeyBindingsTabViewModel(keyBindingRepository, dialogService, preferencesService);
+        viewModel = new KeyBindingsTabViewModel(keyBindingRepository, dialogService, preferences);
 
         keyBindingsTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         viewModel.selectedKeyBindingProperty().bind(

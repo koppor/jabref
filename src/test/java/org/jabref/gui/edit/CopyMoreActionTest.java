@@ -12,14 +12,16 @@ import org.jabref.gui.DialogService;
 import org.jabref.gui.JabRefDialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.StandardActions;
+import org.jabref.gui.frame.ExternalApplicationsPreferences;
+import org.jabref.gui.preferences.GuiPreferences;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.push.CitationCommandString;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
-import org.jabref.preferences.PreferencesService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,11 +33,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CopyMoreActionTest {
+class CopyMoreActionTest {
 
     private final DialogService dialogService = spy(DialogService.class);
     private final ClipBoardManager clipBoardManager = mock(ClipBoardManager.class);
-    private final PreferencesService preferencesService = mock(PreferencesService.class);
+    private final GuiPreferences preferences = mock(GuiPreferences.class);
     private final JournalAbbreviationRepository abbreviationRepository = mock(JournalAbbreviationRepository.class);
     private final StateManager stateManager = mock(StateManager.class);
     private final List<String> titles = new ArrayList<>();
@@ -46,7 +48,7 @@ public class CopyMoreActionTest {
     private BibEntry entry;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         String title = "A tale from the trenches";
         entry = new BibEntry(StandardEntryType.Misc)
                 .withField(StandardField.AUTHOR, "Souti Chattopadhyay and Nicholas Nelson and Audrey Au and Natalia Morales and Christopher Sanchez and Rahul Pandita and Anita Sarma")
@@ -58,13 +60,17 @@ public class CopyMoreActionTest {
         titles.add(title);
         keys.add("abc");
         dois.add("10.1145/3377811.3380330");
+
+        ExternalApplicationsPreferences externalApplicationsPreferences = mock(ExternalApplicationsPreferences.class);
+        when(externalApplicationsPreferences.getCiteCommand()).thenReturn(new CitationCommandString("\\cite{", ",", "}"));
+        when(preferences.getExternalApplicationsPreferences()).thenReturn(externalApplicationsPreferences);
     }
 
     @Test
-    public void testExecuteOnFail() {
+    void executeOnFail() {
         when(stateManager.getActiveDatabase()).thenReturn(Optional.empty());
         when(stateManager.getSelectedEntries()).thenReturn(FXCollections.emptyObservableList());
-        copyMoreAction = new CopyMoreAction(StandardActions.COPY_TITLE, dialogService, stateManager, clipBoardManager, preferencesService, abbreviationRepository);
+        copyMoreAction = new CopyMoreAction(StandardActions.COPY_TITLE, dialogService, stateManager, clipBoardManager, preferences, abbreviationRepository);
         copyMoreAction.execute();
 
         verify(clipBoardManager, times(0)).setContent(any(String.class));
@@ -72,7 +78,7 @@ public class CopyMoreActionTest {
     }
 
     @Test
-    public void testExecuteCopyTitleWithNoTitle() {
+    void executeCopyTitleWithNoTitle() {
         BibEntry entryWithNoTitle = (BibEntry) entry.clone();
         entryWithNoTitle.clearField(StandardField.TITLE);
         ObservableList<BibEntry> entriesWithNoTitles = FXCollections.observableArrayList(entryWithNoTitle);
@@ -80,7 +86,7 @@ public class CopyMoreActionTest {
 
         when(stateManager.getActiveDatabase()).thenReturn(Optional.ofNullable(databaseContext));
         when(stateManager.getSelectedEntries()).thenReturn(entriesWithNoTitles);
-        copyMoreAction = new CopyMoreAction(StandardActions.COPY_TITLE, dialogService, stateManager, clipBoardManager, preferencesService, abbreviationRepository);
+        copyMoreAction = new CopyMoreAction(StandardActions.COPY_TITLE, dialogService, stateManager, clipBoardManager, preferences, abbreviationRepository);
         copyMoreAction.execute();
 
         verify(clipBoardManager, times(0)).setContent(any(String.class));
@@ -88,7 +94,7 @@ public class CopyMoreActionTest {
     }
 
     @Test
-    public void testExecuteCopyTitleOnPartialSuccess() {
+    void executeCopyTitleOnPartialSuccess() {
         BibEntry entryWithNoTitle = (BibEntry) entry.clone();
         entryWithNoTitle.clearField(StandardField.TITLE);
         ObservableList<BibEntry> mixedEntries = FXCollections.observableArrayList(entryWithNoTitle, entry);
@@ -96,7 +102,7 @@ public class CopyMoreActionTest {
 
         when(stateManager.getActiveDatabase()).thenReturn(Optional.ofNullable(databaseContext));
         when(stateManager.getSelectedEntries()).thenReturn(mixedEntries);
-        copyMoreAction = new CopyMoreAction(StandardActions.COPY_TITLE, dialogService, stateManager, clipBoardManager, preferencesService, abbreviationRepository);
+        copyMoreAction = new CopyMoreAction(StandardActions.COPY_TITLE, dialogService, stateManager, clipBoardManager, preferences, abbreviationRepository);
         copyMoreAction.execute();
 
         String copiedTitles = String.join("\n", titles);
@@ -106,13 +112,13 @@ public class CopyMoreActionTest {
     }
 
     @Test
-    public void testExecuteCopyTitleOnSuccess() {
+    void executeCopyTitleOnSuccess() {
         ObservableList<BibEntry> entriesWithTitles = FXCollections.observableArrayList(entry);
         BibDatabaseContext databaseContext = new BibDatabaseContext(new BibDatabase(entriesWithTitles));
 
         when(stateManager.getActiveDatabase()).thenReturn(Optional.ofNullable(databaseContext));
         when(stateManager.getSelectedEntries()).thenReturn(entriesWithTitles);
-        copyMoreAction = new CopyMoreAction(StandardActions.COPY_TITLE, dialogService, stateManager, clipBoardManager, preferencesService, abbreviationRepository);
+        copyMoreAction = new CopyMoreAction(StandardActions.COPY_TITLE, dialogService, stateManager, clipBoardManager, preferences, abbreviationRepository);
         copyMoreAction.execute();
 
         String copiedTitles = String.join("\n", titles);
@@ -122,7 +128,7 @@ public class CopyMoreActionTest {
     }
 
     @Test
-    public void testExecuteCopyKeyWithNoKey() {
+    void executeCopyKeyWithNoKey() {
         BibEntry entryWithNoKey = (BibEntry) entry.clone();
         entryWithNoKey.clearCiteKey();
         ObservableList<BibEntry> entriesWithNoKeys = FXCollections.observableArrayList(entryWithNoKey);
@@ -130,7 +136,7 @@ public class CopyMoreActionTest {
 
         when(stateManager.getActiveDatabase()).thenReturn(Optional.ofNullable(databaseContext));
         when(stateManager.getSelectedEntries()).thenReturn(entriesWithNoKeys);
-        copyMoreAction = new CopyMoreAction(StandardActions.COPY_KEY, dialogService, stateManager, clipBoardManager, preferencesService, abbreviationRepository);
+        copyMoreAction = new CopyMoreAction(StandardActions.COPY_KEY, dialogService, stateManager, clipBoardManager, preferences, abbreviationRepository);
         copyMoreAction.execute();
 
         verify(clipBoardManager, times(0)).setContent(any(String.class));
@@ -138,7 +144,7 @@ public class CopyMoreActionTest {
     }
 
     @Test
-    public void testExecuteCopyKeyOnPartialSuccess() {
+    void executeCopyKeyOnPartialSuccess() {
         BibEntry entryWithNoKey = (BibEntry) entry.clone();
         entryWithNoKey.clearCiteKey();
         ObservableList<BibEntry> mixedEntries = FXCollections.observableArrayList(entryWithNoKey, entry);
@@ -146,7 +152,7 @@ public class CopyMoreActionTest {
 
         when(stateManager.getActiveDatabase()).thenReturn(Optional.ofNullable(databaseContext));
         when(stateManager.getSelectedEntries()).thenReturn(mixedEntries);
-        copyMoreAction = new CopyMoreAction(StandardActions.COPY_KEY, dialogService, stateManager, clipBoardManager, preferencesService, abbreviationRepository);
+        copyMoreAction = new CopyMoreAction(StandardActions.COPY_KEY, dialogService, stateManager, clipBoardManager, preferences, abbreviationRepository);
         copyMoreAction.execute();
 
         String copiedKeys = String.join("\n", keys);
@@ -156,13 +162,13 @@ public class CopyMoreActionTest {
     }
 
     @Test
-    public void testExecuteCopyKeyOnSuccess() {
+    void executeCopyKeyOnSuccess() {
         ObservableList<BibEntry> entriesWithKeys = FXCollections.observableArrayList(entry);
         BibDatabaseContext databaseContext = new BibDatabaseContext(new BibDatabase(entriesWithKeys));
 
         when(stateManager.getActiveDatabase()).thenReturn(Optional.ofNullable(databaseContext));
         when(stateManager.getSelectedEntries()).thenReturn(entriesWithKeys);
-        copyMoreAction = new CopyMoreAction(StandardActions.COPY_KEY, dialogService, stateManager, clipBoardManager, preferencesService, abbreviationRepository);
+        copyMoreAction = new CopyMoreAction(StandardActions.COPY_KEY, dialogService, stateManager, clipBoardManager, preferences, abbreviationRepository);
         copyMoreAction.execute();
 
         String copiedKeys = String.join("\n", keys);
@@ -172,7 +178,7 @@ public class CopyMoreActionTest {
     }
 
     @Test
-    public void testExecuteCopyDoiWithNoDoi() {
+    void executeCopyDoiWithNoDoi() {
         BibEntry entryWithNoDoi = (BibEntry) entry.clone();
         entryWithNoDoi.clearField(StandardField.DOI);
         ObservableList<BibEntry> entriesWithNoDois = FXCollections.observableArrayList(entryWithNoDoi);
@@ -180,7 +186,7 @@ public class CopyMoreActionTest {
 
         when(stateManager.getActiveDatabase()).thenReturn(Optional.ofNullable(databaseContext));
         when(stateManager.getSelectedEntries()).thenReturn(entriesWithNoDois);
-        copyMoreAction = new CopyMoreAction(StandardActions.COPY_DOI, dialogService, stateManager, clipBoardManager, preferencesService, abbreviationRepository);
+        copyMoreAction = new CopyMoreAction(StandardActions.COPY_DOI, dialogService, stateManager, clipBoardManager, preferences, abbreviationRepository);
         copyMoreAction.execute();
 
         verify(clipBoardManager, times(0)).setContent(any(String.class));
@@ -188,7 +194,7 @@ public class CopyMoreActionTest {
     }
 
     @Test
-    public void testExecuteCopyDoiOnPartialSuccess() {
+    void executeCopyDoiOnPartialSuccess() {
         BibEntry entryWithNoDoi = (BibEntry) entry.clone();
         entryWithNoDoi.clearField(StandardField.DOI);
         ObservableList<BibEntry> mixedEntries = FXCollections.observableArrayList(entryWithNoDoi, entry);
@@ -196,7 +202,7 @@ public class CopyMoreActionTest {
 
         when(stateManager.getActiveDatabase()).thenReturn(Optional.ofNullable(databaseContext));
         when(stateManager.getSelectedEntries()).thenReturn(mixedEntries);
-        copyMoreAction = new CopyMoreAction(StandardActions.COPY_DOI, dialogService, stateManager, clipBoardManager, preferencesService, abbreviationRepository);
+        copyMoreAction = new CopyMoreAction(StandardActions.COPY_DOI, dialogService, stateManager, clipBoardManager, preferences, abbreviationRepository);
         copyMoreAction.execute();
 
         String copiedDois = String.join("\n", dois);
@@ -206,13 +212,13 @@ public class CopyMoreActionTest {
     }
 
     @Test
-    public void testExecuteCopyDoiOnSuccess() {
+    void executeCopyDoiOnSuccess() {
         ObservableList<BibEntry> entriesWithDois = FXCollections.observableArrayList(entry);
         BibDatabaseContext databaseContext = new BibDatabaseContext(new BibDatabase(entriesWithDois));
 
         when(stateManager.getActiveDatabase()).thenReturn(Optional.ofNullable(databaseContext));
         when(stateManager.getSelectedEntries()).thenReturn(entriesWithDois);
-        copyMoreAction = new CopyMoreAction(StandardActions.COPY_DOI, dialogService, stateManager, clipBoardManager, preferencesService, abbreviationRepository);
+        copyMoreAction = new CopyMoreAction(StandardActions.COPY_DOI, dialogService, stateManager, clipBoardManager, preferences, abbreviationRepository);
         copyMoreAction.execute();
 
         String copiedDois = String.join("\n", dois);

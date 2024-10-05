@@ -4,13 +4,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jabref.logic.FilePreferences;
 import org.jabref.logic.citationkeypattern.CitationKeyPatternPreferences;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
-import org.jabref.preferences.FilePreferences;
 
 public class IntegrityCheck {
 
@@ -40,14 +40,15 @@ public class IntegrityCheck {
                 new CitationKeyDuplicationChecker(bibDatabaseContext.getDatabase()),
                 new AmpersandChecker(),
                 new LatexIntegrityChecker(),
-                new JournalInAbbreviationListChecker(StandardField.JOURNAL, journalAbbreviationRepository)
-                ));
+                new JournalInAbbreviationListChecker(StandardField.JOURNAL, journalAbbreviationRepository)));
+
         if (bibDatabaseContext.isBiblatexMode()) {
             entryCheckers.add(new UTF8Checker(bibDatabaseContext.getMetaData().getEncoding().orElse(StandardCharsets.UTF_8)));
         } else {
             entryCheckers.addAll(List.of(
                     new ASCIICharacterChecker(),
                     new NoBibtexFieldChecker(),
+                    new UnicodeNormalFormCanonicalCompositionCheck(),
                     new BibTeXEntryTypeChecker())
             );
         }

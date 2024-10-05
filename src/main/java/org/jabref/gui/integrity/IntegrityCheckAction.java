@@ -2,47 +2,47 @@ package org.jabref.gui.integrity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 
 import org.jabref.gui.DialogService;
-import org.jabref.gui.JabRefFrame;
+import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.SimpleCommand;
-import org.jabref.gui.util.TaskExecutor;
+import org.jabref.gui.preferences.GuiPreferences;
+import org.jabref.gui.util.UiTaskExecutor;
 import org.jabref.logic.integrity.IntegrityCheck;
 import org.jabref.logic.integrity.IntegrityMessage;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-import org.jabref.preferences.PreferencesService;
 
 import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 
 public class IntegrityCheckAction extends SimpleCommand {
 
-    private final TaskExecutor taskExecutor;
+    private final UiTaskExecutor taskExecutor;
     private final DialogService dialogService;
-    private final JabRefFrame frame;
-    private final PreferencesService preferencesService;
+    private final Supplier<LibraryTab> tabSupplier;
+    private final GuiPreferences preferences;
     private final StateManager stateManager;
     private final JournalAbbreviationRepository abbreviationRepository;
 
-    public IntegrityCheckAction(JabRefFrame frame,
-                                PreferencesService preferencesService,
+    public IntegrityCheckAction(Supplier<LibraryTab> tabSupplier,
+                                GuiPreferences preferences,
                                 DialogService dialogService,
                                 StateManager stateManager,
-                                TaskExecutor taskExecutor,
+                                UiTaskExecutor taskExecutor,
                                 JournalAbbreviationRepository abbreviationRepository) {
-        this.frame = frame;
+        this.tabSupplier = tabSupplier;
         this.stateManager = stateManager;
         this.taskExecutor = taskExecutor;
-        this.preferencesService = preferencesService;
+        this.preferences = preferences;
         this.dialogService = dialogService;
         this.abbreviationRepository = abbreviationRepository;
-
         this.executable.bind(needsDatabase(this.stateManager));
     }
 
@@ -50,10 +50,10 @@ public class IntegrityCheckAction extends SimpleCommand {
     public void execute() {
         BibDatabaseContext database = stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
         IntegrityCheck check = new IntegrityCheck(database,
-                preferencesService.getFilePreferences(),
-                preferencesService.getCitationKeyPatternPreferences(),
+                preferences.getFilePreferences(),
+                preferences.getCitationKeyPatternPreferences(),
                 abbreviationRepository,
-                preferencesService.getEntryEditorPreferences().shouldAllowIntegerEditionBibtex());
+                preferences.getEntryEditorPreferences().shouldAllowIntegerEditionBibtex());
 
         Task<List<IntegrityMessage>> task = new Task<>() {
             @Override
@@ -78,7 +78,7 @@ public class IntegrityCheckAction extends SimpleCommand {
             if (messages.isEmpty()) {
                 dialogService.notify(Localization.lang("No problems found."));
             } else {
-                dialogService.showCustomDialogAndWait(new IntegrityCheckDialog(messages, frame.getCurrentLibraryTab()));
+                dialogService.showCustomDialogAndWait(new IntegrityCheckDialog(messages, tabSupplier.get()));
             }
         });
         task.setOnFailed(event -> dialogService.showErrorDialogAndWait("Integrity check failed.", task.getException()));

@@ -16,12 +16,12 @@ import org.jabref.logic.journals.JournalInformation;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.identifier.ISSN;
 
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
-import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONException;
-import kong.unirest.json.JSONObject;
+import kong.unirest.core.HttpResponse;
+import kong.unirest.core.JsonNode;
+import kong.unirest.core.Unirest;
+import kong.unirest.core.json.JSONArray;
+import kong.unirest.core.json.JSONException;
+import kong.unirest.core.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 public class JournalInformationFetcher implements WebFetcher {
     public static final String NAME = "Journal Information";
     private static final Logger LOGGER = LoggerFactory.getLogger(JournalInformationFetcher.class);
+    // Uses JabRef Online APIs
     private static final String API_URL = "https://jabref.org/api";
     private static final Pattern QUOTES_BRACKET_PATTERN = Pattern.compile("[\"\\[\\]]");
 
@@ -90,7 +91,7 @@ public class JournalInformationFetcher implements WebFetcher {
         try {
             if (responseJsonObject.has("errors")) {
                 JSONArray errors = responseJsonObject.optJSONArray("errors");
-                if (errors != null && errors.length() > 0) {
+                if (errors != null && !errors.isEmpty()) {
                     JSONObject error = errors.getJSONObject(0);
                     String errorMessage = error.optString("message", "");
                     LOGGER.error("Error accessing catalog: {}", errorMessage);

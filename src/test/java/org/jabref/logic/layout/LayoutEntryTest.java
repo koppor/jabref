@@ -35,7 +35,7 @@ public class LayoutEntryTest {
     private BibEntry mBTE;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         mBTE = new BibEntry();
         mBTE.setField(StandardField.ABSTRACT, "In this paper, we initiate a formal study of security on Android: Google's new open-source platform for mobile devices. Tags: Paper android google Open-Source Devices");
         //  Specifically, we present a core typed language to describe Android applications, and to reason about their data-flow security properties. Our operational semantics and type system provide some necessary foundations to help both users and developers of Android applications deal with their security concerns.
@@ -69,30 +69,30 @@ public class LayoutEntryTest {
     }
 
     @Test
-    public void testParseMethodCalls() {
+    void parseMethodCalls() {
         assertEquals(1, LayoutEntry.parseMethodsCalls("bla").size());
-        assertEquals("bla", (LayoutEntry.parseMethodsCalls("bla").get(0)).get(0));
+        assertEquals("bla", (LayoutEntry.parseMethodsCalls("bla").getFirst()).getFirst());
 
         assertEquals(1, LayoutEntry.parseMethodsCalls("bla,").size());
-        assertEquals("bla", (LayoutEntry.parseMethodsCalls("bla,").get(0)).get(0));
+        assertEquals("bla", (LayoutEntry.parseMethodsCalls("bla,").getFirst()).getFirst());
 
         assertEquals(1, LayoutEntry.parseMethodsCalls("_bla.bla.blub,").size());
-        assertEquals("_bla.bla.blub", (LayoutEntry.parseMethodsCalls("_bla.bla.blub,").get(0)).get(0));
+        assertEquals("_bla.bla.blub", (LayoutEntry.parseMethodsCalls("_bla.bla.blub,").getFirst()).getFirst());
 
         assertEquals(2, LayoutEntry.parseMethodsCalls("bla,foo").size());
-        assertEquals("bla", (LayoutEntry.parseMethodsCalls("bla,foo").get(0)).get(0));
-        assertEquals("foo", (LayoutEntry.parseMethodsCalls("bla,foo").get(1)).get(0));
+        assertEquals("bla", (LayoutEntry.parseMethodsCalls("bla,foo").getFirst()).getFirst());
+        assertEquals("foo", (LayoutEntry.parseMethodsCalls("bla,foo").get(1)).getFirst());
 
         assertEquals(2, LayoutEntry.parseMethodsCalls("bla(\"test\"),foo(\"fark\")").size());
-        assertEquals("bla", (LayoutEntry.parseMethodsCalls("bla(\"test\"),foo(\"fark\")").get(0)).get(0));
-        assertEquals("foo", (LayoutEntry.parseMethodsCalls("bla(\"test\"),foo(\"fark\")").get(1)).get(0));
-        assertEquals("test", (LayoutEntry.parseMethodsCalls("bla(\"test\"),foo(\"fark\")").get(0)).get(1));
+        assertEquals("bla", (LayoutEntry.parseMethodsCalls("bla(\"test\"),foo(\"fark\")").getFirst()).getFirst());
+        assertEquals("foo", (LayoutEntry.parseMethodsCalls("bla(\"test\"),foo(\"fark\")").get(1)).getFirst());
+        assertEquals("test", (LayoutEntry.parseMethodsCalls("bla(\"test\"),foo(\"fark\")").getFirst()).get(1));
         assertEquals("fark", (LayoutEntry.parseMethodsCalls("bla(\"test\"),foo(\"fark\")").get(1)).get(1));
 
         assertEquals(2, LayoutEntry.parseMethodsCalls("bla(test),foo(fark)").size());
-        assertEquals("bla", (LayoutEntry.parseMethodsCalls("bla(test),foo(fark)").get(0)).get(0));
-        assertEquals("foo", (LayoutEntry.parseMethodsCalls("bla(test),foo(fark)").get(1)).get(0));
-        assertEquals("test", (LayoutEntry.parseMethodsCalls("bla(test),foo(fark)").get(0)).get(1));
+        assertEquals("bla", (LayoutEntry.parseMethodsCalls("bla(test),foo(fark)").getFirst()).getFirst());
+        assertEquals("foo", (LayoutEntry.parseMethodsCalls("bla(test),foo(fark)").get(1)).getFirst());
+        assertEquals("test", (LayoutEntry.parseMethodsCalls("bla(test),foo(fark)").getFirst()).get(1));
         assertEquals("fark", (LayoutEntry.parseMethodsCalls("bla(test),foo(fark)").get(1)).get(1));
     }
 }

@@ -1,4 +1,3 @@
-
 .root {
     -jr-row-odd-background: -fx-control-inner-background-alt;
     -jr-row-even-background: -fx-control-inner-background;
@@ -14,13 +13,17 @@
     work nicely with this base color
     */
 
-    /* This theme is the original JabRef dark blue color */
+    /* original JabRef dark blue color */
     -jr-theme: #50618F;
+
     -jr-accent: #a3b7e6;
     -jr-transparent-accent: rgba(163, 183, 230, 0.16);
-    -jr-selected: -jr-accent;
     -jr-checked: -jr-theme;
+
+    -jr-selected: -jr-accent;
+
     -jr-hover: #0002;
+    -jr-hover-text: -fx-focused-text-base-color;
 
     /* The base gray. Most gray-tones in the application are derived from this color. */
     -jr-base: #ebebeb;
@@ -31,6 +34,16 @@
     -jr-gray-2: #808080;
     -jr-gray-3: #404040;
     -jr-black: #000;
+
+    /* Some blueish greys - currently not used */
+    -jr-blue-gray-1: #c8d6e5;
+    -jr-blue-gray-1-darker: derive(-jr-blue-gray-1, -5%);
+    -jr-blue-gray-2: #8395a7;
+    -jr-blue-gray-2-darker: derive(-jr-blue-gray-2, -5%);
+    -jr-blue-gray-3: #576574;
+    -jr-blue-gray-3-darker: derive(-jr-blue-gray-3, -5%);
+    -jr-blue-gray-4: #222f3e;
+    -jr-blue-gray-4-darker: derive(-jr-blue-gray-4, -5%);
 
     /* Highlights */
     -jr-blue: #0abde3;
@@ -43,12 +56,6 @@
     -jr-light-red: #ff6b6b;
     -jr-yellow: #feca57;
     -jr-orange: #ff9f43;
-
-    /* Some blueish greys */
-    -jr-blue-gray-1: #c8d6e5;
-    -jr-blue-gray-2: #8395a7;
-    -jr-blue-gray-3: #576574;
-    -jr-blue-gray-4: #222f3e;
 
     /* Background specs */
     -jr-background-alt: -fx-background;
@@ -252,6 +259,36 @@
 
     /* Consistent size for headers of tab-pane and side-panels*/
     -jr-header-height: 3em;
+
+    /* AI chat style */
+    -jr-ai-message-user: -jr-accent;
+    -jr-ai-message-user-border: -jr-theme;
+    -jr-ai-message-ai: -jr-accent;
+    -jr-ai-message-ai-border: -jr-theme;
+    -jr-ai-message-error: -jr-error;
+    -jr-ai-message-error-border: derive(-jr-error, -40%);
+
+    /* region: maintable base colors **/
+
+    -jr-match-1-odd: -jr-row-odd-background;
+    -jr-match-1-even: -jr-row-even-background;
+    -jr-match-1-text-color: -fx-mid-text-color;
+
+    -jr-match-2-odd: derive(-jr-theme, 100%);
+    -jr-match-2-even: derive(-jr-match-2-odd, 10%);
+    -jr-match-2-text-color: -fx-mid-text-color;
+
+    -jr-match-3-odd: derive(-jr-theme, 50%);
+    -jr-match-3-even: derive(-jr-match-3-odd, 10%);
+    -jr-match-3-text-color: derive(-jr-accent, 30%);
+
+    -jr-match-4-odd: -jr-theme;
+    -jr-match-4-even: derive(-jr-match-4-odd, 10%);
+    -jr-match-4-text-color: -jr-accent;
+
+    -jr-maintable-focused-hover-text: -jr-white;
+
+    /* endregion */
 }
 
 .unchanged {
@@ -269,7 +306,6 @@
 .deletion {
     -rtfx-background-color: rgba(255, 107, 107, 0.55);
 }
-
 
 #frame {
     -fx-background-color: -jr-background-alt;
@@ -303,7 +339,6 @@ TextFlow > .hyperlink:visited,
 .hyperlink:hover {
     -fx-underline: true;
 }
-
 
 .glyph-icon {
     /* This adjusts text alignment within the bounds of text nodes so that
@@ -584,8 +619,8 @@ TextFlow > .tooltip-text-monospaced {
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:selected .glyph-icon {
-    -fx-text-fill: -fx-mid-text-color;
     -fx-fill: -fx-mid-text-color;
+    -fx-text-fill: -fx-mid-text-color;
 }
 
 .tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
@@ -611,13 +646,13 @@ TextFlow > .tooltip-text-monospaced {
 
 .tab-pane > .tab-header-area > .headers-region > .tab .glyph-icon {
     -glyph-size: 13px;
-    -fx-text-fill: -fx-mid-text-color;
     -fx-fill: -fx-mid-text-color;
+    -fx-text-fill: -fx-mid-text-color;
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:selected .glyph-icon {
-    -fx-text-fill: -jr-theme-text;
     -fx-fill: -jr-theme-text;
+    -fx-text-fill: -jr-theme-text;
 }
 
 .tab-pane > .tab-header-area {
@@ -649,13 +684,13 @@ TextFlow > .tooltip-text-monospaced {
 }
 
 .table-row-cell:hover,
+.table-row-cell:hover:even,
 .tree-table-row-cell:hover {
     -fx-background-color: -jr-hover;
-    -fx-text-fill: -fx-focused-text-base-color;
-    -fx-fill: -fx-focused-text-base-color;
+    -fx-fill: -jr-hover-text;
+    -fx-text-fill: -jr-hover-text;
 }
 
-.table-row-cell:hover,
 .tree-table-row-cell:selected > .tree-table-cell > .glyph-icon {
     -fx-fill: white;
     -fx-text-fill: white;
@@ -721,7 +756,9 @@ TextFlow > .tooltip-text-monospaced {
     -fx-table-cell-border-color: transparent;
 }
 
-/* Selected when control is not focused */
+/* Selected when control is not focused
+ * In the context of the MainTable: an element is focused at a double click. A single click "just" selects it.
+ */
 .list-cell:filled:selected,
 .tree-cell:filled:selected,
 .table-row-cell:filled:selected,
@@ -737,6 +774,10 @@ TextFlow > .tooltip-text-monospaced {
 .table-cell:invalid,
 .list-cell:invalid {
     -fx-background-color: -jr-warn;
+}
+
+.duplicate-entry {
+    -fx-background-color: -jr-light-green;
 }
 
 .file-row-text {
@@ -826,7 +867,7 @@ TextFlow > .tooltip-text-monospaced {
 .text-input {
     -fx-background-color: -fx-outer-border, -fx-control-inner-background;
     -fx-background-insets: 0, 1;
-    -fx-prompt-text-fill: -fx-mid-text-color;
+    -fx-prompt-text-fill: -jr-gray-2;
 }
 
 .text-input:focused {
@@ -1044,7 +1085,7 @@ TextFlow > .tooltip-text-monospaced {
     -fx-icon-color: -jr-theme-text;
 }
 
-.mainToolbar .search-field {
+.search-field {
     -fx-background-color: -jr-search-background;
     -fx-border-width: 1;
     -fx-border-color: -jr-separator;
@@ -1052,43 +1093,46 @@ TextFlow > .tooltip-text-monospaced {
     -fx-fill: -jr-search-text;
 }
 
-.mainToolbar .search-field .button .glyph-icon {
+.search-field .button .glyph-icon {
     -fx-fill: -jr-search-text;
     -fx-text-fill: -jr-search-text;
     -fx-icon-color: -jr-search-text;
 }
 
-/* magnifier glass */
-.mainToolbar .search-field .glyph-icon {
-    -fx-fill: -jr-search-text;
-    -fx-text-fill: -jr-search-text;
+/*
+ * The magnifying glass icon left of the search text field.
+ * Currently, hits "Web search" and "Groups" only (not the searchbar on the top).
+*/
+.search-field-icon {
+    -fx-icon-color: -jr-search-text;
+    -fx-font-size: 1.7em;
 }
 
 /* search modifier buttons */
-.mainToolbar .search-field .toggle-button:selected {
+.global-search-bar .toggle-button:selected {
     -fx-background-color: transparent;
 }
 
-.mainToolbar .search-field .toggle-button:hover,
-.mainToolbar .search-field .toggle-button:selected:hover {
+.global-search-bar .toggle-button:hover,
+.global-search-bar .toggle-button:selected:hover {
     -fx-background-color: -jr-icon-background-active;
 }
 
-.mainToolbar .search-field .toggle-button .glyph-icon {
-    -fx-fill: derive(-jr-search-text, 80%);
-    -fx-text-fill: derive(-jr-search-text, 80%);
+.global-search-bar .toggle-button .glyph-icon {
     -fx-icon-color: derive(-jr-search-text, 80%);
 }
 
-.mainToolbar .search-field .toggle-button:selected .glyph-icon {
-    -fx-fill: -jr-search-text;
-    -fx-text-fill: -jr-search-text;
+.global-search-bar .toggle-button:selected .glyph-icon {
     -fx-icon-color: -jr-search-text;
 }
 
 /* search text */
-.mainToolbar .search-field .label {
+.global-search-bar .label {
     -fx-padding: 0em 1.8em 0em 0em;
+}
+
+.global-search-bar:illegal-search {
+    -fx-background-color: derive(-jr-light-red, 70%);
 }
 
 /* The little arrow that shows up when not all tool-bar icons fit into the tool-bar.
@@ -1143,12 +1187,11 @@ We want to have a look that matches our icons in the tool-bar */
 
 .table-cell,
 .tree-table-cell,
-.table-cell .glyph-icon,
 .tree-table-cell .glyph-icon {
-    -fx-padding: 0.5em 1em 0.5em 1em;
     -fx-cell-size: 4.0em;
-    -fx-text-fill: -fx-text-background-color;
+    -fx-padding: 0.5em 1em 0.5em 1em;
     -fx-fill: -fx-text-background-color;
+    -fx-text-fill: -fx-text-background-color;
 }
 
 /* Drag and drop colored indicator */
@@ -1383,17 +1426,15 @@ We want to have a look that matches our icons in the tool-bar */
     -fx-label-padding: 5 0 10 10;
 }
 
-.chips-pane > .editor {
-    -fx-pref-height: 30px;
-    -fx-padding: 0px 0px 0px -8px;
-    -fx-margin: 0em;
-    -fx-border-style: none;
-}
-
 .tags-field {
     -fx-pref-height: 30px;
     -fx-margin: 0em;
     -fx-border-style: none;
+    -fx-background-color: -fx-outer-border, -fx-control-inner-background;
+}
+
+.tags-field:focused {
+    -fx-border-color: -jr-accent;
 }
 
 .tags-field > .flow-pane > .tag-view {
@@ -1408,6 +1449,9 @@ We want to have a look that matches our icons in the tool-bar */
 
 .tags-field-editor {
     -fx-border-width: 0;
+    -fx-text-fill: -fx-focused-text-base-color;
+    -fx-highlight-text-fill: -fx-text-inner-color;
+    -fx-highlight-fill: derive(-jr-accent, 20%);
 }
 
 .searchBar:invalid {
@@ -1447,3 +1491,246 @@ We want to have a look that matches our icons in the tool-bar */
 .table-column .rotated > .label {
     -fx-content-display: graphic-only;
 }
+
+.customGenerateButton {
+    -fx-padding: 0.5em 2em;
+    -fx-min-width: 10em;
+}
+
+.chat-message-text-area {
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* region: fix for making text area round corners (source: https://stackoverflow.com/a/49617953) */
+
+.chat-message-text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.chat-message-text-area .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.chat-message-text-area .scroll-pane .content {
+    -fx-background-color: transparent;
+}
+
+/* endregion */
+
+/* region: maintable css */
+
+
+.main-table .column-icon {
+    -fx-alignment: baseline-center;
+    -fx-padding: 0;
+}
+
+.main-table .column-header.column-icon > .label {
+    -fx-padding: 0;
+    -fx-alignment: baseline-center;
+}
+
+.main-table .empty-special-field {
+    visibility: hidden;
+}
+
+.main-table .table-row-cell:hover .empty-special-field {
+    visibility: visible;
+    -fx-icon-color: -jr-gray-2;
+    -fx-fill: -jr-gray-2;
+}
+
+.main-table .table-row-cell:dragOver-bottom {
+    -fx-border-color: -jr-drag-target;
+    -fx-border-width: 0 0 2 0;
+    -fx-padding: 0 0 -2 0;
+}
+
+.main-table .table-row-cell:dragOver-center {
+    -fx-border-color: -jr-drag-target;
+    -fx-border-width: 1 1 1 1;
+    -fx-padding: -1 -1 -1 -1;
+    -fx-background-color: -jr-drag-target-hover;
+}
+
+.main-table .table-row-cell:dragOver-top {
+    -fx-border-color: -jr-drag-target;
+    -fx-border-width: 2 0 0 0;
+    -fx-padding: -2 0 0 0;
+}
+
+/** even and odd are swapped around somehow. Below "odd" matches lines 2, 4, ... **/
+
+.main-table .table-row-cell:matching-search-and-groups {
+    -fx-background-color: -jr-match-1-even;
+}
+.main-table .table-row-cell:matching-search-and-groups > .table-cell {
+    -fx-text-fill: -jr-match-1-text-color;
+}
+.main-table .table-row-cell:matching-search-and-groups:focused > .table-cell {
+    -fx-text-fill: -fx-focused-text-base-color;
+}
+.main-table .table-row-cell:matching-search-and-groups:focused:hover > .table-cell {
+    -fx-text-fill: -jr-maintable-focused-hover-text;
+}
+.main-table .table-row-cell:matching-search-and-groups:focused:hover > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-maintable-focused-hover-text;
+}
+.main-table .table-row-cell:matching-search-and-groups:hover > .table-cell {
+    -fx-text-fill: -jr-hover-text;
+}
+.main-table .table-row-cell:matching-search-and-groups > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-match-1-text-color;
+}
+.main-table .table-row-cell:matching-search-and-groups:hover > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-hover-text;
+}
+.main-table .table-row-cell:matching-search-and-groups:odd {
+    -fx-background-color: -jr-match-1-odd;
+}
+.main-table .table-row-cell:matching-search-and-groups:odd:selected,
+.main-table .table-row-cell:matching-search-and-groups:odd:focused,
+.main-table .table-row-cell:matching-search-and-groups:odd:focused:hover,
+.main-table .table-row-cell:matching-search-and-groups:focused:hover {
+    -fx-background-color: -jr-selected;
+}
+.main-table .table-row-cell:matching-search-and-groups:odd:hover {
+    -fx-background-color: -jr-hover;
+}
+
+.main-table .table-row-cell:matching-search-not-groups {
+    -fx-background-color: -jr-match-2-even;
+}
+.main-table .table-row-cell:matching-search-not-groups > .table-cell {
+    -fx-text-fill: -jr-match-2-text-color;
+}
+.main-table .table-row-cell:matching-search-not-groups:focused > .table-cell {
+    -fx-text-fill: -fx-focused-text-base-color;
+}
+.main-table .table-row-cell:matching-search-not-groups:focused:hover > .table-cell {
+    -fx-text-fill: -jr-maintable-focused-hover-text;
+}
+.main-table .table-row-cell:matching-search-not-groups:focused:hover > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-maintable-focused-hover-text;
+}
+.main-table .table-row-cell:matching-search-not-groups:hover > .table-cell {
+    -fx-text-fill: -jr-hover-text;
+}
+.main-table .table-row-cell:matching-search-not-groups > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-match-2-text-color;
+}
+.main-table .table-row-cell:matching-search-not-groups:hover > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-hover-text;
+}
+.main-table .table-row-cell:matching-search-not-groups:odd {
+    -fx-background-color: -jr-match-2-odd;
+}
+.main-table .table-row-cell:matching-search-not-groups:odd:selected,
+.main-table .table-row-cell:matching-search-not-groups:odd:focused,
+.main-table .table-row-cell:matching-search-not-groups:odd:focused:hover,
+.main-table .table-row-cell:matching-search-not-groups:focused:hover {
+    -fx-background-color: -jr-selected;
+}
+.main-table .table-row-cell:matching-search-not-groups:odd:hover {
+    -fx-background-color: -jr-hover;
+}
+
+.main-table .table-row-cell:matching-groups-not-search {
+    -fx-background-color: -jr-match-3-even;
+}
+.main-table .table-row-cell:matching-groups-not-search > .table-cell {
+    -fx-text-fill: -jr-match-3-text-color;
+}
+.main-table .table-row-cell:matching-groups-not-search:focused > .table-cell {
+    -fx-text-fill: -fx-focused-text-base-color;
+}
+.main-table .table-row-cell:matching-groups-not-search:focused:hover > .table-cell {
+    -fx-text-fill: -jr-maintable-focused-hover-text;
+}
+.main-table .table-row-cell:matching-groups-not-search:focused:hover > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-maintable-focused-hover-text;
+}
+.main-table .table-row-cell:matching-groups-not-search:hover > .table-cell {
+    -fx-text-fill: -jr-hover-text;
+}
+.main-table .table-row-cell:matching-groups-not-search > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-match-3-text-color;
+}
+.main-table .table-row-cell:matching-groups-not-search:hover > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-hover-text;
+}
+.main-table .table-row-cell:matching-groups-not-search:odd {
+    -fx-background-color: -jr-match-3-odd;
+}
+.main-table .table-row-cell:matching-groups-not-search:odd:selected,
+.main-table .table-row-cell:matching-groups-not-search:odd:focused,
+.main-table .table-row-cell:matching-groups-not-search:odd:focused:hover,
+.main-table .table-row-cell:matching-groups-not-search:focused:hover {
+    -fx-background-color: -jr-selected;
+}
+.main-table .table-row-cell:matching-groups-not-search:odd:hover {
+    -fx-background-color: -jr-hover;
+}
+
+.main-table .table-row-cell:not-matching-search-and-groups {
+    -fx-background-color: -jr-match-4-even;
+}
+.main-table .table-row-cell:not-matching-search-and-groups > .table-cell {
+    -fx-text-fill: -jr-match-4-text-color;
+}
+.main-table .table-row-cell:not-matching-search-and-groups:focused > .table-cell {
+    -fx-text-fill: -fx-focused-text-base-color;
+}
+.main-table .table-row-cell:not-matching-search-and-groups:focused:hover > .table-cell {
+    -fx-text-fill: -jr-maintable-focused-hover-text;
+}
+.main-table .table-row-cell:not-matching-search-and-groups:focused:hover > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-maintable-focused-hover-text;
+}
+.main-table .table-row-cell:not-matching-search-and-groups:hover > .table-cell {
+    -fx-text-fill: -jr-hover-text;
+}
+.main-table .table-row-cell:not-matching-search-and-groups > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-match-4-text-color;
+}
+.main-table.table-row-cell:not-matching-search-and-groups:hover > .table-cell > .ikonli-font-icon {
+    -fx-icon-color: -jr-hover-text;
+}
+.main-table .table-row-cell:not-matching-search-and-groups:odd {
+    -fx-background-color: -jr-match-4-odd;
+}
+.main-table .table-row-cell:not-matching-search-and-groups:odd:selected,
+.main-table .table-row-cell:not-matching-search-and-groups:odd:focused,
+.main-table .table-row-cell:not-matching-search-and-groups:odd:focused:hover,
+.main-table .table-row-cell:not-matching-search-and-groups:focused:hover {
+    -fx-background-color: -jr-selected;
+}
+.main-table .table-row-cell:not-matching-search-and-groups:odd:hover {
+    -fx-background-color: -jr-hover;
+}
+
+.rating > .container {
+    -fx-spacing: 2;
+}
+
+.rating > .container > .button {
+    -fx-pref-width: 16;
+    -fx-pref-height: 10;
+    -fx-background-repeat: no-repeat no-repeat;
+    -fx-background-size: 16 16;
+    -fx-border-style: none;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.rating > .container > .button.strong {
+
+}
+
+.rating > .container > .button:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 8, 0.0, 0, 0);
+}
+
+
+/* endregion */

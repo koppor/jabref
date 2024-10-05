@@ -6,11 +6,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.SequencedSet;
 import java.util.stream.Stream;
 
 import javax.swing.undo.UndoManager;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -24,65 +25,77 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 
 import org.jabref.gui.DialogService;
-import org.jabref.gui.StateManager;
 import org.jabref.gui.autocompleter.SuggestionProviders;
 import org.jabref.gui.fieldeditors.FieldEditorFX;
 import org.jabref.gui.fieldeditors.FieldEditors;
 import org.jabref.gui.fieldeditors.FieldNameLabel;
+import org.jabref.gui.preferences.GuiPreferences;
 import org.jabref.gui.preview.PreviewPanel;
 import org.jabref.gui.theme.ThemeManager;
-import org.jabref.gui.util.TaskExecutor;
+import org.jabref.gui.undo.RedoAction;
+import org.jabref.gui.undo.UndoAction;
+import org.jabref.gui.util.OptionalObjectProperty;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
-import org.jabref.logic.pdf.search.indexing.IndexingTaskManager;
+import org.jabref.logic.search.LuceneManager;
+import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
-import org.jabref.preferences.PreferencesService;
+import org.jabref.model.search.SearchQuery;
 
 import com.tobiasdiez.easybind.EasyBind;
+import com.tobiasdiez.easybind.Subscription;
 
 /**
  * A single tab displayed in the EntryEditor holding several FieldEditors.
  */
-abstract class FieldsEditorTab extends EntryEditorTab {
+abstract class FieldsEditorTab extends EntryEditorTab implements OffersPreview {
     protected final BibDatabaseContext databaseContext;
     protected final Map<Field, FieldEditorFX> editors = new LinkedHashMap<>();
+    protected GridPane gridPane;
     private final boolean isCompressed;
     private final SuggestionProviders suggestionProviders;
+    private final UndoAction undoAction;
+    private final RedoAction redoAction;
     private final DialogService dialogService;
-    private final PreferencesService preferences;
+    private final GuiPreferences preferences;
     private final ThemeManager themeManager;
     private final TaskExecutor taskExecutor;
     private final JournalAbbreviationRepository journalAbbreviationRepository;
-    private final StateManager stateManager;
-    private final IndexingTaskManager indexingTaskManager;
     private PreviewPanel previewPanel;
     private final UndoManager undoManager;
+    private final LuceneManager luceneManager;
+    private final OptionalObjectProperty<SearchQuery> searchQueryProperty;
     private Collection<Field> fields = new ArrayList<>();
-    private GridPane gridPane;
+    @SuppressWarnings("FieldCanBeLocal")
+    private Subscription dividerPositionSubscription;
 
     public FieldsEditorTab(boolean compressed,
                            BibDatabaseContext databaseContext,
                            SuggestionProviders suggestionProviders,
                            UndoManager undoManager,
+                           UndoAction undoAction,
+                           RedoAction redoAction,
                            DialogService dialogService,
-                           PreferencesService preferences,
-                           StateManager stateManager,
+                           GuiPreferences preferences,
                            ThemeManager themeManager,
                            TaskExecutor taskExecutor,
                            JournalAbbreviationRepository journalAbbreviationRepository,
-                           IndexingTaskManager indexingTaskManager) {
+                           LuceneManager luceneManager,
+                           OptionalObjectProperty<SearchQuery> searchQueryProperty) {
         this.isCompressed = compressed;
         this.databaseContext = Objects.requireNonNull(databaseContext);
         this.suggestionProviders = Objects.requireNonNull(suggestionProviders);
         this.undoManager = Objects.requireNonNull(undoManager);
+        this.undoAction = undoAction;
+        this.redoAction = redoAction;
         this.dialogService = Objects.requireNonNull(dialogService);
         this.preferences = Objects.requireNonNull(preferences);
         this.themeManager = themeManager;
         this.taskExecutor = Objects.requireNonNull(taskExecutor);
         this.journalAbbreviationRepository = Objects.requireNonNull(journalAbbreviationRepository);
-        this.stateManager = stateManager;
-        this.indexingTaskManager = indexingTaskManager;
+        this.luceneManager = luceneManager;
+        this.searchQueryProperty = searchQueryProperty;
     }
 
     private static void addColumn(GridPane gridPane, int columnIndex, List<Label> nodes) {
@@ -107,36 +120,22 @@ abstract class FieldsEditorTab extends EntryEditorTab {
 
         fields = determineFieldsToShow(entry);
 
-        List<Label> labels = new ArrayList<>();
-        for (Field field : fields) {
-            FieldEditorFX fieldEditor = FieldEditors.getForField(
-                    field,
-                    taskExecutor,
-                    dialogService,
-                    journalAbbreviationRepository,
-                    preferences,
-                    databaseContext,
-                    entry.getType(),
-                    suggestionProviders,
-                    undoManager);
-            fieldEditor.bindToEntry(entry);
-
-            editors.put(field, fieldEditor);
-            labels.add(new FieldNameLabel(field));
-        }
+        List<Label> labels = fields
+                .stream()
+                .map(field -> createLabelAndEditor(entry, field))
+                .toList();
 
         ColumnConstraints columnExpand = new ColumnConstraints();
         columnExpand.setHgrow(Priority.ALWAYS);
 
         ColumnConstraints columnDoNotContract = new ColumnConstraints();
         columnDoNotContract.setMinWidth(Region.USE_PREF_SIZE);
-        int rows;
         if (compressed) {
-            rows = (int) Math.ceil((double) fields.size() / 2);
+            int rows = (int) Math.ceil((double) fields.size() / 2);
 
             addColumn(gridPane, 0, labels.subList(0, rows));
-            addColumn(gridPane, 3, labels.subList(rows, labels.size()));
             addColumn(gridPane, 1, editors.values().stream().map(FieldEditorFX::getNode).limit(rows));
+            addColumn(gridPane, 3, labels.subList(rows, labels.size()));
             addColumn(gridPane, 4, editors.values().stream().map(FieldEditorFX::getNode).skip(rows));
 
             columnExpand.setPercentWidth(40);
@@ -154,23 +153,41 @@ abstract class FieldsEditorTab extends EntryEditorTab {
         }
     }
 
+    protected Label createLabelAndEditor(BibEntry entry, Field field) {
+        FieldEditorFX fieldEditor = FieldEditors.getForField(
+                field,
+                taskExecutor,
+                dialogService,
+                journalAbbreviationRepository,
+                preferences,
+                databaseContext,
+                entry.getType(),
+                suggestionProviders,
+                undoManager,
+                undoAction,
+                redoAction);
+        fieldEditor.bindToEntry(entry);
+        editors.put(field, fieldEditor);
+        return new FieldNameLabel(field);
+    }
+
     private void setRegularRowLayout(GridPane gridPane) {
         double totalWeight = fields.stream()
                                    .mapToDouble(field -> editors.get(field).getWeight())
                                    .sum();
-
-        List<RowConstraints> constraints = new ArrayList<>();
-        for (Field field : fields) {
-            RowConstraints rowExpand = new RowConstraints();
-            rowExpand.setVgrow(Priority.ALWAYS);
-            rowExpand.setValignment(VPos.TOP);
-            rowExpand.setPercentHeight(100 * editors.get(field).getWeight() / totalWeight);
-            constraints.add(rowExpand);
-        }
+        List<RowConstraints> constraints = fields
+                .stream()
+                .map(field -> {
+                    RowConstraints rowExpand = new RowConstraints();
+                    rowExpand.setVgrow(Priority.ALWAYS);
+                    rowExpand.setValignment(VPos.TOP);
+                    rowExpand.setPercentHeight(100 * editors.get(field).getWeight() / totalWeight);
+                    return rowExpand;
+                }).toList();
         gridPane.getRowConstraints().addAll(constraints);
     }
 
-    private void setCompressedRowLayout(GridPane gridPane, int rows) {
+    protected static void setCompressedRowLayout(GridPane gridPane, int rows) {
         RowConstraints rowExpand = new RowConstraints();
         rowExpand.setVgrow(Priority.ALWAYS);
         rowExpand.setValignment(VPos.TOP);
@@ -179,8 +196,11 @@ abstract class FieldsEditorTab extends EntryEditorTab {
         } else {
             rowExpand.setPercentHeight(100 / (double) rows);
         }
+
+        ObservableList<RowConstraints> rowConstraints = gridPane.getRowConstraints();
+        rowConstraints.clear();
         for (int i = 0; i < rows; i++) {
-            gridPane.getRowConstraints().add(rowExpand);
+            rowConstraints.add(rowExpand);
         }
     }
 
@@ -205,20 +225,20 @@ abstract class FieldsEditorTab extends EntryEditorTab {
     }
 
     @Override
-    protected void nextPreviewStyle() {
+    public void nextPreviewStyle() {
         if (previewPanel != null) {
             previewPanel.nextPreviewStyle();
         }
     }
 
     @Override
-    protected void previousPreviewStyle() {
+    public void previousPreviewStyle() {
         if (previewPanel != null) {
             previewPanel.previousPreviewStyle();
         }
     }
 
-    protected abstract Set<Field> determineFieldsToShow(BibEntry entry);
+    protected abstract SequencedSet<Field> determineFieldsToShow(BibEntry entry);
 
     public Collection<Field> getShownFields() {
         return fields;
@@ -229,7 +249,7 @@ abstract class FieldsEditorTab extends EntryEditorTab {
             gridPane = new GridPane();
             gridPane.getStyleClass().add("editorPane");
 
-            // Warp everything in a scroll-pane
+            // Wrap everything in a scroll-pane
             ScrollPane scrollPane = new ScrollPane();
             scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
             scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -243,18 +263,31 @@ abstract class FieldsEditorTab extends EntryEditorTab {
                     dialogService,
                     preferences.getKeyBindingRepository(),
                     preferences,
-                    stateManager,
                     themeManager,
-                    indexingTaskManager,
-                    taskExecutor);
+                    taskExecutor,
+                    luceneManager,
+                    searchQueryProperty);
             EasyBind.subscribe(preferences.getPreviewPreferences().showPreviewAsExtraTabProperty(), show -> {
                 if (show) {
                     container.getItems().remove(previewPanel);
                 } else {
                     container.getItems().add(1, previewPanel);
+                    container.setDividerPositions(preferences.getEntryEditorPreferences().getPreviewWidthDividerPosition());
                 }
             });
+
+            // save position
+            dividerPositionSubscription = EasyBind.valueAt(container.getDividers(), 0)
+                                                  .mapObservable(SplitPane.Divider::positionProperty)
+                                                  .subscribeToValues(this::savePreviewWidthDividerPosition);
             setContent(container);
         }
     }
+
+    private void savePreviewWidthDividerPosition(Number position) {
+        if (!preferences.getPreviewPreferences().shouldShowPreviewAsExtraTab()) {
+            preferences.getEntryEditorPreferences().setPreviewWidthDividerPosition(position.doubleValue());
+        }
+    }
 }
+

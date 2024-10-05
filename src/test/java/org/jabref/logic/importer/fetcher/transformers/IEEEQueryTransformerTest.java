@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
 import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.apache.lucene.queryparser.flexible.standard.parser.StandardSyntaxParser;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -39,6 +40,7 @@ class IEEEQueryTransformerTest extends InfixTransformerTest<IEEEQueryTransformer
     }
 
     @Override
+    @Test
     public void convertJournalFieldPrefix() throws Exception {
         IEEEQueryTransformer transformer = getTransformer();
 
@@ -46,10 +48,11 @@ class IEEEQueryTransformerTest extends InfixTransformerTest<IEEEQueryTransformer
         QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         transformer.transformLuceneQuery(luceneQuery);
 
-        assertEquals("\"Nature\"", transformer.getJournal().get());
+        assertEquals(Optional.of("Nature"), transformer.getJournal());
     }
 
     @Override
+    @Test
     public void convertYearField() throws Exception {
         // IEEE does not support year range
         // Thus, a generic test does not work
@@ -60,11 +63,12 @@ class IEEEQueryTransformerTest extends InfixTransformerTest<IEEEQueryTransformer
         QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         transformer.transformLuceneQuery(luceneQuery);
 
-        assertEquals(2021, transformer.getStartYear());
-        assertEquals(2021, transformer.getEndYear());
+        assertEquals(Optional.of(2021), transformer.getStartYear());
+        assertEquals(Optional.of(2021), transformer.getEndYear());
     }
 
     @Override
+    @Test
     public void convertYearRangeField() throws Exception {
         IEEEQueryTransformer transformer = getTransformer();
 
@@ -72,8 +76,8 @@ class IEEEQueryTransformerTest extends InfixTransformerTest<IEEEQueryTransformer
         QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         transformer.transformLuceneQuery(luceneQuery);
 
-        assertEquals(2018, transformer.getStartYear());
-        assertEquals(2021, transformer.getEndYear());
+        assertEquals(Optional.of(2018), transformer.getStartYear());
+        assertEquals(Optional.of(2021), transformer.getEndYear());
     }
 
     private static Stream<Arguments> getTitleTestData() {
@@ -86,7 +90,7 @@ class IEEEQueryTransformerTest extends InfixTransformerTest<IEEEQueryTransformer
 
     @ParameterizedTest
     @MethodSource("getTitleTestData")
-    public void testStopWordRemoval(String expected, String queryString) throws Exception {
+    void stopWordRemoval(String expected, String queryString) throws Exception {
         QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         Optional<String> result = getTransformer().transformLuceneQuery(luceneQuery);
         assertEquals(Optional.ofNullable(expected), result);

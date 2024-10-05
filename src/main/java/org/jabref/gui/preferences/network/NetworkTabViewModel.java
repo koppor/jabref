@@ -19,37 +19,29 @@ import javafx.collections.ListChangeListener;
 import javafx.stage.FileChooser;
 
 import org.jabref.gui.DialogService;
-import org.jabref.gui.Globals;
 import org.jabref.gui.preferences.PreferenceTabViewModel;
-import org.jabref.gui.remote.CLIMessageHandler;
 import org.jabref.gui.util.FileDialogConfiguration;
+import org.jabref.logic.InternalPreferences;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.net.ProxyPreferences;
 import org.jabref.logic.net.ProxyRegisterer;
 import org.jabref.logic.net.URLDownload;
 import org.jabref.logic.net.ssl.SSLCertificate;
 import org.jabref.logic.net.ssl.TrustStoreManager;
-import org.jabref.logic.remote.RemotePreferences;
-import org.jabref.logic.remote.RemoteUtil;
-import org.jabref.logic.util.OS;
+import org.jabref.logic.os.OS;
+import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.logic.util.StandardFileType;
-import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.strings.StringUtil;
-import org.jabref.model.util.FileUpdateMonitor;
-import org.jabref.preferences.InternalPreferences;
-import org.jabref.preferences.PreferencesService;
 
 import de.saxsys.mvvmfx.utils.validation.CompositeValidator;
 import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
 import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
 import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
 import de.saxsys.mvvmfx.utils.validation.Validator;
-import kong.unirest.UnirestException;
+import kong.unirest.core.UnirestException;
 
 public class NetworkTabViewModel implements PreferenceTabViewModel {
     private final BooleanProperty versionCheckProperty = new SimpleBooleanProperty();
-    private final BooleanProperty remoteServerProperty = new SimpleBooleanProperty();
-    private final StringProperty remotePortProperty = new SimpleStringProperty("");
     private final BooleanProperty proxyUseProperty = new SimpleBooleanProperty();
     private final StringProperty proxyHostnameProperty = new SimpleStringProperty("");
     private final StringProperty proxyPortProperty = new SimpleStringProperty("");
@@ -60,18 +52,15 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
     private final BooleanProperty passwordPersistAvailable = new SimpleBooleanProperty();
     private final ListProperty<CustomCertificateViewModel> customCertificateListProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
 
-    private final Validator remotePortValidator;
     private final Validator proxyHostnameValidator;
     private final Validator proxyPortValidator;
     private final Validator proxyUsernameValidator;
     private final Validator proxyPasswordValidator;
 
     private final DialogService dialogService;
-    private final PreferencesService preferences;
-    private final FileUpdateMonitor fileUpdateMonitor;
-    private final BibEntryTypesManager entryTypesManager;
+    private final CliPreferences preferences;
 
-    private final RemotePreferences remotePreferences;
+
     private final ProxyPreferences proxyPreferences;
     private final ProxyPreferences backupProxyPreferences;
     private final InternalPreferences internalPreferences;
@@ -81,14 +70,9 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
     private final AtomicBoolean sslCertificatesChanged = new AtomicBoolean(false);
 
     public NetworkTabViewModel(DialogService dialogService,
-                               PreferencesService preferences,
-                               FileUpdateMonitor fileUpdateMonitor,
-                               BibEntryTypesManager entryTypesManager) {
+                               CliPreferences preferences) {
         this.dialogService = dialogService;
         this.preferences = preferences;
-        this.fileUpdateMonitor = fileUpdateMonitor;
-        this.entryTypesManager = entryTypesManager;
-        this.remotePreferences = preferences.getRemotePreferences();
         this.proxyPreferences = preferences.getProxyPreferences();
         this.internalPreferences = preferences.getInternalPreferences();
 
@@ -101,25 +85,10 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
                 proxyPreferences.getPassword(),
                 proxyPreferences.shouldPersistPassword());
 
-        remotePortValidator = new FunctionBasedValidator<>(
-                remotePortProperty,
-                input -> {
-                    try {
-                        int portNumber = Integer.parseInt(remotePortProperty().getValue());
-                        return RemoteUtil.isUserPort(portNumber);
-                    } catch (NumberFormatException ex) {
-                        return false;
-                    }
-                },
-                ValidationMessage.error(String.format("%s > %s %n %n %s",
-                        Localization.lang("Network"),
-                        Localization.lang("Remote operation"),
-                        Localization.lang("You must enter an integer value in the interval 1025-65535"))));
-
         proxyHostnameValidator = new FunctionBasedValidator<>(
                 proxyHostnameProperty,
                 input -> !StringUtil.isNullOrEmpty(input),
-                ValidationMessage.error(String.format("%s > %s %n %n %s",
+                ValidationMessage.error("%s > %s %n %n %s".formatted(
                         Localization.lang("Network"),
                         Localization.lang("Proxy configuration"),
                         Localization.lang("Please specify a hostname"))));
@@ -127,7 +96,7 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
         proxyPortValidator = new FunctionBasedValidator<>(
                 proxyPortProperty,
                 input -> getPortAsInt(input).isPresent(),
-                ValidationMessage.error(String.format("%s > %s %n %n %s",
+                ValidationMessage.error("%s > %s %n %n %s".formatted(
                         Localization.lang("Network"),
                         Localization.lang("Proxy configuration"),
                         Localization.lang("Please specify a port"))));
@@ -135,7 +104,7 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
         proxyUsernameValidator = new FunctionBasedValidator<>(
                 proxyUsernameProperty,
                 input -> !StringUtil.isNullOrEmpty(input),
-                ValidationMessage.error(String.format("%s > %s %n %n %s",
+                ValidationMessage.error("%s > %s %n %n %s".formatted(
                         Localization.lang("Network"),
                         Localization.lang("Proxy configuration"),
                         Localization.lang("Please specify a username"))));
@@ -143,7 +112,7 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
         proxyPasswordValidator = new FunctionBasedValidator<>(
                 proxyPasswordProperty,
                 input -> !input.isBlank(),
-                ValidationMessage.error(String.format("%s > %s %n %n %s",
+                ValidationMessage.error("%s > %s %n %n %s".formatted(
                         Localization.lang("Network"),
                         Localization.lang("Proxy configuration"),
                         Localization.lang("Please specify a password"))));
@@ -154,8 +123,6 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
     @Override
     public void setValues() {
         versionCheckProperty.setValue(internalPreferences.isVersionCheckEnabled());
-        remoteServerProperty.setValue(remotePreferences.useRemoteServer());
-        remotePortProperty.setValue(String.valueOf(remotePreferences.getPort()));
 
         setProxyValues();
         setSSLValues();
@@ -179,11 +146,11 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
             sslCertificatesChanged.set(true);
             while (c.next()) {
                 if (c.wasAdded()) {
-                    CustomCertificateViewModel certificate = c.getAddedSubList().get(0);
+                    CustomCertificateViewModel certificate = c.getAddedSubList().getFirst();
                     certificate.getPath().ifPresent(path -> trustStoreManager
                             .addCertificate(formatCustomAlias(certificate.getThumbprint()), Path.of(path)));
                 } else if (c.wasRemoved()) {
-                    CustomCertificateViewModel certificate = c.getRemoved().get(0);
+                    CustomCertificateViewModel certificate = c.getRemoved().getFirst();
                     trustStoreManager.deleteCertificate(formatCustomAlias(certificate.getThumbprint()));
                 }
             }
@@ -193,21 +160,6 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
     @Override
     public void storeSettings() {
         internalPreferences.setVersionCheckEnabled(versionCheckProperty.getValue());
-
-        getPortAsInt(remotePortProperty.getValue()).ifPresent(newPort -> {
-            if (remotePreferences.isDifferentPort(newPort)) {
-                remotePreferences.setPort(newPort);
-            }
-        });
-
-        if (remoteServerProperty.getValue()) {
-            remotePreferences.setUseRemoteServer(true);
-            Globals.REMOTE_LISTENER.openAndStart(new CLIMessageHandler(preferences, fileUpdateMonitor, entryTypesManager), remotePreferences.getPort());
-        } else {
-            remotePreferences.setUseRemoteServer(false);
-            Globals.REMOTE_LISTENER.stop();
-        }
-
         proxyPreferences.setUseProxy(proxyUseProperty.getValue());
         proxyPreferences.setHostname(proxyHostnameProperty.getValue().trim());
         proxyPreferences.setPort(proxyPortProperty.getValue().trim());
@@ -226,10 +178,6 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
         } catch (NumberFormatException ex) {
             return Optional.empty();
         }
-    }
-
-    public ValidationStatus remotePortValidationStatus() {
-        return remotePortValidator.getValidationStatus();
     }
 
     public ValidationStatus proxyHostnameValidationStatus() {
@@ -251,10 +199,6 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
     @Override
     public boolean validateSettings() {
         CompositeValidator validator = new CompositeValidator();
-
-        if (remoteServerProperty.getValue()) {
-            validator.addValidators(remotePortValidator);
-        }
 
         if (proxyUseProperty.getValue()) {
             validator.addValidators(proxyHostnameValidator);
@@ -325,14 +269,6 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
         return versionCheckProperty;
     }
 
-    public BooleanProperty remoteServerProperty() {
-        return remoteServerProperty;
-    }
-
-    public StringProperty remotePortProperty() {
-        return remotePortProperty;
-    }
-
     public BooleanProperty proxyUseProperty() {
         return proxyUseProperty;
     }
@@ -387,6 +323,6 @@ public class NetworkTabViewModel implements PreferenceTabViewModel {
     }
 
     private String formatCustomAlias(String thumbprint) {
-        return String.format("%s[custom]", thumbprint);
+        return "%s[custom]".formatted(thumbprint);
     }
 }

@@ -5,32 +5,32 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import org.jabref.gui.DialogService;
-import org.jabref.gui.JabRefFrame;
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.ActionHelper;
 import org.jabref.gui.actions.SimpleCommand;
-import org.jabref.gui.desktop.JabRefDesktop;
+import org.jabref.gui.desktop.os.NativeDesktop;
 import org.jabref.gui.icon.IconTheme;
-import org.jabref.gui.util.BackgroundTask;
+import org.jabref.gui.preferences.GuiPreferences;
 import org.jabref.gui.util.FileDialogConfiguration;
 import org.jabref.gui.util.FileFilterConverter;
-import org.jabref.gui.util.TaskExecutor;
 import org.jabref.logic.exporter.Exporter;
 import org.jabref.logic.exporter.ExporterFactory;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.util.BackgroundTask;
+import org.jabref.logic.util.TaskExecutor;
 import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
-import org.jabref.preferences.PreferencesService;
 
 import org.controlsfx.control.action.Action;
 import org.slf4j.Logger;
@@ -46,24 +46,24 @@ public class ExportCommand extends SimpleCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExportCommand.class);
 
     private final ExportMethod exportMethod;
-    private final JabRefFrame frame;
+    private final Supplier<LibraryTab> tabSupplier;
     private final StateManager stateManager;
-    private final PreferencesService preferences;
+    private final GuiPreferences preferences;
     private final DialogService dialogService;
     private final BibEntryTypesManager entryTypesManager;
     private final JournalAbbreviationRepository abbreviationRepository;
     private final TaskExecutor taskExecutor;
 
     public ExportCommand(ExportMethod exportMethod,
-                         JabRefFrame frame,
+                         Supplier<LibraryTab> tabSupplier,
                          StateManager stateManager,
                          DialogService dialogService,
-                         PreferencesService preferences,
+                         GuiPreferences preferences,
                          BibEntryTypesManager entryTypesManager,
                          JournalAbbreviationRepository abbreviationRepository,
                          TaskExecutor taskExecutor) {
         this.exportMethod = exportMethod;
-        this.frame = frame;
+        this.tabSupplier = tabSupplier;
         this.stateManager = stateManager;
         this.preferences = preferences;
         this.dialogService = dialogService;
@@ -96,7 +96,7 @@ public class ExportCommand extends SimpleCommand {
     }
 
     private void export(Path file, FileChooser.ExtensionFilter selectedExtensionFilter, List<Exporter> exporters) {
-        String selectedExtension = selectedExtensionFilter.getExtensions().get(0).replace("*", "");
+        String selectedExtension = selectedExtensionFilter.getExtensions().getFirst().replace("*", "");
         if (!file.endsWith(selectedExtension)) {
             FileUtil.addExtension(file, selectedExtension);
         }
@@ -135,13 +135,13 @@ public class ExportCommand extends SimpleCommand {
                     return null; // can not use BackgroundTask.wrap(Runnable) because Runnable.run() can't throw Exceptions
                 })
                 .onSuccess(save -> {
-                    LibraryTab.DatabaseNotification notificationPane = frame.getCurrentLibraryTab().getNotificationPane();
+                    LibraryTab.DatabaseNotification notificationPane = tabSupplier.get().getNotificationPane();
                     notificationPane.notify(
                             IconTheme.JabRefIcons.FOLDER.getGraphicNode(),
                             Localization.lang("Export operation finished successfully."),
                             List.of(new Action(Localization.lang("Reveal in File Explorer"), event -> {
                                 try {
-                                    JabRefDesktop.openFolderAndSelectFile(file, preferences.getExternalApplicationsPreferences(), dialogService);
+                                    NativeDesktop.openFolderAndSelectFile(file, preferences.getExternalApplicationsPreferences(), dialogService);
                                 } catch (IOException e) {
                                     LOGGER.error("Could not open export folder.", e);
                                 }
