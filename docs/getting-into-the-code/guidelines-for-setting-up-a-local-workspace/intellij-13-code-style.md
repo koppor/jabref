@@ -23,7 +23,7 @@ Click on "Install".
 
 JabRef likes to have 4 spaces indentation.
 This is called the "AOSP" style in the Google Java Format style.
-Navigate to **File > Settings... > google-java-format Settings"**.
+Navigate to **File > Settings... > Other Settings > google-java-format Settings"**.
 Change "Code style" to "Android Open Source Project (AOSP) style".
 
 {% figure caption:"Enable AOSP style in Google Java Format" %}
