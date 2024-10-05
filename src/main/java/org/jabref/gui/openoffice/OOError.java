@@ -1,12 +1,12 @@
 package org.jabref.gui.openoffice;
 
+import com.sun.star.lang.DisposedException;
+
 import org.jabref.gui.DialogService;
 import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.openoffice.NoDocumentFoundException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
-
-import com.sun.star.lang.DisposedException;
 
 class OOError extends JabRefException {
 
@@ -40,19 +40,17 @@ class OOError extends JabRefException {
      */
 
     public static OOError from(JabRefException err) {
-        return new OOError(
-                Localization.lang("JabRefException"),
-                err.getLocalizedMessage(),
-                err);
+        return new OOError(Localization.lang("JabRefException"), err.getLocalizedMessage(), err);
     }
 
     // For DisposedException
     public static OOError from(DisposedException err) {
         return new OOError(
                 Localization.lang("Connection lost"),
-                Localization.lang("Connection to OpenOffice/LibreOffice has been lost."
-                        + " Please make sure OpenOffice/LibreOffice is running,"
-                        + " and try to reconnect."),
+                Localization.lang(
+                        "Connection to OpenOffice/LibreOffice has been lost."
+                                + " Please make sure OpenOffice/LibreOffice is running,"
+                                + " and try to reconnect."),
                 err);
     }
 
@@ -60,10 +58,11 @@ class OOError extends JabRefException {
     public static OOError from(NoDocumentException err) {
         return new OOError(
                 Localization.lang("Not connected to document"),
-                Localization.lang("Not connected to any Writer document."
-                        + " Please make sure a document is open,"
-                        + " and use the 'Select Writer document' button"
-                        + " to connect to it."),
+                Localization.lang(
+                        "Not connected to any Writer document."
+                                + " Please make sure a document is open,"
+                                + " and use the 'Select Writer document' button"
+                                + " to connect to it."),
                 err);
     }
 
@@ -71,18 +70,16 @@ class OOError extends JabRefException {
     public static OOError from(NoDocumentFoundException err) {
         return new OOError(
                 Localization.lang("No Writer documents found"),
-                Localization.lang("Could not connect to any Writer document."
-                        + " Please make sure a document is open"
-                        + " before using the 'Select Writer document' button"
-                        + " to connect to it."),
+                Localization.lang(
+                        "Could not connect to any Writer document."
+                                + " Please make sure a document is open"
+                                + " before using the 'Select Writer document' button"
+                                + " to connect to it."),
                 err);
     }
 
     public static OOError fromMisc(Exception err) {
-        return new OOError(
-                "Exception",
-                err.getMessage(),
-                err);
+        return new OOError("Exception", err.getMessage(), err);
     }
 
     /*
@@ -122,18 +119,21 @@ class OOError extends JabRefException {
 
     // noValidStyleSelected
     public static OOError noValidStyleSelected() {
-        return new OOError(Localization.lang("No valid style file defined"),
+        return new OOError(
+                Localization.lang("No valid style file defined"),
                 Localization.lang("No bibliography style is selected for citation.")
                         + "\n"
                         + Localization.lang("Select one before citing.")
                         + "\n"
-                        + Localization.lang("You must select either a valid style file,"
-                        + " or use one of the default styles."));
+                        + Localization.lang(
+                                "You must select either a valid style file,"
+                                        + " or use one of the default styles."));
     }
 
     // noEntriesSelectedForCitation
     public static OOError noEntriesSelectedForCitation() {
-        return new OOError(Localization.lang("No entries selected for citation"),
+        return new OOError(
+                Localization.lang("No entries selected for citation"),
                 Localization.lang("No bibliography entries are selected for citation.")
                         + "\n"
                         + Localization.lang("Select some before citing."));

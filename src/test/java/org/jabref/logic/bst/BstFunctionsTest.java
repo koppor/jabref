@@ -1,24 +1,23 @@
 package org.jabref.logic.bst;
 
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.types.StandardEntryType;
-
-import org.antlr.v4.runtime.RecognitionException;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.antlr.v4.runtime.RecognitionException;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * For additional tests see for
@@ -33,7 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class BstFunctionsTest {
     @Test
     void compareFunctions() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { test.compare } {
                     #5  #5      =   % TRUE
                     #1  #2      =   % FALSE
@@ -66,7 +67,9 @@ class BstFunctionsTest {
 
     @Test
     void arithmeticFunctions() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { test } {
                     #1  #1  +   % 2
                     #5  #2  -   % 3
@@ -83,7 +86,9 @@ class BstFunctionsTest {
 
     @Test
     void arithmeticFunctionTypeMismatch() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { test } {
                     #1  "HELLO" +   % Should throw exception
                 }
@@ -96,7 +101,9 @@ class BstFunctionsTest {
     @Test
     void stringOperations() throws RecognitionException {
         // Test for concat (*) and add.period
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { test } {
                     "H" "ello"      *           % Hello
                     "Johnny"        add.period$ % Johnny.
@@ -127,7 +134,9 @@ class BstFunctionsTest {
 
     @Test
     void missing() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 ENTRY { title } { } { }
                 FUNCTION { presort } { cite$ 'sort.key$ := }
                 ITERATE { presort }
@@ -136,24 +145,27 @@ class BstFunctionsTest {
                 FUNCTION { test } { title missing$ cite$ }
                 ITERATE { test }
                 """);
-        List<BibEntry> testEntries = List.of(
-                BstVMTest.defaultTestEntry(),
-                new BibEntry(StandardEntryType.Article)
-                        .withCitationKey("test")
-                        .withField(StandardField.AUTHOR, "No title"));
+        List<BibEntry> testEntries =
+                List.of(
+                        BstVMTest.defaultTestEntry(),
+                        new BibEntry(StandardEntryType.Article)
+                                .withCitationKey("test")
+                                .withField(StandardField.AUTHOR, "No title"));
 
         vm.render(testEntries);
 
-        assertEquals("test", vm.getStack().pop());      // cite
-        assertEquals(BstVM.TRUE, vm.getStack().pop());          // missing title
-        assertEquals("canh05", vm.getStack().pop());    // cite
-        assertEquals(BstVM.FALSE, vm.getStack().pop());         // missing title
+        assertEquals("test", vm.getStack().pop()); // cite
+        assertEquals(BstVM.TRUE, vm.getStack().pop()); // missing title
+        assertEquals("canh05", vm.getStack().pop()); // cite
+        assertEquals(BstVM.FALSE, vm.getStack().pop()); // missing title
         assertEquals(0, vm.getStack().size());
     }
 
     @Test
     void numNames() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { test } {
                     "Johnny Foo { and } Mary Bar" num.names$
                     "Johnny Foo and Mary Bar" num.names$
@@ -170,7 +182,9 @@ class BstFunctionsTest {
 
     @Test
     void substring() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { test } {
                     "123456789" #2  #1          substring$  % 2
                     "123456789" #4  global.max$ substring$  % 456789
@@ -200,19 +214,20 @@ class BstFunctionsTest {
 
     @ParameterizedTest
     @CsvSource({
-            "d, abcd, -1, 1",
-            "cd, abcd, -1, 2",
-            "bcd, abcd, -1, 3",
-            "c, abcd, -2, 1",
-            "abc, abcd, -2, 100",
-            "abc, abcd, -2, 2147483647",
-            "b, abcd, -3, 1",
-            "a, abcd, -4, 1",
-            "'', abcd, -5, 1",                    // invalid number -5
-            "'', abcd, -2147483647, 2147483647",  // invalid number
+        "d, abcd, -1, 1",
+        "cd, abcd, -1, 2",
+        "bcd, abcd, -1, 3",
+        "c, abcd, -2, 1",
+        "abc, abcd, -2, 100",
+        "abc, abcd, -2, 2147483647",
+        "b, abcd, -3, 1",
+        "a, abcd, -4, 1",
+        "'', abcd, -5, 1", // invalid number -5
+        "'', abcd, -2147483647, 2147483647", // invalid number
     })
     void substringPlain(String expected, String full, Integer start, Integer length) {
-        BstVMContext bstVMContext = new BstVMContext(List.of(), new BibDatabase(), Path.of("404.bst"));
+        BstVMContext bstVMContext =
+                new BstVMContext(List.of(), new BibDatabase(), Path.of("404.bst"));
         BstFunctions bstFunctions = new BstFunctions(bstVMContext, new StringBuilder());
         bstVMContext.stack().push(full);
         bstVMContext.stack().push(start);
@@ -223,7 +238,9 @@ class BstFunctionsTest {
 
     @Test
     void empty() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 ENTRY { title } { } { }
                 READ
                 STRINGS { s }
@@ -250,7 +267,9 @@ class BstFunctionsTest {
 
     @Test
     void formatNameStatic() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { format }{ "Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin" #1 "{vv~}{ll}{, jj}{, f}?" format.name$ }
                 EXECUTE { format }
                 """);
@@ -264,7 +283,9 @@ class BstFunctionsTest {
 
     @Test
     void formatNameInEntries() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 ENTRY { author } { } { }
                 FUNCTION { presort } { cite$ 'sort.key$ := }
                 ITERATE { presort }
@@ -273,11 +294,14 @@ class BstFunctionsTest {
                 FUNCTION { format }{ author #2 "{vv~}{ll}{, jj}{, f}?" format.name$ }
                 ITERATE { format }
                 """);
-        List<BibEntry> testEntries = List.of(
-                BstVMTest.defaultTestEntry(),
-                new BibEntry(StandardEntryType.Book)
-                        .withCitationKey("test")
-                        .withField(StandardField.AUTHOR, "Jonathan Meyer and Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin"));
+        List<BibEntry> testEntries =
+                List.of(
+                        BstVMTest.defaultTestEntry(),
+                        new BibEntry(StandardEntryType.Book)
+                                .withCitationKey("test")
+                                .withField(
+                                        StandardField.AUTHOR,
+                                        "Jonathan Meyer and Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin"));
 
         vm.render(testEntries);
 
@@ -288,7 +312,9 @@ class BstFunctionsTest {
 
     @Test
     void changeCase() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 STRINGS { title }
                 READ
                 FUNCTION { format.title } {
@@ -308,7 +334,8 @@ class BstFunctionsTest {
 
         vm.render(Collections.emptyList());
 
-        assertEquals("{A}{D}/{C}ycle: {I}{B}{M}'s {F}ramework for {A}pplication {D}evelopment and {C}ase",
+        assertEquals(
+                "{A}{D}/{C}ycle: {I}{B}{M}'s {F}ramework for {A}pplication {D}evelopment and {C}ase",
                 vm.getStack().pop());
         assertEquals("", vm.getStack().pop());
         assertEquals("Hello world", vm.getStack().pop());
@@ -318,7 +345,9 @@ class BstFunctionsTest {
 
     @Test
     void textLength() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { test } {
                     "hello world" text.length$                                  % 11
                     "Hello {W}orld" text.length$                                % 11
@@ -347,7 +376,9 @@ class BstFunctionsTest {
 
     @Test
     void intToStr() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { test } { #3 int.to.str$ #9999 int.to.str$ }
                 EXECUTE { test }
                 """);
@@ -361,7 +392,9 @@ class BstFunctionsTest {
 
     @Test
     void chrToInt() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { test } { "H" chr.to.int$ }
                 EXECUTE { test }
                 """);
@@ -374,7 +407,9 @@ class BstFunctionsTest {
 
     @Test
     void chrToIntIntToChr() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { test } { "H" chr.to.int$ int.to.chr$ }
                 EXECUTE {test}
                 """);
@@ -387,7 +422,9 @@ class BstFunctionsTest {
 
     @Test
     void type() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 ENTRY  { } { } { }
                 FUNCTION { presort } { cite$ 'sort.key$ := }
                 ITERATE { presort }
@@ -395,11 +432,12 @@ class BstFunctionsTest {
                 FUNCTION { test } { type$ }
                 ITERATE { test }
                 """);
-        List<BibEntry> testEntries = List.of(
-                new BibEntry(StandardEntryType.Article).withCitationKey("a"),
-                new BibEntry(StandardEntryType.Book).withCitationKey("b"),
-                new BibEntry(StandardEntryType.Misc).withCitationKey("c"),
-                new BibEntry(StandardEntryType.InProceedings).withCitationKey("d"));
+        List<BibEntry> testEntries =
+                List.of(
+                        new BibEntry(StandardEntryType.Article).withCitationKey("a"),
+                        new BibEntry(StandardEntryType.Book).withCitationKey("b"),
+                        new BibEntry(StandardEntryType.Misc).withCitationKey("c"),
+                        new BibEntry(StandardEntryType.InProceedings).withCitationKey("d"));
 
         vm.render(testEntries);
 
@@ -412,7 +450,9 @@ class BstFunctionsTest {
 
     @Test
     void callType() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 ENTRY { title } { } { }
                 FUNCTION { presort } { cite$ 'sort.key$ := }
                 ITERATE { presort }
@@ -422,11 +462,12 @@ class BstFunctionsTest {
                 FUNCTION { book }{ "Book called on " title * }
                 ITERATE { call.type$ }
                 """);
-        List<BibEntry> testEntries = List.of(
-                BstVMTest.defaultTestEntry(),
-                new BibEntry(StandardEntryType.Book)
-                        .withCitationKey("test")
-                        .withField(StandardField.TITLE, "Test"));
+        List<BibEntry> testEntries =
+                List.of(
+                        BstVMTest.defaultTestEntry(),
+                        new BibEntry(StandardEntryType.Book)
+                                .withCitationKey("test")
+                                .withField(StandardField.TITLE, "Test"));
 
         vm.render(testEntries);
 
@@ -439,7 +480,9 @@ class BstFunctionsTest {
 
     @Test
     void swap() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { a } { #3 "Hallo" swap$ }
                 EXECUTE { a }
                 """);
@@ -454,7 +497,9 @@ class BstFunctionsTest {
 
     @Test
     void assignFunction() {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 INTEGERS { test.var }
                 FUNCTION { test.func } { #1 'test.var := }
                 EXECUTE { test.func }
@@ -470,7 +515,9 @@ class BstFunctionsTest {
 
     @Test
     void simpleIf() {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { path1 } { #1 }
                 FUNCTION { path0 } { #0 }
                 FUNCTION { test } {
@@ -489,7 +536,9 @@ class BstFunctionsTest {
 
     @Test
     void simpleWhile() {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 INTEGERS { i }
                 FUNCTION { test } {
                     #3 'i :=
@@ -514,7 +563,9 @@ class BstFunctionsTest {
 
     @Test
     void nestedControlFunctions() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 STRINGS { t }
                 FUNCTION { not } { { #0 } { #1 } if$ }
                 FUNCTION { n.dashify } {
@@ -559,7 +610,9 @@ class BstFunctionsTest {
 
     @Test
     void logic() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { not } { { #0 } { #1 } if$ }
                 FUNCTION { and } { 'skip$ { pop$ #0 } if$ }
                 FUNCTION { or } { { pop$ #1 } 'skip$ if$ }
@@ -598,7 +651,9 @@ class BstFunctionsTest {
      */
     @Test
     void width() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 ENTRY { address author title type } { } { label }
                 STRINGS { longest.label }
                 INTEGERS { number.label longest.label.width }
@@ -640,7 +695,9 @@ class BstFunctionsTest {
 
     @Test
     void duplicateEmptyPopSwapIf() throws RecognitionException {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { emphasize } {
                     duplicate$ empty$
                         { pop$ "" }
@@ -663,7 +720,9 @@ class BstFunctionsTest {
 
     @Test
     void preambleWriteNewlineQuote() {
-        BstVM vm = new BstVM("""
+        BstVM vm =
+                new BstVM(
+                        """
                 FUNCTION { test } {
                     preamble$
                     write$

@@ -1,5 +1,7 @@
 package org.jabref.gui.entryeditor;
 
+import com.tobiasdiez.easybind.EasyBind;
+
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -23,8 +25,6 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.util.DirectoryMonitorManager;
 
-import com.tobiasdiez.easybind.EasyBind;
-
 public class LatexCitationsTab extends EntryEditorTab {
 
     public static final String NAME = "LaTeX citations";
@@ -33,23 +33,23 @@ public class LatexCitationsTab extends EntryEditorTab {
     private final ProgressIndicator progressIndicator;
     private final CitationsDisplay citationsDisplay;
 
-    public LatexCitationsTab(BibDatabaseContext databaseContext,
-                             GuiPreferences preferences,
-                             DialogService dialogService,
-                             DirectoryMonitorManager directoryMonitorManager) {
+    public LatexCitationsTab(
+            BibDatabaseContext databaseContext,
+            GuiPreferences preferences,
+            DialogService dialogService,
+            DirectoryMonitorManager directoryMonitorManager) {
 
-        this.viewModel = new LatexCitationsTabViewModel(
-                databaseContext,
-                preferences,
-                dialogService,
-                directoryMonitorManager);
+        this.viewModel =
+                new LatexCitationsTabViewModel(
+                        databaseContext, preferences, dialogService, directoryMonitorManager);
 
         this.searchPane = new GridPane();
         this.progressIndicator = new ProgressIndicator();
         this.citationsDisplay = new CitationsDisplay();
 
         setText(Localization.lang("LaTeX citations"));
-        setTooltip(new Tooltip(Localization.lang("Search citations for this entry in LaTeX files")));
+        setTooltip(
+                new Tooltip(Localization.lang("Search citations for this entry in LaTeX files")));
         setGraphic(IconTheme.JabRefIcons.LATEX_CITATIONS.getGraphicNode());
         setSearchPane();
     }
@@ -79,24 +79,26 @@ public class LatexCitationsTab extends EntryEditorTab {
         VBox notFoundPane = getNotFoundPane();
         VBox errorPane = getErrorPane();
 
-        EasyBind.subscribe(viewModel.statusProperty(), status -> {
-            searchPane.getChildren().clear();
-            switch (status) {
-                case IN_PROGRESS:
-                    searchPane.add(progressIndicator, 0, 0);
-                    break;
-                case CITATIONS_FOUND:
-                    searchPane.add(citationsPane, 0, 0);
-                    break;
-                case NO_RESULTS:
-                    searchPane.add(notFoundPane, 0, 0);
-                    break;
-                case ERROR:
-                    searchPane.add(errorPane, 0, 0);
-                    break;
-            }
-            searchPane.add(latexDirectoryBox, 0, 1);
-        });
+        EasyBind.subscribe(
+                viewModel.statusProperty(),
+                status -> {
+                    searchPane.getChildren().clear();
+                    switch (status) {
+                        case IN_PROGRESS:
+                            searchPane.add(progressIndicator, 0, 0);
+                            break;
+                        case CITATIONS_FOUND:
+                            searchPane.add(citationsPane, 0, 0);
+                            break;
+                        case NO_RESULTS:
+                            searchPane.add(notFoundPane, 0, 0);
+                            break;
+                        case ERROR:
+                            searchPane.add(errorPane, 0, 0);
+                            break;
+                    }
+                    searchPane.add(latexDirectoryBox, 0, 1);
+                });
     }
 
     private HBox getLatexDirectoryBox() {
@@ -105,9 +107,11 @@ public class LatexCitationsTab extends EntryEditorTab {
         latexDirectoryPath.textProperty().bind(viewModel.directoryProperty().asString());
         latexDirectoryPath.setStyle("-fx-font-family:monospace;-fx-font-weight: bold;");
         Button latexDirectoryButton = new Button(Localization.lang("Set LaTeX file directory"));
-        latexDirectoryButton.setGraphic(IconTheme.JabRefIcons.LATEX_FILE_DIRECTORY.getGraphicNode());
+        latexDirectoryButton.setGraphic(
+                IconTheme.JabRefIcons.LATEX_FILE_DIRECTORY.getGraphicNode());
         latexDirectoryButton.setOnAction(event -> viewModel.setLatexDirectory());
-        HBox latexDirectoryBox = new HBox(10, latexDirectoryText, latexDirectoryPath, latexDirectoryButton);
+        HBox latexDirectoryBox =
+                new HBox(10, latexDirectoryText, latexDirectoryPath, latexDirectoryButton);
         latexDirectoryBox.setAlignment(Pos.CENTER);
         return latexDirectoryBox;
     }
@@ -123,7 +127,8 @@ public class LatexCitationsTab extends EntryEditorTab {
         Label titleLabel = new Label(Localization.lang("No citations found"));
         titleLabel.getStyleClass().add("heading");
 
-        Text notFoundText = new Text(Localization.lang("No LaTeX files containing this entry were found."));
+        Text notFoundText =
+                new Text(Localization.lang("No LaTeX files containing this entry were found."));
         notFoundText.getStyleClass().add("description");
 
         VBox notFoundBox = new VBox(30, titleLabel, notFoundText);
@@ -133,7 +138,8 @@ public class LatexCitationsTab extends EntryEditorTab {
 
     private VBox getErrorPane() {
         Label titleLabel = new Label(Localization.lang("Error"));
-        titleLabel.setStyle("-fx-font-size: 1.5em;-fx-font-weight: bold;-fx-text-fill: -fx-accent;");
+        titleLabel.setStyle(
+                "-fx-font-size: 1.5em;-fx-font-weight: bold;-fx-text-fill: -fx-accent;");
         Text errorMessageText = new Text();
         errorMessageText.textProperty().bind(viewModel.searchErrorProperty());
         VBox errorMessageBox = new VBox(30, titleLabel, errorMessageText);

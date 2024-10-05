@@ -1,8 +1,5 @@
 package org.jabref.gui.util;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import javafx.beans.binding.BooleanExpression;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -16,6 +13,9 @@ import javafx.stage.Screen;
 import javafx.util.Callback;
 
 import org.jabref.model.strings.StringUtil;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Constructs a {@link TableCell} based on the value of the cell and a bunch of specified converter methods.
@@ -66,27 +66,32 @@ public class ValueTableCellFactory<S, T> implements Callback<TableColumn<S, T>, 
         return this;
     }
 
-    public ValueTableCellFactory<S, T> withOnMouseClickedEvent(BiFunction<S, T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
+    public ValueTableCellFactory<S, T> withOnMouseClickedEvent(
+            BiFunction<S, T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
         this.toOnMouseClickedEvent = toOnMouseClickedEvent;
         return this;
     }
 
-    public ValueTableCellFactory<S, T> withOnMouseClickedEvent(Function<T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
+    public ValueTableCellFactory<S, T> withOnMouseClickedEvent(
+            Function<T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
         this.toOnMouseClickedEvent = (rowItem, value) -> toOnMouseClickedEvent.apply(value);
         return this;
     }
 
-    public ValueTableCellFactory<S, T> withDisableExpression(Function<T, BooleanExpression> toDisableBinding) {
+    public ValueTableCellFactory<S, T> withDisableExpression(
+            Function<T, BooleanExpression> toDisableBinding) {
         this.toDisableExpression = toDisableBinding;
         return this;
     }
 
-    public ValueTableCellFactory<S, T> withVisibleExpression(Function<T, BooleanExpression> toVisibleBinding) {
+    public ValueTableCellFactory<S, T> withVisibleExpression(
+            Function<T, BooleanExpression> toVisibleBinding) {
         this.toVisibleExpression = toVisibleBinding;
         return this;
     }
 
-    public ValueTableCellFactory<S, T> withContextMenu(Function<T, ContextMenu> contextMenuFactory) {
+    public ValueTableCellFactory<S, T> withContextMenu(
+            Function<T, ContextMenu> contextMenuFactory) {
         this.contextMenuFactory = contextMenuFactory;
         return this;
     }
@@ -103,7 +108,10 @@ public class ValueTableCellFactory<S, T> implements Callback<TableColumn<S, T>, 
             protected void updateItem(T item, boolean empty) {
                 super.updateItem(item, empty);
 
-                if (empty || (item == null) || (getTableRow() == null) || (getTableRow().getItem() == null)) {
+                if (empty
+                        || (item == null)
+                        || (getTableRow() == null)
+                        || (getTableRow().getItem() == null)) {
                     setText(null);
                     setGraphic(null);
                     setOnMouseClicked(null);
@@ -131,36 +139,40 @@ public class ValueTableCellFactory<S, T> implements Callback<TableColumn<S, T>, 
 
                     if (contextMenuFactory != null) {
                         // We only create the context menu when really necessary
-                        setOnContextMenuRequested(event -> {
-                            if (!isEmpty()) {
-                                setContextMenu(contextMenuFactory.apply(item));
-                                getContextMenu().show(this, event.getScreenX(), event.getScreenY());
-                            }
-                            event.consume();
-                        });
+                        setOnContextMenuRequested(
+                                event -> {
+                                    if (!isEmpty()) {
+                                        setContextMenu(contextMenuFactory.apply(item));
+                                        getContextMenu()
+                                                .show(this, event.getScreenX(), event.getScreenY());
+                                    }
+                                    event.consume();
+                                });
                     }
 
-                    setOnMouseEntered(event -> {
-                        if (tooltip != null) {
-                            setTooltip(tooltip.apply(rowItem, item));
-                        }
-                    });
-
-                    setOnMouseClicked(event -> {
-                        if (toOnMouseClickedEvent != null) {
-                            toOnMouseClickedEvent.apply(rowItem, item).handle(event);
-                        }
-
-                        if ((menuFactory != null) && !event.isConsumed()) {
-                            if (event.getButton() == MouseButton.PRIMARY) {
-                                ContextMenu menu = menuFactory.apply(rowItem, item);
-                                if (menu != null) {
-                                    menu.show(this, event.getScreenX(), event.getScreenY());
-                                    event.consume();
+                    setOnMouseEntered(
+                            event -> {
+                                if (tooltip != null) {
+                                    setTooltip(tooltip.apply(rowItem, item));
                                 }
-                            }
-                        }
-                    });
+                            });
+
+                    setOnMouseClicked(
+                            event -> {
+                                if (toOnMouseClickedEvent != null) {
+                                    toOnMouseClickedEvent.apply(rowItem, item).handle(event);
+                                }
+
+                                if ((menuFactory != null) && !event.isConsumed()) {
+                                    if (event.getButton() == MouseButton.PRIMARY) {
+                                        ContextMenu menu = menuFactory.apply(rowItem, item);
+                                        if (menu != null) {
+                                            menu.show(this, event.getScreenX(), event.getScreenY());
+                                            event.consume();
+                                        }
+                                    }
+                                }
+                            });
 
                     if (toDisableExpression != null) {
                         disableProperty().bind(toDisableExpression.apply(item));

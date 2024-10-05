@@ -1,6 +1,11 @@
 package org.jabref.gui.ai.components.aichat.chatmessage;
 
-import java.util.function.Consumer;
+import com.airhacks.afterburner.views.ViewLoader;
+import com.dlsc.gemsfx.ExpandingTextArea;
+
+import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.UserMessage;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -12,20 +17,17 @@ import javafx.scene.layout.VBox;
 
 import org.jabref.logic.ai.util.ErrorMessage;
 import org.jabref.logic.l10n.Localization;
-
-import com.airhacks.afterburner.views.ViewLoader;
-import com.dlsc.gemsfx.ExpandingTextArea;
-import dev.langchain4j.data.message.AiMessage;
-import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.data.message.UserMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.function.Consumer;
 
 public class ChatMessageComponent extends HBox {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChatMessageComponent.class);
 
     private final ObjectProperty<ChatMessage> chatMessage = new SimpleObjectProperty<>();
-    private final ObjectProperty<Consumer<ChatMessageComponent>> onDelete = new SimpleObjectProperty<>();
+    private final ObjectProperty<Consumer<ChatMessageComponent>> onDelete =
+            new SimpleObjectProperty<>();
 
     @FXML private HBox wrapperHBox;
     @FXML private VBox vBox;
@@ -34,18 +36,18 @@ public class ChatMessageComponent extends HBox {
     @FXML private VBox buttonsVBox;
 
     public ChatMessageComponent() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
 
-        chatMessage.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                loadChatMessage();
-            }
-        });
+        chatMessage.addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        loadChatMessage();
+                    }
+                });
     }
 
-    public ChatMessageComponent(ChatMessage chatMessage, Consumer<ChatMessageComponent> onDeleteCallback) {
+    public ChatMessageComponent(
+            ChatMessage chatMessage, Consumer<ChatMessageComponent> onDeleteCallback) {
         this();
         setChatMessage(chatMessage);
         setOnDelete(onDeleteCallback);
@@ -87,7 +89,9 @@ public class ChatMessageComponent extends HBox {
             }
 
             default ->
-                LOGGER.error("ChatMessageComponent supports only user, AI, or error messages, but other type was passed: {}", chatMessage.get().type().name());
+                    LOGGER.error(
+                            "ChatMessageComponent supports only user, AI, or error messages, but other type was passed: {}",
+                            chatMessage.get().type().name());
         }
     }
 
@@ -104,6 +108,11 @@ public class ChatMessageComponent extends HBox {
     }
 
     private void setColor(String fillColor, String borderColor) {
-        vBox.setStyle("-fx-background-color: " + fillColor + "; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: " + borderColor + "; -fx-border-width: 3;");
+        vBox.setStyle(
+                "-fx-background-color: "
+                        + fillColor
+                        + "; -fx-border-radius: 10; -fx-background-radius: 10; -fx-border-color: "
+                        + borderColor
+                        + "; -fx-border-width: 3;");
     }
 }

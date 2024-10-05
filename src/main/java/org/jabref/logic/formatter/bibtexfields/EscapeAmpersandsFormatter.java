@@ -1,9 +1,9 @@
 package org.jabref.logic.formatter.bibtexfields;
 
-import java.util.Objects;
-
 import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
+
+import java.util.Objects;
 
 public class EscapeAmpersandsFormatter extends Formatter {
 
@@ -72,7 +72,9 @@ public class EscapeAmpersandsFormatter extends Formatter {
 
             // We add a backslash before any ampersand characters, with one exception: if
             // we are inside an \\url{...} command, we should write it as it is. Maybe.
-            if ((c == '&') && !escape && !(inCommand && "url".contentEquals(commandName))
+            if ((c == '&')
+                    && !escape
+                    && !(inCommand && "url".contentEquals(commandName))
                     && (nestedEnvironments == 0)) {
                 result.append("\\&");
             } else {

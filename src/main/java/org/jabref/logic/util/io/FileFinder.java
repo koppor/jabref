@@ -1,10 +1,10 @@
 package org.jabref.logic.util.io;
 
+import org.jabref.model.entry.BibEntry;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-
-import org.jabref.model.entry.BibEntry;
 
 public interface FileFinder {
 
@@ -15,5 +15,6 @@ public interface FileFinder {
      * @param directories The root directories to search.
      * @param extensions  The extensions that are acceptable.
      */
-    List<Path> findAssociatedFiles(BibEntry entry, List<Path> directories, List<String> extensions) throws IOException;
+    List<Path> findAssociatedFiles(BibEntry entry, List<Path> directories, List<String> extensions)
+            throws IOException;
 }

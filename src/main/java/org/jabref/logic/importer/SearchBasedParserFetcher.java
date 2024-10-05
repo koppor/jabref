@@ -1,15 +1,14 @@
 package org.jabref.logic.importer;
 
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import org.jabref.model.entry.BibEntry;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
-
-import org.jabref.model.entry.BibEntry;
-
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 
 /**
  * Provides a convenient interface for search-based fetcher, which follows the usual three-step procedure:
@@ -32,7 +31,6 @@ import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
  *     We need multi inheritance, because a fetcher might implement multiple query types (such as id fetching {@link IdBasedFetcher}), complete entry {@link EntryBasedFetcher}, and search-based fetcher (this class).
  * </p>
  */
-
 public interface SearchBasedParserFetcher extends SearchBasedFetcher, ParserFetcher {
 
     /**
@@ -49,7 +47,8 @@ public interface SearchBasedParserFetcher extends SearchBasedFetcher, ParserFetc
         try {
             urlForQuery = getURLForQuery(luceneQuery);
         } catch (URISyntaxException | MalformedURLException | FetcherException e) {
-            throw new FetcherException("Search URI crafted from complex search query is malformed", e);
+            throw new FetcherException(
+                    "Search URI crafted from complex search query is malformed", e);
         }
         return getBibEntries(urlForQuery);
     }
@@ -64,7 +63,8 @@ public interface SearchBasedParserFetcher extends SearchBasedFetcher, ParserFetc
             throw new FetcherException(urlForQuery, e);
         } catch (ParseException e) {
             // Regular expression to redact API keys from the error message
-            throw new FetcherException(urlForQuery, "An internal parser error occurred while fetching", e);
+            throw new FetcherException(
+                    urlForQuery, "An internal parser error occurred while fetching", e);
         }
     }
 
@@ -78,5 +78,6 @@ public interface SearchBasedParserFetcher extends SearchBasedFetcher, ParserFetc
      *
      * @param luceneQuery the root node of the lucene query
      */
-    URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException, FetcherException;
+    URL getURLForQuery(QueryNode luceneQuery)
+            throws URISyntaxException, MalformedURLException, FetcherException;
 }

@@ -1,9 +1,9 @@
 package org.jabref.gui.push;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import static org.jabref.gui.actions.ActionHelper.needsDatabase;
+import static org.jabref.gui.actions.ActionHelper.needsEntriesSelected;
+
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.scene.control.ButtonBase;
 import javafx.scene.control.MenuItem;
@@ -21,13 +21,13 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.strings.StringUtil;
-
-import com.tobiasdiez.easybind.EasyBind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jabref.gui.actions.ActionHelper.needsDatabase;
-import static org.jabref.gui.actions.ActionHelper.needsEntriesSelected;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * An Action class representing the process of invoking a PushToApplication operation.
@@ -45,23 +45,29 @@ public class PushToApplicationCommand extends SimpleCommand {
 
     private PushToApplication application;
 
-    public PushToApplicationCommand(StateManager stateManager, DialogService dialogService, GuiPreferences preferences, TaskExecutor taskExecutor) {
+    public PushToApplicationCommand(
+            StateManager stateManager,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            TaskExecutor taskExecutor) {
         this.stateManager = stateManager;
         this.dialogService = dialogService;
         this.preferences = preferences;
         this.taskExecutor = taskExecutor;
 
-        setApplication(preferences.getPushToApplicationPreferences()
-                                  .getActiveApplicationName());
+        setApplication(preferences.getPushToApplicationPreferences().getActiveApplicationName());
 
-        EasyBind.subscribe(preferences.getPushToApplicationPreferences().activeApplicationNameProperty(),
+        EasyBind.subscribe(
+                preferences.getPushToApplicationPreferences().activeApplicationNameProperty(),
                 this::setApplication);
 
         this.executable.bind(needsDatabase(stateManager).and(needsEntriesSelected(stateManager)));
-        this.statusMessage.bind(BindingsHelper.ifThenElse(
-                this.executable,
-                "",
-                Localization.lang("This operation requires one or more entries to be selected.")));
+        this.statusMessage.bind(
+                BindingsHelper.ifThenElse(
+                        this.executable,
+                        "",
+                        Localization.lang(
+                                "This operation requires one or more entries to be selected.")));
     }
 
     public void registerReconfigurable(Object node) {
@@ -75,22 +81,23 @@ public class PushToApplicationCommand extends SimpleCommand {
 
     private void setApplication(String applicationName) {
         final ActionFactory factory = new ActionFactory();
-        PushToApplication application = PushToApplications.getApplicationByName(
-                                                                  applicationName,
-                                                                  dialogService,
-                                                                  preferences)
-                                                          .orElse(new PushToEmacs(dialogService, preferences));
+        PushToApplication application =
+                PushToApplications.getApplicationByName(applicationName, dialogService, preferences)
+                        .orElse(new PushToEmacs(dialogService, preferences));
 
-        preferences.getPushToApplicationPreferences().setActiveApplicationName(application.getDisplayName());
+        preferences
+                .getPushToApplicationPreferences()
+                .setActiveApplicationName(application.getDisplayName());
         this.application = Objects.requireNonNull(application);
 
-        reconfigurableControls.forEach(object -> {
-            if (object instanceof MenuItem item) {
-                factory.configureMenuItem(application.getAction(), this, item);
-            } else if (object instanceof ButtonBase base) {
-                factory.configureIconButton(application.getAction(), this, base);
-            }
-        });
+        reconfigurableControls.forEach(
+                object -> {
+                    if (object instanceof MenuItem item) {
+                        factory.configureMenuItem(application.getAction(), this, item);
+                    } else if (object instanceof ButtonBase base) {
+                        factory.configureIconButton(application.getAction(), this, base);
+                    }
+                });
     }
 
     public Action getAction() {
@@ -125,7 +132,8 @@ public class PushToApplicationCommand extends SimpleCommand {
                 if (StringUtil.isBlank(entry.getCitationKey())) {
                     dialogService.showErrorDialogAndWait(
                             application.getDisplayName(),
-                            Localization.lang("This operation requires all selected entries to have citation keys defined."));
+                            Localization.lang(
+                                    "This operation requires all selected entries to have citation keys defined."));
                     return;
                 }
             }
@@ -133,13 +141,19 @@ public class PushToApplicationCommand extends SimpleCommand {
 
         // All set, call the operation in a new thread:
         BackgroundTask.wrap(this::pushEntries)
-                      .onSuccess(s -> application.onOperationCompleted())
-                      .onFailure(ex -> LOGGER.error("Error pushing citation", ex))
-                      .executeWith(taskExecutor);
+                .onSuccess(s -> application.onOperationCompleted())
+                .onFailure(ex -> LOGGER.error("Error pushing citation", ex))
+                .executeWith(taskExecutor);
     }
 
     private void pushEntries() {
-        BibDatabaseContext database = stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
-        application.pushEntries(database, stateManager.getSelectedEntries(), getKeyString(stateManager.getSelectedEntries(), application.getDelimiter()));
+        BibDatabaseContext database =
+                stateManager
+                        .getActiveDatabase()
+                        .orElseThrow(() -> new NullPointerException("Database null"));
+        application.pushEntries(
+                database,
+                stateManager.getSelectedEntries(),
+                getKeyString(stateManager.getSelectedEntries(), application.getDelimiter()));
     }
 }

@@ -1,5 +1,16 @@
 package org.jabref.logic.msbib;
 
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.entry.BibEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,18 +23,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.BibEntry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
 /**
  * Microsoft Word bibliography.
  * The class is uesed both for import and export
@@ -31,7 +30,8 @@ import org.xml.sax.SAXException;
  */
 public class MSBibDatabase {
 
-    public static final String NAMESPACE = "http://schemas.openxmlformats.org/officeDocument/2006/bibliography";
+    public static final String NAMESPACE =
+            "http://schemas.openxmlformats.org/officeDocument/2006/bibliography";
     public static final String PREFIX = "b:";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MSBibDatabase.class);
@@ -117,8 +117,10 @@ public class MSBibDatabase {
 
             Element rootNode = document.createElementNS(NAMESPACE, PREFIX + "Sources");
             rootNode.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", NAMESPACE);
-            rootNode.setAttributeNS("http://www.w3.org/2000/xmlns/",
-                    "xmlns:" + PREFIX.substring(0, PREFIX.length() - 1), NAMESPACE);
+            rootNode.setAttributeNS(
+                    "http://www.w3.org/2000/xmlns/",
+                    "xmlns:" + PREFIX.substring(0, PREFIX.length() - 1),
+                    NAMESPACE);
             rootNode.setAttribute("SelectedStyle", "");
 
             for (MSBibEntry entry : entriesForExport) {

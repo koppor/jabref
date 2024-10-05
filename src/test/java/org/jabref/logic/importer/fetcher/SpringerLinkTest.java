@@ -1,8 +1,9 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javafx.collections.FXCollections;
 
@@ -11,14 +12,12 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.support.DisabledOnCIServer;
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
 
 @FetcherTest
 class SpringerLinkTest {
@@ -49,7 +48,10 @@ class SpringerLinkTest {
     void findByDOI() throws IOException {
         entry.setField(StandardField.DOI, "10.1186/s13677-015-0042-8");
         assertEquals(
-                Optional.of(URI.create("http://link.springer.com/content/pdf/10.1186/s13677-015-0042-8.pdf").toURL()),
+                Optional.of(
+                        URI.create(
+                                        "http://link.springer.com/content/pdf/10.1186/s13677-015-0042-8.pdf")
+                                .toURL()),
                 finder.findFullText(entry));
     }
 

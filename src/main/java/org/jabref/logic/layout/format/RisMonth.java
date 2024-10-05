@@ -1,10 +1,10 @@
 package org.jabref.logic.layout.format;
 
-import java.util.Locale;
-import java.util.Optional;
-
 import org.jabref.logic.layout.LayoutFormatter;
 import org.jabref.model.entry.Month;
+
+import java.util.Locale;
+import java.util.Optional;
 
 public class RisMonth implements LayoutFormatter {
 

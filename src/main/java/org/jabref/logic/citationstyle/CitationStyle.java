@@ -1,5 +1,13 @@
 package org.jabref.logic.citationstyle;
 
+import com.google.common.annotations.VisibleForTesting;
+
+import org.jabref.architecture.AllowedToUseClassGetResource;
+import org.jabref.logic.openoffice.style.OOStyle;
+import org.jabref.logic.util.StandardFileType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -22,18 +30,11 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.jabref.architecture.AllowedToUseClassGetResource;
-import org.jabref.logic.openoffice.style.OOStyle;
-import org.jabref.logic.util.StandardFileType;
-
-import com.google.common.annotations.VisibleForTesting;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Representation of a CitationStyle. Stores its name, the file path and the style itself
  */
-@AllowedToUseClassGetResource("org.jabref.logic.citationstyle.CitationStyle.discoverCitationStyles reads the whole path to discover all available styles. Should be converted to a build-time job.")
+@AllowedToUseClassGetResource(
+        "org.jabref.logic.citationstyle.CitationStyle.discoverCitationStyles reads the whole path to discover all available styles. Should be converted to a build-time job.")
 public class CitationStyle implements OOStyle {
 
     public static final String DEFAULT = "/ieee.csl";
@@ -48,7 +49,11 @@ public class CitationStyle implements OOStyle {
     private final boolean isNumericStyle;
     private final String source;
 
-    private CitationStyle(final String filename, final String title, final boolean isNumericStyle, final String source) {
+    private CitationStyle(
+            final String filename,
+            final String title,
+            final boolean isNumericStyle,
+            final String source) {
         this.filePath = Objects.requireNonNull(filename);
         this.title = Objects.requireNonNull(title);
         this.isNumericStyle = isNumericStyle;
@@ -58,7 +63,8 @@ public class CitationStyle implements OOStyle {
     /**
      * Creates an CitationStyle instance out of the style string
      */
-    private static Optional<CitationStyle> createCitationStyleFromSource(final InputStream source, final String filename) {
+    private static Optional<CitationStyle> createCitationStyleFromSource(
+            final InputStream source, final String filename) {
         try {
             String content = new String(source.readAllBytes());
 
@@ -67,15 +73,19 @@ public class CitationStyle implements OOStyle {
                 return Optional.empty();
             }
 
-            return Optional.of(new CitationStyle(filename, styleInfo.get().title(), styleInfo.get().isNumericStyle(), content));
+            return Optional.of(
+                    new CitationStyle(
+                            filename,
+                            styleInfo.get().title(),
+                            styleInfo.get().isNumericStyle(),
+                            content));
         } catch (IOException e) {
             LOGGER.error("Error while parsing source", e);
             return Optional.empty();
         }
     }
 
-    public record StyleInfo(String title, boolean isNumericStyle) {
-    }
+    public record StyleInfo(String title, boolean isNumericStyle) {}
 
     @VisibleForTesting
     static Optional<StyleInfo> parseStyleInfo(String filename, String content) {
@@ -104,7 +114,8 @@ public class CitationStyle implements OOStyle {
                             }
                         }
                         case "category" -> {
-                            String citationFormat = reader.getAttributeValue(null, "citation-format");
+                            String citationFormat =
+                                    reader.getAttributeValue(null, "citation-format");
                             if (citationFormat != null) {
                                 isNumericStyle = "numeric".equals(citationFormat);
                             }
@@ -150,7 +161,10 @@ public class CitationStyle implements OOStyle {
         String internalFile = STYLES_ROOT + (styleFile.startsWith("/") ? "" : "/") + styleFile;
         Path internalFilePath = Path.of(internalFile);
         boolean isExternalFile = Files.exists(internalFilePath);
-        try (InputStream inputStream = isExternalFile ? Files.newInputStream(internalFilePath) : CitationStyle.class.getResourceAsStream(internalFile)) {
+        try (InputStream inputStream =
+                isExternalFile
+                        ? Files.newInputStream(internalFilePath)
+                        : CitationStyle.class.getResourceAsStream(internalFile)) {
             if (inputStream == null) {
                 LOGGER.error("Could not find file: {}", styleFile);
                 return Optional.empty();
@@ -170,7 +184,8 @@ public class CitationStyle implements OOStyle {
      * @return default citation style
      */
     public static CitationStyle getDefault() {
-        return createCitationStyleFromFile(DEFAULT).orElse(new CitationStyle("", "Empty", false, ""));
+        return createCitationStyleFromFile(DEFAULT)
+                .orElse(new CitationStyle("", "Empty", false, ""));
     }
 
     /**
@@ -183,7 +198,8 @@ public class CitationStyle implements OOStyle {
             return STYLES;
         }
 
-        // TODO: The list of files should be determined at build time (instead of the dynamic method in discoverCitationStylesInPath(path))
+        // TODO: The list of files should be determined at build time (instead of the dynamic method
+        // in discoverCitationStylesInPath(path))
 
         URL url = CitationStyle.class.getResource(STYLES_ROOT + DEFAULT);
         if (url == null) {
@@ -197,21 +213,21 @@ public class CitationStyle implements OOStyle {
             STYLES.addAll(discoverCitationStylesInPath(path));
 
             return STYLES;
-        } catch (URISyntaxException
-                 | IOException e) {
+        } catch (URISyntaxException | IOException e) {
             LOGGER.error("something went wrong while searching available CitationStyles", e);
             return Collections.emptyList();
         }
     }
 
     private static List<CitationStyle> discoverCitationStylesInPath(Path path) throws IOException {
-        try (Stream<Path> stream = Files.find(path, 1, (file, attr) -> file.toString().endsWith("csl"))) {
+        try (Stream<Path> stream =
+                Files.find(path, 1, (file, attr) -> file.toString().endsWith("csl"))) {
             return stream.map(Path::getFileName)
-                         .map(Path::toString)
-                         .map(CitationStyle::createCitationStyleFromFile)
-                         .filter(Optional::isPresent)
-                         .map(Optional::get)
-                         .collect(Collectors.toList());
+                    .map(Path::toString)
+                    .map(CitationStyle::createCitationStyleFromFile)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -219,7 +235,8 @@ public class CitationStyle implements OOStyle {
      * Checks if the given style file is a CitationStyle
      */
     public static boolean isCitationStyleFile(String styleFile) {
-        return StandardFileType.CITATION_STYLE.getExtensions().stream().anyMatch(styleFile::endsWith);
+        return StandardFileType.CITATION_STYLE.getExtensions().stream()
+                .anyMatch(styleFile::endsWith);
     }
 
     public String getTitle() {

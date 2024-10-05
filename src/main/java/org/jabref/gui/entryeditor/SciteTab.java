@@ -1,8 +1,6 @@
 package org.jabref.gui.entryeditor;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.geometry.HPos;
 import javafx.scene.control.Hyperlink;
@@ -14,6 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
+import org.controlsfx.control.HyperlinkLabel;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.desktop.os.NativeDesktop;
 import org.jabref.gui.preferences.GuiPreferences;
@@ -21,8 +20,9 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.BibEntry;
 
-import com.tobiasdiez.easybind.EasyBind;
-import org.controlsfx.control.HyperlinkLabel;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @implNote This tab is called <code>SciteTab</code>, because it uses the service <code>**scite** aI</code>.
@@ -38,7 +38,8 @@ public class SciteTab extends EntryEditorTab {
     private final GuiPreferences preferences;
     private final DialogService dialogService;
 
-    public SciteTab(GuiPreferences preferences, TaskExecutor taskExecutor, DialogService dialogService) {
+    public SciteTab(
+            GuiPreferences preferences, TaskExecutor taskExecutor, DialogService dialogService) {
         this.preferences = preferences;
         this.viewModel = new SciteTabViewModel(preferences, taskExecutor);
         this.dialogService = dialogService;
@@ -61,17 +62,22 @@ public class SciteTab extends EntryEditorTab {
         sciteResultsPane.setId("scitePane");
         setContent(sciteResultsPane);
 
-        EasyBind.subscribe(viewModel.statusProperty(), status -> {
-            sciteResultsPane.getChildren().clear();
-            switch (status) {
-                case IN_PROGRESS ->
-                        sciteResultsPane.add(progressIndicator, 0, 0);
-                case FOUND ->
-                        viewModel.getCurrentResult().ifPresent(result -> sciteResultsPane.add(getTalliesPane(result), 0, 0));
-                case ERROR ->
-                        sciteResultsPane.add(getErrorPane(), 0, 0);
-            }
-        });
+        EasyBind.subscribe(
+                viewModel.statusProperty(),
+                status -> {
+                    sciteResultsPane.getChildren().clear();
+                    switch (status) {
+                        case IN_PROGRESS -> sciteResultsPane.add(progressIndicator, 0, 0);
+                        case FOUND ->
+                                viewModel
+                                        .getCurrentResult()
+                                        .ifPresent(
+                                                result ->
+                                                        sciteResultsPane.add(
+                                                                getTalliesPane(result), 0, 0));
+                        case ERROR -> sciteResultsPane.add(getErrorPane(), 0, 0);
+                    }
+                });
     }
 
     @Override
@@ -96,15 +102,18 @@ public class SciteTab extends EntryEditorTab {
     private VBox getTalliesPane(SciteTallyModel tallModel) {
         Label titleLabel = new Label(Localization.lang("Tallies for %0", tallModel.doi()));
         titleLabel.getStyleClass().add("scite-tallies-label");
-        Text message = new Text("Total Citations: %d\nSupporting: %d\nContradicting: %d\nMentioning: %d\nUnclassified: %d\nCiting Publications: %d".formatted(
-                tallModel.total(),
-                tallModel.supporting(),
-                tallModel.contradicting(),
-                tallModel.mentioning(),
-                tallModel.unclassified(),
-                tallModel.citingPublications()
-        ));
-        String url = SCITE_REPORTS_URL_BASE + URLEncoder.encode(tallModel.doi(), StandardCharsets.UTF_8);
+        Text message =
+                new Text(
+                        "Total Citations: %d\nSupporting: %d\nContradicting: %d\nMentioning: %d\nUnclassified: %d\nCiting Publications: %d"
+                                .formatted(
+                                        tallModel.total(),
+                                        tallModel.supporting(),
+                                        tallModel.contradicting(),
+                                        tallModel.mentioning(),
+                                        tallModel.unclassified(),
+                                        tallModel.citingPublications()));
+        String url =
+                SCITE_REPORTS_URL_BASE + URLEncoder.encode(tallModel.doi(), StandardCharsets.UTF_8);
         VBox messageBox = getMessageBox(url, titleLabel, message);
         messageBox.getStyleClass().add("scite-message-box");
         return messageBox;
@@ -112,20 +121,25 @@ public class SciteTab extends EntryEditorTab {
 
     private VBox getMessageBox(String url, Label titleLabel, Text message) {
         HyperlinkLabel link = new HyperlinkLabel(Localization.lang("See full report at [%0]", url));
-        link.setOnAction(event -> {
-            if (event.getSource() instanceof Hyperlink) {
-                try {
-                    NativeDesktop.openBrowser(url, preferences.getExternalApplicationsPreferences());
-                } catch (IOException ioex) {
-                    // Can't throw a checked exception from here, so display a message to the user instead.
-                    dialogService.showErrorDialogAndWait(
-                    "An error occurred opening web browser",
-                "JabRef was unable to open a web browser for link:\n\n" + url + "\n\nError Message:\n\n" + ioex.getMessage(),
-                        ioex
-                    );
-                }
-            }
-        });
+        link.setOnAction(
+                event -> {
+                    if (event.getSource() instanceof Hyperlink) {
+                        try {
+                            NativeDesktop.openBrowser(
+                                    url, preferences.getExternalApplicationsPreferences());
+                        } catch (IOException ioex) {
+                            // Can't throw a checked exception from here, so display a message to
+                            // the user instead.
+                            dialogService.showErrorDialogAndWait(
+                                    "An error occurred opening web browser",
+                                    "JabRef was unable to open a web browser for link:\n\n"
+                                            + url
+                                            + "\n\nError Message:\n\n"
+                                            + ioex.getMessage(),
+                                    ioex);
+                        }
+                    }
+                });
 
         return new VBox(30, titleLabel, message, link);
     }

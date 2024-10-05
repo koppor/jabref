@@ -62,9 +62,6 @@ public class StudyDatabase {
 
     @Override
     public String toString() {
-        return "LibraryEntry{" +
-                "name='" + name + '\'' +
-                ", enabled=" + enabled +
-                '}';
+        return "LibraryEntry{" + "name='" + name + '\'' + ", enabled=" + enabled + '}';
     }
 }

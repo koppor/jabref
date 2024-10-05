@@ -1,6 +1,6 @@
 package org.jabref.gui.util;
 
-import java.util.Optional;
+import com.airhacks.afterburner.injection.Injector;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -13,27 +13,33 @@ import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.keyboard.KeyBinding;
 import org.jabref.gui.keyboard.KeyBindingRepository;
 
-import com.airhacks.afterburner.injection.Injector;
+import java.util.Optional;
 
 public class BaseDialog<T> extends Dialog<T> {
 
     protected BaseDialog() {
-        getDialogPane().getScene().setOnKeyPressed(event -> {
-            KeyBindingRepository keyBindingRepository = Injector.instantiateModelOrService(KeyBindingRepository.class);
-            if (keyBindingRepository.checkKeyCombinationEquality(KeyBinding.CLOSE, event)) {
-                close();
-            } else if (keyBindingRepository.checkKeyCombinationEquality(KeyBinding.DEFAULT_DIALOG_ACTION, event)) {
-                getDefaultButton().ifPresent(Button::fire);
-            }
+        getDialogPane()
+                .getScene()
+                .setOnKeyPressed(
+                        event -> {
+                            KeyBindingRepository keyBindingRepository =
+                                    Injector.instantiateModelOrService(KeyBindingRepository.class);
+                            if (keyBindingRepository.checkKeyCombinationEquality(
+                                    KeyBinding.CLOSE, event)) {
+                                close();
+                            } else if (keyBindingRepository.checkKeyCombinationEquality(
+                                    KeyBinding.DEFAULT_DIALOG_ACTION, event)) {
+                                getDefaultButton().ifPresent(Button::fire);
+                            }
 
-            // all buttons in base dialogs react on enter
-            if (event.getCode() == KeyCode.ENTER) {
-                if (event.getTarget() instanceof Button) {
-                    ((Button) event.getTarget()).fire();
-                    event.consume();
-                }
-            }
-        });
+                            // all buttons in base dialogs react on enter
+                            if (event.getCode() == KeyCode.ENTER) {
+                                if (event.getTarget() instanceof Button) {
+                                    ((Button) event.getTarget()).fire();
+                                    event.consume();
+                                }
+                            }
+                        });
 
         setDialogIcon(IconTheme.getJabRefImage());
         setResizable(true);
@@ -45,9 +51,9 @@ public class BaseDialog<T> extends Dialog<T> {
 
     private ButtonType getDefaultButtonType() {
         return getDialogPane().getButtonTypes().stream()
-                              .filter(buttonType -> buttonType.getButtonData().isDefaultButton())
-                              .findFirst()
-                              .orElse(ButtonType.OK);
+                .filter(buttonType -> buttonType.getButtonData().isDefaultButton())
+                .findFirst()
+                .orElse(ButtonType.OK);
     }
 
     private void setDialogIcon(Image image) {

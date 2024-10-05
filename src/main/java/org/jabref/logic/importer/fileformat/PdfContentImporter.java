@@ -1,17 +1,9 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.common.base.Strings;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.jabref.logic.importer.Importer;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.l10n.Localization;
@@ -27,9 +19,17 @@ import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.strings.StringUtil;
 
-import com.google.common.base.Strings;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * PdfContentImporter parses data of the first page of the PDF and creates a BibTeX entry.
@@ -141,9 +141,11 @@ public class PdfContentImporter extends Importer {
                         // last name found
                         res = res.concat(removeNonLettersAtEnd(splitNames[i]));
 
-                        if (!splitNames[i].isEmpty() && Character.isLowerCase(splitNames[i].charAt(0))) {
+                        if (!splitNames[i].isEmpty()
+                                && Character.isLowerCase(splitNames[i].charAt(0))) {
                             // it is probably be "van", "vom", ...
-                            // we just rely on the fact that these things are written in lower case letters
+                            // we just rely on the fact that these things are written in lower case
+                            // letters
                             // do NOT finish name
                             res = res.concat(" ");
                         } else {
@@ -158,7 +160,8 @@ public class PdfContentImporter extends Importer {
                         } else {
                             res = res.concat(" and ");
                         }
-                        if ("et".equalsIgnoreCase(splitNames[i]) && (splitNames.length > (i + 1))
+                        if ("et".equalsIgnoreCase(splitNames[i])
+                                && (splitNames.length > (i + 1))
                                 && "al.".equalsIgnoreCase(splitNames[i + 1])) {
                             res = res.concat("others");
                             break;
@@ -166,7 +169,7 @@ public class PdfContentImporter extends Importer {
                             res = res.concat(splitNames[i]).concat(" ");
                             workedOnFirstOrMiddle = true;
                         }
-                    }  // do nothing, just increment i at the end of this iteration
+                    } // do nothing, just increment i at the end of this iteration
                 }
                 i++;
             } while (i < splitNames.length);
@@ -186,8 +189,9 @@ public class PdfContentImporter extends Importer {
     @Override
     public ParserResult importDatabase(BufferedReader reader) throws IOException {
         Objects.requireNonNull(reader);
-        throw new UnsupportedOperationException("PdfContentImporter does not support importDatabase(BufferedReader reader)."
-                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException(
+                "PdfContentImporter does not support importDatabase(BufferedReader reader)."
+                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override
@@ -203,7 +207,8 @@ public class PdfContentImporter extends Importer {
             return ParserResult.fromError(exception);
         }
 
-        result.forEach(entry -> entry.addFile(new LinkedFile("", filePath.toAbsolutePath(), "PDF")));
+        result.forEach(
+                entry -> entry.addFile(new LinkedFile("", filePath.toAbsolutePath(), "PDF")));
         return new ParserResult(result);
     }
 
@@ -218,11 +223,14 @@ public class PdfContentImporter extends Importer {
         // curString (mostly) contains the current block
         //   the different lines are joined into one and thereby separated by " "
 
-        String firstpageContentsUnifiedLineBreaks = StringUtil.unifyLineBreaks(firstpageContents, lineSeparator);
+        String firstpageContentsUnifiedLineBreaks =
+                StringUtil.unifyLineBreaks(firstpageContents, lineSeparator);
 
         lines = firstpageContentsUnifiedLineBreaks.split(lineSeparator);
 
-        lineIndex = 0; // to prevent array index out of bounds exception on second run we need to reset i to zero
+        lineIndex =
+                0; // to prevent array index out of bounds exception on second run we need to reset
+                   // i to zero
 
         proceedToNextNonEmptyLine();
         if (lineIndex >= lines.length) {
@@ -288,7 +296,7 @@ public class PdfContentImporter extends Importer {
             } else {
                 if (!"".equals(curString)) {
                     author = author.concat(" and ").concat(curString);
-                }  // if lines[i] is "and" then "" is returned by streamlineNames -> do nothing
+                } // if lines[i] is "and" then "" is returned by streamlineNames -> do nothing
             }
             lineIndex++;
         }
@@ -298,15 +306,21 @@ public class PdfContentImporter extends Importer {
         // then, abstract and keywords follow
         while (lineIndex < lines.length) {
             curString = lines[lineIndex];
-            if ((curString.length() >= "Abstract".length()) && "Abstract".equalsIgnoreCase(curString.substring(0, "Abstract".length()))) {
+            if ((curString.length() >= "Abstract".length())
+                    && "Abstract".equalsIgnoreCase(curString.substring(0, "Abstract".length()))) {
                 if (curString.length() == "Abstract".length()) {
                     // only word "abstract" found -- skip line
                     curString = "";
                 } else {
-                    curString = curString.substring("Abstract".length() + 1).trim().concat(System.lineSeparator());
+                    curString =
+                            curString
+                                    .substring("Abstract".length() + 1)
+                                    .trim()
+                                    .concat(System.lineSeparator());
                 }
                 lineIndex++;
-                // fillCurStringWithNonEmptyLines() cannot be used as that uses " " as line separator
+                // fillCurStringWithNonEmptyLines() cannot be used as that uses " " as line
+                // separator
                 // whereas we need linebreak as separator
                 while ((lineIndex < lines.length) && !"".equals(lines[lineIndex])) {
                     curString = curString.concat(lines[lineIndex]).concat(System.lineSeparator());
@@ -314,7 +328,8 @@ public class PdfContentImporter extends Importer {
                 }
                 abstractT = curString.trim();
                 lineIndex++;
-            } else if ((curString.length() >= "Keywords".length()) && "Keywords".equalsIgnoreCase(curString.substring(0, "Keywords".length()))) {
+            } else if ((curString.length() >= "Keywords".length())
+                    && "Keywords".equalsIgnoreCase(curString.substring(0, "Keywords".length()))) {
                 if (curString.length() == "Keywords".length()) {
                     // only word "Keywords" found -- skip line
                     curString = "";
@@ -364,9 +379,15 @@ public class PdfContentImporter extends Importer {
                 editor = streamlineNames(curString.substring(0, pos - 1));
 
                 int edslength = "(Eds.)".length();
-                int posWithEditor = pos + edslength + 2; // +2 because of ":" after (Eds.) and the subsequent space
+                int posWithEditor =
+                        pos + edslength
+                                + 2; // +2 because of ":" after (Eds.) and the subsequent space
                 if (posWithEditor > curString.length()) {
-                    curString = curString.substring(posWithEditor - 2); // we don't have any spaces after Eds so we substract the 2
+                    curString =
+                            curString.substring(
+                                    posWithEditor
+                                            - 2); // we don't have any spaces after Eds so we
+                                                  // substract the 2
                 } else {
                     curString = curString.substring(posWithEditor);
                 }
@@ -588,6 +609,7 @@ public class PdfContentImporter extends Importer {
 
     @Override
     public String getDescription() {
-        return Localization.lang("This importer parses data of the first page of the PDF and creates a BibTeX entry. Currently, Springer and IEEE formats are supported.");
+        return Localization.lang(
+                "This importer parses data of the first page of the PDF and creates a BibTeX entry. Currently, Springer and IEEE formats are supported.");
     }
 }

@@ -1,7 +1,5 @@
 package org.jabref.gui.fieldeditors;
 
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.control.Button;
 
 import org.jabref.gui.DialogService;
@@ -15,6 +13,8 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
+
+import javax.swing.undo.UndoManager;
 
 public class ISSNEditorViewModel extends AbstractEditorViewModel {
     private final TaskExecutor taskExecutor;
@@ -45,10 +45,17 @@ public class ISSNEditorViewModel extends AbstractEditorViewModel {
     }
 
     public void fetchBibliographyInformation(BibEntry bibEntry) {
-        stateManager.getActiveDatabase().ifPresentOrElse(
-                databaseContext -> new FetchAndMergeEntry(databaseContext, taskExecutor, preferences, dialogService, undoManager)
-                        .fetchAndMerge(bibEntry, StandardField.ISSN),
-                () -> dialogService.notify(Localization.lang("No library selected"))
-        );
+        stateManager
+                .getActiveDatabase()
+                .ifPresentOrElse(
+                        databaseContext ->
+                                new FetchAndMergeEntry(
+                                                databaseContext,
+                                                taskExecutor,
+                                                preferences,
+                                                dialogService,
+                                                undoManager)
+                                        .fetchAndMerge(bibEntry, StandardField.ISSN),
+                        () -> dialogService.notify(Localization.lang("No library selected")));
     }
 }

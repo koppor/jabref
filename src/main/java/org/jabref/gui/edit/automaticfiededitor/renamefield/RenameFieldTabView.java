@@ -1,6 +1,11 @@
 package org.jabref.gui.edit.automaticfiededitor.renamefield;
 
-import java.util.List;
+import static org.jabref.gui.util.FieldsUtil.FIELD_STRING_CONVERTER;
+
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,19 +21,13 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+import java.util.List;
 
-import static org.jabref.gui.util.FieldsUtil.FIELD_STRING_CONVERTER;
-
-public class RenameFieldTabView extends AbstractAutomaticFieldEditorTabView implements AutomaticFieldEditorTab {
-    @FXML
-    private Button renameButton;
-    @FXML
-    private ComboBox<Field> fieldComboBox;
-    @FXML
-    private TextField newFieldNameTextField;
+public class RenameFieldTabView extends AbstractAutomaticFieldEditorTabView
+        implements AutomaticFieldEditorTab {
+    @FXML private Button renameButton;
+    @FXML private ComboBox<Field> fieldComboBox;
+    @FXML private TextField newFieldNameTextField;
     private final List<BibEntry> selectedEntries;
     private final BibDatabase database;
     private final StateManager stateManager;
@@ -41,9 +40,7 @@ public class RenameFieldTabView extends AbstractAutomaticFieldEditorTabView impl
         this.database = database;
         this.stateManager = stateManager;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @FXML
@@ -56,15 +53,19 @@ public class RenameFieldTabView extends AbstractAutomaticFieldEditorTabView impl
         fieldComboBox.setConverter(FIELD_STRING_CONVERTER);
 
         fieldComboBox.valueProperty().bindBidirectional(viewModel.selectedFieldProperty());
-        EasyBind.listen(fieldComboBox.getEditor().textProperty(), observable -> fieldComboBox.commitValue());
+        EasyBind.listen(
+                fieldComboBox.getEditor().textProperty(),
+                observable -> fieldComboBox.commitValue());
 
         renameButton.disableProperty().bind(viewModel.canRenameProperty().not());
 
         newFieldNameTextField.textProperty().bindBidirectional(viewModel.newFieldNameProperty());
 
-        Platform.runLater(() -> {
-            visualizer.initVisualization(viewModel.fieldNameValidationStatus(), newFieldNameTextField, true);
-        });
+        Platform.runLater(
+                () -> {
+                    visualizer.initVisualization(
+                            viewModel.fieldNameValidationStatus(), newFieldNameTextField, true);
+                });
     }
 
     @Override

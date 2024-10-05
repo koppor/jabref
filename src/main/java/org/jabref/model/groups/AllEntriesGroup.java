@@ -1,8 +1,8 @@
 package org.jabref.model.groups;
 
-import java.util.Objects;
-
 import org.jabref.model.entry.BibEntry;
+
+import java.util.Objects;
 
 /**
  * This group contains all entries. Always. At any time!

@@ -1,7 +1,5 @@
 package org.jabref.gui.exporter;
 
-import java.nio.file.Path;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -12,9 +10,10 @@ import org.jabref.logic.exporter.TemplateExporter;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.logic.util.StandardFileType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
 
 /**
  * This view model can be used both for "add exporter" and "modify exporter" functionalities.
@@ -22,10 +21,10 @@ import org.slf4j.LoggerFactory;
  * for "modify exporter."  It returns an optional exporter which empty if an invalid or no exporter is
  * created, and otherwise contains the exporter to be added or that is modified.
  */
-
 public class CreateModifyExporterDialogViewModel extends AbstractViewModel {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CreateModifyExporterDialogViewModel.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(CreateModifyExporterDialogViewModel.class);
 
     private final DialogService dialogService;
     private final CliPreferences preferences;
@@ -34,9 +33,8 @@ public class CreateModifyExporterDialogViewModel extends AbstractViewModel {
     private final StringProperty layoutFile = new SimpleStringProperty("");
     private final StringProperty extension = new SimpleStringProperty("");
 
-    public CreateModifyExporterDialogViewModel(ExporterViewModel exporter,
-                                               DialogService dialogService,
-                                               CliPreferences preferences) {
+    public CreateModifyExporterDialogViewModel(
+            ExporterViewModel exporter, DialogService dialogService, CliPreferences preferences) {
         this.dialogService = dialogService;
         this.preferences = preferences;
 
@@ -55,33 +53,46 @@ public class CreateModifyExporterDialogViewModel extends AbstractViewModel {
         }
 
         // Check that there are no empty strings.
-        if (layoutFile.get().isEmpty() || name.get().isEmpty() || extension.get().isEmpty()
+        if (layoutFile.get().isEmpty()
+                || name.get().isEmpty()
+                || extension.get().isEmpty()
                 || !layoutFile.get().endsWith(".layout")) {
             LOGGER.info("One of the fields is empty or invalid.");
             return null;
         }
 
-        // Create a new exporter to be returned to ExportCustomizationDialogViewModel, which requested it
-        TemplateExporter format = new TemplateExporter(
-                name.get(),
-                layoutFile.get(),
-                extension.get(),
-                preferences.getLayoutFormatterPreferences(),
-                preferences.getSelfContainedExportConfiguration().getSelfContainedSaveOrder());
+        // Create a new exporter to be returned to ExportCustomizationDialogViewModel, which
+        // requested it
+        TemplateExporter format =
+                new TemplateExporter(
+                        name.get(),
+                        layoutFile.get(),
+                        extension.get(),
+                        preferences.getLayoutFormatterPreferences(),
+                        preferences
+                                .getSelfContainedExportConfiguration()
+                                .getSelfContainedSaveOrder());
         format.setCustomExport(true);
         return new ExporterViewModel(format);
     }
 
     public void browse() {
-        String fileDir = layoutFile.getValue().isEmpty()
-                ? preferences.getExportPreferences().getExportWorkingDirectory().toString()
-                : layoutFile.getValue();
+        String fileDir =
+                layoutFile.getValue().isEmpty()
+                        ? preferences.getExportPreferences().getExportWorkingDirectory().toString()
+                        : layoutFile.getValue();
 
-        FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
-                .addExtensionFilter(Localization.lang("Custom layout file"), StandardFileType.LAYOUT)
-                .withDefaultExtension(Localization.lang("Custom layout file"), StandardFileType.LAYOUT)
-                .withInitialDirectory(fileDir).build();
-        dialogService.showFileOpenDialog(fileDialogConfiguration).ifPresent(f -> layoutFile.set(f.toAbsolutePath().toString()));
+        FileDialogConfiguration fileDialogConfiguration =
+                new FileDialogConfiguration.Builder()
+                        .addExtensionFilter(
+                                Localization.lang("Custom layout file"), StandardFileType.LAYOUT)
+                        .withDefaultExtension(
+                                Localization.lang("Custom layout file"), StandardFileType.LAYOUT)
+                        .withInitialDirectory(fileDir)
+                        .build();
+        dialogService
+                .showFileOpenDialog(fileDialogConfiguration)
+                .ifPresent(f -> layoutFile.set(f.toAbsolutePath().toString()));
     }
 
     public StringProperty getName() {

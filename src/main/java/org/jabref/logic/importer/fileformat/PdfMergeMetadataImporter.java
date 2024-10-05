@@ -1,15 +1,5 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
 import org.jabref.logic.FilePreferences;
 import org.jabref.logic.importer.EntryBasedFetcher;
 import org.jabref.logic.importer.FetcherException;
@@ -27,9 +17,18 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Tries to import BibTeX data trying multiple PDF content importers and merging the results.
@@ -65,15 +64,17 @@ public class PdfMergeMetadataImporter extends Importer {
     @Override
     public ParserResult importDatabase(BufferedReader reader) throws IOException {
         Objects.requireNonNull(reader);
-        throw new UnsupportedOperationException("PdfMergeMetadataImporter does not support importDatabase(BufferedReader reader). "
-                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException(
+                "PdfMergeMetadataImporter does not support importDatabase(BufferedReader reader). "
+                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override
     public ParserResult importDatabase(String data) throws IOException {
         Objects.requireNonNull(data);
-        throw new UnsupportedOperationException("PdfMergeMetadataImporter does not support importDatabase(String data). "
-                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException(
+                "PdfMergeMetadataImporter does not support importDatabase(String data). "
+                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override
@@ -81,7 +82,8 @@ public class PdfMergeMetadataImporter extends Importer {
         List<BibEntry> candidates = new ArrayList<>();
 
         for (Importer metadataImporter : metadataImporters) {
-            List<BibEntry> extractedEntries = metadataImporter.importDatabase(filePath).getDatabase().getEntries();
+            List<BibEntry> extractedEntries =
+                    metadataImporter.importDatabase(filePath).getDatabase().getEntries();
             if (extractedEntries.isEmpty()) {
                 continue;
             }
@@ -94,19 +96,29 @@ public class PdfMergeMetadataImporter extends Importer {
         for (BibEntry candidate : candidates) {
             if (candidate.hasField(StandardField.DOI)) {
                 try {
-                    new DoiFetcher(importFormatPreferences).performSearchById(candidate.getField(StandardField.DOI).get()).ifPresent(fetchedCandidates::add);
+                    new DoiFetcher(importFormatPreferences)
+                            .performSearchById(candidate.getField(StandardField.DOI).get())
+                            .ifPresent(fetchedCandidates::add);
                 } catch (FetcherException e) {
-                    LOGGER.error("Fetching failed for DOI \"{}\".", candidate.getField(StandardField.DOI).get(), e);
+                    LOGGER.error(
+                            "Fetching failed for DOI \"{}\".",
+                            candidate.getField(StandardField.DOI).get(),
+                            e);
                 }
             }
             if (candidate.hasField(StandardField.ISBN)) {
                 try {
                     new IsbnFetcher(importFormatPreferences)
                             // .addRetryFetcher(new EbookDeIsbnFetcher(importFormatPreferences))
-                            // .addRetryFetcher(new DoiToBibtexConverterComIsbnFetcher(importFormatPreferences))
-                            .performSearchById(candidate.getField(StandardField.ISBN).get()).ifPresent(fetchedCandidates::add);
+                            // .addRetryFetcher(new
+                            // DoiToBibtexConverterComIsbnFetcher(importFormatPreferences))
+                            .performSearchById(candidate.getField(StandardField.ISBN).get())
+                            .ifPresent(fetchedCandidates::add);
                 } catch (FetcherException e) {
-                    LOGGER.error("Fetching failed for ISBN \"{}\".", candidate.getField(StandardField.ISBN).get(), e);
+                    LOGGER.error(
+                            "Fetching failed for ISBN \"{}\".",
+                            candidate.getField(StandardField.ISBN).get(),
+                            e);
                 }
             }
         }
@@ -118,10 +130,12 @@ public class PdfMergeMetadataImporter extends Importer {
             }
             Set<Field> presentFields = entry.getFields();
             for (Map.Entry<Field, String> fieldEntry : candidate.getFieldMap().entrySet()) {
-                // Don't merge FILE fields that point to a stored file as we set that to filePath anyway.
+                // Don't merge FILE fields that point to a stored file as we set that to filePath
+                // anyway.
                 // Nevertheless, retain online links.
-                if (StandardField.FILE == fieldEntry.getKey() &&
-                        FileFieldParser.parse(fieldEntry.getValue()).stream().noneMatch(LinkedFile::isOnlineLink)) {
+                if (StandardField.FILE == fieldEntry.getKey()
+                        && FileFieldParser.parse(fieldEntry.getValue()).stream()
+                                .noneMatch(LinkedFile::isOnlineLink)) {
                     continue;
                 }
                 // Only overwrite non-present fields
@@ -131,7 +145,8 @@ public class PdfMergeMetadataImporter extends Importer {
             }
         }
 
-        // We use the absolute path here as we do not know the context where this import will be used.
+        // We use the absolute path here as we do not know the context where this import will be
+        // used.
         // The caller is responsible for making the path relative if necessary.
         entry.addFile(new LinkedFile("", filePath, StandardFileType.PDF.getName()));
         return new ParserResult(List.of(entry));
@@ -149,16 +164,22 @@ public class PdfMergeMetadataImporter extends Importer {
 
     @Override
     public String getDescription() {
-        return Localization.lang("Imports BibTeX data from a PDF using multiple strategies (e.g., XMP, embedded BibTeX, text parsing, Grobid, and DOI lookup) and merges the result.");
+        return Localization.lang(
+                "Imports BibTeX data from a PDF using multiple strategies (e.g., XMP, embedded BibTeX, text parsing, Grobid, and DOI lookup) and merges the result.");
     }
 
-    public static class EntryBasedFetcherWrapper extends PdfMergeMetadataImporter implements EntryBasedFetcher {
+    public static class EntryBasedFetcherWrapper extends PdfMergeMetadataImporter
+            implements EntryBasedFetcher {
 
-        private static final Logger LOGGER = LoggerFactory.getLogger(EntryBasedFetcherWrapper.class);
+        private static final Logger LOGGER =
+                LoggerFactory.getLogger(EntryBasedFetcherWrapper.class);
         private final FilePreferences filePreferences;
         private final BibDatabaseContext databaseContext;
 
-        public EntryBasedFetcherWrapper(ImportFormatPreferences importFormatPreferences, FilePreferences filePreferences, BibDatabaseContext context) {
+        public EntryBasedFetcherWrapper(
+                ImportFormatPreferences importFormatPreferences,
+                FilePreferences filePreferences,
+                BibDatabaseContext context) {
             super(importFormatPreferences);
             this.filePreferences = filePreferences;
             this.databaseContext = context;
@@ -172,7 +193,10 @@ public class PdfMergeMetadataImporter extends Importer {
                     try {
                         ParserResult result = importDatabase(filePath.get());
                         if (!result.isEmpty()) {
-                            return FileUtil.relativize(result.getDatabase().getEntries(), databaseContext, filePreferences);
+                            return FileUtil.relativize(
+                                    result.getDatabase().getEntries(),
+                                    databaseContext,
+                                    filePreferences);
                         }
                     } catch (IOException e) {
                         LOGGER.error("Cannot read {}", filePath.get(), e);

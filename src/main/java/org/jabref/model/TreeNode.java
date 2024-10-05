@@ -1,5 +1,8 @@
 package org.jabref.model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -8,9 +11,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
  * Represents a node in a tree.
@@ -30,7 +30,8 @@ import javafx.collections.ObservableList;
  *
  * @param <T> the type of the class
  */
-// We use some explicit casts of the form "(T) this". The constructor ensures that this cast is valid.
+// We use some explicit casts of the form "(T) this". The constructor ensures that this cast is
+// valid.
 @SuppressWarnings("unchecked")
 public abstract class TreeNode<T extends TreeNode<T>> {
 
@@ -38,16 +39,19 @@ public abstract class TreeNode<T extends TreeNode<T>> {
      * Array of children, may be empty if this node has no children (but never null)
      */
     private final ObservableList<T> children;
+
     /**
      * This node's parent, or null if this node has no parent
      */
     private T parent;
+
     /**
      * The function which is invoked when something changed in the subtree.
      */
-    private Consumer<T> onDescendantChanged = t -> {
-        /* Do nothing */
-    };
+    private Consumer<T> onDescendantChanged =
+            t -> {
+                /* Do nothing */
+            };
 
     /**
      * Constructs a tree node without parent and no children.
@@ -60,7 +64,8 @@ public abstract class TreeNode<T extends TreeNode<T>> {
         children = FXCollections.observableArrayList();
 
         if (!derivingClass.isInstance(this)) {
-            throw new UnsupportedOperationException("The class extending TreeNode<T> has to derive from T");
+            throw new UnsupportedOperationException(
+                    "The class extending TreeNode<T> has to derive from T");
         }
     }
 
@@ -115,8 +120,11 @@ public abstract class TreeNode<T extends TreeNode<T>> {
      * @return the child index of this node in its parent
      */
     public int getPositionInParent() {
-        return getParent().orElseThrow(() -> new UnsupportedOperationException("Roots have no position in parent"))
-                          .getIndexOfChild((T) this).get();
+        return getParent()
+                .orElseThrow(
+                        () -> new UnsupportedOperationException("Roots have no position in parent"))
+                .getIndexOfChild((T) this)
+                .get();
     }
 
     /**
@@ -469,7 +477,8 @@ public abstract class TreeNode<T extends TreeNode<T>> {
     public T addChild(T child, int index) {
         Objects.requireNonNull(child);
         if (child.getParent().isPresent()) {
-            throw new UnsupportedOperationException("Cannot add a node which already has a parent, use moveTo instead");
+            throw new UnsupportedOperationException(
+                    "Cannot add a node which already has a parent, use moveTo instead");
         }
 
         child.setParent((T) this);
@@ -549,9 +558,11 @@ public abstract class TreeNode<T extends TreeNode<T>> {
     public void moveTo(T target, int targetIndex) {
         Objects.requireNonNull(target);
 
-        // Check that the target node is not an ancestor of this node, because this would create loops in the tree
+        // Check that the target node is not an ancestor of this node, because this would create
+        // loops in the tree
         if (this.isAncestorOf(target)) {
-            throw new UnsupportedOperationException("the target cannot be a descendant of this node");
+            throw new UnsupportedOperationException(
+                    "the target cannot be a descendant of this node");
         }
 
         // Remove from previous parent
@@ -629,6 +640,7 @@ public abstract class TreeNode<T extends TreeNode<T>> {
     }
 
     public Stream<T> iterateOverTree() {
-        return Stream.concat(Stream.of((T) this), getChildren().stream().flatMap(TreeNode::iterateOverTree));
+        return Stream.concat(
+                Stream.of((T) this), getChildren().stream().flatMap(TreeNode::iterateOverTree));
     }
 }

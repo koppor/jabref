@@ -1,6 +1,8 @@
 package org.jabref.gui.bibtexextractor;
 
-import javax.swing.undo.UndoManager;
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -20,8 +22,7 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.model.util.FileUpdateMonitor;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import javax.swing.undo.UndoManager;
 
 /**
  * GUI Dialog for the feature "Extract BibTeX from plain text".
@@ -46,9 +47,7 @@ public class ExtractBibtexDialog extends BaseDialog<Void> {
 
     public ExtractBibtexDialog(boolean onlineMode) {
         this.onlineMode = onlineMode;
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
         if (onlineMode) {
             this.setTitle(Localization.lang("Plain References Parser (online)"));
         } else {
@@ -58,32 +57,42 @@ public class ExtractBibtexDialog extends BaseDialog<Void> {
 
     @FXML
     private void initialize() {
-        BibDatabaseContext database = stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
-        BibtexExtractorViewModel viewModel = new BibtexExtractorViewModel(
-                onlineMode,
-                database,
-                dialogService,
-                preferences,
-                fileUpdateMonitor,
-                taskExecutor,
-                undoManager,
-                stateManager);
+        BibDatabaseContext database =
+                stateManager
+                        .getActiveDatabase()
+                        .orElseThrow(() -> new NullPointerException("Database null"));
+        BibtexExtractorViewModel viewModel =
+                new BibtexExtractorViewModel(
+                        onlineMode,
+                        database,
+                        dialogService,
+                        preferences,
+                        fileUpdateMonitor,
+                        taskExecutor,
+                        undoManager,
+                        stateManager);
 
         input.textProperty().bindBidirectional(viewModel.inputTextProperty());
         String clipText = ClipBoardManager.getContents();
         if (StringUtil.isBlank(clipText)) {
-            input.setPromptText(Localization.lang("Please enter the plain references to extract from separated by double empty lines."));
+            input.setPromptText(
+                    Localization.lang(
+                            "Please enter the plain references to extract from separated by double empty lines."));
         } else {
             input.setText(clipText);
             input.selectAll();
         }
 
-        Platform.runLater(() -> {
-            input.requestFocus();
-            Button buttonParse = (Button) getDialogPane().lookupButton(parseButtonType);
-            buttonParse.setTooltip(new Tooltip((Localization.lang("Starts the extraction and adds the resulting entries to the currently opened database"))));
-            buttonParse.setOnAction(event -> viewModel.startParsing());
-            buttonParse.disableProperty().bind(viewModel.inputTextProperty().isEmpty());
-        });
+        Platform.runLater(
+                () -> {
+                    input.requestFocus();
+                    Button buttonParse = (Button) getDialogPane().lookupButton(parseButtonType);
+                    buttonParse.setTooltip(
+                            new Tooltip(
+                                    (Localization.lang(
+                                            "Starts the extraction and adds the resulting entries to the currently opened database"))));
+                    buttonParse.setOnAction(event -> viewModel.startParsing());
+                    buttonParse.disableProperty().bind(viewModel.inputTextProperty().isEmpty());
+                });
     }
 }

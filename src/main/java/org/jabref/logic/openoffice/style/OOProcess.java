@@ -1,8 +1,5 @@
 package org.jabref.logic.openoffice.style;
 
-import java.util.Comparator;
-import java.util.List;
-
 import org.jabref.logic.bibtex.comparator.FieldComparator;
 import org.jabref.logic.bibtex.comparator.FieldComparatorStack;
 import org.jabref.model.database.BibDatabase;
@@ -10,25 +7,33 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.openoffice.style.CitationGroups;
 
+import java.util.Comparator;
+import java.util.List;
+
 public class OOProcess {
 
-    static final Comparator<BibEntry> AUTHOR_YEAR_TITLE_COMPARATOR = makeAuthorYearTitleComparator();
-    static final Comparator<BibEntry> YEAR_AUTHOR_TITLE_COMPARATOR = makeYearAuthorTitleComparator();
+    static final Comparator<BibEntry> AUTHOR_YEAR_TITLE_COMPARATOR =
+            makeAuthorYearTitleComparator();
+    static final Comparator<BibEntry> YEAR_AUTHOR_TITLE_COMPARATOR =
+            makeYearAuthorTitleComparator();
 
-    private OOProcess() {
-    }
+    private OOProcess() {}
 
     private static Comparator<BibEntry> makeAuthorYearTitleComparator() {
-        List<Comparator<BibEntry>> ayt = List.of(new FieldComparator(StandardField.AUTHOR),
-                                                 new FieldComparator(StandardField.YEAR),
-                                                 new FieldComparator(StandardField.TITLE));
+        List<Comparator<BibEntry>> ayt =
+                List.of(
+                        new FieldComparator(StandardField.AUTHOR),
+                        new FieldComparator(StandardField.YEAR),
+                        new FieldComparator(StandardField.TITLE));
         return new FieldComparatorStack<>(ayt);
     }
 
     private static Comparator<BibEntry> makeYearAuthorTitleComparator() {
-        List<Comparator<BibEntry>> yat = List.of(new FieldComparator(StandardField.YEAR),
-                                                 new FieldComparator(StandardField.AUTHOR),
-                                                 new FieldComparator(StandardField.TITLE));
+        List<Comparator<BibEntry>> yat =
+                List.of(
+                        new FieldComparator(StandardField.YEAR),
+                        new FieldComparator(StandardField.AUTHOR),
+                        new FieldComparator(StandardField.TITLE));
         return new FieldComparatorStack<>(yat);
     }
 
@@ -53,9 +58,11 @@ public class OOProcess {
      *  Fill citationGroups.bibliography and cgs.citationGroupsUnordered//CitationMarker
      *  according to style.
      */
-    public static void produceCitationMarkers(CitationGroups citationGroups, List<BibDatabase> databases, JStyle style) {
+    public static void produceCitationMarkers(
+            CitationGroups citationGroups, List<BibDatabase> databases, JStyle style) {
         if (!citationGroups.hasGlobalOrder()) {
-            throw new IllegalStateException("produceCitationMarkers: globalOrder is misssing in citationGroups");
+            throw new IllegalStateException(
+                    "produceCitationMarkers: globalOrder is misssing in citationGroups");
         }
 
         citationGroups.lookupCitations(databases);

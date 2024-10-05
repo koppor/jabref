@@ -16,7 +16,10 @@ public class HelpAction extends SimpleCommand {
     private final DialogService dialogService;
     private final ExternalApplicationsPreferences externalApplicationPreferences;
 
-    public HelpAction(HelpFile helpPage, DialogService dialogService, ExternalApplicationsPreferences externalApplicationsPreferences) {
+    public HelpAction(
+            HelpFile helpPage,
+            DialogService dialogService,
+            ExternalApplicationsPreferences externalApplicationsPreferences) {
         this.helpPage = helpPage;
         this.dialogService = dialogService;
         this.externalApplicationPreferences = externalApplicationsPreferences;
@@ -25,8 +28,8 @@ public class HelpAction extends SimpleCommand {
     void openHelpPage(HelpFile helpPage) {
         StringBuilder sb = new StringBuilder("https://docs.jabref.org/");
         sb.append(helpPage.getPageName());
-        NativeDesktop.openBrowserShowPopup(sb.toString(), dialogService, externalApplicationPreferences
-        );
+        NativeDesktop.openBrowserShowPopup(
+                sb.toString(), dialogService, externalApplicationPreferences);
     }
 
     @Override

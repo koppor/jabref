@@ -9,4 +9,3 @@ public class OOPair<A, B> {
         this.b = b;
     }
 }
-

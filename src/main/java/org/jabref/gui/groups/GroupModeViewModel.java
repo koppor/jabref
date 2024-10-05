@@ -1,12 +1,12 @@
 package org.jabref.gui.groups;
 
-import java.util.Set;
-
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 
 import org.jabref.gui.icon.IconTheme.JabRefIcons;
 import org.jabref.logic.l10n.Localization;
+
+import java.util.Set;
 
 public class GroupModeViewModel {
 

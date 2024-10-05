@@ -1,5 +1,10 @@
 package org.jabref.logic.remote;
 
+import javafx.util.Pair;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -7,11 +12,6 @@ import java.net.Socket;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-
-import javafx.util.Pair;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @implNote The first byte of every message identifies its type as a {@link RemoteMessage}.
@@ -42,7 +42,8 @@ public class Protocol implements AutoCloseable {
     public void sendMessage(RemoteMessage type, Object argument) throws IOException {
         out.writeObject(type);
 
-        // encode the commandline arguments to handle special characters (eg. spaces and Chinese characters)
+        // encode the commandline arguments to handle special characters (eg. spaces and Chinese
+        // characters)
         // related to issue #6487
         if (type == RemoteMessage.SEND_COMMAND_LINE_ARGUMENTS) {
             String[] encodedArgs = ((String[]) argument).clone();
@@ -67,12 +68,15 @@ public class Protocol implements AutoCloseable {
             // decode the received commandline arguments
             if (type == RemoteMessage.SEND_COMMAND_LINE_ARGUMENTS) {
                 for (int i = 0; i < ((String[]) argument).length; i++) {
-                    ((String[]) argument)[i] = URLDecoder.decode(((String[]) argument)[i], StandardCharsets.UTF_8);
+                    ((String[]) argument)[i] =
+                            URLDecoder.decode(((String[]) argument)[i], StandardCharsets.UTF_8);
                 }
             }
 
             if (endOfMessage != '\0') {
-                throw new IOException("Message didn't end on correct end of message identifier. Got " + endOfMessage);
+                throw new IOException(
+                        "Message didn't end on correct end of message identifier. Got "
+                                + endOfMessage);
             }
 
             return new Pair<>(type, argument);
@@ -92,7 +96,8 @@ public class Protocol implements AutoCloseable {
         try {
             out.close();
         } catch (IOException e) {
-            // On the server side, the socket is automatically closed, thus we don't need to close it here.
+            // On the server side, the socket is automatically closed, thus we don't need to close
+            // it here.
             // See org.jabref.logic.remote.server.RemoteListenerServer.run
             LOGGER.debug("Output stream not closed", e);
         }
@@ -100,7 +105,8 @@ public class Protocol implements AutoCloseable {
         try {
             socket.close();
         } catch (IOException e) {
-            // On the server side, the socket is automatically closed, thus we don't need to close it here.
+            // On the server side, the socket is automatically closed, thus we don't need to close
+            // it here.
             // See org.jabref.logic.remote.server.RemoteListenerServer.run
             LOGGER.debug("Socket not closed", e);
         }

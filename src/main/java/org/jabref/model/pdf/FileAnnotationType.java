@@ -1,16 +1,15 @@
 package org.jabref.model.pdf;
 
-import java.util.Locale;
-
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Locale;
 
 /**
  * Our representation of the type of the FileAnnotation. This is needed as some FileAnnotationTypes require special
  * handling (e.g., Highlight or Underline), because of the linked FileAnnotations.
  */
-
 public enum FileAnnotationType {
     TEXT("Text", false),
     HIGHLIGHT("Highlight", true),
@@ -47,7 +46,9 @@ public enum FileAnnotationType {
         try {
             return FileAnnotationType.valueOf(annotation.getSubtype().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            LOGGER.info("FileAnnotationType %s is not supported and was converted into 'Unknown'!".formatted(annotation.getSubtype()));
+            LOGGER.info(
+                    "FileAnnotationType %s is not supported and was converted into 'Unknown'!"
+                            .formatted(annotation.getSubtype()));
             return UNKNOWN;
         }
     }
@@ -60,7 +61,8 @@ public enum FileAnnotationType {
      */
     public static boolean isMarkedFileAnnotationType(String annotationType) {
         try {
-            return FileAnnotationType.valueOf(annotationType.toUpperCase(Locale.ROOT)).linkedFileAnnotationType;
+            return FileAnnotationType.valueOf(annotationType.toUpperCase(Locale.ROOT))
+                    .linkedFileAnnotationType;
         } catch (IllegalArgumentException e) {
             return false;
         }

@@ -1,8 +1,8 @@
 package org.jabref.model.openoffice.style;
 
-import java.util.Optional;
-
 import org.jabref.model.openoffice.ootext.OOText;
+
+import java.util.Optional;
 
 /**
  * This is what we need for numeric citation markers.

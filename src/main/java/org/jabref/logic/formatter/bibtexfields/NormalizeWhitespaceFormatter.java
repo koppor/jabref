@@ -1,11 +1,11 @@
 package org.jabref.logic.formatter.bibtexfields;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
-
 import org.jabref.logic.bibtex.FieldPreferences;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
+
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Replaces two subsequent whitespaces (and tabs) to one space in case of single-line fields. In case of multine fields,
@@ -43,7 +43,8 @@ public class NormalizeWhitespaceFormatter {
             return fieldContent;
         }
 
-        // Replace multiple whitespaces by one. We need to keep the leading and trailing whitespace to enable constructs such as "#kopp# and #breit#"
+        // Replace multiple whitespaces by one. We need to keep the leading and trailing whitespace
+        // to enable constructs such as "#kopp# and #breit#"
         return WHITESPACE.matcher(fieldContent).replaceAll(" ");
     }
 

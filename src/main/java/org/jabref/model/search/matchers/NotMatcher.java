@@ -1,9 +1,9 @@
 package org.jabref.model.search.matchers;
 
-import java.util.Objects;
-
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.search.SearchMatcher;
+
+import java.util.Objects;
 
 /**
  * Inverts the search result.

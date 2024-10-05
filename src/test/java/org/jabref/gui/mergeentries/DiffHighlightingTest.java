@@ -1,19 +1,18 @@
 package org.jabref.gui.mergeentries;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javafx.scene.text.Text;
 
 import org.jabref.testutils.category.GUITest;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.framework.junit5.ApplicationExtension;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @GUITest
 @ExtendWith(ApplicationExtension.class)
@@ -24,19 +23,29 @@ class DiffHighlightingTest {
         Assertions.assertEquals(expected.toString(), actual.toString());
 
         // Moreover, make sure that style classes are correct
-        List<String> expectedStyles = expected.stream().map(text -> text.getStyleClass().toString()).collect(Collectors.toList());
-        List<String> actualStyles = actual.stream().map(text -> text.getStyleClass().toString()).collect(Collectors.toList());
+        List<String> expectedStyles =
+                expected.stream()
+                        .map(text -> text.getStyleClass().toString())
+                        .collect(Collectors.toList());
+        List<String> actualStyles =
+                actual.stream()
+                        .map(text -> text.getStyleClass().toString())
+                        .collect(Collectors.toList());
         Assertions.assertEquals(expectedStyles, actualStyles);
     }
 
     @Test
     void generateDiffHighlightingBothNullThrowsNPE() {
-        assertThrows(NullPointerException.class, () -> DiffHighlighting.generateDiffHighlighting(null, null, ""));
+        assertThrows(
+                NullPointerException.class,
+                () -> DiffHighlighting.generateDiffHighlighting(null, null, ""));
     }
 
     @Test
     void nullSeparatorThrowsNPE() {
-        assertThrows(NullPointerException.class, () -> DiffHighlighting.generateDiffHighlighting("", "", null));
+        assertThrows(
+                NullPointerException.class,
+                () -> DiffHighlighting.generateDiffHighlighting("", "", null));
     }
 
     @Test
@@ -45,8 +54,7 @@ class DiffHighlightingTest {
                 Arrays.asList(
                         DiffHighlighting.forUnchanged("f"),
                         DiffHighlighting.forUnchanged("o"),
-                        DiffHighlighting.forUnchanged("o")
-                ),
+                        DiffHighlighting.forUnchanged("o")),
                 DiffHighlighting.generateDiffHighlighting("foo", "foo", ""));
     }
 
@@ -54,9 +62,7 @@ class DiffHighlightingTest {
     void generateDiffHighlightingSingleWordAddTextWordDiff() {
         assertEquals(
                 Arrays.asList(
-                        DiffHighlighting.forRemoved("foo "),
-                        DiffHighlighting.forAdded("foobar")
-                ),
+                        DiffHighlighting.forRemoved("foo "), DiffHighlighting.forAdded("foobar")),
                 DiffHighlighting.generateDiffHighlighting("foo", "foobar", " "));
     }
 
@@ -67,8 +73,7 @@ class DiffHighlightingTest {
                         DiffHighlighting.forUnchanged("f"),
                         DiffHighlighting.forUnchanged("o"),
                         DiffHighlighting.forUnchanged("o"),
-                        DiffHighlighting.forAdded("bar")
-                ),
+                        DiffHighlighting.forAdded("bar")),
                 DiffHighlighting.generateDiffHighlighting("foo", "foobar", ""));
     }
 
@@ -76,9 +81,7 @@ class DiffHighlightingTest {
     void generateDiffHighlightingSingleWordDeleteTextWordDiff() {
         assertEquals(
                 Arrays.asList(
-                        DiffHighlighting.forRemoved("foobar "),
-                        DiffHighlighting.forAdded("foo")
-                ),
+                        DiffHighlighting.forRemoved("foobar "), DiffHighlighting.forAdded("foo")),
                 DiffHighlighting.generateDiffHighlighting("foobar", "foo", " "));
     }
 
@@ -91,8 +94,7 @@ class DiffHighlightingTest {
                         DiffHighlighting.forUnchanged("o"),
                         DiffHighlighting.forRemoved("b"),
                         DiffHighlighting.forRemoved("a"),
-                        DiffHighlighting.forRemoved("r")
-                ),
+                        DiffHighlighting.forRemoved("r")),
                 DiffHighlighting.generateDiffHighlighting("foobar", "foo", ""));
     }
 }

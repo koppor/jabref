@@ -1,5 +1,12 @@
 package org.jabref.logic.importer;
 
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.database.BibDatabases;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.BibEntryType;
+import org.jabref.model.metadata.MetaData;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,13 +16,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.database.BibDatabases;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.BibEntryType;
-import org.jabref.model.metadata.MetaData;
 
 public class ParserResult {
     private final Set<BibEntryType> entryTypes;
@@ -147,10 +147,10 @@ public class ParserResult {
     }
 
     public boolean isEmpty() {
-        return !this.getDatabase().hasEntries() &&
-                this.getDatabase().hasNoStrings() &&
-                this.getDatabase().getPreamble().isEmpty() &&
-                this.getMetaData().isEmpty();
+        return !this.getDatabase().hasEntries()
+                && this.getDatabase().hasNoStrings()
+                && this.getDatabase().getPreamble().isEmpty()
+                && this.getMetaData().isEmpty();
     }
 
     public boolean getChangedOnMigration() {

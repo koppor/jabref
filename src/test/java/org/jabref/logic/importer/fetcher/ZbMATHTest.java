@@ -1,8 +1,8 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.model.entry.BibEntry;
@@ -10,14 +10,13 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @FetcherTest
 class ZbMATHTest {
@@ -26,7 +25,8 @@ class ZbMATHTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
 
         fetcher = new ZbMATH(importFormatPreferences);
@@ -41,7 +41,8 @@ class ZbMATHTest {
         donaldsonEntry.setField(StandardField.LANGUAGE, "English");
         donaldsonEntry.setField(StandardField.KEYWORDS, "57N13,57R10,53C05,58J99,57R65");
         donaldsonEntry.setField(StandardField.PAGES, "279--315");
-        donaldsonEntry.setField(StandardField.TITLE, "An application of gauge theory to four dimensional topology");
+        donaldsonEntry.setField(
+                StandardField.TITLE, "An application of gauge theory to four dimensional topology");
         donaldsonEntry.setField(StandardField.VOLUME, "18");
         donaldsonEntry.setField(StandardField.YEAR, "1983");
         donaldsonEntry.setField(StandardField.ZBL_NUMBER, "0507.57010");
@@ -63,7 +64,8 @@ class ZbMATHTest {
     @Test
     void searchByEntryFindsEntry() throws Exception {
         BibEntry searchEntry = new BibEntry();
-        searchEntry.setField(StandardField.TITLE, "An application of gauge theory to four dimensional topology");
+        searchEntry.setField(
+                StandardField.TITLE, "An application of gauge theory to four dimensional topology");
         searchEntry.setField(StandardField.AUTHOR, "S. K. {Donaldson}");
 
         List<BibEntry> fetchedEntries = fetcher.performSearch(searchEntry);

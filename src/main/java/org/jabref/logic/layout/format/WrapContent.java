@@ -1,8 +1,8 @@
 package org.jabref.logic.layout.format;
 
-import java.util.List;
-
 import org.jabref.logic.layout.AbstractParamLayoutFormatter;
+
+import java.util.List;
 
 /**
  * This formatter outputs the input value after adding a prefix and a postfix,

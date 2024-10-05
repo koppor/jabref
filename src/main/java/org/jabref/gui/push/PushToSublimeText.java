@@ -1,10 +1,5 @@
 package org.jabref.gui.push;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
@@ -15,9 +10,13 @@ import org.jabref.logic.util.HeadlessExecutorService;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.strings.StringUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 
 public class PushToSublimeText extends AbstractPushToApplication {
 
@@ -45,7 +44,11 @@ public class PushToSublimeText extends AbstractPushToApplication {
         couldNotCall = false;
         notDefined = false;
 
-        commandPath = preferences.getPushToApplicationPreferences().getCommandPaths().get(this.getDisplayName());
+        commandPath =
+                preferences
+                        .getPushToApplicationPreferences()
+                        .getCommandPaths()
+                        .get(this.getDisplayName());
 
         // Check if a path to the command has been specified
         if (StringUtil.isNullOrEmpty(commandPath)) {
@@ -60,8 +63,10 @@ public class PushToSublimeText extends AbstractPushToApplication {
             envs.put("PATH", Path.of(commandPath).getParent().toString());
 
             Process process = processBuilder.start();
-            StreamGobbler streamGobblerInput = new StreamGobbler(process.getInputStream(), LOGGER::info);
-            StreamGobbler streamGobblerError = new StreamGobbler(process.getErrorStream(), LOGGER::info);
+            StreamGobbler streamGobblerInput =
+                    new StreamGobbler(process.getInputStream(), LOGGER::info);
+            StreamGobbler streamGobblerError =
+                    new StreamGobbler(process.getErrorStream(), LOGGER::info);
 
             HeadlessExecutorService.INSTANCE.execute(streamGobblerInput);
             HeadlessExecutorService.INSTANCE.execute(streamGobblerError);
@@ -81,9 +86,31 @@ public class PushToSublimeText extends AbstractPushToApplication {
 
         if (OS.WINDOWS) {
             // TODO we might need to escape the inner double quotes with """ """
-            return new String[] {"cmd.exe", "/c", "\"" + commandPath + "\"" + "--command \"insert {\\\"characters\\\": \"\\" + getCitePrefix() + keyString + getCiteSuffix() + "\"}\""};
+            return new String[] {
+                "cmd.exe",
+                "/c",
+                "\""
+                        + commandPath
+                        + "\""
+                        + "--command \"insert {\\\"characters\\\": \"\\"
+                        + getCitePrefix()
+                        + keyString
+                        + getCiteSuffix()
+                        + "\"}\""
+            };
         } else {
-            return new String[] {"sh", "-c", "\"" + commandPath + "\"" + " --command 'insert {\"characters\": \"" + citeCommand + keyString + getCiteSuffix() + "\"}'"};
+            return new String[] {
+                "sh",
+                "-c",
+                "\""
+                        + commandPath
+                        + "\""
+                        + " --command 'insert {\"characters\": \""
+                        + citeCommand
+                        + keyString
+                        + getCiteSuffix()
+                        + "\"}'"
+            };
         }
     }
 }

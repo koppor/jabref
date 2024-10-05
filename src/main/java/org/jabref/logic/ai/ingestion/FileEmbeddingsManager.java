@@ -1,7 +1,10 @@
 package org.jabref.logic.ai.ingestion;
 
-import java.util.List;
-import java.util.Optional;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.store.embedding.EmbeddingStore;
+import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -9,11 +12,8 @@ import javafx.beans.property.ReadOnlyBooleanProperty;
 import org.jabref.logic.ai.AiPreferences;
 import org.jabref.model.entry.LinkedFile;
 
-import dev.langchain4j.data.document.Document;
-import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.store.embedding.EmbeddingStore;
-import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This class is responsible for managing the embeddings cache. The cache is saved in a local user directory.
@@ -37,12 +37,12 @@ public class FileEmbeddingsManager {
     private final FullyIngestedDocumentsTracker fullyIngestedDocumentsTracker;
     private final LowLevelIngestor lowLevelIngestor;
 
-    public FileEmbeddingsManager(AiPreferences aiPreferences,
-                                 ReadOnlyBooleanProperty shutdownSignal,
-                                 EmbeddingModel embeddingModel,
-                                 EmbeddingStore<TextSegment> embeddingStore,
-                                 FullyIngestedDocumentsTracker fullyIngestedDocumentsTracker
-    ) {
+    public FileEmbeddingsManager(
+            AiPreferences aiPreferences,
+            ReadOnlyBooleanProperty shutdownSignal,
+            EmbeddingModel embeddingModel,
+            EmbeddingStore<TextSegment> embeddingStore,
+            FullyIngestedDocumentsTracker fullyIngestedDocumentsTracker) {
         this.aiPreferences = aiPreferences;
         this.shutdownSignal = shutdownSignal;
         this.embeddingStore = embeddingStore;
@@ -56,17 +56,25 @@ public class FileEmbeddingsManager {
         aiPreferences.addListenerToEmbeddingsParametersChange(embeddingStore::removeAll);
     }
 
-    public void addDocument(String link, Document document, long modificationTimeInSeconds, IntegerProperty workDone, IntegerProperty workMax) throws InterruptedException {
+    public void addDocument(
+            String link,
+            Document document,
+            long modificationTimeInSeconds,
+            IntegerProperty workDone,
+            IntegerProperty workMax)
+            throws InterruptedException {
         document.metadata().put(LINK_METADATA_KEY, link);
         lowLevelIngestor.ingestDocument(document, shutdownSignal, workDone, workMax);
 
         if (!shutdownSignal.get()) {
-            fullyIngestedDocumentsTracker.markDocumentAsFullyIngested(link, modificationTimeInSeconds);
+            fullyIngestedDocumentsTracker.markDocumentAsFullyIngested(
+                    link, modificationTimeInSeconds);
         }
     }
 
     public void removeDocument(String link) {
-        embeddingStore.removeAll(MetadataFilterBuilder.metadataKey(LINK_METADATA_KEY).isEqualTo(link));
+        embeddingStore.removeAll(
+                MetadataFilterBuilder.metadataKey(LINK_METADATA_KEY).isEqualTo(link));
         fullyIngestedDocumentsTracker.unmarkDocumentAsFullyIngested(link);
     }
 

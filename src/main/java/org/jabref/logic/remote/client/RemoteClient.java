@@ -1,18 +1,17 @@
 package org.jabref.logic.remote.client;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-
 import javafx.util.Pair;
 
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.remote.Protocol;
 import org.jabref.logic.remote.RemoteMessage;
 import org.jabref.logic.remote.RemotePreferences;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 public class RemoteClient {
 
@@ -32,11 +31,15 @@ public class RemoteClient {
             protocol.sendMessage(RemoteMessage.PING);
             Pair<RemoteMessage, Object> response = protocol.receiveMessage();
 
-            if ((response.getKey() == RemoteMessage.PONG) && Protocol.IDENTIFIER.equals(response.getValue())) {
+            if ((response.getKey() == RemoteMessage.PONG)
+                    && Protocol.IDENTIFIER.equals(response.getValue())) {
                 return true;
             } else {
                 String port = String.valueOf(this.port);
-                String errorMessage = Localization.lang("Cannot use port %0 for remote operation; another application may be using it. Try specifying another port.", port);
+                String errorMessage =
+                        Localization.lang(
+                                "Cannot use port %0 for remote operation; another application may be using it. Try specifying another port.",
+                                port);
                 LOGGER.error(errorMessage);
                 return false;
             }
@@ -58,7 +61,11 @@ public class RemoteClient {
             Pair<RemoteMessage, Object> response = protocol.receiveMessage();
             return response.getKey() == RemoteMessage.OK;
         } catch (IOException e) {
-            LOGGER.debug("Could not send args {} to the server at port {}", String.join(", ", args), port, e);
+            LOGGER.debug(
+                    "Could not send args {} to the server at port {}",
+                    String.join(", ", args),
+                    port,
+                    e);
             return false;
         }
     }

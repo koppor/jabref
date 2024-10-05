@@ -1,5 +1,19 @@
 package org.jabref.logic.importer.fetcher;
 
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import org.jabref.http.dto.SimpleHttpResponse;
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.logic.importer.ImportFormatPreferences;
+import org.jabref.logic.importer.ParseException;
+import org.jabref.logic.importer.SearchBasedFetcher;
+import org.jabref.logic.importer.util.GrobidService;
+import org.jabref.model.entry.BibEntry;
+import org.jooq.lambda.Unchecked;
+import org.jooq.lambda.UncheckedException;
+import org.jsoup.HttpStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
@@ -8,21 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.jabref.http.dto.SimpleHttpResponse;
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.ImportFormatPreferences;
-import org.jabref.logic.importer.ParseException;
-import org.jabref.logic.importer.SearchBasedFetcher;
-import org.jabref.logic.importer.util.GrobidService;
-import org.jabref.model.entry.BibEntry;
-
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
-import org.jooq.lambda.Unchecked;
-import org.jooq.lambda.UncheckedException;
-import org.jsoup.HttpStatusException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class GrobidCitationFetcher implements SearchBasedFetcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GrobidCitationFetcher.class);
@@ -30,11 +29,13 @@ public class GrobidCitationFetcher implements SearchBasedFetcher {
     private final ImportFormatPreferences importFormatPreferences;
     private final GrobidService grobidService;
 
-    public GrobidCitationFetcher(GrobidPreferences grobidPreferences, ImportFormatPreferences importFormatPreferences) {
+    public GrobidCitationFetcher(
+            GrobidPreferences grobidPreferences, ImportFormatPreferences importFormatPreferences) {
         this(importFormatPreferences, new GrobidService(grobidPreferences));
     }
 
-    GrobidCitationFetcher(ImportFormatPreferences importFormatPreferences, GrobidService grobidService) {
+    GrobidCitationFetcher(
+            ImportFormatPreferences importFormatPreferences, GrobidService grobidService) {
         this.importFormatPreferences = importFormatPreferences;
         this.grobidService = grobidService;
     }
@@ -47,7 +48,10 @@ public class GrobidCitationFetcher implements SearchBasedFetcher {
      */
     private Optional<BibEntry> parseUsingGrobid(String plainText) throws FetcherException {
         try {
-            return grobidService.processCitation(plainText, importFormatPreferences, GrobidService.ConsolidateCitations.WITH_METADATA);
+            return grobidService.processCitation(
+                    plainText,
+                    importFormatPreferences,
+                    GrobidService.ConsolidateCitations.WITH_METADATA);
         } catch (HttpStatusException e) {
             LOGGER.debug("Could not connect to Grobid", e);
             throw new FetcherException("{grobid}", new SimpleHttpResponse(e));
@@ -70,7 +74,8 @@ public class GrobidCitationFetcher implements SearchBasedFetcher {
     public List<BibEntry> performSearch(String searchQuery) throws FetcherException {
         List<BibEntry> result;
         try {
-            result = Arrays.stream(searchQuery.split("\\r\\r+|\\n\\n+|\\r\\n(\\r\\n)+"))
+            result =
+                    Arrays.stream(searchQuery.split("\\r\\r+|\\n\\n+|\\r\\n(\\r\\n)+"))
                             .map(String::trim)
                             .filter(str -> !str.isBlank())
                             .map(Unchecked.function(this::parseUsingGrobid))

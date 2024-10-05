@@ -1,20 +1,6 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import javafx.util.Pair;
-
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.WebFetcher;
-import org.jabref.logic.journals.JournalInformation;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.model.entry.identifier.ISSN;
 
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
@@ -22,8 +8,22 @@ import kong.unirest.core.Unirest;
 import kong.unirest.core.json.JSONArray;
 import kong.unirest.core.json.JSONException;
 import kong.unirest.core.json.JSONObject;
+
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.logic.importer.WebFetcher;
+import org.jabref.logic.journals.JournalInformation;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.model.entry.identifier.ISSN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Fetches journal information from the JabRef Web API
@@ -40,7 +40,8 @@ public class JournalInformationFetcher implements WebFetcher {
         return JournalInformationFetcher.NAME;
     }
 
-    public Optional<JournalInformation> getJournalInformation(String issnString, String journalName) throws FetcherException {
+    public Optional<JournalInformation> getJournalInformation(String issnString, String journalName)
+            throws FetcherException {
         ISSN issn = new ISSN(issnString);
         String cleanedISSN = "";
 
@@ -54,10 +55,11 @@ public class JournalInformationFetcher implements WebFetcher {
 
         JSONObject postData = buildPostData(cleanedISSN, journalName);
 
-        HttpResponse<JsonNode> httpResponse = Unirest.post(API_URL)
-                                                     .header("Content-Type", "application/json")
-                                                     .body(postData)
-                                                     .asJson();
+        HttpResponse<JsonNode> httpResponse =
+                Unirest.post(API_URL)
+                        .header("Content-Type", "application/json")
+                        .body(postData)
+                        .asJson();
 
         if (httpResponse.getBody() != null) {
             JSONObject responseJsonObject = httpResponse.getBody().getObject();
@@ -67,7 +69,8 @@ public class JournalInformationFetcher implements WebFetcher {
         return journalInformationOptional;
     }
 
-    private JournalInformation parseResponse(JSONObject responseJsonObject) throws FetcherException {
+    private JournalInformation parseResponse(JSONObject responseJsonObject)
+            throws FetcherException {
         String title = "";
         String publisher = "";
         String coverageStartYear = "";
@@ -119,19 +122,26 @@ public class JournalInformationFetcher implements WebFetcher {
                     if (citationInfo != null) {
                         docsThisYear = parseCitationInfo(citationInfo, "docsThisYear");
                         docsPrevious3Years = parseCitationInfo(citationInfo, "docsPrevious3Years");
-                        citableDocsPrevious3Years = parseCitationInfo(citationInfo, "citableDocsPrevious3Years");
+                        citableDocsPrevious3Years =
+                                parseCitationInfo(citationInfo, "citableDocsPrevious3Years");
                         citesOutgoing = parseCitationInfo(citationInfo, "citesOutgoing");
-                        citesOutgoingPerDoc = parseCitationInfo(citationInfo, "citesOutgoingPerDoc");
-                        citesIncomingByRecentlyPublished = parseCitationInfo(citationInfo, "citesIncomingByRecentlyPublished");
-                        citesIncomingPerDocByRecentlyPublished = parseCitationInfo(citationInfo, "citesIncomingPerDocByRecentlyPublished");
+                        citesOutgoingPerDoc =
+                                parseCitationInfo(citationInfo, "citesOutgoingPerDoc");
+                        citesIncomingByRecentlyPublished =
+                                parseCitationInfo(citationInfo, "citesIncomingByRecentlyPublished");
+                        citesIncomingPerDocByRecentlyPublished =
+                                parseCitationInfo(
+                                        citationInfo, "citesIncomingPerDocByRecentlyPublished");
                         sjrArray = parseCitationInfo(citationInfo, "sjrIndex");
                         snipArray = parseCitationInfo(citationInfo, "snipIndex");
                     }
                 } else {
-                    throw new FetcherException(Localization.lang("ISSN and/or journal name not found in catalog"));
+                    throw new FetcherException(
+                            Localization.lang("ISSN and/or journal name not found in catalog"));
                 }
             } else {
-                throw new FetcherException(Localization.lang("ISSN and/or journal name not found in catalog"));
+                throw new FetcherException(
+                        Localization.lang("ISSN and/or journal name not found in catalog"));
             }
         } catch (JSONException e) {
             throw new FetcherException(Localization.lang("Parsing error"), e);
@@ -156,8 +166,7 @@ public class JournalInformationFetcher implements WebFetcher {
                 citesOutgoing,
                 citesOutgoingPerDoc,
                 citesIncomingByRecentlyPublished,
-                citesIncomingPerDocByRecentlyPublished
-        );
+                citesIncomingPerDocByRecentlyPublished);
     }
 
     private static String getConcatenatedString(JSONObject jsonObject, String key) {
@@ -170,7 +179,8 @@ public class JournalInformationFetcher implements WebFetcher {
     }
 
     private JSONObject buildPostData(String issn, String journalName) {
-        String query = """
+        String query =
+                """
                 query GetJournal($issn: String, $name: String) {
                   journal(issn: $issn, name: $name) {
                     id

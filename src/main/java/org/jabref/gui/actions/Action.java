@@ -1,9 +1,9 @@
 package org.jabref.gui.actions;
 
-import java.util.Optional;
-
 import org.jabref.gui.icon.JabRefIcon;
 import org.jabref.gui.keyboard.KeyBinding;
+
+import java.util.Optional;
 
 public interface Action {
     default Optional<JabRefIcon> getIcon() {

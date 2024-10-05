@@ -1,6 +1,9 @@
 package org.jabref.gui.preferences.table;
 
-import java.util.EnumSet;
+import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
+import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
+import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
+import de.saxsys.mvvmfx.utils.validation.Validator;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
@@ -30,33 +33,35 @@ import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.entry.field.SpecialField;
 import org.jabref.model.entry.field.StandardField;
 
-import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
-import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
-import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
-import de.saxsys.mvvmfx.utils.validation.Validator;
+import java.util.EnumSet;
 
 public class TableTabViewModel implements PreferenceTabViewModel {
 
-    static StringConverter<MainTableColumnModel> columnNameStringConverter = new StringConverter<>() {
-        @Override
-        public String toString(MainTableColumnModel object) {
-            if (object != null) {
-                return object.getName();
-            } else {
-                return "";
-            }
-        }
+    static StringConverter<MainTableColumnModel> columnNameStringConverter =
+            new StringConverter<>() {
+                @Override
+                public String toString(MainTableColumnModel object) {
+                    if (object != null) {
+                        return object.getName();
+                    } else {
+                        return "";
+                    }
+                }
 
-        @Override
-        public MainTableColumnModel fromString(String string) {
-            return MainTableColumnModel.parse(string);
-        }
-    };
+                @Override
+                public MainTableColumnModel fromString(String string) {
+                    return MainTableColumnModel.parse(string);
+                }
+            };
 
-    private final ListProperty<MainTableColumnModel> columnsListProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ObjectProperty<SelectionModel<MainTableColumnModel>> selectedColumnModelProperty = new SimpleObjectProperty<>(new NoSelectionModel<>());
-    private final ListProperty<MainTableColumnModel> availableColumnsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ObjectProperty<MainTableColumnModel> addColumnProperty = new SimpleObjectProperty<>();
+    private final ListProperty<MainTableColumnModel> columnsListProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ObjectProperty<SelectionModel<MainTableColumnModel>> selectedColumnModelProperty =
+            new SimpleObjectProperty<>(new NoSelectionModel<>());
+    private final ListProperty<MainTableColumnModel> availableColumnsProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ObjectProperty<MainTableColumnModel> addColumnProperty =
+            new SimpleObjectProperty<>();
     private final BooleanProperty specialFieldsEnabledProperty = new SimpleBooleanProperty();
     private final BooleanProperty extraFileColumnsEnabledProperty = new SimpleBooleanProperty();
     private final BooleanProperty autoResizeColumnsProperty = new SimpleBooleanProperty();
@@ -86,29 +91,34 @@ public class TableTabViewModel implements PreferenceTabViewModel {
         this.nameDisplayPreferences = preferences.getNameDisplayPreferences();
         this.mainTablePreferences = preferences.getMainTablePreferences();
 
-        specialFieldsEnabledProperty.addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                insertSpecialFieldColumns();
-            } else {
-                removeSpecialFieldColumns();
-            }
-        });
+        specialFieldsEnabledProperty.addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        insertSpecialFieldColumns();
+                    } else {
+                        removeSpecialFieldColumns();
+                    }
+                });
 
-        extraFileColumnsEnabledProperty.addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                insertExtraFileColumns();
-            } else {
-                removeExtraFileColumns();
-            }
-        });
+        extraFileColumnsEnabledProperty.addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        insertExtraFileColumns();
+                    } else {
+                        removeExtraFileColumns();
+                    }
+                });
 
-        columnsNotEmptyValidator = new FunctionBasedValidator<>(
-                columnsListProperty,
-                list -> !list.isEmpty(),
-                ValidationMessage.error("%s > %s %n %n %s".formatted(
-                        Localization.lang("Entry table columns"),
-                        Localization.lang("Columns"),
-                        Localization.lang("List must not be empty."))));
+        columnsNotEmptyValidator =
+                new FunctionBasedValidator<>(
+                        columnsListProperty,
+                        list -> !list.isEmpty(),
+                        ValidationMessage.error(
+                                "%s > %s %n %n %s"
+                                        .formatted(
+                                                Localization.lang("Entry table columns"),
+                                                Localization.lang("Columns"),
+                                                Localization.lang("List must not be empty."))));
     }
 
     @Override
@@ -129,17 +139,22 @@ public class TableTabViewModel implements PreferenceTabViewModel {
                 new MainTableColumnModel(MainTableColumnModel.Type.GROUPS),
                 new MainTableColumnModel(MainTableColumnModel.Type.GROUP_ICONS),
                 new MainTableColumnModel(MainTableColumnModel.Type.FILES),
-                new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, StandardField.TIMESTAMP.getName()),
-                new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, StandardField.OWNER.getName()),
-                new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, StandardField.GROUPS.getName()),
-                new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, InternalField.KEY_FIELD.getName()),
-                new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, InternalField.TYPE_HEADER.getName())
-        );
+                new MainTableColumnModel(
+                        MainTableColumnModel.Type.NORMALFIELD, StandardField.TIMESTAMP.getName()),
+                new MainTableColumnModel(
+                        MainTableColumnModel.Type.NORMALFIELD, StandardField.OWNER.getName()),
+                new MainTableColumnModel(
+                        MainTableColumnModel.Type.NORMALFIELD, StandardField.GROUPS.getName()),
+                new MainTableColumnModel(
+                        MainTableColumnModel.Type.NORMALFIELD, InternalField.KEY_FIELD.getName()),
+                new MainTableColumnModel(
+                        MainTableColumnModel.Type.NORMALFIELD,
+                        InternalField.TYPE_HEADER.getName()));
 
         EnumSet.allOf(StandardField.class).stream()
-               .map(Field::getName)
-               .map(name -> new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, name))
-               .forEach(item -> availableColumnsProperty.getValue().add(item));
+                .map(Field::getName)
+                .map(name -> new MainTableColumnModel(MainTableColumnModel.Type.NORMALFIELD, name))
+                .forEach(item -> availableColumnsProperty.getValue().add(item));
 
         if (specialFieldsEnabledProperty.getValue()) {
             insertSpecialFieldColumns();
@@ -172,26 +187,34 @@ public class TableTabViewModel implements PreferenceTabViewModel {
 
     private void insertSpecialFieldColumns() {
         EnumSet.allOf(SpecialField.class).stream()
-               .map(Field::getName)
-               .map(name -> new MainTableColumnModel(MainTableColumnModel.Type.SPECIALFIELD, name))
-               .forEach(item -> availableColumnsProperty.getValue().addFirst(item));
+                .map(Field::getName)
+                .map(name -> new MainTableColumnModel(MainTableColumnModel.Type.SPECIALFIELD, name))
+                .forEach(item -> availableColumnsProperty.getValue().addFirst(item));
     }
 
     private void removeSpecialFieldColumns() {
-        columnsListProperty.getValue().removeIf(column -> column.getType() == MainTableColumnModel.Type.SPECIALFIELD);
-        availableColumnsProperty.getValue().removeIf(column -> column.getType() == MainTableColumnModel.Type.SPECIALFIELD);
+        columnsListProperty
+                .getValue()
+                .removeIf(column -> column.getType() == MainTableColumnModel.Type.SPECIALFIELD);
+        availableColumnsProperty
+                .getValue()
+                .removeIf(column -> column.getType() == MainTableColumnModel.Type.SPECIALFIELD);
     }
 
     private void insertExtraFileColumns() {
         preferences.getExternalApplicationsPreferences().getExternalFileTypes().stream()
-                   .map(ExternalFileType::getName)
-                   .map(name -> new MainTableColumnModel(MainTableColumnModel.Type.EXTRAFILE, name))
-                   .forEach(item -> availableColumnsProperty.getValue().add(item));
+                .map(ExternalFileType::getName)
+                .map(name -> new MainTableColumnModel(MainTableColumnModel.Type.EXTRAFILE, name))
+                .forEach(item -> availableColumnsProperty.getValue().add(item));
     }
 
     private void removeExtraFileColumns() {
-        columnsListProperty.getValue().removeIf(column -> column.getType() == MainTableColumnModel.Type.EXTRAFILE);
-        availableColumnsProperty.getValue().removeIf(column -> column.getType() == MainTableColumnModel.Type.EXTRAFILE);
+        columnsListProperty
+                .getValue()
+                .removeIf(column -> column.getType() == MainTableColumnModel.Type.EXTRAFILE);
+        availableColumnsProperty
+                .getValue()
+                .removeIf(column -> column.getType() == MainTableColumnModel.Type.EXTRAFILE);
     }
 
     public void insertColumnInList() {
@@ -199,7 +222,10 @@ public class TableTabViewModel implements PreferenceTabViewModel {
             return;
         }
 
-        if (columnsListProperty.getValue().stream().filter(item -> item.equals(addColumnProperty.getValue())).findAny().isEmpty()) {
+        if (columnsListProperty.getValue().stream()
+                .filter(item -> item.equals(addColumnProperty.getValue()))
+                .findAny()
+                .isEmpty()) {
             columnsListProperty.add(addColumnProperty.getValue());
             addColumnProperty.setValue(null);
         }
@@ -210,7 +236,8 @@ public class TableTabViewModel implements PreferenceTabViewModel {
     }
 
     public void moveColumnUp() {
-        MainTableColumnModel selectedColumn = selectedColumnModelProperty.getValue().getSelectedItem();
+        MainTableColumnModel selectedColumn =
+                selectedColumnModelProperty.getValue().getSelectedItem();
         int row = columnsListProperty.getValue().indexOf(selectedColumn);
         if ((selectedColumn == null) || (row < 1)) {
             return;
@@ -222,7 +249,8 @@ public class TableTabViewModel implements PreferenceTabViewModel {
     }
 
     public void moveColumnDown() {
-        MainTableColumnModel selectedColumn = selectedColumnModelProperty.getValue().getSelectedItem();
+        MainTableColumnModel selectedColumn =
+                selectedColumnModelProperty.getValue().getSelectedItem();
         int row = columnsListProperty.getValue().indexOf(selectedColumn);
         if ((selectedColumn == null) || (row > (columnsListProperty.getValue().size() - 2))) {
             return;
@@ -268,8 +296,10 @@ public class TableTabViewModel implements PreferenceTabViewModel {
     public boolean validateSettings() {
         ValidationStatus validationStatus = columnsListValidationStatus();
         if (!validationStatus.isValid()) {
-            validationStatus.getHighestMessage().ifPresent(message ->
-                    dialogService.showErrorDialogAndWait(message.getMessage()));
+            validationStatus
+                    .getHighestMessage()
+                    .ifPresent(
+                            message -> dialogService.showErrorDialogAndWait(message.getMessage()));
             return false;
         }
         return true;

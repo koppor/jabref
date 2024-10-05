@@ -1,14 +1,14 @@
 package org.jabref.gui.undo;
 
-import javax.swing.undo.CannotUndoException;
-import javax.swing.undo.UndoManager;
-import javax.swing.undo.UndoableEdit;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
+import javax.swing.undo.UndoableEdit;
 
 public class CountingUndoManager extends UndoManager {
 
@@ -18,6 +18,7 @@ public class CountingUndoManager extends UndoManager {
      * Indicates the number of edits aka balance of edits on the stack +1 when an edit is added/redone and -1 when an edit is undoed.
      * */
     private final IntegerProperty balanceProperty = new SimpleIntegerProperty(0);
+
     private final BooleanProperty undoableProperty = new SimpleBooleanProperty(false);
     private final BooleanProperty redoableProperty = new SimpleBooleanProperty(false);
 

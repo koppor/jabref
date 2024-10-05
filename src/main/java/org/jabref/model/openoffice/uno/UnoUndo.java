@@ -1,24 +1,23 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Optional;
-
 import com.sun.star.document.XUndoManager;
 import com.sun.star.document.XUndoManagerSupplier;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.util.InvalidStateException;
+
+import java.util.Optional;
 
 /**
  * Undo : group document changes into larger Undo actions.
  */
 public class UnoUndo {
 
-    private UnoUndo() {
-    }
+    private UnoUndo() {}
 
     public static Optional<XUndoManager> getXUndoManager(XTextDocument doc) {
         // https://www.openoffice.org/api/docs/common/ref/com/sun/star/document/XUndoManager.html
         return UnoCast.cast(XUndoManagerSupplier.class, doc)
-                       .map(XUndoManagerSupplier::getUndoManager);
+                .map(XUndoManagerSupplier::getUndoManager);
     }
 
     /**

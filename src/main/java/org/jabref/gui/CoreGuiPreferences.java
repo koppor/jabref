@@ -19,13 +19,14 @@ public class CoreGuiPreferences {
 
     private final StringProperty lastSelectedIdBasedFetcher;
 
-    public CoreGuiPreferences(double positionX,
-                              double positionY,
-                              double sizeX,
-                              double sizeY,
-                              boolean windowMaximised,
-                              String lastSelectedIdBasedFetcher,
-                              double sidePaneWidth) {
+    public CoreGuiPreferences(
+            double positionX,
+            double positionY,
+            double sizeX,
+            double sizeY,
+            boolean windowMaximised,
+            String lastSelectedIdBasedFetcher,
+            double sidePaneWidth) {
         this.positionX = new SimpleDoubleProperty(positionX);
         this.positionY = new SimpleDoubleProperty(positionY);
         this.sizeX = new SimpleDoubleProperty(sizeX);

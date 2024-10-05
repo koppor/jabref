@@ -1,5 +1,15 @@
 package org.jabref.logic.exporter;
 
+import org.jabref.logic.util.StandardFileType;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.entry.types.EntryType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -24,17 +34,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.jabref.logic.util.StandardFileType;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.field.UnknownField;
-import org.jabref.model.entry.types.EntryType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * TemplateExporter for exporting in MODS XML format.
  */
@@ -43,7 +42,8 @@ class ModsExporter extends Exporter {
     private static final String MODS_NAMESPACE_URI = "http://www.loc.gov/mods/v3";
     private static final String MINUS = "-";
     private static final String DOUBLE_MINUS = "--";
-    private static final String MODS_SCHEMA_LOCATION = "http://www.loc.gov/standards/mods/v3/mods-3-6.xsd";
+    private static final String MODS_SCHEMA_LOCATION =
+            "http://www.loc.gov/standards/mods/v3/mods-3-6.xsd";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModsExporter.class);
 
@@ -52,7 +52,9 @@ class ModsExporter extends Exporter {
     }
 
     @Override
-    public void export(final BibDatabaseContext databaseContext, final Path file, List<BibEntry> entries) throws SaveException {
+    public void export(
+            final BibDatabaseContext databaseContext, final Path file, List<BibEntry> entries)
+            throws SaveException {
         Objects.requireNonNull(databaseContext);
         Objects.requireNonNull(entries);
         if (entries.isEmpty()) { // Only export if entries exist
@@ -151,22 +153,31 @@ class ModsExporter extends Exporter {
         writer.writeNamespace("mods", MODS_NAMESPACE_URI);
         writer.writeNamespace("ns2", "http://www.w3.org/1999/xlink");
         writer.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", MODS_SCHEMA_LOCATION);
+        writer.writeAttribute(
+                "xsi",
+                "http://www.w3.org/2001/XMLSchema-instance",
+                "schemaLocation",
+                MODS_SCHEMA_LOCATION);
         return writer;
     }
 
-    private void writerFormatted(Path file, StringWriter sw) throws TransformerException, IOException {
+    private void writerFormatted(Path file, StringWriter sw)
+            throws TransformerException, IOException {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
         try (OutputStream outputStream = Files.newOutputStream(file)) {
-            transformer.transform(new StreamSource(new StringReader(sw.toString())), new StreamResult(outputStream));
+            transformer.transform(
+                    new StreamSource(new StringReader(sw.toString())),
+                    new StreamResult(outputStream));
         }
     }
 
-    private void writeOriginInformation(XMLStreamWriter writer, List<String> originItems, Map<Field, String> fieldMap) throws XMLStreamException {
+    private void writeOriginInformation(
+            XMLStreamWriter writer, List<String> originItems, Map<Field, String> fieldMap)
+            throws XMLStreamException {
         if (originItems.isEmpty()) {
             writer.writeEmptyElement("mods", "originInfo", MODS_NAMESPACE_URI);
         } else {
@@ -180,7 +191,9 @@ class ModsExporter extends Exporter {
         }
     }
 
-    private void writeRelatedInformation(XMLStreamWriter writer, List<String> parts, Map<Field, String> fieldMap) throws XMLStreamException {
+    private void writeRelatedInformation(
+            XMLStreamWriter writer, List<String> parts, Map<Field, String> fieldMap)
+            throws XMLStreamException {
         writer.writeStartElement("mods", "relatedItem", MODS_NAMESPACE_URI);
         writer.writeAttribute("type", "host");
 
@@ -200,7 +213,9 @@ class ModsExporter extends Exporter {
         writer.writeEndElement(); // end typeOfResource
     }
 
-    private void writePartInformation(XMLStreamWriter writer, List<String> parts, Map<Field, String> fieldMap) throws XMLStreamException {
+    private void writePartInformation(
+            XMLStreamWriter writer, List<String> parts, Map<Field, String> fieldMap)
+            throws XMLStreamException {
         if (parts.isEmpty()) {
             writer.writeEmptyElement("mods", "part", MODS_NAMESPACE_URI);
         } else {
@@ -303,7 +318,8 @@ class ModsExporter extends Exporter {
         writer.writeEndElement();
     }
 
-    private void addJournal(XMLStreamWriter writer, String value) throws XMLStreamException { // this may also need to be called within second for loop?
+    private void addJournal(XMLStreamWriter writer, String value)
+            throws XMLStreamException { // this may also need to be called within second for loop?
         // Start TitleInfoDefinition
         writer.writeStartElement("mods", "titleInfo", MODS_NAMESPACE_URI);
 
@@ -358,7 +374,8 @@ class ModsExporter extends Exporter {
             writer.writeAttribute("type", "personal");
 
             if (author.contains(",")) {
-                // if author contains ","  then this indicates that the author has a forename and family name
+                // if author contains ","  then this indicates that the author has a forename and
+                // family name
                 int commaIndex = author.indexOf(',');
                 String familyName = author.substring(0, commaIndex);
                 writer.writeStartElement("mods", "namePart", MODS_NAMESPACE_URI);
@@ -389,7 +406,8 @@ class ModsExporter extends Exporter {
         }
     }
 
-    private void addIdentifier(XMLStreamWriter writer, Field field, String value) throws XMLStreamException {
+    private void addIdentifier(XMLStreamWriter writer, Field field, String value)
+            throws XMLStreamException {
 
         if (new UnknownField("citekey").equals(field)) {
             writer.writeStartElement("mods", "mods", MODS_NAMESPACE_URI);
@@ -401,7 +419,8 @@ class ModsExporter extends Exporter {
         writer.writeEndElement(); // end identifier
     }
 
-    private void addStartAndEndPage(XMLStreamWriter writer, String value, String minus) throws XMLStreamException {
+    private void addStartAndEndPage(XMLStreamWriter writer, String value, String minus)
+            throws XMLStreamException {
         int minusIndex = value.indexOf(minus);
         String startPage = value.substring(0, minusIndex);
         String endPage = "";
@@ -421,7 +440,8 @@ class ModsExporter extends Exporter {
         writer.writeEndElement();
     }
 
-    private void addDetail(XMLStreamWriter writer, Field field, String value) throws XMLStreamException {
+    private void addDetail(XMLStreamWriter writer, Field field, String value)
+            throws XMLStreamException {
         writer.writeStartElement("mods", "detail", MODS_NAMESPACE_URI);
         writer.writeAttribute("type", field.getName());
         writer.writeStartElement("mods", "number", MODS_NAMESPACE_URI);
@@ -430,7 +450,8 @@ class ModsExporter extends Exporter {
         writer.writeEndElement(); // end detail
     }
 
-    private void addOriginInformation(XMLStreamWriter writer, Field field, String value) throws XMLStreamException {
+    private void addOriginInformation(XMLStreamWriter writer, Field field, String value)
+            throws XMLStreamException {
 
         if (field.equals(StandardField.YEAR)) {
             addDate(writer, "dateIssued", value);
@@ -442,7 +463,8 @@ class ModsExporter extends Exporter {
             addDate(writer, "dateCaptured", value);
         } else if (StandardField.PUBLISHER == field) {
             writer.writeStartElement("mods", "publisher", MODS_NAMESPACE_URI);
-            writer.writeAttribute("xsi", MODS_NAMESPACE_URI, "type", "mods:stringPlusLanguagePlusSupplied");
+            writer.writeAttribute(
+                    "xsi", MODS_NAMESPACE_URI, "type", "mods:stringPlusLanguagePlusSupplied");
             writer.writeCharacters(value);
             writer.writeEndElement();
         } else if (field.equals(new UnknownField("issuance"))) {
@@ -466,7 +488,8 @@ class ModsExporter extends Exporter {
         }
     }
 
-    private void addDate(XMLStreamWriter writer, String dateName, String value) throws XMLStreamException {
+    private void addDate(XMLStreamWriter writer, String dateName, String value)
+            throws XMLStreamException {
         writer.writeStartElement("mods", dateName, MODS_NAMESPACE_URI);
         writer.writeAttribute("keyDate", "yes");
         writer.writeCharacters(value);

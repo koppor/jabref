@@ -1,13 +1,5 @@
 package org.jabref.logic.openoffice.style;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.style.Citation;
 import org.jabref.model.openoffice.style.CitationGroup;
@@ -19,10 +11,17 @@ import org.jabref.model.openoffice.style.CitedKeys;
 import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
 import org.jabref.model.openoffice.util.OOListUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 class OOProcessAuthorYearMarkers {
 
-    private OOProcessAuthorYearMarkers() {
-    }
+    private OOProcessAuthorYearMarkers() {}
 
     /**
      *  Fills {@code sortedCitedKeys//normCitMarker}
@@ -48,7 +47,8 @@ class OOProcessAuthorYearMarkers {
      *
      *  Depends on: style, citations and their order.
      */
-    private static void createUniqueLetters(CitedKeys sortedCitedKeys, CitationGroups citationGroups) {
+    private static void createUniqueLetters(
+            CitedKeys sortedCitedKeys, CitationGroups citationGroups) {
         // The entries in the clashingKeys lists preserve
         // firstAppearance order from sortedCitedKeys.values().
         //
@@ -60,7 +60,8 @@ class OOProcessAuthorYearMarkers {
             String normCitMarker = OOText.toString(citedKey.getNormalizedCitationMarker().get());
             String citationKey = citedKey.citationKey;
 
-            List<String> clashingKeys = normCitMarkerToClachingKeys.putIfAbsent(normCitMarker, new ArrayList<>(1));
+            List<String> clashingKeys =
+                    normCitMarkerToClachingKeys.putIfAbsent(normCitMarker, new ArrayList<>(1));
             if (clashingKeys == null) {
                 clashingKeys = normCitMarkerToClachingKeys.get(normCitMarker);
             }
@@ -135,7 +136,8 @@ class OOProcessAuthorYearMarkers {
 
         createNormalizedCitationMarkers(citedKeys, style);
         createUniqueLetters(citedKeys, citationGroups);
-        citationGroups.createPlainBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
+        citationGroups.createPlainBibliographySortedByComparator(
+                OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
 
         // Mark first appearance of each citationKey
         setIsFirstAppearanceOfSourceInCitations(citationGroups);
@@ -146,9 +148,9 @@ class OOProcessAuthorYearMarkers {
 
             List<Citation> cits = group.getCitationsInLocalOrder();
             List<CitationMarkerEntry> citationMarkerEntries = OOListUtil.map(cits, e -> e);
-            OOText citMarker = style.createCitationMarker(citationMarkerEntries,
-                                                          inParenthesis,
-                                                          strictlyUnique);
+            OOText citMarker =
+                    style.createCitationMarker(
+                            citationMarkerEntries, inParenthesis, strictlyUnique);
             group.setCitationMarker(Optional.of(citMarker));
         }
     }

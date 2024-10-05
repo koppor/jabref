@@ -1,12 +1,5 @@
 package org.jabref.gui.groups;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
-import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.undo.CountingUndoManager;
 import org.jabref.model.FieldChange;
 import org.jabref.model.entry.BibEntry;
@@ -17,6 +10,13 @@ import org.jabref.model.groups.GroupEntryChanger;
 import org.jabref.model.groups.GroupTreeNode;
 import org.jabref.model.groups.KeywordGroup;
 import org.jabref.model.groups.SearchGroup;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.undo.UndoManager;
 
 public class GroupTreeNodeViewModel {
     private final GroupTreeNode node;
@@ -50,32 +50,38 @@ public class GroupTreeNodeViewModel {
         AbstractGroup group = node.getGroup();
         String shortDescription = "";
         boolean showDynamic = true;
-        shortDescription = switch (group) {
-            case ExplicitGroup explicitGroup ->
-                    GroupDescriptions.getShortDescriptionExplicitGroup(explicitGroup);
-            case KeywordGroup keywordGroup ->
-                    GroupDescriptions.getShortDescriptionKeywordGroup(keywordGroup, showDynamic);
-            case SearchGroup searchGroup ->
-                    GroupDescriptions.getShortDescription(searchGroup, showDynamic);
-            case null,
-                 default ->
-                    GroupDescriptions.getShortDescriptionAllEntriesGroup();
-        };
+        shortDescription =
+                switch (group) {
+                    case ExplicitGroup explicitGroup ->
+                            GroupDescriptions.getShortDescriptionExplicitGroup(explicitGroup);
+                    case KeywordGroup keywordGroup ->
+                            GroupDescriptions.getShortDescriptionKeywordGroup(
+                                    keywordGroup, showDynamic);
+                    case SearchGroup searchGroup ->
+                            GroupDescriptions.getShortDescription(searchGroup, showDynamic);
+                    case null, default -> GroupDescriptions.getShortDescriptionAllEntriesGroup();
+                };
         return "<html>" + shortDescription + "</html>";
     }
 
     public boolean canAddEntries(List<BibEntry> entries) {
-        return (getNode().getGroup() instanceof GroupEntryChanger) && !getNode().getGroup().containsAll(entries);
+        return (getNode().getGroup() instanceof GroupEntryChanger)
+                && !getNode().getGroup().containsAll(entries);
     }
 
     public boolean canRemoveEntries(List<BibEntry> entries) {
-        return (getNode().getGroup() instanceof GroupEntryChanger) && getNode().getGroup().containsAny(entries);
+        return (getNode().getGroup() instanceof GroupEntryChanger)
+                && getNode().getGroup().containsAny(entries);
     }
 
     public void sortChildrenByName(boolean recursive) {
-        getNode().sortChildren(
-                (node1, node2) -> node1.getGroup().getName().compareToIgnoreCase(node2.getGroup().getName()),
-                recursive);
+        getNode()
+                .sortChildren(
+                        (node1, node2) ->
+                                node1.getGroup()
+                                        .getName()
+                                        .compareToIgnoreCase(node2.getGroup().getName()),
+                        recursive);
     }
 
     @Override
@@ -156,7 +162,8 @@ public class GroupTreeNodeViewModel {
 
         // Remember undo information
         if (!changesRemove.isEmpty()) {
-            AbstractUndoableEdit undoRemove = UndoableChangeEntriesOfGroup.getUndoableEdit(this, changesRemove);
+            AbstractUndoableEdit undoRemove =
+                    UndoableChangeEntriesOfGroup.getUndoableEdit(this, changesRemove);
             if (!changesAdd.isEmpty() && (undoRemove != null)) {
                 // we removed and added entries
                 undoRemove.addEdit(UndoableChangeEntriesOfGroup.getUndoableEdit(this, changesAdd));
@@ -179,10 +186,11 @@ public class GroupTreeNodeViewModel {
         GroupTreeNode newNode = GroupTreeNode.fromGroup(newGroup);
         this.getNode().addChild(newNode);
 
-        UndoableAddOrRemoveGroup undo = new UndoableAddOrRemoveGroup(
-                this,
-                new GroupTreeNodeViewModel(newNode),
-                UndoableAddOrRemoveGroup.ADD_NODE);
+        UndoableAddOrRemoveGroup undo =
+                new UndoableAddOrRemoveGroup(
+                        this,
+                        new GroupTreeNodeViewModel(newNode),
+                        UndoableAddOrRemoveGroup.ADD_NODE);
         undoManager.addEdit(undo);
     }
 
@@ -194,6 +202,8 @@ public class GroupTreeNodeViewModel {
     }
 
     public void subscribeToDescendantChanged(Consumer<GroupTreeNodeViewModel> subscriber) {
-        getNode().subscribeToDescendantChanged(node -> subscriber.accept(new GroupTreeNodeViewModel(node)));
+        getNode()
+                .subscribeToDescendantChanged(
+                        node -> subscriber.accept(new GroupTreeNodeViewModel(node)));
     }
 }

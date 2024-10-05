@@ -1,8 +1,11 @@
 package org.jabref.logic.importer;
 
-import java.io.BufferedReader;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.jabref.logic.importer.fileformat.BiblioscapeImporter;
 import org.jabref.logic.importer.fileformat.BibtexImporter;
@@ -22,25 +25,22 @@ import org.jabref.logic.importer.fileformat.RepecNepImporter;
 import org.jabref.logic.importer.fileformat.RisImporter;
 import org.jabref.logic.xmp.XmpPreferences;
 import org.jabref.model.util.DummyFileUpdateMonitor;
-
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Answers;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.io.BufferedReader;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class ImporterTest {
 
     @ParameterizedTest
     @MethodSource("instancesToTest")
     void isRecognizedFormatWithNullForBufferedReaderThrowsException(Importer format) {
-        assertThrows(NullPointerException.class, () -> format.isRecognizedFormat((BufferedReader) null));
+        assertThrows(
+                NullPointerException.class, () -> format.isRecognizedFormat((BufferedReader) null));
     }
 
     @ParameterizedTest
@@ -52,7 +52,8 @@ public class ImporterTest {
     @ParameterizedTest
     @MethodSource("instancesToTest")
     void importDatabaseWithNullForBufferedReaderThrowsException(Importer format) {
-        assertThrows(NullPointerException.class, () -> format.importDatabase((BufferedReader) null));
+        assertThrows(
+                NullPointerException.class, () -> format.importDatabase((BufferedReader) null));
     }
 
     @ParameterizedTest
@@ -101,7 +102,8 @@ public class ImporterTest {
     }
 
     public static Stream<Importer> instancesToTest() {
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
         XmpPreferences xmpPreferences = mock(XmpPreferences.class);
         return Stream.of(
@@ -122,7 +124,6 @@ public class ImporterTest {
                 new PdfContentImporter(),
                 new PdfXmpImporter(xmpPreferences),
                 new RepecNepImporter(importFormatPreferences),
-                new RisImporter()
-        );
+                new RisImporter());
     }
 }

@@ -1,9 +1,9 @@
 package org.jabref.logic.bibtex.comparator;
 
+import org.jabref.model.database.BibDatabaseContext;
+
 import java.util.Objects;
 import java.util.Optional;
-
-import org.jabref.model.database.BibDatabaseContext;
 
 public class PreambleDiff {
 
@@ -15,13 +15,15 @@ public class PreambleDiff {
         this.newPreamble = newPreamble;
     }
 
-    public static Optional<PreambleDiff> compare(BibDatabaseContext originalDatabase, BibDatabaseContext newDatabase) {
+    public static Optional<PreambleDiff> compare(
+            BibDatabaseContext originalDatabase, BibDatabaseContext newDatabase) {
         Optional<String> originalPreamble = originalDatabase.getDatabase().getPreamble();
         Optional<String> newPreamble = newDatabase.getDatabase().getPreamble();
         if (originalPreamble.equals(newPreamble)) {
             return Optional.empty();
         } else {
-            return Optional.of(new PreambleDiff(originalPreamble.orElse(""), newPreamble.orElse("")));
+            return Optional.of(
+                    new PreambleDiff(originalPreamble.orElse(""), newPreamble.orElse("")));
         }
     }
 
@@ -43,7 +45,8 @@ public class PreambleDiff {
         }
 
         PreambleDiff that = (PreambleDiff) other;
-        return Objects.equals(newPreamble, that.newPreamble) && Objects.equals(originalPreamble, that.originalPreamble);
+        return Objects.equals(newPreamble, that.newPreamble)
+                && Objects.equals(originalPreamble, that.originalPreamble);
     }
 
     @Override
@@ -53,9 +56,13 @@ public class PreambleDiff {
 
     @Override
     public String toString() {
-        return "PreambleDiff{" +
-                "originalPreamble='" + originalPreamble + '\'' +
-                ", newPreamble='" + newPreamble + '\'' +
-                '}';
+        return "PreambleDiff{"
+                + "originalPreamble='"
+                + originalPreamble
+                + '\''
+                + ", newPreamble='"
+                + newPreamble
+                + '\''
+                + '}';
     }
 }

@@ -1,30 +1,30 @@
 package org.jabref.logic.util.io;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 class FileNameUniquenessTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileNameUniquenessTest.class);
 
-    @TempDir
-    protected Path tempDir;
+    @TempDir protected Path tempDir;
 
     @Test
     void getNonOverWritingFileNameReturnsSameName() throws IOException {
         assertFalse(Files.exists(tempDir.resolve("sameFile.txt")));
 
-        String outputFileName = FileNameUniqueness.getNonOverWritingFileName(tempDir, "sameFile.txt");
+        String outputFileName =
+                FileNameUniqueness.getNonOverWritingFileName(tempDir, "sameFile.txt");
         assertEquals("sameFile.txt", outputFileName);
     }
 
@@ -34,7 +34,8 @@ class FileNameUniquenessTest {
 
         Files.createFile(dummyFilePath1);
 
-        String outputFileName = FileNameUniqueness.getNonOverWritingFileName(tempDir, "differentFile.txt");
+        String outputFileName =
+                FileNameUniqueness.getNonOverWritingFileName(tempDir, "differentFile.txt");
         assertEquals("differentFile (1).txt", outputFileName);
     }
 
@@ -46,7 +47,8 @@ class FileNameUniquenessTest {
         Files.createFile(dummyFilePath1);
         Files.createFile(dummyFilePath2);
 
-        String outputFileName = FileNameUniqueness.getNonOverWritingFileName(tempDir, "manyfiles.txt");
+        String outputFileName =
+                FileNameUniqueness.getNonOverWritingFileName(tempDir, "manyfiles.txt");
         assertEquals("manyfiles (2).txt", outputFileName);
     }
 

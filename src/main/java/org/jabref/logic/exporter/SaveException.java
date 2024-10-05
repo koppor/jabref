@@ -9,11 +9,13 @@ import org.jabref.model.entry.BibEntry;
  */
 public class SaveException extends Exception {
 
-    public static final SaveException FILE_LOCKED = new SaveException(
-            "Could not save, file locked by another JabRef instance.",
-            Localization.lang("Could not save, file locked by another JabRef instance."));
-    public static final SaveException BACKUP_CREATION = new SaveException("Unable to create backup",
-            Localization.lang("Unable to create backup"));
+    public static final SaveException FILE_LOCKED =
+            new SaveException(
+                    "Could not save, file locked by another JabRef instance.",
+                    Localization.lang("Could not save, file locked by another JabRef instance."));
+    public static final SaveException BACKUP_CREATION =
+            new SaveException(
+                    "Unable to create backup", Localization.lang("Unable to create backup"));
 
     private BibEntry entry;
     private int status;

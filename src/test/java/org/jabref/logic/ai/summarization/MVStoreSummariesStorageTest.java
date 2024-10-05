@@ -1,11 +1,11 @@
 package org.jabref.logic.ai.summarization;
 
-import java.nio.file.Path;
+import static org.mockito.Mockito.mock;
 
 import org.jabref.logic.ai.summarization.storages.MVStoreSummariesStorage;
 import org.jabref.logic.util.NotificationService;
 
-import static org.mockito.Mockito.mock;
+import java.nio.file.Path;
 
 class MVStoreSummariesStorageTest extends SummariesStorageTest {
     @Override

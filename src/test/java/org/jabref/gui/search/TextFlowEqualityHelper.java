@@ -1,11 +1,11 @@
 package org.jabref.gui.search;
 
-import java.util.List;
-
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 import org.junit.jupiter.api.Assertions;
+
+import java.util.List;
 
 public class TextFlowEqualityHelper {
 
@@ -27,7 +27,8 @@ public class TextFlowEqualityHelper {
         }
     }
 
-    public static boolean checkIfTextsEqualsExpectedTexts(List<Text> texts, List<Text> expectedTexts) {
+    public static boolean checkIfTextsEqualsExpectedTexts(
+            List<Text> texts, List<Text> expectedTexts) {
         if (expectedTexts.size() != texts.size()) {
             return false;
         }

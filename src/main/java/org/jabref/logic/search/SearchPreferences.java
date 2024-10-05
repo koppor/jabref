@@ -1,6 +1,6 @@
 package org.jabref.logic.search;
 
-import java.util.EnumSet;
+import com.google.common.annotations.VisibleForTesting;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -13,7 +13,7 @@ import javafx.collections.ObservableSet;
 
 import org.jabref.model.search.SearchFlags;
 
-import com.google.common.annotations.VisibleForTesting;
+import java.util.EnumSet;
 
 public class SearchPreferences {
 
@@ -25,15 +25,36 @@ public class SearchPreferences {
     private final BooleanProperty keepSearchSting;
     private final ObjectProperty<SearchDisplayMode> searchDisplayMode;
 
-    public SearchPreferences(SearchDisplayMode searchDisplayMode, boolean isFulltext, boolean keepSearchString, boolean keepWindowOnTop, double searchWindowHeight, double searchWindowWidth, double searchWindowDividerPosition) {
-        this(searchDisplayMode, EnumSet.noneOf(SearchFlags.class), keepSearchString, keepWindowOnTop, searchWindowHeight, searchWindowWidth, searchWindowDividerPosition);
+    public SearchPreferences(
+            SearchDisplayMode searchDisplayMode,
+            boolean isFulltext,
+            boolean keepSearchString,
+            boolean keepWindowOnTop,
+            double searchWindowHeight,
+            double searchWindowWidth,
+            double searchWindowDividerPosition) {
+        this(
+                searchDisplayMode,
+                EnumSet.noneOf(SearchFlags.class),
+                keepSearchString,
+                keepWindowOnTop,
+                searchWindowHeight,
+                searchWindowWidth,
+                searchWindowDividerPosition);
         if (isFulltext) {
             searchFlags.add(SearchFlags.FULLTEXT);
         }
     }
 
     @VisibleForTesting
-    public SearchPreferences(SearchDisplayMode searchDisplayMode, EnumSet<SearchFlags> searchFlags, boolean keepSearchString, boolean keepWindowOnTop, double searchWindowHeight, double searchWindowWidth, double searchWindowDividerPosition) {
+    public SearchPreferences(
+            SearchDisplayMode searchDisplayMode,
+            EnumSet<SearchFlags> searchFlags,
+            boolean keepSearchString,
+            boolean keepWindowOnTop,
+            double searchWindowHeight,
+            double searchWindowWidth,
+            double searchWindowDividerPosition) {
         this.searchDisplayMode = new SimpleObjectProperty<>(searchDisplayMode);
         this.searchFlags = FXCollections.observableSet(searchFlags);
 

@@ -1,13 +1,13 @@
 package org.jabref.gui.preferences;
 
+import org.jabref.logic.preferences.CliPreferences;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import org.jabref.logic.preferences.CliPreferences;
 
 public class PreferencesFilter {
 
@@ -22,19 +22,26 @@ public class PreferencesFilter {
         Map<String, Object> prefs = preferences.getPreferences();
 
         return prefs.entrySet().stream()
-                    .map(entry -> new PreferenceOption(entry.getKey(), entry.getValue(), defaults.get(entry.getKey())))
-                    .collect(Collectors.toList());
+                .map(
+                        entry ->
+                                new PreferenceOption(
+                                        entry.getKey(),
+                                        entry.getValue(),
+                                        defaults.get(entry.getKey())))
+                .collect(Collectors.toList());
     }
 
     public List<PreferenceOption> getDeviatingPreferences() {
         return getPreferenceOptions().stream()
-                                     .filter(PreferenceOption::isChanged)
-                                     .sorted()
-                                     .collect(Collectors.toList());
+                .filter(PreferenceOption::isChanged)
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     public enum PreferenceType {
-        BOOLEAN, INTEGER, STRING
+        BOOLEAN,
+        INTEGER,
+        STRING
     }
 
     public static class PreferenceOption implements Comparable<PreferenceOption> {

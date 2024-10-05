@@ -1,14 +1,14 @@
 package org.jabref.gui.errorconsole;
 
-import java.util.Objects;
-import java.util.Optional;
+import com.google.common.base.Throwables;
 
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
 import org.jabref.logic.os.OS;
-
-import com.google.common.base.Throwables;
 import org.tinylog.core.LogEntry;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public class LogEventViewModel {
 
@@ -51,6 +51,7 @@ public class LogEventViewModel {
     }
 
     public String getDetailedText() {
-        return getDisplayText() + getStackTrace().map(stacktrace -> OS.NEWLINE + stacktrace).orElse("");
+        return getDisplayText()
+                + getStackTrace().map(stacktrace -> OS.NEWLINE + stacktrace).orElse("");
     }
 }

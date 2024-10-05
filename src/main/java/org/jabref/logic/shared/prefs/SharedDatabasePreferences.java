@@ -1,16 +1,15 @@
 package org.jabref.logic.shared.prefs;
 
+import org.jabref.logic.shared.DatabaseConnectionProperties;
+import org.jabref.logic.shared.security.Password;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
-import org.jabref.logic.shared.DatabaseConnectionProperties;
-import org.jabref.logic.shared.security.Password;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SharedDatabasePreferences {
 
@@ -27,14 +26,16 @@ public class SharedDatabasePreferences {
     private static final String SHARED_DATABASE_PASSWORD = "sharedDatabasePassword";
     private static final String SHARED_DATABASE_FOLDER = "sharedDatabaseFolder";
     private static final String SHARED_DATABASE_AUTOSAVE = "sharedDatabaseAutosave";
-    private static final String SHARED_DATABASE_REMEMBER_PASSWORD = "sharedDatabaseRememberPassword";
+    private static final String SHARED_DATABASE_REMEMBER_PASSWORD =
+            "sharedDatabaseRememberPassword";
     private static final String SHARED_DATABASE_USE_SSL = "sharedDatabaseUseSSL";
     private static final String SHARED_DATABASE_KEYSTORE_FILE = "sharedDatabaseKeyStoreFile";
     private static final String SHARED_DATABASE_SERVER_TIMEZONE = "sharedDatabaseServerTimezone";
     private static final String SHARED_DATABASE_EXPERT_MODE = "sharedDatabaseExpertMode";
     private static final String SHARED_DATABASE_JDBC_URL = "sharedDatabaseJdbcUrl";
 
-    // This {@link Preferences} is used only for things which should not appear in real JabRefPreferences due to security reasons.
+    // This {@link Preferences} is used only for things which should not appear in real
+    // JabRefPreferences due to security reasons.
     private final Preferences internalPrefs;
 
     public SharedDatabasePreferences() {
@@ -188,7 +189,9 @@ public class SharedDatabasePreferences {
         setJdbcUrl(properties.getJdbcUrl());
 
         try {
-            setPassword(new Password(properties.getPassword().toCharArray(), properties.getUser()).encrypt());
+            setPassword(
+                    new Password(properties.getPassword().toCharArray(), properties.getUser())
+                            .encrypt());
         } catch (GeneralSecurityException | UnsupportedEncodingException e) {
             LOGGER.error("Could not store the password due to encryption problems.", e);
         }

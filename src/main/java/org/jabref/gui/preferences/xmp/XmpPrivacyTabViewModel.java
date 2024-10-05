@@ -1,6 +1,9 @@
 package org.jabref.gui.preferences.xmp;
 
-import java.util.Comparator;
+import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
+import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
+import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
+import de.saxsys.mvvmfx.utils.validation.Validator;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
@@ -17,16 +20,15 @@ import org.jabref.logic.xmp.XmpPreferences;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
 
-import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
-import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
-import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
-import de.saxsys.mvvmfx.utils.validation.Validator;
+import java.util.Comparator;
 
 public class XmpPrivacyTabViewModel implements PreferenceTabViewModel {
 
     private final BooleanProperty xmpFilterEnabledProperty = new SimpleBooleanProperty();
-    private final ListProperty<Field> xmpFilterListProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ListProperty<Field> availableFieldsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<Field> xmpFilterListProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<Field> availableFieldsProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
     private final ObjectProperty<Field> addFieldProperty = new SimpleObjectProperty<>();
 
     private final DialogService dialogService;
@@ -38,13 +40,16 @@ public class XmpPrivacyTabViewModel implements PreferenceTabViewModel {
         this.dialogService = dialogService;
         this.xmpPreferences = xmpPreferences;
 
-        xmpFilterListValidator = new FunctionBasedValidator<>(
-                xmpFilterListProperty,
-                input -> !input.isEmpty(),
-                ValidationMessage.error("%s > %s %n %n %s".formatted(
-                        Localization.lang("XMP metadata"),
-                        Localization.lang("Filter List"),
-                        Localization.lang("List must not be empty."))));
+        xmpFilterListValidator =
+                new FunctionBasedValidator<>(
+                        xmpFilterListProperty,
+                        input -> !input.isEmpty(),
+                        ValidationMessage.error(
+                                "%s > %s %n %n %s"
+                                        .formatted(
+                                                Localization.lang("XMP metadata"),
+                                                Localization.lang("Filter List"),
+                                                Localization.lang("List must not be empty."))));
     }
 
     @Override
@@ -71,7 +76,10 @@ public class XmpPrivacyTabViewModel implements PreferenceTabViewModel {
             return;
         }
 
-        if (xmpFilterListProperty.getValue().stream().filter(item -> item.equals(addFieldProperty.getValue())).findAny().isEmpty()) {
+        if (xmpFilterListProperty.getValue().stream()
+                .filter(item -> item.equals(addFieldProperty.getValue()))
+                .findAny()
+                .isEmpty()) {
             xmpFilterListProperty.add(addFieldProperty.getValue());
             addFieldProperty.setValue(null);
         }
@@ -89,8 +97,10 @@ public class XmpPrivacyTabViewModel implements PreferenceTabViewModel {
     public boolean validateSettings() {
         ValidationStatus validationStatus = xmpFilterListValidationStatus();
         if (xmpFilterEnabledProperty.getValue() && !validationStatus.isValid()) {
-            validationStatus.getHighestMessage().ifPresent(message ->
-                    dialogService.showErrorDialogAndWait(message.getMessage()));
+            validationStatus
+                    .getHighestMessage()
+                    .ifPresent(
+                            message -> dialogService.showErrorDialogAndWait(message.getMessage()));
             return false;
         }
         return true;

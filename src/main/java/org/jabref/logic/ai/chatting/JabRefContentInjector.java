@@ -1,23 +1,25 @@
 package org.jabref.logic.ai.chatting;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
+import static org.jabref.logic.ai.ingestion.FileEmbeddingsManager.LINK_METADATA_KEY;
 
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.input.PromptTemplate;
 import dev.langchain4j.rag.content.Content;
 import dev.langchain4j.rag.content.injector.ContentInjector;
 
-import static org.jabref.logic.ai.ingestion.FileEmbeddingsManager.LINK_METADATA_KEY;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class JabRefContentInjector implements ContentInjector {
-    public static final PromptTemplate DEFAULT_PROMPT_TEMPLATE = PromptTemplate.from("{{userMessage}}\n\nAnswer using the following information:\n{{contents}}");
+    public static final PromptTemplate DEFAULT_PROMPT_TEMPLATE =
+            PromptTemplate.from(
+                    "{{userMessage}}\n\nAnswer using the following information:\n{{contents}}");
 
     private final BibDatabaseContext bibDatabaseContext;
 
@@ -27,7 +29,8 @@ public class JabRefContentInjector implements ContentInjector {
 
     @Override
     public UserMessage inject(List<Content> list, UserMessage userMessage) {
-        String contentText = list.stream().map(this::contentToString).collect(Collectors.joining("\n\n"));
+        String contentText =
+                list.stream().map(this::contentToString).collect(Collectors.joining("\n\n"));
 
         String res = applyPrompt(userMessage.singleText(), contentText);
         return new UserMessage(res);
@@ -41,10 +44,11 @@ public class JabRefContentInjector implements ContentInjector {
             return text;
         }
 
-        String keys = findEntriesByLink(link)
-                .filter(entry -> entry.getCitationKey().isPresent())
-                .map(entry -> "@" + entry.getCitationKey().get())
-                .collect(Collectors.joining(", "));
+        String keys =
+                findEntriesByLink(link)
+                        .filter(entry -> entry.getCitationKey().isPresent())
+                        .map(entry -> "@" + entry.getCitationKey().get())
+                        .collect(Collectors.joining(", "));
 
         if (keys.isEmpty()) {
             return text;
@@ -54,7 +58,11 @@ public class JabRefContentInjector implements ContentInjector {
     }
 
     private Stream<BibEntry> findEntriesByLink(String link) {
-        return bibDatabaseContext.getEntries().stream().filter(entry -> entry.getFiles().stream().anyMatch(file -> file.getLink().equals(link)));
+        return bibDatabaseContext.getEntries().stream()
+                .filter(
+                        entry ->
+                                entry.getFiles().stream()
+                                        .anyMatch(file -> file.getLink().equals(link)));
     }
 
     private String applyPrompt(String userMessage, String contents) {

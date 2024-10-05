@@ -1,22 +1,22 @@
 package org.jabref.logic.pdf;
 
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.util.Objects;
-
-import org.jabref.architecture.AllowedToUseAwt;
-
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSFloat;
 import org.apache.pdfbox.cos.COSInteger;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.text.PDFTextStripperByArea;
+import org.jabref.architecture.AllowedToUseAwt;
+
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Extracts the text of marked annotations using bounding boxes.
  */
-@AllowedToUseAwt("org.apache.pdfbox.text.PDFTextStripperByArea.addRegion uses AWT's Rectangle to indicate a region")
+@AllowedToUseAwt(
+        "org.apache.pdfbox.text.PDFTextStripperByArea.addRegion uses AWT's Rectangle to indicate a region")
 public final class TextExtractor {
 
     private final COSArray boundingBoxes;
@@ -42,11 +42,15 @@ public final class TextExtractor {
         PDFTextStripperByArea stripperByArea = new PDFTextStripperByArea();
         String markedText = "";
 
-        // Iterates over the array of segments. Each segment consists of 8 points forming a bounding box.
+        // Iterates over the array of segments. Each segment consists of 8 points forming a bounding
+        // box.
         int totalSegments = boundingBoxes.size() / 8;
-        for (int currentSegment = 1, segmentPointer = 0; currentSegment <= totalSegments; currentSegment++, segmentPointer += 8) {
+        for (int currentSegment = 1, segmentPointer = 0;
+                currentSegment <= totalSegments;
+                currentSegment++, segmentPointer += 8) {
             try {
-                stripperByArea.addRegion("markedRegion", calculateSegmentBoundingBox(boundingBoxes, segmentPointer));
+                stripperByArea.addRegion(
+                        "markedRegion", calculateSegmentBoundingBox(boundingBoxes, segmentPointer));
                 stripperByArea.extractRegions(page);
 
                 markedText = markedText.concat(stripperByArea.getTextForRegion("markedRegion"));

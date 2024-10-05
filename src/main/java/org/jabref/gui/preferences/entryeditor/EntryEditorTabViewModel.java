@@ -1,9 +1,5 @@
 package org.jabref.gui.preferences.entryeditor;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,6 +14,10 @@ import org.jabref.logic.importer.fetcher.MrDlibPreferences;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class EntryEditorTabViewModel implements PreferenceTabViewModel {
 
@@ -57,14 +57,19 @@ public class EntryEditorTabViewModel implements PreferenceTabViewModel {
 
         openOnNewEntryProperty.setValue(entryEditorPreferences.shouldOpenOnNewEntry());
         defaultSourceProperty.setValue(entryEditorPreferences.showSourceTabByDefault());
-        enableRelatedArticlesTabProperty.setValue(entryEditorPreferences.shouldShowRecommendationsTab());
+        enableRelatedArticlesTabProperty.setValue(
+                entryEditorPreferences.shouldShowRecommendationsTab());
         enableAiSummaryTabProperty.setValue(entryEditorPreferences.shouldShowAiSummaryTab());
         enableAiChatTabProperty.setValue(entryEditorPreferences.shouldShowAiChatTab());
         acceptRecommendationsProperty.setValue(mrDlibPreferences.shouldAcceptRecommendations());
-        enableLatexCitationsTabProperty.setValue(entryEditorPreferences.shouldShowLatexCitationsTab());
+        enableLatexCitationsTabProperty.setValue(
+                entryEditorPreferences.shouldShowLatexCitationsTab());
         enableValidationProperty.setValue(entryEditorPreferences.shouldEnableValidation());
-        allowIntegerEditionProperty.setValue(entryEditorPreferences.shouldAllowIntegerEditionBibtex());
-        journalPopupProperty.setValue(entryEditorPreferences.shouldEnableJournalPopup() == EntryEditorPreferences.JournalPopupEnabled.ENABLED);
+        allowIntegerEditionProperty.setValue(
+                entryEditorPreferences.shouldAllowIntegerEditionBibtex());
+        journalPopupProperty.setValue(
+                entryEditorPreferences.shouldEnableJournalPopup()
+                        == EntryEditorPreferences.JournalPopupEnabled.ENABLED);
         autoLinkEnabledProperty.setValue(entryEditorPreferences.autoLinkFilesEnabled());
         enableSciteTabProperty.setValue(entryEditorPreferences.shouldShowSciteTab());
         showUserCommentsProperty.setValue(entryEditorPreferences.shouldShowUserCommentsFields());
@@ -93,17 +98,20 @@ public class EntryEditorTabViewModel implements PreferenceTabViewModel {
     public void storeSettings() {
         // entryEditorPreferences.setEntryEditorTabList();
         entryEditorPreferences.setShouldOpenOnNewEntry(openOnNewEntryProperty.getValue());
-        entryEditorPreferences.setShouldShowRecommendationsTab(enableRelatedArticlesTabProperty.getValue());
+        entryEditorPreferences.setShouldShowRecommendationsTab(
+                enableRelatedArticlesTabProperty.getValue());
         entryEditorPreferences.setShouldShowAiSummaryTab(enableAiSummaryTabProperty.getValue());
         entryEditorPreferences.setShouldShowAiChatTab(enableAiChatTabProperty.getValue());
         mrDlibPreferences.setAcceptRecommendations(acceptRecommendationsProperty.getValue());
-        entryEditorPreferences.setShouldShowLatexCitationsTab(enableLatexCitationsTabProperty.getValue());
+        entryEditorPreferences.setShouldShowLatexCitationsTab(
+                enableLatexCitationsTabProperty.getValue());
         entryEditorPreferences.setShowSourceTabByDefault(defaultSourceProperty.getValue());
         entryEditorPreferences.setEnableValidation(enableValidationProperty.getValue());
         entryEditorPreferences.setAllowIntegerEditionBibtex(allowIntegerEditionProperty.getValue());
-        entryEditorPreferences.setEnableJournalPopup(journalPopupProperty.getValue()
-                ? EntryEditorPreferences.JournalPopupEnabled.ENABLED
-                : EntryEditorPreferences.JournalPopupEnabled.DISABLED);
+        entryEditorPreferences.setEnableJournalPopup(
+                journalPopupProperty.getValue()
+                        ? EntryEditorPreferences.JournalPopupEnabled.ENABLED
+                        : EntryEditorPreferences.JournalPopupEnabled.DISABLED);
         // entryEditorPreferences.setDividerPosition();
         entryEditorPreferences.setAutoLinkFilesEnabled(autoLinkEnabledProperty.getValue());
         entryEditorPreferences.setShouldShowSciteTab(enableSciteTabProperty.getValue());
@@ -117,19 +125,23 @@ public class EntryEditorTabViewModel implements PreferenceTabViewModel {
             if (parts.length != 2) {
                 dialogService.showInformationDialogAndWait(
                         Localization.lang("Error"),
-                        Localization.lang("Each line must be of the following form: 'tab:field1;field2;...;fieldN'."));
+                        Localization.lang(
+                                "Each line must be of the following form: 'tab:field1;field2;...;fieldN'."));
                 return;
             }
 
-            // Use literal string of unwanted characters specified below as opposed to exporting characters
+            // Use literal string of unwanted characters specified below as opposed to exporting
+            // characters
             // from preferences because the list of allowable characters in this particular differs
-            // i.e. ';' character is allowed in this window, but it's on the list of unwanted chars in preferences
+            // i.e. ';' character is allowed in this window, but it's on the list of unwanted chars
+            // in preferences
             String unwantedChars = "#{}()~,^&-\"'`ʹ\\";
             String testString = CitationKeyGenerator.cleanKey(parts[1], unwantedChars);
             if (!testString.equals(parts[1])) {
                 dialogService.showInformationDialogAndWait(
                         Localization.lang("Error"),
-                        Localization.lang("Field names are not allowed to contain white spaces or certain characters (%0).",
+                        Localization.lang(
+                                "Field names are not allowed to contain white spaces or certain characters (%0).",
                                 "# { } ( ) ~ , ^ & - \" ' ` ʹ \\"));
                 return;
             }

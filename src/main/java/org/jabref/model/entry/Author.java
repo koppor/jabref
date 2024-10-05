@@ -1,12 +1,12 @@
 package org.jabref.model.entry;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import org.jabref.architecture.AllowedToUseLogic;
 import org.jabref.logic.formatter.bibtexfields.RemoveWordEnclosingAndOuterEnclosingBracesFormatter;
 import org.jabref.model.strings.LatexToUnicodeAdapter;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is an immutable class that keeps information regarding single author. It is just a container for the information, with very simple methods to access it.
@@ -23,7 +23,8 @@ public class Author {
      */
     public static final Author OTHERS = new Author("", "", null, "others", null);
 
-    public static final RemoveWordEnclosingAndOuterEnclosingBracesFormatter FORMATTER = new RemoveWordEnclosingAndOuterEnclosingBracesFormatter();
+    public static final RemoveWordEnclosingAndOuterEnclosingBracesFormatter FORMATTER =
+            new RemoveWordEnclosingAndOuterEnclosingBracesFormatter();
 
     private final String givenName;
     private final String givenNameAbbreviated;
@@ -43,8 +44,18 @@ public class Author {
      * @param familyName      the last name of the author (may consist of several tokens, like "Vall{\'e}e Poussin" in "Charles Louis Xavier Joseph de la Vall{\'e}e Poussin")
      * @param nameSuffix        the junior part of the author's name (may consist of several tokens, like "Jr. III" in "Smith, Jr. III, John")
      */
-    public Author(String givenName, String givenNameAbbreviated, String namePrefix, String familyName, String nameSuffix) {
-        boolean keepBracesAtLastPart = StringUtil.isBlank(givenName) && StringUtil.isBlank(givenNameAbbreviated) && StringUtil.isBlank(namePrefix) && !StringUtil.isBlank(familyName) && StringUtil.isBlank(nameSuffix);
+    public Author(
+            String givenName,
+            String givenNameAbbreviated,
+            String namePrefix,
+            String familyName,
+            String nameSuffix) {
+        boolean keepBracesAtLastPart =
+                StringUtil.isBlank(givenName)
+                        && StringUtil.isBlank(givenNameAbbreviated)
+                        && StringUtil.isBlank(namePrefix)
+                        && !StringUtil.isBlank(familyName)
+                        && StringUtil.isBlank(nameSuffix);
 
         if (!StringUtil.isBlank(givenName)) {
             this.givenName = addDotIfAbbreviation(FORMATTER.format(givenName));
@@ -84,8 +95,9 @@ public class Author {
             return name;
         }
         // If only one character (uppercase letter), add a dot and return immediately:
-        if ((name.length() == 1) && Character.isLetter(name.charAt(0)) &&
-                Character.isUpperCase(name.charAt(0))) {
+        if ((name.length() == 1)
+                && Character.isLetter(name.charAt(0))
+                && Character.isUpperCase(name.charAt(0))) {
             return name + ".";
         }
 
@@ -105,15 +117,18 @@ public class Author {
                 }
             }
 
-            boolean currentIsUppercaseLetter = Character.isLetter(currentChar) && Character.isUpperCase(currentChar);
+            boolean currentIsUppercaseLetter =
+                    Character.isLetter(currentChar) && Character.isUpperCase(currentChar);
             if (!currentIsUppercaseLetter) {
                 // No uppercase letter, hence nothing to do
                 continue;
             }
 
-            boolean lastIsLowercaseLetter = Character.isLetter(lastChar) && Character.isLowerCase(lastChar);
+            boolean lastIsLowercaseLetter =
+                    Character.isLetter(lastChar) && Character.isLowerCase(lastChar);
             if (lastIsLowercaseLetter) {
-                // previous character was lowercase (probably an acronym like JabRef) -> don't change anything
+                // previous character was lowercase (probably an acronym like JabRef) -> don't
+                // change anything
                 continue;
             }
 
@@ -140,12 +155,16 @@ public class Author {
             char furtherChar = Character.MIN_VALUE;
             for (int j = i + 1; j < name.length(); j++) {
                 furtherChar = name.charAt(j);
-                if (Character.isWhitespace(furtherChar) || (furtherChar == '-') || (furtherChar == '~') || (furtherChar == '.')) {
+                if (Character.isWhitespace(furtherChar)
+                        || (furtherChar == '-')
+                        || (furtherChar == '~')
+                        || (furtherChar == '.')) {
                     // end of word
                     break;
                 }
 
-                boolean furtherIsUppercaseLetter = Character.isLetter(furtherChar) && Character.isUpperCase(furtherChar);
+                boolean furtherIsUppercaseLetter =
+                        Character.isLetter(furtherChar) && Character.isUpperCase(furtherChar);
                 if (!furtherIsUppercaseLetter) {
                     nextWordIsUppercase = false;
                     break;
@@ -317,7 +336,8 @@ public class Author {
     public Author latexFree() {
         if (latexFreeAuthor == null) {
             String first = getGivenName().map(LatexToUnicodeAdapter::format).orElse(null);
-            String givenNameAbbreviated = getGivenNameAbbreviated().map(LatexToUnicodeAdapter::format).orElse(null);
+            String givenNameAbbreviated =
+                    getGivenNameAbbreviated().map(LatexToUnicodeAdapter::format).orElse(null);
             String von = getNamePrefix().map(LatexToUnicodeAdapter::format).orElse(null);
             String last = getFamilyName().map(LatexToUnicodeAdapter::format).orElse(null);
             String jr = getNameSuffix().map(LatexToUnicodeAdapter::format).orElse(null);

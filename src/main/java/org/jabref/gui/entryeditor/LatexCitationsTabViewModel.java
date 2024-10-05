@@ -1,11 +1,5 @@
 package org.jabref.gui.entryeditor;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Optional;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
@@ -16,6 +10,10 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.monitor.FileAlterationListener;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.preferences.GuiPreferences;
@@ -30,13 +28,14 @@ import org.jabref.model.texparser.Citation;
 import org.jabref.model.texparser.LatexParserResult;
 import org.jabref.model.texparser.LatexParserResults;
 import org.jabref.model.util.DirectoryMonitorManager;
-
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.monitor.FileAlterationListener;
-import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Optional;
 
 public class LatexCitationsTabViewModel extends AbstractViewModel {
 
@@ -49,7 +48,10 @@ public class LatexCitationsTabViewModel extends AbstractViewModel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LatexCitationsTabViewModel.class);
     private static final String TEX_EXT = ".tex";
-    private static final IOFileFilter FILE_FILTER = FileFilterUtils.or(FileFilterUtils.suffixFileFilter(TEX_EXT), FileFilterUtils.directoryFileFilter());
+    private static final IOFileFilter FILE_FILTER =
+            FileFilterUtils.or(
+                    FileFilterUtils.suffixFileFilter(TEX_EXT),
+                    FileFilterUtils.directoryFileFilter());
     private final BibDatabaseContext databaseContext;
     private final GuiPreferences preferences;
     private final DialogService dialogService;
@@ -65,16 +67,27 @@ public class LatexCitationsTabViewModel extends AbstractViewModel {
     private FileAlterationObserver observer;
     private BibEntry currentEntry;
 
-    public LatexCitationsTabViewModel(BibDatabaseContext databaseContext,
-                                      GuiPreferences preferences,
-                                      DialogService dialogService,
-                                      DirectoryMonitorManager directoryMonitorManager) {
+    public LatexCitationsTabViewModel(
+            BibDatabaseContext databaseContext,
+            GuiPreferences preferences,
+            DialogService dialogService,
+            DirectoryMonitorManager directoryMonitorManager) {
 
         this.databaseContext = databaseContext;
         this.preferences = preferences;
         this.dialogService = dialogService;
-        this.directory = new SimpleObjectProperty<>(databaseContext.getMetaData().getLatexFileDirectory(preferences.getFilePreferences().getUserAndHost())
-                                                                   .orElse(FileUtil.getInitialDirectory(databaseContext, preferences.getFilePreferences().getWorkingDirectory())));
+        this.directory =
+                new SimpleObjectProperty<>(
+                        databaseContext
+                                .getMetaData()
+                                .getLatexFileDirectory(
+                                        preferences.getFilePreferences().getUserAndHost())
+                                .orElse(
+                                        FileUtil.getInitialDirectory(
+                                                databaseContext,
+                                                preferences
+                                                        .getFilePreferences()
+                                                        .getWorkingDirectory())));
 
         this.citationList = FXCollections.observableArrayList();
         this.status = new SimpleObjectProperty<>(Status.IN_PROGRESS);
@@ -141,16 +154,13 @@ public class LatexCitationsTabViewModel extends AbstractViewModel {
             }
 
             @Override
-            public void onDirectoryChange(File directory) {
-            }
+            public void onDirectoryChange(File directory) {}
 
             @Override
-            public void onDirectoryCreate(File directory) {
-            }
+            public void onDirectoryCreate(File directory) {}
 
             @Override
-            public void onDirectoryDelete(File directory) {
-            }
+            public void onDirectoryDelete(File directory) {}
         };
     }
 
@@ -171,24 +181,40 @@ public class LatexCitationsTabViewModel extends AbstractViewModel {
                 updateStatus();
             }
         } else {
-            searchError.set(Localization.lang("Selected entry does not have an associated citation key."));
+            searchError.set(
+                    Localization.lang("Selected entry does not have an associated citation key."));
             status.set(Status.ERROR);
         }
     }
 
     public void setLatexDirectory() {
-        DirectoryDialogConfiguration directoryDialogConfiguration = new DirectoryDialogConfiguration.Builder()
-                .withInitialDirectory(directory.get()).build();
+        DirectoryDialogConfiguration directoryDialogConfiguration =
+                new DirectoryDialogConfiguration.Builder()
+                        .withInitialDirectory(directory.get())
+                        .build();
 
-        dialogService.showDirectorySelectionDialog(directoryDialogConfiguration).ifPresent(selectedDirectory ->
-                databaseContext.getMetaData().setLatexFileDirectory(preferences.getFilePreferences().getUserAndHost(), selectedDirectory.toAbsolutePath()));
+        dialogService
+                .showDirectorySelectionDialog(directoryDialogConfiguration)
+                .ifPresent(
+                        selectedDirectory ->
+                                databaseContext
+                                        .getMetaData()
+                                        .setLatexFileDirectory(
+                                                preferences.getFilePreferences().getUserAndHost(),
+                                                selectedDirectory.toAbsolutePath()));
 
         checkAndUpdateDirectory();
     }
 
     private void checkAndUpdateDirectory() {
-        Path newDirectory = databaseContext.getMetaData().getLatexFileDirectory(preferences.getFilePreferences().getUserAndHost())
-                                           .orElse(FileUtil.getInitialDirectory(databaseContext, preferences.getFilePreferences().getWorkingDirectory()));
+        Path newDirectory =
+                databaseContext
+                        .getMetaData()
+                        .getLatexFileDirectory(preferences.getFilePreferences().getUserAndHost())
+                        .orElse(
+                                FileUtil.getInitialDirectory(
+                                        databaseContext,
+                                        preferences.getFilePreferences().getWorkingDirectory()));
 
         if (!newDirectory.equals(directory.get())) {
             status.set(Status.IN_PROGRESS);
@@ -204,16 +230,20 @@ public class LatexCitationsTabViewModel extends AbstractViewModel {
     }
 
     private void updateStatus() {
-        UiTaskExecutor.runInJavaFXThread(() -> {
-            if (!Files.exists(directory.get())) {
-                searchError.set(Localization.lang("Current search directory does not exist: %0", directory.get()));
-                status.set(Status.ERROR);
-            } else if (citationList.isEmpty()) {
-                status.set(Status.NO_RESULTS);
-            } else {
-                status.set(Status.CITATIONS_FOUND);
-            }
-        });
+        UiTaskExecutor.runInJavaFXThread(
+                () -> {
+                    if (!Files.exists(directory.get())) {
+                        searchError.set(
+                                Localization.lang(
+                                        "Current search directory does not exist: %0",
+                                        directory.get()));
+                        status.set(Status.ERROR);
+                    } else if (citationList.isEmpty()) {
+                        status.set(Status.NO_RESULTS);
+                    } else {
+                        status.set(Status.CITATIONS_FOUND);
+                    }
+                });
     }
 
     public ObjectProperty<Path> directoryProperty() {

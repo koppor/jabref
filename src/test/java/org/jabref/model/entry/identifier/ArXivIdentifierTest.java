@@ -1,11 +1,11 @@
 package org.jabref.model.entry.identifier;
 
-import java.net.URI;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.net.URI;
+import java.util.Optional;
 
 class ArXivIdentifierTest {
 
@@ -54,7 +54,8 @@ class ArXivIdentifierTest {
     @Test
     void acceptLegacyEprint() {
         Optional<ArXivIdentifier> parsed = ArXivIdentifier.parse("astro-ph.GT/1234567");
-        assertEquals(Optional.of(new ArXivIdentifier("astro-ph.GT/1234567", "astro-ph.GT")), parsed);
+        assertEquals(
+                Optional.of(new ArXivIdentifier("astro-ph.GT/1234567", "astro-ph.GT")), parsed);
     }
 
     @Test
@@ -79,7 +80,8 @@ class ArXivIdentifierTest {
 
     @Test
     void parseHttpsUrl() throws Exception {
-        Optional<ArXivIdentifier> parsed = ArXivIdentifier.parse("https://arxiv.org/abs/1502.05795");
+        Optional<ArXivIdentifier> parsed =
+                ArXivIdentifier.parse("https://arxiv.org/abs/1502.05795");
 
         assertEquals(Optional.of(new ArXivIdentifier("1502.05795", "")), parsed);
     }
@@ -93,14 +95,16 @@ class ArXivIdentifierTest {
 
     @Test
     void parseUrlWithVersion() throws Exception {
-        Optional<ArXivIdentifier> parsed = ArXivIdentifier.parse("http://arxiv.org/abs/1502.05795v1");
+        Optional<ArXivIdentifier> parsed =
+                ArXivIdentifier.parse("http://arxiv.org/abs/1502.05795v1");
 
         assertEquals(Optional.of(new ArXivIdentifier("1502.05795", "1", "")), parsed);
     }
 
     @Test
     void parseOldUrlWithVersion() throws Exception {
-        Optional<ArXivIdentifier> parsed = ArXivIdentifier.parse("http://arxiv.org/pdf/hep-ex/0307015v1");
+        Optional<ArXivIdentifier> parsed =
+                ArXivIdentifier.parse("http://arxiv.org/pdf/hep-ex/0307015v1");
 
         assertEquals(Optional.of(new ArXivIdentifier("hep-ex/0307015", "1", "hep-ex")), parsed);
     }
@@ -149,25 +153,30 @@ class ArXivIdentifierTest {
 
     @Test
     void acceptUrlHttpEprint() {
-        Optional<ArXivIdentifier> parsed = ArXivIdentifier.parse("http://arxiv.org/abs/0706.0001v1");
+        Optional<ArXivIdentifier> parsed =
+                ArXivIdentifier.parse("http://arxiv.org/abs/0706.0001v1");
         assertEquals(Optional.of(new ArXivIdentifier("0706.0001", "v1", "")), parsed);
     }
 
     @Test
     void acceptUrlHttpsEprint() {
-        Optional<ArXivIdentifier> parsed = ArXivIdentifier.parse("https://arxiv.org/abs/0706.0001v1");
+        Optional<ArXivIdentifier> parsed =
+                ArXivIdentifier.parse("https://arxiv.org/abs/0706.0001v1");
         assertEquals(Optional.of(new ArXivIdentifier("0706.0001", "v1", "")), parsed);
     }
 
     @Test
     void rejectUrlOtherDomainEprint() {
-        Optional<ArXivIdentifier> parsed = ArXivIdentifier.parse("https://asdf.org/abs/0706.0001v1");
+        Optional<ArXivIdentifier> parsed =
+                ArXivIdentifier.parse("https://asdf.org/abs/0706.0001v1");
         assertEquals(Optional.empty(), parsed);
     }
 
     @Test
     void constructCorrectURLForEprint() throws Exception {
         Optional<ArXivIdentifier> parsed = ArXivIdentifier.parse("0706.0001v1");
-        assertEquals(Optional.of(new URI("https://arxiv.org/abs/0706.0001v1")), parsed.get().getExternalURI());
+        assertEquals(
+                Optional.of(new URI("https://arxiv.org/abs/0706.0001v1")),
+                parsed.get().getExternalURI());
     }
 }

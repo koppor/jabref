@@ -1,13 +1,5 @@
 package org.jabref.logic.importer.fetcher.isbntobibtex;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Pattern;
-
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.importer.EntryBasedFetcher;
 import org.jabref.logic.importer.FetcherException;
@@ -19,9 +11,16 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.identifier.ISBN;
 import org.jabref.model.util.OptionalUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * Fetcher to generate the Bibtex entry from an ISBN.
@@ -39,7 +38,8 @@ public class IsbnFetcher implements EntryBasedFetcher, IdBasedFetcher {
 
     public IsbnFetcher(ImportFormatPreferences importFormatPreferences) {
         this.importFormatPreferences = importFormatPreferences;
-        OpenLibraryIsbnFetcher openLibraryIsbnFetcher = new OpenLibraryIsbnFetcher(importFormatPreferences);
+        OpenLibraryIsbnFetcher openLibraryIsbnFetcher =
+                new OpenLibraryIsbnFetcher(importFormatPreferences);
         this.gvkIsbnFetcher = new GvkFetcher(importFormatPreferences);
         this.retryIsbnFetcher = new ArrayList<>();
         this.addRetryFetcher(openLibraryIsbnFetcher);
@@ -71,13 +71,17 @@ public class IsbnFetcher implements EntryBasedFetcher, IdBasedFetcher {
                 throw ex;
             }
         } finally {
-            // do not move the iterator in the loop as this would always return a new one and thus create and endless loop
+            // do not move the iterator in the loop as this would always return a new one and thus
+            // create and endless loop
             Iterator<AbstractIsbnFetcher> iterator = retryIsbnFetcher.iterator();
             while (bibEntry.isEmpty() && iterator.hasNext()) {
                 LOGGER.debug("Trying using the alternate ISBN fetchers to find an entry.");
 
                 AbstractIsbnFetcher fetcher = iterator.next();
-                LOGGER.debug("No entry found for ISBN {}; trying {} next.", identifier, fetcher.getName());
+                LOGGER.debug(
+                        "No entry found for ISBN {}; trying {} next.",
+                        identifier,
+                        fetcher.getName());
                 bibEntry = fetcher.performSearchById(identifier);
             }
         }

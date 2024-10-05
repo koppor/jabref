@@ -1,15 +1,10 @@
 package org.jabref.logic.search.indexing;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-
-import org.jabref.model.strings.StringUtil;
+import static org.jabref.model.search.SearchFieldConstants.ANNOTATIONS;
+import static org.jabref.model.search.SearchFieldConstants.CONTENT;
+import static org.jabref.model.search.SearchFieldConstants.MODIFIED;
+import static org.jabref.model.search.SearchFieldConstants.PAGE_NUMBER;
+import static org.jabref.model.search.SearchFieldConstants.PATH;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -20,14 +15,18 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.jabref.model.strings.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jabref.model.search.SearchFieldConstants.ANNOTATIONS;
-import static org.jabref.model.search.SearchFieldConstants.CONTENT;
-import static org.jabref.model.search.SearchFieldConstants.MODIFIED;
-import static org.jabref.model.search.SearchFieldConstants.PAGE_NUMBER;
-import static org.jabref.model.search.SearchFieldConstants.PATH;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /**
  * Utility class for reading the data from LinkedFiles of a BibEntry for Lucene.
@@ -36,13 +35,17 @@ public final class DocumentReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DocumentReader.class);
     private static final Pattern HYPHEN_LINEBREAK_PATTERN = Pattern.compile("\\-\n");
-    private static final Pattern LINEBREAK_WITHOUT_PERIOD_PATTERN = Pattern.compile("([^\\\\.])\\n");
+    private static final Pattern LINEBREAK_WITHOUT_PERIOD_PATTERN =
+            Pattern.compile("([^\\\\.])\\n");
 
     public List<Document> readPdfContents(String fileLink, Path resolvedPdfPath) {
         List<Document> pages = new ArrayList<>();
         try (PDDocument pdfDocument = Loader.loadPDF(resolvedPdfPath.toFile())) {
             int numberOfPages = pdfDocument.getNumberOfPages();
-            LOGGER.debug("Reading file {} content with {} pages", resolvedPdfPath.toAbsolutePath(), numberOfPages);
+            LOGGER.debug(
+                    "Reading file {} content with {} pages",
+                    resolvedPdfPath.toAbsolutePath(),
+                    numberOfPages);
             for (int pageNumber = 1; pageNumber <= numberOfPages; pageNumber++) {
                 Document newDocument = new Document();
                 addIdentifiers(newDocument, fileLink);
@@ -90,7 +93,8 @@ public final class DocumentReader {
         addStringField(newDocument, PAGE_NUMBER.toString(), String.valueOf(pageNumber));
     }
 
-    private void addContentIfNotEmpty(PDDocument pdfDocument, Document newDocument, Path resolvedPath, int pageNumber) {
+    private void addContentIfNotEmpty(
+            PDDocument pdfDocument, Document newDocument, Path resolvedPath, int pageNumber) {
         PDFTextStripper pdfTextStripper = new PDFTextStripper();
         pdfTextStripper.setLineSeparator("\n");
         pdfTextStripper.setStartPage(pageNumber);
@@ -99,22 +103,29 @@ public final class DocumentReader {
         try {
             String pdfContent = pdfTextStripper.getText(pdfDocument);
             if (StringUtil.isNotBlank(pdfContent)) {
-                newDocument.add(new TextField(CONTENT.toString(), mergeLines(pdfContent), Field.Store.YES));
+                newDocument.add(
+                        new TextField(CONTENT.toString(), mergeLines(pdfContent), Field.Store.YES));
             }
 
-            // Apache PDFTextStripper is 1-based. See {@link org.apache.pdfbox.text.PDFTextStripper.processPages}
+            // Apache PDFTextStripper is 1-based. See {@link
+            // org.apache.pdfbox.text.PDFTextStripper.processPages}
             PDPage page = pdfDocument.getPage(pageNumber - 1);
-            List<String> annotations = page.getAnnotations()
-                                           .stream()
-                                           .map(PDAnnotation::getContents)
-                                           .filter(Objects::nonNull)
-                                           .toList();
+            List<String> annotations =
+                    page.getAnnotations().stream()
+                            .map(PDAnnotation::getContents)
+                            .filter(Objects::nonNull)
+                            .toList();
 
             if (!annotations.isEmpty()) {
-                newDocument.add(new TextField(ANNOTATIONS.toString(), String.join("\n", annotations), Field.Store.YES));
+                newDocument.add(
+                        new TextField(
+                                ANNOTATIONS.toString(),
+                                String.join("\n", annotations),
+                                Field.Store.YES));
             }
         } catch (IOException e) {
-            LOGGER.warn("Could not read page {} of  {}", pageNumber, resolvedPath.toAbsolutePath(), e);
+            LOGGER.warn(
+                    "Could not read page {} of  {}", pageNumber, resolvedPath.toAbsolutePath(), e);
         }
     }
 

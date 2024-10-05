@@ -1,21 +1,20 @@
 package org.jabref.logic.util.io;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.types.StandardEntryType;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class CitationKeyBasedFileFinderTest {
 
@@ -75,7 +74,11 @@ class CitationKeyBasedFileFinderTest {
         Files.createFile(pdfsDir.resolve("HipKro03a - Hello second paper.pdf"));
         FileFinder fileFinder = new CitationKeyBasedFileFinder(false);
 
-        List<Path> results = fileFinder.findAssociatedFiles(entry, Collections.singletonList(pdfsDir), Collections.singletonList("pdf"));
+        List<Path> results =
+                fileFinder.findAssociatedFiles(
+                        entry,
+                        Collections.singletonList(pdfsDir),
+                        Collections.singletonList("pdf"));
 
         assertEquals(Collections.singletonList(pdfFile), results);
     }
@@ -85,7 +88,11 @@ class CitationKeyBasedFileFinderTest {
         Path secondPdfFile = Files.createFile(pdfsDir.resolve("HipKro03_Hello second paper.pdf"));
         FileFinder fileFinder = new CitationKeyBasedFileFinder(false);
 
-        List<Path> results = fileFinder.findAssociatedFiles(entry, Collections.singletonList(pdfsDir), Collections.singletonList("pdf"));
+        List<Path> results =
+                fileFinder.findAssociatedFiles(
+                        entry,
+                        Collections.singletonList(pdfsDir),
+                        Collections.singletonList("pdf"));
 
         assertEquals(Arrays.asList(secondPdfFile, pdfFile), results);
     }
@@ -109,7 +116,11 @@ class CitationKeyBasedFileFinderTest {
         Path testFile = Files.createFile(pdfsDir.resolve("_test_file.pdf"));
         FileFinder fileFinder = new CitationKeyBasedFileFinder(false);
 
-        List<Path> results = fileFinder.findAssociatedFiles(entryWithUnsafeCitationKey, Collections.singletonList(pdfsDir), Collections.singletonList("pdf"));
+        List<Path> results =
+                fileFinder.findAssociatedFiles(
+                        entryWithUnsafeCitationKey,
+                        Collections.singletonList(pdfsDir),
+                        Collections.singletonList("pdf"));
 
         assertEquals(Collections.singletonList(testFile), results);
     }
@@ -122,7 +133,11 @@ class CitationKeyBasedFileFinderTest {
         Path testFile = Files.createFile(pdfsDir.resolve("test_test__test_.pdf"));
         FileFinder fileFinder = new CitationKeyBasedFileFinder(true);
 
-        List<Path> results = fileFinder.findAssociatedFiles(entryWithUnsafeCitationKey, Collections.singletonList(pdfsDir), Collections.singletonList("pdf"));
+        List<Path> results =
+                fileFinder.findAssociatedFiles(
+                        entryWithUnsafeCitationKey,
+                        Collections.singletonList(pdfsDir),
+                        Collections.singletonList("pdf"));
 
         assertNotEquals(Collections.singletonList(testFile), results);
     }

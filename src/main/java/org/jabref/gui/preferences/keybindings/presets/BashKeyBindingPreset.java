@@ -1,9 +1,9 @@
 package org.jabref.gui.preferences.keybindings.presets;
 
+import org.jabref.gui.keyboard.KeyBinding;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jabref.gui.keyboard.KeyBinding;
 
 public class BashKeyBindingPreset implements KeyBindingPreset {
 

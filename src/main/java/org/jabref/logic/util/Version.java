@@ -1,5 +1,11 @@
 package org.jabref.logic.util;
 
+import kong.unirest.core.json.JSONArray;
+import kong.unirest.core.json.JSONObject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,11 +18,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import kong.unirest.core.json.JSONArray;
-import kong.unirest.core.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Represents the Application Version with the major and minor number, the full Version String and if it's a developer version
  */
@@ -26,10 +27,13 @@ public class Version {
 
     private static final Version UNKNOWN_VERSION = new Version();
 
-    private final static Pattern VERSION_PATTERN = Pattern.compile("(?<major>\\d+)(\\.(?<minor>\\d+))?(\\.(?<patch>\\d+))?(?<stage>-alpha|-beta)?(?<num>\\d+)?(?<dev>-?dev)?.*");
-    private final static Pattern CI_SUFFIX_PATTERN = Pattern.compile("-ci\\.\\d+");
+    private static final Pattern VERSION_PATTERN =
+            Pattern.compile(
+                    "(?<major>\\d+)(\\.(?<minor>\\d+))?(\\.(?<patch>\\d+))?(?<stage>-alpha|-beta)?(?<num>\\d+)?(?<dev>-?dev)?.*");
+    private static final Pattern CI_SUFFIX_PATTERN = Pattern.compile("-ci\\.\\d+");
 
-    private static final String JABREF_GITHUB_RELEASES = "https://api.github.com/repos/JabRef/JabRef/releases";
+    private static final String JABREF_GITHUB_RELEASES =
+            "https://api.github.com/repos/JabRef/JabRef/releases";
 
     private String fullVersion = BuildInfo.UNKNOWN_VERSION;
     private int major = -1;
@@ -42,8 +46,7 @@ public class Version {
     /**
      * Dummy constructor to create a local object (and  {@link Version#UNKNOWN_VERSION})
      */
-    private Version() {
-    }
+    private Version() {}
 
     /**
      * Tinylog does not allow for altering existing loging configuraitons after the logger was initialized .
@@ -58,7 +61,9 @@ public class Version {
      * @return the parsed version or {@link Version#UNKNOWN_VERSION} if an error occurred
      */
     public static Version parse(String version) {
-        if ((version == null) || version.isEmpty() || version.equals(BuildInfo.UNKNOWN_VERSION)
+        if ((version == null)
+                || version.isEmpty()
+                || version.equals(BuildInfo.UNKNOWN_VERSION)
                 || "${version}".equals(version)) {
             return UNKNOWN_VERSION;
         }
@@ -82,10 +87,14 @@ public class Version {
                 parsedVersion.patch = patchString == null ? 0 : Integer.parseInt(patchString);
 
                 String versionStageString = matcher.group("stage");
-                parsedVersion.developmentStage = versionStageString == null ? DevelopmentStage.STABLE : DevelopmentStage.parse(versionStageString);
+                parsedVersion.developmentStage =
+                        versionStageString == null
+                                ? DevelopmentStage.STABLE
+                                : DevelopmentStage.parse(versionStageString);
 
                 String stageNumString = matcher.group("num");
-                parsedVersion.developmentNum = stageNumString == null ? 0 : Integer.parseInt(stageNumString);
+                parsedVersion.developmentNum =
+                        stageNumString == null ? 0 : Integer.parseInt(stageNumString);
 
                 parsedVersion.isDevelopmentVersion = matcher.group("dev") != null;
             } catch (NumberFormatException e) {
@@ -106,14 +115,17 @@ public class Version {
      * Grabs all the available releases from the GitHub repository
      */
     public static List<Version> getAllAvailableVersions() throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) URI.create(JABREF_GITHUB_RELEASES).toURL().openConnection();
+        HttpURLConnection connection =
+                (HttpURLConnection) URI.create(JABREF_GITHUB_RELEASES).toURL().openConnection();
         connection.setRequestProperty("Accept-Charset", "UTF-8");
-        try (BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+        try (BufferedReader rd =
+                new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
             JSONArray objects = new JSONArray(rd.readLine());
             List<Version> versions = new ArrayList<>(objects.length());
             for (int i = 0; i < objects.length(); i++) {
                 JSONObject jsonObject = objects.getJSONObject(i);
-                Version version = Version.parse(jsonObject.getString("tag_name").replaceFirst("v", ""));
+                Version version =
+                        Version.parse(jsonObject.getString("tag_name").replaceFirst("v", ""));
                 versions.add(version);
             }
             connection.disconnect();
@@ -154,7 +166,8 @@ public class Version {
                         if (this.getDevelopmentNum() > otherVersion.getDevelopmentNum()) {
                             return true;
                         } else if (this.getDevelopmentNum() == otherVersion.getDevelopmentNum()) {
-                            // if the stage is equal check if this version is in development and the other is not
+                            // if the stage is equal check if this version is in development and the
+                            // other is not
                             return !this.isDevelopmentVersion && otherVersion.isDevelopmentVersion;
                         }
                     }
@@ -186,7 +199,8 @@ public class Version {
      * @return True if this version should be updated to the given one
      */
     public boolean shouldBeUpdatedTo(Version otherVersion) {
-        // ignoring the other version if it is not stable, except if this version itself is not stable
+        // ignoring the other version if it is not stable, except if this version itself is not
+        // stable
         if (developmentStage == Version.DevelopmentStage.STABLE
                 && otherVersion.developmentStage != Version.DevelopmentStage.STABLE) {
             return false;
@@ -227,24 +241,21 @@ public class Version {
         if (isDevelopmentVersion) {
             return "https://github.com/JabRef/jabref/blob/main/CHANGELOG.md#unreleased";
         } else {
-            StringBuilder changelogLink = new StringBuilder()
-                    .append("https://github.com/JabRef/jabref/blob/v")
-                    .append(this.getMajor())
-                    .append(".")
-                    .append(this.getMinor());
+            StringBuilder changelogLink =
+                    new StringBuilder()
+                            .append("https://github.com/JabRef/jabref/blob/v")
+                            .append(this.getMajor())
+                            .append(".")
+                            .append(this.getMinor());
 
             if (this.getPatch() != 0) {
-                changelogLink
-                        .append(".")
-                        .append(this.getPatch());
+                changelogLink.append(".").append(this.getPatch());
             }
 
-            changelogLink
-                    .append(this.developmentStage.stage);
+            changelogLink.append(this.developmentStage.stage);
 
             if (this.getDevelopmentNum() != 0) {
-                changelogLink
-                        .append(this.getDevelopmentNum());
+                changelogLink.append(this.getDevelopmentNum());
             }
 
             changelogLink.append("/CHANGELOG.md");
@@ -286,6 +297,7 @@ public class Version {
          * describes how stable this stage is, the higher the better
          */
         private final int stability;
+
         private final String stage;
 
         DevelopmentStage(String stage, int stability) {

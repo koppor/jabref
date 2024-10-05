@@ -1,5 +1,9 @@
 package org.jabref.gui.documentviewer;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,9 +27,6 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.LinkedFile;
-
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
 
 public class DocumentViewerView extends BaseDialog<Void> {
 
@@ -51,11 +52,10 @@ public class DocumentViewerView extends BaseDialog<Void> {
         this.setTitle(Localization.lang("Document viewer"));
         this.initModality(Modality.NONE);
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
-        // Remove button bar at bottom, but add close button to keep the dialog closable by clicking the "x" window symbol
+        // Remove button bar at bottom, but add close button to keep the dialog closable by clicking
+        // the "x" window symbol
         getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
         getDialogPane().getChildren().removeIf(ButtonBar.class::isInstance);
     }
@@ -73,23 +73,30 @@ public class DocumentViewerView extends BaseDialog<Void> {
 
     private void setupModeButtons() {
         // make sure that always one toggle is selected
-        toggleGroupMode.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
-            if (newToggle == null) {
-                oldToggle.setSelected(true);
-            }
-        });
+        toggleGroupMode
+                .selectedToggleProperty()
+                .addListener(
+                        (observable, oldToggle, newToggle) -> {
+                            if (newToggle == null) {
+                                oldToggle.setSelected(true);
+                            }
+                        });
 
-        modeLive.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                viewModel.setLiveMode(true);
-            }
-        });
+        modeLive.selectedProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                viewModel.setLiveMode(true);
+                            }
+                        });
 
-        modeLock.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                viewModel.setLiveMode(false);
-            }
-        });
+        modeLock.selectedProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue) {
+                                viewModel.setLiveMode(false);
+                            }
+                        });
     }
 
     private void setupScrollbar() {
@@ -103,39 +110,50 @@ public class DocumentViewerView extends BaseDialog<Void> {
         currentPage.setTextFormatter(integerFormatter);
         maxPages.textProperty().bind(viewModel.maxPagesProperty().asString());
         previousButton.setDisable(true);
-        viewModel.currentPageProperty().addListener((observable, oldValue, newValue) -> {
-            nextButton.setDisable(newValue == viewModel.maxPagesProperty().get());
-            previousButton.setDisable(newValue == 1);
-        });
+        viewModel
+                .currentPageProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            nextButton.setDisable(newValue == viewModel.maxPagesProperty().get());
+                            previousButton.setDisable(newValue == 1);
+                        });
     }
 
     private void setupFileChoice() {
-        ViewModelListCellFactory<LinkedFile> cellFactory = new ViewModelListCellFactory<LinkedFile>()
-                .withText(LinkedFile::getLink);
+        ViewModelListCellFactory<LinkedFile> cellFactory =
+                new ViewModelListCellFactory<LinkedFile>().withText(LinkedFile::getLink);
         fileChoice.setButtonCell(cellFactory.call(null));
         fileChoice.setCellFactory(cellFactory);
-        fileChoice.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> viewModel.switchToFile(newValue));
+        fileChoice
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> viewModel.switchToFile(newValue));
         // We always want that the first item is selected after a change
         // This also automatically selects the first file on the initial load
         Stage stage = (Stage) getDialogPane().getScene().getWindow();
-        fileChoice.itemsProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.isEmpty()) {
-                stage.close();
-            } else {
-                fileChoice.getSelectionModel().selectFirst();
-            }
-        });
+        fileChoice
+                .itemsProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue.isEmpty()) {
+                                stage.close();
+                            } else {
+                                fileChoice.getSelectionModel().selectFirst();
+                            }
+                        });
         fileChoice.itemsProperty().bind(viewModel.filesProperty());
     }
 
     private void setupViewer() {
         viewer = new DocumentViewerControl(taskExecutor);
-        viewModel.currentDocumentProperty().addListener((observable, oldDocument, newDocument) -> {
-            if (newDocument != null) {
-                viewer.show(newDocument);
-            }
-        });
+        viewModel
+                .currentDocumentProperty()
+                .addListener(
+                        (observable, oldDocument, newDocument) -> {
+                            if (newDocument != null) {
+                                viewer.show(newDocument);
+                            }
+                        });
         viewModel.currentPageProperty().bindBidirectional(viewer.currentPageProperty());
         mainPane.setCenter(viewer);
     }

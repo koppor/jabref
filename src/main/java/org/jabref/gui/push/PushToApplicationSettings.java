@@ -1,8 +1,5 @@
 package org.jabref.gui.push;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -17,6 +14,9 @@ import org.jabref.gui.util.FileDialogConfiguration;
 import org.jabref.logic.FilePreferences;
 import org.jabref.logic.l10n.Localization;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PushToApplicationSettings {
 
     protected final Label commandLabel;
@@ -25,10 +25,11 @@ public class PushToApplicationSettings {
     protected final PushToApplicationPreferences preferences;
     protected final AbstractPushToApplication application;
 
-    public PushToApplicationSettings(PushToApplication application,
-                                     DialogService dialogService,
-                                     FilePreferences filePreferences,
-                                     PushToApplicationPreferences preferences) {
+    public PushToApplicationSettings(
+            PushToApplication application,
+            DialogService dialogService,
+            FilePreferences filePreferences,
+            PushToApplicationPreferences preferences) {
         this.application = (AbstractPushToApplication) application;
         this.preferences = preferences;
 
@@ -46,8 +47,10 @@ public class PushToApplicationSettings {
         browse.setPrefHeight(20.0);
         browse.setPrefWidth(20.0);
 
-        // In case the application name and the actual command is not the same, add the command in brackets
-        StringBuilder commandLine = new StringBuilder(Localization.lang("Path to %0", application.getDisplayName()));
+        // In case the application name and the actual command is not the same, add the command in
+        // brackets
+        StringBuilder commandLine =
+                new StringBuilder(Localization.lang("Path to %0", application.getDisplayName()));
         if (this.application.getCommandName() == null) {
             commandLine.append(':');
         } else {
@@ -59,10 +62,15 @@ public class PushToApplicationSettings {
         path.setText(preferences.getCommandPaths().get(this.application.getDisplayName()));
         settingsPane.add(path, 1, 0);
 
-        FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
-                .withInitialDirectory(filePreferences.getWorkingDirectory()).build();
-        browse.setOnAction(e -> dialogService.showFileOpenDialog(fileDialogConfiguration)
-                                             .ifPresent(f -> path.setText(f.toAbsolutePath().toString())));
+        FileDialogConfiguration fileDialogConfiguration =
+                new FileDialogConfiguration.Builder()
+                        .withInitialDirectory(filePreferences.getWorkingDirectory())
+                        .build();
+        browse.setOnAction(
+                e ->
+                        dialogService
+                                .showFileOpenDialog(fileDialogConfiguration)
+                                .ifPresent(f -> path.setText(f.toAbsolutePath().toString())));
         settingsPane.add(browse, 2, 0);
 
         ColumnConstraints textConstraints = new ColumnConstraints();
@@ -70,7 +78,9 @@ public class PushToApplicationSettings {
         pathConstraints.setHgrow(Priority.ALWAYS);
         ColumnConstraints browseConstraints = new ColumnConstraints(20.0);
         browseConstraints.setHgrow(Priority.NEVER);
-        settingsPane.getColumnConstraints().addAll(textConstraints, pathConstraints, browseConstraints);
+        settingsPane
+                .getColumnConstraints()
+                .addAll(textConstraints, pathConstraints, browseConstraints);
     }
 
     /**

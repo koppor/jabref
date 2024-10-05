@@ -1,16 +1,6 @@
 package org.jabref.logic.crawler;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.charset.UnsupportedCharsetException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
 import org.jabref.logic.database.DatabaseMerger;
 import org.jabref.logic.exporter.AtomicFileWriter;
@@ -36,10 +26,19 @@ import org.jabref.model.study.Study;
 import org.jabref.model.study.StudyDatabase;
 import org.jabref.model.study.StudyQuery;
 import org.jabref.model.util.FileUpdateMonitor;
-
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This class manages all aspects of the study process related to the repository.
@@ -57,7 +56,8 @@ public class StudyRepository {
     private static final Pattern MATCH_COLON = Pattern.compile(":");
     private static final Pattern MATCH_ILLEGAL_CHARACTERS = Pattern.compile("[^A-Za-z0-9_.\\s=-]");
 
-    // Currently we make assumptions about the configuration: the remotes, work and search branch names
+    // Currently we make assumptions about the configuration: the remotes, work and search branch
+    // names
     private static final String REMOTE = "origin";
     private static final String WORK_BRANCH = "work";
     private static final String SEARCH_BRANCH = "search";
@@ -80,11 +80,13 @@ public class StudyRepository {
      * @throws IOException              Thrown if the given repository does not exist, or the study definition file
      *                                  does not exist
      */
-    public StudyRepository(Path pathToRepository,
-                           SlrGitHandler gitHandler,
-                           CliPreferences preferences,
-                           FileUpdateMonitor fileUpdateMonitor,
-                           BibEntryTypesManager bibEntryTypesManager) throws IOException {
+    public StudyRepository(
+            Path pathToRepository,
+            SlrGitHandler gitHandler,
+            CliPreferences preferences,
+            FileUpdateMonitor fileUpdateMonitor,
+            BibEntryTypesManager bibEntryTypesManager)
+            throws IOException {
         this.repositoryPath = pathToRepository;
         this.gitHandler = gitHandler;
         this.preferences = preferences;
@@ -103,7 +105,8 @@ public class StudyRepository {
             LOGGER.error("Could not checkout work branch");
         }
         if (Files.notExists(studyDefinitionFile)) {
-            throw new IOException("The study definition file does not exist in the given repository.");
+            throw new IOException(
+                    "The study definition file does not exist in the given repository.");
         }
         study = parseStudyFile();
         try {
@@ -114,8 +117,13 @@ public class StudyRepository {
             gitHandler.createCommitOnCurrentBranch(updateRepositoryStructureMessage, false);
 
             gitHandler.checkoutBranch(SEARCH_BRANCH);
-            // If study definition does not exist on this branch or was changed on work branch, copy it from work
-            boolean studyDefinitionDoesNotExistOrChanged = !(Files.exists(studyDefinitionFile) && new StudyYamlParser().parseStudyYamlFile(studyDefinitionFile).equals(study));
+            // If study definition does not exist on this branch or was changed on work branch, copy
+            // it from work
+            boolean studyDefinitionDoesNotExistOrChanged =
+                    !(Files.exists(studyDefinitionFile)
+                            && new StudyYamlParser()
+                                    .parseStudyYamlFile(studyDefinitionFile)
+                                    .equals(study));
             if (studyDefinitionDoesNotExistOrChanged) {
                 new StudyYamlParser().writeStudyYamlFile(study, studyDefinitionFile);
             }
@@ -134,11 +142,14 @@ public class StudyRepository {
     /**
      * Returns entries stored in the repository for a certain query and fetcher
      */
-    public BibDatabaseContext getFetcherResultEntries(String query, String fetcherName) throws IOException {
+    public BibDatabaseContext getFetcherResultEntries(String query, String fetcherName)
+            throws IOException {
         if (Files.exists(getPathToFetcherResultFile(query, fetcherName))) {
-            return OpenDatabase.loadDatabase(getPathToFetcherResultFile(query, fetcherName),
-                    preferences.getImportFormatPreferences(),
-                    fileUpdateMonitor).getDatabaseContext();
+            return OpenDatabase.loadDatabase(
+                            getPathToFetcherResultFile(query, fetcherName),
+                            preferences.getImportFormatPreferences(),
+                            fileUpdateMonitor)
+                    .getDatabaseContext();
         }
         return new BibDatabaseContext();
     }
@@ -148,9 +159,11 @@ public class StudyRepository {
      */
     public BibDatabaseContext getQueryResultEntries(String query) throws IOException {
         if (Files.exists(getPathToQueryResultFile(query))) {
-            return OpenDatabase.loadDatabase(getPathToQueryResultFile(query),
-                    preferences.getImportFormatPreferences(),
-                    fileUpdateMonitor).getDatabaseContext();
+            return OpenDatabase.loadDatabase(
+                            getPathToQueryResultFile(query),
+                            preferences.getImportFormatPreferences(),
+                            fileUpdateMonitor)
+                    .getDatabaseContext();
         }
         return new BibDatabaseContext();
     }
@@ -160,9 +173,11 @@ public class StudyRepository {
      */
     public BibDatabaseContext getStudyResultEntries() throws IOException {
         if (Files.exists(getPathToStudyResultFile())) {
-            return OpenDatabase.loadDatabase(getPathToStudyResultFile(),
-                    preferences.getImportFormatPreferences(),
-                    fileUpdateMonitor).getDatabaseContext();
+            return OpenDatabase.loadDatabase(
+                            getPathToStudyResultFile(),
+                            preferences.getImportFormatPreferences(),
+                            fileUpdateMonitor)
+                    .getDatabaseContext();
         }
         return new BibDatabaseContext();
     }
@@ -183,10 +198,9 @@ public class StudyRepository {
      * @return List of all queries as Strings.
      */
     public List<String> getSearchQueryStrings() {
-        return study.getQueries()
-                    .parallelStream()
-                    .map(StudyQuery::getQuery)
-                    .collect(Collectors.toList());
+        return study.getQueries().parallelStream()
+                .map(StudyQuery::getQuery)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -196,10 +210,9 @@ public class StudyRepository {
      * @throws IllegalArgumentException If a transformation from Library entry to LibraryDefinition fails
      */
     public List<StudyDatabase> getActiveLibraryEntries() throws IllegalArgumentException {
-        return study.getDatabases()
-                    .parallelStream()
-                    .filter(StudyDatabase::isEnabled)
-                    .collect(Collectors.toList());
+        return study.getDatabases().parallelStream()
+                .filter(StudyDatabase::isEnabled)
+                .collect(Collectors.toList());
     }
 
     public Study getStudy() {
@@ -218,21 +231,24 @@ public class StudyRepository {
      *     <li>Update the remote tracking branches of the work and search branch</li>
      * </ol>
      */
-    public void persist(List<QueryResult> crawlResults) throws IOException, GitAPIException, SaveException {
+    public void persist(List<QueryResult> crawlResults)
+            throws IOException, GitAPIException, SaveException {
         updateWorkAndSearchBranch();
 
         gitHandler.checkoutBranch(SEARCH_BRANCH);
         persistResults(crawlResults);
         try {
             // First commit changes to search branch and update remote
-            String commitMessage = "Conducted search: " + LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+            String commitMessage =
+                    "Conducted search: " + LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
             boolean newSearchResults = gitHandler.createCommitOnCurrentBranch(commitMessage, false);
             gitHandler.checkoutBranch(WORK_BRANCH);
             if (!newSearchResults) {
                 return;
             }
             // Patch new results into work branch
-            gitHandler.appendLatestSearchResultsOntoCurrentBranch(commitMessage + " - Patch", SEARCH_BRANCH);
+            gitHandler.appendLatestSearchResultsOntoCurrentBranch(
+                    commitMessage + " - Patch", SEARCH_BRANCH);
             // Update both remote tracked branches
             updateRemoteSearchAndWorkBranch();
         } catch (GitAPIException e) {
@@ -281,14 +297,18 @@ public class StudyRepository {
      */
     private void setUpRepositoryStructureForQueriesAndFetchers() throws IOException {
         // Cannot use stream here since IOException has to be thrown
-        StudyCatalogToFetcherConverter converter = new StudyCatalogToFetcherConverter(
-                this.getActiveLibraryEntries(),
-                preferences.getImportFormatPreferences(),
-                preferences.getImporterPreferences());
+        StudyCatalogToFetcherConverter converter =
+                new StudyCatalogToFetcherConverter(
+                        this.getActiveLibraryEntries(),
+                        preferences.getImportFormatPreferences(),
+                        preferences.getImporterPreferences());
         for (String query : this.getSearchQueryStrings()) {
             createQueryResultFolder(query);
-            converter.getActiveFetchers()
-                     .forEach(searchBasedFetcher -> createFetcherResultFile(query, searchBasedFetcher));
+            converter
+                    .getActiveFetchers()
+                    .forEach(
+                            searchBasedFetcher ->
+                                    createFetcherResultFile(query, searchBasedFetcher));
             createQueryResultFile(query);
         }
         createStudyResultFile();
@@ -331,7 +351,8 @@ public class StudyRepository {
             try {
                 Files.createFile(file);
             } catch (IOException e) {
-                throw new IllegalStateException("Error during creation of repository structure.", e);
+                throw new IllegalStateException(
+                        "Error during creation of repository structure.", e);
             }
         }
     }
@@ -382,14 +403,16 @@ public class StudyRepository {
      * @param crawlResults The results that shall be persisted.
      */
     private void persistResults(List<QueryResult> crawlResults) throws IOException, SaveException {
-        DatabaseMerger merger = new DatabaseMerger(preferences.getBibEntryPreferences().getKeywordSeparator());
+        DatabaseMerger merger =
+                new DatabaseMerger(preferences.getBibEntryPreferences().getKeywordSeparator());
         BibDatabase newStudyResultEntries = new BibDatabase();
 
         for (QueryResult result : crawlResults) {
             BibDatabase queryResultEntries = new BibDatabase();
             for (FetchResult fetcherResult : result.getResultsPerFetcher()) {
                 BibDatabase fetcherEntries = fetcherResult.getFetchResult();
-                BibDatabaseContext existingFetcherResult = getFetcherResultEntries(result.getQuery(), fetcherResult.getFetcherName());
+                BibDatabaseContext existingFetcherResult =
+                        getFetcherResultEntries(result.getQuery(), fetcherResult.getFetcherName());
 
                 // Merge new entries into fetcher result file
                 merger.merge(existingFetcherResult.getDatabase(), fetcherEntries);
@@ -400,7 +423,10 @@ public class StudyRepository {
                 // Aggregate each fetcher result into the query result
                 merger.merge(queryResultEntries, fetcherEntries);
 
-                writeResultToFile(getPathToFetcherResultFile(result.getQuery(), fetcherResult.getFetcherName()), existingFetcherResult);
+                writeResultToFile(
+                        getPathToFetcherResultFile(
+                                result.getQuery(), fetcherResult.getFetcherName()),
+                        existingFetcherResult);
             }
             BibDatabaseContext existingQueryEntries = getQueryResultEntries(result.getQuery());
 
@@ -420,33 +446,51 @@ public class StudyRepository {
     }
 
     private void generateCiteKeys(BibDatabaseContext existingEntries, BibDatabase targetEntries) {
-        CitationKeyGenerator citationKeyGenerator = new CitationKeyGenerator(existingEntries,
-                preferences.getCitationKeyPatternPreferences());
-        targetEntries.getEntries().stream().filter(bibEntry -> !bibEntry.hasCitationKey()).forEach(citationKeyGenerator::generateAndSetKey);
+        CitationKeyGenerator citationKeyGenerator =
+                new CitationKeyGenerator(
+                        existingEntries, preferences.getCitationKeyPatternPreferences());
+        targetEntries.getEntries().stream()
+                .filter(bibEntry -> !bibEntry.hasCitationKey())
+                .forEach(citationKeyGenerator::generateAndSetKey);
     }
 
-    private void writeResultToFile(Path pathToFile, BibDatabaseContext context) throws SaveException {
-        try (AtomicFileWriter fileWriter = new AtomicFileWriter(pathToFile, StandardCharsets.UTF_8)) {
-            SelfContainedSaveConfiguration saveConfiguration = (SelfContainedSaveConfiguration) new SelfContainedSaveConfiguration()
-                    .withSaveOrder(context.getMetaData().getSaveOrder().map(so -> SelfContainedSaveOrder.of(so)).orElse(SaveOrder.getDefaultSaveOrder()))
-                    .withReformatOnSave(preferences.getLibraryPreferences().shouldAlwaysReformatOnSave());
+    private void writeResultToFile(Path pathToFile, BibDatabaseContext context)
+            throws SaveException {
+        try (AtomicFileWriter fileWriter =
+                new AtomicFileWriter(pathToFile, StandardCharsets.UTF_8)) {
+            SelfContainedSaveConfiguration saveConfiguration =
+                    (SelfContainedSaveConfiguration)
+                            new SelfContainedSaveConfiguration()
+                                    .withSaveOrder(
+                                            context.getMetaData()
+                                                    .getSaveOrder()
+                                                    .map(so -> SelfContainedSaveOrder.of(so))
+                                                    .orElse(SaveOrder.getDefaultSaveOrder()))
+                                    .withReformatOnSave(
+                                            preferences
+                                                    .getLibraryPreferences()
+                                                    .shouldAlwaysReformatOnSave());
             BibWriter bibWriter = new BibWriter(fileWriter, OS.NEWLINE);
-            BibtexDatabaseWriter databaseWriter = new BibtexDatabaseWriter(
-                    bibWriter,
-                    saveConfiguration,
-                    preferences.getFieldPreferences(),
-                    preferences.getCitationKeyPatternPreferences(),
-                    bibEntryTypesManager);
+            BibtexDatabaseWriter databaseWriter =
+                    new BibtexDatabaseWriter(
+                            bibWriter,
+                            saveConfiguration,
+                            preferences.getFieldPreferences(),
+                            preferences.getCitationKeyPatternPreferences(),
+                            bibEntryTypesManager);
             databaseWriter.saveDatabase(context);
         } catch (UnsupportedCharsetException ex) {
-            throw new SaveException(Localization.lang("Character encoding UTF-8 is not supported.", ex));
+            throw new SaveException(
+                    Localization.lang("Character encoding UTF-8 is not supported.", ex));
         } catch (IOException ex) {
             throw new SaveException("Problems saving", ex);
         }
     }
 
     private Path getPathToFetcherResultFile(String query, String fetcherName) {
-        return repositoryPath.resolve(trimNameAndAddID(query)).resolve(FileNameCleaner.cleanFileName(fetcherName) + ".bib");
+        return repositoryPath
+                .resolve(trimNameAndAddID(query))
+                .resolve(FileNameCleaner.cleanFileName(fetcherName) + ".bib");
     }
 
     private Path getPathToQueryResultFile(String query) {

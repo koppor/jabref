@@ -1,9 +1,6 @@
 package org.jabref.gui.entryeditor.citationrelationtab.semanticscholar;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.List;
+import com.google.gson.Gson;
 
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.ImporterPreferences;
@@ -12,7 +9,10 @@ import org.jabref.logic.net.URLDownload;
 import org.jabref.logic.util.BuildInfo;
 import org.jabref.model.entry.BibEntry;
 
-import com.google.gson.Gson;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.List;
 
 public class SemanticScholarFetcher implements CitationFetcher, CustomizableKeyFetcher {
     private static final String SEMANTIC_SCHOLAR_API = "https://api.semanticscholar.org/graph/v1/";
@@ -26,8 +26,14 @@ public class SemanticScholarFetcher implements CitationFetcher, CustomizableKeyF
     }
 
     public String getAPIUrl(String entry_point, BibEntry entry) {
-        return SEMANTIC_SCHOLAR_API + "paper/" + "DOI:" + entry.getDOI().orElseThrow().getDOI() + "/" + entry_point
-                + "?fields=" + "title,authors,year,citationCount,referenceCount,externalIds,publicationTypes,abstract,url"
+        return SEMANTIC_SCHOLAR_API
+                + "paper/"
+                + "DOI:"
+                + entry.getDOI().orElseThrow().getDOI()
+                + "/"
+                + entry_point
+                + "?fields="
+                + "title,authors,year,citationCount,referenceCount,externalIds,publicationTypes,abstract,url"
                 + "&limit=1000";
     }
 
@@ -49,12 +55,13 @@ public class SemanticScholarFetcher implements CitationFetcher, CustomizableKeyF
         if (!apiKey.isEmpty()) {
             urlDownload.addHeader("x-api-key", apiKey);
         }
-        CitationsResponse citationsResponse = new Gson()
-                .fromJson(urlDownload.asString(), CitationsResponse.class);
+        CitationsResponse citationsResponse =
+                new Gson().fromJson(urlDownload.asString(), CitationsResponse.class);
 
-        return citationsResponse.getData()
-                                .stream().filter(citationDataItem -> citationDataItem.getCitingPaper() != null)
-                                .map(citationDataItem -> citationDataItem.getCitingPaper().toBibEntry()).toList();
+        return citationsResponse.getData().stream()
+                .filter(citationDataItem -> citationDataItem.getCitingPaper() != null)
+                .map(citationDataItem -> citationDataItem.getCitingPaper().toBibEntry())
+                .toList();
     }
 
     @Override
@@ -75,13 +82,13 @@ public class SemanticScholarFetcher implements CitationFetcher, CustomizableKeyF
         if (!apiKey.isEmpty()) {
             urlDownload.addHeader("x-api-key", apiKey);
         }
-        ReferencesResponse referencesResponse = new Gson()
-                .fromJson(urlDownload.asString(), ReferencesResponse.class);
+        ReferencesResponse referencesResponse =
+                new Gson().fromJson(urlDownload.asString(), ReferencesResponse.class);
 
-        return referencesResponse.getData()
-                                 .stream()
-                                 .filter(citationDataItem -> citationDataItem.getCitedPaper() != null)
-                                 .map(referenceDataItem -> referenceDataItem.getCitedPaper().toBibEntry()).toList();
+        return referencesResponse.getData().stream()
+                .filter(citationDataItem -> citationDataItem.getCitedPaper() != null)
+                .map(referenceDataItem -> referenceDataItem.getCitedPaper().toBibEntry())
+                .toList();
     }
 
     @Override

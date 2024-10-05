@@ -1,28 +1,27 @@
 package org.jabref.logic.openoffice.style;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.style.CitationMarkerNumericBibEntry;
 import org.jabref.model.openoffice.style.CitationMarkerNumericEntry;
 import org.jabref.model.openoffice.style.PageInfo;
 import org.jabref.model.openoffice.util.OOListUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 class JStyleGetNumCitationMarker {
 
     // The number encoding "this entry is unresolved"
-    public final static int UNRESOLVED_ENTRY_NUMBER = 0;
+    public static final int UNRESOLVED_ENTRY_NUMBER = 0;
 
-    private JStyleGetNumCitationMarker() {
-    }
+    private JStyleGetNumCitationMarker() {}
 
     /**
      * Defines sort order for CitationMarkerNumericEntry.
      */
-    private static int compareCitationMarkerNumericEntry(CitationMarkerNumericEntry a,
-                                                         CitationMarkerNumericEntry b) {
+    private static int compareCitationMarkerNumericEntry(
+            CitationMarkerNumericEntry a, CitationMarkerNumericEntry b) {
         int na = a.getNumber().orElse(UNRESOLVED_ENTRY_NUMBER);
         int nb = b.getNumber().orElse(UNRESOLVED_ENTRY_NUMBER);
         int res = Integer.compare(na, nb);
@@ -45,8 +44,8 @@ class JStyleGetNumCitationMarker {
      *       "]" stands for BRACKET_AFTER_IN_LIST (with fallback BRACKET_AFTER)
      *       "${number}" stands for the formatted number.
      */
-    public static OOText getNumCitationMarkerForBibliography(JStyle style,
-                                                             CitationMarkerNumericBibEntry entry) {
+    public static OOText getNumCitationMarkerForBibliography(
+            JStyle style, CitationMarkerNumericBibEntry entry) {
         // prefer BRACKET_BEFORE_IN_LIST and BRACKET_AFTER_IN_LIST
         String bracketBefore = style.getBracketBeforeInListWithFallBack();
         String bracketAfter = style.getBracketAfterInListWithFallBack();
@@ -54,9 +53,10 @@ class JStyleGetNumCitationMarker {
         stringBuilder.append(style.getCitationGroupMarkupBefore());
         stringBuilder.append(bracketBefore);
         final Optional<Integer> current = entry.getNumber();
-        stringBuilder.append(current.isPresent()
-                  ? String.valueOf(current.get())
-                  : (JStyle.UNDEFINED_CITATION_MARKER + entry.getCitationKey()));
+        stringBuilder.append(
+                current.isPresent()
+                        ? String.valueOf(current.get())
+                        : (JStyle.UNDEFINED_CITATION_MARKER + entry.getCitationKey()));
         stringBuilder.append(bracketAfter);
         stringBuilder.append(style.getCitationGroupMarkupAfter());
         return OOText.fromString(stringBuilder.toString());
@@ -85,10 +85,11 @@ class JStyleGetNumCitationMarker {
      *     without repetition.
      *
      */
-    private static void emitBlock(List<CitationMarkerNumericEntry> block,
-                                  JStyle style,
-                                  int minGroupingCount,
-                                  StringBuilder stringBuilder) {
+    private static void emitBlock(
+            List<CitationMarkerNumericEntry> block,
+            JStyle style,
+            int minGroupingCount,
+            StringBuilder stringBuilder) {
 
         final int blockSize = block.size();
         if (blockSize == 0) {
@@ -99,9 +100,10 @@ class JStyleGetNumCitationMarker {
             // Add single entry:
             CitationMarkerNumericEntry entry = block.getFirst();
             final Optional<Integer> num = entry.getNumber();
-            stringBuilder.append(num.isEmpty()
-                                 ? (JStyle.UNDEFINED_CITATION_MARKER + entry.getCitationKey())
-                                 : String.valueOf(num.get()));
+            stringBuilder.append(
+                    num.isEmpty()
+                            ? (JStyle.UNDEFINED_CITATION_MARKER + entry.getCitationKey())
+                            : String.valueOf(num.get()));
             // Emit pageInfo
             Optional<OOText> pageInfo = entry.getPageInfo();
             if (pageInfo.isPresent()) {
@@ -117,11 +119,13 @@ class JStyleGetNumCitationMarker {
              */
 
             if (block.stream().anyMatch(x -> x.getPageInfo().isPresent())) {
-                throw new IllegalArgumentException("Found pageInfo in a block with more than one elements");
+                throw new IllegalArgumentException(
+                        "Found pageInfo in a block with more than one elements");
             }
 
             if (block.stream().anyMatch(x -> x.getNumber().isEmpty())) {
-                throw new IllegalArgumentException("Found unresolved entry in a block with more than one elements");
+                throw new IllegalArgumentException(
+                        "Found unresolved entry in a block with more than one elements");
             }
 
             for (int j = 1; j < blockSize; j++) {
@@ -181,9 +185,8 @@ class JStyleGetNumCitationMarker {
      * @return The text for the citation.
      *
      */
-    public static OOText getNumCitationMarker2(JStyle style,
-                                               List<CitationMarkerNumericEntry> entries,
-                                               int minGroupingCount) {
+    public static OOText getNumCitationMarker2(
+            JStyle style, List<CitationMarkerNumericEntry> entries, int minGroupingCount) {
 
         final boolean joinIsDisabled = minGroupingCount <= 0;
         final int nCitations = entries.size();
@@ -231,8 +234,8 @@ class JStyleGetNumCitationMarker {
                 } else if (compareCitationMarkerNumericEntry(current, prev) == 0) {
                     // Same as prev, just forget it.
                 } else if ((current.getNumber().get() == (prev.getNumber().get() + 1))
-                           && (prev.getPageInfo().isEmpty())
-                           && (current.getPageInfo().isEmpty())) {
+                        && (prev.getPageInfo().isEmpty())
+                        && (current.getPageInfo().isEmpty())) {
                     // Just two consecutive numbers without pageInfo: join
                     currentBlock.add(current);
                 } else {

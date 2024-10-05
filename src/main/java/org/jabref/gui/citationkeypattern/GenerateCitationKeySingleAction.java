@@ -1,7 +1,5 @@
 package org.jabref.gui.citationkeypattern;
 
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.undo.UndoableKeyChange;
@@ -9,6 +7,8 @@ import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
 import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
+
+import javax.swing.undo.UndoManager;
 
 public class GenerateCitationKeySingleAction extends SimpleCommand {
 
@@ -18,7 +18,12 @@ public class GenerateCitationKeySingleAction extends SimpleCommand {
     private final BibEntry entry;
     private final UndoManager undoManager;
 
-    public GenerateCitationKeySingleAction(BibEntry entry, BibDatabaseContext databaseContext, DialogService dialogService, CliPreferences preferences, UndoManager undoManager) {
+    public GenerateCitationKeySingleAction(
+            BibEntry entry,
+            BibDatabaseContext databaseContext,
+            DialogService dialogService,
+            CliPreferences preferences,
+            UndoManager undoManager) {
         this.entry = entry;
         this.databaseContext = databaseContext;
         this.dialogService = dialogService;
@@ -32,8 +37,10 @@ public class GenerateCitationKeySingleAction extends SimpleCommand {
 
     @Override
     public void execute() {
-        if (!entry.hasCitationKey() || GenerateCitationKeyAction.confirmOverwriteKeys(dialogService, preferences)) {
-            new CitationKeyGenerator(databaseContext, preferences.getCitationKeyPatternPreferences())
+        if (!entry.hasCitationKey()
+                || GenerateCitationKeyAction.confirmOverwriteKeys(dialogService, preferences)) {
+            new CitationKeyGenerator(
+                            databaseContext, preferences.getCitationKeyPatternPreferences())
                     .generateAndSetKey(entry)
                     .ifPresent(change -> undoManager.addEdit(new UndoableKeyChange(change)));
         }

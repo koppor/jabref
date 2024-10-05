@@ -35,7 +35,8 @@ public class GroupsTabViewModel implements PreferenceTabViewModel {
 
     @Override
     public void storeSettings() {
-        groupsPreferences.setGroupViewMode(GroupViewMode.INTERSECTION, groupViewModeIntersectionProperty.getValue());
+        groupsPreferences.setGroupViewMode(
+                GroupViewMode.INTERSECTION, groupViewModeIntersectionProperty.getValue());
         groupsPreferences.setAutoAssignGroup(autoAssignGroupProperty.getValue());
         groupsPreferences.setDisplayGroupCount(displayGroupCountProperty.getValue());
     }

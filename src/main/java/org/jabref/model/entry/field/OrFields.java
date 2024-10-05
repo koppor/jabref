@@ -86,8 +86,6 @@ public class OrFields implements Comparable<OrFields> {
 
     @Override
     public String toString() {
-        return "OrFields{" +
-                "fields=" + fields +
-                '}';
+        return "OrFields{" + "fields=" + fields + '}';
     }
 }

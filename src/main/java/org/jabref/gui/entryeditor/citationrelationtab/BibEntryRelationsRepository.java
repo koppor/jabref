@@ -1,13 +1,12 @@
 package org.jabref.gui.entryeditor.citationrelationtab;
 
-import java.util.List;
-
 import org.jabref.gui.entryeditor.citationrelationtab.semanticscholar.SemanticScholarFetcher;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.model.entry.BibEntry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class BibEntryRelationsRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(BibEntryRelationsRepository.class);
@@ -15,7 +14,8 @@ public class BibEntryRelationsRepository {
     private final SemanticScholarFetcher fetcher;
     private final BibEntryRelationsCache cache;
 
-    public BibEntryRelationsRepository(SemanticScholarFetcher fetcher, BibEntryRelationsCache cache) {
+    public BibEntryRelationsRepository(
+            SemanticScholarFetcher fetcher, BibEntryRelationsCache cache) {
         this.fetcher = fetcher;
         this.cache = cache;
     }

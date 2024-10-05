@@ -3,13 +3,8 @@
  */
 package org.jabref.logic.importer.fileformat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
+import kong.unirest.core.json.JSONException;
+import kong.unirest.core.json.JSONObject;
 
 import org.jabref.logic.importer.Importer;
 import org.jabref.logic.importer.ParserResult;
@@ -17,11 +12,16 @@ import org.jabref.logic.util.StandardFileType;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
-
-import kong.unirest.core.json.JSONException;
-import kong.unirest.core.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Handles importing of recommended articles to be displayed in the Related Articles tab.
@@ -92,8 +92,7 @@ public class MrDLibImporter extends Importer {
     /**
      * Small pair-class to ensure the right order of the recommendations.
      */
-    private record RankedBibEntry(BibEntry entry, Integer rank) {
-    }
+    private record RankedBibEntry(BibEntry entry, Integer rank) {}
 
     /**
      * Parses the input from the server to a ParserResult
@@ -119,8 +118,10 @@ public class MrDLibImporter extends Importer {
         }
 
         // Sort bib entries according to rank
-        rankedBibEntries.sort(Comparator.comparing((RankedBibEntry rankedBibEntry) -> rankedBibEntry.rank));
-        List<BibEntry> bibEntries = rankedBibEntries.stream().map(e -> e.entry).collect(Collectors.toList());
+        rankedBibEntries.sort(
+                Comparator.comparing((RankedBibEntry rankedBibEntry) -> rankedBibEntry.rank));
+        List<BibEntry> bibEntries =
+                rankedBibEntries.stream().map(e -> e.entry).collect(Collectors.toList());
 
         bibDatabase.insertEntries(bibEntries);
         parserResult = new ParserResult(bibDatabase);
@@ -128,7 +129,8 @@ public class MrDLibImporter extends Importer {
         JSONObject label = recommendationSetJson.getJSONObject("label");
         recommendationsHeading = label.getString("label-text");
         recommendationsDescription = label.getString("label-description");
-        recommendationSetId = recommendationSetJson.getBigInteger("recommendation_set_id").toString();
+        recommendationSetId =
+                recommendationSetJson.getBigInteger("recommendation_set_id").toString();
     }
 
     /**
@@ -141,12 +143,30 @@ public class MrDLibImporter extends Importer {
         BibEntry current = new BibEntry();
 
         // parse each of the relevant fields into variables
-        String authors = isRecommendationFieldPresent(recommendation, "authors") ? recommendation.getString("authors") : "";
-        String title = isRecommendationFieldPresent(recommendation, "title") ? recommendation.getString("title") : "";
-        String year = isRecommendationFieldPresent(recommendation, "published_year") ? Integer.toString(recommendation.getInt("published_year")) : "";
-        String journal = isRecommendationFieldPresent(recommendation, "published_in") ? recommendation.getString("published_in") : "";
-        String url = isRecommendationFieldPresent(recommendation, "url") ? recommendation.getString("url") : "";
-        Integer rank = isRecommendationFieldPresent(recommendation, "recommendation_id") ? recommendation.getInt("recommendation_id") : 100;
+        String authors =
+                isRecommendationFieldPresent(recommendation, "authors")
+                        ? recommendation.getString("authors")
+                        : "";
+        String title =
+                isRecommendationFieldPresent(recommendation, "title")
+                        ? recommendation.getString("title")
+                        : "";
+        String year =
+                isRecommendationFieldPresent(recommendation, "published_year")
+                        ? Integer.toString(recommendation.getInt("published_year"))
+                        : "";
+        String journal =
+                isRecommendationFieldPresent(recommendation, "published_in")
+                        ? recommendation.getString("published_in")
+                        : "";
+        String url =
+                isRecommendationFieldPresent(recommendation, "url")
+                        ? recommendation.getString("url")
+                        : "";
+        Integer rank =
+                isRecommendationFieldPresent(recommendation, "recommendation_id")
+                        ? recommendation.getInt("recommendation_id")
+                        : 100;
 
         // Populate bib entry with relevant data
         current.setField(StandardField.AUTHOR, authors);

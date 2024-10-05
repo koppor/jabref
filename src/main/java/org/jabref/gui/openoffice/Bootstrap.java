@@ -20,19 +20,6 @@
 
 package org.jabref.gui.openoffice;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Random;
-
 import com.sun.star.bridge.UnoUrlResolver;
 import com.sun.star.bridge.XUnoUrlResolver;
 import com.sun.star.comp.helper.BootstrapException;
@@ -50,46 +37,65 @@ import com.sun.star.loader.XImplementationLoader;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Random;
+
 /** Bootstrap offers functionality to obtain a context or simply
-  * a service manager.
-  * The service manager can create a few basic services, whose implementations  are:
-  * <ul>
-  * <li>com.sun.star.comp.loader.JavaLoader</li>
-  * <li>com.sun.star.comp.urlresolver.UrlResolver</li>
-  * <li>com.sun.star.comp.bridgefactory.BridgeFactory</li>
-  * <li>com.sun.star.comp.connections.Connector</li>
-  * <li>com.sun.star.comp.connections.Acceptor</li>
-  * <li>com.sun.star.comp.servicemanager.ServiceManager</li>
-  * </ul>
-  *
-  * Other services can be inserted into the service manager by
-  * using its XSet interface:
-  * <pre>
-  *     XSet xSet = UnoRuntime.queryInterface( XSet.class, aMultiComponentFactory );
-  *     // insert the service manager
-  *     xSet.insert( aSingleComponentFactory );
-  * </pre>
-*/
+ * a service manager.
+ * The service manager can create a few basic services, whose implementations  are:
+ * <ul>
+ * <li>com.sun.star.comp.loader.JavaLoader</li>
+ * <li>com.sun.star.comp.urlresolver.UrlResolver</li>
+ * <li>com.sun.star.comp.bridgefactory.BridgeFactory</li>
+ * <li>com.sun.star.comp.connections.Connector</li>
+ * <li>com.sun.star.comp.connections.Acceptor</li>
+ * <li>com.sun.star.comp.servicemanager.ServiceManager</li>
+ * </ul>
+ *
+ * Other services can be inserted into the service manager by
+ * using its XSet interface:
+ * <pre>
+ *     XSet xSet = UnoRuntime.queryInterface( XSet.class, aMultiComponentFactory );
+ *     // insert the service manager
+ *     xSet.insert( aSingleComponentFactory );
+ * </pre>
+ */
 public class Bootstrap {
 
     private static final Random RANDOM_PIPE_NAME = new Random();
     private static boolean M_LOADED_JUH = false;
 
-    private static void insertBasicFactories(XSet xSet, XImplementationLoader xImpLoader) throws Exception {
+    private static void insertBasicFactories(XSet xSet, XImplementationLoader xImpLoader)
+            throws Exception {
         // insert the factory of the loader
         xSet.insert(xImpLoader.activate("com.sun.star.comp.loader.JavaLoader", null, null, null));
 
         // insert the factory of the URLResolver
-        xSet.insert(xImpLoader.activate("com.sun.star.comp.urlresolver.UrlResolver", null, null, null));
+        xSet.insert(
+                xImpLoader.activate("com.sun.star.comp.urlresolver.UrlResolver", null, null, null));
 
         // insert the bridgefactory
-        xSet.insert(xImpLoader.activate("com.sun.star.comp.bridgefactory.BridgeFactory", null, null, null));
+        xSet.insert(
+                xImpLoader.activate(
+                        "com.sun.star.comp.bridgefactory.BridgeFactory", null, null, null));
 
         // insert the connector
-        xSet.insert(xImpLoader.activate("com.sun.star.comp.connections.Connector", null, null, null));
+        xSet.insert(
+                xImpLoader.activate("com.sun.star.comp.connections.Connector", null, null, null));
 
         // insert the acceptor
-        xSet.insert(xImpLoader.activate("com.sun.star.comp.connections.Acceptor", null, null, null));
+        xSet.insert(
+                xImpLoader.activate("com.sun.star.comp.connections.Acceptor", null, null, null));
     }
 
     /**
@@ -120,7 +126,8 @@ public class Bootstrap {
      * @return a new context.
      * @throws Exception if things go awry.
      */
-    public static XComponentContext createInitialComponentContext(Hashtable<String, Object> context_entries) throws Exception {
+    public static XComponentContext createInitialComponentContext(
+            Hashtable<String, Object> context_entries) throws Exception {
         return createInitialComponentContext((Map<String, Object>) context_entries);
     }
 
@@ -131,10 +138,12 @@ public class Bootstrap {
      * @return a new context.
      * @throws Exception if things go awry.
      */
-    public static XComponentContext createInitialComponentContext(Map<String, Object> context_entries) throws Exception {
+    public static XComponentContext createInitialComponentContext(
+            Map<String, Object> context_entries) throws Exception {
         ServiceManager xSMgr = new ServiceManager();
 
-        XImplementationLoader xImpLoader = UnoRuntime.queryInterface(XImplementationLoader.class, new JavaLoader());
+        XImplementationLoader xImpLoader =
+                UnoRuntime.queryInterface(XImplementationLoader.class, new JavaLoader());
         XInitialization xInit = UnoRuntime.queryInterface(XInitialization.class, xImpLoader);
         Object[] args = new Object[] {xSMgr};
         xInit.initialize(args);
@@ -144,7 +153,9 @@ public class Bootstrap {
             context_entries = new HashMap<>(1);
         }
         // add smgr
-        context_entries.put("/singletons/com.sun.star.lang.theServiceManager", new ComponentContextEntry(null, xSMgr));
+        context_entries.put(
+                "/singletons/com.sun.star.lang.theServiceManager",
+                new ComponentContextEntry(null, xSMgr));
         // ... xxx todo: add standard entries
         XComponentContext xContext = new ComponentContext(context_entries, null);
 
@@ -166,7 +177,9 @@ public class Bootstrap {
      * @throws Exception if things go awry.
      */
     public static XMultiServiceFactory createSimpleServiceManager() throws Exception {
-        return UnoRuntime.queryInterface(XMultiServiceFactory.class, createInitialComponentContext((Map<String, Object>) null).getServiceManager());
+        return UnoRuntime.queryInterface(
+                XMultiServiceFactory.class,
+                createInitialComponentContext((Map<String, Object>) null).getServiceManager());
     }
 
     /**
@@ -190,8 +203,10 @@ public class Bootstrap {
      * @return a freshly bootstrapped component context.
      * @throws Exception if things go awry.
      */
-    public static XComponentContext defaultBootstrap_InitialComponentContext(String ini_file, Hashtable<String, String> bootstrap_parameters) throws Exception {
-        return defaultBootstrap_InitialComponentContext(ini_file, (Map<String, String>) bootstrap_parameters);
+    public static XComponentContext defaultBootstrap_InitialComponentContext(
+            String ini_file, Hashtable<String, String> bootstrap_parameters) throws Exception {
+        return defaultBootstrap_InitialComponentContext(
+                ini_file, (Map<String, String>) bootstrap_parameters);
     }
 
     /**
@@ -205,7 +220,8 @@ public class Bootstrap {
      * @return a freshly bootstrapped component context.
      * @throws Exception if things go awry.
      */
-    public static XComponentContext defaultBootstrap_InitialComponentContext(String ini_file, Map<String, String> bootstrap_parameters) throws Exception {
+    public static XComponentContext defaultBootstrap_InitialComponentContext(
+            String ini_file, Map<String, String> bootstrap_parameters) throws Exception {
         // jni convenience: easier to iterate over array than calling Hashtable
         String pairs[] = null;
         if (null != bootstrap_parameters) {
@@ -243,10 +259,13 @@ public class Bootstrap {
             }
             M_LOADED_JUH = true;
         }
-        return UnoRuntime.queryInterface(XComponentContext.class, cppuhelper_bootstrap(ini_file, pairs, Bootstrap.class.getClassLoader()));
+        return UnoRuntime.queryInterface(
+                XComponentContext.class,
+                cppuhelper_bootstrap(ini_file, pairs, Bootstrap.class.getClassLoader()));
     }
 
-    private static native Object cppuhelper_bootstrap(String ini_file, String bootstrap_parameters[], ClassLoader loader) throws Exception;
+    private static native Object cppuhelper_bootstrap(
+            String ini_file, String bootstrap_parameters[], ClassLoader loader) throws Exception;
 
     /**
      * Bootstraps the component context from a UNO installation.
@@ -269,19 +288,22 @@ public class Bootstrap {
      * @see #getDefaultOptions()
      * @since LibreOffice 5.1
      */
-    public static XComponentContext bootstrap(String[] argArray, Path path) throws BootstrapException {
+    public static XComponentContext bootstrap(String[] argArray, Path path)
+            throws BootstrapException {
 
         XComponentContext xContext = null;
 
         try {
             // create default local component context
-            XComponentContext xLocalContext = createInitialComponentContext((Map<String, Object>) null);
+            XComponentContext xLocalContext =
+                    createInitialComponentContext((Map<String, Object>) null);
             if (xLocalContext == null) {
                 throw new BootstrapException("no local component context!");
             }
 
             // create call with arguments
-            // We need a socket, pipe does not work. https://api.libreoffice.org/examples/examples.html
+            // We need a socket, pipe does not work.
+            // https://api.libreoffice.org/examples/examples.html
             String[] cmdArray = new String[argArray.length + 2];
             cmdArray[0] = path.toAbsolutePath().toString();
             cmdArray[1] = "--accept=socket,host=localhost,port=2083" + ";urp;";
@@ -303,7 +325,8 @@ public class Bootstrap {
             XUnoUrlResolver xUrlResolver = UnoUrlResolver.create(xLocalContext);
 
             // connection string
-            String sConnect = "uno:socket,host=localhost,port=2083" + ";urp;StarOffice.ComponentContext";
+            String sConnect =
+                    "uno:socket,host=localhost,port=2083" + ";urp;StarOffice.ComponentContext";
 
             // wait until office is started
             for (int i = 0; ; ++i) {
@@ -340,7 +363,8 @@ public class Bootstrap {
             @Override
             public void run() {
                 try {
-                    BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+                    BufferedReader r =
+                            new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
                     for (; ; ) {
                         String s = r.readLine();

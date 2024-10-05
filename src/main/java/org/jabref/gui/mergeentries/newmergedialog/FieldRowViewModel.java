@@ -1,9 +1,6 @@
 package org.jabref.gui.mergeentries.newmergedialog;
 
-import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
-import javax.swing.undo.CompoundEdit;
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -21,10 +18,13 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.entry.types.EntryTypeFactory;
 import org.jabref.model.strings.StringUtil;
-
-import com.tobiasdiez.easybind.EasyBind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.CompoundEdit;
 
 public class FieldRowViewModel {
     public enum Selection {
@@ -60,7 +60,12 @@ public class FieldRowViewModel {
 
     private final CompoundEdit fieldsMergedEdit = new CompoundEdit();
 
-    public FieldRowViewModel(Field field, BibEntry leftEntry, BibEntry rightEntry, BibEntry mergedEntry, FieldMergerFactory fieldMergerFactory) {
+    public FieldRowViewModel(
+            Field field,
+            BibEntry leftEntry,
+            BibEntry rightEntry,
+            BibEntry mergedEntry,
+            FieldMergerFactory fieldMergerFactory) {
         this.field = field;
         this.leftEntry = leftEntry;
         this.rightEntry = rightEntry;
@@ -75,47 +80,69 @@ public class FieldRowViewModel {
             setRightFieldValue(rightEntry.getField(field).orElse(""));
         }
 
-        EasyBind.listen(leftFieldValueProperty(), (obs, old, leftValue) -> leftEntry.setField(field, leftValue));
-        EasyBind.listen(rightFieldValueProperty(), (obs, old, rightValue) -> rightEntry.setField(field, rightValue));
-        EasyBind.listen(mergedFieldValueProperty(), (obs, old, mergedFieldValue) -> {
-            if (field.equals(InternalField.TYPE_HEADER)) {
-                getMergedEntry().setType(EntryTypeFactory.parse(mergedFieldValue));
-            } else {
-                getMergedEntry().setField(field, mergedFieldValue);
-            }
-        });
+        EasyBind.listen(
+                leftFieldValueProperty(),
+                (obs, old, leftValue) -> leftEntry.setField(field, leftValue));
+        EasyBind.listen(
+                rightFieldValueProperty(),
+                (obs, old, rightValue) -> rightEntry.setField(field, rightValue));
+        EasyBind.listen(
+                mergedFieldValueProperty(),
+                (obs, old, mergedFieldValue) -> {
+                    if (field.equals(InternalField.TYPE_HEADER)) {
+                        getMergedEntry().setType(EntryTypeFactory.parse(mergedFieldValue));
+                    } else {
+                        getMergedEntry().setField(field, mergedFieldValue);
+                    }
+                });
 
-        hasEqualLeftAndRight = Bindings.createBooleanBinding(this::hasEqualLeftAndRightValues, leftFieldValueProperty(), rightFieldValueProperty());
+        hasEqualLeftAndRight =
+                Bindings.createBooleanBinding(
+                        this::hasEqualLeftAndRightValues,
+                        leftFieldValueProperty(),
+                        rightFieldValueProperty());
 
         selectNonEmptyValue();
 
-        EasyBind.listen(isFieldsMergedProperty(), (obs, old, areFieldsMerged) -> {
-            LOGGER.debug("Field are merged: {}", areFieldsMerged);
-            if (areFieldsMerged) {
-                selectLeftValue();
-            } else {
-                selectNonEmptyValue();
-            }
-        });
+        EasyBind.listen(
+                isFieldsMergedProperty(),
+                (obs, old, areFieldsMerged) -> {
+                    LOGGER.debug("Field are merged: {}", areFieldsMerged);
+                    if (areFieldsMerged) {
+                        selectLeftValue();
+                    } else {
+                        selectNonEmptyValue();
+                    }
+                });
 
-        EasyBind.subscribe(selectionProperty(), selection -> {
-            LOGGER.debug("Selecting {}' value for field {}", selection, field.getDisplayName());
-            switch (selection) {
-                case LEFT -> EasyBind.subscribe(leftFieldValueProperty(), this::setMergedFieldValue);
-                case RIGHT -> EasyBind.subscribe(rightFieldValueProperty(), this::setMergedFieldValue);
-            }
-        });
+        EasyBind.subscribe(
+                selectionProperty(),
+                selection -> {
+                    LOGGER.debug(
+                            "Selecting {}' value for field {}", selection, field.getDisplayName());
+                    switch (selection) {
+                        case LEFT ->
+                                EasyBind.subscribe(
+                                        leftFieldValueProperty(), this::setMergedFieldValue);
+                        case RIGHT ->
+                                EasyBind.subscribe(
+                                        rightFieldValueProperty(), this::setMergedFieldValue);
+                    }
+                });
 
-        EasyBind.subscribe(mergedFieldValueProperty(), mergedValue -> {
-            LOGGER.debug("Merged value is {} for field {}", mergedValue, field.getDisplayName());
-            if (mergedValue.equals(getLeftFieldValue())) {
-                selectLeftValue();
-            } else if (getMergedFieldValue().equals(getRightFieldValue())) {
-                selectRightValue();
-            } else {
-                selectNone();
-            }
-        });
+        EasyBind.subscribe(
+                mergedFieldValueProperty(),
+                mergedValue -> {
+                    LOGGER.debug(
+                            "Merged value is {} for field {}", mergedValue, field.getDisplayName());
+                    if (mergedValue.equals(getLeftFieldValue())) {
+                        selectLeftValue();
+                    } else if (getMergedFieldValue().equals(getRightFieldValue())) {
+                        selectRightValue();
+                    } else {
+                        selectNone();
+                    }
+                });
 
         EasyBind.subscribe(hasEqualLeftAndRightBinding(), this::setIsFieldsMerged);
     }
@@ -178,7 +205,8 @@ public class FieldRowViewModel {
         if (fieldsMergedEdit.canRedo()) {
             fieldsMergedEdit.redo();
         } else {
-            fieldsMergedEdit.addEdit(new MergeFieldsUndo(oldLeftFieldValue, oldRightFieldValue, mergedFields));
+            fieldsMergedEdit.addEdit(
+                    new MergeFieldsUndo(oldLeftFieldValue, oldRightFieldValue, mergedFields));
             fieldsMergedEdit.end();
         }
     }

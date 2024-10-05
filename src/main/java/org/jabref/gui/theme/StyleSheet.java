@@ -1,5 +1,10 @@
 package org.jabref.gui.theme;
 
+import org.jabref.architecture.AllowedToUseClassGetResource;
+import org.jabref.gui.JabRefGUI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -8,12 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Optional;
-
-import org.jabref.architecture.AllowedToUseClassGetResource;
-import org.jabref.gui.JabRefGUI;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @AllowedToUseClassGetResource("JavaFX internally handles the passed URLs properly.")
 abstract class StyleSheet {
@@ -41,9 +40,17 @@ abstract class StyleSheet {
             try {
                 styleSheetUrl = Optional.of(Path.of(name).toUri().toURL());
             } catch (InvalidPathException e) {
-                LOGGER.warn("Cannot load additional css {} because it is an invalid path: {}", name, e.getLocalizedMessage(), e);
+                LOGGER.warn(
+                        "Cannot load additional css {} because it is an invalid path: {}",
+                        name,
+                        e.getLocalizedMessage(),
+                        e);
             } catch (MalformedURLException e) {
-                LOGGER.warn("Cannot load additional css url {} because it is a malformed url: {}", name, e.getLocalizedMessage(), e);
+                LOGGER.warn(
+                        "Cannot load additional css url {} because it is a malformed url: {}",
+                        name,
+                        e.getLocalizedMessage(),
+                        e);
             }
         }
 
@@ -57,12 +64,16 @@ abstract class StyleSheet {
             StyleSheet styleSheet = new StyleSheetFile(styleSheetUrl.get());
 
             if (Files.isDirectory(styleSheet.getWatchPath())) {
-                LOGGER.warn("Failed to loadCannot load additional css {} because it is a directory.", styleSheet.getWatchPath());
+                LOGGER.warn(
+                        "Failed to loadCannot load additional css {} because it is a directory.",
+                        styleSheet.getWatchPath());
                 return Optional.empty();
             }
 
             if (!Files.exists(styleSheet.getWatchPath())) {
-                LOGGER.warn("Cannot load additional css {} because the file does not exist.", styleSheet.getWatchPath());
+                LOGGER.warn(
+                        "Cannot load additional css {} because the file does not exist.",
+                        styleSheet.getWatchPath());
                 // Should not return empty, since the user can create the file later.
             }
 

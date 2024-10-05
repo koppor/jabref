@@ -1,5 +1,28 @@
 package org.jabref.logic.importer.fetcher;
 
+import jakarta.ws.rs.core.MediaType;
+
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import org.jabref.logic.help.HelpFile;
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.logic.importer.PagedSearchBasedParserFetcher;
+import org.jabref.logic.importer.Parser;
+import org.jabref.logic.importer.fetcher.transformers.ISIDOREQueryTransformer;
+import org.jabref.logic.net.URLDownload;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.types.EntryType;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.jooq.lambda.Unchecked;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.PushbackInputStream;
 import java.net.MalformedURLException;
@@ -15,29 +38,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.jabref.logic.help.HelpFile;
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.PagedSearchBasedParserFetcher;
-import org.jabref.logic.importer.Parser;
-import org.jabref.logic.importer.fetcher.transformers.ISIDOREQueryTransformer;
-import org.jabref.logic.net.URLDownload;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.types.EntryType;
-import org.jabref.model.entry.types.StandardEntryType;
-
-import jakarta.ws.rs.core.MediaType;
-import org.apache.hc.core5.net.URIBuilder;
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
-import org.jooq.lambda.Unchecked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 /**
  * Fetcher for <a href="https://isidore.science">ISIDORE</a>```
  * Will take in the link to the website or the last six digits that identify the reference
@@ -49,7 +49,8 @@ public class ISIDOREFetcher implements PagedSearchBasedParserFetcher {
 
     private static final String SOURCE_WEB_SEARCH = "https://api.isidore.science/resource/search";
 
-    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY =
+            DocumentBuilderFactory.newInstance();
 
     @Override
     public Parser getParser() {
@@ -63,7 +64,8 @@ public class ISIDOREFetcher implements PagedSearchBasedParserFetcher {
                 if (pushbackInputStream.available() < 5) {
                     // We guess, it's an error if less than 5
                     pushbackInputStream.unread(data);
-                    String error = new String(pushbackInputStream.readAllBytes(), StandardCharsets.UTF_8);
+                    String error =
+                            new String(pushbackInputStream.readAllBytes(), StandardCharsets.UTF_8);
                     throw new FetcherException(error);
                 }
 
@@ -96,7 +98,8 @@ public class ISIDOREFetcher implements PagedSearchBasedParserFetcher {
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException {
+    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber)
+            throws URISyntaxException, MalformedURLException {
         ISIDOREQueryTransformer queryTransformer = new ISIDOREQueryTransformer();
         String transformedQuery = queryTransformer.transformLuceneQuery(luceneQuery).orElse("");
         URIBuilder uriBuilder = new URIBuilder(SOURCE_WEB_SEARCH);
@@ -107,9 +110,12 @@ public class ISIDOREFetcher implements PagedSearchBasedParserFetcher {
         uriBuilder.addParameter("replies", String.valueOf(getPageSize()));
         uriBuilder.addParameter("lang", "en");
         uriBuilder.addParameter("output", "xml");
-        queryTransformer.getParameterMap().forEach((k, v) -> {
-            uriBuilder.addParameter(k, v);
-        });
+        queryTransformer
+                .getParameterMap()
+                .forEach(
+                        (k, v) -> {
+                            uriBuilder.addParameter(k, v);
+                        });
 
         URL url = uriBuilder.build().toURL();
         LOGGER.debug("URl for query {}", url);
@@ -129,13 +135,36 @@ public class ISIDOREFetcher implements PagedSearchBasedParserFetcher {
     }
 
     private BibEntry xmlItemToBibEntry(Element itemElement) {
-        return new BibEntry(getType(itemElement.getElementsByTagName("types").item(0).getChildNodes()))
-                .withField(StandardField.TITLE, itemElement.getElementsByTagName("title").item(0).getTextContent().replace("\"", ""))
-                .withField(StandardField.AUTHOR, getAuthor(itemElement.getElementsByTagName("enrichedCreators").item(0)))
-                .withField(StandardField.YEAR, itemElement.getElementsByTagName("date").item(0).getChildNodes().item(1).getTextContent().substring(0, 4))
-                .withField(StandardField.JOURNAL, getJournal(itemElement.getElementsByTagName("dc:source")))
-                .withField(StandardField.PUBLISHER, getPublishers(itemElement.getElementsByTagName("publishers").item(0)))
-                .withField(StandardField.DOI, getDOI(itemElement.getElementsByTagName("ore").item(0).getChildNodes()));
+        return new BibEntry(
+                        getType(itemElement.getElementsByTagName("types").item(0).getChildNodes()))
+                .withField(
+                        StandardField.TITLE,
+                        itemElement
+                                .getElementsByTagName("title")
+                                .item(0)
+                                .getTextContent()
+                                .replace("\"", ""))
+                .withField(
+                        StandardField.AUTHOR,
+                        getAuthor(itemElement.getElementsByTagName("enrichedCreators").item(0)))
+                .withField(
+                        StandardField.YEAR,
+                        itemElement
+                                .getElementsByTagName("date")
+                                .item(0)
+                                .getChildNodes()
+                                .item(1)
+                                .getTextContent()
+                                .substring(0, 4))
+                .withField(
+                        StandardField.JOURNAL,
+                        getJournal(itemElement.getElementsByTagName("dc:source")))
+                .withField(
+                        StandardField.PUBLISHER,
+                        getPublishers(itemElement.getElementsByTagName("publishers").item(0)))
+                .withField(
+                        StandardField.DOI,
+                        getDOI(itemElement.getElementsByTagName("ore").item(0).getChildNodes()));
     }
 
     private String getDOI(NodeList list) {
@@ -176,14 +205,18 @@ public class ISIDOREFetcher implements PagedSearchBasedParserFetcher {
         // For some reason the author field sometimes has extra numbers and letters.
         StringJoiner stringJoiner = new StringJoiner(" and ");
         for (int i = 1; i < itemElement.getChildNodes().getLength(); i += 2) {
-            String next = removeNumbers(itemElement.getChildNodes().item(i).getTextContent()).replaceAll("\\s+", " ");
+            String next =
+                    removeNumbers(itemElement.getChildNodes().item(i).getTextContent())
+                            .replaceAll("\\s+", " ");
             next = next.replace("\n", "");
             if (next.isBlank()) {
                 continue;
             }
             stringJoiner.add(next);
         }
-        return (stringJoiner.toString().substring(0, stringJoiner.length())).trim().replaceAll("\\s+", " ");
+        return (stringJoiner.toString().substring(0, stringJoiner.length()))
+                .trim()
+                .replaceAll("\\s+", " ");
     }
 
     /**

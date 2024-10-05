@@ -1,13 +1,5 @@
 package org.jabref.gui.externalfiles;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-
 import org.jabref.gui.externalfiletype.ExternalFileType;
 import org.jabref.gui.externalfiletype.ExternalFileTypes;
 import org.jabref.gui.externalfiletype.UnknownExternalFileType;
@@ -20,9 +12,16 @@ import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 
 public class AutoSetFileLinksUtil {
 
@@ -54,21 +53,31 @@ public class AutoSetFileLinksUtil {
     private final ExternalApplicationsPreferences externalApplicationsPreferences;
     private final FilePreferences filePreferences;
 
-    public AutoSetFileLinksUtil(BibDatabaseContext databaseContext,
-                                ExternalApplicationsPreferences externalApplicationsPreferences,
-                                FilePreferences filePreferences,
-                                AutoLinkPreferences autoLinkPreferences) {
-        this(databaseContext.getFileDirectories(filePreferences), externalApplicationsPreferences, filePreferences, autoLinkPreferences);
+    public AutoSetFileLinksUtil(
+            BibDatabaseContext databaseContext,
+            ExternalApplicationsPreferences externalApplicationsPreferences,
+            FilePreferences filePreferences,
+            AutoLinkPreferences autoLinkPreferences) {
+        this(
+                databaseContext.getFileDirectories(filePreferences),
+                externalApplicationsPreferences,
+                filePreferences,
+                autoLinkPreferences);
     }
 
-    private AutoSetFileLinksUtil(List<Path> directories, ExternalApplicationsPreferences externalApplicationsPreferences, FilePreferences filePreferences, AutoLinkPreferences autoLinkPreferences) {
+    private AutoSetFileLinksUtil(
+            List<Path> directories,
+            ExternalApplicationsPreferences externalApplicationsPreferences,
+            FilePreferences filePreferences,
+            AutoLinkPreferences autoLinkPreferences) {
         this.directories = directories;
         this.autoLinkPreferences = autoLinkPreferences;
         this.externalApplicationsPreferences = externalApplicationsPreferences;
         this.filePreferences = filePreferences;
     }
 
-    public LinkFilesResult linkAssociatedFiles(List<BibEntry> entries, BiConsumer<LinkedFile, BibEntry> onAddLinkedFile) {
+    public LinkFilesResult linkAssociatedFiles(
+            List<BibEntry> entries, BiConsumer<LinkedFile, BibEntry> onAddLinkedFile) {
         LinkFilesResult result = new LinkFilesResult();
 
         for (BibEntry entry : entries) {
@@ -94,7 +103,10 @@ public class AutoSetFileLinksUtil {
     public List<LinkedFile> findAssociatedNotLinkedFiles(BibEntry entry) throws IOException {
         List<LinkedFile> linkedFiles = new ArrayList<>();
 
-        List<String> extensions = externalApplicationsPreferences.getExternalFileTypes().stream().map(ExternalFileType::getExtension).toList();
+        List<String> extensions =
+                externalApplicationsPreferences.getExternalFileTypes().stream()
+                        .map(ExternalFileType::getExtension)
+                        .toList();
 
         LOGGER.debug("Searching for extensions {} in directories {}", extensions, directories);
 
@@ -104,21 +116,28 @@ public class AutoSetFileLinksUtil {
 
         // Collect the found files that are not yet linked
         for (Path foundFile : result) {
-            boolean fileAlreadyLinked = entry.getFiles().stream()
-                                             .map(file -> file.findIn(directories))
-                                             .anyMatch(file -> {
-                                                 try {
-                                                     return file.isPresent() && Files.isSameFile(file.get(), foundFile);
-                                                 } catch (IOException e) {
-                                                     LOGGER.error("Problem with isSameFile", e);
-                                                 }
-                                                 return false;
-                                             });
+            boolean fileAlreadyLinked =
+                    entry.getFiles().stream()
+                            .map(file -> file.findIn(directories))
+                            .anyMatch(
+                                    file -> {
+                                        try {
+                                            return file.isPresent()
+                                                    && Files.isSameFile(file.get(), foundFile);
+                                        } catch (IOException e) {
+                                            LOGGER.error("Problem with isSameFile", e);
+                                        }
+                                        return false;
+                                    });
 
             if (!fileAlreadyLinked) {
-                Optional<ExternalFileType> type = FileUtil.getFileExtension(foundFile)
-                                                            .map(extension -> ExternalFileTypes.getExternalFileTypeByExt(extension, externalApplicationsPreferences))
-                                                            .orElse(Optional.of(new UnknownExternalFileType("")));
+                Optional<ExternalFileType> type =
+                        FileUtil.getFileExtension(foundFile)
+                                .map(
+                                        extension ->
+                                                ExternalFileTypes.getExternalFileTypeByExt(
+                                                        extension, externalApplicationsPreferences))
+                                .orElse(Optional.of(new UnknownExternalFileType("")));
 
                 String strType = type.isPresent() ? type.get().getName() : "";
                 Path relativeFilePath = FileUtil.relativize(foundFile, directories);

@@ -1,8 +1,8 @@
 package org.jabref.logic.shared.event;
 
-import java.util.List;
-
 import org.jabref.model.entry.BibEntry;
+
+import java.util.List;
 
 /**
  * This event is fired when the user tries to push changes of one or more obsolete

@@ -1,14 +1,5 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.FulltextFetcher;
 import org.jabref.logic.importer.IdBasedFetcher;
@@ -20,9 +11,17 @@ import org.jabref.logic.net.URLDownload;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.strings.StringUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class IacrEprintFetcher implements FulltextFetcher, IdBasedFetcher {
     public static final String NAME = "IACR eprints";
@@ -31,7 +30,8 @@ public class IacrEprintFetcher implements FulltextFetcher, IdBasedFetcher {
 
     private static final Pattern WITHOUT_LETTERS_SPACE = Pattern.compile("[^0-9/]");
 
-    private static final Predicate<String> IDENTIFIER_PREDICATE = Pattern.compile("\\d{4}/\\d{3,5}").asPredicate();
+    private static final Predicate<String> IDENTIFIER_PREDICATE =
+            Pattern.compile("\\d{4}/\\d{3,5}").asPredicate();
     private static final String CITATION_URL_PREFIX = "https://eprint.iacr.org/";
     private static final String DESCRIPTION_URL_PREFIX = "https://eprint.iacr.org/";
     private static final String FULLTEXT_URL_PREFIX = "https://eprint.iacr.org/";
@@ -45,7 +45,8 @@ public class IacrEprintFetcher implements FulltextFetcher, IdBasedFetcher {
 
     @Override
     public Optional<BibEntry> performSearchById(String identifier) throws FetcherException {
-        String identifierWithoutLettersAndSpaces = WITHOUT_LETTERS_SPACE.matcher(identifier).replaceAll(" ").trim();
+        String identifierWithoutLettersAndSpaces =
+                WITHOUT_LETTERS_SPACE.matcher(identifier).replaceAll(" ").trim();
 
         if (!IDENTIFIER_PREDICATE.test(identifierWithoutLettersAndSpaces)) {
             throw new FetcherException(Localization.lang("Invalid identifier: '%0'.", identifier));
@@ -60,7 +61,8 @@ public class IacrEprintFetcher implements FulltextFetcher, IdBasedFetcher {
         return entry;
     }
 
-    private Optional<BibEntry> createEntryFromIacrCitation(String validIdentifier) throws FetcherException {
+    private Optional<BibEntry> createEntryFromIacrCitation(String validIdentifier)
+            throws FetcherException {
         URL url;
         try {
             url = URI.create(CITATION_URL_PREFIX + validIdentifier).toURL();
@@ -71,12 +73,14 @@ public class IacrEprintFetcher implements FulltextFetcher, IdBasedFetcher {
         if (bibtexCitationHtml.contains("No such report found")) {
             throw new FetcherException(Localization.lang("No results found."));
         }
-        String actualEntry = getRequiredValueBetween("<pre id=\"bibtex\">", "</pre>", bibtexCitationHtml);
+        String actualEntry =
+                getRequiredValueBetween("<pre id=\"bibtex\">", "</pre>", bibtexCitationHtml);
 
         try {
             return BibtexParser.singleFromString(actualEntry, prefs);
         } catch (ParseException e) {
-            throw new FetcherException(Localization.lang("Entry from %0 could not be parsed.", "IACR"), e);
+            throw new FetcherException(
+                    Localization.lang("Entry from %0 could not be parsed.", "IACR"), e);
         }
     }
 
@@ -114,14 +118,17 @@ public class IacrEprintFetcher implements FulltextFetcher, IdBasedFetcher {
     }
 
     private String getAbstract(String descriptiveHtml) throws FetcherException {
-        String startOfAbstractString = "<h5 class=\"mt-3\">Abstract</h5>\n    <p style=\"white-space: pre-wrap;\">";
-        String abstractText = getRequiredValueBetween(startOfAbstractString, "</p>", descriptiveHtml);
+        String startOfAbstractString =
+                "<h5 class=\"mt-3\">Abstract</h5>\n    <p style=\"white-space: pre-wrap;\">";
+        String abstractText =
+                getRequiredValueBetween(startOfAbstractString, "</p>", descriptiveHtml);
         return abstractText;
     }
 
     private String getDate(String descriptiveHtml) throws FetcherException {
         String startOfHistoryString = "<dt>History</dt>\n      \n      \n      <dd>";
-        String dateStringAsInHtml = getRequiredValueBetween(startOfHistoryString, ":", descriptiveHtml);
+        String dateStringAsInHtml =
+                getRequiredValueBetween(startOfHistoryString, ":", descriptiveHtml);
         return dateStringAsInHtml;
     }
 
@@ -130,10 +137,12 @@ public class IacrEprintFetcher implements FulltextFetcher, IdBasedFetcher {
         return download.asString();
     }
 
-    private String getRequiredValueBetween(String from, String to, String haystack) throws FetcherException {
+    private String getRequiredValueBetween(String from, String to, String haystack)
+            throws FetcherException {
         String value = StringUtil.substringBetween(haystack, from, to);
         if (value == null) {
-            throw new FetcherException(Localization.lang("Entry from %0 could not be parsed.", "IACR"));
+            throw new FetcherException(
+                    Localization.lang("Entry from %0 could not be parsed.", "IACR"));
         } else {
             return value;
         }
@@ -168,8 +177,10 @@ public class IacrEprintFetcher implements FulltextFetcher, IdBasedFetcher {
 
             String descriptiveHtml = getHtml(url);
             String startOfFulltextLink = "<a class=\"btn btn-sm btn-outline-dark\"";
-            String fulltextLinkAsInHtml = getRequiredValueBetween(startOfFulltextLink, ".pdf", descriptiveHtml);
-            // There is an additional "\n           href=\"/archive/" we have to remove - and for some reason,
+            String fulltextLinkAsInHtml =
+                    getRequiredValueBetween(startOfFulltextLink, ".pdf", descriptiveHtml);
+            // There is an additional "\n           href=\"/archive/" we have to remove - and for
+            // some reason,
             // getRequiredValueBetween refuses to match across the line break.
             fulltextLinkAsInHtml = fulltextLinkAsInHtml.replaceFirst(".*href=\"/", "").trim();
             String fulltextLink = FULLTEXT_URL_PREFIX + fulltextLinkAsInHtml + ".pdf";

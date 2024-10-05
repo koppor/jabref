@@ -1,13 +1,12 @@
 package org.jabref.logic.formatter.bibtexfields;
 
-import java.util.Objects;
-import java.util.StringJoiner;
-
 import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.strings.StringUtil;
-
 import org.jspecify.annotations.NullMarked;
+
+import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * Removes start and end brace both at the complete string and at beginning/end of a word
@@ -22,7 +21,8 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class RemoveWordEnclosingAndOuterEnclosingBracesFormatter extends Formatter {
 
-    private static final RemoveEnclosingBracesFormatter REMOVE_ENCLOSING_BRACES_FORMATTER = new RemoveEnclosingBracesFormatter();
+    private static final RemoveEnclosingBracesFormatter REMOVE_ENCLOSING_BRACES_FORMATTER =
+            new RemoveEnclosingBracesFormatter();
 
     @Override
     public String getName() {
@@ -36,7 +36,8 @@ public class RemoveWordEnclosingAndOuterEnclosingBracesFormatter extends Formatt
 
     @Override
     public String getDescription() {
-        return Localization.lang("Removes braces encapsulating a complete word and the complete field content.");
+        return Localization.lang(
+                "Removes braces encapsulating a complete word and the complete field content.");
     }
 
     @Override
@@ -55,7 +56,8 @@ public class RemoveWordEnclosingAndOuterEnclosingBracesFormatter extends Formatt
             return input;
         }
 
-        // We need to first remove the outer braces to have double braces at the last word working (e.g., {In {CDMA}})
+        // We need to first remove the outer braces to have double braces at the last word working
+        // (e.g., {In {CDMA}})
         input = REMOVE_ENCLOSING_BRACES_FORMATTER.format(input);
 
         String[] split = input.split(" ");

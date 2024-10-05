@@ -1,9 +1,8 @@
 package org.jabref.gui.util;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import com.tobiasdiez.easybind.EasyBind;
+import com.tobiasdiez.easybind.PreboundBinding;
+import com.tobiasdiez.easybind.Subscription;
 
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.ObjectBinding;
@@ -20,20 +19,22 @@ import javafx.collections.ObservableMap;
 import javafx.css.PseudoClass;
 import javafx.scene.Node;
 
-import com.tobiasdiez.easybind.EasyBind;
-import com.tobiasdiez.easybind.PreboundBinding;
-import com.tobiasdiez.easybind.Subscription;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Helper methods for javafx binding. Some methods are taken from https://bugs.openjdk.java.net/browse/JDK-8134679
  */
 public class BindingsHelper {
 
-    private BindingsHelper() {
-    }
+    private BindingsHelper() {}
 
-    public static Subscription includePseudoClassWhen(Node node, PseudoClass pseudoClass, ObservableValue<? extends Boolean> condition) {
-        Consumer<Boolean> changePseudoClass = value -> node.pseudoClassStateChanged(pseudoClass, value);
+    public static Subscription includePseudoClassWhen(
+            Node node, PseudoClass pseudoClass, ObservableValue<? extends Boolean> condition) {
+        Consumer<Boolean> changePseudoClass =
+                value -> node.pseudoClassStateChanged(pseudoClass, value);
         Subscription subscription = EasyBind.subscribe(condition, changePseudoClass);
 
         // Put the pseudo class there depending on the current value
@@ -41,13 +42,15 @@ public class BindingsHelper {
         return subscription;
     }
 
-    public static <T, U> ObservableList<U> map(ObservableValue<T> source, Function<T, List<U>> mapper) {
-        PreboundBinding<List<U>> binding = new PreboundBinding<>(source) {
-            @Override
-            protected List<U> computeValue() {
-                return mapper.apply(source.getValue());
-            }
-        };
+    public static <T, U> ObservableList<U> map(
+            ObservableValue<T> source, Function<T, List<U>> mapper) {
+        PreboundBinding<List<U>> binding =
+                new PreboundBinding<>(source) {
+                    @Override
+                    protected List<U> computeValue() {
+                        return mapper.apply(source.getValue());
+                    }
+                };
 
         ObservableList<U> list = FXCollections.observableArrayList();
         binding.addListener((observable, oldValue, newValue) -> list.setAll(newValue));
@@ -57,7 +60,11 @@ public class BindingsHelper {
     /**
      * Binds propertyA bidirectional to propertyB using the provided map functions to convert between them.
      */
-    public static <A, B> void bindBidirectional(Property<A> propertyA, Property<B> propertyB, Function<A, B> mapAtoB, Function<B, A> mapBtoA) {
+    public static <A, B> void bindBidirectional(
+            Property<A> propertyA,
+            Property<B> propertyB,
+            Function<A, B> mapAtoB,
+            Function<B, A> mapBtoA) {
         Consumer<B> updateA = newValueB -> propertyA.setValue(mapBtoA.apply(newValueB));
         Consumer<A> updateB = newValueA -> propertyB.setValue(mapAtoB.apply(newValueA));
         bindBidirectional(propertyA, propertyB, updateA, updateB);
@@ -66,15 +73,21 @@ public class BindingsHelper {
     /**
      * Binds propertyA bidirectional to propertyB while using updateB to update propertyB when propertyA changed.
      */
-    public static <A> void bindBidirectional(Property<A> propertyA, ObservableValue<A> propertyB, Consumer<A> updateB) {
+    public static <A> void bindBidirectional(
+            Property<A> propertyA, ObservableValue<A> propertyB, Consumer<A> updateB) {
         bindBidirectional(propertyA, propertyB, propertyA::setValue, updateB);
     }
 
     /**
      * Binds propertyA bidirectional to propertyB using updateB to update propertyB when propertyA changed and similar for updateA.
      */
-    public static <A, B> void bindBidirectional(ObservableValue<A> propertyA, ObservableValue<B> propertyB, Consumer<B> updateA, Consumer<A> updateB) {
-        final BidirectionalBinding<A, B> binding = new BidirectionalBinding<>(propertyA, propertyB, updateA, updateB);
+    public static <A, B> void bindBidirectional(
+            ObservableValue<A> propertyA,
+            ObservableValue<B> propertyB,
+            Consumer<B> updateA,
+            Consumer<A> updateB) {
+        final BidirectionalBinding<A, B> binding =
+                new BidirectionalBinding<>(propertyA, propertyB, updateA, updateB);
 
         // use updateB as initial source
         updateA.accept(propertyB.getValue());
@@ -83,16 +96,22 @@ public class BindingsHelper {
         propertyB.addListener(binding.getChangeListenerB());
     }
 
-    public static <A, B> void bindContentBidirectional(ObservableList<A> propertyA, ListProperty<B> propertyB, Consumer<ObservableList<B>> updateA, Consumer<List<A>> updateB) {
+    public static <A, B> void bindContentBidirectional(
+            ObservableList<A> propertyA,
+            ListProperty<B> propertyB,
+            Consumer<ObservableList<B>> updateA,
+            Consumer<List<A>> updateB) {
         bindContentBidirectional(
-                propertyA,
-                (ObservableValue<ObservableList<B>>) propertyB,
-                updateA,
-                updateB);
+                propertyA, (ObservableValue<ObservableList<B>>) propertyB, updateA, updateB);
     }
 
-    public static <A, B> void bindContentBidirectional(ObservableList<A> propertyA, ObservableValue<B> propertyB, Consumer<B> updateA, Consumer<List<A>> updateB) {
-        final BidirectionalListBinding<A, B> binding = new BidirectionalListBinding<>(propertyA, propertyB, updateA, updateB);
+    public static <A, B> void bindContentBidirectional(
+            ObservableList<A> propertyA,
+            ObservableValue<B> propertyB,
+            Consumer<B> updateA,
+            Consumer<List<A>> updateB) {
+        final BidirectionalListBinding<A, B> binding =
+                new BidirectionalListBinding<>(propertyA, propertyB, updateA, updateB);
 
         // use property as initial source
         updateA.accept(propertyB.getValue());
@@ -101,19 +120,24 @@ public class BindingsHelper {
         propertyB.addListener(binding);
     }
 
-    public static <A, B> void bindContentBidirectional(ListProperty<A> listProperty, Property<B> property, Function<List<A>, B> mapToB, Function<B, List<A>> mapToList) {
+    public static <A, B> void bindContentBidirectional(
+            ListProperty<A> listProperty,
+            Property<B> property,
+            Function<List<A>, B> mapToB,
+            Function<B, List<A>> mapToList) {
         Consumer<B> updateList = newValueB -> listProperty.setAll(mapToList.apply(newValueB));
         Consumer<List<A>> updateB = newValueList -> property.setValue(mapToB.apply(newValueList));
 
-        bindContentBidirectional(
-                listProperty,
-                property,
-                updateList,
-                updateB);
+        bindContentBidirectional(listProperty, property, updateList, updateB);
     }
 
-    public static <A, V, B> void bindContentBidirectional(ObservableMap<A, V> propertyA, ObservableValue<B> propertyB, Consumer<B> updateA, Consumer<Map<A, V>> updateB) {
-        final BidirectionalMapBinding<A, V, B> binding = new BidirectionalMapBinding<>(propertyA, propertyB, updateA, updateB);
+    public static <A, V, B> void bindContentBidirectional(
+            ObservableMap<A, V> propertyA,
+            ObservableValue<B> propertyB,
+            Consumer<B> updateA,
+            Consumer<Map<A, V>> updateB) {
+        final BidirectionalMapBinding<A, V, B> binding =
+                new BidirectionalMapBinding<>(propertyA, propertyB, updateA, updateB);
 
         // use list as initial source
         updateB.accept(propertyA);
@@ -122,13 +146,14 @@ public class BindingsHelper {
         propertyB.addListener(binding);
     }
 
-    public static <A, V, B> void bindContentBidirectional(ObservableMap<A, V> propertyA, Property<B> propertyB, Consumer<B> updateA, Function<Map<A, V>, B> mapToB) {
-        Consumer<Map<A, V>> updateB = newValueList -> propertyB.setValue(mapToB.apply(newValueList));
-        bindContentBidirectional(
-                propertyA,
-                propertyB,
-                updateA,
-                updateB);
+    public static <A, V, B> void bindContentBidirectional(
+            ObservableMap<A, V> propertyA,
+            Property<B> propertyB,
+            Consumer<B> updateA,
+            Function<Map<A, V>, B> mapToB) {
+        Consumer<Map<A, V>> updateB =
+                newValueList -> propertyB.setValue(mapToB.apply(newValueList));
+        bindContentBidirectional(propertyA, propertyB, updateA, updateB);
     }
 
     public static <T> ObservableValue<T> constantOf(T value) {
@@ -165,14 +190,17 @@ public class BindingsHelper {
         return new UiThreadList<>(list);
     }
 
-    public static <T> ObservableValue<T> ifThenElse(ObservableValue<Boolean> condition, T value, T other) {
-        return EasyBind.map(condition, conditionValue -> {
-            if (conditionValue) {
-                return value;
-            } else {
-                return other;
-            }
-        });
+    public static <T> ObservableValue<T> ifThenElse(
+            ObservableValue<Boolean> condition, T value, T other) {
+        return EasyBind.map(
+                condition,
+                conditionValue -> {
+                    if (conditionValue) {
+                        return value;
+                    } else {
+                        return other;
+                    }
+                });
     }
 
     /**
@@ -183,8 +211,10 @@ public class BindingsHelper {
      * @return a subscription that can be used to stop invoking subscriber for any further {@code observable} changes.
      * @apiNote {@link EasyBind#subscribe(ObservableValue, Consumer)} is similar but also invokes the {@code subscriber} for the current value
      */
-    public static <T> Subscription subscribeFuture(ObservableValue<T> observable, Consumer<? super T> subscriber) {
-        ChangeListener<? super T> listener = (obs, oldValue, newValue) -> subscriber.accept(newValue);
+    public static <T> Subscription subscribeFuture(
+            ObservableValue<T> observable, Consumer<? super T> subscriber) {
+        ChangeListener<? super T> listener =
+                (obs, oldValue, newValue) -> subscriber.accept(newValue);
         observable.addListener(listener);
         return () -> observable.removeListener(listener);
     }
@@ -196,7 +226,11 @@ public class BindingsHelper {
         private final Consumer<A> updateB;
         private boolean updating = false;
 
-        public BidirectionalBinding(ObservableValue<A> propertyA, ObservableValue<B> propertyB, Consumer<B> updateA, Consumer<A> updateB) {
+        public BidirectionalBinding(
+                ObservableValue<A> propertyA,
+                ObservableValue<B> propertyB,
+                Consumer<B> updateA,
+                Consumer<A> updateB) {
             this.propertyA = propertyA;
             this.updateA = updateA;
             this.updateB = updateB;
@@ -230,7 +264,8 @@ public class BindingsHelper {
         }
     }
 
-    private static class BidirectionalListBinding<A, B> implements ListChangeListener<A>, ChangeListener<B> {
+    private static class BidirectionalListBinding<A, B>
+            implements ListChangeListener<A>, ChangeListener<B> {
 
         private final ObservableList<A> listProperty;
         private final ObservableValue<B> property;
@@ -238,7 +273,11 @@ public class BindingsHelper {
         private final Consumer<List<A>> updateB;
         private boolean updating = false;
 
-        public BidirectionalListBinding(ObservableList<A> listProperty, ObservableValue<B> property, Consumer<B> updateA, Consumer<List<A>> updateB) {
+        public BidirectionalListBinding(
+                ObservableList<A> listProperty,
+                ObservableValue<B> property,
+                Consumer<B> updateA,
+                Consumer<List<A>> updateB) {
             this.listProperty = listProperty;
             this.property = property;
             this.updateA = updateA;
@@ -270,7 +309,8 @@ public class BindingsHelper {
         }
     }
 
-    private static class BidirectionalMapBinding<A, V, B> implements MapChangeListener<A, V>, ChangeListener<B> {
+    private static class BidirectionalMapBinding<A, V, B>
+            implements MapChangeListener<A, V>, ChangeListener<B> {
 
         private final ObservableMap<A, V> mapProperty;
         private final ObservableValue<B> property;
@@ -278,7 +318,11 @@ public class BindingsHelper {
         private final Consumer<Map<A, V>> updateB;
         private boolean updating = false;
 
-        public BidirectionalMapBinding(ObservableMap<A, V> mapProperty, ObservableValue<B> property, Consumer<B> updateA, Consumer<Map<A, V>> updateB) {
+        public BidirectionalMapBinding(
+                ObservableMap<A, V> mapProperty,
+                ObservableValue<B> property,
+                Consumer<B> updateA,
+                Consumer<Map<A, V>> updateB) {
             this.mapProperty = mapProperty;
             this.property = property;
             this.updateA = updateA;

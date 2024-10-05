@@ -1,13 +1,13 @@
 package org.jabref.gui.icon;
 
+import com.tobiasdiez.easybind.EasyBind;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.css.Size;
 import javafx.css.SizeUnits;
 
 import org.jabref.gui.icon.IconTheme.JabRefIcons;
-
-import com.tobiasdiez.easybind.EasyBind;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 public class JabRefIconView extends FontIcon {
@@ -17,6 +17,7 @@ public class JabRefIconView extends FontIcon {
      * (e.g. validation that parameter passed to "icon" is indeed of type {@link IconTheme.JabRefIcons}).
      */
     private final ObjectProperty<IconTheme.JabRefIcons> glyph;
+
     private final ObjectProperty<Number> glyphSize;
 
     public JabRefIconView(JabRefIcons icon, int size) {

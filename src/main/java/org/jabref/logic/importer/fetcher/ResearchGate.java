@@ -1,18 +1,7 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.jabref.logic.importer.EntryBasedFetcher;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.FulltextFetcher;
@@ -27,15 +16,25 @@ import org.jabref.logic.os.OS;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.identifier.DOI;
-
-import org.apache.hc.core5.net.URIBuilder;
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchBasedFetcher {
 
@@ -44,7 +43,8 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
     private static final String GOOGLE_SEARCH = "https://www.google.com/search?q=";
     private static final String GOOGLE_SITE = "%20site:researchgate.net";
     private static final String SEARCH = "https://www.researchgate.net/search.Search.html?";
-    private static final String SEARCH_FOR_BIB_ENTRY = "https://www.researchgate.net/lite.publication.PublicationDownloadCitationModal.downloadCitation.html?fileType=BibTeX&citation=citationAndAbstract&publicationUid=";
+    private static final String SEARCH_FOR_BIB_ENTRY =
+            "https://www.researchgate.net/lite.publication.PublicationDownloadCitationModal.downloadCitation.html?fileType=BibTeX&citation=citationAndAbstract&publicationUid=";
     private final ImportFormatPreferences formatPreferences;
 
     public ResearchGate(ImportFormatPreferences importFormatPreferences) {
@@ -128,15 +128,18 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
 
             URLDownload urlDownload = new URLDownload(source.toString());
             urlDownload.getCookieFromUrl();
-            Document html = Jsoup.connect(source.toString())
-                                 .userAgent(URLDownload.USER_AGENT)
-                                 .referrer("www.google.com")
-                                 .ignoreHttpErrors(true)
-                                 .get();
+            Document html =
+                    Jsoup.connect(source.toString())
+                            .userAgent(URLDownload.USER_AGENT)
+                            .referrer("www.google.com")
+                            .ignoreHttpErrors(true)
+                            .get();
 
-            link = HOST + Objects.requireNonNull(html.getElementById("content"))
-                                 .select("a[href^=publication/]")
-                                 .attr("href");
+            link =
+                    HOST
+                            + Objects.requireNonNull(html.getElementById("content"))
+                                    .select("a[href^=publication/]")
+                                    .attr("href");
             if (link.contains("?")) {
                 link = link.substring(0, link.indexOf("?"));
             }
@@ -156,14 +159,14 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
 
             source = new URIBuilder(GOOGLE_SEARCH + doi.getDOI() + GOOGLE_SITE);
             Connection connection = Jsoup.connect(source.toString());
-            Document html = connection
-                    .cookieStore(connection.cookieStore())
-                    .userAgent(URLDownload.USER_AGENT)
-                    .ignoreHttpErrors(true)
-                    .get();
+            Document html =
+                    connection
+                            .cookieStore(connection.cookieStore())
+                            .userAgent(URLDownload.USER_AGENT)
+                            .ignoreHttpErrors(true)
+                            .get();
 
-            link = Objects.requireNonNull(html.getElementById("search"))
-                          .select("a").attr("href");
+            link = Objects.requireNonNull(html.getElementById("search")).select("a").attr("href");
         } catch (URISyntaxException e) {
             return Optional.empty();
         }
@@ -173,10 +176,10 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
 
     private Document getPage(URL url) throws IOException {
         return Jsoup.connect(url.toString())
-                    .userAgent(URLDownload.USER_AGENT)
-                    .referrer("www.google.com")
-                    .ignoreHttpErrors(true)
-                    .get();
+                .userAgent(URLDownload.USER_AGENT)
+                .referrer("www.google.com")
+                .ignoreHttpErrors(true)
+                .get();
     }
 
     /**
@@ -187,7 +190,8 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
      * @param luceneQuery the search query.
      * @return A URL that lets us download a .bib file
      */
-    private static URL getUrlForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException {
+    private static URL getUrlForQuery(QueryNode luceneQuery)
+            throws URISyntaxException, MalformedURLException {
         String query = new DefaultQueryTransformer().transformLuceneQuery(luceneQuery).orElse("");
         URIBuilder source = new URIBuilder(SEARCH);
         source.addParameter("type", "publication");
@@ -229,14 +233,19 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
         }
 
         Elements sol = html.getElementsByClass("nova-legacy-v-publication-item__title");
-        List<String> urls = sol.select("a").eachAttr("href").stream()
-                               .filter(stream -> stream.contains("publication/"))
-                               .map(resultStream -> resultStream.substring(resultStream.indexOf("publication/") + 12, resultStream.indexOf("_")))
-                               .map(idStream -> SEARCH_FOR_BIB_ENTRY + idStream)
-                               .map(this::getInputStream)
-                               .filter(Objects::nonNull)
-                               .map(stream -> stream.lines().collect(Collectors.joining(OS.NEWLINE)))
-                               .toList();
+        List<String> urls =
+                sol.select("a").eachAttr("href").stream()
+                        .filter(stream -> stream.contains("publication/"))
+                        .map(
+                                resultStream ->
+                                        resultStream.substring(
+                                                resultStream.indexOf("publication/") + 12,
+                                                resultStream.indexOf("_")))
+                        .map(idStream -> SEARCH_FOR_BIB_ENTRY + idStream)
+                        .map(this::getInputStream)
+                        .filter(Objects::nonNull)
+                        .map(stream -> stream.lines().collect(Collectors.joining(OS.NEWLINE)))
+                        .toList();
 
         List<BibEntry> list = new ArrayList<>();
         for (String bib : urls) {
@@ -283,4 +292,3 @@ public class ResearchGate implements FulltextFetcher, EntryBasedFetcher, SearchB
         return performSearch(new RTFChars().format(title.get()));
     }
 }
-

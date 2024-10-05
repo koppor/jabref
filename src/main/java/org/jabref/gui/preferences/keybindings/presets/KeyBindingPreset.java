@@ -1,8 +1,8 @@
 package org.jabref.gui.preferences.keybindings.presets;
 
-import java.util.Map;
-
 import org.jabref.gui.keyboard.KeyBinding;
+
+import java.util.Map;
 
 public interface KeyBindingPreset {
     String getName();

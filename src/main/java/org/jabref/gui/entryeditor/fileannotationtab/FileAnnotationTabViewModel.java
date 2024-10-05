@@ -1,14 +1,5 @@
 package org.jabref.gui.entryeditor.fileannotationtab;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
@@ -26,16 +17,27 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.pdf.FileAnnotation;
 import org.jabref.model.util.FileUpdateListener;
 import org.jabref.model.util.FileUpdateMonitor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class FileAnnotationTabViewModel extends AbstractViewModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileAnnotationTabViewModel.class);
 
-    private final ListProperty<FileAnnotationViewModel> annotations = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ListProperty<Path> files = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ObjectProperty<FileAnnotationViewModel> currentAnnotation = new SimpleObjectProperty<>();
+    private final ListProperty<FileAnnotationViewModel> annotations =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<Path> files =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ObjectProperty<FileAnnotationViewModel> currentAnnotation =
+            new SimpleObjectProperty<>();
     private final ReadOnlyBooleanProperty annotationEmpty = annotations.emptyProperty();
 
     private final FileAnnotationCache cache;
@@ -46,10 +48,11 @@ public class FileAnnotationTabViewModel extends AbstractViewModel {
     private final ClipBoardManager clipBoardManager;
     private final FileUpdateListener fileListener = this::reloadAnnotations;
 
-    public FileAnnotationTabViewModel(FileAnnotationCache cache,
-                                      BibEntry entry,
-                                      FileUpdateMonitor fileMonitor,
-                                      ClipBoardManager clipBoardManager) {
+    public FileAnnotationTabViewModel(
+            FileAnnotationCache cache,
+            BibEntry entry,
+            FileUpdateMonitor fileMonitor,
+            ClipBoardManager clipBoardManager) {
         this.cache = cache;
         this.entry = entry;
         this.fileMonitor = fileMonitor;
@@ -85,13 +88,12 @@ public class FileAnnotationTabViewModel extends AbstractViewModel {
 
         Comparator<FileAnnotation> byPage = Comparator.comparingInt(FileAnnotation::getPage);
 
-        List<FileAnnotationViewModel> newAnnotations = fileAnnotations
-                .getOrDefault(currentFile, new ArrayList<>())
-                .stream()
-                .filter(annotation -> (null != annotation.getContent()))
-                .sorted(byPage)
-                .map(FileAnnotationViewModel::new)
-                .collect(Collectors.toList());
+        List<FileAnnotationViewModel> newAnnotations =
+                fileAnnotations.getOrDefault(currentFile, new ArrayList<>()).stream()
+                        .filter(annotation -> (null != annotation.getContent()))
+                        .sorted(byPage)
+                        .map(FileAnnotationViewModel::new)
+                        .collect(Collectors.toList());
         annotations.setAll(newAnnotations);
 
         try {
@@ -102,16 +104,19 @@ public class FileAnnotationTabViewModel extends AbstractViewModel {
     }
 
     private void reloadAnnotations() {
-        // Make sure to always run this in the JavaFX thread as the file monitor (and its notifications) live in a different thread
-        UiTaskExecutor.runInJavaFXThread(() -> {
-            // Remove annotations for the current entry and reinitialize annotation/cache
-            cache.remove(entry);
-            fileAnnotations = cache.getFromCache(entry);
-            files.setAll(fileAnnotations.keySet());
+        // Make sure to always run this in the JavaFX thread as the file monitor (and its
+        // notifications) live in a different thread
+        UiTaskExecutor.runInJavaFXThread(
+                () -> {
+                    // Remove annotations for the current entry and reinitialize annotation/cache
+                    cache.remove(entry);
+                    fileAnnotations = cache.getFromCache(entry);
+                    files.setAll(fileAnnotations.keySet());
 
-            // Pretend that we just switched to the current file in order to refresh the display
-            notifyNewSelectedFile(currentFile);
-        });
+                    // Pretend that we just switched to the current file in order to refresh the
+                    // display
+                    notifyNewSelectedFile(currentFile);
+                });
     }
 
     /**
@@ -126,7 +131,10 @@ public class FileAnnotationTabViewModel extends AbstractViewModel {
         sj.add(Localization.lang("Date") + ": " + getCurrentAnnotation().getDate());
         sj.add(Localization.lang("Page") + ": " + getCurrentAnnotation().getPage());
         sj.add(Localization.lang("Content") + ": " + getCurrentAnnotation().getContent());
-        sj.add(Localization.lang("Marking") + ": " + getCurrentAnnotation().markingProperty().get());
+        sj.add(
+                Localization.lang("Marking")
+                        + ": "
+                        + getCurrentAnnotation().markingProperty().get());
 
         clipBoardManager.setContent(sj.toString());
     }

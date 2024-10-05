@@ -1,13 +1,14 @@
 package org.jabref.http.server;
 
-import java.util.EnumSet;
-import java.util.stream.Collectors;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.ws.rs.core.Application;
+
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.EnumSet;
+import java.util.stream.Collectors;
 
 class LibrariesResourceTest extends ServerTest {
 
@@ -20,15 +21,22 @@ class LibrariesResourceTest extends ServerTest {
 
     @Test
     void defaultOneTestLibrary() throws Exception {
-        assertEquals("[\"" + TestBibFile.GENERAL_SERVER_TEST.id + "\"]", target("/libraries").request().get(String.class));
+        assertEquals(
+                "[\"" + TestBibFile.GENERAL_SERVER_TEST.id + "\"]",
+                target("/libraries").request().get(String.class));
     }
 
     @Test
     void twoTestLibraries() {
-        EnumSet<TestBibFile> availableLibraries = EnumSet.of(TestBibFile.GENERAL_SERVER_TEST, TestBibFile.JABREF_AUTHORS);
+        EnumSet<TestBibFile> availableLibraries =
+                EnumSet.of(TestBibFile.GENERAL_SERVER_TEST, TestBibFile.JABREF_AUTHORS);
         setAvailableLibraries(availableLibraries);
-        // We cannot use a string constant as the path changes from OS to OS. Therefore, we need to dynamically create the expected result.
-        String expected = availableLibraries.stream().map(file -> file.id).collect(Collectors.joining("\",\"", "[\"", "\"]"));
+        // We cannot use a string constant as the path changes from OS to OS. Therefore, we need to
+        // dynamically create the expected result.
+        String expected =
+                availableLibraries.stream()
+                        .map(file -> file.id)
+                        .collect(Collectors.joining("\",\"", "[\"", "\"]"));
         assertEquals(expected, target("/libraries").request().get(String.class));
     }
 }

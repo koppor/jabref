@@ -1,9 +1,5 @@
 package org.jabref.gui.bibtexextractor;
 
-import java.util.List;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -20,9 +16,12 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.util.FileUpdateMonitor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
+import javax.swing.undo.UndoManager;
 
 /**
  * View model for the feature "Extract BibTeX from plain text".
@@ -42,26 +41,28 @@ public class BibtexExtractorViewModel {
     private final ImportHandler importHandler;
     private final StringProperty inputTextProperty = new SimpleStringProperty("");
 
-    public BibtexExtractorViewModel(boolean onlineMode,
-                                    BibDatabaseContext bibdatabaseContext,
-                                    DialogService dialogService,
-                                    GuiPreferences preferences,
-                                    FileUpdateMonitor fileUpdateMonitor,
-                                    TaskExecutor taskExecutor,
-                                    UndoManager undoManager,
-                                    StateManager stateManager) {
+    public BibtexExtractorViewModel(
+            boolean onlineMode,
+            BibDatabaseContext bibdatabaseContext,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            FileUpdateMonitor fileUpdateMonitor,
+            TaskExecutor taskExecutor,
+            UndoManager undoManager,
+            StateManager stateManager) {
         this.onlineMode = onlineMode;
         this.dialogService = dialogService;
         this.preferences = preferences;
         this.taskExecutor = taskExecutor;
-        this.importHandler = new ImportHandler(
-                bibdatabaseContext,
-                preferences,
-                fileUpdateMonitor,
-                undoManager,
-                stateManager,
-                dialogService,
-                taskExecutor);
+        this.importHandler =
+                new ImportHandler(
+                        bibdatabaseContext,
+                        preferences,
+                        fileUpdateMonitor,
+                        undoManager,
+                        stateManager,
+                        dialogService,
+                        taskExecutor);
     }
 
     public void startParsing() {
@@ -78,22 +79,36 @@ public class BibtexExtractorViewModel {
     }
 
     private void startParsingOnline() {
-        GrobidCitationFetcher grobidCitationFetcher = new GrobidCitationFetcher(preferences.getGrobidPreferences(), preferences.getImportFormatPreferences());
+        GrobidCitationFetcher grobidCitationFetcher =
+                new GrobidCitationFetcher(
+                        preferences.getGrobidPreferences(),
+                        preferences.getImportFormatPreferences());
         BackgroundTask.wrap(() -> grobidCitationFetcher.performSearch(inputTextProperty.getValue()))
-                      .onRunning(() -> dialogService.notify(Localization.lang("Your text is being parsed...")))
-                      .onFailure(e -> {
-                          if (e instanceof FetcherException) {
-                              String msg = Localization.lang("There are connection issues with a JabRef server. Detailed information: %0",
-                                      e.getMessage());
-                              dialogService.notify(msg);
-                          } else {
-                              LOGGER.warn("Missing exception handling.", e);
-                          }
-                      })
-                      .onSuccess(parsedEntries -> {
-                          dialogService.notify(Localization.lang("%0 entries were parsed from your query.", String.valueOf(parsedEntries.size())));
-                          importHandler.importEntries(parsedEntries);
-                      }).executeWith(taskExecutor);
+                .onRunning(
+                        () ->
+                                dialogService.notify(
+                                        Localization.lang("Your text is being parsed...")))
+                .onFailure(
+                        e -> {
+                            if (e instanceof FetcherException) {
+                                String msg =
+                                        Localization.lang(
+                                                "There are connection issues with a JabRef server. Detailed information: %0",
+                                                e.getMessage());
+                                dialogService.notify(msg);
+                            } else {
+                                LOGGER.warn("Missing exception handling.", e);
+                            }
+                        })
+                .onSuccess(
+                        parsedEntries -> {
+                            dialogService.notify(
+                                    Localization.lang(
+                                            "%0 entries were parsed from your query.",
+                                            String.valueOf(parsedEntries.size())));
+                            importHandler.importEntries(parsedEntries);
+                        })
+                .executeWith(taskExecutor);
     }
 
     public StringProperty inputTextProperty() {

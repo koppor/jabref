@@ -1,18 +1,17 @@
 package org.jabref.gui.util;
 
+import javafx.collections.ObservableListBase;
+import javafx.collections.transformation.FilteredList;
+
+import org.jabref.gui.maintable.BibEntryTableViewModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.ListIterator;
 import java.util.function.Predicate;
-
-import javafx.collections.ObservableListBase;
-import javafx.collections.transformation.FilteredList;
-
-import org.jabref.gui.maintable.BibEntryTableViewModel;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FilteredListProxy {
     private static final Logger LOGGER = LoggerFactory.getLogger(FilteredListProxy.class);
@@ -39,12 +38,15 @@ public class FilteredListProxy {
         }
     }
 
-    public static void refilterListReflection(FilteredList<BibEntryTableViewModel> filteredList, int sourceFrom, int sourceTo) {
+    public static void refilterListReflection(
+            FilteredList<BibEntryTableViewModel> filteredList, int sourceFrom, int sourceTo) {
         try {
             if (!initialized) {
                 initReflection();
             }
-            if (sourceFrom < 0 || sourceTo > filteredList.getSource().size() || sourceFrom > sourceTo) {
+            if (sourceFrom < 0
+                    || sourceTo > filteredList.getSource().size()
+                    || sourceFrom > sourceTo) {
                 throw new IndexOutOfBoundsException();
             }
 
@@ -52,8 +54,11 @@ public class FilteredListProxy {
             ENSURE_SIZE_METHOD.invoke(filteredList, filteredList.getSource().size());
 
             @SuppressWarnings("unchecked")
-            Predicate<BibEntryTableViewModel> predicateImpl = (Predicate<BibEntryTableViewModel>) GET_PREDICATE_IMPL_METHOD.invoke(filteredList);
-            ListIterator<? extends BibEntryTableViewModel> it = filteredList.getSource().listIterator(sourceFrom);
+            Predicate<BibEntryTableViewModel> predicateImpl =
+                    (Predicate<BibEntryTableViewModel>)
+                            GET_PREDICATE_IMPL_METHOD.invoke(filteredList);
+            ListIterator<? extends BibEntryTableViewModel> it =
+                    filteredList.getSource().listIterator(sourceFrom);
 
             int[] filtered = (int[]) FILTERED_FIELD.get(filteredList);
             int size = (int) SIZE_FIELD.get(filteredList);
@@ -75,7 +80,12 @@ public class FilteredListProxy {
                     size--;
                 } else if (passedNow) {
                     int insertionPoint = ~pos;
-                    System.arraycopy(filtered, insertionPoint, filtered, insertionPoint + 1, size - insertionPoint);
+                    System.arraycopy(
+                            filtered,
+                            insertionPoint,
+                            filtered,
+                            insertionPoint + 1,
+                            size - insertionPoint);
                     filtered[insertionPoint] = i;
                     NEXT_ADD_METHOD.invoke(filteredList, insertionPoint, insertionPoint + 1);
                     size++;
@@ -95,9 +105,11 @@ public class FilteredListProxy {
     private static void initReflection() throws NoSuchMethodException, NoSuchFieldException {
         BEGIN_CHANGE_METHOD = ObservableListBase.class.getDeclaredMethod("beginChange");
         END_CHANGE_METHOD = ObservableListBase.class.getDeclaredMethod("endChange");
-        NEXT_ADD_METHOD = ObservableListBase.class.getDeclaredMethod("nextAdd", int.class, int.class);
+        NEXT_ADD_METHOD =
+                ObservableListBase.class.getDeclaredMethod("nextAdd", int.class, int.class);
         NEXT_UPDATE_METHOD = ObservableListBase.class.getDeclaredMethod("nextUpdate", int.class);
-        NEXT_REMOVE_METHOD = ObservableListBase.class.getDeclaredMethod("nextRemove", int.class, Object.class);
+        NEXT_REMOVE_METHOD =
+                ObservableListBase.class.getDeclaredMethod("nextRemove", int.class, Object.class);
 
         REFILTER_METHOD = FilteredList.class.getDeclaredMethod("refilter");
         ENSURE_SIZE_METHOD = FilteredList.class.getDeclaredMethod("ensureSize", int.class);

@@ -1,15 +1,14 @@
 package org.jabref.logic.importer.fetcher.transformers;
 
+import org.jabref.logic.formatter.casechanger.Word;
+import org.jabref.model.entry.AuthorList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-
-import org.jabref.logic.formatter.casechanger.Word;
-import org.jabref.model.entry.AuthorList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ISIDOREQueryTransformer extends YearRangeByFilteringQueryTransformer {
 

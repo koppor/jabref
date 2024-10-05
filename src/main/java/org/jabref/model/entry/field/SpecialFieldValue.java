@@ -1,11 +1,10 @@
 package org.jabref.model.entry.field;
 
-import java.util.Optional;
-
 import org.jabref.model.entry.Keyword;
 
-public enum SpecialFieldValue {
+import java.util.Optional;
 
+public enum SpecialFieldValue {
     PRINTED("printed"),
 
     CLEAR_PRIORITY(null),

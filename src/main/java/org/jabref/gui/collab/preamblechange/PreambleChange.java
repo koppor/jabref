@@ -7,7 +7,6 @@ import org.jabref.gui.undo.UndoablePreambleChange;
 import org.jabref.logic.bibtex.comparator.PreambleDiff;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,10 @@ public final class PreambleChange extends DatabaseChange {
 
     private final PreambleDiff preambleDiff;
 
-    public PreambleChange(PreambleDiff preambleDiff, BibDatabaseContext databaseContext, DatabaseChangeResolverFactory databaseChangeResolverFactory) {
+    public PreambleChange(
+            PreambleDiff preambleDiff,
+            BibDatabaseContext databaseContext,
+            DatabaseChangeResolverFactory databaseChangeResolverFactory) {
         super(databaseContext, databaseChangeResolverFactory);
         this.preambleDiff = preambleDiff;
 
@@ -26,7 +28,11 @@ public final class PreambleChange extends DatabaseChange {
     @Override
     public void applyChange(NamedCompound undoEdit) {
         databaseContext.getDatabase().setPreamble(preambleDiff.getNewPreamble());
-        undoEdit.addEdit(new UndoablePreambleChange(databaseContext.getDatabase(), preambleDiff.getOriginalPreamble(), preambleDiff.getNewPreamble()));
+        undoEdit.addEdit(
+                new UndoablePreambleChange(
+                        databaseContext.getDatabase(),
+                        preambleDiff.getOriginalPreamble(),
+                        preambleDiff.getNewPreamble()));
     }
 
     public PreambleDiff getPreambleDiff() {

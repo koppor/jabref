@@ -1,18 +1,17 @@
 package org.jabref.logic.openoffice.style;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.style.CitationGroup;
 import org.jabref.model.openoffice.style.CitationGroups;
 import org.jabref.model.openoffice.style.CitationMarkerNumericEntry;
 import org.jabref.model.openoffice.util.OOListUtil;
 
+import java.util.List;
+import java.util.Optional;
+
 class OOProcessNumericMarkers {
 
-    private OOProcessNumericMarkers() {
-    }
+    private OOProcessNumericMarkers() {}
 
     /**
      * Produce citation markers for the case of numbered citations
@@ -28,11 +27,13 @@ class OOProcessNumericMarkers {
         if (style.isSortByPosition()) {
             citationGroups.createNumberedBibliographySortedInOrderOfAppearance();
         } else {
-            citationGroups.createNumberedBibliographySortedByComparator(OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
+            citationGroups.createNumberedBibliographySortedByComparator(
+                    OOProcess.AUTHOR_YEAR_TITLE_COMPARATOR);
         }
 
         for (CitationGroup group : citationGroups.getCitationGroupsInGlobalOrder()) {
-            List<CitationMarkerNumericEntry> cits = OOListUtil.map(group.getCitationsInLocalOrder(), e -> e);
+            List<CitationMarkerNumericEntry> cits =
+                    OOListUtil.map(group.getCitationsInLocalOrder(), e -> e);
             OOText citMarker = style.getNumCitationMarker2(cits);
             group.setCitationMarker(Optional.of(citMarker));
         }

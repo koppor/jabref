@@ -9,7 +9,8 @@ public class TogglePaneAction extends SimpleCommand {
     private final SidePaneType pane;
     private final SidePanePreferences sidePanePreferences;
 
-    public TogglePaneAction(StateManager stateManager, SidePaneType pane, SidePanePreferences sidePanePreferences) {
+    public TogglePaneAction(
+            StateManager stateManager, SidePaneType pane, SidePanePreferences sidePanePreferences) {
         this.stateManager = stateManager;
         this.pane = pane;
         this.sidePanePreferences = sidePanePreferences;
@@ -19,7 +20,9 @@ public class TogglePaneAction extends SimpleCommand {
     public void execute() {
         if (!stateManager.getVisibleSidePaneComponents().contains(pane)) {
             stateManager.getVisibleSidePaneComponents().add(pane);
-            stateManager.getVisibleSidePaneComponents().sort(new SidePaneViewModel.PreferredIndexSort(sidePanePreferences));
+            stateManager
+                    .getVisibleSidePaneComponents()
+                    .sort(new SidePaneViewModel.PreferredIndexSort(sidePanePreferences));
         } else {
             stateManager.getVisibleSidePaneComponents().remove(pane);
         }

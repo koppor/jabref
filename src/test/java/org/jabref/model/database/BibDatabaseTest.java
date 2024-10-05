@@ -1,5 +1,20 @@
 package org.jabref.model.database;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.BibtexString;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.jabref.model.event.EventListenerTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,22 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.BibtexString;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.field.UnknownField;
-import org.jabref.model.entry.types.StandardEntryType;
-import org.jabref.model.event.EventListenerTest;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BibDatabaseTest {
 
@@ -392,8 +391,7 @@ class BibDatabaseTest {
 
     @Test
     void getUsedStrings() {
-        BibEntry entry = new BibEntry()
-                .withField(StandardField.AUTHOR, "#AAA#");
+        BibEntry entry = new BibEntry().withField(StandardField.AUTHOR, "#AAA#");
         BibtexString tripleA = new BibtexString("AAA", "Some other #BBB#");
         BibtexString tripleB = new BibtexString("BBB", "Some more text");
         BibtexString tripleC = new BibtexString("CCC", "Even more text");
@@ -406,14 +404,14 @@ class BibDatabaseTest {
         database.addString(tripleC);
         database.insertEntry(entry);
 
-        Set<BibtexString> usedStrings = new HashSet<>(database.getUsedStrings(Collections.singletonList(entry)));
+        Set<BibtexString> usedStrings =
+                new HashSet<>(database.getUsedStrings(Collections.singletonList(entry)));
         assertEquals(stringSet, usedStrings);
     }
 
     @Test
     void getUsedStringsSingleString() {
-        BibEntry entry = new BibEntry()
-                .withField(StandardField.AUTHOR, "#AAA#");
+        BibEntry entry = new BibEntry().withField(StandardField.AUTHOR, "#AAA#");
         BibtexString tripleA = new BibtexString("AAA", "Some other text");
         BibtexString tripleB = new BibtexString("BBB", "Some more text");
         List<BibtexString> strings = new ArrayList<>(1);
@@ -423,18 +421,19 @@ class BibDatabaseTest {
         database.addString(tripleB);
         database.insertEntry(entry);
 
-        List<BibtexString> usedStrings = (List<BibtexString>) database.getUsedStrings(Collections.singletonList(entry));
+        List<BibtexString> usedStrings =
+                (List<BibtexString>) database.getUsedStrings(Collections.singletonList(entry));
         assertEquals(strings, usedStrings);
     }
 
     @Test
     void getUsedStringsNoString() {
-        BibEntry entry = new BibEntry()
-                .withField(StandardField.AUTHOR, "Oscar Gustafsson");
+        BibEntry entry = new BibEntry().withField(StandardField.AUTHOR, "Oscar Gustafsson");
         BibtexString string = new BibtexString("AAA", "Some other text");
         database.addString(string);
         database.insertEntry(entry);
-        Collection<BibtexString> usedStrings = database.getUsedStrings(Collections.singletonList(entry));
+        Collection<BibtexString> usedStrings =
+                database.getUsedStrings(Collections.singletonList(entry));
         assertEquals(Collections.emptyList(), usedStrings);
     }
 
@@ -445,7 +444,9 @@ class BibDatabaseTest {
         BibEntry entryA = new BibEntry(StandardEntryType.Article);
         entryB.setId("1");
         database.insertEntries(entryB, entryA);
-        assertEquals(Arrays.asList(entryA, entryB), database.getEntriesSorted(Comparator.comparing(BibEntry::getId)));
+        assertEquals(
+                Arrays.asList(entryA, entryB),
+                database.getEntriesSorted(Comparator.comparing(BibEntry::getId)));
     }
 
     @Test

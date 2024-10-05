@@ -13,11 +13,14 @@ public class UnlinkedFilesDialogPreferences {
     private final ObjectProperty<DateRange> unlinkedFilesSelectedDateRange;
     private final ObjectProperty<ExternalFileSorter> unlinkedFilesSelectedSort;
 
-    public UnlinkedFilesDialogPreferences(String unlinkedFilesSelectedExtension,
-                                          DateRange unlinkedFilesSelectedDateRange,
-                                          ExternalFileSorter unlinkedFilesSelectedSort) {
-        this.unlinkedFilesSelectedExtension = new SimpleStringProperty(unlinkedFilesSelectedExtension);
-        this.unlinkedFilesSelectedDateRange = new SimpleObjectProperty<>(unlinkedFilesSelectedDateRange);
+    public UnlinkedFilesDialogPreferences(
+            String unlinkedFilesSelectedExtension,
+            DateRange unlinkedFilesSelectedDateRange,
+            ExternalFileSorter unlinkedFilesSelectedSort) {
+        this.unlinkedFilesSelectedExtension =
+                new SimpleStringProperty(unlinkedFilesSelectedExtension);
+        this.unlinkedFilesSelectedDateRange =
+                new SimpleObjectProperty<>(unlinkedFilesSelectedDateRange);
         this.unlinkedFilesSelectedSort = new SimpleObjectProperty<>(unlinkedFilesSelectedSort);
     }
 

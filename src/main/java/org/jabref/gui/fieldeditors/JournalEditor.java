@@ -1,6 +1,8 @@
 package org.jabref.gui.fieldeditors;
 
-import javax.swing.undo.UndoManager;
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
 
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -21,8 +23,7 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import javax.swing.undo.UndoManager;
 
 public class JournalEditor extends HBox implements FieldEditorFX {
 
@@ -37,29 +38,32 @@ public class JournalEditor extends HBox implements FieldEditorFX {
     @Inject private JournalAbbreviationRepository abbreviationRepository;
     @Inject private UndoManager undoManager;
 
-    public JournalEditor(Field field,
-                         SuggestionProvider<?> suggestionProvider,
-                         FieldCheckers fieldCheckers,
-                         UndoAction undoAction,
-                         RedoAction redoAction) {
+    public JournalEditor(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            UndoAction undoAction,
+            RedoAction redoAction) {
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
 
-        this.viewModel = new JournalEditorViewModel(
-                field,
-                suggestionProvider,
-                abbreviationRepository,
-                fieldCheckers,
-                taskExecutor,
-                dialogService,
-                undoManager);
+        this.viewModel =
+                new JournalEditorViewModel(
+                        field,
+                        suggestionProvider,
+                        abbreviationRepository,
+                        fieldCheckers,
+                        taskExecutor,
+                        dialogService,
+                        undoManager);
 
-        establishBinding(textField, viewModel.textProperty(), keyBindingRepository, undoAction, redoAction);
+        establishBinding(
+                textField, viewModel.textProperty(), keyBindingRepository, undoAction, redoAction);
         textField.initContextMenu(new DefaultMenu(textField), keyBindingRepository);
         AutoCompletionTextInputBinding.autoComplete(textField, viewModel::complete);
-        new EditorValidator(preferences).configureValidation(viewModel.getFieldValidator().getValidationStatus(), textField);
+        new EditorValidator(preferences)
+                .configureValidation(
+                        viewModel.getFieldValidator().getValidationStatus(), textField);
     }
 
     public JournalEditorViewModel getViewModel() {
@@ -83,7 +87,8 @@ public class JournalEditor extends HBox implements FieldEditorFX {
 
     @FXML
     private void showJournalInfo() {
-        if (JournalInfoOptInDialogHelper.isJournalInfoEnabled(dialogService, preferences.getEntryEditorPreferences())) {
+        if (JournalInfoOptInDialogHelper.isJournalInfoEnabled(
+                dialogService, preferences.getEntryEditorPreferences())) {
             viewModel.showJournalInfo(journalInfoButton);
         }
     }

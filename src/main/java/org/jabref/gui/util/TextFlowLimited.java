@@ -31,21 +31,23 @@ public class TextFlowLimited extends TextFlow {
 
     private void expand() {
         double newPrefHeight = super.computePrefHeight(getWidth());
-        final Animation expandPanel = new Transition() {
-            {
-                setCycleDuration(Duration.millis(200));
-            }
+        final Animation expandPanel =
+                new Transition() {
+                    {
+                        setCycleDuration(Duration.millis(200));
+                    }
 
-            @Override
-            protected void interpolate(double fraction) {
-                setPrefHeight(newPrefHeight * fraction);
-            }
-        };
+                    @Override
+                    protected void interpolate(double fraction) {
+                        setPrefHeight(newPrefHeight * fraction);
+                    }
+                };
 
-        expandPanel.setOnFinished(event -> {
-            isCollapsed = false;
-            requestLayout();
-        });
+        expandPanel.setOnFinished(
+                event -> {
+                    isCollapsed = false;
+                    requestLayout();
+                });
         expandPanel.play();
     }
 
@@ -67,9 +69,18 @@ public class TextFlowLimited extends TextFlow {
             if (!this.getChildren().contains(moreLink)) {
                 this.getChildren().add(moreLink);
             }
-            layoutInArea(moreLink, 0, 0, getWidth(), getHeight(), getBaselineOffset(), HPos.RIGHT, VPos.BOTTOM);
+            layoutInArea(
+                    moreLink,
+                    0,
+                    0,
+                    getWidth(),
+                    getHeight(),
+                    getBaselineOffset(),
+                    HPos.RIGHT,
+                    VPos.BOTTOM);
 
-            // Clip content if it expands above pref height (no idea why this is needed, but otherwise sometimes the text is still visible)
+            // Clip content if it expands above pref height (no idea why this is needed, but
+            // otherwise sometimes the text is still visible)
             clip.setHeight(computePrefHeight(this.getWidth()));
             clip.setWidth(this.getWidth());
             this.setClip(clip);

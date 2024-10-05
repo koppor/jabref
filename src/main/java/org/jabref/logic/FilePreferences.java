@@ -1,8 +1,5 @@
 package org.jabref.logic;
 
-import java.nio.file.Path;
-import java.util.Optional;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -12,12 +9,16 @@ import javafx.beans.property.StringProperty;
 
 import org.jabref.model.strings.StringUtil;
 
+import java.nio.file.Path;
+import java.util.Optional;
+
 /**
  *  Preferences for the linked files
  */
 public class FilePreferences {
 
-    public static final String[] DEFAULT_FILENAME_PATTERNS = new String[] {"[bibtexkey]", "[bibtexkey] - [title]"};
+    public static final String[] DEFAULT_FILENAME_PATTERNS =
+            new String[] {"[bibtexkey]", "[bibtexkey] - [title]"};
 
     private final StringProperty userAndHost = new SimpleStringProperty();
     private final SimpleStringProperty mainFileDirectory = new SimpleStringProperty();
@@ -33,19 +34,20 @@ public class FilePreferences {
     private final BooleanProperty moveToTrash = new SimpleBooleanProperty();
     private final BooleanProperty shouldKeepDownloadUrl = new SimpleBooleanProperty();
 
-    public FilePreferences(String userAndHost,
-                           String mainFileDirectory,
-                           boolean storeFilesRelativeToBibFile,
-                           String fileNamePattern,
-                           String fileDirectoryPattern,
-                           boolean downloadLinkedFiles,
-                           boolean fulltextIndexLinkedFiles,
-                           Path workingDirectory,
-                           boolean createBackup,
-                           Path backupDirectory,
-                           boolean confirmDeleteLinkedFile,
-                           boolean moveToTrash,
-                           boolean shouldKeepDownloadUrl) {
+    public FilePreferences(
+            String userAndHost,
+            String mainFileDirectory,
+            boolean storeFilesRelativeToBibFile,
+            String fileNamePattern,
+            String fileDirectoryPattern,
+            boolean downloadLinkedFiles,
+            boolean fulltextIndexLinkedFiles,
+            Path workingDirectory,
+            boolean createBackup,
+            Path backupDirectory,
+            boolean confirmDeleteLinkedFile,
+            boolean moveToTrash,
+            boolean shouldKeepDownloadUrl) {
         this.userAndHost.setValue(userAndHost);
         this.mainFileDirectory.setValue(mainFileDirectory);
         this.storeFilesRelativeToBibFile.setValue(storeFilesRelativeToBibFile);

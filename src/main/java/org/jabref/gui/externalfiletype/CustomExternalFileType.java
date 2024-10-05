@@ -1,10 +1,10 @@
 package org.jabref.gui.externalfiletype;
 
-import java.util.Objects;
-
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
 import org.jabref.logic.FilePreferences;
+
+import java.util.Objects;
 
 /**
  * This class defines a type of external files that can be linked to from JabRef.
@@ -22,8 +22,13 @@ public class CustomExternalFileType implements ExternalFileType {
     private String mimeType;
     private JabRefIcon icon;
 
-    public CustomExternalFileType(String name, String extension, String mimeType,
-                                  String openWith, String iconName, JabRefIcon icon) {
+    public CustomExternalFileType(
+            String name,
+            String extension,
+            String mimeType,
+            String openWith,
+            String iconName,
+            JabRefIcon icon) {
         this.name = name;
         this.extension = extension;
         this.mimeType = mimeType;
@@ -34,7 +39,13 @@ public class CustomExternalFileType implements ExternalFileType {
     }
 
     public CustomExternalFileType(ExternalFileType type) {
-        this(type.getName(), type.getExtension(), type.getMimeType(), type.getOpenWithApplication(), "", type.getIcon());
+        this(
+                type.getName(),
+                type.getExtension(),
+                type.getMimeType(),
+                type.getOpenWithApplication(),
+                "",
+                type.getIcon());
     }
 
     /**
@@ -47,7 +58,8 @@ public class CustomExternalFileType implements ExternalFileType {
      */
     public static ExternalFileType buildFromArgs(String[] val) {
         if ((val == null) || (val.length < 4) || (val.length > 5)) {
-            throw new IllegalArgumentException("Cannot construct ExternalFileType without four elements in String[] argument.");
+            throw new IllegalArgumentException(
+                    "Cannot construct ExternalFileType without four elements in String[] argument.");
         }
         String name = val[0];
         String extension = val[1];
@@ -182,8 +194,11 @@ public class CustomExternalFileType implements ExternalFileType {
         }
 
         if (object instanceof CustomExternalFileType other) {
-            return Objects.equals(name, other.name) && Objects.equals(extension, other.extension) &&
-                    Objects.equals(mimeType, other.mimeType) && Objects.equals(openWith, other.openWith) && Objects.equals(iconName, other.iconName);
+            return Objects.equals(name, other.name)
+                    && Objects.equals(extension, other.extension)
+                    && Objects.equals(mimeType, other.mimeType)
+                    && Objects.equals(openWith, other.openWith)
+                    && Objects.equals(iconName, other.iconName);
         }
         return false;
     }

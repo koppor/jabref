@@ -1,5 +1,17 @@
 package org.jabref.logic.importer.fileformat;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.jabref.logic.bibtex.BibEntryAssert;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -10,28 +22,17 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.jabref.logic.bibtex.BibEntryAssert;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.field.UnknownField;
-import org.jabref.model.entry.types.StandardEntryType;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 class OvidImporterTest {
 
     private static final String FILE_ENDING = ".txt";
     private OvidImporter importer = new OvidImporter();
 
     private static Stream<String> fileNames() throws IOException {
-        Predicate<String> fileName = name -> name.startsWith("OvidImporterTest")
-                && !name.contains("Invalid")
-                && name.endsWith(FILE_ENDING);
+        Predicate<String> fileName =
+                name ->
+                        name.startsWith("OvidImporterTest")
+                                && !name.contains("Invalid")
+                                && name.endsWith(FILE_ENDING);
         return ImporterTestEngine.getTestFiles(fileName).stream();
     }
 
@@ -67,7 +68,8 @@ class OvidImporterTest {
 
         BibEntry entry = entries.getFirst();
         assertEquals(StandardEntryType.Misc, entry.getType());
-        assertEquals(Optional.of("Mustermann and Musterfrau"), entry.getField(StandardField.AUTHOR));
+        assertEquals(
+                Optional.of("Mustermann and Musterfrau"), entry.getField(StandardField.AUTHOR));
         assertEquals(Optional.of("Short abstract"), entry.getField(StandardField.ABSTRACT));
         assertEquals(Optional.of("Musterbuch"), entry.getField(StandardField.TITLE));
         assertEquals(Optional.of("Einleitung"), entry.getField(new UnknownField("chaptertitle")));
@@ -123,10 +125,14 @@ class OvidImporterTest {
     void importSingleEntries() throws IOException, URISyntaxException {
 
         for (int n = 3; n <= 7; n++) {
-            Path file = Path.of(OvidImporter.class.getResource("OvidImporterTest" + n + ".txt").toURI());
-            try (InputStream nis = OvidImporter.class.getResourceAsStream("OvidImporterTestBib" + n + ".bib")) {
-                List<BibEntry> entries = importer.importDatabase(file).getDatabase()
-                                                 .getEntries();
+            Path file =
+                    Path.of(
+                            OvidImporter.class
+                                    .getResource("OvidImporterTest" + n + ".txt")
+                                    .toURI());
+            try (InputStream nis =
+                    OvidImporter.class.getResourceAsStream("OvidImporterTestBib" + n + ".bib")) {
+                List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
                 assertNotNull(entries);
                 assertEquals(1, entries.size());
                 BibEntryAssert.assertEquals(nis, entries.getFirst());

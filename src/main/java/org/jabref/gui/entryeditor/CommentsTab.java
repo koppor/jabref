@@ -1,15 +1,5 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.SequencedSet;
-import java.util.stream.Collectors;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.collections.ObservableList;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
@@ -37,6 +27,16 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UserSpecificCommentField;
 import org.jabref.model.search.SearchQuery;
 
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.SequencedSet;
+import java.util.stream.Collectors;
+
+import javax.swing.undo.UndoManager;
+
 public class CommentsTab extends FieldsEditorTab {
     public static final String NAME = "Comments";
 
@@ -45,18 +45,19 @@ public class CommentsTab extends FieldsEditorTab {
 
     private final EntryEditorPreferences entryEditorPreferences;
 
-    public CommentsTab(GuiPreferences preferences,
-                       BibDatabaseContext databaseContext,
-                       SuggestionProviders suggestionProviders,
-                       UndoManager undoManager,
-                       UndoAction undoAction,
-                       RedoAction redoAction,
-                       DialogService dialogService,
-                       ThemeManager themeManager,
-                       TaskExecutor taskExecutor,
-                       JournalAbbreviationRepository journalAbbreviationRepository,
-                       LuceneManager luceneManager,
-                       OptionalObjectProperty<SearchQuery> searchQueryProperty) {
+    public CommentsTab(
+            GuiPreferences preferences,
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            UndoAction undoAction,
+            RedoAction redoAction,
+            DialogService dialogService,
+            ThemeManager themeManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository,
+            LuceneManager luceneManager,
+            OptionalObjectProperty<SearchQuery> searchQueryProperty) {
         super(
                 false,
                 databaseContext,
@@ -70,9 +71,13 @@ public class CommentsTab extends FieldsEditorTab {
                 taskExecutor,
                 journalAbbreviationRepository,
                 luceneManager,
-                searchQueryProperty
-        );
-        this.defaultOwner = preferences.getOwnerPreferences().getDefaultOwner().toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]", "-");
+                searchQueryProperty);
+        this.defaultOwner =
+                preferences
+                        .getOwnerPreferences()
+                        .getDefaultOwner()
+                        .toLowerCase(Locale.ROOT)
+                        .replaceAll("[^a-z0-9]", "-");
         setText(Localization.lang("Comments"));
         setGraphic(IconTheme.JabRefIcons.COMMENT.getGraphicNode());
 
@@ -88,16 +93,23 @@ public class CommentsTab extends FieldsEditorTab {
         comments.add(StandardField.COMMENT);
 
         // Also show comment field of the current user (if enabled in the preferences)
-        if (entry.hasField(userSpecificCommentField) || entryEditorPreferences.shouldShowUserCommentsFields()) {
+        if (entry.hasField(userSpecificCommentField)
+                || entryEditorPreferences.shouldShowUserCommentsFields()) {
             comments.add(userSpecificCommentField);
         }
 
         // Show all non-empty comment fields (otherwise, they are completely hidden)
-        comments.addAll(entry.getFields().stream()
-                .filter(field -> (field instanceof UserSpecificCommentField && !field.equals(userSpecificCommentField))
-                        || field.getName().toLowerCase().contains("comment"))
-                .sorted(Comparator.comparing(Field::getName))
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
+        comments.addAll(
+                entry.getFields().stream()
+                        .filter(
+                                field ->
+                                        (field instanceof UserSpecificCommentField
+                                                        && !field.equals(userSpecificCommentField))
+                                                || field.getName()
+                                                        .toLowerCase()
+                                                        .contains("comment"))
+                        .sorted(Comparator.comparing(Field::getName))
+                        .collect(Collectors.toCollection(LinkedHashSet::new)));
         return comments;
     }
 
@@ -132,7 +144,11 @@ public class CommentsTab extends FieldsEditorTab {
     protected void setupPanel(BibEntry entry, boolean compressed) {
         super.setupPanel(entry, compressed);
 
-        Optional<FieldEditorFX> fieldEditorForUserDefinedComment = editors.entrySet().stream().filter(f -> f.getKey().getName().contains(defaultOwner)).map(Map.Entry::getValue).findFirst();
+        Optional<FieldEditorFX> fieldEditorForUserDefinedComment =
+                editors.entrySet().stream()
+                        .filter(f -> f.getKey().getName().contains(defaultOwner))
+                        .map(Map.Entry::getValue)
+                        .findFirst();
         for (Map.Entry<Field, FieldEditorFX> fieldEditorEntry : editors.entrySet()) {
             Field field = fieldEditorEntry.getKey();
             FieldEditorFX editor = fieldEditorEntry.getValue();
@@ -143,19 +159,34 @@ public class CommentsTab extends FieldsEditorTab {
             editor.getNode().setDisable(!shouldBeEnabled);
         }
 
-        // Show "Hide" button only if user-specific comment field is empty. Otherwise, it is a strange UI, because the
+        // Show "Hide" button only if user-specific comment field is empty. Otherwise, it is a
+        // strange UI, because the
         // button would just disappear and no change **in the current** editor would be made
-        if (entryEditorPreferences.shouldShowUserCommentsFields() && !entry.hasField(userSpecificCommentField)) {
-            Button hideDefaultOwnerCommentButton = new Button(Localization.lang("Hide user comments"));
-            hideDefaultOwnerCommentButton.setOnAction(e -> {
-                var labelForField = gridPane.getChildren().stream().filter(s -> s instanceof FieldNameLabel).filter(x -> ((FieldNameLabel) x).getText().equals(userSpecificCommentField.getDisplayName())).findFirst();
-                labelForField.ifPresent(label -> gridPane.getChildren().remove(label));
-                fieldEditorForUserDefinedComment.ifPresent(f -> gridPane.getChildren().remove(f.getNode()));
-                editors.remove(userSpecificCommentField);
+        if (entryEditorPreferences.shouldShowUserCommentsFields()
+                && !entry.hasField(userSpecificCommentField)) {
+            Button hideDefaultOwnerCommentButton =
+                    new Button(Localization.lang("Hide user comments"));
+            hideDefaultOwnerCommentButton.setOnAction(
+                    e -> {
+                        var labelForField =
+                                gridPane.getChildren().stream()
+                                        .filter(s -> s instanceof FieldNameLabel)
+                                        .filter(
+                                                x ->
+                                                        ((FieldNameLabel) x)
+                                                                .getText()
+                                                                .equals(
+                                                                        userSpecificCommentField
+                                                                                .getDisplayName()))
+                                        .findFirst();
+                        labelForField.ifPresent(label -> gridPane.getChildren().remove(label));
+                        fieldEditorForUserDefinedComment.ifPresent(
+                                f -> gridPane.getChildren().remove(f.getNode()));
+                        editors.remove(userSpecificCommentField);
 
-                entryEditorPreferences.setShowUserCommentsFields(false);
-                setupPanel(entry, false);
-            });
+                        entryEditorPreferences.setShowUserCommentsFields(false);
+                        setupPanel(entry, false);
+                    });
             gridPane.add(hideDefaultOwnerCommentButton, 1, gridPane.getRowCount(), 2, 1);
             setCompressedRowLayout();
         }

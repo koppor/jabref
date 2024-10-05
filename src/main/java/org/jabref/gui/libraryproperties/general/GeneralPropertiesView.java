@@ -1,6 +1,8 @@
 package org.jabref.gui.libraryproperties.general;
 
-import java.nio.charset.Charset;
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -13,8 +15,7 @@ import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.database.BibDatabaseMode;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import java.nio.charset.Charset;
 
 public class GeneralPropertiesView extends AbstractPropertiesTabView<GeneralPropertiesViewModel> {
     @FXML private ComboBox<Charset> encoding;
@@ -28,9 +29,7 @@ public class GeneralPropertiesView extends AbstractPropertiesTabView<GeneralProp
     public GeneralPropertiesView(BibDatabaseContext databaseContext) {
         this.databaseContext = databaseContext;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -39,11 +38,10 @@ public class GeneralPropertiesView extends AbstractPropertiesTabView<GeneralProp
     }
 
     public void initialize() {
-        this.viewModel = new GeneralPropertiesViewModel(databaseContext, dialogService, preferences);
+        this.viewModel =
+                new GeneralPropertiesViewModel(databaseContext, dialogService, preferences);
 
-        new ViewModelListCellFactory<Charset>()
-                .withText(Charset::displayName)
-                .install(encoding);
+        new ViewModelListCellFactory<Charset>().withText(Charset::displayName).install(encoding);
         encoding.disableProperty().bind(viewModel.encodingDisableProperty());
         encoding.itemsProperty().bind(viewModel.encodingsProperty());
         encoding.valueProperty().bindBidirectional(viewModel.selectedEncodingProperty());
@@ -54,8 +52,12 @@ public class GeneralPropertiesView extends AbstractPropertiesTabView<GeneralProp
         databaseMode.itemsProperty().bind(viewModel.databaseModesProperty());
         databaseMode.valueProperty().bindBidirectional(viewModel.selectedDatabaseModeProperty());
 
-        generalFileDirectory.textProperty().bindBidirectional(viewModel.generalFileDirectoryPropertyProperty());
-        userSpecificFileDirectory.textProperty().bindBidirectional(viewModel.userSpecificFileDirectoryProperty());
+        generalFileDirectory
+                .textProperty()
+                .bindBidirectional(viewModel.generalFileDirectoryPropertyProperty());
+        userSpecificFileDirectory
+                .textProperty()
+                .bindBidirectional(viewModel.userSpecificFileDirectoryProperty());
         laTexFileDirectory.textProperty().bindBidirectional(viewModel.laTexFileDirectoryProperty());
     }
 

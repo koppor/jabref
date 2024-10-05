@@ -1,13 +1,13 @@
 package org.jabref.logic.layout;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import javafx.beans.property.StringProperty;
 
 import org.jabref.logic.layout.format.NameFormatterPreferences;
 import org.jabref.logic.preferences.DOIPreferences;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class LayoutFormatterPreferences {
 
@@ -17,9 +17,10 @@ public class LayoutFormatterPreferences {
     private final StringProperty mainFileDirectoryProperty;
     private final Map<String, String> customExportNameFormatters = new HashMap<>();
 
-    public LayoutFormatterPreferences(NameFormatterPreferences nameFormatterPreferences,
-                                      DOIPreferences doiPreferences,
-                                      StringProperty mainFileDirectoryProperty) {
+    public LayoutFormatterPreferences(
+            NameFormatterPreferences nameFormatterPreferences,
+            DOIPreferences doiPreferences,
+            StringProperty mainFileDirectoryProperty) {
         this.nameFormatterPreferences = nameFormatterPreferences;
         this.mainFileDirectoryProperty = mainFileDirectoryProperty;
         this.doiPreferences = doiPreferences;

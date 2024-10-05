@@ -1,19 +1,18 @@
 package org.jabref.logic.integrity;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.junit.jupiter.api.Test;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UTF8CheckerTest {
 
@@ -45,7 +44,11 @@ class UTF8CheckerTest {
         UTF8Checker checker = new UTF8Checker(Charset.forName("GBK"));
         String NonUTF8 = new String("你好，这条语句使用GBK字符集".getBytes(StandardCharsets.UTF_8), GBK);
         entry.setField(StandardField.MONTH, NonUTF8);
-        assertEquals(List.of(new IntegrityMessage("Non-UTF-8 encoded field found", entry, StandardField.MONTH)), checker.check(entry));
+        assertEquals(
+                List.of(
+                        new IntegrityMessage(
+                                "Non-UTF-8 encoded field found", entry, StandardField.MONTH)),
+                checker.check(entry));
     }
 
     /**
@@ -58,7 +61,7 @@ class UTF8CheckerTest {
     @Test
     void NonUTF8EncodingCheckerTest() throws UnsupportedEncodingException {
         String NonUTF8 = new String("你好，这条语句使用GBK字符集".getBytes(StandardCharsets.UTF_8), GBK);
-            assertFalse(UTF8Checker.UTF8EncodingChecker(NonUTF8.getBytes(GBK)));
+        assertFalse(UTF8Checker.UTF8EncodingChecker(NonUTF8.getBytes(GBK)));
     }
 
     /**
@@ -67,7 +70,9 @@ class UTF8CheckerTest {
      */
     @Test
     void UTF8EncodingCheckerTest() {
-        String UTF8Demo = new String("你好，这条语句使用GBK字符集".getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
-            assertTrue(UTF8Checker.UTF8EncodingChecker(UTF8Demo.getBytes(StandardCharsets.UTF_8)));
+        String UTF8Demo =
+                new String(
+                        "你好，这条语句使用GBK字符集".getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+        assertTrue(UTF8Checker.UTF8EncodingChecker(UTF8Demo.getBytes(StandardCharsets.UTF_8)));
     }
 }

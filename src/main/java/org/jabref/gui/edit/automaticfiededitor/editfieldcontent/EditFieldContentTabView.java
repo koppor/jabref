@@ -1,6 +1,11 @@
 package org.jabref.gui.edit.automaticfiededitor.editfieldcontent;
 
-import java.util.List;
+import static org.jabref.gui.util.FieldsUtil.FIELD_STRING_CONVERTER;
+
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,24 +21,17 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
-
-import static org.jabref.gui.util.FieldsUtil.FIELD_STRING_CONVERTER;
+import java.util.List;
 
 public class EditFieldContentTabView extends AbstractAutomaticFieldEditorTabView {
     public Button appendValueButton;
     public Button clearFieldButton;
     public Button setValueButton;
-    @FXML
-    private ComboBox<Field> fieldComboBox;
+    @FXML private ComboBox<Field> fieldComboBox;
 
-    @FXML
-    private TextField fieldValueTextField;
+    @FXML private TextField fieldValueTextField;
 
-    @FXML
-    private CheckBox overwriteFieldContentCheckBox;
+    @FXML private CheckBox overwriteFieldContentCheckBox;
 
     private final List<BibEntry> selectedEntries;
     private final BibDatabase database;
@@ -49,9 +47,7 @@ public class EditFieldContentTabView extends AbstractAutomaticFieldEditorTabView
         this.database = database;
         this.stateManager = stateManager;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @FXML
@@ -64,18 +60,31 @@ public class EditFieldContentTabView extends AbstractAutomaticFieldEditorTabView
         fieldComboBox.getSelectionModel().selectFirst();
 
         fieldComboBox.valueProperty().bindBidirectional(viewModel.selectedFieldProperty());
-        EasyBind.listen(fieldComboBox.getEditor().textProperty(), observable -> fieldComboBox.commitValue());
+        EasyBind.listen(
+                fieldComboBox.getEditor().textProperty(),
+                observable -> fieldComboBox.commitValue());
 
         fieldValueTextField.textProperty().bindBidirectional(viewModel.fieldValueProperty());
 
-        overwriteFieldContentCheckBox.selectedProperty().bindBidirectional(viewModel.overwriteFieldContentProperty());
+        overwriteFieldContentCheckBox
+                .selectedProperty()
+                .bindBidirectional(viewModel.overwriteFieldContentProperty());
 
         appendValueButton.disableProperty().bind(viewModel.canAppendProperty().not());
-        setValueButton.disableProperty().bind(viewModel.fieldValidationStatus().validProperty().not());
-        clearFieldButton.disableProperty().bind(viewModel.fieldValidationStatus().validProperty().not());
-        overwriteFieldContentCheckBox.disableProperty().bind(viewModel.fieldValidationStatus().validProperty().not());
+        setValueButton
+                .disableProperty()
+                .bind(viewModel.fieldValidationStatus().validProperty().not());
+        clearFieldButton
+                .disableProperty()
+                .bind(viewModel.fieldValidationStatus().validProperty().not());
+        overwriteFieldContentCheckBox
+                .disableProperty()
+                .bind(viewModel.fieldValidationStatus().validProperty().not());
 
-        Platform.runLater(() -> visualizer.initVisualization(viewModel.fieldValidationStatus(), fieldComboBox, true));
+        Platform.runLater(
+                () ->
+                        visualizer.initVisualization(
+                                viewModel.fieldValidationStatus(), fieldComboBox, true));
     }
 
     @Override

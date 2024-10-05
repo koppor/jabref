@@ -1,10 +1,5 @@
 package org.jabref.gui.entryeditor.fileannotationtab;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ContextMenu;
@@ -37,9 +32,13 @@ import org.jabref.model.search.SearchFlags;
 import org.jabref.model.search.SearchQuery;
 import org.jabref.model.search.SearchResult;
 import org.jabref.model.search.SearchResults;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 
 public class FulltextSearchResultsTab extends EntryEditorTab {
 
@@ -57,12 +56,13 @@ public class FulltextSearchResultsTab extends EntryEditorTab {
     private BibEntry entry;
     private DocumentViewerView documentViewerView;
 
-    public FulltextSearchResultsTab(StateManager stateManager,
-                                    GuiPreferences preferences,
-                                    DialogService dialogService,
-                                    BibDatabaseContext databaseContext,
-                                    TaskExecutor taskExecutor,
-                                    OptionalObjectProperty<SearchQuery> searchQueryProperty) {
+    public FulltextSearchResultsTab(
+            StateManager stateManager,
+            GuiPreferences preferences,
+            DialogService dialogService,
+            BibDatabaseContext databaseContext,
+            TaskExecutor taskExecutor,
+            OptionalObjectProperty<SearchQuery> searchQueryProperty) {
         this.stateManager = stateManager;
         this.preferences = preferences;
         this.dialogService = dialogService;
@@ -82,7 +82,13 @@ public class FulltextSearchResultsTab extends EntryEditorTab {
 
     @Override
     public boolean shouldShow(BibEntry entry) {
-        return searchQueryProperty.get().map(query -> query.isValid() && query.getSearchFlags().contains(SearchFlags.FULLTEXT)).orElse(false);
+        return searchQueryProperty
+                .get()
+                .map(
+                        query ->
+                                query.isValid()
+                                        && query.getSearchFlags().contains(SearchFlags.FULLTEXT))
+                .orElse(false);
     }
 
     @Override
@@ -96,84 +102,191 @@ public class FulltextSearchResultsTab extends EntryEditorTab {
         this.entry = entry;
         content.getChildren().clear();
 
-        stateManager.activeSearchQuery(SearchType.NORMAL_SEARCH).get().ifPresent(searchQuery -> {
-            SearchResults searchResults = searchQuery.getSearchResults();
-            if (searchResults != null) {
-                Map<String, List<SearchResult>> searchResultsForEntry = searchResults.getFileSearchResultsForEntry(entry);
-                if (searchResultsForEntry.isEmpty()) {
-                    content.getChildren().add(new Text(Localization.lang("No search matches.")));
-                } else {
-                    // Iterate through files with search hits
-                    for (Map.Entry<String, List<SearchResult>> iterator : searchResultsForEntry.entrySet()) {
-                        entry.getFiles().stream().filter(file -> file.getLink().equals(iterator.getKey())).findFirst().ifPresent(linkedFile -> {
-                            content.getChildren().addAll(createFileLink(linkedFile), lineSeparator());
-                            // Iterate through pages (within file) with search hits
-                            for (SearchResult searchResult : iterator.getValue()) {
-                                for (String resultTextHtml : searchResult.getContentResultStringsHtml()) {
-                                    content.getChildren().addAll(TooltipTextUtil.createTextsFromHtml(resultTextHtml.replace("</b> <b>", " ")));
-                                    content.getChildren().addAll(new Text(System.lineSeparator()), lineSeparator(0.8), createPageLink(linkedFile, searchResult.getPageNumber()));
-                                }
-                                if (!searchResult.getAnnotationsResultStringsHtml().isEmpty()) {
-                                    Text annotationsText = new Text(System.lineSeparator() + Localization.lang("Found matches in annotations:") + System.lineSeparator() + System.lineSeparator());
-                                    annotationsText.setStyle("-fx-font-style: italic;");
-                                    content.getChildren().add(annotationsText);
+        stateManager
+                .activeSearchQuery(SearchType.NORMAL_SEARCH)
+                .get()
+                .ifPresent(
+                        searchQuery -> {
+                            SearchResults searchResults = searchQuery.getSearchResults();
+                            if (searchResults != null) {
+                                Map<String, List<SearchResult>> searchResultsForEntry =
+                                        searchResults.getFileSearchResultsForEntry(entry);
+                                if (searchResultsForEntry.isEmpty()) {
+                                    content.getChildren()
+                                            .add(new Text(Localization.lang("No search matches.")));
+                                } else {
+                                    // Iterate through files with search hits
+                                    for (Map.Entry<String, List<SearchResult>> iterator :
+                                            searchResultsForEntry.entrySet()) {
+                                        entry.getFiles().stream()
+                                                .filter(
+                                                        file ->
+                                                                file.getLink()
+                                                                        .equals(iterator.getKey()))
+                                                .findFirst()
+                                                .ifPresent(
+                                                        linkedFile -> {
+                                                            content.getChildren()
+                                                                    .addAll(
+                                                                            createFileLink(
+                                                                                    linkedFile),
+                                                                            lineSeparator());
+                                                            // Iterate through pages (within file)
+                                                            // with search hits
+                                                            for (SearchResult searchResult :
+                                                                    iterator.getValue()) {
+                                                                for (String resultTextHtml :
+                                                                        searchResult
+                                                                                .getContentResultStringsHtml()) {
+                                                                    content.getChildren()
+                                                                            .addAll(
+                                                                                    TooltipTextUtil
+                                                                                            .createTextsFromHtml(
+                                                                                                    resultTextHtml
+                                                                                                            .replace(
+                                                                                                                    "</b> <b>",
+                                                                                                                    " ")));
+                                                                    content.getChildren()
+                                                                            .addAll(
+                                                                                    new Text(
+                                                                                            System
+                                                                                                    .lineSeparator()),
+                                                                                    lineSeparator(
+                                                                                            0.8),
+                                                                                    createPageLink(
+                                                                                            linkedFile,
+                                                                                            searchResult
+                                                                                                    .getPageNumber()));
+                                                                }
+                                                                if (!searchResult
+                                                                        .getAnnotationsResultStringsHtml()
+                                                                        .isEmpty()) {
+                                                                    Text annotationsText =
+                                                                            new Text(
+                                                                                    System
+                                                                                                    .lineSeparator()
+                                                                                            + Localization
+                                                                                                    .lang(
+                                                                                                            "Found matches in annotations:")
+                                                                                            + System
+                                                                                                    .lineSeparator()
+                                                                                            + System
+                                                                                                    .lineSeparator());
+                                                                    annotationsText.setStyle(
+                                                                            "-fx-font-style: italic;");
+                                                                    content.getChildren()
+                                                                            .add(annotationsText);
 
-                                    for (String resultTextHtml : searchResult.getAnnotationsResultStringsHtml()) {
-                                        content.getChildren().addAll(TooltipTextUtil.createTextsFromHtml(resultTextHtml.replace("</b> <b>", " ")));
-                                        content.getChildren().addAll(new Text(System.lineSeparator()), lineSeparator(0.8), createPageLink(linkedFile, searchResult.getPageNumber()));
+                                                                    for (String resultTextHtml :
+                                                                            searchResult
+                                                                                    .getAnnotationsResultStringsHtml()) {
+                                                                        content.getChildren()
+                                                                                .addAll(
+                                                                                        TooltipTextUtil
+                                                                                                .createTextsFromHtml(
+                                                                                                        resultTextHtml
+                                                                                                                .replace(
+                                                                                                                        "</b> <b>",
+                                                                                                                        " ")));
+                                                                        content.getChildren()
+                                                                                .addAll(
+                                                                                        new Text(
+                                                                                                System
+                                                                                                        .lineSeparator()),
+                                                                                        lineSeparator(
+                                                                                                0.8),
+                                                                                        createPageLink(
+                                                                                                linkedFile,
+                                                                                                searchResult
+                                                                                                        .getPageNumber()));
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
                                     }
                                 }
                             }
                         });
-                    }
-                }
-            }
-        });
     }
 
     private Text createFileLink(LinkedFile linkedFile) {
-        Text fileLinkText = new Text(Localization.lang("Found match in %0", linkedFile.getLink()) + System.lineSeparator() + System.lineSeparator());
+        Text fileLinkText =
+                new Text(
+                        Localization.lang("Found match in %0", linkedFile.getLink())
+                                + System.lineSeparator()
+                                + System.lineSeparator());
         fileLinkText.setStyle("-fx-font-weight: bold;");
 
         ContextMenu fileContextMenu = getFileContextMenu(linkedFile);
-        Path resolvedPath = linkedFile.findIn(databaseContext, preferences.getFilePreferences()).orElse(Path.of(linkedFile.getLink()));
+        Path resolvedPath =
+                linkedFile
+                        .findIn(databaseContext, preferences.getFilePreferences())
+                        .orElse(Path.of(linkedFile.getLink()));
         Tooltip fileLinkTooltip = new Tooltip(resolvedPath.toAbsolutePath().toString());
         Tooltip.install(fileLinkText, fileLinkTooltip);
-        fileLinkText.setOnMouseClicked(event -> {
-            if (MouseButton.PRIMARY == event.getButton()) {
-                try {
-                    NativeDesktop.openBrowser(resolvedPath.toUri(), preferences.getExternalApplicationsPreferences());
-                } catch (IOException e) {
-                    LOGGER.error("Cannot open {}.", resolvedPath, e);
-                }
-            } else {
-                fileContextMenu.show(fileLinkText, event.getScreenX(), event.getScreenY());
-            }
-        });
+        fileLinkText.setOnMouseClicked(
+                event -> {
+                    if (MouseButton.PRIMARY == event.getButton()) {
+                        try {
+                            NativeDesktop.openBrowser(
+                                    resolvedPath.toUri(),
+                                    preferences.getExternalApplicationsPreferences());
+                        } catch (IOException e) {
+                            LOGGER.error("Cannot open {}.", resolvedPath, e);
+                        }
+                    } else {
+                        fileContextMenu.show(fileLinkText, event.getScreenX(), event.getScreenY());
+                    }
+                });
         return fileLinkText;
     }
 
     private Text createPageLink(LinkedFile linkedFile, int pageNumber) {
-        Text pageLink = new Text(Localization.lang("On page %0", pageNumber) + System.lineSeparator() + System.lineSeparator());
+        Text pageLink =
+                new Text(
+                        Localization.lang("On page %0", pageNumber)
+                                + System.lineSeparator()
+                                + System.lineSeparator());
         pageLink.setStyle("-fx-font-style: italic; -fx-font-weight: bold;");
 
-        pageLink.setOnMouseClicked(event -> {
-            if (MouseButton.PRIMARY == event.getButton()) {
-                documentViewerView.switchToFile(linkedFile);
-                documentViewerView.gotoPage(pageNumber);
-                documentViewerView.disableLiveMode();
-                dialogService.showCustomDialog(documentViewerView);
-            }
-        });
+        pageLink.setOnMouseClicked(
+                event -> {
+                    if (MouseButton.PRIMARY == event.getButton()) {
+                        documentViewerView.switchToFile(linkedFile);
+                        documentViewerView.gotoPage(pageNumber);
+                        documentViewerView.disableLiveMode();
+                        dialogService.showCustomDialog(documentViewerView);
+                    }
+                });
         return pageLink;
     }
 
     private ContextMenu getFileContextMenu(LinkedFile file) {
         ContextMenu fileContextMenu = new ContextMenu();
-        fileContextMenu.getItems().add(actionFactory.createMenuItem(
-                StandardActions.OPEN_FOLDER, new OpenFolderAction(dialogService, stateManager, preferences, entry, file, taskExecutor)));
-        fileContextMenu.getItems().add(actionFactory.createMenuItem(
-                StandardActions.OPEN_EXTERNAL_FILE, new OpenExternalFileAction(dialogService, stateManager, preferences, entry, file, taskExecutor)));
+        fileContextMenu
+                .getItems()
+                .add(
+                        actionFactory.createMenuItem(
+                                StandardActions.OPEN_FOLDER,
+                                new OpenFolderAction(
+                                        dialogService,
+                                        stateManager,
+                                        preferences,
+                                        entry,
+                                        file,
+                                        taskExecutor)));
+        fileContextMenu
+                .getItems()
+                .add(
+                        actionFactory.createMenuItem(
+                                StandardActions.OPEN_EXTERNAL_FILE,
+                                new OpenExternalFileAction(
+                                        dialogService,
+                                        stateManager,
+                                        preferences,
+                                        entry,
+                                        file,
+                                        taskExecutor)));
         return fileContextMenu;
     }
 

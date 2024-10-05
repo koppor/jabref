@@ -1,21 +1,20 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.jabref.logic.importer.FulltextFetcher;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.identifier.DOI;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * FulltextFetcher implementation that attempts to find a PDF URL at <a href="https://pubs.acs.org/">ACS</a>.

@@ -1,8 +1,6 @@
 package org.jabref.gui.maintable.columns;
 
-import java.util.Optional;
-
-import javax.swing.undo.UndoManager;
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
@@ -11,6 +9,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
+import org.controlsfx.control.Rating;
 import org.jabref.gui.icon.JabRefIcon;
 import org.jabref.gui.maintable.BibEntryTableViewModel;
 import org.jabref.gui.maintable.ColumnPreferences;
@@ -28,8 +27,9 @@ import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.SpecialField;
 import org.jabref.model.entry.field.SpecialFieldValue;
 
-import com.tobiasdiez.easybind.EasyBind;
-import org.controlsfx.control.Rating;
+import java.util.Optional;
+
+import javax.swing.undo.UndoManager;
 
 /**
  * A column that displays a SpecialField
@@ -39,13 +39,15 @@ public class SpecialFieldColumn extends MainTableColumn<Optional<SpecialFieldVal
     private final CliPreferences preferences;
     private final UndoManager undoManager;
 
-    public SpecialFieldColumn(MainTableColumnModel model, CliPreferences preferences, UndoManager undoManager) {
+    public SpecialFieldColumn(
+            MainTableColumnModel model, CliPreferences preferences, UndoManager undoManager) {
         super(model);
         this.preferences = preferences;
         this.undoManager = undoManager;
 
         SpecialField specialField = (SpecialField) FieldFactory.parseField(model.getQualifier());
-        SpecialFieldViewModel specialFieldViewModel = new SpecialFieldViewModel(specialField, preferences, undoManager);
+        SpecialFieldViewModel specialFieldViewModel =
+                new SpecialFieldViewModel(specialField, preferences, undoManager);
 
         Node headerGraphic = specialFieldViewModel.getIcon().getGraphicNode();
         Tooltip.install(headerGraphic, new Tooltip(specialFieldViewModel.getLocalization()));
@@ -53,7 +55,8 @@ public class SpecialFieldColumn extends MainTableColumn<Optional<SpecialFieldVal
         this.getStyleClass().add(MainTableColumnFactory.STYLE_ICON_COLUMN);
 
         if (specialField == SpecialField.RANKING) {
-            MainTableColumnFactory.setExactWidth(this, SpecialFieldsPreferences.COLUMN_RANKING_WIDTH);
+            MainTableColumnFactory.setExactWidth(
+                    this, SpecialFieldsPreferences.COLUMN_RANKING_WIDTH);
             this.setResizable(false);
             new OptionalValueTableCellFactory<BibEntryTableViewModel, SpecialFieldValueViewModel>()
                     .withGraphic(this::createSpecialRating)
@@ -63,18 +66,29 @@ public class SpecialFieldColumn extends MainTableColumn<Optional<SpecialFieldVal
             this.setResizable(false);
 
             if (specialField.isSingleValueField()) {
-                new OptionalValueTableCellFactory<BibEntryTableViewModel, SpecialFieldValueViewModel>()
-                        .withGraphic((entry, value) -> createSpecialFieldIcon(value, specialFieldViewModel))
-                        .withOnMouseClickedEvent((entry, value) -> event -> {
-                            if (event.getButton() == MouseButton.PRIMARY) {
-                                specialFieldViewModel.toggle(entry.getEntry());
-                            }
-                        })
+                new OptionalValueTableCellFactory<
+                                BibEntryTableViewModel, SpecialFieldValueViewModel>()
+                        .withGraphic(
+                                (entry, value) ->
+                                        createSpecialFieldIcon(value, specialFieldViewModel))
+                        .withOnMouseClickedEvent(
+                                (entry, value) ->
+                                        event -> {
+                                            if (event.getButton() == MouseButton.PRIMARY) {
+                                                specialFieldViewModel.toggle(entry.getEntry());
+                                            }
+                                        })
                         .install(this);
             } else {
-                new OptionalValueTableCellFactory<BibEntryTableViewModel, SpecialFieldValueViewModel>()
-                        .withGraphic((entry, value) -> createSpecialFieldIcon(value, specialFieldViewModel))
-                        .withMenu((entry, value) -> createSpecialFieldMenu(entry.getEntry(), specialFieldViewModel))
+                new OptionalValueTableCellFactory<
+                                BibEntryTableViewModel, SpecialFieldValueViewModel>()
+                        .withGraphic(
+                                (entry, value) ->
+                                        createSpecialFieldIcon(value, specialFieldViewModel))
+                        .withMenu(
+                                (entry, value) ->
+                                        createSpecialFieldMenu(
+                                                entry.getEntry(), specialFieldViewModel))
                         .install(this);
             }
         }
@@ -90,7 +104,8 @@ public class SpecialFieldColumn extends MainTableColumn<Optional<SpecialFieldVal
         this.setSortable(true);
     }
 
-    private Rating createSpecialRating(BibEntryTableViewModel entry, Optional<SpecialFieldValueViewModel> value) {
+    private Rating createSpecialRating(
+            BibEntryTableViewModel entry, Optional<SpecialFieldValueViewModel> value) {
         Rating ranking = new Rating();
 
         if (value.isPresent()) {
@@ -99,18 +114,24 @@ public class SpecialFieldColumn extends MainTableColumn<Optional<SpecialFieldVal
             ranking.setRating(0);
         }
 
-        ranking.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-                ranking.setRating(0);
-                event.consume();
-            } else if (event.getButton() == MouseButton.SECONDARY) {
-                event.consume();
-            }
-        });
+        ranking.addEventFilter(
+                MouseEvent.MOUSE_CLICKED,
+                event -> {
+                    if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+                        ranking.setRating(0);
+                        event.consume();
+                    } else if (event.getButton() == MouseButton.SECONDARY) {
+                        event.consume();
+                    }
+                });
 
-        EasyBind.subscribe(ranking.ratingProperty(), rating ->
-                new SpecialFieldViewModel(SpecialField.RANKING, preferences, undoManager)
-                        .setSpecialFieldValue(entry.getEntry(), SpecialFieldValue.getRating(rating.intValue())));
+        EasyBind.subscribe(
+                ranking.ratingProperty(),
+                rating ->
+                        new SpecialFieldViewModel(SpecialField.RANKING, preferences, undoManager)
+                                .setSpecialFieldValue(
+                                        entry.getEntry(),
+                                        SpecialFieldValue.getRating(rating.intValue())));
 
         return ranking;
     }
@@ -119,21 +140,28 @@ public class SpecialFieldColumn extends MainTableColumn<Optional<SpecialFieldVal
         ContextMenu contextMenu = new ContextMenu();
 
         for (SpecialFieldValueViewModel value : specialField.getValues()) {
-            MenuItem menuItem = new MenuItem(value.getMenuString(), value.getIcon().map(JabRefIcon::getGraphicNode).orElse(null));
-            menuItem.setOnAction(event -> specialField.setSpecialFieldValue(entry, value.getValue()));
+            MenuItem menuItem =
+                    new MenuItem(
+                            value.getMenuString(),
+                            value.getIcon().map(JabRefIcon::getGraphicNode).orElse(null));
+            menuItem.setOnAction(
+                    event -> specialField.setSpecialFieldValue(entry, value.getValue()));
             contextMenu.getItems().add(menuItem);
         }
 
         return contextMenu;
     }
 
-    private Node createSpecialFieldIcon(Optional<SpecialFieldValueViewModel> fieldValue, SpecialFieldViewModel specialField) {
-        return fieldValue.flatMap(SpecialFieldValueViewModel::getIcon)
-                         .map(JabRefIcon::getGraphicNode)
-                         .orElseGet(() -> {
-                             Node node = specialField.getEmptyIcon().getGraphicNode();
-                             node.getStyleClass().add("empty-special-field");
-                             return node;
-                         });
+    private Node createSpecialFieldIcon(
+            Optional<SpecialFieldValueViewModel> fieldValue, SpecialFieldViewModel specialField) {
+        return fieldValue
+                .flatMap(SpecialFieldValueViewModel::getIcon)
+                .map(JabRefIcon::getGraphicNode)
+                .orElseGet(
+                        () -> {
+                            Node node = specialField.getEmptyIcon().getGraphicNode();
+                            node.getStyleClass().add("empty-special-field");
+                            return node;
+                        });
     }
 }

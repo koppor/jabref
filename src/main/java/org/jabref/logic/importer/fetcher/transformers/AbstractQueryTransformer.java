@@ -1,19 +1,18 @@
 package org.jabref.logic.importer.fetcher.transformers;
 
-import java.util.Optional;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-
-import org.jabref.model.strings.StringUtil;
-
 import org.apache.lucene.queryparser.flexible.core.nodes.BooleanQueryNode;
 import org.apache.lucene.queryparser.flexible.core.nodes.FieldQueryNode;
 import org.apache.lucene.queryparser.flexible.core.nodes.GroupQueryNode;
 import org.apache.lucene.queryparser.flexible.core.nodes.ModifierQueryNode;
 import org.apache.lucene.queryparser.flexible.core.nodes.OrQueryNode;
 import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import org.jabref.model.strings.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * In case the transformer contains state for a query transformation (such as the {@link IEEEQueryTransformer}), it has to be noted at the JavaDoc.
@@ -40,10 +39,11 @@ public abstract class AbstractQueryTransformer {
             delimiter = getLogicalAndOperator();
         }
 
-        String result = query.getChildren().stream()
-                             .map(this::transform)
-                             .flatMap(Optional::stream)
-                             .collect(Collectors.joining(delimiter, "(", ")"));
+        String result =
+                query.getChildren().stream()
+                        .map(this::transform)
+                        .flatMap(Optional::stream)
+                        .collect(Collectors.joining(delimiter, "(", ")"));
         if ("()".equals(result)) {
             return Optional.empty();
         }
@@ -193,7 +193,9 @@ public abstract class AbstractQueryTransformer {
     }
 
     protected String createKeyValuePair(String fieldAsString, String term, String separator) {
-        return "%s%s%s".formatted(fieldAsString, separator, StringUtil.quoteStringIfSpaceIsContained(term));
+        return "%s%s%s"
+                .formatted(
+                        fieldAsString, separator, StringUtil.quoteStringIfSpaceIsContained(term));
     }
 
     /**

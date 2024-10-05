@@ -1,16 +1,8 @@
 package org.jabref;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.Authenticator;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import com.airhacks.afterburner.injection.Injector;
 
+import org.apache.commons.cli.ParseException;
 import org.jabref.cli.ArgumentProcessor;
 import org.jabref.cli.JabRefCLI;
 import org.jabref.gui.JabRefGUI;
@@ -37,13 +29,21 @@ import org.jabref.migrations.PreferencesMigrations;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.DirectoryMonitor;
 import org.jabref.model.util.FileUpdateMonitor;
-
-import com.airhacks.afterburner.injection.Injector;
-import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.tinylog.configuration.Configuration;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.Authenticator;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The main entry point for the JabRef application.
@@ -76,8 +76,13 @@ public class Launcher {
 
             PreferencesMigrations.runMigrations(preferences, entryTypesManager);
 
-            Injector.setModelOrService(JournalAbbreviationRepository.class, JournalAbbreviationLoader.loadRepository(preferences.getJournalAbbreviationPreferences()));
-            Injector.setModelOrService(ProtectedTermsLoader.class, new ProtectedTermsLoader(preferences.getProtectedTermsPreferences()));
+            Injector.setModelOrService(
+                    JournalAbbreviationRepository.class,
+                    JournalAbbreviationLoader.loadRepository(
+                            preferences.getJournalAbbreviationPreferences()));
+            Injector.setModelOrService(
+                    ProtectedTermsLoader.class,
+                    new ProtectedTermsLoader(preferences.getProtectedTermsPreferences()));
 
             configureProxy(preferences.getProxyPreferences());
             configureSSL(preferences.getSSLPreferences());
@@ -87,19 +92,21 @@ public class Launcher {
             try {
                 DefaultFileUpdateMonitor fileUpdateMonitor = new DefaultFileUpdateMonitor();
                 Injector.setModelOrService(FileUpdateMonitor.class, fileUpdateMonitor);
-                HeadlessExecutorService.INSTANCE.executeInterruptableTask(fileUpdateMonitor, "FileUpdateMonitor");
+                HeadlessExecutorService.INSTANCE.executeInterruptableTask(
+                        fileUpdateMonitor, "FileUpdateMonitor");
 
                 DirectoryMonitor directoryMonitor = new DefaultDirectoryMonitor();
                 Injector.setModelOrService(DirectoryMonitor.class, directoryMonitor);
 
                 // Process arguments
-                ArgumentProcessor argumentProcessor = new ArgumentProcessor(
-                        args,
-                        ArgumentProcessor.Mode.INITIAL_START,
-                        preferences,
-                        preferences,
-                        fileUpdateMonitor,
-                        entryTypesManager);
+                ArgumentProcessor argumentProcessor =
+                        new ArgumentProcessor(
+                                args,
+                                ArgumentProcessor.Mode.INITIAL_START,
+                                preferences,
+                                preferences,
+                                fileUpdateMonitor,
+                                entryTypesManager);
                 argumentProcessor.processArguments();
                 if (argumentProcessor.shouldShutDown()) {
                     LOGGER.debug("JabRef shut down after processing command line arguments");
@@ -151,15 +158,18 @@ public class Launcher {
 
         // The "Shared File Writer" is explained at
         // https://tinylog.org/v2/configuration/#shared-file-writer
-        Map<String, String> configuration = Map.of(
-                "level", isDebugEnabled ? "debug" : "info",
-                "writerFile", "rolling file",
-                "writerFile.level", isDebugEnabled ? "debug" : "info",
-                // We need to manually join the path, because ".resolve" does not work on Windows, because ":" is not allowed in file names on Windows
-                "writerFile.file", directory + File.separator + "log_{date:yyyy-MM-dd_HH-mm-ss}.txt",
-                "writerFile.charset", "UTF-8",
-                "writerFile.policies", "startup",
-                "writerFile.backups", "30");
+        Map<String, String> configuration =
+                Map.of(
+                        "level", isDebugEnabled ? "debug" : "info",
+                        "writerFile", "rolling file",
+                        "writerFile.level", isDebugEnabled ? "debug" : "info",
+                        // We need to manually join the path, because ".resolve" does not work on
+                        // Windows, because ":" is not allowed in file names on Windows
+                        "writerFile.file",
+                                directory + File.separator + "log_{date:yyyy-MM-dd_HH-mm-ss}.txt",
+                        "writerFile.charset", "UTF-8",
+                        "writerFile.policies", "startup",
+                        "writerFile.backups", "30");
         configuration.forEach(Configuration::set);
 
         LOGGER = LoggerFactory.getLogger(Launcher.class);
@@ -168,7 +178,8 @@ public class Launcher {
     /**
      * @return true if JabRef should continue starting up, false if it should quit.
      */
-    private static boolean handleMultipleAppInstances(String[] args, RemotePreferences remotePreferences) throws InterruptedException {
+    private static boolean handleMultipleAppInstances(
+            String[] args, RemotePreferences remotePreferences) throws InterruptedException {
         LOGGER.trace("Checking for remote handling...");
         if (remotePreferences.useRemoteServer()) {
             // Try to contact already running JabRef
@@ -176,15 +187,20 @@ public class Launcher {
             if (remoteClient.ping()) {
                 LOGGER.debug("Pinging other instance succeeded.");
                 if (args.length == 0) {
-                    // There is already a server out there, avoid showing log "Passing arguments" while no arguments are provided.
-                    LOGGER.warn("This JabRef instance is already running. Please switch to that instance.");
+                    // There is already a server out there, avoid showing log "Passing arguments"
+                    // while no arguments are provided.
+                    LOGGER.warn(
+                            "This JabRef instance is already running. Please switch to that instance.");
                 } else {
-                    // We are not alone, there is already a server out there, send command line arguments to other instance
+                    // We are not alone, there is already a server out there, send command line
+                    // arguments to other instance
                     LOGGER.debug("Passing arguments passed on to running JabRef...");
                     if (remoteClient.sendCommandLineArguments(args)) {
                         // So we assume it's all taken care of, and quit.
-                        // Output to both to the log and the screen. Therefore, we do not have an additional System.out.println.
-                        LOGGER.info("Arguments passed on to running JabRef instance. Shutting down.");
+                        // Output to both to the log and the screen. Therefore, we do not have an
+                        // additional System.out.println.
+                        LOGGER.info(
+                                "Arguments passed on to running JabRef instance. Shutting down.");
                     } else {
                         LOGGER.warn("Could not communicate with other running JabRef instance.");
                     }
@@ -206,7 +222,8 @@ public class Launcher {
     }
 
     private static void configureSSL(SSLPreferences sslPreferences) {
-        TrustStoreManager.createTruststoreFileIfNotExist(Path.of(sslPreferences.getTruststorePath()));
+        TrustStoreManager.createTruststoreFileIfNotExist(
+                Path.of(sslPreferences.getTruststorePath()));
     }
 
     private static void clearOldSearchIndices() {
@@ -221,7 +238,9 @@ public class Launcher {
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(appData)) {
             for (Path path : stream) {
-                if (Files.isDirectory(path) && !path.toString().endsWith("ssl") && path.toString().contains("lucene")
+                if (Files.isDirectory(path)
+                        && !path.toString().endsWith("ssl")
+                        && path.toString().contains("lucene")
                         && !path.equals(currentIndexPath)) {
                     LOGGER.info("Deleting out-of-date fulltext search index at {}.", path);
                     Files.walk(path)

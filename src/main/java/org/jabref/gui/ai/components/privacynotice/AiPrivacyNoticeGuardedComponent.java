@@ -17,7 +17,10 @@ public abstract class AiPrivacyNoticeGuardedComponent extends DynamicallyChangea
     private final ExternalApplicationsPreferences externalApplicationsPreferences;
     private final DialogService dialogService;
 
-    public AiPrivacyNoticeGuardedComponent(AiPreferences aiPreferences, ExternalApplicationsPreferences externalApplicationsPreferences, DialogService dialogService) {
+    public AiPrivacyNoticeGuardedComponent(
+            AiPreferences aiPreferences,
+            ExternalApplicationsPreferences externalApplicationsPreferences,
+            DialogService dialogService) {
         this.aiPreferences = aiPreferences;
         this.externalApplicationsPreferences = externalApplicationsPreferences;
         this.dialogService = dialogService;
@@ -34,9 +37,7 @@ public abstract class AiPrivacyNoticeGuardedComponent extends DynamicallyChangea
                             aiPreferences,
                             this::rebuildUi,
                             externalApplicationsPreferences,
-                            dialogService
-                    )
-            );
+                            dialogService));
         }
     }
 

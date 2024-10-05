@@ -1,11 +1,11 @@
 package org.jabref.logic.ai.chatting.chathistory;
 
-import java.nio.file.Path;
+import static org.mockito.Mockito.mock;
 
 import org.jabref.logic.ai.chatting.chathistory.storages.MVStoreChatHistoryStorage;
 import org.jabref.logic.util.NotificationService;
 
-import static org.mockito.Mockito.mock;
+import java.nio.file.Path;
 
 class MVStoreChatHistoryStorageTest extends ChatHistoryStorageTest {
     @Override

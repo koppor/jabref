@@ -1,6 +1,8 @@
 package org.jabref.gui.entryeditor.fileannotationtab;
 
-import java.nio.file.Path;
+import com.tobiasdiez.easybind.EasyBind;
+
+import jakarta.inject.Inject;
 
 import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
@@ -26,8 +28,7 @@ import org.jabref.logic.pdf.FileAnnotationCache;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.util.FileUpdateMonitor;
 
-import com.tobiasdiez.easybind.EasyBind;
-import jakarta.inject.Inject;
+import java.nio.file.Path;
 
 public class FileAnnotationTabView {
 
@@ -53,28 +54,51 @@ public class FileAnnotationTabView {
 
     @FXML
     public void initialize() {
-        viewModel = new FileAnnotationTabViewModel(fileAnnotationCache, entry, fileMonitor, clipBoardManager);
+        viewModel =
+                new FileAnnotationTabViewModel(
+                        fileAnnotationCache, entry, fileMonitor, clipBoardManager);
 
         // Set-up files list
         files.getItems().setAll(viewModel.filesProperty().get());
-        files.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> viewModel.notifyNewSelectedFile(newValue));
+        files.getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable, oldValue, newValue) ->
+                                viewModel.notifyNewSelectedFile(newValue));
         files.getSelectionModel().selectFirst();
 
         // Set-up annotation list
         annotationList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        annotationList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> viewModel.notifyNewSelectedAnnotation(newValue));
-        ViewModelListCellFactory<FileAnnotationViewModel> cellFactory = new ViewModelListCellFactory<FileAnnotationViewModel>()
-                .withGraphic(this::createFileAnnotationNode);
+        annotationList
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable, oldValue, newValue) ->
+                                viewModel.notifyNewSelectedAnnotation(newValue));
+        ViewModelListCellFactory<FileAnnotationViewModel> cellFactory =
+                new ViewModelListCellFactory<FileAnnotationViewModel>()
+                        .withGraphic(this::createFileAnnotationNode);
         annotationList.setCellFactory(cellFactory);
-        annotationList.setPlaceholder(new Label(Localization.lang("File has no attached annotations")));
+        annotationList.setPlaceholder(
+                new Label(Localization.lang("File has no attached annotations")));
         Bindings.bindContent(annotationList.itemsProperty().get(), viewModel.annotationsProperty());
         annotationList.getSelectionModel().selectFirst();
-        annotationList.itemsProperty().get().addListener(
-                (ListChangeListener<? super FileAnnotationViewModel>) c -> annotationList.getSelectionModel().selectFirst());
+        annotationList
+                .itemsProperty()
+                .get()
+                .addListener(
+                        (ListChangeListener<? super FileAnnotationViewModel>)
+                                c -> annotationList.getSelectionModel().selectFirst());
 
         // Set-up details pane
-        content.textProperty().bind(EasyBind.select(viewModel.currentAnnotationProperty()).selectObject(FileAnnotationViewModel::contentProperty));
-        marking.textProperty().bind(EasyBind.select(viewModel.currentAnnotationProperty()).selectObject(FileAnnotationViewModel::markingProperty));
+        content.textProperty()
+                .bind(
+                        EasyBind.select(viewModel.currentAnnotationProperty())
+                                .selectObject(FileAnnotationViewModel::contentProperty));
+        marking.textProperty()
+                .bind(
+                        EasyBind.select(viewModel.currentAnnotationProperty())
+                                .selectObject(FileAnnotationViewModel::markingProperty));
         details.disableProperty().bind(viewModel.isAnnotationsEmpty());
     }
 

@@ -1,7 +1,5 @@
 package org.jabref.gui.autocompleter;
 
-import java.util.Set;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -12,10 +10,14 @@ import javafx.collections.ObservableSet;
 import org.jabref.logic.preferences.AutoCompleteFirstNameMode;
 import org.jabref.model.entry.field.Field;
 
+import java.util.Set;
+
 public class AutoCompletePreferences {
 
     public enum NameFormat {
-        LAST_FIRST, FIRST_LAST, BOTH
+        LAST_FIRST,
+        FIRST_LAST,
+        BOTH
     }
 
     private final BooleanProperty shouldAutoComplete;
@@ -23,10 +25,11 @@ public class AutoCompletePreferences {
     private final ObjectProperty<NameFormat> nameFormat;
     private final ObservableSet<Field> completeFields;
 
-    public AutoCompletePreferences(boolean shouldAutoComplete,
-                                   AutoCompleteFirstNameMode firstNameMode,
-                                   NameFormat nameFormat,
-                                   Set<Field> completeFields) {
+    public AutoCompletePreferences(
+            boolean shouldAutoComplete,
+            AutoCompleteFirstNameMode firstNameMode,
+            NameFormat nameFormat,
+            Set<Field> completeFields) {
         this.shouldAutoComplete = new SimpleBooleanProperty(shouldAutoComplete);
         this.firstNameMode = new SimpleObjectProperty<>(firstNameMode);
         this.nameFormat = new SimpleObjectProperty<>(nameFormat);

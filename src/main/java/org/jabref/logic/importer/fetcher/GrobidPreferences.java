@@ -10,9 +10,7 @@ public class GrobidPreferences {
     private final BooleanProperty grobidOptOut;
     private final StringProperty grobidURL;
 
-    public GrobidPreferences(boolean grobidEnabled,
-                             boolean grobidOptOut,
-                             String grobidURL) {
+    public GrobidPreferences(boolean grobidEnabled, boolean grobidOptOut, String grobidURL) {
         this.grobidEnabled = new SimpleBooleanProperty(grobidEnabled);
         this.grobidOptOut = new SimpleBooleanProperty(grobidOptOut);
         this.grobidURL = new SimpleStringProperty(grobidURL);
@@ -42,6 +40,7 @@ public class GrobidPreferences {
     public void setGrobidOptOut(boolean grobidOptOut) {
         this.grobidOptOut.set(grobidOptOut);
     }
+
     // endregion: optout
 
     public String getGrobidURL() {

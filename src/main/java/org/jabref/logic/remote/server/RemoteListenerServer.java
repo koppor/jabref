@@ -1,18 +1,17 @@
 package org.jabref.logic.remote.server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
-
 import javafx.util.Pair;
 
 import org.jabref.logic.remote.Protocol;
 import org.jabref.logic.remote.RemoteMessage;
 import org.jabref.logic.remote.RemotePreferences;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 
 public class RemoteListenerServer implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoteListenerServer.class);
@@ -50,7 +49,8 @@ public class RemoteListenerServer implements Runnable {
         }
     }
 
-    private void handleMessage(Protocol protocol, RemoteMessage type, Object argument) throws IOException {
+    private void handleMessage(Protocol protocol, RemoteMessage type, Object argument)
+            throws IOException {
         switch (type) {
             case PING:
                 protocol.sendMessage(RemoteMessage.PONG, Protocol.IDENTIFIER);
@@ -60,7 +60,9 @@ public class RemoteListenerServer implements Runnable {
                     messageHandler.handleCommandLineArguments(strings);
                     protocol.sendMessage(RemoteMessage.OK);
                 } else {
-                    throw new IOException("Argument for 'SEND_COMMAND_LINE_ARGUMENTS' is not of type String[]. Got " + argument);
+                    throw new IOException(
+                            "Argument for 'SEND_COMMAND_LINE_ARGUMENTS' is not of type String[]. Got "
+                                    + argument);
                 }
                 break;
             default:

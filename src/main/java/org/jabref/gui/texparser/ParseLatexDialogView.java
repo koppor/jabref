@@ -1,5 +1,12 @@
 package org.jabref.gui.texparser;
 
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+
+import jakarta.inject.Inject;
+
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -9,6 +16,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 
+import org.controlsfx.control.CheckTreeView;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.theme.ThemeManager;
 import org.jabref.gui.util.BaseDialog;
@@ -22,12 +30,6 @@ import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.util.FileUpdateMonitor;
-
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
-import jakarta.inject.Inject;
-import org.controlsfx.control.CheckTreeView;
 
 public class ParseLatexDialogView extends BaseDialog<Void> {
 
@@ -56,38 +58,60 @@ public class ParseLatexDialogView extends BaseDialog<Void> {
 
         ViewLoader.view(this).load().setAsDialogPane(this);
 
-        ControlHelper.setAction(parseButtonType, getDialogPane(), event -> viewModel.parseButtonClicked());
+        ControlHelper.setAction(
+                parseButtonType, getDialogPane(), event -> viewModel.parseButtonClicked());
         Button parseButton = (Button) getDialogPane().lookupButton(parseButtonType);
-        parseButton.disableProperty().bind(viewModel.noFilesFoundProperty().or(
-                Bindings.isEmpty(viewModel.getCheckedFileList())));
+        parseButton
+                .disableProperty()
+                .bind(
+                        viewModel
+                                .noFilesFoundProperty()
+                                .or(Bindings.isEmpty(viewModel.getCheckedFileList())));
 
         themeManager.updateFontStyle(getDialogPane().getScene());
     }
 
     @FXML
     private void initialize() {
-        viewModel = new ParseLatexDialogViewModel(databaseContext, dialogService, taskExecutor, preferences, fileMonitor);
+        viewModel =
+                new ParseLatexDialogViewModel(
+                        databaseContext, dialogService, taskExecutor, preferences, fileMonitor);
 
         fileTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         fileTreeView.showRootProperty().bindBidirectional(viewModel.successfulSearchProperty());
-        fileTreeView.rootProperty().bind(EasyBind.map(viewModel.rootProperty(), fileNode ->
-                new RecursiveTreeItem<>(fileNode, FileNodeViewModel::getChildren)));
+        fileTreeView
+                .rootProperty()
+                .bind(
+                        EasyBind.map(
+                                viewModel.rootProperty(),
+                                fileNode ->
+                                        new RecursiveTreeItem<>(
+                                                fileNode, FileNodeViewModel::getChildren)));
 
         new ViewModelTreeCellFactory<FileNodeViewModel>()
                 .withText(FileNodeViewModel::getDisplayText)
                 .install(fileTreeView);
 
-        EasyBind.subscribe(fileTreeView.rootProperty(), root -> {
-            ((CheckBoxTreeItem<FileNodeViewModel>) root).setSelected(true);
-            root.setExpanded(true);
-            EasyBind.bindContent(viewModel.getCheckedFileList(), fileTreeView.getCheckModel().getCheckedItems());
-        });
+        EasyBind.subscribe(
+                fileTreeView.rootProperty(),
+                root -> {
+                    ((CheckBoxTreeItem<FileNodeViewModel>) root).setSelected(true);
+                    root.setExpanded(true);
+                    EasyBind.bindContent(
+                            viewModel.getCheckedFileList(),
+                            fileTreeView.getCheckModel().getCheckedItems());
+                });
 
-        latexDirectoryField.textProperty().bindBidirectional(viewModel.latexFileDirectoryProperty());
+        latexDirectoryField
+                .textProperty()
+                .bindBidirectional(viewModel.latexFileDirectoryProperty());
         validationVisualizer.setDecoration(new IconValidationDecorator());
-        validationVisualizer.initVisualization(viewModel.latexDirectoryValidation(), latexDirectoryField);
+        validationVisualizer.initVisualization(
+                viewModel.latexDirectoryValidation(), latexDirectoryField);
         browseButton.disableProperty().bindBidirectional(viewModel.searchInProgressProperty());
-        searchButton.disableProperty().bind(viewModel.latexDirectoryValidation().validProperty().not());
+        searchButton
+                .disableProperty()
+                .bind(viewModel.latexDirectoryValidation().validProperty().not());
         selectAllButton.disableProperty().bindBidirectional(viewModel.noFilesFoundProperty());
         unselectAllButton.disableProperty().bindBidirectional(viewModel.noFilesFoundProperty());
         progressIndicator.visibleProperty().bindBidirectional(viewModel.searchInProgressProperty());
