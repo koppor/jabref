@@ -1,21 +1,25 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.function.Supplier;
+import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.SimpleCommand;
 
-import static org.jabref.gui.actions.ActionHelper.needsDatabase;
+import java.util.function.Supplier;
 
 public class PreviewSwitchAction extends SimpleCommand {
 
-    public enum Direction { PREVIOUS, NEXT }
+    public enum Direction {
+        PREVIOUS,
+        NEXT
+    }
 
     private final Supplier<LibraryTab> tabSupplier;
     private final Direction direction;
 
-    public PreviewSwitchAction(Direction direction, Supplier<LibraryTab> tabSupplier, StateManager stateManager) {
+    public PreviewSwitchAction(
+            Direction direction, Supplier<LibraryTab> tabSupplier, StateManager stateManager) {
         this.tabSupplier = tabSupplier;
         this.direction = direction;
 

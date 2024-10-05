@@ -1,5 +1,7 @@
 package org.jabref.gui.maintable.columns;
 
+import com.google.common.collect.MoreCollectors;
+
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Tooltip;
 
@@ -12,8 +14,6 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.entry.field.UnknownField;
-
-import com.google.common.collect.MoreCollectors;
 
 /**
  * A column that displays the text-value of the field

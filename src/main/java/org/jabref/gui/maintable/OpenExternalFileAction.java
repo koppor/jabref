@@ -1,8 +1,5 @@
 package org.jabref.gui.maintable;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.ActionHelper;
@@ -13,6 +10,9 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class OpenExternalFileAction extends SimpleCommand {
 
@@ -26,19 +26,21 @@ public class OpenExternalFileAction extends SimpleCommand {
     private final LinkedFile linkedFile;
     private final TaskExecutor taskExecutor;
 
-    public OpenExternalFileAction(DialogService dialogService,
-                                  StateManager stateManager,
-                                  GuiPreferences preferences,
-                                  TaskExecutor taskExecutor) {
+    public OpenExternalFileAction(
+            DialogService dialogService,
+            StateManager stateManager,
+            GuiPreferences preferences,
+            TaskExecutor taskExecutor) {
         this(dialogService, stateManager, preferences, null, null, taskExecutor);
     }
 
-    public OpenExternalFileAction(DialogService dialogService,
-                                  StateManager stateManager,
-                                  GuiPreferences preferences,
-                                  BibEntry entry,
-                                  LinkedFile linkedFile,
-                                  TaskExecutor taskExecutor) {
+    public OpenExternalFileAction(
+            DialogService dialogService,
+            StateManager stateManager,
+            GuiPreferences preferences,
+            BibEntry entry,
+            LinkedFile linkedFile,
+            TaskExecutor taskExecutor) {
         this.dialogService = dialogService;
         this.stateManager = stateManager;
         this.preferences = preferences;
@@ -47,9 +49,9 @@ public class OpenExternalFileAction extends SimpleCommand {
         this.taskExecutor = taskExecutor;
 
         if (this.linkedFile == null) {
-            this.executable.bind(ActionHelper.hasLinkedFileForSelectedEntries(stateManager)
-                                             .and(ActionHelper.needsEntriesSelected(stateManager))
-            );
+            this.executable.bind(
+                    ActionHelper.hasLinkedFileForSelectedEntries(stateManager)
+                            .and(ActionHelper.needsEntriesSelected(stateManager)));
         } else {
             this.setExecutable(true);
         }
@@ -62,48 +64,61 @@ public class OpenExternalFileAction extends SimpleCommand {
      */
     @Override
     public void execute() {
-        stateManager.getActiveDatabase().ifPresent(databaseContext -> {
-            if (entry == null) {
-                final List<BibEntry> selectedEntries = stateManager.getSelectedEntries();
+        stateManager
+                .getActiveDatabase()
+                .ifPresent(
+                        databaseContext -> {
+                            if (entry == null) {
+                                final List<BibEntry> selectedEntries =
+                                        stateManager.getSelectedEntries();
 
-                List<LinkedFileViewModel> linkedFileViewModelList = new LinkedList<>();
-                LinkedFileViewModel linkedFileViewModel;
+                                List<LinkedFileViewModel> linkedFileViewModelList =
+                                        new LinkedList<>();
+                                LinkedFileViewModel linkedFileViewModel;
 
-                for (BibEntry entry : selectedEntries) {
-                    for (LinkedFile linkedFile : entry.getFiles()) {
-                        linkedFileViewModel = new LinkedFileViewModel(
-                                linkedFile,
-                                entry,
-                                databaseContext,
-                                taskExecutor,
-                                dialogService,
-                                preferences);
+                                for (BibEntry entry : selectedEntries) {
+                                    for (LinkedFile linkedFile : entry.getFiles()) {
+                                        linkedFileViewModel =
+                                                new LinkedFileViewModel(
+                                                        linkedFile,
+                                                        entry,
+                                                        databaseContext,
+                                                        taskExecutor,
+                                                        dialogService,
+                                                        preferences);
 
-                        linkedFileViewModelList.add(linkedFileViewModel);
-                    }
-                }
+                                        linkedFileViewModelList.add(linkedFileViewModel);
+                                    }
+                                }
 
-                // ask the user when detecting # of files > FILES_LIMIT
-                if (linkedFileViewModelList.size() > FILES_LIMIT) {
-                    boolean continueOpening = dialogService.showConfirmationDialogAndWait(Localization.lang("Opening large number of files"),
-                            Localization.lang("You are about to open %0 files. Continue?", linkedFileViewModelList.size()),
-                            Localization.lang("Continue"), Localization.lang("Cancel"));
-                    if (!continueOpening) {
-                        return;
-                    }
-                }
+                                // ask the user when detecting # of files > FILES_LIMIT
+                                if (linkedFileViewModelList.size() > FILES_LIMIT) {
+                                    boolean continueOpening =
+                                            dialogService.showConfirmationDialogAndWait(
+                                                    Localization.lang(
+                                                            "Opening large number of files"),
+                                                    Localization.lang(
+                                                            "You are about to open %0 files. Continue?",
+                                                            linkedFileViewModelList.size()),
+                                                    Localization.lang("Continue"),
+                                                    Localization.lang("Cancel"));
+                                    if (!continueOpening) {
+                                        return;
+                                    }
+                                }
 
-                linkedFileViewModelList.forEach(LinkedFileViewModel::open);
-            } else {
-                LinkedFileViewModel linkedFileViewModel = new LinkedFileViewModel(
-                        linkedFile,
-                        entry,
-                        databaseContext,
-                        taskExecutor,
-                        dialogService,
-                        preferences);
-                linkedFileViewModel.open();
-            }
-        });
+                                linkedFileViewModelList.forEach(LinkedFileViewModel::open);
+                            } else {
+                                LinkedFileViewModel linkedFileViewModel =
+                                        new LinkedFileViewModel(
+                                                linkedFile,
+                                                entry,
+                                                databaseContext,
+                                                taskExecutor,
+                                                dialogService,
+                                                preferences);
+                                linkedFileViewModel.open();
+                            }
+                        });
     }
 }

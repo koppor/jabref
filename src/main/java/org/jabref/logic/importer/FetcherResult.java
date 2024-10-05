@@ -1,8 +1,8 @@
 package org.jabref.logic.importer;
 
-import java.net.URL;
-
 import org.jabref.logic.importer.fetcher.TrustLevel;
+
+import java.net.URL;
 
 public final class FetcherResult {
     private final TrustLevel trust;

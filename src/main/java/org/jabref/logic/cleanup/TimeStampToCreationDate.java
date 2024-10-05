@@ -1,13 +1,5 @@
 package org.jabref.logic.cleanup;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.logic.preferences.TimestampPreferences;
 import org.jabref.model.FieldChange;
 import org.jabref.model.entry.BibEntry;
@@ -15,6 +7,14 @@ import org.jabref.model.entry.Date;
 import org.jabref.model.entry.event.EntriesEventSource;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This class handles the migration from timestamp field to creationdate and modificationdate fields.
@@ -67,19 +67,30 @@ public class TimeStampToCreationDate implements CleanupJob {
     public List<FieldChange> cleanup(BibEntry entry) {
         // Query entries for their timestamp field entries
         if (entry.getField(timeStampField).isPresent()) {
-            Optional<String> formattedTimeStamp = formatTimeStamp(entry.getField(timeStampField).get());
+            Optional<String> formattedTimeStamp =
+                    formatTimeStamp(entry.getField(timeStampField).get());
             if (formattedTimeStamp.isEmpty()) {
                 // In case the timestamp could not be parsed, do nothing to not lose data
                 return Collections.emptyList();
             }
-            // Setting the EventSource is necessary to circumvent the update of the modification date during timestamp migration
+            // Setting the EventSource is necessary to circumvent the update of the modification
+            // date during timestamp migration
             entry.clearField(timeStampField, EntriesEventSource.CLEANUP_TIMESTAMP);
             List<FieldChange> changeList = new ArrayList<>();
             FieldChange changeTo;
             // Add removal of timestamp field
-            changeList.add(new FieldChange(entry, StandardField.TIMESTAMP, formattedTimeStamp.get(), ""));
-            entry.setField(StandardField.CREATIONDATE, formattedTimeStamp.get(), EntriesEventSource.CLEANUP_TIMESTAMP);
-            changeTo = new FieldChange(entry, StandardField.CREATIONDATE, entry.getField(StandardField.CREATIONDATE).orElse(""), formattedTimeStamp.get());
+            changeList.add(
+                    new FieldChange(entry, StandardField.TIMESTAMP, formattedTimeStamp.get(), ""));
+            entry.setField(
+                    StandardField.CREATIONDATE,
+                    formattedTimeStamp.get(),
+                    EntriesEventSource.CLEANUP_TIMESTAMP);
+            changeTo =
+                    new FieldChange(
+                            entry,
+                            StandardField.CREATIONDATE,
+                            entry.getField(StandardField.CREATIONDATE).orElse(""),
+                            formattedTimeStamp.get());
             changeList.add(changeTo);
             return changeList;
         }

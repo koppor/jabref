@@ -1,17 +1,16 @@
 package org.jabref.model.entry.types;
 
+import org.jabref.model.entry.BibEntryType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import org.jabref.model.entry.BibEntryType;
-
 public class EntryTypeFactory {
 
-    private EntryTypeFactory() {
-    }
+    private EntryTypeFactory() {}
 
     /**
      * Checks whether two EntryTypeFactory are equal
@@ -28,7 +27,8 @@ public class EntryTypeFactory {
             return Objects.equals(type1.getType(), type2.getType())
                     && Objects.equals(type1.getRequiredFields(), type2.getRequiredFields())
                     && Objects.equals(type1.getOptionalFields(), type2.getOptionalFields())
-                    && Objects.equals(type1.getDetailOptionalFields(), type2.getDetailOptionalFields());
+                    && Objects.equals(
+                            type1.getDetailOptionalFields(), type2.getDetailOptionalFields());
         }
     }
 
@@ -37,20 +37,26 @@ public class EntryTypeFactory {
     }
 
     private static boolean isBibtex(EntryType type) {
-        return BibtexEntryTypeDefinitions.ALL.stream().anyMatch(bibEntryType -> bibEntryType.getType().equals(type));
+        return BibtexEntryTypeDefinitions.ALL.stream()
+                .anyMatch(bibEntryType -> bibEntryType.getType().equals(type));
     }
 
     private static boolean isBiblatex(EntryType type) {
-        return BiblatexEntryTypeDefinitions.ALL.stream().anyMatch(bibEntryType -> bibEntryType.getType().equals(type));
+        return BiblatexEntryTypeDefinitions.ALL.stream()
+                .anyMatch(bibEntryType -> bibEntryType.getType().equals(type));
     }
 
     public static EntryType parse(String typeName) {
-        List<EntryType> types = new ArrayList<>(Arrays.<EntryType>asList(StandardEntryType.values()));
+        List<EntryType> types =
+                new ArrayList<>(Arrays.<EntryType>asList(StandardEntryType.values()));
         types.addAll(Arrays.<EntryType>asList(IEEETranEntryType.values()));
         types.addAll(Arrays.<EntryType>asList(BiblatexSoftwareEntryType.values()));
         types.addAll(Arrays.<EntryType>asList(BiblatexApaEntryType.values()));
         types.addAll(Arrays.<EntryType>asList(SystematicLiteratureReviewStudyEntryType.values()));
 
-        return types.stream().filter(type -> type.getName().equals(typeName.toLowerCase(Locale.ENGLISH))).findFirst().orElse(new UnknownEntryType(typeName));
+        return types.stream()
+                .filter(type -> type.getName().equals(typeName.toLowerCase(Locale.ENGLISH)))
+                .findFirst()
+                .orElse(new UnknownEntryType(typeName));
     }
 }

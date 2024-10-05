@@ -47,7 +47,8 @@ public class ViewModelTreeCellFactory<T> implements Callback<TreeView<T>, TreeCe
         return this;
     }
 
-    public ViewModelTreeCellFactory<T> withOnMouseClickedEvent(Callback<T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
+    public ViewModelTreeCellFactory<T> withOnMouseClickedEvent(
+            Callback<T, EventHandler<? super MouseEvent>> toOnMouseClickedEvent) {
         this.toOnMouseClickedEvent = toOnMouseClickedEvent;
         return this;
     }
@@ -66,18 +67,20 @@ public class ViewModelTreeCellFactory<T> implements Callback<TreeView<T>, TreeCe
                     return null;
                 };
 
-        StringConverter<TreeItem<T>> converter = new StringConverter<>() {
-            @Override
-            public String toString(TreeItem<T> treeItem) {
-                return treeItem == null || treeItem.getValue() == null || toText == null ?
-                        "" : toText.call(treeItem.getValue());
-            }
+        StringConverter<TreeItem<T>> converter =
+                new StringConverter<>() {
+                    @Override
+                    public String toString(TreeItem<T> treeItem) {
+                        return treeItem == null || treeItem.getValue() == null || toText == null
+                                ? ""
+                                : toText.call(treeItem.getValue());
+                    }
 
-            @Override
-            public TreeItem<T> fromString(String string) {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-        };
+                    @Override
+                    public TreeItem<T> fromString(String string) {
+                        throw new UnsupportedOperationException("Not supported.");
+                    }
+                };
         return new CheckBoxTreeCell<>(getSelectedProperty, converter);
     }
 }

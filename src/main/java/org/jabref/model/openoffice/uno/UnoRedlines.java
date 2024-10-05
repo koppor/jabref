@@ -1,7 +1,5 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Optional;
-
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.container.NoSuchElementException;
@@ -11,14 +9,14 @@ import com.sun.star.document.XRedlinesSupplier;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextDocument;
 
+import java.util.Optional;
+
 /**
  * Change tracking and Redlines
  */
 public class UnoRedlines {
 
-    public static boolean getRecordChanges(XTextDocument doc)
-            throws
-            WrappedTargetException {
+    public static boolean getRecordChanges(XTextDocument doc) throws WrappedTargetException {
 
         // https://wiki.openoffice.org/wiki/Documentation/DevGuide/Text/Settings
         // "Properties of com.sun.star.text.TextDocument"
@@ -28,7 +26,8 @@ public class UnoRedlines {
         try {
             return (boolean) propertySet.getPropertyValue("RecordChanges");
         } catch (UnknownPropertyException ex) {
-            throw new java.lang.IllegalStateException("Caught UnknownPropertyException on 'RecordChanges'");
+            throw new java.lang.IllegalStateException(
+                    "Caught UnknownPropertyException on 'RecordChanges'");
         }
     }
 

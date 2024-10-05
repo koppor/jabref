@@ -1,12 +1,7 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.List;
-import java.util.Optional;
-
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.jabref.logic.cleanup.FieldFormatterCleanup;
 import org.jabref.logic.formatter.bibtexfields.ClearFormatter;
 import org.jabref.logic.formatter.bibtexfields.RemoveEnclosingBracesFormatter;
@@ -26,8 +21,12 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
 
-import org.apache.hc.core5.net.URIBuilder;
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Fetches data from the INSPIRE database.
@@ -55,9 +54,12 @@ public class INSPIREFetcher implements SearchBasedParserFetcher, EntryBasedFetch
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException {
+    public URL getURLForQuery(QueryNode luceneQuery)
+            throws URISyntaxException, MalformedURLException {
         URIBuilder uriBuilder = new URIBuilder(INSPIRE_HOST);
-        uriBuilder.addParameter("q", new DefaultLuceneQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
+        uriBuilder.addParameter(
+                "q",
+                new DefaultLuceneQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
         return uriBuilder.build().toURL();
     }
 
@@ -71,12 +73,15 @@ public class INSPIREFetcher implements SearchBasedParserFetcher, EntryBasedFetch
     @Override
     public void doPostCleanup(BibEntry entry) {
         // Remove strange "SLACcitation" field
-        new FieldFormatterCleanup(new UnknownField("SLACcitation"), new ClearFormatter()).cleanup(entry);
+        new FieldFormatterCleanup(new UnknownField("SLACcitation"), new ClearFormatter())
+                .cleanup(entry);
 
         // Remove braces around content of "title" field
-        new FieldFormatterCleanup(StandardField.TITLE, new RemoveEnclosingBracesFormatter()).cleanup(entry);
+        new FieldFormatterCleanup(StandardField.TITLE, new RemoveEnclosingBracesFormatter())
+                .cleanup(entry);
 
-        new FieldFormatterCleanup(StandardField.TITLE, new LatexToUnicodeFormatter()).cleanup(entry);
+        new FieldFormatterCleanup(StandardField.TITLE, new LatexToUnicodeFormatter())
+                .cleanup(entry);
     }
 
     @Override

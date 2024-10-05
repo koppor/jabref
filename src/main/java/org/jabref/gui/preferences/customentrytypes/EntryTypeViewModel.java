@@ -1,9 +1,6 @@
 package org.jabref.gui.preferences.customentrytypes;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import static org.jabref.gui.preferences.customentrytypes.FieldViewModel.Mandatory;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -13,7 +10,10 @@ import javafx.collections.ObservableList;
 import org.jabref.model.entry.BibEntryType;
 import org.jabref.model.entry.field.Field;
 
-import static org.jabref.gui.preferences.customentrytypes.FieldViewModel.Mandatory;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class EntryTypeViewModel {
 
@@ -22,12 +22,18 @@ public class EntryTypeViewModel {
 
     public EntryTypeViewModel(BibEntryType entryType, Predicate<Field> isMultiline) {
         this.entryType.set(entryType);
-        List<FieldViewModel> allFieldsForType = entryType.getAllBibFields()
-                       .stream().map(bibField -> new FieldViewModel(bibField.field(),
-                                   entryType.isRequired(bibField.field()) ? Mandatory.REQUIRED : Mandatory.OPTIONAL,
-                                   bibField.priority(),
-                                   isMultiline.test(bibField.field())))
-                                                 .collect(Collectors.toList());
+        List<FieldViewModel> allFieldsForType =
+                entryType.getAllBibFields().stream()
+                        .map(
+                                bibField ->
+                                        new FieldViewModel(
+                                                bibField.field(),
+                                                entryType.isRequired(bibField.field())
+                                                        ? Mandatory.REQUIRED
+                                                        : Mandatory.OPTIONAL,
+                                                bibField.priority(),
+                                                isMultiline.test(bibField.field())))
+                        .collect(Collectors.toList());
         fields = FXCollections.observableArrayList(allFieldsForType);
     }
 

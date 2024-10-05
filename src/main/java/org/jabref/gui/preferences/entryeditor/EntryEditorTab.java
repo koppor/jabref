@@ -1,5 +1,7 @@
 package org.jabref.gui.preferences.entryeditor;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -13,9 +15,8 @@ import org.jabref.gui.preferences.PreferencesTab;
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.l10n.Localization;
 
-import com.airhacks.afterburner.views.ViewLoader;
-
-public class EntryEditorTab extends AbstractPreferenceTabView<EntryEditorTabViewModel> implements PreferencesTab {
+public class EntryEditorTab extends AbstractPreferenceTabView<EntryEditorTabViewModel>
+        implements PreferencesTab {
 
     @FXML private CheckBox openOnNewEntry;
     @FXML private CheckBox defaultSource;
@@ -35,9 +36,7 @@ public class EntryEditorTab extends AbstractPreferenceTabView<EntryEditorTabView
     @FXML private TextArea fieldsTextArea;
 
     public EntryEditorTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -50,22 +49,42 @@ public class EntryEditorTab extends AbstractPreferenceTabView<EntryEditorTabView
 
         openOnNewEntry.selectedProperty().bindBidirectional(viewModel.openOnNewEntryProperty());
         defaultSource.selectedProperty().bindBidirectional(viewModel.defaultSourceProperty());
-        enableRelatedArticlesTab.selectedProperty().bindBidirectional(viewModel.enableRelatedArticlesTabProperty());
-        enableAiSummaryTab.selectedProperty().bindBidirectional(viewModel.enableAiSummaryTabProperty());
+        enableRelatedArticlesTab
+                .selectedProperty()
+                .bindBidirectional(viewModel.enableRelatedArticlesTabProperty());
+        enableAiSummaryTab
+                .selectedProperty()
+                .bindBidirectional(viewModel.enableAiSummaryTabProperty());
         enableAiChatTab.selectedProperty().bindBidirectional(viewModel.enableAiChatTabProperty());
-        acceptRecommendations.selectedProperty().bindBidirectional(viewModel.acceptRecommendationsProperty());
-        enableLatexCitationsTab.selectedProperty().bindBidirectional(viewModel.enableLatexCitationsTabProperty());
+        acceptRecommendations
+                .selectedProperty()
+                .bindBidirectional(viewModel.acceptRecommendationsProperty());
+        enableLatexCitationsTab
+                .selectedProperty()
+                .bindBidirectional(viewModel.enableLatexCitationsTabProperty());
         enableValidation.selectedProperty().bindBidirectional(viewModel.enableValidationProperty());
-        allowIntegerEdition.selectedProperty().bindBidirectional(viewModel.allowIntegerEditionProperty());
+        allowIntegerEdition
+                .selectedProperty()
+                .bindBidirectional(viewModel.allowIntegerEditionProperty());
         journalPopupEnabled.selectedProperty().bindBidirectional(viewModel.journalPopupProperty());
-        autoLinkFilesEnabled.selectedProperty().bindBidirectional(viewModel.autoLinkFilesEnabledProperty());
+        autoLinkFilesEnabled
+                .selectedProperty()
+                .bindBidirectional(viewModel.autoLinkFilesEnabledProperty());
         enableSciteTab.selectedProperty().bindBidirectional(viewModel.enableSciteTabProperty());
-        showUserCommentsField.selectedProperty().bindBidirectional(viewModel.showUserCommentsProperty());
+        showUserCommentsField
+                .selectedProperty()
+                .bindBidirectional(viewModel.showUserCommentsProperty());
 
         fieldsTextArea.textProperty().bindBidirectional(viewModel.fieldsProperty());
 
         ActionFactory actionFactory = new ActionFactory();
-        actionFactory.configureIconButton(StandardActions.HELP, new HelpAction(HelpFile.GENERAL_FIELDS, dialogService, preferences.getExternalApplicationsPreferences()), generalFieldsHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP,
+                new HelpAction(
+                        HelpFile.GENERAL_FIELDS,
+                        dialogService,
+                        preferences.getExternalApplicationsPreferences()),
+                generalFieldsHelp);
     }
 
     @FXML

@@ -1,6 +1,6 @@
 package org.jabref.gui.fieldeditors;
 
-import javax.swing.undo.UndoManager;
+import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
 
 import javafx.scene.control.TextInputControl;
 
@@ -12,14 +12,30 @@ import org.jabref.gui.undo.UndoAction;
 import org.jabref.logic.integrity.FieldCheckers;
 import org.jabref.model.entry.field.Field;
 
-import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
+import javax.swing.undo.UndoManager;
 
 public class MarkdownEditor extends SimpleEditor {
 
-    private final FlexmarkHtmlConverter flexmarkHtmlConverter = FlexmarkHtmlConverter.builder().build();
+    private final FlexmarkHtmlConverter flexmarkHtmlConverter =
+            FlexmarkHtmlConverter.builder().build();
 
-    public MarkdownEditor(Field field, SuggestionProvider<?> suggestionProvider, FieldCheckers fieldCheckers, GuiPreferences preferences, UndoManager undoManager, UndoAction undoAction, RedoAction redoAction) {
-        super(field, suggestionProvider, fieldCheckers, preferences, true, undoManager, undoAction, redoAction);
+    public MarkdownEditor(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            GuiPreferences preferences,
+            UndoManager undoManager,
+            UndoAction undoAction,
+            RedoAction redoAction) {
+        super(
+                field,
+                suggestionProvider,
+                fieldCheckers,
+                preferences,
+                true,
+                undoManager,
+                undoAction,
+                redoAction);
     }
 
     @Override

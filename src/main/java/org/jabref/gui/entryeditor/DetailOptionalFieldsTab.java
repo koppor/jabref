@@ -1,7 +1,5 @@
 package org.jabref.gui.entryeditor;
 
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.autocompleter.SuggestionProviders;
 import org.jabref.gui.preferences.GuiPreferences;
@@ -17,23 +15,26 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.search.SearchQuery;
 
+import javax.swing.undo.UndoManager;
+
 public class DetailOptionalFieldsTab extends OptionalFieldsTabBase {
 
     public static final String NAME = "Optional fields 2";
 
-    public DetailOptionalFieldsTab(BibDatabaseContext databaseContext,
-                                   SuggestionProviders suggestionProviders,
-                                   UndoManager undoManager,
-                                   UndoAction undoAction,
-                                   RedoAction redoAction,
-                                   DialogService dialogService,
-                                   GuiPreferences preferences,
-                                   ThemeManager themeManager,
-                                   BibEntryTypesManager entryTypesManager,
-                                   TaskExecutor taskExecutor,
-                                   JournalAbbreviationRepository journalAbbreviationRepository,
-                                   LuceneManager luceneManager,
-                                   OptionalObjectProperty<SearchQuery> searchQueryProperty) {
+    public DetailOptionalFieldsTab(
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            UndoAction undoAction,
+            RedoAction redoAction,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            ThemeManager themeManager,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository,
+            LuceneManager luceneManager,
+            OptionalObjectProperty<SearchQuery> searchQueryProperty) {
         super(
                 Localization.lang("Optional fields 2"),
                 false,
@@ -49,7 +50,6 @@ public class DetailOptionalFieldsTab extends OptionalFieldsTabBase {
                 taskExecutor,
                 journalAbbreviationRepository,
                 luceneManager,
-                searchQueryProperty
-        );
+                searchQueryProperty);
     }
 }

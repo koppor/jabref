@@ -1,6 +1,6 @@
 package org.jabref.gui.search;
 
-import java.util.function.Supplier;
+import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTab;
@@ -9,7 +9,7 @@ import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.preferences.CliPreferences;
 
-import static org.jabref.gui.actions.ActionHelper.needsDatabase;
+import java.util.function.Supplier;
 
 public class RebuildFulltextSearchIndexAction extends SimpleCommand {
 
@@ -18,14 +18,17 @@ public class RebuildFulltextSearchIndexAction extends SimpleCommand {
     private final Supplier<LibraryTab> tabSupplier;
     private boolean shouldContinue = true;
 
-    public RebuildFulltextSearchIndexAction(StateManager stateManager,
-                                            Supplier<LibraryTab> tabSupplier,
-                                            DialogService dialogService,
-                                            CliPreferences preferences) {
+    public RebuildFulltextSearchIndexAction(
+            StateManager stateManager,
+            Supplier<LibraryTab> tabSupplier,
+            DialogService dialogService,
+            CliPreferences preferences) {
         this.stateManager = stateManager;
         this.dialogService = dialogService;
         this.tabSupplier = tabSupplier;
-        this.executable.bind(needsDatabase(stateManager).and(preferences.getFilePreferences().fulltextIndexLinkedFilesProperty()));
+        this.executable.bind(
+                needsDatabase(stateManager)
+                        .and(preferences.getFilePreferences().fulltextIndexLinkedFilesProperty()));
     }
 
     @Override
@@ -39,9 +42,10 @@ public class RebuildFulltextSearchIndexAction extends SimpleCommand {
             return;
         }
 
-        boolean confirm = dialogService.showConfirmationDialogAndWait(
-                Localization.lang("Rebuild fulltext search index"),
-                Localization.lang("Rebuild fulltext search index for current library?"));
+        boolean confirm =
+                dialogService.showConfirmationDialogAndWait(
+                        Localization.lang("Rebuild fulltext search index"),
+                        Localization.lang("Rebuild fulltext search index for current library?"));
         if (!confirm) {
             shouldContinue = false;
             return;

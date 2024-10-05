@@ -10,8 +10,8 @@ public interface FileType {
 
     default List<String> getExtensionsWithAsteriskAndDot() {
         return getExtensions().stream()
-                              .map(extension -> "*." + extension)
-                              .collect(Collectors.toList());
+                .map(extension -> "*." + extension)
+                .collect(Collectors.toList());
     }
 
     List<String> getExtensions();

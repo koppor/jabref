@@ -1,9 +1,9 @@
 package org.jabref.logic.layout.format;
 
+import org.jabref.logic.layout.ParamLayoutFormatter;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
-import org.jabref.logic.layout.ParamLayoutFormatter;
 
 public class DateFormatter implements ParamLayoutFormatter {
 

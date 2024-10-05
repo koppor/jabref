@@ -1,8 +1,11 @@
 package org.jabref.gui.groups;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
@@ -14,17 +17,13 @@ import org.jabref.model.groups.AbstractGroup;
 import org.jabref.model.groups.GroupHierarchyType;
 import org.jabref.model.metadata.MetaData;
 import org.jabref.model.util.DummyFileUpdateMonitor;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
 
 class GroupDialogViewModelTest {
 
@@ -53,7 +52,15 @@ class GroupDialogViewModelTest {
 
         bibDatabaseContext.setMetaData(metaData);
 
-        viewModel = new GroupDialogViewModel(dialogService, bibDatabaseContext, preferences, group, null, new DummyFileUpdateMonitor(), stateManager);
+        viewModel =
+                new GroupDialogViewModel(
+                        dialogService,
+                        bibDatabaseContext,
+                        preferences,
+                        group,
+                        null,
+                        new DummyFileUpdateMonitor(),
+                        stateManager);
     }
 
     @Test
@@ -61,7 +68,8 @@ class GroupDialogViewModelTest {
         var anAuxFile = temporaryFolder.resolve("auxfile.aux").toAbsolutePath();
 
         Files.createFile(anAuxFile);
-        when(metaData.getLatexFileDirectory(any(String.class))).thenReturn(Optional.of(temporaryFolder));
+        when(metaData.getLatexFileDirectory(any(String.class)))
+                .thenReturn(Optional.of(temporaryFolder));
 
         viewModel.texGroupFilePathProperty().setValue(anAuxFile.toString());
         assertTrue(viewModel.texGroupFilePathValidatonStatus().isValid());
@@ -80,7 +88,8 @@ class GroupDialogViewModelTest {
 
         // The file needs to exist
         Files.createFile(temporaryFolder.resolve(anAuxFile));
-        when(metaData.getLatexFileDirectory(any(String.class))).thenReturn(Optional.of(temporaryFolder));
+        when(metaData.getLatexFileDirectory(any(String.class)))
+                .thenReturn(Optional.of(temporaryFolder));
 
         viewModel.texGroupFilePathProperty().setValue(anAuxFile.toString());
         assertTrue(viewModel.texGroupFilePathValidatonStatus().isValid());
@@ -90,7 +99,15 @@ class GroupDialogViewModelTest {
     void hierarchicalContextFromGroup() throws Exception {
         GroupHierarchyType groupHierarchyType = GroupHierarchyType.INCLUDING;
         when(group.getHierarchicalContext()).thenReturn(groupHierarchyType);
-        viewModel = new GroupDialogViewModel(dialogService, bibDatabaseContext, preferences, group, null, new DummyFileUpdateMonitor(), stateManager);
+        viewModel =
+                new GroupDialogViewModel(
+                        dialogService,
+                        bibDatabaseContext,
+                        preferences,
+                        group,
+                        null,
+                        new DummyFileUpdateMonitor(),
+                        stateManager);
 
         assertEquals(groupHierarchyType, viewModel.groupHierarchySelectedProperty().getValue());
     }
@@ -98,9 +115,19 @@ class GroupDialogViewModelTest {
     @Test
     void defaultHierarchicalContext() throws Exception {
         GroupHierarchyType defaultHierarchicalContext = GroupHierarchyType.REFINING;
-        when(preferences.getGroupsPreferences().getDefaultHierarchicalContext()).thenReturn(defaultHierarchicalContext);
-        viewModel = new GroupDialogViewModel(dialogService, bibDatabaseContext, preferences, null, null, new DummyFileUpdateMonitor(), stateManager);
+        when(preferences.getGroupsPreferences().getDefaultHierarchicalContext())
+                .thenReturn(defaultHierarchicalContext);
+        viewModel =
+                new GroupDialogViewModel(
+                        dialogService,
+                        bibDatabaseContext,
+                        preferences,
+                        null,
+                        null,
+                        new DummyFileUpdateMonitor(),
+                        stateManager);
 
-        assertEquals(defaultHierarchicalContext, viewModel.groupHierarchySelectedProperty().getValue());
+        assertEquals(
+                defaultHierarchicalContext, viewModel.groupHierarchySelectedProperty().getValue());
     }
 }

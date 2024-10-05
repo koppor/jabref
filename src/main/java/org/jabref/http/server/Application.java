@@ -1,24 +1,27 @@
 package org.jabref.http.server;
 
-import java.util.Set;
-
-import org.jabref.http.dto.GsonFactory;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.ApplicationPath;
+
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
+import org.jabref.http.dto.GsonFactory;
+
+import java.util.Set;
 
 @ApplicationPath("/")
 public class Application extends jakarta.ws.rs.core.Application {
 
-    @Inject
-    ServiceLocator serviceLocator;
+    @Inject ServiceLocator serviceLocator;
 
     @Override
     public Set<Class<?>> getClasses() {
         initialize();
-        return Set.of(RootResource.class, LibrariesResource.class, LibraryResource.class, CORSFilter.class);
+        return Set.of(
+                RootResource.class,
+                LibrariesResource.class,
+                LibraryResource.class,
+                CORSFilter.class);
     }
 
     /**

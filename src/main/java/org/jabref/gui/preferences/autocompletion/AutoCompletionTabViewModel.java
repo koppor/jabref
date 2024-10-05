@@ -1,9 +1,5 @@
 package org.jabref.gui.preferences.autocompletion;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -18,10 +14,15 @@ import org.jabref.logic.preferences.AutoCompleteFirstNameMode;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class AutoCompletionTabViewModel implements PreferenceTabViewModel {
 
     private final BooleanProperty enableAutoCompleteProperty = new SimpleBooleanProperty();
-    private final ListProperty<Field> autoCompleteFieldsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<Field> autoCompleteFieldsProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
     private final BooleanProperty autoCompleteFirstLastProperty = new SimpleBooleanProperty();
     private final BooleanProperty autoCompleteLastFirstProperty = new SimpleBooleanProperty();
     private final BooleanProperty autoCompleteBothProperty = new SimpleBooleanProperty();
@@ -40,10 +41,13 @@ public class AutoCompletionTabViewModel implements PreferenceTabViewModel {
     @Override
     public void setValues() {
         enableAutoCompleteProperty.setValue(autoCompletePreferences.shouldAutoComplete());
-        autoCompleteFieldsProperty.setValue(FXCollections.observableArrayList(autoCompletePreferences.getCompleteFields()));
-        if (autoCompletePreferences.getNameFormat() == AutoCompletePreferences.NameFormat.FIRST_LAST) {
+        autoCompleteFieldsProperty.setValue(
+                FXCollections.observableArrayList(autoCompletePreferences.getCompleteFields()));
+        if (autoCompletePreferences.getNameFormat()
+                == AutoCompletePreferences.NameFormat.FIRST_LAST) {
             autoCompleteFirstLastProperty.setValue(true);
-        } else if (autoCompletePreferences.getNameFormat() == AutoCompletePreferences.NameFormat.LAST_FIRST) {
+        } else if (autoCompletePreferences.getNameFormat()
+                == AutoCompletePreferences.NameFormat.LAST_FIRST) {
             autoCompleteLastFirstProperty.setValue(true);
         } else {
             autoCompleteBothProperty.setValue(true);
@@ -141,7 +145,11 @@ public class AutoCompletionTabViewModel implements PreferenceTabViewModel {
 
     public List<Field> getSuggestions(String request) {
         return FieldFactory.getAllFieldsWithOutInternal().stream()
-                           .filter(field -> field.getDisplayName().toLowerCase().contains(request.toLowerCase()))
-                           .collect(Collectors.toList());
+                .filter(
+                        field ->
+                                field.getDisplayName()
+                                        .toLowerCase()
+                                        .contains(request.toLowerCase()))
+                .collect(Collectors.toList());
     }
 }

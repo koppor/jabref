@@ -1,5 +1,11 @@
 package org.jabref.logic.auxparser;
 
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,13 +16,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * LaTeX Aux to BibTeX Parser
@@ -32,7 +31,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultAuxParser implements AuxParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuxParser.class);
 
-    private static final Pattern CITE_PATTERN = Pattern.compile("\\\\(citation|abx@aux@cite)(\\{\\d+\\})?\\{(?<citationkey>.+)\\}");
+    private static final Pattern CITE_PATTERN =
+            Pattern.compile("\\\\(citation|abx@aux@cite)(\\{\\d+\\})?\\{(?<citationkey>.+)\\}");
     private static final Pattern INPUT_PATTERN = Pattern.compile("\\\\@input\\{(.+)\\}");
 
     private final BibDatabase masterDatabase;
@@ -83,7 +83,8 @@ public class DefaultAuxParser implements AuxParser {
         return result;
     }
 
-    private void matchNestedAux(Path baseAuxFile, AuxParserResult result, List<Path> fileList, String line) {
+    private void matchNestedAux(
+            Path baseAuxFile, AuxParserResult result, List<Path> fileList, String line) {
         Matcher inputMatch = INPUT_PATTERN.matcher(line);
 
         while (inputMatch.find()) {
@@ -141,7 +142,8 @@ public class DefaultAuxParser implements AuxParser {
         // Copy database definitions
         if (result.getGeneratedBibDatabase().hasEntries()) {
             result.getGeneratedBibDatabase().copyPreamble(masterDatabase);
-            result.insertStrings(masterDatabase.getUsedStrings(result.getGeneratedBibDatabase().getEntries()));
+            result.insertStrings(
+                    masterDatabase.getUsedStrings(result.getGeneratedBibDatabase().getEntries()));
         }
     }
 
@@ -154,20 +156,25 @@ public class DefaultAuxParser implements AuxParser {
     private void resolveCrossReferences(List<BibEntry> entries, AuxParserResult result) {
         List<BibEntry> entriesToInsert = new ArrayList<>();
         for (BibEntry entry : entries) {
-            entry.getField(StandardField.CROSSREF).ifPresent(crossref -> {
-                if (result.getGeneratedBibDatabase().getEntryByCitationKey(crossref).isEmpty()) {
-                    Optional<BibEntry> refEntry = masterDatabase.getEntryByCitationKey(crossref);
+            entry.getField(StandardField.CROSSREF)
+                    .ifPresent(
+                            crossref -> {
+                                if (result.getGeneratedBibDatabase()
+                                        .getEntryByCitationKey(crossref)
+                                        .isEmpty()) {
+                                    Optional<BibEntry> refEntry =
+                                            masterDatabase.getEntryByCitationKey(crossref);
 
-                    if (refEntry.isPresent()) {
-                        if (!entriesToInsert.contains(refEntry.get())) {
-                            entriesToInsert.add(refEntry.get());
-                            result.increaseCrossRefEntriesCounter();
-                        }
-                    } else {
-                        result.getUnresolvedKeys().add(crossref);
-                    }
-                }
-            });
+                                    if (refEntry.isPresent()) {
+                                        if (!entriesToInsert.contains(refEntry.get())) {
+                                            entriesToInsert.add(refEntry.get());
+                                            result.increaseCrossRefEntriesCounter();
+                                        }
+                                    } else {
+                                        result.getUnresolvedKeys().add(crossref);
+                                    }
+                                }
+                            });
         }
         insertEntries(entriesToInsert, result);
     }

@@ -1,14 +1,14 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.net.URISyntaxException;
-import java.util.Optional;
-
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.importer.IdBasedParserFetcher;
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.logic.importer.Parser;
 import org.jabref.logic.importer.fileformat.BibtexParser;
 import org.jabref.model.entry.identifier.ISBN;
+
+import java.net.URISyntaxException;
+import java.util.Optional;
 
 public abstract class AbstractIsbnFetcher implements IdBasedParserFetcher {
 

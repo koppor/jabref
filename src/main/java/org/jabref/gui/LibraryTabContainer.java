@@ -1,19 +1,17 @@
 package org.jabref.gui;
 
-import java.util.List;
-
 import org.jabref.model.database.BibDatabaseContext;
-
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 @NullMarked
 public interface LibraryTabContainer {
     List<LibraryTab> getLibraryTabs();
 
-    @Nullable
-    LibraryTab getCurrentLibraryTab();
+    @Nullable LibraryTab getCurrentLibraryTab();
 
     void showLibraryTab(LibraryTab libraryTab);
 

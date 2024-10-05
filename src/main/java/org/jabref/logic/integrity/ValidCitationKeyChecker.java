@@ -1,10 +1,10 @@
 package org.jabref.logic.integrity;
 
-import java.util.Optional;
-
 import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.Optional;
 
 /**
  * Makes sure the key is legal

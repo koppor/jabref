@@ -1,5 +1,27 @@
 package org.jabref.logic.importer.fileformat;
 
+import com.google.common.base.CaseFormat;
+import com.google.common.base.Enums;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.apache.hc.core5.net.URIBuilder;
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.logic.importer.ParseException;
+import org.jabref.logic.importer.Parser;
+import org.jabref.logic.net.URLDownload;
+import org.jabref.model.entry.Author;
+import org.jabref.model.entry.AuthorList;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.CookieHandler;
@@ -13,28 +35,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.ParseException;
-import org.jabref.logic.importer.Parser;
-import org.jabref.logic.net.URLDownload;
-import org.jabref.model.entry.Author;
-import org.jabref.model.entry.AuthorList;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.types.StandardEntryType;
-
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Enums;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.apache.hc.core5.net.URIBuilder;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 public class ACMPortalParser implements Parser {
 
@@ -117,7 +117,8 @@ public class ACMPortalParser implements Parser {
      * @param doiList DOI List
      * @return query URL
      */
-    public URL getUrlFromDoiList(List<String> doiList) throws URISyntaxException, MalformedURLException {
+    public URL getUrlFromDoiList(List<String> doiList)
+            throws URISyntaxException, MalformedURLException {
         URIBuilder uriBuilder = new URIBuilder(DOI_URL);
         uriBuilder.addParameter("targetFile", "custom-bibtex");
         uriBuilder.addParameter("format", "bibTex");
@@ -130,8 +131,11 @@ public class ACMPortalParser implements Parser {
         if ("PAPER_CONFERENCE".equals(typeStr)) {
             type = StandardEntryType.Conference;
         } else {
-            String upperUnderscoreTyeStr = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, typeStr);
-            type = Enums.getIfPresent(StandardEntryType.class, upperUnderscoreTyeStr).or(StandardEntryType.Article);
+            String upperUnderscoreTyeStr =
+                    CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, typeStr);
+            type =
+                    Enums.getIfPresent(StandardEntryType.class, upperUnderscoreTyeStr)
+                            .or(StandardEntryType.Article);
         }
         return type;
     }
@@ -157,8 +161,11 @@ public class ACMPortalParser implements Parser {
         if (jsonObject.has("issued")) {
             JsonObject issued = jsonObject.get("issued").getAsJsonObject();
             if (issued.has("date-parts")) {
-                JsonArray dateArray = issued.get("date-parts").getAsJsonArray().get(0).getAsJsonArray();
-                StandardField[] dateField = {StandardField.YEAR, StandardField.MONTH, StandardField.DAY};
+                JsonArray dateArray =
+                        issued.get("date-parts").getAsJsonArray().get(0).getAsJsonArray();
+                StandardField[] dateField = {
+                    StandardField.YEAR, StandardField.MONTH, StandardField.DAY
+                };
                 for (int i = 0; i < dateArray.size(); i++) {
                     bibEntry.setField(dateField[i], dateArray.get(i).getAsString());
                 }
@@ -170,11 +177,13 @@ public class ACMPortalParser implements Parser {
         }
 
         if (jsonObject.has("collection-title")) {
-            bibEntry.setField(StandardField.SERIES, jsonObject.get("collection-title").getAsString());
+            bibEntry.setField(
+                    StandardField.SERIES, jsonObject.get("collection-title").getAsString());
         }
 
         if (jsonObject.has("container-title")) {
-            bibEntry.setField(StandardField.BOOKTITLE, jsonObject.get("container-title").getAsString());
+            bibEntry.setField(
+                    StandardField.BOOKTITLE, jsonObject.get("container-title").getAsString());
         }
 
         if (jsonObject.has("DOI")) {
@@ -191,12 +200,14 @@ public class ACMPortalParser implements Parser {
 
         if (jsonObject.has("keyword")) {
             String[] keywords = jsonObject.get("keyword").getAsString().split(", ");
-            String sortedKeywords = Arrays.stream(keywords).sorted().collect(Collectors.joining(", "));
+            String sortedKeywords =
+                    Arrays.stream(keywords).sorted().collect(Collectors.joining(", "));
             bibEntry.setField(StandardField.KEYWORDS, sortedKeywords);
         }
 
         if (jsonObject.has("number-of-pages")) {
-            bibEntry.setField(StandardField.PAGETOTAL, jsonObject.get("number-of-pages").getAsString());
+            bibEntry.setField(
+                    StandardField.PAGETOTAL, jsonObject.get("number-of-pages").getAsString());
         }
 
         if (jsonObject.has("page")) {
@@ -208,7 +219,8 @@ public class ACMPortalParser implements Parser {
         }
 
         if (jsonObject.has("publisher-place")) {
-            bibEntry.setField(StandardField.ADDRESS, jsonObject.get("publisher-place").getAsString());
+            bibEntry.setField(
+                    StandardField.ADDRESS, jsonObject.get("publisher-place").getAsString());
         }
 
         if (jsonObject.has("title")) {

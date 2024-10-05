@@ -1,5 +1,16 @@
 package org.jabref.logic.importer.fileformat;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.jabref.logic.util.StandardFileType;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -8,18 +19,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
-import org.jabref.logic.util.StandardFileType;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.types.StandardEntryType;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EndnoteImporterTest {
 
@@ -47,13 +46,19 @@ class EndnoteImporterTest {
 
     @Test
     void getDescription() {
-        assertEquals("Importer for the Refer/Endnote format."
-                + " Modified to use article number for pages if pages are missing.", importer.getDescription());
+        assertEquals(
+                "Importer for the Refer/Endnote format."
+                        + " Modified to use article number for pages if pages are missing.",
+                importer.getDescription());
     }
 
     @Test
     void isRecognizedFormat() throws IOException, URISyntaxException {
-        List<String> list = Arrays.asList("Endnote.pattern.A.enw", "Endnote.pattern.E.enw", "Endnote.book.example.enw");
+        List<String> list =
+                Arrays.asList(
+                        "Endnote.pattern.A.enw",
+                        "Endnote.pattern.E.enw",
+                        "Endnote.book.example.enw");
 
         for (String string : list) {
             Path file = Path.of(EndnoteImporterTest.class.getResource(string).toURI());
@@ -63,9 +68,17 @@ class EndnoteImporterTest {
 
     @Test
     void isRecognizedFormatReject() throws IOException, URISyntaxException {
-        List<String> list = Arrays.asList("IEEEImport1.txt", "IsiImporterTest1.isi", "IsiImporterTestInspec.isi",
-                "IsiImporterTestWOS.isi", "IsiImporterTestMedline.isi", "RisImporterTest1.ris",
-                "Endnote.pattern.no_enw", "empty.pdf", "annotated.pdf");
+        List<String> list =
+                Arrays.asList(
+                        "IEEEImport1.txt",
+                        "IsiImporterTest1.isi",
+                        "IsiImporterTestInspec.isi",
+                        "IsiImporterTestWOS.isi",
+                        "IsiImporterTestMedline.isi",
+                        "RisImporterTest1.ris",
+                        "Endnote.pattern.no_enw",
+                        "empty.pdf",
+                        "annotated.pdf");
 
         for (String string : list) {
             Path file = Path.of(EndnoteImporterTest.class.getResource(string).toURI());
@@ -121,8 +134,10 @@ class EndnoteImporterTest {
     @Test
     void importEntries1() throws IOException {
         String medlineString = "%O Artn\\\\s testO\n%A testA,\n%E testE0, testE1";
-        List<BibEntry> bibEntries = importer.importDatabase(new BufferedReader(new StringReader(medlineString))).getDatabase()
-                                            .getEntries();
+        List<BibEntry> bibEntries =
+                importer.importDatabase(new BufferedReader(new StringReader(medlineString)))
+                        .getDatabase()
+                        .getEntries();
 
         BibEntry entry = bibEntries.getFirst();
 
@@ -135,7 +150,8 @@ class EndnoteImporterTest {
 
     @Test
     void importEntriesBookExample() throws IOException, URISyntaxException {
-        Path file = Path.of(EndnoteImporterTest.class.getResource("Endnote.book.example.enw").toURI());
+        Path file =
+                Path.of(EndnoteImporterTest.class.getResource("Endnote.book.example.enw").toURI());
         List<BibEntry> bibEntries = importer.importDatabase(file).getDatabase().getEntries();
 
         BibEntry entry = bibEntries.getFirst();
@@ -143,12 +159,18 @@ class EndnoteImporterTest {
         assertEquals(1, bibEntries.size());
         assertEquals(StandardEntryType.Book, entry.getType());
         assertEquals(Optional.of("Heidelberg"), entry.getField(StandardField.ADDRESS));
-        assertEquals(Optional.of("Preißel, René and Stachmann, Bjørn"), entry.getField(StandardField.AUTHOR));
-        assertEquals(Optional.of("3., aktualisierte und erweiterte Auflage"), entry.getField(StandardField.EDITION));
+        assertEquals(
+                Optional.of("Preißel, René and Stachmann, Bjørn"),
+                entry.getField(StandardField.AUTHOR));
+        assertEquals(
+                Optional.of("3., aktualisierte und erweiterte Auflage"),
+                entry.getField(StandardField.EDITION));
         assertEquals(Optional.of("Versionsverwaltung"), entry.getField(StandardField.KEYWORDS));
         assertEquals(Optional.of("XX, 327"), entry.getField(StandardField.PAGES));
         assertEquals(Optional.of("dpunkt.verlag"), entry.getField(StandardField.PUBLISHER));
-        assertEquals(Optional.of("Git : dezentrale Versionsverwaltung im Team : Grundlagen und Workflows"),
+        assertEquals(
+                Optional.of(
+                        "Git : dezentrale Versionsverwaltung im Team : Grundlagen und Workflows"),
                 entry.getField(StandardField.TITLE));
         assertEquals(Optional.of("http://d-nb.info/107601965X"), entry.getField(StandardField.URL));
         assertEquals(Optional.of("2016"), entry.getField(StandardField.YEAR));

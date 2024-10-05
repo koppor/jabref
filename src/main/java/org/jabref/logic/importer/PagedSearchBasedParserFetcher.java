@@ -1,5 +1,9 @@
 package org.jabref.logic.importer;
 
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.paging.Page;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -7,21 +11,19 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.paging.Page;
-
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
-
-public interface PagedSearchBasedParserFetcher extends SearchBasedParserFetcher, PagedSearchBasedFetcher, ParserFetcher {
+public interface PagedSearchBasedParserFetcher
+        extends SearchBasedParserFetcher, PagedSearchBasedFetcher, ParserFetcher {
 
     @Override
-    default Page<BibEntry> performSearchPaged(QueryNode luceneQuery, int pageNumber) throws FetcherException {
+    default Page<BibEntry> performSearchPaged(QueryNode luceneQuery, int pageNumber)
+            throws FetcherException {
         // ADR-0014
         URL urlForQuery;
         try {
             urlForQuery = getURLForQuery(luceneQuery, pageNumber);
         } catch (URISyntaxException | MalformedURLException e) {
-            throw new FetcherException("Search URI crafted from complex search query is malformed", e);
+            throw new FetcherException(
+                    "Search URI crafted from complex search query is malformed", e);
         }
         return new Page<>(luceneQuery.toString(), pageNumber, getBibEntries(urlForQuery));
     }
@@ -44,10 +46,12 @@ public interface PagedSearchBasedParserFetcher extends SearchBasedParserFetcher,
      * @param luceneQuery the search query
      * @param pageNumber  the number of the page indexed from 0
      */
-    URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException;
+    URL getURLForQuery(QueryNode luceneQuery, int pageNumber)
+            throws URISyntaxException, MalformedURLException;
 
     @Override
-    default URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException {
+    default URL getURLForQuery(QueryNode luceneQuery)
+            throws URISyntaxException, MalformedURLException {
         return getURLForQuery(luceneQuery, 0);
     }
 

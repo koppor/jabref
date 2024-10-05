@@ -1,14 +1,6 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
-
+import org.apache.hc.core5.net.URIBuilder;
 import org.jabref.logic.importer.EntryBasedFetcher;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.ParserResult;
@@ -19,10 +11,17 @@ import org.jabref.logic.util.Version;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
-
-import org.apache.hc.core5.net.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * This class is responsible for getting the recommendations from Mr. DLib
@@ -32,7 +31,8 @@ public class MrDLibFetcher implements EntryBasedFetcher {
     private static final String NAME = "MDL_FETCHER";
     private static final String MDL_JABREF_PARTNER_ID = "1";
     private static final String MDL_URL = "api.mr-dlib.org";
-    private static final String DEFAULT_MRDLIB_ERROR_MESSAGE = Localization.lang("Error while fetching recommendations from Mr.DLib.");
+    private static final String DEFAULT_MRDLIB_ERROR_MESSAGE =
+            Localization.lang("Error while fetching recommendations from Mr.DLib.");
     private final String LANGUAGE;
     private final Version VERSION;
     private String heading;
@@ -117,7 +117,8 @@ public class MrDLibFetcher implements EntryBasedFetcher {
      * @param queryWithTitle the query holds the title of the selected entry. Used to make a query to the MDL Server
      * @return the string used to make the query at mdl server
      */
-    private URL constructQuery(String queryWithTitle) throws URISyntaxException, MalformedURLException {
+    private URL constructQuery(String queryWithTitle)
+            throws URISyntaxException, MalformedURLException {
         // The encoding does not work for / so we convert them by our own
         queryWithTitle = queryWithTitle.replace("/", " ");
         URIBuilder builder = new URIBuilder();

@@ -1,13 +1,13 @@
 package org.jabref.gui.commonfxcontrols;
 
-import java.util.Objects;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 import org.jabref.model.entry.types.EntryType;
+
+import java.util.Objects;
 
 public class CitationKeyPatternsPanelItemModel {
     private final ObjectProperty<EntryType> entryType = new SimpleObjectProperty<>();

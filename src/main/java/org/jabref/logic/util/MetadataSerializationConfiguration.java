@@ -68,6 +68,5 @@ public class MetadataSerializationConfiguration {
      */
     public static final String TEX_GROUP_ID = "TexGroup:";
 
-    private MetadataSerializationConfiguration() {
-    }
+    private MetadataSerializationConfiguration() {}
 }

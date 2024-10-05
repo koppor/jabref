@@ -1,8 +1,10 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.Optional;
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+import com.tobiasdiez.easybind.optional.ObservableOptionalValue;
 
-import javax.swing.undo.UndoManager;
+import jakarta.inject.Inject;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
@@ -60,10 +62,9 @@ import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import com.tobiasdiez.easybind.optional.ObservableOptionalValue;
-import jakarta.inject.Inject;
+import java.util.Optional;
+
+import javax.swing.undo.UndoManager;
 
 public class LinkedFilesEditor extends HBox implements FieldEditorFX {
 
@@ -85,21 +86,21 @@ public class LinkedFilesEditor extends HBox implements FieldEditorFX {
 
     private LinkedFilesEditorViewModel viewModel;
 
-    private ObservableOptionalValue<BibEntry> bibEntry = EasyBind.wrapNullable(new SimpleObjectProperty<>());
+    private ObservableOptionalValue<BibEntry> bibEntry =
+            EasyBind.wrapNullable(new SimpleObjectProperty<>());
     private final UiThreadObservableList<LinkedFileViewModel> decoratedModelList;
 
-    public LinkedFilesEditor(Field field,
-                             BibDatabaseContext databaseContext,
-                             SuggestionProvider<?> suggestionProvider,
-                             FieldCheckers fieldCheckers) {
+    public LinkedFilesEditor(
+            Field field,
+            BibDatabaseContext databaseContext,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers) {
         this.field = field;
         this.databaseContext = databaseContext;
         this.suggestionProvider = suggestionProvider;
         this.fieldCheckers = fieldCheckers;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
 
         decoratedModelList = new UiThreadObservableList<>(viewModel.filesProperty());
         Bindings.bindContentBidirectional(listView.itemsProperty().get(), decoratedModelList);
@@ -107,15 +108,16 @@ public class LinkedFilesEditor extends HBox implements FieldEditorFX {
 
     @FXML
     private void initialize() {
-        this.viewModel = new LinkedFilesEditorViewModel(
-                field,
-                suggestionProvider,
-                dialogService,
-                databaseContext,
-                taskExecutor,
-                fieldCheckers,
-                preferences,
-                undoManager);
+        this.viewModel =
+                new LinkedFilesEditorViewModel(
+                        field,
+                        suggestionProvider,
+                        dialogService,
+                        databaseContext,
+                        taskExecutor,
+                        fieldCheckers,
+                        preferences,
+                        undoManager);
 
         new ViewModelListCellFactory<LinkedFileViewModel>()
                 .withStringTooltip(LinkedFileViewModel::getDescriptionAndLink)
@@ -136,17 +138,20 @@ public class LinkedFilesEditor extends HBox implements FieldEditorFX {
     }
 
     private void handleOnDragOver(LinkedFileViewModel originalItem, DragEvent event) {
-        if ((event.getGestureSource() != originalItem) && event.getDragboard().hasContent(DragAndDropDataFormats.LINKED_FILE)) {
+        if ((event.getGestureSource() != originalItem)
+                && event.getDragboard().hasContent(DragAndDropDataFormats.LINKED_FILE)) {
             event.acceptTransferModes(TransferMode.MOVE);
         }
     }
 
-    private void handleOnDragDetected(@SuppressWarnings("unused") LinkedFileViewModel linkedFile, MouseEvent event) {
+    private void handleOnDragDetected(
+            @SuppressWarnings("unused") LinkedFileViewModel linkedFile, MouseEvent event) {
         LinkedFile selectedItem = listView.getSelectionModel().getSelectedItem().getFile();
         if (selectedItem != null) {
             ClipboardContent content = new ClipboardContent();
             Dragboard dragboard = listView.startDragAndDrop(TransferMode.MOVE);
-            // We have to use the model class here, as the content of the dragboard must be serializable
+            // We have to use the model class here, as the content of the dragboard must be
+            // serializable
             content.put(DragAndDropDataFormats.LINKED_FILE, selectedItem);
             dragboard.setContent(content);
         }
@@ -160,7 +165,8 @@ public class LinkedFilesEditor extends HBox implements FieldEditorFX {
         ObservableList<LinkedFileViewModel> items = listView.itemsProperty().get();
 
         if (dragboard.hasContent(DragAndDropDataFormats.LINKED_FILE)) {
-            LinkedFile linkedFile = (LinkedFile) dragboard.getContent(DragAndDropDataFormats.LINKED_FILE);
+            LinkedFile linkedFile =
+                    (LinkedFile) dragboard.getContent(DragAndDropDataFormats.LINKED_FILE);
             LinkedFileViewModel transferredItem = null;
             int draggedIdx = 0;
             for (int i = 0; i < items.size(); i++) {
@@ -189,7 +195,9 @@ public class LinkedFilesEditor extends HBox implements FieldEditorFX {
         Text link = new Text();
         link.textProperty().bind(linkedFile.linkProperty());
         link.getStyleClass().setAll("file-row-text");
-        EasyBind.subscribe(linkedFile.isAutomaticallyFoundProperty(), found -> link.pseudoClassStateChanged(opacity, found));
+        EasyBind.subscribe(
+                linkedFile.isAutomaticallyFoundProperty(),
+                found -> link.pseudoClassStateChanged(opacity, found));
 
         Text desc = new Text();
         desc.textProperty().bind(linkedFile.descriptionProperty());
@@ -204,70 +212,97 @@ public class LinkedFilesEditor extends HBox implements FieldEditorFX {
         label.textProperty().bind(linkedFile.linkProperty());
         label.getStyleClass().setAll("file-row-text");
         label.textOverrunProperty().setValue(OverrunStyle.LEADING_ELLIPSIS);
-        EasyBind.subscribe(linkedFile.isAutomaticallyFoundProperty(), found -> label.pseudoClassStateChanged(opacity, found));
+        EasyBind.subscribe(
+                linkedFile.isAutomaticallyFoundProperty(),
+                found -> label.pseudoClassStateChanged(opacity, found));
 
         HBox info = new HBox(8);
         HBox.setHgrow(info, Priority.ALWAYS);
-        info.setStyle("-fx-padding: 0.5em 0 0.5em 0;"); // To align with buttons below which also have 0.5em padding
+        info.setStyle(
+                "-fx-padding: 0.5em 0 0.5em 0;"); // To align with buttons below which also have
+        // 0.5em padding
         info.getChildren().setAll(label, progressIndicator);
 
         Button acceptAutoLinkedFile = IconTheme.JabRefIcons.AUTO_LINKED_FILE.asButton();
-        acceptAutoLinkedFile.setTooltip(new Tooltip(Localization.lang("This file was found automatically. Do you want to link it to this entry?")));
+        acceptAutoLinkedFile.setTooltip(
+                new Tooltip(
+                        Localization.lang(
+                                "This file was found automatically. Do you want to link it to this entry?")));
         acceptAutoLinkedFile.visibleProperty().bind(linkedFile.isAutomaticallyFoundProperty());
         acceptAutoLinkedFile.managedProperty().bind(linkedFile.isAutomaticallyFoundProperty());
         acceptAutoLinkedFile.setOnAction(event -> linkedFile.acceptAsLinked());
         acceptAutoLinkedFile.getStyleClass().setAll("icon-button");
 
         Button writeMetadataToPdf = IconTheme.JabRefIcons.PDF_METADATA_WRITE.asButton();
-        writeMetadataToPdf.setTooltip(new Tooltip(Localization.lang("Write BibTeX to PDF (XMP and embedded)")));
+        writeMetadataToPdf.setTooltip(
+                new Tooltip(Localization.lang("Write BibTeX to PDF (XMP and embedded)")));
         writeMetadataToPdf.visibleProperty().bind(linkedFile.isOfflinePdfProperty());
         writeMetadataToPdf.getStyleClass().setAll("icon-button");
-        WriteMetadataToSinglePdfAction writeMetadataToSinglePdfAction = new WriteMetadataToSinglePdfAction(
-                linkedFile.getFile(),
-                bibEntry.getValueOrElse(new BibEntry()),
-                databaseContext, dialogService, preferences.getFieldPreferences(),
-                preferences.getFilePreferences(), preferences.getXmpPreferences(), abbreviationRepository, bibEntryTypesManager,
-                taskExecutor
-        );
-        writeMetadataToPdf.disableProperty().bind(writeMetadataToSinglePdfAction.executableProperty().not());
+        WriteMetadataToSinglePdfAction writeMetadataToSinglePdfAction =
+                new WriteMetadataToSinglePdfAction(
+                        linkedFile.getFile(),
+                        bibEntry.getValueOrElse(new BibEntry()),
+                        databaseContext,
+                        dialogService,
+                        preferences.getFieldPreferences(),
+                        preferences.getFilePreferences(),
+                        preferences.getXmpPreferences(),
+                        abbreviationRepository,
+                        bibEntryTypesManager,
+                        taskExecutor);
+        writeMetadataToPdf
+                .disableProperty()
+                .bind(writeMetadataToSinglePdfAction.executableProperty().not());
         writeMetadataToPdf.setOnAction(event -> writeMetadataToSinglePdfAction.execute());
 
         Button parsePdfMetadata = IconTheme.JabRefIcons.PDF_METADATA_READ.asButton();
         parsePdfMetadata.setTooltip(new Tooltip(Localization.lang("Parse Metadata from PDF.")));
         parsePdfMetadata.visibleProperty().bind(linkedFile.isOfflinePdfProperty());
-        parsePdfMetadata.setOnAction(event -> {
-            GrobidOptInDialogHelper.showAndWaitIfUserIsUndecided(dialogService, preferences.getGrobidPreferences());
-            linkedFile.parsePdfMetadataAndShowMergeDialog();
-        });
+        parsePdfMetadata.setOnAction(
+                event -> {
+                    GrobidOptInDialogHelper.showAndWaitIfUserIsUndecided(
+                            dialogService, preferences.getGrobidPreferences());
+                    linkedFile.parsePdfMetadataAndShowMergeDialog();
+                });
         parsePdfMetadata.getStyleClass().setAll("icon-button");
 
         HBox container = new HBox(2);
         container.setPrefHeight(Double.NEGATIVE_INFINITY);
         container.maxWidthProperty().bind(listView.widthProperty().subtract(20d));
-        container.getChildren().addAll(acceptAutoLinkedFile, info, writeMetadataToPdf, parsePdfMetadata);
+        container
+                .getChildren()
+                .addAll(acceptAutoLinkedFile, info, writeMetadataToPdf, parsePdfMetadata);
 
         return container;
     }
 
     private void setUpKeyBindings() {
-        listView.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            Optional<KeyBinding> keyBinding = preferences.getKeyBindingRepository().mapToKeyBinding(event);
-            if (keyBinding.isPresent()) {
-                switch (keyBinding.get()) {
-                    case DELETE_ENTRY:
-                        deleteAttachedFilesWithConfirmation();
-                        event.consume();
-                        break;
-                    default:
-                        // Pass other keys to children
-                }
-            }
-        });
+        listView.addEventFilter(
+                KeyEvent.KEY_PRESSED,
+                event -> {
+                    Optional<KeyBinding> keyBinding =
+                            preferences.getKeyBindingRepository().mapToKeyBinding(event);
+                    if (keyBinding.isPresent()) {
+                        switch (keyBinding.get()) {
+                            case DELETE_ENTRY:
+                                deleteAttachedFilesWithConfirmation();
+                                event.consume();
+                                break;
+                            default:
+                                // Pass other keys to children
+                        }
+                    }
+                });
     }
 
     private void deleteAttachedFilesWithConfirmation() {
-        new DeleteFileAction(dialogService, preferences.getFilePreferences(), databaseContext,
-                viewModel, listView.getSelectionModel().getSelectedItems()).execute();
+        new DeleteFileAction(
+                        dialogService,
+                        preferences.getFilePreferences(),
+                        databaseContext,
+                        viewModel,
+                        listView.getSelectionModel().getSelectedItems())
+                .execute();
     }
 
     public LinkedFilesEditorViewModel getViewModel() {
@@ -287,9 +322,12 @@ public class LinkedFilesEditor extends HBox implements FieldEditorFX {
 
     @FXML
     private void addNewFile() {
-        dialogService.showCustomDialogAndWait(new LinkedFileEditDialog()).ifPresent(newLinkedFile -> {
-            viewModel.addNewLinkedFile(newLinkedFile);
-        });
+        dialogService
+                .showCustomDialogAndWait(new LinkedFileEditDialog())
+                .ifPresent(
+                        newLinkedFile -> {
+                            viewModel.addNewLinkedFile(newLinkedFile);
+                        });
     }
 
     @FXML
@@ -318,22 +356,69 @@ public class LinkedFilesEditor extends HBox implements FieldEditorFX {
         ContextMenu menu = new ContextMenu();
         ActionFactory factory = new ActionFactory();
 
-        menu.getItems().addAll(
-                factory.createMenuItem(StandardActions.EDIT_FILE_LINK, new ContextAction(StandardActions.EDIT_FILE_LINK, linkedFile, preferences)),
-                new SeparatorMenuItem(),
-                factory.createMenuItem(StandardActions.OPEN_FILE, new ContextAction(StandardActions.OPEN_FILE, linkedFile, preferences)),
-                factory.createMenuItem(StandardActions.OPEN_FOLDER, new ContextAction(StandardActions.OPEN_FOLDER, linkedFile, preferences)),
-                new SeparatorMenuItem(),
-                factory.createMenuItem(StandardActions.DOWNLOAD_FILE, new ContextAction(StandardActions.DOWNLOAD_FILE, linkedFile, preferences)),
-                factory.createMenuItem(StandardActions.RENAME_FILE_TO_PATTERN, new ContextAction(StandardActions.RENAME_FILE_TO_PATTERN, linkedFile, preferences)),
-                factory.createMenuItem(StandardActions.RENAME_FILE_TO_NAME, new ContextAction(StandardActions.RENAME_FILE_TO_NAME, linkedFile, preferences)),
-                factory.createMenuItem(StandardActions.MOVE_FILE_TO_FOLDER, new ContextAction(StandardActions.MOVE_FILE_TO_FOLDER, linkedFile, preferences)),
-                factory.createMenuItem(StandardActions.MOVE_FILE_TO_FOLDER_AND_RENAME, new ContextAction(StandardActions.MOVE_FILE_TO_FOLDER_AND_RENAME, linkedFile, preferences)),
-                factory.createMenuItem(StandardActions.COPY_FILE_TO_FOLDER, new CopySingleFileAction(linkedFile.getFile(), dialogService, databaseContext, preferences.getFilePreferences())),
-                factory.createMenuItem(StandardActions.REDOWNLOAD_FILE, new ContextAction(StandardActions.REDOWNLOAD_FILE, linkedFile, preferences)),
-                factory.createMenuItem(StandardActions.REMOVE_LINK, new ContextAction(StandardActions.REMOVE_LINK, linkedFile, preferences)),
-                factory.createMenuItem(StandardActions.DELETE_FILE, new ContextAction(StandardActions.DELETE_FILE, linkedFile, preferences))
-        );
+        menu.getItems()
+                .addAll(
+                        factory.createMenuItem(
+                                StandardActions.EDIT_FILE_LINK,
+                                new ContextAction(
+                                        StandardActions.EDIT_FILE_LINK, linkedFile, preferences)),
+                        new SeparatorMenuItem(),
+                        factory.createMenuItem(
+                                StandardActions.OPEN_FILE,
+                                new ContextAction(
+                                        StandardActions.OPEN_FILE, linkedFile, preferences)),
+                        factory.createMenuItem(
+                                StandardActions.OPEN_FOLDER,
+                                new ContextAction(
+                                        StandardActions.OPEN_FOLDER, linkedFile, preferences)),
+                        new SeparatorMenuItem(),
+                        factory.createMenuItem(
+                                StandardActions.DOWNLOAD_FILE,
+                                new ContextAction(
+                                        StandardActions.DOWNLOAD_FILE, linkedFile, preferences)),
+                        factory.createMenuItem(
+                                StandardActions.RENAME_FILE_TO_PATTERN,
+                                new ContextAction(
+                                        StandardActions.RENAME_FILE_TO_PATTERN,
+                                        linkedFile,
+                                        preferences)),
+                        factory.createMenuItem(
+                                StandardActions.RENAME_FILE_TO_NAME,
+                                new ContextAction(
+                                        StandardActions.RENAME_FILE_TO_NAME,
+                                        linkedFile,
+                                        preferences)),
+                        factory.createMenuItem(
+                                StandardActions.MOVE_FILE_TO_FOLDER,
+                                new ContextAction(
+                                        StandardActions.MOVE_FILE_TO_FOLDER,
+                                        linkedFile,
+                                        preferences)),
+                        factory.createMenuItem(
+                                StandardActions.MOVE_FILE_TO_FOLDER_AND_RENAME,
+                                new ContextAction(
+                                        StandardActions.MOVE_FILE_TO_FOLDER_AND_RENAME,
+                                        linkedFile,
+                                        preferences)),
+                        factory.createMenuItem(
+                                StandardActions.COPY_FILE_TO_FOLDER,
+                                new CopySingleFileAction(
+                                        linkedFile.getFile(),
+                                        dialogService,
+                                        databaseContext,
+                                        preferences.getFilePreferences())),
+                        factory.createMenuItem(
+                                StandardActions.REDOWNLOAD_FILE,
+                                new ContextAction(
+                                        StandardActions.REDOWNLOAD_FILE, linkedFile, preferences)),
+                        factory.createMenuItem(
+                                StandardActions.REMOVE_LINK,
+                                new ContextAction(
+                                        StandardActions.REMOVE_LINK, linkedFile, preferences)),
+                        factory.createMenuItem(
+                                StandardActions.DELETE_FILE,
+                                new ContextAction(
+                                        StandardActions.DELETE_FILE, linkedFile, preferences)));
 
         return menu;
     }
@@ -343,32 +428,78 @@ public class LinkedFilesEditor extends HBox implements FieldEditorFX {
         private final StandardActions command;
         private final LinkedFileViewModel linkedFile;
 
-        public ContextAction(StandardActions command, LinkedFileViewModel linkedFile, CliPreferences preferences) {
+        public ContextAction(
+                StandardActions command,
+                LinkedFileViewModel linkedFile,
+                CliPreferences preferences) {
             this.command = command;
             this.linkedFile = linkedFile;
 
             this.executable.bind(
                     switch (command) {
-                        case RENAME_FILE_TO_PATTERN -> Bindings.createBooleanBinding(
-                                () -> !linkedFile.getFile().isOnlineLink()
-                                        && linkedFile.getFile().findIn(databaseContext, preferences.getFilePreferences()).isPresent()
-                                        && !linkedFile.isGeneratedNameSameAsOriginal(),
-                                linkedFile.getFile().linkProperty(), bibEntry.getValue().map(BibEntry::getFieldsObservable).orElse(null));
-                        case MOVE_FILE_TO_FOLDER, MOVE_FILE_TO_FOLDER_AND_RENAME -> Bindings.createBooleanBinding(
-                                () -> !linkedFile.getFile().isOnlineLink()
-                                        && linkedFile.getFile().findIn(databaseContext, preferences.getFilePreferences()).isPresent()
-                                        && !linkedFile.isGeneratedPathSameAsOriginal(),
-                                linkedFile.getFile().linkProperty(), bibEntry.getValue().map(BibEntry::getFieldsObservable).orElse(null));
-                        case DOWNLOAD_FILE -> Bindings.createBooleanBinding(
-                                () -> linkedFile.getFile().isOnlineLink(),
-                                linkedFile.getFile().linkProperty(), bibEntry.getValue().map(BibEntry::getFieldsObservable).orElse(null));
-                        case REDOWNLOAD_FILE -> Bindings.createBooleanBinding(
-                                () -> !linkedFile.getFile().getSourceUrl().isEmpty(),
-                                linkedFile.getFile().sourceUrlProperty(), bibEntry.getValue().map(BibEntry::getFieldsObservable).orElse(null));
-                        case OPEN_FILE, OPEN_FOLDER, RENAME_FILE_TO_NAME, DELETE_FILE -> Bindings.createBooleanBinding(
-                                () -> !linkedFile.getFile().isOnlineLink()
-                                        && linkedFile.getFile().findIn(databaseContext, preferences.getFilePreferences()).isPresent(),
-                                linkedFile.getFile().linkProperty(), bibEntry.getValue().map(BibEntry::getFieldsObservable).orElse(null));
+                        case RENAME_FILE_TO_PATTERN ->
+                                Bindings.createBooleanBinding(
+                                        () ->
+                                                !linkedFile.getFile().isOnlineLink()
+                                                        && linkedFile
+                                                                .getFile()
+                                                                .findIn(
+                                                                        databaseContext,
+                                                                        preferences
+                                                                                .getFilePreferences())
+                                                                .isPresent()
+                                                        && !linkedFile
+                                                                .isGeneratedNameSameAsOriginal(),
+                                        linkedFile.getFile().linkProperty(),
+                                        bibEntry.getValue()
+                                                .map(BibEntry::getFieldsObservable)
+                                                .orElse(null));
+                        case MOVE_FILE_TO_FOLDER, MOVE_FILE_TO_FOLDER_AND_RENAME ->
+                                Bindings.createBooleanBinding(
+                                        () ->
+                                                !linkedFile.getFile().isOnlineLink()
+                                                        && linkedFile
+                                                                .getFile()
+                                                                .findIn(
+                                                                        databaseContext,
+                                                                        preferences
+                                                                                .getFilePreferences())
+                                                                .isPresent()
+                                                        && !linkedFile
+                                                                .isGeneratedPathSameAsOriginal(),
+                                        linkedFile.getFile().linkProperty(),
+                                        bibEntry.getValue()
+                                                .map(BibEntry::getFieldsObservable)
+                                                .orElse(null));
+                        case DOWNLOAD_FILE ->
+                                Bindings.createBooleanBinding(
+                                        () -> linkedFile.getFile().isOnlineLink(),
+                                        linkedFile.getFile().linkProperty(),
+                                        bibEntry.getValue()
+                                                .map(BibEntry::getFieldsObservable)
+                                                .orElse(null));
+                        case REDOWNLOAD_FILE ->
+                                Bindings.createBooleanBinding(
+                                        () -> !linkedFile.getFile().getSourceUrl().isEmpty(),
+                                        linkedFile.getFile().sourceUrlProperty(),
+                                        bibEntry.getValue()
+                                                .map(BibEntry::getFieldsObservable)
+                                                .orElse(null));
+                        case OPEN_FILE, OPEN_FOLDER, RENAME_FILE_TO_NAME, DELETE_FILE ->
+                                Bindings.createBooleanBinding(
+                                        () ->
+                                                !linkedFile.getFile().isOnlineLink()
+                                                        && linkedFile
+                                                                .getFile()
+                                                                .findIn(
+                                                                        databaseContext,
+                                                                        preferences
+                                                                                .getFilePreferences())
+                                                                .isPresent(),
+                                        linkedFile.getFile().linkProperty(),
+                                        bibEntry.getValue()
+                                                .map(BibEntry::getFieldsObservable)
+                                                .orElse(null));
                         default -> BindingsHelper.constantOf(true);
                     });
         }

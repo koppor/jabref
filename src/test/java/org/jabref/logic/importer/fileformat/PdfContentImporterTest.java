@@ -1,17 +1,16 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
-
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 
 class PdfContentImporterTest {
 
@@ -29,25 +28,31 @@ class PdfContentImporterTest {
         Path file = Path.of(PdfContentImporter.class.getResource("/pdfs/minimal.pdf").toURI());
         List<BibEntry> result = importer.importDatabase(file).getDatabase().getEntries();
 
-        BibEntry expected = new BibEntry(StandardEntryType.InProceedings)
-                .withField(StandardField.AUTHOR, "1 ")
-                .withField(StandardField.TITLE, "Hello World")
-                .withFiles(List.of(new LinkedFile("", file.toAbsolutePath(), "PDF")));
+        BibEntry expected =
+                new BibEntry(StandardEntryType.InProceedings)
+                        .withField(StandardField.AUTHOR, "1 ")
+                        .withField(StandardField.TITLE, "Hello World")
+                        .withFiles(List.of(new LinkedFile("", file.toAbsolutePath(), "PDF")));
         assertEquals(List.of(expected), result);
 
-        List<BibEntry> resultSecondImport = importer.importDatabase(file).getDatabase().getEntries();
+        List<BibEntry> resultSecondImport =
+                importer.importDatabase(file).getDatabase().getEntries();
         assertEquals(List.of(expected), resultSecondImport);
     }
 
     @Test
     void parsingEditorWithoutPagesorSeriesInformation() {
-        BibEntry entry = new BibEntry(StandardEntryType.InProceedings)
-                .withField(StandardField.AUTHOR, "Anke Lüdeling and Merja Kytö (Eds.)")
-                .withField(StandardField.EDITOR, "Anke Lüdeling and Merja Kytö")
-                .withField(StandardField.PUBLISHER, "Springer")
-                .withField(StandardField.TITLE, "Corpus Linguistics – An International Handbook – Lüdeling, Anke, Kytö, Merja (Eds.)");
+        BibEntry entry =
+                new BibEntry(StandardEntryType.InProceedings)
+                        .withField(StandardField.AUTHOR, "Anke Lüdeling and Merja Kytö (Eds.)")
+                        .withField(StandardField.EDITOR, "Anke Lüdeling and Merja Kytö")
+                        .withField(StandardField.PUBLISHER, "Springer")
+                        .withField(
+                                StandardField.TITLE,
+                                "Corpus Linguistics – An International Handbook – Lüdeling, Anke, Kytö, Merja (Eds.)");
 
-        String firstPageContents = """
+        String firstPageContents =
+                """
                 Corpus Linguistics – An International Handbook – Lüdeling, Anke,
                 Kytö, Merja (Eds.)
 
@@ -70,12 +75,18 @@ class PdfContentImporterTest {
 
     @Test
     void parsingWithoutActualDOINumber() {
-        BibEntry entry = new BibEntry(StandardEntryType.InProceedings)
-                .withField(StandardField.AUTHOR, "Link to record in KAR and http://kar.kent.ac.uk/51043/  and Document Version and UNSPECIFIED  and Master of Research (MRes) thesis and University of Kent")
-                .withField(StandardField.TITLE, "Kent Academic Repository Full text document (pdf) Citation for published version Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock Losses and Stakeholder Opinions. DOI")
-                .withField(StandardField.YEAR, "5104");
+        BibEntry entry =
+                new BibEntry(StandardEntryType.InProceedings)
+                        .withField(
+                                StandardField.AUTHOR,
+                                "Link to record in KAR and http://kar.kent.ac.uk/51043/  and Document Version and UNSPECIFIED  and Master of Research (MRes) thesis and University of Kent")
+                        .withField(
+                                StandardField.TITLE,
+                                "Kent Academic Repository Full text document (pdf) Citation for published version Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock Losses and Stakeholder Opinions. DOI")
+                        .withField(StandardField.YEAR, "5104");
 
-        String firstPageContents = """
+        String firstPageContents =
+                """
                 Kent Academic Repository Full text document (pdf)
                 Citation for published version
                 Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock
@@ -93,13 +104,17 @@ class PdfContentImporterTest {
 
     @Test
     void extractDOIFromPage1() {
-        BibEntry entry = new BibEntry(StandardEntryType.InProceedings)
-                .withField(StandardField.DOI, "10.1017/S0007114507795296")
-                .withField(StandardField.AUTHOR, "Review Article")
-                .withField(StandardField.TITLE, "British Journal of Nutrition (2008), 99, 1–11 doi: 10.1017/S0007114507795296 q The Authors")
-                .withField(StandardField.YEAR, "2008");
+        BibEntry entry =
+                new BibEntry(StandardEntryType.InProceedings)
+                        .withField(StandardField.DOI, "10.1017/S0007114507795296")
+                        .withField(StandardField.AUTHOR, "Review Article")
+                        .withField(
+                                StandardField.TITLE,
+                                "British Journal of Nutrition (2008), 99, 1–11 doi: 10.1017/S0007114507795296 q The Authors")
+                        .withField(StandardField.YEAR, "2008");
 
-        String firstPageContent = """
+        String firstPageContent =
+                """
                 British Journal of Nutrition (2008), 99, 1–11 doi: 10.1017/S0007114507795296
                 q The Authors 2008
 

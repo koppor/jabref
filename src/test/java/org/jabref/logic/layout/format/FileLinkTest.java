@@ -1,16 +1,15 @@
 package org.jabref.logic.layout.format;
 
-import java.util.Collections;
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.logic.layout.ParamLayoutFormatter;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Collections;
+import java.util.stream.Stream;
 
 class FileLinkTest {
 
@@ -38,7 +37,6 @@ class FileLinkTest {
                 Arguments.of("test.pdf", "paper:test.pdf:PDF", ""),
                 Arguments.of("test.pdf", "paper:test.pdf:PDF;presentation:pres.ppt:PPT", ""),
                 Arguments.of("pres.ppt", "paper:test.pdf:PDF;presentation:pres.ppt:PPT", "ppt"),
-                Arguments.of("", "paper:test.pdf:PDF;presentation:pres.ppt:PPT", "doc")
-        );
+                Arguments.of("", "paper:test.pdf:PDF;presentation:pres.ppt:PPT", "doc"));
     }
 }

@@ -1,11 +1,6 @@
 package org.jabref.gui.documentviewer;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -18,6 +13,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.util.UiTaskExecutor;
@@ -25,12 +22,15 @@ import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
-
-import com.tobiasdiez.easybind.EasyBind;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DocumentViewerViewModel extends AbstractViewModel {
 
@@ -48,23 +48,31 @@ public class DocumentViewerViewModel extends AbstractViewModel {
         this.stateManager = Objects.requireNonNull(stateManager);
         this.preferences = Objects.requireNonNull(preferences);
 
-        this.stateManager.getSelectedEntries().addListener((ListChangeListener<? super BibEntry>) c -> {
-            // Switch to currently selected entry in live mode
-            if (liveMode.get()) {
-                setCurrentEntries(this.stateManager.getSelectedEntries());
-            }
-        });
+        this.stateManager
+                .getSelectedEntries()
+                .addListener(
+                        (ListChangeListener<? super BibEntry>)
+                                c -> {
+                                    // Switch to currently selected entry in live mode
+                                    if (liveMode.get()) {
+                                        setCurrentEntries(this.stateManager.getSelectedEntries());
+                                    }
+                                });
 
-        this.liveMode.addListener((observable, oldValue, newValue) -> {
-            // Switch to currently selected entry if mode is changed to live
-            if ((oldValue != newValue) && newValue) {
-                setCurrentEntries(this.stateManager.getSelectedEntries());
-            }
-        });
+        this.liveMode.addListener(
+                (observable, oldValue, newValue) -> {
+                    // Switch to currently selected entry if mode is changed to live
+                    if ((oldValue != newValue) && newValue) {
+                        setCurrentEntries(this.stateManager.getSelectedEntries());
+                    }
+                });
 
         // we need to wrap this in run later so that the max pages number is correctly shown
-        UiTaskExecutor.runInJavaFXThread(() -> maxPages.bind(
-                EasyBind.wrapNullable(currentDocument).selectProperty(DocumentViewModel::maxPagesProperty)));
+        UiTaskExecutor.runInJavaFXThread(
+                () ->
+                        maxPages.bind(
+                                EasyBind.wrapNullable(currentDocument)
+                                        .selectProperty(DocumentViewModel::maxPagesProperty)));
         setCurrentEntries(this.stateManager.getSelectedEntries());
     }
 
@@ -92,7 +100,11 @@ public class DocumentViewerViewModel extends AbstractViewModel {
         if (entries.isEmpty()) {
             files.clear();
         } else {
-            Set<LinkedFile> linkedFiles = entries.stream().map(BibEntry::getFiles).flatMap(List::stream).collect(Collectors.toSet());
+            Set<LinkedFile> linkedFiles =
+                    entries.stream()
+                            .map(BibEntry::getFiles)
+                            .flatMap(List::stream)
+                            .collect(Collectors.toSet());
             // We don't need to switch to the first file, this is done automatically in the UI part
             files.setValue(FXCollections.observableArrayList(linkedFiles));
         }
@@ -111,9 +123,10 @@ public class DocumentViewerViewModel extends AbstractViewModel {
 
     public void switchToFile(LinkedFile file) {
         if (file != null) {
-            stateManager.getActiveDatabase()
-                        .flatMap(database -> file.findIn(database, preferences.getFilePreferences()))
-                        .ifPresent(this::setCurrentDocument);
+            stateManager
+                    .getActiveDatabase()
+                    .flatMap(database -> file.findIn(database, preferences.getFilePreferences()))
+                    .ifPresent(this::setCurrentDocument);
             currentPage.set(1);
         }
     }

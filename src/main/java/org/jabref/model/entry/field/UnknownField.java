@@ -1,10 +1,10 @@
 package org.jabref.model.entry.field;
 
+import org.jabref.model.strings.StringUtil;
+
 import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Objects;
-
-import org.jabref.model.strings.StringUtil;
 
 public class UnknownField implements Field {
     private String name;
@@ -25,7 +25,8 @@ public class UnknownField implements Field {
         this(name, StringUtil.capitalizeFirst(name), first, rest);
     }
 
-    public UnknownField(String name, String displayName, FieldProperty first, FieldProperty... rest) {
+    public UnknownField(
+            String name, String displayName, FieldProperty first, FieldProperty... rest) {
         this.name = name;
         this.displayName = displayName;
         this.properties = EnumSet.of(first, rest);
@@ -78,8 +79,6 @@ public class UnknownField implements Field {
 
     @Override
     public String toString() {
-        return "UnknownField{" +
-               "name='" + name + '\'' +
-               '}';
+        return "UnknownField{" + "name='" + name + '\'' + '}';
     }
 }

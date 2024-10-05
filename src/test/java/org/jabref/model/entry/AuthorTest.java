@@ -1,13 +1,13 @@
 package org.jabref.model.entry;
 
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Optional;
 
 class AuthorTest {
 
@@ -26,11 +26,25 @@ class AuthorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"O.", "A. O.", "A.-O.",
-                            "O. Moore", "A. O. Moore", "O. von Moore", "A.-O. Moore",
-                            "Moore, O.", "Moore, O., Jr.", "Moore, A. O.", "Moore, A.-O.",
-                            "MEmre", "{\\'{E}}douard", "J{\\\"o}rg", "Moore, O. and O. Moore",
-                            "Moore, O. and O. Moore and Moore, O. O."})
+    @ValueSource(
+            strings = {
+                "O.",
+                "A. O.",
+                "A.-O.",
+                "O. Moore",
+                "A. O. Moore",
+                "O. von Moore",
+                "A.-O. Moore",
+                "Moore, O.",
+                "Moore, O., Jr.",
+                "Moore, A. O.",
+                "Moore, A.-O.",
+                "MEmre",
+                "{\\'{E}}douard",
+                "J{\\\"o}rg",
+                "Moore, O. and O. Moore",
+                "Moore, O. and O. Moore and Moore, O. O."
+            })
     void addDotIfAbbreviationDoNotAddDot(String input) {
         assertEquals(input, Author.addDotIfAbbreviation(input));
     }
@@ -74,7 +88,9 @@ class AuthorTest {
 
     @Test
     void bracesKept() {
-        assertEquals(Optional.of("{Company Name, LLC}"), new Author("", "", null, "{Company Name, LLC}", null).getFamilyName());
+        assertEquals(
+                Optional.of("{Company Name, LLC}"),
+                new Author("", "", null, "{Company Name, LLC}", null).getFamilyName());
     }
 
     @ParameterizedTest

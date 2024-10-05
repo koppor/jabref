@@ -1,6 +1,10 @@
 package org.jabref.gui.importer;
 
-import java.util.List;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTab;
@@ -11,15 +15,10 @@ import org.jabref.gui.util.OptionalObjectProperty;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.StandardEntryType;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.List;
 
 class NewEntryActionTest {
 
@@ -33,13 +32,16 @@ class NewEntryActionTest {
     @BeforeEach
     void setUp() {
         when(stateManager.activeDatabaseProperty()).thenReturn(OptionalObjectProperty.empty());
-        newEntryAction = new NewEntryAction(() -> libraryTab, dialogService, preferences, stateManager);
+        newEntryAction =
+                new NewEntryAction(() -> libraryTab, dialogService, preferences, stateManager);
     }
 
     @Test
     void executeOnSuccessWithFixedType() {
         EntryType type = StandardEntryType.Article;
-        newEntryAction = new NewEntryAction(() -> libraryTab, type, dialogService, preferences, stateManager);
+        newEntryAction =
+                new NewEntryAction(
+                        () -> libraryTab, type, dialogService, preferences, stateManager);
         when(tabContainer.getLibraryTabs()).thenReturn(List.of(libraryTab));
 
         newEntryAction.execute();

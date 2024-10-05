@@ -1,13 +1,13 @@
 package org.jabref.logic.cleanup;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Set;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Set;
 
 public class CleanupPreferences {
 
@@ -26,7 +26,8 @@ public class CleanupPreferences {
         this(EnumSet.noneOf(CleanupStep.class), formatterCleanups);
     }
 
-    public CleanupPreferences(EnumSet<CleanupStep> activeJobs, FieldFormatterCleanups formatterCleanups) {
+    public CleanupPreferences(
+            EnumSet<CleanupStep> activeJobs, FieldFormatterCleanups formatterCleanups) {
         this.activeJobs = FXCollections.observableSet(activeJobs);
         this.fieldFormatterCleanups = new SimpleObjectProperty<>(formatterCleanups);
     }

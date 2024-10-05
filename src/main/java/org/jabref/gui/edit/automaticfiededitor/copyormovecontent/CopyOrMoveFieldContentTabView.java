@@ -1,7 +1,11 @@
 package org.jabref.gui.edit.automaticfiededitor.copyormovecontent;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.jabref.gui.util.FieldsUtil.FIELD_STRING_CONVERTER;
+
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -17,27 +21,20 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.jabref.gui.util.FieldsUtil.FIELD_STRING_CONVERTER;
-
-public class CopyOrMoveFieldContentTabView extends AbstractAutomaticFieldEditorTabView implements AutomaticFieldEditorTab {
+public class CopyOrMoveFieldContentTabView extends AbstractAutomaticFieldEditorTabView
+        implements AutomaticFieldEditorTab {
     public Button copyContentButton;
-    @FXML
-    private Button moveContentButton;
+    @FXML private Button moveContentButton;
 
-    @FXML
-    private Button swapContentButton;
+    @FXML private Button swapContentButton;
 
-    @FXML
-    private ComboBox<Field> fromFieldComboBox;
-    @FXML
-    private ComboBox<Field> toFieldComboBox;
+    @FXML private ComboBox<Field> fromFieldComboBox;
+    @FXML private ComboBox<Field> toFieldComboBox;
 
-    @FXML
-    private CheckBox overwriteFieldContentCheckBox;
+    @FXML private CheckBox overwriteFieldContentCheckBox;
 
     private CopyOrMoveFieldContentTabViewModel viewModel;
     private final List<BibEntry> selectedEntries;
@@ -51,25 +48,31 @@ public class CopyOrMoveFieldContentTabView extends AbstractAutomaticFieldEditorT
         this.database = database;
         this.stateManager = stateManager;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     public void initialize() {
         viewModel = new CopyOrMoveFieldContentTabViewModel(selectedEntries, database, stateManager);
         initializeFromAndToComboBox();
 
-        viewModel.overwriteFieldContentProperty().bindBidirectional(overwriteFieldContentCheckBox.selectedProperty());
+        viewModel
+                .overwriteFieldContentProperty()
+                .bindBidirectional(overwriteFieldContentCheckBox.selectedProperty());
 
         moveContentButton.disableProperty().bind(viewModel.canMoveProperty().not());
         swapContentButton.disableProperty().bind(viewModel.canSwapProperty().not());
-        copyContentButton.disableProperty().bind(viewModel.toFieldValidationStatus().validProperty().not());
-        overwriteFieldContentCheckBox.disableProperty().bind(viewModel.toFieldValidationStatus().validProperty().not());
+        copyContentButton
+                .disableProperty()
+                .bind(viewModel.toFieldValidationStatus().validProperty().not());
+        overwriteFieldContentCheckBox
+                .disableProperty()
+                .bind(viewModel.toFieldValidationStatus().validProperty().not());
 
-        Platform.runLater(() -> {
-            visualizer.initVisualization(viewModel.toFieldValidationStatus(), toFieldComboBox, true);
-        });
+        Platform.runLater(
+                () -> {
+                    visualizer.initVisualization(
+                            viewModel.toFieldValidationStatus(), toFieldComboBox, true);
+                });
     }
 
     private void initializeFromAndToComboBox() {
@@ -83,8 +86,12 @@ public class CopyOrMoveFieldContentTabView extends AbstractAutomaticFieldEditorT
         fromFieldComboBox.valueProperty().bindBidirectional(viewModel.fromFieldProperty());
         toFieldComboBox.valueProperty().bindBidirectional(viewModel.toFieldProperty());
 
-        EasyBind.listen(fromFieldComboBox.getEditor().textProperty(), observable -> fromFieldComboBox.commitValue());
-        EasyBind.listen(toFieldComboBox.getEditor().textProperty(), observable -> toFieldComboBox.commitValue());
+        EasyBind.listen(
+                fromFieldComboBox.getEditor().textProperty(),
+                observable -> fromFieldComboBox.commitValue());
+        EasyBind.listen(
+                toFieldComboBox.getEditor().textProperty(),
+                observable -> toFieldComboBox.commitValue());
     }
 
     @Override

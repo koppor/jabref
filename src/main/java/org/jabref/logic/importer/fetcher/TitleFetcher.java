@@ -1,7 +1,5 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.util.Optional;
-
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.IdBasedFetcher;
@@ -11,6 +9,8 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.identifier.DOI;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.Optional;
 
 public class TitleFetcher implements IdBasedFetcher {
 

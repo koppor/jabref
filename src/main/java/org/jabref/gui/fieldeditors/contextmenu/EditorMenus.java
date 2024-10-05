@@ -1,8 +1,7 @@
 package org.jabref.gui.fieldeditors.contextmenu;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
+import com.airhacks.afterburner.injection.Injector;
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -19,8 +18,9 @@ import org.jabref.logic.formatter.bibtexfields.NormalizeNamesFormatter;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.strings.StringUtil;
 
-import com.airhacks.afterburner.injection.Injector;
-import com.tobiasdiez.easybind.EasyBind;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Provides context menus for the text fields of the entry editor. Note that we use {@link Supplier} to prevent an early
@@ -38,9 +38,15 @@ public class EditorMenus {
      */
     public static Supplier<List<MenuItem>> getNameMenu(final TextInputControl textInput) {
         return () -> {
-            MenuItem normalizeNames = new MenuItem(Localization.lang("Normalize to BibTeX name format"));
-            EasyBind.subscribe(textInput.textProperty(), value -> normalizeNames.setDisable(StringUtil.isNullOrEmpty(value)));
-            normalizeNames.setOnAction(event -> textInput.setText(new NormalizeNamesFormatter().format(textInput.getText())));
+            MenuItem normalizeNames =
+                    new MenuItem(Localization.lang("Normalize to BibTeX name format"));
+            EasyBind.subscribe(
+                    textInput.textProperty(),
+                    value -> normalizeNames.setDisable(StringUtil.isNullOrEmpty(value)));
+            normalizeNames.setOnAction(
+                    event ->
+                            textInput.setText(
+                                    new NormalizeNamesFormatter().format(textInput.getText())));
             List<MenuItem> menuItems = new ArrayList<>(6);
             menuItems.add(normalizeNames);
             menuItems.addAll(new DefaultMenu(textInput).get());
@@ -54,12 +60,28 @@ public class EditorMenus {
      * @param textArea text-area that this menu will be connected to
      * @return menu containing items of the default menu and an item for copying a DOI/DOI URL
      */
-    public static Supplier<List<MenuItem>> getDOIMenu(TextArea textArea, DialogService dialogService) {
+    public static Supplier<List<MenuItem>> getDOIMenu(
+            TextArea textArea, DialogService dialogService) {
         return () -> {
             ActionFactory factory = new ActionFactory();
-            ClipBoardManager clipBoardManager = Injector.instantiateModelOrService(ClipBoardManager.class);
-            MenuItem copyDoiMenuItem = factory.createMenuItem(StandardActions.COPY_DOI, new CopyDoiUrlAction(textArea, StandardActions.COPY_DOI, dialogService, clipBoardManager));
-            MenuItem copyDoiUrlMenuItem = factory.createMenuItem(StandardActions.COPY_DOI_URL, new CopyDoiUrlAction(textArea, StandardActions.COPY_DOI_URL, dialogService, clipBoardManager));
+            ClipBoardManager clipBoardManager =
+                    Injector.instantiateModelOrService(ClipBoardManager.class);
+            MenuItem copyDoiMenuItem =
+                    factory.createMenuItem(
+                            StandardActions.COPY_DOI,
+                            new CopyDoiUrlAction(
+                                    textArea,
+                                    StandardActions.COPY_DOI,
+                                    dialogService,
+                                    clipBoardManager));
+            MenuItem copyDoiUrlMenuItem =
+                    factory.createMenuItem(
+                            StandardActions.COPY_DOI_URL,
+                            new CopyDoiUrlAction(
+                                    textArea,
+                                    StandardActions.COPY_DOI_URL,
+                                    dialogService,
+                                    clipBoardManager));
             List<MenuItem> menuItems = new ArrayList<>();
             menuItems.add(copyDoiMenuItem);
             menuItems.add(copyDoiUrlMenuItem);
@@ -79,7 +101,9 @@ public class EditorMenus {
         return () -> {
             MenuItem cleanupURL = new MenuItem(Localization.lang("Cleanup URL link"));
             cleanupURL.setDisable(textArea.textProperty().isEmpty().get());
-            cleanupURL.setOnAction(event -> textArea.setText(new CleanupUrlFormatter().format(textArea.getText())));
+            cleanupURL.setOnAction(
+                    event ->
+                            textArea.setText(new CleanupUrlFormatter().format(textArea.getText())));
             List<MenuItem> menuItems = new ArrayList<>();
             menuItems.add(cleanupURL);
             return menuItems;

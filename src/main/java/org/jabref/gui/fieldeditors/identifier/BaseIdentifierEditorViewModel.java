@@ -1,9 +1,6 @@
 package org.jabref.gui.fieldeditors.identifier;
 
-import java.io.IOException;
-import java.util.Optional;
-
-import javax.swing.undo.UndoManager;
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -25,30 +22,38 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.identifier.Identifier;
-
-import com.tobiasdiez.easybind.EasyBind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseIdentifierEditorViewModel<T extends Identifier> extends AbstractEditorViewModel {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseIdentifierEditorViewModel.class);
+import java.io.IOException;
+import java.util.Optional;
+
+import javax.swing.undo.UndoManager;
+
+public abstract class BaseIdentifierEditorViewModel<T extends Identifier>
+        extends AbstractEditorViewModel {
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(BaseIdentifierEditorViewModel.class);
     protected BooleanProperty isInvalidIdentifier = new SimpleBooleanProperty();
     protected final BooleanProperty identifierLookupInProgress = new SimpleBooleanProperty(false);
     protected final BooleanProperty canLookupIdentifier = new SimpleBooleanProperty(true);
-    protected final BooleanProperty canFetchBibliographyInformationById = new SimpleBooleanProperty();
+    protected final BooleanProperty canFetchBibliographyInformationById =
+            new SimpleBooleanProperty();
     protected IdentifierParser identifierParser;
-    protected final ObjectProperty<Optional<T>> identifier = new SimpleObjectProperty<>(Optional.empty());
+    protected final ObjectProperty<Optional<T>> identifier =
+            new SimpleObjectProperty<>(Optional.empty());
     protected DialogService dialogService;
     protected TaskExecutor taskExecutor;
     protected GuiPreferences preferences;
 
-    public BaseIdentifierEditorViewModel(Field field,
-                                         SuggestionProvider<?> suggestionProvider,
-                                         FieldCheckers fieldCheckers,
-                                         DialogService dialogService,
-                                         TaskExecutor taskExecutor,
-                                         GuiPreferences preferences,
-                                         UndoManager undoManager) {
+    public BaseIdentifierEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            DialogService dialogService,
+            TaskExecutor taskExecutor,
+            GuiPreferences preferences,
+            UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
         this.dialogService = dialogService;
         this.taskExecutor = taskExecutor;
@@ -62,7 +67,8 @@ public abstract class BaseIdentifierEditorViewModel<T extends Identifier> extend
      * <p>
      * <b>NOTE: This method MUST be called by all the implementation view models in their principal constructor</b>
      * */
-    protected final void configure(boolean canFetchBibliographyInformationById, boolean canLookupIdentifier) {
+    protected final void configure(
+            boolean canFetchBibliographyInformationById, boolean canLookupIdentifier) {
         this.canLookupIdentifier.set(canLookupIdentifier);
         this.canFetchBibliographyInformationById.set(canFetchBibliographyInformationById);
     }
@@ -79,13 +85,21 @@ public abstract class BaseIdentifierEditorViewModel<T extends Identifier> extend
     protected void handleIdentifierFetchingError(Exception exception, IdFetcher<T> fetcher) {
         LOGGER.error("Error while fetching identifier", exception);
         if (exception instanceof FetcherClientException) {
-            dialogService.showInformationDialogAndWait(Localization.lang("Look up %0", fetcher.getName()), Localization.lang("No data was found for the identifier"));
+            dialogService.showInformationDialogAndWait(
+                    Localization.lang("Look up %0", fetcher.getName()),
+                    Localization.lang("No data was found for the identifier"));
         } else if (exception instanceof FetcherServerException) {
-            dialogService.showInformationDialogAndWait(Localization.lang("Look up %0", fetcher.getName()), Localization.lang("Server not available"));
+            dialogService.showInformationDialogAndWait(
+                    Localization.lang("Look up %0", fetcher.getName()),
+                    Localization.lang("Server not available"));
         } else if (exception.getCause() != null) {
-            dialogService.showWarningDialogAndWait(Localization.lang("Look up %0", fetcher.getName()), Localization.lang("Error occurred %0", exception.getCause().getMessage()));
+            dialogService.showWarningDialogAndWait(
+                    Localization.lang("Look up %0", fetcher.getName()),
+                    Localization.lang("Error occurred %0", exception.getCause().getMessage()));
         } else {
-            dialogService.showWarningDialogAndWait(Localization.lang("Look up %0", fetcher.getName()), Localization.lang("Error occurred %0", exception.getCause().getMessage()));
+            dialogService.showWarningDialogAndWait(
+                    Localization.lang("Look up %0", fetcher.getName()),
+                    Localization.lang("Error occurred %0", exception.getCause().getMessage()));
         }
     }
 
@@ -122,7 +136,9 @@ public abstract class BaseIdentifierEditorViewModel<T extends Identifier> extend
     }
 
     public void fetchBibliographyInformation(BibEntry bibEntry) {
-        LOGGER.warn("Unable to fetch bibliography information using the '{}' identifier", field.getDisplayName());
+        LOGGER.warn(
+                "Unable to fetch bibliography information using the '{}' identifier",
+                field.getDisplayName());
     }
 
     public void lookupIdentifier(BibEntry bibEntry) {
@@ -130,14 +146,19 @@ public abstract class BaseIdentifierEditorViewModel<T extends Identifier> extend
     }
 
     public void openExternalLink() {
-        identifier.get().flatMap(Identifier::getExternalURI).ifPresent(url -> {
-                    try {
-                        NativeDesktop.openBrowser(url, preferences.getExternalApplicationsPreferences());
-                    } catch (IOException ex) {
-                        dialogService.showErrorDialogAndWait(Localization.lang("Unable to open link."), ex);
-                    }
-                }
-        );
+        identifier
+                .get()
+                .flatMap(Identifier::getExternalURI)
+                .ifPresent(
+                        url -> {
+                            try {
+                                NativeDesktop.openBrowser(
+                                        url, preferences.getExternalApplicationsPreferences());
+                            } catch (IOException ex) {
+                                dialogService.showErrorDialogAndWait(
+                                        Localization.lang("Unable to open link."), ex);
+                            }
+                        });
     }
 
     @Override
@@ -145,6 +166,7 @@ public abstract class BaseIdentifierEditorViewModel<T extends Identifier> extend
         super.bindToEntry(entry);
         identifierParser = new IdentifierParser(entry);
         EasyBind.subscribe(textProperty(), ignored -> updateIdentifier());
-        EasyBind.subscribe(identifier, newIdentifier -> isInvalidIdentifier.set(newIdentifier.isEmpty()));
+        EasyBind.subscribe(
+                identifier, newIdentifier -> isInvalidIdentifier.set(newIdentifier.isEmpty()));
     }
 }

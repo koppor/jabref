@@ -1,5 +1,10 @@
 package org.jabref.model.util;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import org.jabref.model.TreeNode;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -11,11 +16,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import org.jabref.model.TreeNode;
 
 /**
  * Merges a list of nodes into a tree.
@@ -33,17 +33,19 @@ public class TreeCollector<T> implements Collector<T, ObservableList<T>, Observa
      * @param addChild    a function that adds the second argument as a child to the first-specified node
      * @param equivalence a function that tells us whether two nodes are equivalent
      */
-    private TreeCollector(Function<T, List<T>> getChildren, BiConsumer<T, T> addChild, BiPredicate<T, T> equivalence) {
+    private TreeCollector(
+            Function<T, List<T>> getChildren,
+            BiConsumer<T, T> addChild,
+            BiPredicate<T, T> equivalence) {
         this.getChildren = getChildren;
         this.addChild = addChild;
         this.equivalence = equivalence;
     }
 
-    public static <T extends TreeNode<T>> TreeCollector<T> mergeIntoTree(BiPredicate<T, T> equivalence) {
+    public static <T extends TreeNode<T>> TreeCollector<T> mergeIntoTree(
+            BiPredicate<T, T> equivalence) {
         return new TreeCollector<>(
-                TreeNode::getChildren,
-                (parent, child) -> child.moveTo(parent),
-                equivalence);
+                TreeNode::getChildren, (parent, child) -> child.moveTo(parent), equivalence);
     }
 
     @Override
@@ -55,10 +57,10 @@ public class TreeCollector<T> implements Collector<T, ObservableList<T>, Observa
     public BiConsumer<ObservableList<T>, T> accumulator() {
         return (alreadyProcessed, newItem) -> {
             // Check if the node is already in the tree
-            Optional<T> sameItemInTree = alreadyProcessed
-                    .stream()
-                    .filter(item -> equivalence.test(item, newItem))
-                    .findFirst();
+            Optional<T> sameItemInTree =
+                    alreadyProcessed.stream()
+                            .filter(item -> equivalence.test(item, newItem))
+                            .findFirst();
             if (sameItemInTree.isPresent()) {
                 for (T child : new ArrayList<>(getChildren.apply(newItem))) {
                     merge(sameItemInTree.get(), child);
@@ -70,12 +72,13 @@ public class TreeCollector<T> implements Collector<T, ObservableList<T>, Observa
     }
 
     private void merge(T target, T node) {
-        Optional<T> sameItemInTree = getChildren
-                .apply(target).stream()
-                .filter(item -> equivalence.test(item, node))
-                .findFirst();
+        Optional<T> sameItemInTree =
+                getChildren.apply(target).stream()
+                        .filter(item -> equivalence.test(item, node))
+                        .findFirst();
         if (sameItemInTree.isPresent()) {
-            // We need to copy the list because the #addChild method might remove the child from its own parent
+            // We need to copy the list because the #addChild method might remove the child from its
+            // own parent
             for (T child : new ArrayList<>(getChildren.apply(node))) {
                 merge(sameItemInTree.get(), child);
             }

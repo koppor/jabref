@@ -1,10 +1,10 @@
 package org.jabref.logic.layout.format;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jabref.logic.layout.LayoutFormatter;
 import org.jabref.logic.util.strings.XmlCharsMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Changes {\^o} or {\^{o}} to ?

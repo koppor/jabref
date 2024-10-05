@@ -1,6 +1,6 @@
 package org.jabref.gui.groups;
 
-import java.util.EnumSet;
+import com.google.common.annotations.VisibleForTesting;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -12,7 +12,7 @@ import javafx.collections.FXCollections;
 
 import org.jabref.model.groups.GroupHierarchyType;
 
-import com.google.common.annotations.VisibleForTesting;
+import java.util.EnumSet;
 
 public class GroupsPreferences {
 
@@ -21,12 +21,13 @@ public class GroupsPreferences {
     private final BooleanProperty shouldDisplayGroupCount;
     private final ObjectProperty<GroupHierarchyType> defaultHierarchicalContext;
 
-    public GroupsPreferences(boolean viewModeIntersection,
-                             boolean viewModeFilter,
-                             boolean viewModeInvert,
-                             boolean shouldAutoAssignGroup,
-                             boolean shouldDisplayGroupCount,
-                             GroupHierarchyType defaultHierarchicalContext) {
+    public GroupsPreferences(
+            boolean viewModeIntersection,
+            boolean viewModeFilter,
+            boolean viewModeInvert,
+            boolean shouldAutoAssignGroup,
+            boolean shouldDisplayGroupCount,
+            GroupHierarchyType defaultHierarchicalContext) {
 
         this.groupViewMode = new SimpleSetProperty<>(FXCollections.observableSet());
         this.shouldAutoAssignGroup = new SimpleBooleanProperty(shouldAutoAssignGroup);
@@ -45,10 +46,11 @@ public class GroupsPreferences {
     }
 
     @VisibleForTesting
-    public GroupsPreferences(EnumSet<GroupViewMode> groupViewMode,
-                             boolean shouldAutoAssignGroup,
-                             boolean shouldDisplayGroupCount,
-                             GroupHierarchyType defaultHierarchicalContext) {
+    public GroupsPreferences(
+            EnumSet<GroupViewMode> groupViewMode,
+            boolean shouldAutoAssignGroup,
+            boolean shouldDisplayGroupCount,
+            GroupHierarchyType defaultHierarchicalContext) {
         this.groupViewMode = new SimpleSetProperty<>(FXCollections.observableSet(groupViewMode));
         this.shouldAutoAssignGroup = new SimpleBooleanProperty(shouldAutoAssignGroup);
         this.shouldDisplayGroupCount = new SimpleBooleanProperty(shouldDisplayGroupCount);

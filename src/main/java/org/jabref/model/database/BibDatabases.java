@@ -1,15 +1,14 @@
 package org.jabref.model.database;
 
+import org.jabref.model.entry.BibEntry;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jabref.model.entry.BibEntry;
-
 public class BibDatabases {
 
-    private BibDatabases() {
-    }
+    private BibDatabases() {}
 
     /**
      * Receives a Collection of BibEntry instances, iterates through them, and
@@ -18,7 +17,7 @@ public class BibDatabases {
      */
     public static List<BibEntry> purgeEmptyEntries(Collection<BibEntry> entries) {
         return entries.stream()
-                      .filter(entry -> !entry.getFields().isEmpty())
-                      .collect(Collectors.toList());
+                .filter(entry -> !entry.getFields().isEmpty())
+                .collect(Collectors.toList());
     }
 }

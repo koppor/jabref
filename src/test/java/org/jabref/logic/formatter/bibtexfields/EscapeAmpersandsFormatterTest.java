@@ -1,9 +1,9 @@
 package org.jabref.logic.formatter.bibtexfields;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EscapeAmpersandsFormatterTest {
 
@@ -31,7 +31,8 @@ class EscapeAmpersandsFormatterTest {
 
     @Test
     void formatReturnsSameTextInNewUserDefinedLatexCommandIfNoAmpersandsPresent() throws Exception {
-        assertEquals("\\newcommand[1]{Lorem ipsum}", formatter.format("\\newcommand[1]{Lorem ipsum}"));
+        assertEquals(
+                "\\newcommand[1]{Lorem ipsum}", formatter.format("\\newcommand[1]{Lorem ipsum}"));
     }
 
     @Test

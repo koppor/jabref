@@ -6,7 +6,51 @@ nav_order: 13
 
 # Step 3: Set up JabRef's code style
 
-Contributions to JabRef's source code need to have a code formatting that is consistent with existing source code. For that purpose, JabRef provides code-style and check-style definitions.
+Contributions to JabRef's source code need to have a code formatting that is consistent with existing source code.
+For that purpose, JabRef relies on both the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) and [checkstyle](https://checkstyle.sourceforge.io/).
+
+## Google Java Style (AOSP)
+
+### Install google-java-format plugin
+
+Install the [google-java-format IDEA plugin](https://plugins.jetbrains.com/plugin/8527-google-java-format):
+Navigate to **File > Settings... > Plugins"**.
+On the top, click on "Marketplace".
+Then, search for "google-java-format".
+Click on "Install".
+
+### Configure google-java-format plugin
+
+JabRef likes to have 4 spaces indentation.
+This is called the "AOSP" style in the Google Java Format style.
+Navigate to **File > Settings... > Other Settings > google-java-format Settings"**.
+Change "Code style" to "Android Open Source Project (AOSP) style".
+
+{% figure caption:"Enable AOSP style in Google Java Format" %}
+![Enable GJF AOSP](guidelines-intellij-gfm-aosp.png)
+{% endfigure %}
+
+The google-java-format plugin uses some internal classes that are not available
+without extra configuration. To use the plugin, you need to
+[add some options to your IDE's Java runtime](https://www.jetbrains.com/help/idea/tuning-the-ide.html#procedure-jvm-options).
+To do that, go to `Help→Edit Custom VM Options...` and paste in these lines:
+
+```text
+--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
+```
+
+Once you have done that, restart the IDE.
+
+(This howto is based on the [google-java-format plugin documentation](https://github.com/google/google-java-format/blob/master/README.md#intellij-jre-config).)
+
+## Checkstyle
+
+## Install checkstyle plugin
 
 Install the [CheckStyle-IDEA plugin](http://plugins.jetbrains.com/plugin/1065?pr=idea), it can be found via the plug-in repository:
 Navigate to **File > Settings... > Plugins"**.
@@ -35,37 +79,7 @@ Afterwards, use the "Restart IDE" button to restart IntelliJ.
 
 Click on "Restart" to finally restart.
 
-Wait for IntelliJ coming up again.
-
-Go to **File > Settings... > Editor > Code Style**
-
-Click on the settings wheel (next to the scheme chooser),
-then click "Import Scheme >",
-then click "IntelliJ IDEA code style XML"
-
-{% figure caption:"Location of “Import Scheme > IntelliJ IDEA code style XML”" %}
-![Location of IntelliJ IDEA code style XML](guidelines-intellij-codestyle-import.png)
-{% endfigure %}
-
-You have to browse for the directory `config` in JabRef's code.
-There is an `IntelliJ Code Style.xml`.
-
-{% figure caption:"Browsing for `config/IntelliJ Code Style.xml`" %}
-![Browsing for config/IntelliJ Code Style.xml](guidelines-intellij-codestyle-import-select-xml-file.png)
-{% endfigure %}
-
-Click "OK".
-
-At following dialog is "Import Scheme".
-Click there "OK", too.
-
-{% figure caption:"Import to JabRef" %}
-![Import to JabRef](guidelines-intellij-codestyle-import-as-jabref.png)
-{% endfigure %}
-
-Click on "Apply" to store the preferences.
-
-## Put JabRef's checkstyle configuration in place
+### Put JabRef's checkstyle configuration in place
 
 Now, put the checkstyle configuration file is in place:
 
@@ -105,15 +119,17 @@ Also, set the "Scan Scope" to "Only Java sources (including tests)".
 
 Save settings by clicking "Apply" and then "OK"
 
-## Run checkstyle
+## Enable proper import cleanup
 
-In the lower part of IntelliJ's window, click on "Checkstyle".
-In "Rules", change to "JabRef".
-Then, you can run a check on all modified files.
+To enable "magic" creation and auto cleanup of imports, go to **File > Settings... > Editor > General > Auto Import**.
+There, enable both "Add unambiguous imports on the fly" and "Optimize imports on the fly"
+(Source: [JetBrains help](https://www.jetbrains.com/help/idea/creating-and-optimizing-imports.html#automatically-add-import-statements)).
 
-{% figure caption:"JabRef's style is active - and we are ready to run a check on all modified files" %}
-![JabRef's style is active - and we are ready to run a check on all modified files](guidelines-intellij-checkstyle-window.png)
+{% figure caption:"Auto import enabled" %}
+![Enable auto import](guidelines-intellij-editor-autoimport.png)
 {% endfigure %}
+
+Press "OK".
 
 ## Have auto format working properly in JavaDoc
 
@@ -127,18 +143,6 @@ At "Other", disable "Wrap at right margin"
 !["Wrap at right margin" disabled](guidelines-intellij-editor-javadoc-do-not-wrap.png)
 {% endfigure %}
 
-## Enable proper import cleanup
-
-To enable "magic" creation and auto cleanup of imports, go to **File > Settings... > Editor > General > Auto Import**.
-There, enable both "Add unambiguous imports on the fly" and "Optimize imports on the fly"
-(Source: [JetBrains help](https://www.jetbrains.com/help/idea/creating-and-optimizing-imports.html#automatically-add-import-statements)).
-
-{% figure caption:"Auto import enabled" %}
-![Enable auto import](guidelines-intellij-editor-autoimport.png)
-{% endfigure %}
-
-Press "OK".
-
 ## Disable too advanced code folding
 
 Go to **File > Settings... > Editor > General > Code Folding**.
@@ -150,6 +154,16 @@ At section "Java", disable "One-line methods".
 {% endfigure %}
 
 Press "OK".
+
+## Run checkstyle
+
+In the lower part of IntelliJ's window, click on "Checkstyle".
+In "Rules", change to "JabRef".
+Then, you can run a check on all modified files.
+
+{% figure caption:"JabRef's style is active - and we are ready to run a check on all modified files" %}
+![JabRef's style is active - and we are ready to run a check on all modified files](guidelines-intellij-checkstyle-window.png)
+{% endfigure %}
 
 ## Final comments
 

@@ -1,7 +1,5 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.Optional;
-
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -12,6 +10,8 @@ import org.jabref.logic.util.WebViewStore;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.identifier.MathSciNetId;
+
+import java.util.Optional;
 
 public class MathSciNetTab extends EntryEditorTab {
 
@@ -38,15 +38,20 @@ public class MathSciNetTab extends EntryEditorTab {
         root.getChildren().addAll(browser, progress);
 
         Optional<MathSciNetId> mathSciNetId = getMathSciNetId(entry);
-        mathSciNetId.flatMap(MathSciNetId::getExternalURI)
-                    .ifPresent(url -> browser.getEngine().load(url.toASCIIString()));
+        mathSciNetId
+                .flatMap(MathSciNetId::getExternalURI)
+                .ifPresent(url -> browser.getEngine().load(url.toASCIIString()));
 
         // Hide progress indicator if finished (over 70% loaded)
-        browser.getEngine().getLoadWorker().progressProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.doubleValue() >= 0.7) {
-                progress.setVisible(false);
-            }
-        });
+        browser.getEngine()
+                .getLoadWorker()
+                .progressProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (newValue.doubleValue() >= 0.7) {
+                                progress.setVisible(false);
+                            }
+                        });
         return root;
     }
 

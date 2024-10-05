@@ -1,6 +1,9 @@
 package org.jabref.gui.texparser;
 
-import java.nio.file.Path;
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import jakarta.inject.Inject;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -16,9 +19,7 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.texparser.LatexBibEntriesResolverResult;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import jakarta.inject.Inject;
+import java.nio.file.Path;
 
 public class ParseLatexResultView extends BaseDialog<Void> {
 
@@ -31,7 +32,10 @@ public class ParseLatexResultView extends BaseDialog<Void> {
     @Inject private ThemeManager themeManager;
     private ParseLatexResultViewModel viewModel;
 
-    public ParseLatexResultView(LatexBibEntriesResolverResult resolverResult, BibDatabaseContext databaseContext, Path basePath) {
+    public ParseLatexResultView(
+            LatexBibEntriesResolverResult resolverResult,
+            BibDatabaseContext databaseContext,
+            Path basePath) {
         this.resolverResult = resolverResult;
         this.databaseContext = databaseContext;
         this.basePath = basePath;
@@ -40,10 +44,13 @@ public class ParseLatexResultView extends BaseDialog<Void> {
 
         ViewLoader.view(this).load().setAsDialogPane(this);
 
-        ControlHelper.setAction(importButtonType, getDialogPane(), event -> {
-            viewModel.importButtonClicked();
-            close();
-        });
+        ControlHelper.setAction(
+                importButtonType,
+                getDialogPane(),
+                event -> {
+                    viewModel.importButtonClicked();
+                    close();
+                });
         Button importButton = (Button) getDialogPane().lookupButton(importButtonType);
         importButton.disableProperty().bind(viewModel.importButtonDisabledProperty());
 
@@ -57,16 +64,18 @@ public class ParseLatexResultView extends BaseDialog<Void> {
         referenceListView.setItems(viewModel.getReferenceList());
         referenceListView.getSelectionModel().selectFirst();
         new ViewModelListCellFactory<ReferenceViewModel>()
-                .withGraphic(reference -> {
-                    Text referenceText = new Text(reference.getDisplayText());
-                    if (reference.isHighlighted()) {
-                        referenceText.setStyle("-fx-fill: -fx-accent");
-                    }
-                    return referenceText;
-                })
+                .withGraphic(
+                        reference -> {
+                            Text referenceText = new Text(reference.getDisplayText());
+                            if (reference.isHighlighted()) {
+                                referenceText.setStyle("-fx-fill: -fx-accent");
+                            }
+                            return referenceText;
+                        })
                 .install(referenceListView);
 
-        EasyBind.subscribe(referenceListView.getSelectionModel().selectedItemProperty(),
+        EasyBind.subscribe(
+                referenceListView.getSelectionModel().selectedItemProperty(),
                 viewModel::activeReferenceChanged);
 
         citationsDisplay.basePathProperty().set(basePath);

@@ -1,10 +1,5 @@
 package org.jabref.logic.crawler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.PagedSearchBasedFetcher;
 import org.jabref.logic.importer.SearchBasedFetcher;
@@ -12,9 +7,13 @@ import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.study.FetchResult;
 import org.jabref.model.study.QueryResult;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Delegates the search of the provided set of targeted E-Libraries with the provided queries to the E-Library specific fetchers,
@@ -27,7 +26,8 @@ class StudyFetcher {
     private final List<SearchBasedFetcher> activeFetchers;
     private final List<String> searchQueries;
 
-    StudyFetcher(List<SearchBasedFetcher> activeFetchers, List<String> searchQueries) throws IllegalArgumentException {
+    StudyFetcher(List<SearchBasedFetcher> activeFetchers, List<String> searchQueries)
+            throws IllegalArgumentException {
         this.searchQueries = searchQueries;
         this.activeFetchers = activeFetchers;
     }
@@ -39,8 +39,8 @@ class StudyFetcher {
      */
     public List<QueryResult> crawl() {
         return searchQueries.parallelStream()
-                            .map(this::getQueryResult)
-                            .collect(Collectors.toList());
+                .map(this::getQueryResult)
+                .collect(Collectors.toList());
     }
 
     private QueryResult getQueryResult(String searchQuery) {
@@ -55,18 +55,24 @@ class StudyFetcher {
      */
     private List<FetchResult> performSearchOnQuery(String searchQuery) {
         return activeFetchers.parallelStream()
-                             .map(fetcher -> performSearchOnQueryForFetcher(searchQuery, fetcher))
-                             .filter(Objects::nonNull)
-                             .collect(Collectors.toList());
+                .map(fetcher -> performSearchOnQueryForFetcher(searchQuery, fetcher))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
-    private FetchResult performSearchOnQueryForFetcher(String searchQuery, SearchBasedFetcher fetcher) {
+    private FetchResult performSearchOnQueryForFetcher(
+            String searchQuery, SearchBasedFetcher fetcher) {
         try {
             List<BibEntry> fetchResult = new ArrayList<>();
             if (fetcher instanceof PagedSearchBasedFetcher basedFetcher) {
-                int pages = (int) Math.ceil(((double) MAX_AMOUNT_OF_RESULTS_PER_FETCHER) / basedFetcher.getPageSize());
+                int pages =
+                        (int)
+                                Math.ceil(
+                                        ((double) MAX_AMOUNT_OF_RESULTS_PER_FETCHER)
+                                                / basedFetcher.getPageSize());
                 for (int page = 0; page < pages; page++) {
-                    fetchResult.addAll(basedFetcher.performSearchPaged(searchQuery, page).getContent());
+                    fetchResult.addAll(
+                            basedFetcher.performSearchPaged(searchQuery, page).getContent());
                 }
             } else {
                 fetchResult = fetcher.performSearch(searchQuery);

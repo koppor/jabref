@@ -1,10 +1,10 @@
 package org.jabref.model.entry;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
 
 class BibtexStringTest {
 
@@ -105,7 +105,8 @@ class BibtexStringTest {
     @Test
     void institutionTypeCorrectlyDetermined() {
         // Source of the example: https://docs.jabref.org/fields/strings
-        BibtexString bibtexString = new BibtexString("iMIT", "{Massachusetts Institute of Technology ({MIT})}");
+        BibtexString bibtexString =
+                new BibtexString("iMIT", "{Massachusetts Institute of Technology ({MIT})}");
         assertEquals(BibtexString.Type.INSTITUTION, bibtexString.getType());
     }
 
@@ -119,7 +120,10 @@ class BibtexStringTest {
     @Test
     void otherTypeCorrectlyDeterminedForUpperCase() {
         // Source of the example: https://docs.jabref.org/fields/strings
-        BibtexString bibtexString = new BibtexString("lTOSCA", "Topology and Orchestration Specification for Cloud Applications");
+        BibtexString bibtexString =
+                new BibtexString(
+                        "lTOSCA",
+                        "Topology and Orchestration Specification for Cloud Applications");
         assertEquals(BibtexString.Type.OTHER, bibtexString.getType());
     }
 }

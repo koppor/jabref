@@ -1,11 +1,10 @@
 package org.jabref.logic.openoffice.oocsltext;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.sun.star.container.NoSuchElementException;
+import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
+import com.sun.star.uno.Exception;
 
 import org.jabref.logic.citationkeypattern.BracketedPattern;
 import org.jabref.logic.citationstyle.CitationStyle;
@@ -20,11 +19,12 @@ import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.ootext.OOTextIntoOO;
 import org.jabref.model.openoffice.uno.CreationException;
 
-import com.sun.star.container.NoSuchElementException;
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XTextCursor;
-import com.sun.star.text.XTextDocument;
-import com.sun.star.uno.Exception;
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class processes CSL citations in JabRef and interacts directly with LibreOffice using an XTextDocument instance.
@@ -49,16 +49,29 @@ public class CSLCitationOOAdapter {
      * Inserts a citation for a group of entries.
      * Comparable to LaTeX's \cite command.
      */
-    public void insertCitation(XTextCursor cursor, CitationStyle selectedStyle, List<BibEntry> entries, BibDatabaseContext bibDatabaseContext, BibEntryTypesManager bibEntryTypesManager)
+    public void insertCitation(
+            XTextCursor cursor,
+            CitationStyle selectedStyle,
+            List<BibEntry> entries,
+            BibDatabaseContext bibDatabaseContext,
+            BibEntryTypesManager bibEntryTypesManager)
             throws CreationException, IOException, Exception {
         String style = selectedStyle.getSource();
         boolean isAlphanumeric = isAlphanumericStyle(selectedStyle);
 
         String inTextCitation;
         if (isAlphanumeric) {
-            inTextCitation = CSLFormatUtils.generateAlphanumericCitation(entries, bibDatabaseContext);
+            inTextCitation =
+                    CSLFormatUtils.generateAlphanumericCitation(entries, bibDatabaseContext);
         } else {
-            inTextCitation = CitationStyleGenerator.generateCitation(entries, style, CSLFormatUtils.OUTPUT_FORMAT, bibDatabaseContext, bibEntryTypesManager).getText();
+            inTextCitation =
+                    CitationStyleGenerator.generateCitation(
+                                    entries,
+                                    style,
+                                    CSLFormatUtils.OUTPUT_FORMAT,
+                                    bibDatabaseContext,
+                                    bibEntryTypesManager)
+                            .getText();
         }
 
         String formattedCitation = CSLFormatUtils.transformHTML(inTextCitation);
@@ -78,7 +91,12 @@ public class CSLCitationOOAdapter {
      *
      * @implNote Very similar to the {@link #insertCitation(XTextCursor, CitationStyle, List, BibDatabaseContext, BibEntryTypesManager)} method.insertInText method
      */
-    public void insertInTextCitation(XTextCursor cursor, CitationStyle selectedStyle, List<BibEntry> entries, BibDatabaseContext bibDatabaseContext, BibEntryTypesManager bibEntryTypesManager)
+    public void insertInTextCitation(
+            XTextCursor cursor,
+            CitationStyle selectedStyle,
+            List<BibEntry> entries,
+            BibDatabaseContext bibDatabaseContext,
+            BibEntryTypesManager bibEntryTypesManager)
             throws IOException, CreationException, Exception {
         String style = selectedStyle.getSource();
         boolean isAlphanumeric = isAlphanumericStyle(selectedStyle);
@@ -89,25 +107,49 @@ public class CSLCitationOOAdapter {
             String inTextCitation;
             if (isAlphanumeric) {
                 // Generate the alphanumeric citation
-                inTextCitation = CSLFormatUtils.generateAlphanumericCitation(List.of(currentEntry), bibDatabaseContext);
+                inTextCitation =
+                        CSLFormatUtils.generateAlphanumericCitation(
+                                List.of(currentEntry), bibDatabaseContext);
                 // Get the author's name
-                String authorName = currentEntry.getResolvedFieldOrAlias(StandardField.AUTHOR, bibDatabaseContext.getDatabase())
-                                                .map(AuthorList::parse)
-                                                .map(list -> BracketedPattern.joinAuthorsOnLastName(list, 1, "", " et al."))
-                                                .orElse("");
+                String authorName =
+                        currentEntry
+                                .getResolvedFieldOrAlias(
+                                        StandardField.AUTHOR, bibDatabaseContext.getDatabase())
+                                .map(AuthorList::parse)
+                                .map(
+                                        list ->
+                                                BracketedPattern.joinAuthorsOnLastName(
+                                                        list, 1, "", " et al."))
+                                .orElse("");
                 // Combine author name with the citation
                 inTextCitation = authorName + " " + inTextCitation;
             } else {
-                inTextCitation = CitationStyleGenerator.generateCitation(List.of(currentEntry), style, CSLFormatUtils.OUTPUT_FORMAT, bibDatabaseContext, bibEntryTypesManager).getText();
+                inTextCitation =
+                        CitationStyleGenerator.generateCitation(
+                                        List.of(currentEntry),
+                                        style,
+                                        CSLFormatUtils.OUTPUT_FORMAT,
+                                        bibDatabaseContext,
+                                        bibEntryTypesManager)
+                                .getText();
             }
             String formattedCitation = CSLFormatUtils.transformHTML(inTextCitation);
             String finalText;
             if (selectedStyle.isNumericStyle()) {
-                formattedCitation = updateSingleOrMultipleCitationNumbers(formattedCitation, List.of(currentEntry));
-                String prefix = currentEntry.getResolvedFieldOrAlias(StandardField.AUTHOR, bibDatabaseContext.getDatabase())
-                                            .map(AuthorList::parse)
-                                            .map(list -> BracketedPattern.joinAuthorsOnLastName(list, 1, "", " et al.") + " ")
-                                            .orElse("");
+                formattedCitation =
+                        updateSingleOrMultipleCitationNumbers(
+                                formattedCitation, List.of(currentEntry));
+                String prefix =
+                        currentEntry
+                                .getResolvedFieldOrAlias(
+                                        StandardField.AUTHOR, bibDatabaseContext.getDatabase())
+                                .map(AuthorList::parse)
+                                .map(
+                                        list ->
+                                                BracketedPattern.joinAuthorsOnLastName(
+                                                                list, 1, "", " et al.")
+                                                        + " ")
+                                .orElse("");
                 finalText = prefix + formattedCitation;
             } else if (isAlphanumeric) {
                 finalText = formattedCitation;
@@ -132,7 +174,8 @@ public class CSLCitationOOAdapter {
         OOText emptyOOText = OOFormat.setLocaleNone(OOText.fromString(""));
         insertReferences(cursor, entries, emptyOOText, selectedStyle.isNumericStyle());
 
-        // Move the cursor to the end of the inserted text - although no need as we don't insert any text, but a good practice
+        // Move the cursor to the end of the inserted text - although no need as we don't insert any
+        // text, but a good practice
         cursor.collapseToEnd();
     }
 
@@ -140,40 +183,70 @@ public class CSLCitationOOAdapter {
      * Creates a "Bibliography" section in the document and inserts a list of references.
      * The list is generated based on the existing citations, in-text citations and empty citations in the document.
      */
-    public void insertBibliography(XTextCursor cursor, CitationStyle selectedStyle, List<BibEntry> entries, BibDatabaseContext bibDatabaseContext, BibEntryTypesManager bibEntryTypesManager)
+    public void insertBibliography(
+            XTextCursor cursor,
+            CitationStyle selectedStyle,
+            List<BibEntry> entries,
+            BibDatabaseContext bibDatabaseContext,
+            BibEntryTypesManager bibEntryTypesManager)
             throws WrappedTargetException, CreationException, NoSuchElementException {
         markManager.setUpdateRequired(selectedStyle.isNumericStyle());
         readAndUpdateExistingMarks();
 
-        OOText title = OOFormat.paragraph(OOText.fromString(CSLFormatUtils.DEFAULT_BIBLIOGRAPHY_TITLE), CSLFormatUtils.DEFAULT_BIBLIOGRAPHY_HEADER_PARAGRAPH_FORMAT);
+        OOText title =
+                OOFormat.paragraph(
+                        OOText.fromString(CSLFormatUtils.DEFAULT_BIBLIOGRAPHY_TITLE),
+                        CSLFormatUtils.DEFAULT_BIBLIOGRAPHY_HEADER_PARAGRAPH_FORMAT);
         OOTextIntoOO.write(document, cursor, OOText.fromString(title.toString()));
-        OOText ooBreak = OOFormat.paragraph(OOText.fromString(""), CSLFormatUtils.DEFAULT_BIBLIOGRAPHY_BODY_PARAGRAPH_FORMAT);
+        OOText ooBreak =
+                OOFormat.paragraph(
+                        OOText.fromString(""),
+                        CSLFormatUtils.DEFAULT_BIBLIOGRAPHY_BODY_PARAGRAPH_FORMAT);
         OOTextIntoOO.write(document, cursor, ooBreak);
 
         String style = selectedStyle.getSource();
 
         if (selectedStyle.isNumericStyle()) {
             // Sort entries based on their order of appearance in the document
-            entries.sort(Comparator.comparingInt(entry -> markManager.getCitationNumber(entry.getCitationKey().orElse(""))));
+            entries.sort(
+                    Comparator.comparingInt(
+                            entry ->
+                                    markManager.getCitationNumber(
+                                            entry.getCitationKey().orElse(""))));
 
             for (BibEntry entry : entries) {
-                String citation = CitationStyleGenerator.generateBibliography(List.of(entry), style, CSLFormatUtils.OUTPUT_FORMAT, bibDatabaseContext, bibEntryTypesManager).getFirst();
+                String citation =
+                        CitationStyleGenerator.generateBibliography(
+                                        List.of(entry),
+                                        style,
+                                        CSLFormatUtils.OUTPUT_FORMAT,
+                                        bibDatabaseContext,
+                                        bibEntryTypesManager)
+                                .getFirst();
                 String citationKey = entry.getCitationKey().orElse("");
                 int currentNumber = markManager.getCitationNumber(citationKey);
 
-                String formattedCitation = CSLFormatUtils.updateSingleBibliographyNumber(CSLFormatUtils.transformHTML(citation), currentNumber);
+                String formattedCitation =
+                        CSLFormatUtils.updateSingleBibliographyNumber(
+                                CSLFormatUtils.transformHTML(citation), currentNumber);
                 OOText ooText = OOFormat.setLocaleNone(OOText.fromString(formattedCitation));
 
                 OOTextIntoOO.write(document, cursor, ooText);
-                    // Select the paragraph break
-                    cursor.goLeft((short) 1, true);
+                // Select the paragraph break
+                cursor.goLeft((short) 1, true);
 
-                    // Delete the selected content (paragraph break)
-                    cursor.setString("");
+                // Delete the selected content (paragraph break)
+                cursor.setString("");
             }
         } else {
             // Ordering will be according to citeproc item data provider (default)
-            List<String> citations = CitationStyleGenerator.generateBibliography(entries, style, CSLFormatUtils.OUTPUT_FORMAT, bibDatabaseContext, bibEntryTypesManager);
+            List<String> citations =
+                    CitationStyleGenerator.generateBibliography(
+                            entries,
+                            style,
+                            CSLFormatUtils.OUTPUT_FORMAT,
+                            bibDatabaseContext,
+                            bibEntryTypesManager);
 
             for (String citation : citations) {
                 String formattedCitation = CSLFormatUtils.transformHTML(citation);
@@ -187,12 +260,14 @@ public class CSLCitationOOAdapter {
     /**
      * Inserts references and also adds a space before the citation if not already present ("smart space").
      */
-    private void insertReferences(XTextCursor cursor, List<BibEntry> entries, OOText ooText, boolean isNumericStyle)
+    private void insertReferences(
+            XTextCursor cursor, List<BibEntry> entries, OOText ooText, boolean isNumericStyle)
             throws CreationException, Exception {
         boolean preceedingSpaceExists;
         XTextCursor checkCursor = cursor.getText().createTextCursorByRange(cursor.getStart());
 
-        // Check if we're at the start of the document - if yes we set the flag and don't insert a space
+        // Check if we're at the start of the document - if yes we set the flag and don't insert a
+        // space
         if (!checkCursor.goLeft((short) 1, true)) {
             // We're at the start of the document
             preceedingSpaceExists = true;
@@ -229,9 +304,11 @@ public class CSLCitationOOAdapter {
             String prefix = matcher.group(1);
             String suffix = matcher.group(3);
 
-            int currentNumber = markManager.getCitationNumber(iterator.next().getCitationKey().orElse(""));
+            int currentNumber =
+                    markManager.getCitationNumber(iterator.next().getCitationKey().orElse(""));
 
-            matcher.appendReplacement(sb, Matcher.quoteReplacement(prefix + currentNumber + suffix));
+            matcher.appendReplacement(
+                    sb, Matcher.quoteReplacement(prefix + currentNumber + suffix));
         }
         matcher.appendTail(sb);
         return sb.toString();
@@ -252,6 +329,7 @@ public class CSLCitationOOAdapter {
      * Thus, we currently hardcode the check for "DIN 1505-2".
      */
     private boolean isAlphanumericStyle(CitationStyle style) {
-        return "DIN 1505-2 (alphanumeric, Deutsch) - standard superseded by ISO-690".equals(style.getTitle());
+        return "DIN 1505-2 (alphanumeric, Deutsch) - standard superseded by ISO-690"
+                .equals(style.getTitle());
     }
 }

@@ -1,8 +1,9 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.Comparator;
+import com.airhacks.afterburner.views.ViewLoader;
+import com.dlsc.gemsfx.TagsField;
 
-import javax.swing.undo.UndoManager;
+import jakarta.inject.Inject;
 
 import javafx.beans.binding.Bindings;
 import javafx.css.PseudoClass;
@@ -29,12 +30,12 @@ import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.Keyword;
 import org.jabref.model.entry.field.Field;
-
-import com.airhacks.afterburner.views.ViewLoader;
-import com.dlsc.gemsfx.TagsField;
-import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Comparator;
+
+import javax.swing.undo.UndoManager;
 
 public class KeywordsEditor extends HBox implements FieldEditorFX {
     private static final Logger LOGGER = LoggerFactory.getLogger(KeywordsEditor.class);
@@ -48,46 +49,54 @@ public class KeywordsEditor extends HBox implements FieldEditorFX {
     @Inject private UndoManager undoManager;
     @Inject private ClipBoardManager clipBoardManager;
 
-    public KeywordsEditor(Field field,
-                          SuggestionProvider<?> suggestionProvider,
-                          FieldCheckers fieldCheckers) {
+    public KeywordsEditor(
+            Field field, SuggestionProvider<?> suggestionProvider, FieldCheckers fieldCheckers) {
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
 
-        this.viewModel = new KeywordsEditorViewModel(
-                field,
-                suggestionProvider,
-                fieldCheckers,
-                preferences,
-                undoManager);
+        this.viewModel =
+                new KeywordsEditorViewModel(
+                        field, suggestionProvider, fieldCheckers, preferences, undoManager);
 
-        keywordTagsField.setCellFactory(new ViewModelListCellFactory<Keyword>().withText(Keyword::get));
+        keywordTagsField.setCellFactory(
+                new ViewModelListCellFactory<Keyword>().withText(Keyword::get));
         keywordTagsField.setTagViewFactory(this::createTag);
 
-        keywordTagsField.setSuggestionProvider(request -> viewModel.getSuggestions(request.getUserText()));
+        keywordTagsField.setSuggestionProvider(
+                request -> viewModel.getSuggestions(request.getUserText()));
         keywordTagsField.setConverter(viewModel.getStringConverter());
-        keywordTagsField.setMatcher((keyword, searchText) -> keyword.get().toLowerCase().startsWith(searchText.toLowerCase()));
+        keywordTagsField.setMatcher(
+                (keyword, searchText) ->
+                        keyword.get().toLowerCase().startsWith(searchText.toLowerCase()));
         keywordTagsField.setComparator(Comparator.comparing(Keyword::get));
 
-        keywordTagsField.setNewItemProducer(searchText -> viewModel.getStringConverter().fromString(searchText));
+        keywordTagsField.setNewItemProducer(
+                searchText -> viewModel.getStringConverter().fromString(searchText));
 
         keywordTagsField.setShowSearchIcon(false);
         keywordTagsField.setOnMouseClicked(event -> keywordTagsField.getEditor().requestFocus());
         keywordTagsField.getEditor().getStyleClass().clear();
         keywordTagsField.getEditor().getStyleClass().add("tags-field-editor");
-        keywordTagsField.getEditor().focusedProperty().addListener((observable, oldValue, newValue) -> keywordTagsField.pseudoClassStateChanged(FOCUSED, newValue));
+        keywordTagsField
+                .getEditor()
+                .focusedProperty()
+                .addListener(
+                        (observable, oldValue, newValue) ->
+                                keywordTagsField.pseudoClassStateChanged(FOCUSED, newValue));
 
         String keywordSeparator = String.valueOf(viewModel.getKeywordSeparator());
-        keywordTagsField.getEditor().setOnKeyReleased(event -> {
-            if (event.getText().equals(keywordSeparator)) {
-                keywordTagsField.commit();
-                event.consume();
-            }
-        });
+        keywordTagsField
+                .getEditor()
+                .setOnKeyReleased(
+                        event -> {
+                            if (event.getText().equals(keywordSeparator)) {
+                                keywordTagsField.commit();
+                                event.consume();
+                            }
+                        });
 
-        Bindings.bindContentBidirectional(keywordTagsField.getTags(), viewModel.keywordListProperty());
+        Bindings.bindContentBidirectional(
+                keywordTagsField.getTags(), viewModel.keywordListProperty());
     }
 
     private Node createTag(Keyword keyword) {
@@ -98,11 +107,19 @@ public class KeywordsEditor extends HBox implements FieldEditorFX {
         tagLabel.setContentDisplay(ContentDisplay.RIGHT);
         ContextMenu contextMenu = new ContextMenu();
         ActionFactory factory = new ActionFactory();
-        contextMenu.getItems().addAll(
-                factory.createMenuItem(StandardActions.COPY, new KeywordsEditor.TagContextAction(StandardActions.COPY, keyword)),
-                factory.createMenuItem(StandardActions.CUT, new KeywordsEditor.TagContextAction(StandardActions.CUT, keyword)),
-                factory.createMenuItem(StandardActions.DELETE, new KeywordsEditor.TagContextAction(StandardActions.DELETE, keyword))
-        );
+        contextMenu
+                .getItems()
+                .addAll(
+                        factory.createMenuItem(
+                                StandardActions.COPY,
+                                new KeywordsEditor.TagContextAction(StandardActions.COPY, keyword)),
+                        factory.createMenuItem(
+                                StandardActions.CUT,
+                                new KeywordsEditor.TagContextAction(StandardActions.CUT, keyword)),
+                        factory.createMenuItem(
+                                StandardActions.DELETE,
+                                new KeywordsEditor.TagContextAction(
+                                        StandardActions.DELETE, keyword)));
         tagLabel.setContextMenu(contextMenu);
         return tagLabel;
     }
@@ -140,19 +157,21 @@ public class KeywordsEditor extends HBox implements FieldEditorFX {
             switch (command) {
                 case COPY -> {
                     clipBoardManager.setContent(keyword.get());
-                    dialogService.notify(Localization.lang("Copied '%0' to clipboard.",
-                            JabRefDialogService.shortenDialogMessage(keyword.get())));
+                    dialogService.notify(
+                            Localization.lang(
+                                    "Copied '%0' to clipboard.",
+                                    JabRefDialogService.shortenDialogMessage(keyword.get())));
                 }
                 case CUT -> {
                     clipBoardManager.setContent(keyword.get());
-                    dialogService.notify(Localization.lang("Copied '%0' to clipboard.",
-                            JabRefDialogService.shortenDialogMessage(keyword.get())));
+                    dialogService.notify(
+                            Localization.lang(
+                                    "Copied '%0' to clipboard.",
+                                    JabRefDialogService.shortenDialogMessage(keyword.get())));
                     keywordTagsField.removeTags(keyword);
                 }
-                case DELETE ->
-                        keywordTagsField.removeTags(keyword);
-                default ->
-                        LOGGER.info("Action {} not defined", command.getText());
+                case DELETE -> keywordTagsField.removeTags(keyword);
+                default -> LOGGER.info("Action {} not defined", command.getText());
             }
         }
     }

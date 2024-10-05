@@ -1,9 +1,9 @@
 package org.jabref.logic.formatter.bibtexfields;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests in addition to the general tests from {@link org.jabref.logic.formatter.FormatterTest}
@@ -64,7 +64,8 @@ class AddBracesFormatterTest {
 
     @Test
     void formatDoesNotRemoveBracesInBrokenString() {
-        // We opt here for a conservative approach although one could argue that "A} and {B}" is also a valid return
+        // We opt here for a conservative approach although one could argue that "A} and {B}" is
+        // also a valid return
         assertEquals("{A} and {B}}", formatter.format("{A} and {B}}"));
     }
 

@@ -7,7 +7,6 @@ import org.jabref.gui.undo.UndoableStringChange;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibtexString;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,11 @@ public final class BibTexStringChange extends DatabaseChange {
     private final BibtexString oldString;
     private final BibtexString newString;
 
-    public BibTexStringChange(BibtexString oldString, BibtexString newString, BibDatabaseContext databaseContext, DatabaseChangeResolverFactory databaseChangeResolverFactory) {
+    public BibTexStringChange(
+            BibtexString oldString,
+            BibtexString newString,
+            BibDatabaseContext databaseContext,
+            DatabaseChangeResolverFactory databaseChangeResolverFactory) {
         super(databaseContext, databaseChangeResolverFactory);
         this.oldString = oldString;
         this.newString = newString;

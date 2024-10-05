@@ -1,5 +1,14 @@
 package org.jabref.logic.util.io;
 
+import org.jabref.architecture.AllowedToUseStandardStreams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.io.StringWriter;
 import java.util.AbstractList;
 import java.util.Collections;
@@ -14,16 +23,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.jabref.architecture.AllowedToUseStandardStreams;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 /**
  * Currently used for debugging only
  */
@@ -31,8 +30,7 @@ import org.w3c.dom.NodeList;
 public class XMLUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(XMLUtil.class);
 
-    private XMLUtil() {
-    }
+    private XMLUtil() {}
 
     /**
      * Prints out the document to standard out. Used to generate files for test cases.
@@ -83,7 +81,8 @@ public class XMLUtil {
      */
     public static Optional<String> getAttributeContent(Node item, String attributeName) {
         NamedNodeMap attributes = item.getAttributes();
-        return Optional.ofNullable(attributes.getNamedItem(attributeName)).map(Node::getTextContent);
+        return Optional.ofNullable(attributes.getNamedItem(attributeName))
+                .map(Node::getTextContent);
     }
 
     /**
@@ -115,7 +114,8 @@ public class XMLUtil {
     }
 
     // Wrapper to make NodeList iterable,
-    // taken from <a href="http://stackoverflow.com/questions/19589231/can-i-iterate-through-a-nodelist-using-for-each-in-java">StackOverflow Answer</a>.
+    // taken from <a
+    // href="http://stackoverflow.com/questions/19589231/can-i-iterate-through-a-nodelist-using-for-each-in-java">StackOverflow Answer</a>.
     private static final class NodeListWrapper extends AbstractList<Node> implements RandomAccess {
 
         private final NodeList list;

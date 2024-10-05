@@ -1,9 +1,9 @@
 package org.jabref.logic.remote.server;
 
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * This thread wrapper is required to be able to interrupt the remote listener server, e.g. when JabRef is closing down the server should shutdown as well.
@@ -14,7 +14,8 @@ public class RemoteListenerServerThread extends Thread {
 
     private final RemoteListenerServer server;
 
-    public RemoteListenerServerThread(RemoteMessageHandler messageHandler, int port) throws IOException {
+    public RemoteListenerServerThread(RemoteMessageHandler messageHandler, int port)
+            throws IOException {
         this.server = new RemoteListenerServer(messageHandler, port);
         this.setName("JabRef - Remote Listener Server on port " + port);
     }

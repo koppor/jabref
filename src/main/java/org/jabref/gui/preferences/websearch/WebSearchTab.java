@@ -1,5 +1,8 @@
 package org.jabref.gui.preferences.websearch;
 
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
 import javafx.beans.InvalidationListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -20,10 +23,8 @@ import org.jabref.gui.util.ViewModelTableRowFactory;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.preferences.FetcherApiKey;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-
-public class WebSearchTab extends AbstractPreferenceTabView<WebSearchTabViewModel> implements PreferencesTab {
+public class WebSearchTab extends AbstractPreferenceTabView<WebSearchTabViewModel>
+        implements PreferencesTab {
 
     @FXML private CheckBox enableWebSearch;
     @FXML private CheckBox generateNewKeyOnImport;
@@ -44,15 +45,17 @@ public class WebSearchTab extends AbstractPreferenceTabView<WebSearchTabViewMode
     @FXML private Button testCustomApiKey;
 
     @FXML private CheckBox persistApiKeys;
-    @FXML private SplitPane persistentTooltipWrapper; // The disabled persistApiKeys control does not show tooltips
+
+    @FXML
+    private SplitPane
+            persistentTooltipWrapper; // The disabled persistApiKeys control does not show tooltips
+
     @FXML private TableView<StudyCatalogItem> catalogTable;
     @FXML private TableColumn<StudyCatalogItem, Boolean> catalogEnabledColumn;
     @FXML private TableColumn<StudyCatalogItem, String> catalogColumn;
 
     public WebSearchTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -64,9 +67,15 @@ public class WebSearchTab extends AbstractPreferenceTabView<WebSearchTabViewMode
         this.viewModel = new WebSearchTabViewModel(preferences, dialogService);
 
         enableWebSearch.selectedProperty().bindBidirectional(viewModel.enableWebSearchProperty());
-        generateNewKeyOnImport.selectedProperty().bindBidirectional(viewModel.generateKeyOnImportProperty());
-        warnAboutDuplicatesOnImport.selectedProperty().bindBidirectional(viewModel.warnAboutDuplicatesOnImportProperty());
-        downloadLinkedOnlineFiles.selectedProperty().bindBidirectional(viewModel.shouldDownloadLinkedOnlineFiles());
+        generateNewKeyOnImport
+                .selectedProperty()
+                .bindBidirectional(viewModel.generateKeyOnImportProperty());
+        warnAboutDuplicatesOnImport
+                .selectedProperty()
+                .bindBidirectional(viewModel.warnAboutDuplicatesOnImportProperty());
+        downloadLinkedOnlineFiles
+                .selectedProperty()
+                .bindBidirectional(viewModel.shouldDownloadLinkedOnlineFiles());
         keepDownloadUrl.selectedProperty().bindBidirectional(viewModel.shouldKeepDownloadUrl());
 
         grobidEnabled.selectedProperty().bindBidirectional(viewModel.grobidEnabledProperty());
@@ -78,11 +87,12 @@ public class WebSearchTab extends AbstractPreferenceTabView<WebSearchTabViewMode
         useCustomDOIName.disableProperty().bind(useCustomDOI.selectedProperty().not());
 
         new ViewModelTableRowFactory<StudyCatalogItem>()
-                .withOnMouseClickedEvent((entry, event) -> {
-                    if (event.getButton() == MouseButton.PRIMARY) {
-                        entry.setEnabled(!entry.isEnabled());
-                    }
-                })
+                .withOnMouseClickedEvent(
+                        (entry, event) -> {
+                            if (event.getButton() == MouseButton.PRIMARY) {
+                                entry.setEnabled(!entry.isEnabled());
+                            }
+                        })
                 .install(catalogTable);
 
         catalogColumn.setReorderable(false);
@@ -99,18 +109,23 @@ public class WebSearchTab extends AbstractPreferenceTabView<WebSearchTabViewMode
 
         testCustomApiKey.setDisable(true);
 
-        new ViewModelTableRowFactory<FetcherApiKey>()
-                .install(apiKeySelectorTable);
+        new ViewModelTableRowFactory<FetcherApiKey>().install(apiKeySelectorTable);
 
-        apiKeySelectorTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != null) {
-                updateFetcherApiKey(oldValue);
-            }
-            if (newValue != null) {
-                viewModel.selectedApiKeyProperty().setValue(newValue);
-                testCustomApiKey.disableProperty().bind(newValue.useProperty().not());
-            }
-        });
+        apiKeySelectorTable
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            if (oldValue != null) {
+                                updateFetcherApiKey(oldValue);
+                            }
+                            if (newValue != null) {
+                                viewModel.selectedApiKeyProperty().setValue(newValue);
+                                testCustomApiKey
+                                        .disableProperty()
+                                        .bind(newValue.useProperty().not());
+                            }
+                        });
 
         apiKeyName.setCellValueFactory(param -> param.getValue().nameProperty());
         apiKeyName.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -131,22 +146,29 @@ public class WebSearchTab extends AbstractPreferenceTabView<WebSearchTabViewMode
 
         persistApiKeys.selectedProperty().bindBidirectional(viewModel.getApikeyPersistProperty());
         persistApiKeys.disableProperty().bind(viewModel.apiKeyPersistAvailable().not());
-        EasyBind.subscribe(viewModel.apiKeyPersistAvailable(), available -> {
-            if (!available) {
-                persistentTooltipWrapper.setTooltip(new Tooltip(Localization.lang("Credential store not available.")));
-            } else {
-                persistentTooltipWrapper.setTooltip(null);
-            }
-        });
+        EasyBind.subscribe(
+                viewModel.apiKeyPersistAvailable(),
+                available -> {
+                    if (!available) {
+                        persistentTooltipWrapper.setTooltip(
+                                new Tooltip(Localization.lang("Credential store not available.")));
+                    } else {
+                        persistentTooltipWrapper.setTooltip(null);
+                    }
+                });
 
         apiKeySelectorTable.setItems(viewModel.fetcherApiKeys());
 
         // Content is set later
-        viewModel.fetcherApiKeys().addListener((InvalidationListener) change -> {
-            if (!apiKeySelectorTable.getItems().isEmpty()) {
-                apiKeySelectorTable.getSelectionModel().selectFirst();
-            }
-        });
+        viewModel
+                .fetcherApiKeys()
+                .addListener(
+                        (InvalidationListener)
+                                change -> {
+                                    if (!apiKeySelectorTable.getItems().isEmpty()) {
+                                        apiKeySelectorTable.getSelectionModel().selectFirst();
+                                    }
+                                });
     }
 
     private void updateFetcherApiKey(FetcherApiKey apiKey) {

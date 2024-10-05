@@ -1,7 +1,10 @@
 package org.jabref.gui.search;
 
-import java.util.EnumSet;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
@@ -20,7 +23,6 @@ import org.jabref.logic.search.SearchPreferences;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.search.SearchFlags;
 import org.jabref.testutils.category.GUITest;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
@@ -28,11 +30,8 @@ import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationExtension;
 import org.testfx.framework.junit5.Start;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.EnumSet;
+import java.util.List;
 
 @GUITest
 @ExtendWith(ApplicationExtension.class)
@@ -45,7 +44,8 @@ public class GlobalSearchBarTest {
     public void onStart(Stage stage) {
         SearchPreferences searchPreferences = mock(SearchPreferences.class);
         when(searchPreferences.getSearchFlags()).thenReturn(EnumSet.noneOf(SearchFlags.class));
-        when(searchPreferences.getObservableSearchFlags()).thenReturn(FXCollections.observableSet());
+        when(searchPreferences.getObservableSearchFlags())
+                .thenReturn(FXCollections.observableSet());
         GuiPreferences preferences = mock(GuiPreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(preferences.getSearchPreferences()).thenReturn(searchPreferences);
 
@@ -58,14 +58,14 @@ public class GlobalSearchBarTest {
         stateManager.setActiveDatabase(new BibDatabaseContext());
 
         // Instantiate GlobalSearchBar class, so the change listener is registered
-        GlobalSearchBar searchBar = new GlobalSearchBar(
-                mock(LibraryTabContainer.class),
-                stateManager,
-                preferences,
-                mock(CountingUndoManager.class),
-                mock(DialogService.class),
-                SearchType.NORMAL_SEARCH
-        );
+        GlobalSearchBar searchBar =
+                new GlobalSearchBar(
+                        mock(LibraryTabContainer.class),
+                        stateManager,
+                        preferences,
+                        mock(CountingUndoManager.class),
+                        mock(DialogService.class),
+                        SearchType.NORMAL_SEARCH);
 
         hBox = new HBox(searchBar);
 

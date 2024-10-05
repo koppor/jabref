@@ -1,17 +1,17 @@
 package org.jabref.logic.integrity;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.jabref.logic.FilePreferences;
 import org.jabref.logic.importer.util.FileFieldParser;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.strings.StringUtil;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class FileChecker implements ValueChecker {
 
@@ -29,10 +29,10 @@ public class FileChecker implements ValueChecker {
             return Optional.empty();
         }
 
-        List<LinkedFile> linkedFiles = FileFieldParser
-                .parse(value).stream()
-                .filter(file -> !file.isOnlineLink())
-                .collect(Collectors.toList());
+        List<LinkedFile> linkedFiles =
+                FileFieldParser.parse(value).stream()
+                        .filter(file -> !file.isOnlineLink())
+                        .collect(Collectors.toList());
 
         for (LinkedFile file : linkedFiles) {
             Optional<Path> linkedFile = file.findIn(context, filePreferences);

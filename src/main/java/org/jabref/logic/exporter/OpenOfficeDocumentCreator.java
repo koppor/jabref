@@ -1,5 +1,12 @@
 package org.jabref.logic.exporter;
 
+import org.jabref.logic.util.StandardFileType;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -24,14 +31,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.jabref.logic.util.StandardFileType;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class OpenOfficeDocumentCreator extends Exporter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenOfficeDocumentCreator.class);
@@ -44,7 +43,8 @@ public class OpenOfficeDocumentCreator extends Exporter {
     }
 
     private static void storeOpenOfficeFile(Path file, InputStream source) throws Exception {
-        try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(file)))) {
+        try (ZipOutputStream out =
+                new ZipOutputStream(new BufferedOutputStream(Files.newOutputStream(file)))) {
             ZipEntry zipEntry = new ZipEntry("content.xml");
             out.putNextEntry(zipEntry);
             int c;
@@ -55,14 +55,17 @@ public class OpenOfficeDocumentCreator extends Exporter {
 
             // Add manifest (required for OOo 2.0), "meta.xml", "mimetype" files. These are in the
             // resource/openoffice directory, and are copied verbatim into the zip file.
-            OpenOfficeDocumentCreator.addResourceFile("meta.xml", "/resource/openoffice/meta.xml", out);
-            OpenOfficeDocumentCreator.addResourceFile("mimetype", "/resource/openoffice/mimetype", out);
-            OpenOfficeDocumentCreator.addResourceFile("META-INF/manifest.xml", "/resource/openoffice/manifest.xml",
-                    out);
+            OpenOfficeDocumentCreator.addResourceFile(
+                    "meta.xml", "/resource/openoffice/meta.xml", out);
+            OpenOfficeDocumentCreator.addResourceFile(
+                    "mimetype", "/resource/openoffice/mimetype", out);
+            OpenOfficeDocumentCreator.addResourceFile(
+                    "META-INF/manifest.xml", "/resource/openoffice/manifest.xml", out);
         }
     }
 
-    private static void exportOpenOfficeCalc(Path file, BibDatabase database, List<BibEntry> entries) throws Exception {
+    private static void exportOpenOfficeCalc(
+            Path file, BibDatabase database, List<BibEntry> entries) throws Exception {
         // First store the xml formatted content to a temporary file.
         File tmpFile = File.createTempFile("oocalc", null);
         OpenOfficeDocumentCreator.exportOpenOfficeCalcXML(tmpFile, database, entries);
@@ -79,19 +82,23 @@ public class OpenOfficeDocumentCreator extends Exporter {
     }
 
     @Override
-    public void export(final BibDatabaseContext databaseContext, final Path file,
-                       List<BibEntry> entries) throws Exception {
+    public void export(
+            final BibDatabaseContext databaseContext, final Path file, List<BibEntry> entries)
+            throws Exception {
         Objects.requireNonNull(databaseContext);
         Objects.requireNonNull(entries);
         if (!entries.isEmpty()) { // Do not export if no entries
-            OpenOfficeDocumentCreator.exportOpenOfficeCalc(file, databaseContext.getDatabase(), entries);
+            OpenOfficeDocumentCreator.exportOpenOfficeCalc(
+                    file, databaseContext.getDatabase(), entries);
         }
     }
 
-    private static void exportOpenOfficeCalcXML(File tmpFile, BibDatabase database, List<BibEntry> entries) {
+    private static void exportOpenOfficeCalcXML(
+            File tmpFile, BibDatabase database, List<BibEntry> entries) {
         OOCalcDatabase od = new OOCalcDatabase(database, entries);
 
-        try (Writer ps = new OutputStreamWriter(new FileOutputStream(tmpFile), StandardCharsets.UTF_8)) {
+        try (Writer ps =
+                new OutputStreamWriter(new FileOutputStream(tmpFile), StandardCharsets.UTF_8)) {
             DOMSource source = new DOMSource(od.getDOMrepresentation());
             StreamResult result = new StreamResult(ps);
             Transformer trans = TransformerFactory.newInstance().newTransformer();
@@ -102,7 +109,8 @@ public class OpenOfficeDocumentCreator extends Exporter {
         }
     }
 
-    private static void addResourceFile(String name, String resource, ZipOutputStream out) throws IOException {
+    private static void addResourceFile(String name, String resource, ZipOutputStream out)
+            throws IOException {
         ZipEntry zipEntry = new ZipEntry(name);
         out.putNextEntry(zipEntry);
         OpenOfficeDocumentCreator.addFromResource(resource, out);

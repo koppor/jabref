@@ -1,17 +1,17 @@
 package org.jabref.gui.externalfiles;
 
+import org.jabref.logic.FilePreferences;
+import org.jabref.logic.util.io.DatabaseFileLookup;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.DirectoryStream.Filter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import org.jabref.logic.FilePreferences;
-import org.jabref.logic.util.io.DatabaseFileLookup;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
 
 /**
  * {@link FileFilter} implementation, that allows only files which are not linked in any of the {@link BibEntry}s of the
@@ -25,7 +25,10 @@ public class UnlinkedPDFFileFilter implements DirectoryStream.Filter<Path> {
     private final DatabaseFileLookup lookup;
     private final Filter<Path> fileFilter;
 
-    public UnlinkedPDFFileFilter(DirectoryStream.Filter<Path> fileFilter, BibDatabaseContext databaseContext, FilePreferences filePreferences) {
+    public UnlinkedPDFFileFilter(
+            DirectoryStream.Filter<Path> fileFilter,
+            BibDatabaseContext databaseContext,
+            FilePreferences filePreferences) {
         this.fileFilter = fileFilter;
         this.lookup = new DatabaseFileLookup(databaseContext, filePreferences);
     }
@@ -35,7 +38,9 @@ public class UnlinkedPDFFileFilter implements DirectoryStream.Filter<Path> {
         if (Files.isDirectory(pathname)) {
             return true;
         } else {
-            return fileFilter.accept(pathname) && !lookup.lookupDatabase(pathname) && !lookup.getPathOfDatabase().equals(pathname);
+            return fileFilter.accept(pathname)
+                    && !lookup.lookupDatabase(pathname)
+                    && !lookup.getPathOfDatabase().equals(pathname);
         }
     }
 }

@@ -1,9 +1,9 @@
 package org.jabref.gui.entryeditor.citationrelationtab;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.swing.undo.UndoManager;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javafx.collections.FXCollections;
 
@@ -28,27 +28,24 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.util.DummyFileUpdateMonitor;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.List;
+import java.util.Optional;
+
+import javax.swing.undo.UndoManager;
 
 class CitationsRelationsTabViewModelTest {
     private ImportHandler importHandler;
     private BibDatabaseContext bibDatabaseContext;
     private BibEntry testEntry;
 
-    @Mock
-    private GuiPreferences preferences;
-    @Mock
-    private DuplicateCheck duplicateCheck;
+    @Mock private GuiPreferences preferences;
+    @Mock private DuplicateCheck duplicateCheck;
     private BibEntry existingEntry;
     private BibEntry firstEntryToImport;
     private BibEntry secondEntryToImport;
@@ -58,81 +55,110 @@ class CitationsRelationsTabViewModelTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(preferences.getImportFormatPreferences()).thenReturn(importFormatPreferences);
 
-        ImporterPreferences importerPreferences = mock(ImporterPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        ImporterPreferences importerPreferences =
+                mock(ImporterPreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(importerPreferences.isGenerateNewKeyOnImport()).thenReturn(false);
         when(preferences.getImporterPreferences()).thenReturn(importerPreferences);
 
         FieldPreferences fieldPreferences = mock(FieldPreferences.class);
-        when(fieldPreferences.getNonWrappableFields()).thenReturn(FXCollections.observableArrayList());
+        when(fieldPreferences.getNonWrappableFields())
+                .thenReturn(FXCollections.observableArrayList());
         when(preferences.getFieldPreferences()).thenReturn(fieldPreferences);
 
         when(preferences.getFilePreferences()).thenReturn(mock(FilePreferences.class));
-        when(preferences.getOwnerPreferences()).thenReturn(mock(OwnerPreferences.class, Answers.RETURNS_DEEP_STUBS));
-        when(preferences.getTimestampPreferences()).thenReturn(mock(TimestampPreferences.class, Answers.RETURNS_DEEP_STUBS));
+        when(preferences.getOwnerPreferences())
+                .thenReturn(mock(OwnerPreferences.class, Answers.RETURNS_DEEP_STUBS));
+        when(preferences.getTimestampPreferences())
+                .thenReturn(mock(TimestampPreferences.class, Answers.RETURNS_DEEP_STUBS));
 
-        CitationKeyPatternPreferences citationKeyPatternPreferences = mock(CitationKeyPatternPreferences.class);
+        CitationKeyPatternPreferences citationKeyPatternPreferences =
+                mock(CitationKeyPatternPreferences.class);
         GlobalCitationKeyPatterns patterns = GlobalCitationKeyPatterns.fromPattern("[auth][year]");
         when(citationKeyPatternPreferences.getKeyPatterns()).thenReturn(patterns);
-        when(preferences.getCitationKeyPatternPreferences()).thenReturn(citationKeyPatternPreferences);
+        when(preferences.getCitationKeyPatternPreferences())
+                .thenReturn(citationKeyPatternPreferences);
 
         bibDatabaseContext = new BibDatabaseContext(new BibDatabase());
         when(duplicateCheck.isDuplicate(any(), any(), any())).thenReturn(false);
 
-        viewModel = new CitationsRelationsTabViewModel(
-                bibDatabaseContext,
-                preferences,
-                mock(UndoManager.class),
-                mock(StateManager.class, Answers.RETURNS_DEEP_STUBS),
-                mock(DialogService.class),
-                new DummyFileUpdateMonitor(),
-                new CurrentThreadTaskExecutor());
+        viewModel =
+                new CitationsRelationsTabViewModel(
+                        bibDatabaseContext,
+                        preferences,
+                        mock(UndoManager.class),
+                        mock(StateManager.class, Answers.RETURNS_DEEP_STUBS),
+                        mock(DialogService.class),
+                        new DummyFileUpdateMonitor(),
+                        new CurrentThreadTaskExecutor());
 
-        existingEntry = new BibEntry(StandardEntryType.Article)
-                .withCitationKey("Test2023")
-                .withField(StandardField.AUTHOR, "Test Author");
+        existingEntry =
+                new BibEntry(StandardEntryType.Article)
+                        .withCitationKey("Test2023")
+                        .withField(StandardField.AUTHOR, "Test Author");
 
         bibDatabaseContext.getDatabase().insertEntry(existingEntry);
 
-        firstEntryToImport = new BibEntry(StandardEntryType.Article).withField(StandardField.AUTHOR, "First Author")
-                                                                    .withField(StandardField.YEAR, "2022")
-                                                                    .withCitationKey("FirstAuthorCitationKey2022");
+        firstEntryToImport =
+                new BibEntry(StandardEntryType.Article)
+                        .withField(StandardField.AUTHOR, "First Author")
+                        .withField(StandardField.YEAR, "2022")
+                        .withCitationKey("FirstAuthorCitationKey2022");
 
-        secondEntryToImport = new BibEntry(StandardEntryType.Article).withField(StandardField.AUTHOR, "Second Author")
-                                                                     .withField(StandardField.YEAR, "2021")
-                                                                     .withCitationKey("SecondAuthorCitationKey20221");
+        secondEntryToImport =
+                new BibEntry(StandardEntryType.Article)
+                        .withField(StandardField.AUTHOR, "Second Author")
+                        .withField(StandardField.YEAR, "2021")
+                        .withCitationKey("SecondAuthorCitationKey20221");
     }
 
     @Test
     void existingEntryCitesOtherPaperWithCitationKeys() {
-        var citationItems = List.of(new CitationRelationItem(firstEntryToImport, false),
-                new CitationRelationItem(secondEntryToImport, false));
+        var citationItems =
+                List.of(
+                        new CitationRelationItem(firstEntryToImport, false),
+                        new CitationRelationItem(secondEntryToImport, false));
 
         viewModel.importEntries(citationItems, CitationFetcher.SearchType.CITES, existingEntry);
-        assertEquals(Optional.of("FirstAuthorCitationKey2022,SecondAuthorCitationKey20221"), existingEntry.getField(StandardField.CITES));
-        assertEquals(List.of(existingEntry, firstEntryToImport, secondEntryToImport), bibDatabaseContext.getEntries());
+        assertEquals(
+                Optional.of("FirstAuthorCitationKey2022,SecondAuthorCitationKey20221"),
+                existingEntry.getField(StandardField.CITES));
+        assertEquals(
+                List.of(existingEntry, firstEntryToImport, secondEntryToImport),
+                bibDatabaseContext.getEntries());
     }
 
     @Test
     void importedEntriesWithExistingCitationKeysCiteExistingEntry() {
-        var citationItems = List.of(new CitationRelationItem(firstEntryToImport, false),
-                new CitationRelationItem(secondEntryToImport, false));
+        var citationItems =
+                List.of(
+                        new CitationRelationItem(firstEntryToImport, false),
+                        new CitationRelationItem(secondEntryToImport, false));
 
         viewModel.importEntries(citationItems, CitationFetcher.SearchType.CITED_BY, existingEntry);
         assertEquals(Optional.of("Test2023"), firstEntryToImport.getField(StandardField.CITES));
-        assertEquals(List.of(existingEntry, firstEntryToImport, secondEntryToImport), bibDatabaseContext.getEntries());
+        assertEquals(
+                List.of(existingEntry, firstEntryToImport, secondEntryToImport),
+                bibDatabaseContext.getEntries());
     }
 
     @Test
     void existingEntryCitesOtherPaperWithCitationKeysAndExistingCiteField() {
         existingEntry.setField(StandardField.CITES, "Asdf1222");
-        var citationItems = List.of(new CitationRelationItem(firstEntryToImport, false),
-                new CitationRelationItem(secondEntryToImport, false));
+        var citationItems =
+                List.of(
+                        new CitationRelationItem(firstEntryToImport, false),
+                        new CitationRelationItem(secondEntryToImport, false));
 
         viewModel.importEntries(citationItems, CitationFetcher.SearchType.CITES, existingEntry);
-        assertEquals(Optional.of("Asdf1222,FirstAuthorCitationKey2022,SecondAuthorCitationKey20221"), existingEntry.getField(StandardField.CITES));
-        assertEquals(List.of(existingEntry, firstEntryToImport, secondEntryToImport), bibDatabaseContext.getEntries());
+        assertEquals(
+                Optional.of("Asdf1222,FirstAuthorCitationKey2022,SecondAuthorCitationKey20221"),
+                existingEntry.getField(StandardField.CITES));
+        assertEquals(
+                List.of(existingEntry, firstEntryToImport, secondEntryToImport),
+                bibDatabaseContext.getEntries());
     }
 }

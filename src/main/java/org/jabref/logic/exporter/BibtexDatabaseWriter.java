@@ -1,11 +1,5 @@
 package org.jabref.logic.exporter;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
 import org.jabref.logic.bibtex.BibEntryWriter;
 import org.jabref.logic.bibtex.FieldPreferences;
 import org.jabref.logic.bibtex.FieldWriter;
@@ -20,9 +14,14 @@ import org.jabref.model.entry.BibtexString;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.metadata.MetaData;
 import org.jabref.model.strings.StringUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 /**
  * Writes a .bib file following the BibTeX / BibLaTeX format using the provided {@link BibWriter}.
@@ -38,25 +37,29 @@ public class BibtexDatabaseWriter extends BibDatabaseWriter {
     private static final String PREAMBLE_PREFIX = "@Preamble";
     private static final String STRING_PREFIX = "@String";
 
-    public BibtexDatabaseWriter(BibWriter bibWriter,
-                                SelfContainedSaveConfiguration saveConfiguration,
-                                FieldPreferences fieldPreferences,
-                                CitationKeyPatternPreferences citationKeyPatternPreferences,
-                                BibEntryTypesManager entryTypesManager) {
-        super(bibWriter,
+    public BibtexDatabaseWriter(
+            BibWriter bibWriter,
+            SelfContainedSaveConfiguration saveConfiguration,
+            FieldPreferences fieldPreferences,
+            CitationKeyPatternPreferences citationKeyPatternPreferences,
+            BibEntryTypesManager entryTypesManager) {
+        super(
+                bibWriter,
                 saveConfiguration,
                 fieldPreferences,
                 citationKeyPatternPreferences,
                 entryTypesManager);
     }
 
-    public BibtexDatabaseWriter(Writer writer,
-                                String newline,
-                                SelfContainedSaveConfiguration saveConfiguration,
-                                FieldPreferences fieldPreferences,
-                                CitationKeyPatternPreferences citationKeyPatternPreferences,
-                                BibEntryTypesManager entryTypesManager) {
-        super(new BibWriter(writer, newline),
+    public BibtexDatabaseWriter(
+            Writer writer,
+            String newline,
+            SelfContainedSaveConfiguration saveConfiguration,
+            FieldPreferences fieldPreferences,
+            CitationKeyPatternPreferences citationKeyPatternPreferences,
+            BibEntryTypesManager entryTypesManager) {
+        super(
+                new BibWriter(writer, newline),
                 saveConfiguration,
                 fieldPreferences,
                 citationKeyPatternPreferences,
@@ -107,14 +110,19 @@ public class BibtexDatabaseWriter extends BibDatabaseWriter {
             bibWriter.writeLine(userComments);
         }
 
-        bibWriter.write(STRING_PREFIX + "{" + bibtexString.getName() + StringUtil
-                .repeatSpaces(maxKeyLength - bibtexString.getName().length()) + " = ");
+        bibWriter.write(
+                STRING_PREFIX
+                        + "{"
+                        + bibtexString.getName()
+                        + StringUtil.repeatSpaces(maxKeyLength - bibtexString.getName().length())
+                        + " = ");
         if (bibtexString.getContent().isEmpty()) {
             bibWriter.write("{}");
         } else {
             try {
-                String formatted = new FieldWriter(fieldPreferences)
-                        .write(InternalField.BIBTEX_STRING, bibtexString.getContent());
+                String formatted =
+                        new FieldWriter(fieldPreferences)
+                                .write(InternalField.BIBTEX_STRING, bibtexString.getContent());
                 bibWriter.write(formatted);
             } catch (InvalidFieldValueException ex) {
                 throw new IOException(ex);
@@ -133,12 +141,15 @@ public class BibtexDatabaseWriter extends BibDatabaseWriter {
     }
 
     @Override
-    protected void writeProlog(BibDatabaseContext bibDatabaseContext, Charset encoding) throws IOException {
+    protected void writeProlog(BibDatabaseContext bibDatabaseContext, Charset encoding)
+            throws IOException {
         // We write the encoding if
         //   - it is provided (!= null)
         //   - explicitly set in the .bib file OR not equal to UTF_8
         // Otherwise, we do not write anything and return
-        if ((encoding == null) || (!bibDatabaseContext.getMetaData().getEncodingExplicitlySupplied() && (encoding.equals(StandardCharsets.UTF_8)))) {
+        if ((encoding == null)
+                || (!bibDatabaseContext.getMetaData().getEncodingExplicitlySupplied()
+                        && (encoding.equals(StandardCharsets.UTF_8)))) {
             return;
         }
 
@@ -157,7 +168,8 @@ public class BibtexDatabaseWriter extends BibDatabaseWriter {
 
     @Override
     protected void writeEntry(BibEntry entry, BibDatabaseMode mode) throws IOException {
-        BibEntryWriter bibtexEntryWriter = new BibEntryWriter(new FieldWriter(fieldPreferences), entryTypesManager);
+        BibEntryWriter bibtexEntryWriter =
+                new BibEntryWriter(new FieldWriter(fieldPreferences), entryTypesManager);
         bibtexEntryWriter.write(entry, bibWriter, mode, saveConfiguration.shouldReformatFile());
     }
 }

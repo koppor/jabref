@@ -1,8 +1,7 @@
 package org.jabref.logic.integrity;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import org.jabref.logic.FilePreferences;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
@@ -12,19 +11,32 @@ import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.entry.field.StandardField;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FieldCheckers {
 
     private final Multimap<Field, ValueChecker> fieldChecker;
 
-    public FieldCheckers(BibDatabaseContext databaseContext, FilePreferences filePreferences,
-                         JournalAbbreviationRepository abbreviationRepository, boolean allowIntegerEdition) {
-        fieldChecker = getAllMap(databaseContext, filePreferences, abbreviationRepository, allowIntegerEdition);
+    public FieldCheckers(
+            BibDatabaseContext databaseContext,
+            FilePreferences filePreferences,
+            JournalAbbreviationRepository abbreviationRepository,
+            boolean allowIntegerEdition) {
+        fieldChecker =
+                getAllMap(
+                        databaseContext,
+                        filePreferences,
+                        abbreviationRepository,
+                        allowIntegerEdition);
     }
 
-    private static Multimap<Field, ValueChecker> getAllMap(BibDatabaseContext databaseContext, FilePreferences filePreferences, JournalAbbreviationRepository abbreviationRepository, boolean allowIntegerEdition) {
+    private static Multimap<Field, ValueChecker> getAllMap(
+            BibDatabaseContext databaseContext,
+            FilePreferences filePreferences,
+            JournalAbbreviationRepository abbreviationRepository,
+            boolean allowIntegerEdition) {
         ArrayListMultimap<Field, ValueChecker> fieldCheckers = ArrayListMultimap.create(50, 10);
 
         for (Field field : FieldFactory.getPersonNameFields()) {
@@ -34,7 +46,8 @@ public class FieldCheckers {
         fieldCheckers.put(StandardField.TITLE, new BracketChecker());
         fieldCheckers.put(StandardField.TITLE, new TitleChecker(databaseContext));
         fieldCheckers.put(StandardField.DOI, new DoiValidityChecker());
-        fieldCheckers.put(StandardField.EDITION, new EditionChecker(databaseContext, allowIntegerEdition));
+        fieldCheckers.put(
+                StandardField.EDITION, new EditionChecker(databaseContext, allowIntegerEdition));
         fieldCheckers.put(StandardField.FILE, new FileChecker(databaseContext, filePreferences));
         fieldCheckers.put(StandardField.HOWPUBLISHED, new HowPublishedChecker(databaseContext));
         fieldCheckers.put(StandardField.ISBN, new ISBNChecker());
@@ -59,15 +72,12 @@ public class FieldCheckers {
     }
 
     public List<FieldChecker> getAll() {
-        return fieldChecker
-                .entries()
-                .stream()
+        return fieldChecker.entries().stream()
                 .map(pair -> new FieldChecker(pair.getKey(), pair.getValue()))
                 .collect(Collectors.toList());
     }
 
     public Collection<ValueChecker> getForField(Field field) {
-        return fieldChecker
-                .get(field);
+        return fieldChecker.get(field);
     }
 }

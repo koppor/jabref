@@ -1,9 +1,9 @@
 package org.jabref.logic.layout.format;
 
+import org.jabref.logic.layout.LayoutFormatter;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-
-import org.jabref.logic.layout.LayoutFormatter;
 
 /**
  * Inserts the current date (the time a database is being exported).

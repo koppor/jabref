@@ -1,9 +1,6 @@
 package org.jabref.gui.slr;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.function.Supplier;
-
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTabContainer;
 import org.jabref.gui.StateManager;
@@ -20,10 +17,12 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
-
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.function.Supplier;
 
 public class ExistingStudySearchAction extends SimpleCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExistingStudySearchAction.class);
@@ -51,7 +50,8 @@ public class ExistingStudySearchAction extends SimpleCommand {
             TaskExecutor taskExecutor,
             CliPreferences preferences,
             StateManager stateManager) {
-        this(tabContainer,
+        this(
+                tabContainer,
                 openDatabaseActionSupplier,
                 dialogService,
                 fileUpdateMonitor,
@@ -104,38 +104,53 @@ public class ExistingStudySearchAction extends SimpleCommand {
         try {
             crawlPreparation(this.studyDirectory);
         } catch (IOException | GitAPIException e) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Study repository could not be created"), e);
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Study repository could not be created"), e);
             return;
         }
 
         final Crawler crawler;
         try {
-            crawler = new Crawler(
-                    this.studyDirectory,
-                    new SlrGitHandler(this.studyDirectory),
-                    preferences,
-                    new BibEntryTypesManager(),
-                    fileUpdateMonitor);
+            crawler =
+                    new Crawler(
+                            this.studyDirectory,
+                            new SlrGitHandler(this.studyDirectory),
+                            preferences,
+                            new BibEntryTypesManager(),
+                            fileUpdateMonitor);
         } catch (IOException | ParseException e) {
             LOGGER.error("Error during reading of study definition file.", e);
-            dialogService.showErrorDialogAndWait(Localization.lang("Error during reading of study definition file."), e);
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error during reading of study definition file."), e);
             return;
         }
 
         dialogService.notify(Localization.lang("Searching..."));
-        BackgroundTask.wrap(() -> {
-                          crawler.performCrawl();
-                          return 0; // Return any value to make this a callable instead of a runnable. This allows throwing exceptions.
-                      })
-                      .onFailure(e -> {
-                          LOGGER.error("Error during persistence of crawling results.");
-                          dialogService.showErrorDialogAndWait(Localization.lang("Error during persistence of crawling results."), e);
-                      })
-                      .onSuccess(unused -> {
-                          dialogService.notify(Localization.lang("Finished Searching"));
-                          openDatabaseActionSupplier.get().openFile(Path.of(this.studyDirectory.toString(), Crawler.FILENAME_STUDY_RESULT_BIB));
-                      })
-                      .executeWith(taskExecutor);
+        BackgroundTask.wrap(
+                        () -> {
+                            crawler.performCrawl();
+                            return 0; // Return any value to make this a callable instead of a
+                            // runnable. This allows throwing exceptions.
+                        })
+                .onFailure(
+                        e -> {
+                            LOGGER.error("Error during persistence of crawling results.");
+                            dialogService.showErrorDialogAndWait(
+                                    Localization.lang(
+                                            "Error during persistence of crawling results."),
+                                    e);
+                        })
+                .onSuccess(
+                        unused -> {
+                            dialogService.notify(Localization.lang("Finished Searching"));
+                            openDatabaseActionSupplier
+                                    .get()
+                                    .openFile(
+                                            Path.of(
+                                                    this.studyDirectory.toString(),
+                                                    Crawler.FILENAME_STUDY_RESULT_BIB));
+                        })
+                .executeWith(taskExecutor);
     }
 
     /**

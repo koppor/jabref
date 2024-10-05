@@ -1,12 +1,5 @@
 package org.jabref.logic.exporter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.jabref.logic.bibtex.comparator.FieldComparator;
 import org.jabref.logic.bibtex.comparator.FieldComparatorStack;
 import org.jabref.logic.layout.format.GetOpenOfficeType;
@@ -18,17 +11,24 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 class OpenDocumentRepresentation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenDocumentRepresentation.class);
-    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY =
+            DocumentBuilderFactory.newInstance();
 
     private final List<BibEntry> entries;
 
@@ -62,13 +62,17 @@ class OpenDocumentRepresentation {
             result = dbuild.newDocument();
             Element collection = result.createElement("office:document-content");
             // collection.setAttribute("xmlns", "http://openoffice.org/2000/office");
-            collection.setAttribute("xmlns:office", "urn:oasis:names:tc:opendocument:xmlns:office:1.0");
-            collection.setAttribute("xmlns:style", "urn:oasis:names:tc:opendocument:xmlns:style:1.0");
+            collection.setAttribute(
+                    "xmlns:office", "urn:oasis:names:tc:opendocument:xmlns:office:1.0");
+            collection.setAttribute(
+                    "xmlns:style", "urn:oasis:names:tc:opendocument:xmlns:style:1.0");
             collection.setAttribute("xmlns:text", "urn:oasis:names:tc:opendocument:xmlns:text:1.0");
-            collection.setAttribute("xmlns:table", "urn:oasis:names:tc:opendocument:xmlns:table:1.0");
+            collection.setAttribute(
+                    "xmlns:table", "urn:oasis:names:tc:opendocument:xmlns:table:1.0");
             collection.setAttribute("xmlns:meta", "urn:oasis:names:tc:opendocument:xmlns:meta:1.0");
             collection.setAttribute("office:version", "1.0");
-            collection.setAttribute("xmlns:fo", "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0");
+            collection.setAttribute(
+                    "xmlns:fo", "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0");
             collection.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
             Element el = result.createElement("office:scripts");
             collection.appendChild(el);
@@ -149,13 +153,25 @@ class OpenDocumentRepresentation {
                 addTableCell(result, row, getField(e, StandardField.ADDRESS));
                 addTableCell(result, row, getField(e, StandardField.ASSIGNEE));
                 addTableCell(result, row, getField(e, StandardField.ANNOTE));
-                addTableCell(result, row, getField(e, StandardField.AUTHOR)); // new AuthorLastFirst().format(getField(e, StandardField.AUTHOR_FIELD)));
+                addTableCell(
+                        result,
+                        row,
+                        getField(
+                                e,
+                                StandardField.AUTHOR)); // new AuthorLastFirst().format(getField(e,
+                // StandardField.AUTHOR_FIELD)));
                 addTableCell(result, row, getField(e, StandardField.BOOKTITLE));
                 addTableCell(result, row, getField(e, StandardField.CHAPTER));
                 addTableCell(result, row, getField(e, StandardField.DAY));
                 addTableCell(result, row, getField(e, StandardField.DAYFILED));
                 addTableCell(result, row, getField(e, StandardField.EDITION));
-                addTableCell(result, row, getField(e, StandardField.EDITOR)); // new AuthorLastFirst().format(getField(e, StandardField.EDITOR_FIELD)));
+                addTableCell(
+                        result,
+                        row,
+                        getField(
+                                e,
+                                StandardField.EDITOR)); // new AuthorLastFirst().format(getField(e,
+                // StandardField.EDITOR_FIELD)));
                 addTableCell(result, row, getField(e, StandardField.HOWPUBLISHED));
                 addTableCell(result, row, getField(e, StandardField.INSTITUTION));
                 addTableCell(result, row, getField(e, StandardField.JOURNAL));
@@ -171,7 +187,13 @@ class OpenDocumentRepresentation {
                 addTableCell(result, row, getField(e, StandardField.REVISION));
                 addTableCell(result, row, getField(e, StandardField.SCHOOL));
                 addTableCell(result, row, getField(e, StandardField.SERIES));
-                addTableCell(result, row, new RemoveWhitespace().format(new RemoveBrackets().format(getField(e, StandardField.TITLE))));
+                addTableCell(
+                        result,
+                        row,
+                        new RemoveWhitespace()
+                                .format(
+                                        new RemoveBrackets()
+                                                .format(getField(e, StandardField.TITLE))));
                 addTableCell(result, row, getField(e, new UnknownField("reporttype")));
                 addTableCell(result, row, getField(e, StandardField.VOLUME));
                 addTableCell(result, row, getField(e, StandardField.YEAR));

@@ -1,5 +1,9 @@
 package org.jabref.model.entry;
 
+import org.jabref.architecture.AllowedToUseLogic;
+import org.jabref.logic.importer.AuthorListParser;
+import org.jspecify.annotations.NonNull;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -9,11 +13,6 @@ import java.util.WeakHashMap;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import org.jabref.architecture.AllowedToUseLogic;
-import org.jabref.logic.importer.AuthorListParser;
-
-import org.jspecify.annotations.NonNull;
 
 /**
  * This is an immutable class representing information of either <CODE>author</CODE> or <CODE>editor</CODE> field in bibtex record.
@@ -120,7 +119,8 @@ import org.jspecify.annotations.NonNull;
 @AllowedToUseLogic("because it needs access to AuthorList parser")
 public class AuthorList implements Iterable<Author> {
 
-    private static final Map<String, AuthorList> AUTHOR_CACHE = Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Map<String, AuthorList> AUTHOR_CACHE =
+            Collections.synchronizedMap(new WeakHashMap<>());
     private final List<Author> authors;
     private AuthorList latexFreeAuthors;
 
@@ -148,7 +148,8 @@ public class AuthorList implements Iterable<Author> {
         return Collectors.collectingAndThen(Collectors.toUnmodifiableList(), AuthorList::new);
     }
 
-    private static String andCoordinatedConjunction(List<Author> authors, Function<Author, String> style, boolean oxfordComma) {
+    private static String andCoordinatedConjunction(
+            List<Author> authors, Function<Author, String> style, boolean oxfordComma) {
         var formattedAuthors = authors.stream().map(style).collect(Collectors.toUnmodifiableList());
         return andCoordinatedConjunction(formattedAuthors, oxfordComma);
     }
@@ -160,7 +161,10 @@ public class AuthorList implements Iterable<Author> {
             case 0 -> "";
             case 1 -> authors.getFirst();
             case 2 -> authors.getFirst() + " and " + authors.get(1);
-            default -> String.join(", ", authors.subList(0, lastIndex)) + lastDelimiter + authors.get(lastIndex);
+            default ->
+                    String.join(", ", authors.subList(0, lastIndex))
+                            + lastDelimiter
+                            + authors.get(lastIndex);
         };
     }
 
@@ -173,10 +177,12 @@ public class AuthorList implements Iterable<Author> {
      * @return An AuthorList object representing the given authors.
      */
     public static AuthorList parse(@NonNull final String authors) {
-        return AUTHOR_CACHE.computeIfAbsent(authors, string -> {
-            AuthorListParser parser = new AuthorListParser();
-            return parser.parse(string);
-        });
+        return AUTHOR_CACHE.computeIfAbsent(
+                authors,
+                string -> {
+                    AuthorListParser parser = new AuthorListParser();
+                    return parser.parse(string);
+                });
     }
 
     /**
@@ -184,7 +190,8 @@ public class AuthorList implements Iterable<Author> {
      *
      * @see AuthorList#getAsFirstLastNames
      */
-    public static String fixAuthorFirstNameFirstCommas(String authors, boolean abbreviate, boolean oxfordComma) {
+    public static String fixAuthorFirstNameFirstCommas(
+            String authors, boolean abbreviate, boolean oxfordComma) {
         return AuthorList.parse(authors).getAsFirstLastNames(abbreviate, oxfordComma);
     }
 
@@ -202,7 +209,8 @@ public class AuthorList implements Iterable<Author> {
      *
      * @see AuthorList#getAsLastFirstNames
      */
-    public static String fixAuthorLastNameFirstCommas(String authors, boolean abbreviate, boolean oxfordComma) {
+    public static String fixAuthorLastNameFirstCommas(
+            String authors, boolean abbreviate, boolean oxfordComma) {
         return AuthorList.parse(authors).getAsLastFirstNames(abbreviate, oxfordComma);
     }
 
@@ -293,9 +301,11 @@ public class AuthorList implements Iterable<Author> {
      */
     public AuthorList latexFree() {
         if (latexFreeAuthors == null) {
-            latexFreeAuthors = new AuthorList(authors.stream()
-                                                     .map(Author::latexFree)
-                                                     .collect(Collectors.toUnmodifiableList()));
+            latexFreeAuthors =
+                    new AuthorList(
+                            authors.stream()
+                                    .map(Author::latexFree)
+                                    .collect(Collectors.toUnmodifiableList()));
             latexFreeAuthors.latexFreeAuthors = latexFreeAuthors;
         }
         return latexFreeAuthors;
@@ -318,7 +328,10 @@ public class AuthorList implements Iterable<Author> {
         return switch (authors.size()) {
             case 0 -> "";
             case 1 -> authors.getFirst().getNamePrefixAndFamilyName();
-            case 2 -> authors.getFirst().getNamePrefixAndFamilyName() + " and " + authors.get(1).getNamePrefixAndFamilyName();
+            case 2 ->
+                    authors.getFirst().getNamePrefixAndFamilyName()
+                            + " and "
+                            + authors.get(1).getNamePrefixAndFamilyName();
             default -> authors.getFirst().getNamePrefixAndFamilyName() + " et al.";
         };
     }
@@ -339,7 +352,8 @@ public class AuthorList implements Iterable<Author> {
      * Oxford comma.</a>
      */
     public String getAsLastNames(boolean oxfordComma) {
-        return andCoordinatedConjunction(getAuthors(), Author::getNamePrefixAndFamilyName, oxfordComma);
+        return andCoordinatedConjunction(
+                getAuthors(), Author::getNamePrefixAndFamilyName, oxfordComma);
     }
 
     /**
@@ -361,7 +375,8 @@ public class AuthorList implements Iterable<Author> {
      * Oxford comma.</a>
      */
     public String getAsLastFirstNames(boolean abbreviate, boolean oxfordComma) {
-        return andCoordinatedConjunction(getAuthors(), auth -> auth.getFamilyGiven(abbreviate), oxfordComma);
+        return andCoordinatedConjunction(
+                getAuthors(), auth -> auth.getFamilyGiven(abbreviate), oxfordComma);
     }
 
     @Override
@@ -384,8 +399,8 @@ public class AuthorList implements Iterable<Author> {
      */
     public String getAsLastFirstNamesWithAnd(boolean abbreviate) {
         return getAuthors().stream()
-                           .map(author -> author.getFamilyGiven(abbreviate))
-                           .collect(Collectors.joining(" and "));
+                .map(author -> author.getFamilyGiven(abbreviate))
+                .collect(Collectors.joining(" and "));
     }
 
     /**
@@ -397,13 +412,15 @@ public class AuthorList implements Iterable<Author> {
         return switch (authors.size()) {
             case 0 -> "";
             case 1 -> authors.getFirst().getFamilyGiven(abbreviate);
-            default -> authors.stream()
-                              .skip(1)
-                              .map(author -> author.getGivenFamily(abbreviate))
-                              .collect(Collectors.joining(
-                                      " and ",
-                                      authors.getFirst().getFamilyGiven(abbreviate) + " and ",
-                                      ""));
+            default ->
+                    authors.stream()
+                            .skip(1)
+                            .map(author -> author.getGivenFamily(abbreviate))
+                            .collect(
+                                    Collectors.joining(
+                                            " and ",
+                                            authors.getFirst().getFamilyGiven(abbreviate) + " and ",
+                                            ""));
         };
     }
 
@@ -426,7 +443,8 @@ public class AuthorList implements Iterable<Author> {
      * Oxford comma.</a>
      */
     public String getAsFirstLastNames(boolean abbreviate, boolean oxfordComma) {
-        return andCoordinatedConjunction(getAuthors(), author -> author.getGivenFamily(abbreviate), oxfordComma);
+        return andCoordinatedConjunction(
+                getAuthors(), author -> author.getGivenFamily(abbreviate), oxfordComma);
     }
 
     /**
@@ -467,8 +485,8 @@ public class AuthorList implements Iterable<Author> {
      */
     public String getAsFirstLastNamesWithAnd() {
         return getAuthors().stream()
-                           .map(author -> author.getGivenFamily(false))
-                           .collect(Collectors.joining(" and "));
+                .map(author -> author.getGivenFamily(false))
+                .collect(Collectors.joining(" and "));
     }
 
     /**
@@ -482,8 +500,8 @@ public class AuthorList implements Iterable<Author> {
      */
     public String getForAlphabetization() {
         return getAuthors().stream()
-                           .map(Author::getNameForAlphabetization)
-                           .collect(Collectors.joining(" and "));
+                .map(Author::getNameForAlphabetization)
+                .collect(Collectors.joining(" and "));
     }
 
     @Override

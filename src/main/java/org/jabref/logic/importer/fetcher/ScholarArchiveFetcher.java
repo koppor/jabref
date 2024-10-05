@@ -1,13 +1,13 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
+import jakarta.ws.rs.core.MediaType;
 
+import kong.unirest.core.json.JSONArray;
+import kong.unirest.core.json.JSONException;
+import kong.unirest.core.json.JSONObject;
+
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.jabref.logic.importer.PagedSearchBasedParserFetcher;
 import org.jabref.logic.importer.ParseException;
 import org.jabref.logic.importer.Parser;
@@ -19,15 +19,16 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.StandardEntryType;
-
-import jakarta.ws.rs.core.MediaType;
-import kong.unirest.core.json.JSONArray;
-import kong.unirest.core.json.JSONException;
-import kong.unirest.core.json.JSONObject;
-import org.apache.hc.core5.net.URIBuilder;
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 public class ScholarArchiveFetcher implements PagedSearchBasedParserFetcher {
 
@@ -45,9 +46,12 @@ public class ScholarArchiveFetcher implements PagedSearchBasedParserFetcher {
      * @return URL
      */
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException {
+    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber)
+            throws URISyntaxException, MalformedURLException {
         URIBuilder uriBuilder = new URIBuilder(API_URL);
-        uriBuilder.addParameter("q", new ScholarArchiveQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
+        uriBuilder.addParameter(
+                "q",
+                new ScholarArchiveQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
         uriBuilder.addParameter("from", String.valueOf(getPageSize() * pageNumber));
         uriBuilder.addParameter("size", String.valueOf(getPageSize()));
         uriBuilder.addParameter("format", "json");
@@ -98,12 +102,17 @@ public class ScholarArchiveFetcher implements PagedSearchBasedParserFetcher {
             JSONObject biblio = jsonEntry.optJSONObject("biblio");
 
             JSONArray abstracts = jsonEntry.getJSONArray("abstracts");
-            String foundAbstract = IntStream.range(0, abstracts.length())
-                                            .mapToObj(abstracts::getJSONObject)
-                                            .map(object -> object.optString("body"))
-                                            .findFirst().orElse("");
+            String foundAbstract =
+                    IntStream.range(0, abstracts.length())
+                            .mapToObj(abstracts::getJSONObject)
+                            .map(object -> object.optString("body"))
+                            .findFirst()
+                            .orElse("");
 
-            String url = Optional.ofNullable(jsonEntry.optJSONObject("fulltext")).map(fullText -> fullText.optString("access_url")).orElse("");
+            String url =
+                    Optional.ofNullable(jsonEntry.optJSONObject("fulltext"))
+                            .map(fullText -> fullText.optString("access_url"))
+                            .orElse("");
 
             // publication type
             String type = biblio.optString("release_type");
@@ -138,7 +147,8 @@ public class ScholarArchiveFetcher implements PagedSearchBasedParserFetcher {
                     authorList.add(authors.getString(i));
                 }
                 AuthorList parsedAuthors = AuthorList.parse(String.join(" and ", authorList));
-                entry.setField(StandardField.AUTHOR, parsedAuthors.getAsLastFirstNamesWithAnd(false));
+                entry.setField(
+                        StandardField.AUTHOR, parsedAuthors.getAsLastFirstNamesWithAnd(false));
             }
 
             if (biblio.has("issns")) {

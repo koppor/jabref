@@ -1,6 +1,6 @@
 package org.jabref.gui.util;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javafx.scene.paint.Color;
 
@@ -9,7 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.stream.Stream;
 
 class ColorUtilTest {
 
@@ -39,8 +39,7 @@ class ColorUtilTest {
                 Arguments.of(C2, "rgba(255,255,255,%f)".formatted(1.0)),
                 Arguments.of(C3, "rgba(0,0,0,%f)".formatted(0.0)),
                 Arguments.of(C4, "rgba(255,255,255,%f)".formatted(1.0)),
-                Arguments.of(C5, "rgba(153,204,127,%f)".formatted(0.3))
-        );
+                Arguments.of(C5, "rgba(153,204,127,%f)".formatted(0.3)));
     }
 
     @Test

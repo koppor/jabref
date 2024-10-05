@@ -1,7 +1,6 @@
 package org.jabref.gui.edit;
 
-import java.util.List;
-import java.util.Optional;
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -17,17 +16,20 @@ import org.jabref.model.entry.BibEntryPreferences;
 import org.jabref.model.entry.Keyword;
 import org.jabref.model.entry.KeywordList;
 
-import com.tobiasdiez.easybind.EasyBind;
+import java.util.List;
+import java.util.Optional;
 
 public class ManageKeywordsViewModel {
 
     private final List<BibEntry> entries;
     private final KeywordList sortedKeywordsOfAllEntriesBeforeUpdateByUser = new KeywordList();
     private final BibEntryPreferences bibEntryPreferences;
-    private final ObjectProperty<ManageKeywordsDisplayType> displayType = new SimpleObjectProperty<>(ManageKeywordsDisplayType.CONTAINED_IN_ALL_ENTRIES);
+    private final ObjectProperty<ManageKeywordsDisplayType> displayType =
+            new SimpleObjectProperty<>(ManageKeywordsDisplayType.CONTAINED_IN_ALL_ENTRIES);
     private final ObservableList<String> keywords;
 
-    public ManageKeywordsViewModel(BibEntryPreferences bibEntryPreferences, List<BibEntry> entries) {
+    public ManageKeywordsViewModel(
+            BibEntryPreferences bibEntryPreferences, List<BibEntry> entries) {
         this.bibEntryPreferences = bibEntryPreferences;
         this.entries = entries;
         this.keywords = FXCollections.observableArrayList();
@@ -60,7 +62,8 @@ public class ManageKeywordsViewModel {
             sortedKeywordsOfAllEntriesBeforeUpdateByUser.addAll(separatedKeywords);
 
             // for the remaining entries, intersection has to be used
-            // this approach ensures that one empty keyword list leads to an empty set of common keywords
+            // this approach ensures that one empty keyword list leads to an empty set of common
+            // keywords
             for (BibEntry entry : entries) {
                 separatedKeywords = entry.getKeywords(keywordSeparator);
                 sortedKeywordsOfAllEntriesBeforeUpdateByUser.retainAll(separatedKeywords);
@@ -108,8 +111,8 @@ public class ManageKeywordsViewModel {
         // TODO: bp.getUndoManager().addEdit(ce);
     }
 
-    private NamedCompound updateKeywords(List<BibEntry> entries, KeywordList keywordsToAdd,
-                                         KeywordList keywordsToRemove) {
+    private NamedCompound updateKeywords(
+            List<BibEntry> entries, KeywordList keywordsToAdd, KeywordList keywordsToRemove) {
         Character keywordSeparator = bibEntryPreferences.getKeywordSeparator();
 
         NamedCompound ce = new NamedCompound(Localization.lang("Update keywords"));

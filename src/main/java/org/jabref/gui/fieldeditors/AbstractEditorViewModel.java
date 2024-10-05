@@ -1,12 +1,16 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.Collection;
+import com.tobiasdiez.easybind.EasyObservableValue;
 
-import javax.swing.undo.UndoManager;
+import de.saxsys.mvvmfx.utils.validation.CompositeValidator;
+import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
+import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
+import de.saxsys.mvvmfx.utils.validation.Validator;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import org.controlsfx.control.textfield.AutoCompletionBinding;
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.autocompleter.SuggestionProvider;
 import org.jabref.gui.undo.UndoableFieldChange;
@@ -16,12 +20,9 @@ import org.jabref.logic.integrity.ValueChecker;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 
-import com.tobiasdiez.easybind.EasyObservableValue;
-import de.saxsys.mvvmfx.utils.validation.CompositeValidator;
-import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
-import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
-import de.saxsys.mvvmfx.utils.validation.Validator;
-import org.controlsfx.control.textfield.AutoCompletionBinding;
+import java.util.Collection;
+
+import javax.swing.undo.UndoManager;
 
 public class AbstractEditorViewModel extends AbstractViewModel {
     protected final Field field;
@@ -32,15 +33,24 @@ public class AbstractEditorViewModel extends AbstractViewModel {
     private final CompositeValidator fieldValidator;
     private EasyObservableValue<String> fieldBinding;
 
-    public AbstractEditorViewModel(Field field, SuggestionProvider<?> suggestionProvider, FieldCheckers fieldCheckers, UndoManager undoManager) {
+    public AbstractEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            UndoManager undoManager) {
         this.field = field;
         this.suggestionProvider = suggestionProvider;
         this.undoManager = undoManager;
 
         this.fieldValidator = new CompositeValidator();
         for (ValueChecker checker : fieldCheckers.getForField(field)) {
-            FunctionBasedValidator<String> validator = new FunctionBasedValidator<>(text, value ->
-                    checker.checkValue(value).map(ValidationMessage::warning).orElse(null));
+            FunctionBasedValidator<String> validator =
+                    new FunctionBasedValidator<>(
+                            text,
+                            value ->
+                                    checker.checkValue(value)
+                                            .map(ValidationMessage::warning)
+                                            .orElse(null));
             fieldValidator.addValidators(validator);
         }
     }
@@ -64,13 +74,19 @@ public class AbstractEditorViewModel extends AbstractViewModel {
                 fieldBinding,
                 newValue -> {
                     if (newValue != null) {
-                        // A file may be loaded using CRLF. ControlsFX uses hardcoded \n for multiline fields.
+                        // A file may be loaded using CRLF. ControlsFX uses hardcoded \n for
+                        // multiline fields.
                         // Thus, we need to normalize the line endings.
-                        // Note: Normalizing for the .bib file is done during writing of the .bib file (see org.jabref.logic.exporter.BibWriter.BibWriter).
-                        String oldValue = entry.getField(field).map(value -> value.replace("\r\n", "\n")).orElse(null);
+                        // Note: Normalizing for the .bib file is done during writing of the .bib
+                        // file (see org.jabref.logic.exporter.BibWriter.BibWriter).
+                        String oldValue =
+                                entry.getField(field)
+                                        .map(value -> value.replace("\r\n", "\n"))
+                                        .orElse(null);
                         if (!newValue.equals(oldValue)) {
                             entry.setField(field, newValue);
-                            undoManager.addEdit(new UndoableFieldChange(entry, field, oldValue, newValue));
+                            undoManager.addEdit(
+                                    new UndoableFieldChange(entry, field, oldValue, newValue));
                         }
                     }
                 });

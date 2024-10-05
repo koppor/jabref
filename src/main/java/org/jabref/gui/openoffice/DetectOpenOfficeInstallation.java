@@ -1,10 +1,5 @@
 package org.jabref.gui.openoffice;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.desktop.os.NativeDesktop;
 import org.jabref.gui.util.DirectoryDialogConfiguration;
@@ -14,6 +9,11 @@ import org.jabref.logic.os.OS;
 import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.strings.StringUtil;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Tools for automatically detecting OpenOffice or LibreOffice installations.
  */
@@ -22,7 +22,8 @@ public class DetectOpenOfficeInstallation {
     private final OpenOfficePreferences openOfficePreferences;
     private final DialogService dialogService;
 
-    public DetectOpenOfficeInstallation(OpenOfficePreferences openOfficePreferences, DialogService dialogService) {
+    public DetectOpenOfficeInstallation(
+            OpenOfficePreferences openOfficePreferences, DialogService dialogService) {
         this.dialogService = dialogService;
         this.openOfficePreferences = openOfficePreferences;
     }
@@ -32,11 +33,14 @@ public class DetectOpenOfficeInstallation {
     }
 
     public Optional<Path> selectInstallationPath() {
-        dialogService.showInformationDialogAndWait(Localization.lang("Could not find OpenOffice/LibreOffice installation"),
-                Localization.lang("Unable to autodetect OpenOffice/LibreOffice installation. Please choose the installation directory manually."));
-        DirectoryDialogConfiguration dirDialogConfiguration = new DirectoryDialogConfiguration.Builder()
-                .withInitialDirectory(NativeDesktop.get().getApplicationDirectory())
-                .build();
+        dialogService.showInformationDialogAndWait(
+                Localization.lang("Could not find OpenOffice/LibreOffice installation"),
+                Localization.lang(
+                        "Unable to autodetect OpenOffice/LibreOffice installation. Please choose the installation directory manually."));
+        DirectoryDialogConfiguration dirDialogConfiguration =
+                new DirectoryDialogConfiguration.Builder()
+                        .withInitialDirectory(NativeDesktop.get().getApplicationDirectory())
+                        .build();
         return dialogService.showDirectorySelectionDialog(dirDialogConfiguration);
     }
 
@@ -49,7 +53,8 @@ public class DetectOpenOfficeInstallation {
         if (OS.LINUX && (System.getenv("FLATPAK_SANDBOX_DIR") != null)) {
             executablePath = OpenOfficePreferences.DEFAULT_LINUX_FLATPAK_EXEC_PATH;
         }
-        return !StringUtil.isNullOrEmpty(executablePath) && Files.isRegularFile(Path.of(executablePath));
+        return !StringUtil.isNullOrEmpty(executablePath)
+                && Files.isRegularFile(Path.of(executablePath));
     }
 
     public boolean setOpenOfficePreferences(Path installDir) {
@@ -82,7 +87,8 @@ public class DetectOpenOfficeInstallation {
 
         return dialogService.showChoiceDialogAndWait(
                 Localization.lang("Choose OpenOffice/LibreOffice executable"),
-                Localization.lang("Found more than one OpenOffice/LibreOffice executable.") + "\n"
+                Localization.lang("Found more than one OpenOffice/LibreOffice executable.")
+                        + "\n"
                         + Localization.lang("Please choose which one to connect to:"),
                 Localization.lang("Use selected instance"),
                 installDirs);

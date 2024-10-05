@@ -1,6 +1,11 @@
 package org.jabref.gui.preferences.general;
 
-import java.util.regex.Pattern;
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+
+import jakarta.inject.Inject;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -28,12 +33,10 @@ import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
-import jakarta.inject.Inject;
+import java.util.regex.Pattern;
 
-public class GeneralTab extends AbstractPreferenceTabView<GeneralTabViewModel> implements PreferencesTab {
+public class GeneralTab extends AbstractPreferenceTabView<GeneralTabViewModel>
+        implements PreferencesTab {
 
     @FXML private ComboBox<Language> language;
     @FXML private ComboBox<ThemeTypes> theme;
@@ -61,20 +64,22 @@ public class GeneralTab extends AbstractPreferenceTabView<GeneralTabViewModel> i
 
     private final ControlsFxVisualizer validationVisualizer = new ControlsFxVisualizer();
 
-    // The fontSizeFormatter formats the input given to the fontSize spinner so that non valid values cannot be entered.
-    private final TextFormatter<Integer> fontSizeFormatter = new TextFormatter<>(new IntegerStringConverter(), 9,
-            c -> {
-                if (Pattern.matches("\\d*", c.getText())) {
-                    return c;
-                }
-                c.setText("0");
-                return c;
-            });
+    // The fontSizeFormatter formats the input given to the fontSize spinner so that non valid
+    // values cannot be entered.
+    private final TextFormatter<Integer> fontSizeFormatter =
+            new TextFormatter<>(
+                    new IntegerStringConverter(),
+                    9,
+                    c -> {
+                        if (Pattern.matches("\\d*", c.getText())) {
+                            return c;
+                        }
+                        c.setText("0");
+                        return c;
+                    });
 
     public GeneralTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -83,7 +88,9 @@ public class GeneralTab extends AbstractPreferenceTabView<GeneralTabViewModel> i
     }
 
     public void initialize() {
-        this.viewModel = new GeneralTabViewModel(dialogService, preferences, fileUpdateMonitor, entryTypesManager);
+        this.viewModel =
+                new GeneralTabViewModel(
+                        dialogService, preferences, fileUpdateMonitor, entryTypesManager);
 
         new ViewModelListCellFactory<Language>()
                 .withText(Language::getDisplayName)
@@ -107,17 +114,23 @@ public class GeneralTab extends AbstractPreferenceTabView<GeneralTabViewModel> i
         theme.valueProperty().bindBidirectional(viewModel.selectedThemeProperty());
         themeSyncOs.selectedProperty().bindBidirectional(viewModel.themeSyncOsProperty());
         customThemePath.textProperty().bindBidirectional(viewModel.customPathToThemeProperty());
-        EasyBind.subscribe(viewModel.selectedThemeProperty(), theme -> {
-            boolean isCustomTheme = theme == ThemeTypes.CUSTOM;
-            customThemePath.disableProperty().set(!isCustomTheme);
-            customThemeBrowse.disableProperty().set(!isCustomTheme);
-        });
+        EasyBind.subscribe(
+                viewModel.selectedThemeProperty(),
+                theme -> {
+                    boolean isCustomTheme = theme == ThemeTypes.CUSTOM;
+                    customThemePath.disableProperty().set(!isCustomTheme);
+                    customThemeBrowse.disableProperty().set(!isCustomTheme);
+                });
 
         validationVisualizer.setDecoration(new IconValidationDecorator());
 
         openLastStartup.selectedProperty().bindBidirectional(viewModel.openLastStartupProperty());
-        showAdvancedHints.selectedProperty().bindBidirectional(viewModel.showAdvancedHintsProperty());
-        inspectionWarningDuplicate.selectedProperty().bindBidirectional(viewModel.inspectionWarningDuplicateProperty());
+        showAdvancedHints
+                .selectedProperty()
+                .bindBidirectional(viewModel.showAdvancedHintsProperty());
+        inspectionWarningDuplicate
+                .selectedProperty()
+                .bindBidirectional(viewModel.inspectionWarningDuplicateProperty());
         confirmDelete.selectedProperty().bindBidirectional(viewModel.confirmDeleteProperty());
 
         new ViewModelListCellFactory<BibDatabaseMode>()
@@ -126,21 +139,41 @@ public class GeneralTab extends AbstractPreferenceTabView<GeneralTabViewModel> i
         biblatexMode.itemsProperty().bind(viewModel.biblatexModeListProperty());
         biblatexMode.valueProperty().bindBidirectional(viewModel.selectedBiblatexModeProperty());
 
-        alwaysReformatBib.selectedProperty().bindBidirectional(viewModel.alwaysReformatBibProperty());
-        autosaveLocalLibraries.selectedProperty().bindBidirectional(viewModel.autosaveLocalLibrariesProperty());
+        alwaysReformatBib
+                .selectedProperty()
+                .bindBidirectional(viewModel.alwaysReformatBibProperty());
+        autosaveLocalLibraries
+                .selectedProperty()
+                .bindBidirectional(viewModel.autosaveLocalLibrariesProperty());
         ActionFactory actionFactory = new ActionFactory();
-        actionFactory.configureIconButton(StandardActions.HELP, new HelpAction(HelpFile.AUTOSAVE, dialogService, preferences.getExternalApplicationsPreferences()), autosaveLocalLibrariesHelp);
-        actionFactory.configureIconButton(StandardActions.HELP, new HelpAction(HelpFile.REMOTE, dialogService, preferences.getExternalApplicationsPreferences()), remoteHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP,
+                new HelpAction(
+                        HelpFile.AUTOSAVE,
+                        dialogService,
+                        preferences.getExternalApplicationsPreferences()),
+                autosaveLocalLibrariesHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP,
+                new HelpAction(
+                        HelpFile.REMOTE,
+                        dialogService,
+                        preferences.getExternalApplicationsPreferences()),
+                remoteHelp);
 
         createBackup.selectedProperty().bindBidirectional(viewModel.createBackupProperty());
         backupDirectory.textProperty().bindBidirectional(viewModel.backupDirectoryProperty());
         backupDirectory.disableProperty().bind(viewModel.createBackupProperty().not());
 
-        Platform.runLater(() -> {
-            validationVisualizer.initVisualization(viewModel.remotePortValidationStatus(), remotePort);
-            validationVisualizer.initVisualization(viewModel.fontSizeValidationStatus(), fontSize);
-            validationVisualizer.initVisualization(viewModel.customPathToThemeValidationStatus(), customThemePath);
-        });
+        Platform.runLater(
+                () -> {
+                    validationVisualizer.initVisualization(
+                            viewModel.remotePortValidationStatus(), remotePort);
+                    validationVisualizer.initVisualization(
+                            viewModel.fontSizeValidationStatus(), fontSize);
+                    validationVisualizer.initVisualization(
+                            viewModel.customPathToThemeValidationStatus(), customThemePath);
+                });
 
         remoteServer.selectedProperty().bindBidirectional(viewModel.remoteServerProperty());
         remotePort.textProperty().bindBidirectional(viewModel.remotePortProperty());

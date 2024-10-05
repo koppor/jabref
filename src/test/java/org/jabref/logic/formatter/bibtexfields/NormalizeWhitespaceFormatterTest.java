@@ -1,15 +1,14 @@
 package org.jabref.logic.formatter.bibtexfields;
 
-import java.util.Collections;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.logic.bibtex.FieldPreferences;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Collections;
 
 class NormalizeWhitespaceFormatterTest {
 
@@ -17,10 +16,10 @@ class NormalizeWhitespaceFormatterTest {
 
     @BeforeEach
     void setUp() {
-        parser = new NormalizeWhitespaceFormatter(new FieldPreferences(
-                false,
-                Collections.emptyList(),
-                Collections.emptyList()));
+        parser =
+                new NormalizeWhitespaceFormatter(
+                        new FieldPreferences(
+                                false, Collections.emptyList(), Collections.emptyList()));
     }
 
     @Test
@@ -28,7 +27,8 @@ class NormalizeWhitespaceFormatterTest {
         String original = "I\r\nunify\nline\rbreaks.";
         String processed = parser.format(new StringBuilder(original), StandardField.ABSTRACT);
 
-        // Normalization is done at org.jabref.logic.exporter.BibWriter, so no need to normalize here
+        // Normalization is done at org.jabref.logic.exporter.BibWriter, so no need to normalize
+        // here
         assertEquals(original, processed);
     }
 

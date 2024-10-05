@@ -1,16 +1,15 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.logic.util.StandardFileType;
 import org.jabref.model.entry.BibEntry;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 
 class CopacImporterTest {
 

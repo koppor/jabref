@@ -1,5 +1,10 @@
 package org.jabref.logic.importer;
 
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.identifier.Identifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,12 +15,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.identifier.Identifier;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides a convenient interface for {@link IdFetcher}, which follow the usual three-step procedure:
@@ -32,7 +31,8 @@ public interface IdParserFetcher<T extends Identifier> extends IdFetcher<T>, Par
      *
      * @param entry the entry to look information for
      */
-    URL getURLForEntry(BibEntry entry) throws URISyntaxException, MalformedURLException, FetcherException;
+    URL getURLForEntry(BibEntry entry)
+            throws URISyntaxException, MalformedURLException, FetcherException;
 
     /**
      * Returns the parser used to convert the response to a list of {@link BibEntry}.
@@ -46,7 +46,8 @@ public interface IdParserFetcher<T extends Identifier> extends IdFetcher<T>, Par
      *                       the result)
      * @param fetchedEntries list of entries returned by the web service
      */
-    Optional<T> extractIdentifier(BibEntry inputEntry, List<BibEntry> fetchedEntries) throws FetcherException;
+    Optional<T> extractIdentifier(BibEntry inputEntry, List<BibEntry> fetchedEntries)
+            throws FetcherException;
 
     @Override
     default Optional<T> findIdentifier(BibEntry entry) throws FetcherException {

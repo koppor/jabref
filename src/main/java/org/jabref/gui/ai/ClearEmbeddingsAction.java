@@ -1,6 +1,6 @@
 package org.jabref.gui.ai;
 
-import java.util.List;
+import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
@@ -11,7 +11,7 @@ import org.jabref.logic.util.BackgroundTask;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.LinkedFile;
 
-import static org.jabref.gui.actions.ActionHelper.needsDatabase;
+import java.util.List;
 
 public class ClearEmbeddingsAction extends SimpleCommand {
     private final StateManager stateManager;
@@ -19,10 +19,11 @@ public class ClearEmbeddingsAction extends SimpleCommand {
     private final AiService aiService;
     private final TaskExecutor taskExecutor;
 
-    public ClearEmbeddingsAction(StateManager stateManager,
-                                 DialogService dialogService,
-                                 AiService aiService,
-                                 TaskExecutor taskExecutor) {
+    public ClearEmbeddingsAction(
+            StateManager stateManager,
+            DialogService dialogService,
+            AiService aiService,
+            TaskExecutor taskExecutor) {
         this.stateManager = stateManager;
         this.dialogService = dialogService;
         this.taskExecutor = taskExecutor;
@@ -36,9 +37,10 @@ public class ClearEmbeddingsAction extends SimpleCommand {
             return;
         }
 
-        boolean confirmed = dialogService.showConfirmationDialogAndWait(
-                Localization.lang("Clear embeddings cache"),
-                Localization.lang("Clear embeddings cache for current library?"));
+        boolean confirmed =
+                dialogService.showConfirmationDialogAndWait(
+                        Localization.lang("Clear embeddings cache"),
+                        Localization.lang("Clear embeddings cache for current library?"));
 
         if (!confirmed) {
             return;
@@ -46,16 +48,12 @@ public class ClearEmbeddingsAction extends SimpleCommand {
 
         dialogService.notify(Localization.lang("Clearing embeddings cache..."));
 
-        List<LinkedFile> linkedFiles = stateManager
-                .getActiveDatabase()
-                .get()
-                .getDatabase()
-                .getEntries()
-                .stream()
-                .flatMap(entry -> entry.getFiles().stream())
-                .toList();
+        List<LinkedFile> linkedFiles =
+                stateManager.getActiveDatabase().get().getDatabase().getEntries().stream()
+                        .flatMap(entry -> entry.getFiles().stream())
+                        .toList();
 
         BackgroundTask.wrap(() -> aiService.getIngestionService().clearEmbeddingsFor(linkedFiles))
-                      .executeWith(taskExecutor);
+                .executeWith(taskExecutor);
     }
 }

@@ -1,7 +1,5 @@
 package org.jabref.gui.entryeditor.citationrelationtab;
 
-import java.util.EnumSet;
-
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -14,6 +12,8 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.StandardEntryType;
+
+import java.util.EnumSet;
 
 /**
  * Class to unify the display method of BibEntries in ListViews.
@@ -40,16 +40,15 @@ public class BibEntryView {
         Label journal = new Label(entry.getFieldOrAliasLatexFree(StandardField.JOURNAL).orElse(""));
         journal.getStyleClass().add("journal");
 
-        VBox entryContainer = new VBox(
-                new HBox(10, entryType, title),
-                new HBox(5, year, journal),
-                authors
-        );
-        entry.getFieldOrAliasLatexFree(StandardField.ABSTRACT).ifPresent(summaryText -> {
-            TextFlowLimited summary = new TextFlowLimited(new Text(summaryText));
-            summary.getStyleClass().add("summary");
-            entryContainer.getChildren().add(summary);
-        });
+        VBox entryContainer =
+                new VBox(new HBox(10, entryType, title), new HBox(5, year, journal), authors);
+        entry.getFieldOrAliasLatexFree(StandardField.ABSTRACT)
+                .ifPresent(
+                        summaryText -> {
+                            TextFlowLimited summary = new TextFlowLimited(new Text(summaryText));
+                            summary.getStyleClass().add("summary");
+                            entryContainer.getChildren().add(summary);
+                        });
 
         entryContainer.getStyleClass().add("bibEntry");
         return entryContainer;
@@ -62,8 +61,11 @@ public class BibEntryView {
      * @return Icon corresponding to {@link EntryType}
      */
     private static IconTheme.JabRefIcons getIcon(EntryType type) {
-        EnumSet<StandardEntryType> crossRefTypes = EnumSet.of(StandardEntryType.InBook,
-                StandardEntryType.InProceedings, StandardEntryType.InCollection);
+        EnumSet<StandardEntryType> crossRefTypes =
+                EnumSet.of(
+                        StandardEntryType.InBook,
+                        StandardEntryType.InProceedings,
+                        StandardEntryType.InCollection);
         if (type == StandardEntryType.Book) {
             return IconTheme.JabRefIcons.BOOK;
         } else if (crossRefTypes.contains(type)) {

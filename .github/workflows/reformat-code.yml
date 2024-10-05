@@ -1,0 +1,29 @@
+name: Reformat Code
+
+on:
+  workflow_dispatch
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  reformat-code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21.0.2
+          distribution: 'temurin'
+      - uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "-r -a --skip-reflowing-long-strings --skip-javadoc-formatting"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: 'Automated code reformat'
+          branch: reformat-code
+          title: 'Automated code reformat'
+          body: 'Contains the result of applying the [Google Java Format Action](https://github.com/axel-op/googlejavaformat-action?tab=readme-ov-file#google-java-format-action).'

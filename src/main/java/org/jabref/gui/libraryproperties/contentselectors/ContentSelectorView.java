@@ -1,7 +1,9 @@
 package org.jabref.gui.libraryproperties.contentselectors;
 
-import java.util.Optional;
-import java.util.function.Supplier;
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import jakarta.inject.Inject;
 
 import javafx.beans.property.ListProperty;
 import javafx.fxml.FXML;
@@ -16,9 +18,8 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import jakarta.inject.Inject;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 public class ContentSelectorView extends AbstractPropertiesTabView<ContentSelectorViewModel> {
 
@@ -35,9 +36,7 @@ public class ContentSelectorView extends AbstractPropertiesTabView<ContentSelect
     public ContentSelectorView(BibDatabaseContext databaseContext) {
         this.databaseContext = databaseContext;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -55,7 +54,9 @@ public class ContentSelectorView extends AbstractPropertiesTabView<ContentSelect
 
     private void initFieldNameComponents() {
         initListView(fieldsListView, viewModel::getFieldNamesBackingList);
-        viewModel.selectedFieldProperty().bind(fieldsListView.getSelectionModel().selectedItemProperty());
+        viewModel
+                .selectedFieldProperty()
+                .bind(fieldsListView.getSelectionModel().selectedItemProperty());
         new ViewModelListCellFactory<Field>()
                 .withText(Field::getDisplayName)
                 .install(fieldsListView);
@@ -65,7 +66,9 @@ public class ContentSelectorView extends AbstractPropertiesTabView<ContentSelect
 
     private void initKeywordsComponents() {
         initListView(keywordsListView, viewModel::getKeywordsBackingList);
-        viewModel.selectedKeywordProperty().bind(keywordsListView.getSelectionModel().selectedItemProperty());
+        viewModel
+                .selectedKeywordProperty()
+                .bind(keywordsListView.getSelectionModel().selectedItemProperty());
         addKeywordButton.disableProperty().bind(viewModel.isFieldNameListEmpty());
         removeKeywordButton.disableProperty().bind(viewModel.isNoKeywordSelected());
     }
@@ -94,7 +97,8 @@ public class ContentSelectorView extends AbstractPropertiesTabView<ContentSelect
         }
     }
 
-    private <T> void initListView(ListView<T> listViewToInit, Supplier<ListProperty<T>> backingList) {
+    private <T> void initListView(
+            ListView<T> listViewToInit, Supplier<ListProperty<T>> backingList) {
         listViewToInit.itemsProperty().bind(backingList.get());
         listViewToInit.getSelectionModel().selectFirst();
     }
@@ -104,6 +108,7 @@ public class ContentSelectorView extends AbstractPropertiesTabView<ContentSelect
     }
 
     private Optional<String> getSelectedKeyword() {
-        return Optional.of(keywordsListView.getSelectionModel()).map(SelectionModel::getSelectedItem);
+        return Optional.of(keywordsListView.getSelectionModel())
+                .map(SelectionModel::getSelectedItem);
     }
 }

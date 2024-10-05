@@ -1,10 +1,10 @@
 package org.jabref.gui.autocompleter;
 
-import java.util.Objects;
-import java.util.stream.Stream;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.field.Field;
+
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Stores all words in the given field.
@@ -21,8 +21,7 @@ public class WordSuggestionProvider extends StringSuggestionProvider {
 
     @Override
     public Stream<String> getSource() {
-        return database.getEntries()
-                       .parallelStream()
-                       .flatMap(entry -> entry.getFieldAsWords(field).stream());
+        return database.getEntries().parallelStream()
+                .flatMap(entry -> entry.getFieldAsWords(field).stream());
     }
 }

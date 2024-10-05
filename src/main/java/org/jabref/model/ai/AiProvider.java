@@ -22,4 +22,3 @@ public enum AiProvider implements Serializable {
         return label;
     }
 }
-

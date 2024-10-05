@@ -1,19 +1,18 @@
 package org.jabref.logic.importer;
 
+import org.apache.lucene.index.Term;
+import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
+import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.QueryVisitor;
+import org.jabref.logic.importer.fetcher.ComplexSearchQuery;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import org.jabref.logic.importer.fetcher.ComplexSearchQuery;
-
-import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
-import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.QueryVisitor;
 
 /**
  * This class converts a query string written in lucene syntax into a complex  query.
@@ -34,8 +33,10 @@ public class QueryParser {
             StandardQueryParser parser = new StandardQueryParser();
             Query luceneQuery = parser.parse(query, "default");
             Set<Term> terms = new HashSet<>();
-            // This implementation collects all terms from the leaves of the query tree independent of the internal boolean structure
-            // If further capabilities are required in the future the visitor and ComplexSearchQuery has to be adapted accordingly.
+            // This implementation collects all terms from the leaves of the query tree independent
+            // of the internal boolean structure
+            // If further capabilities are required in the future the visitor and ComplexSearchQuery
+            // has to be adapted accordingly.
             QueryVisitor visitor = QueryVisitor.termCollector(terms);
             luceneQuery.visit(visitor);
 

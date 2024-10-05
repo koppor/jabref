@@ -1,11 +1,11 @@
 package org.jabref.logic.texparser;
 
+import org.jabref.model.texparser.LatexParserResult;
+import org.jabref.model.texparser.LatexParserResults;
+
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-
-import org.jabref.model.texparser.LatexParserResult;
-import org.jabref.model.texparser.LatexParserResults;
 
 /**
  * Parses a LaTeX file

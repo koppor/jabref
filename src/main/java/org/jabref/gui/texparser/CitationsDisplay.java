@@ -1,9 +1,5 @@
 package org.jabref.gui.texparser;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
@@ -21,15 +17,20 @@ import org.jabref.gui.util.ViewModelListCellFactory;
 import org.jabref.model.strings.LatexToUnicodeAdapter;
 import org.jabref.model.texparser.Citation;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
 public class CitationsDisplay extends ListView<Citation> {
 
     private final ObjectProperty<Path> basePath;
 
     public CitationsDisplay() {
         this.basePath = new SimpleObjectProperty<>(null);
-        new ViewModelListCellFactory<Citation>().withGraphic(this::getDisplayGraphic)
-                                                .withTooltip(this::getDisplayTooltip)
-                                                .install(this);
+        new ViewModelListCellFactory<Citation>()
+                .withGraphic(this::getDisplayGraphic)
+                .withTooltip(this::getDisplayTooltip)
+                .install(this);
 
         this.getStyleClass().add("citationsList");
     }
@@ -51,7 +52,8 @@ public class CitationsDisplay extends ListView<Citation> {
 
         Label fileNameLabel = new Label("%s".formatted(basePath.get().relativize(item.path())));
         fileNameLabel.setGraphic(IconTheme.JabRefIcons.LATEX_FILE.getGraphicNode());
-        Label positionLabel = new Label("(%s:%s-%s)".formatted(item.line(), item.colStart(), item.colEnd()));
+        Label positionLabel =
+                new Label("(%s:%s-%s)".formatted(item.line(), item.colStart(), item.colEnd()));
         positionLabel.setGraphic(IconTheme.JabRefIcons.LATEX_LINE.getGraphicNode());
         HBox dataBox = new HBox(5, fileNameLabel, positionLabel);
 

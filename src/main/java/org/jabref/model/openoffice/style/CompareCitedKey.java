@@ -1,9 +1,9 @@
 package org.jabref.model.openoffice.style;
 
+import org.jabref.model.entry.BibEntry;
+
 import java.util.Comparator;
 import java.util.Optional;
-
-import org.jabref.model.entry.BibEntry;
 
 /*
  * Given a Comparator<BibEntry> provide a Comparator<ComparableCitedKey> that also handles

@@ -1,5 +1,21 @@
 package org.jabref.logic.importer.fileformat;
 
+import org.jabref.logic.importer.ParseException;
+import org.jabref.logic.importer.Parser;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.entry.types.EntryType;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.jabref.model.strings.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -9,26 +25,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.jabref.logic.importer.ParseException;
-import org.jabref.logic.importer.Parser;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.field.UnknownField;
-import org.jabref.model.entry.types.EntryType;
-import org.jabref.model.entry.types.StandardEntryType;
-import org.jabref.model.strings.StringUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 public class PicaXmlParser implements Parser {
     private static final Logger LOGGER = LoggerFactory.getLogger(PicaXmlParser.class);
-    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
+    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY =
+            DocumentBuilderFactory.newInstance();
 
     @Override
     public List<BibEntry> parseEntries(InputStream inputStream) throws ParseException {
@@ -60,7 +60,8 @@ public class PicaXmlParser implements Parser {
                 e = getChild("record", e);
                 if (e != null) {
                     BibEntry bibEntry = parseEntry(e);
-                    // TODO: Add filtering on years (based on org.jabref.logic.importer.fetcher.transformers.YearRangeByFilteringQueryTransformer.getStartYear)
+                    // TODO: Add filtering on years (based on
+                    // org.jabref.logic.importer.fetcher.transformers.YearRangeByFilteringQueryTransformer.getStartYear)
                     result.add(bibEntry);
                 }
             }
@@ -100,7 +101,8 @@ public class PicaXmlParser implements Parser {
             String tag = datafield.getAttribute("tag");
             LOGGER.debug("tag: {}", tag);
 
-            // genre/type of the entry https://swbtools.bsz-bw.de/cgi-bin/k10plushelp.pl?cmd=kat&val=0500&katalog=Standard
+            // genre/type of the entry
+            // https://swbtools.bsz-bw.de/cgi-bin/k10plushelp.pl?cmd=kat&val=0500&katalog=Standard
             if ("002@".equals(tag)) {
                 bibliographicGenre = getSubfield("0", datafield);
                 if (bibliographicGenre == null) {
@@ -307,8 +309,10 @@ public class PicaXmlParser implements Parser {
             }
 
             // URLs behandeln
-            if ("009P".equals(tag) && ("03".equals(datafield.getAttribute("occurrence"))
-                    || "05".equals(datafield.getAttribute("occurrence"))) && (url == null)) {
+            if ("009P".equals(tag)
+                    && ("03".equals(datafield.getAttribute("occurrence"))
+                            || "05".equals(datafield.getAttribute("occurrence")))
+                    && (url == null)) {
                 url = getSubfield("a", datafield);
             }
         }
@@ -373,10 +377,13 @@ public class PicaXmlParser implements Parser {
         }
         if (!StringUtil.isNullOrEmpty(subtitle)) {
             // ensure that first letter is an upper case letter
-            // there could be the edge case that the string is only one character long, therefore, this special treatment
-            // this is Apache commons lang StringUtils.capitalize (https://commons.apache.org/proper/commons-lang/javadocs/api-release/org/apache/commons/lang3/StringUtils.html#capitalize%28java.lang.String%29), but we don't want to add an additional dependency  ('org.apache.commons:commons-lang3:3.4')
-            StringBuilder newSubtitle = new StringBuilder(
-                    Character.toString(Character.toUpperCase(subtitle.charAt(0))));
+            // there could be the edge case that the string is only one character long, therefore,
+            // this special treatment
+            // this is Apache commons lang StringUtils.capitalize
+            // (https://commons.apache.org/proper/commons-lang/javadocs/api-release/org/apache/commons/lang3/StringUtils.html#capitalize%28java.lang.String%29), but we don't want to add an additional dependency  ('org.apache.commons:commons-lang3:3.4')
+            StringBuilder newSubtitle =
+                    new StringBuilder(
+                            Character.toString(Character.toUpperCase(subtitle.charAt(0))));
             if (subtitle.length() > 1) {
                 newSubtitle.append(subtitle.substring(1));
             }

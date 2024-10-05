@@ -1,5 +1,19 @@
 package org.jabref.logic.exporter;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.xmlunit.builder.Input;
+import org.xmlunit.diff.DefaultNodeMatcher;
+import org.xmlunit.diff.ElementSelectors;
+import org.xmlunit.matchers.CompareMatcher;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -13,21 +27,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.types.StandardEntryType;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import org.xmlunit.builder.Input;
-import org.xmlunit.diff.DefaultNodeMatcher;
-import org.xmlunit.diff.ElementSelectors;
-import org.xmlunit.matchers.CompareMatcher;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-
 public class OpenOfficeDocumentCreatorTest {
     public BibDatabaseContext databaseContext;
     public Charset charset;
@@ -38,7 +37,11 @@ public class OpenOfficeDocumentCreatorTest {
 
     @BeforeEach
     void setUp() throws URISyntaxException {
-        xmlFile = Path.of(OpenOfficeDocumentCreatorTest.class.getResource("OldOpenOfficeCalcExportFormatContentSingleEntry.xml").toURI());
+        xmlFile =
+                Path.of(
+                        OpenOfficeDocumentCreatorTest.class
+                                .getResource("OldOpenOfficeCalcExportFormatContentSingleEntry.xml")
+                                .toURI());
 
         exporter = new OpenOfficeDocumentCreator();
 
@@ -47,7 +50,9 @@ public class OpenOfficeDocumentCreatorTest {
 
         BibEntry entry = new BibEntry(StandardEntryType.Article);
         entry.setField(StandardField.ADDRESS, "New York, NY, USA");
-        entry.setField(StandardField.TITLE, "Design and usability in security systems: daily life as a context of use?");
+        entry.setField(
+                StandardField.TITLE,
+                "Design and usability in security systems: daily life as a context of use?");
         entry.setField(StandardField.AUTHOR, "Tony Clear");
         entry.setField(StandardField.ISSN, "0097-8418");
         entry.setField(StandardField.DOI, "http://doi.acm.org/10.1145/820127.820136");
@@ -74,12 +79,16 @@ public class OpenOfficeDocumentCreatorTest {
         Input.Builder control = Input.from(Files.newInputStream(xmlFile));
         Input.Builder test = Input.from(Files.newInputStream(contentXmlPath));
         // for debugging purposes
-       // Path testPath = xmlFile.resolveSibling("test.xml");
-       // Files.copy(Files.newInputStream(contentXmlPath), testPath, StandardCopyOption.REPLACE_EXISTING);
+        // Path testPath = xmlFile.resolveSibling("test.xml");
+        // Files.copy(Files.newInputStream(contentXmlPath), testPath,
+        // StandardCopyOption.REPLACE_EXISTING);
 
-        assertThat(test, CompareMatcher.isSimilarTo(control)
-                                       .normalizeWhitespace()
-                                       .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText)).throwComparisonFailure());
+        assertThat(
+                test,
+                CompareMatcher.isSimilarTo(control)
+                        .normalizeWhitespace()
+                        .withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndText))
+                        .throwComparisonFailure());
     }
 
     private static void unzipContentXml(Path zipFile, Path unzipFolder) throws IOException {

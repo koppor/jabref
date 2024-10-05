@@ -1,5 +1,10 @@
 package org.jabref.gui.preferences.keybindings;
 
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import jakarta.inject.Inject;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
@@ -18,11 +23,8 @@ import org.jabref.gui.util.RecursiveTreeItem;
 import org.jabref.gui.util.ViewModelTreeTableCellFactory;
 import org.jabref.logic.l10n.Localization;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import jakarta.inject.Inject;
-
-public class KeyBindingsTab extends AbstractPreferenceTabView<KeyBindingsTabViewModel> implements PreferencesTab {
+public class KeyBindingsTab extends AbstractPreferenceTabView<KeyBindingsTabViewModel>
+        implements PreferencesTab {
 
     @FXML private TreeTableView<KeyBindingViewModel> keyBindingsTable;
     @FXML private TreeTableColumn<KeyBindingViewModel, String> actionColumn;
@@ -34,9 +36,7 @@ public class KeyBindingsTab extends AbstractPreferenceTabView<KeyBindingsTabView
     @Inject private KeyBindingRepository keyBindingRepository;
 
     public KeyBindingsTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -49,28 +49,46 @@ public class KeyBindingsTab extends AbstractPreferenceTabView<KeyBindingsTabView
         viewModel = new KeyBindingsTabViewModel(keyBindingRepository, dialogService, preferences);
 
         keyBindingsTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        viewModel.selectedKeyBindingProperty().bind(
-                EasyBind.wrapNullable(keyBindingsTable.selectionModelProperty())
-                        .mapObservable(SelectionModel::selectedItemProperty)
-                        .mapObservable(TreeItem::valueProperty)
-        );
+        viewModel
+                .selectedKeyBindingProperty()
+                .bind(
+                        EasyBind.wrapNullable(keyBindingsTable.selectionModelProperty())
+                                .mapObservable(SelectionModel::selectedItemProperty)
+                                .mapObservable(TreeItem::valueProperty));
         keyBindingsTable.setOnKeyPressed(viewModel::setNewBindingForCurrent);
-        keyBindingsTable.rootProperty().bind(
-                EasyBind.map(viewModel.rootKeyBindingProperty(),
-                        keybinding -> new RecursiveTreeItem<>(keybinding, KeyBindingViewModel::getChildren))
-        );
+        keyBindingsTable
+                .rootProperty()
+                .bind(
+                        EasyBind.map(
+                                viewModel.rootKeyBindingProperty(),
+                                keybinding ->
+                                        new RecursiveTreeItem<>(
+                                                keybinding, KeyBindingViewModel::getChildren)));
         actionColumn.setCellValueFactory(cellData -> cellData.getValue().getValue().nameProperty());
-        shortcutColumn.setCellValueFactory(cellData -> cellData.getValue().getValue().shownBindingProperty());
+        shortcutColumn.setCellValueFactory(
+                cellData -> cellData.getValue().getValue().shownBindingProperty());
         new ViewModelTreeTableCellFactory<KeyBindingViewModel>()
-                .withGraphic(keyBinding -> keyBinding.getResetIcon().map(JabRefIcon::getGraphicNode).orElse(null))
+                .withGraphic(
+                        keyBinding ->
+                                keyBinding
+                                        .getResetIcon()
+                                        .map(JabRefIcon::getGraphicNode)
+                                        .orElse(null))
                 .withOnMouseClickedEvent(keyBinding -> evt -> keyBinding.resetToDefault())
                 .install(resetColumn);
         new ViewModelTreeTableCellFactory<KeyBindingViewModel>()
-                .withGraphic(keyBinding -> keyBinding.getClearIcon().map(JabRefIcon::getGraphicNode).orElse(null))
+                .withGraphic(
+                        keyBinding ->
+                                keyBinding
+                                        .getClearIcon()
+                                        .map(JabRefIcon::getGraphicNode)
+                                        .orElse(null))
                 .withOnMouseClickedEvent(keyBinding -> evt -> keyBinding.clear())
                 .install(clearColumn);
 
-        viewModel.keyBindingPresets().forEach(preset -> presetsButton.getItems().add(createMenuItem(preset)));
+        viewModel
+                .keyBindingPresets()
+                .forEach(preset -> presetsButton.getItems().add(createMenuItem(preset)));
     }
 
     private MenuItem createMenuItem(KeyBindingPreset preset) {

@@ -8,9 +8,10 @@ public class MainTablePreferences {
     private final BooleanProperty resizeColumnsToFit = new SimpleBooleanProperty();
     private final BooleanProperty extraFileColumnsEnabled = new SimpleBooleanProperty();
 
-    public MainTablePreferences(ColumnPreferences columnPreferences,
-                                boolean resizeColumnsToFit,
-                                boolean extraFileColumnsEnabled) {
+    public MainTablePreferences(
+            ColumnPreferences columnPreferences,
+            boolean resizeColumnsToFit,
+            boolean extraFileColumnsEnabled) {
         this.columnPreferences = columnPreferences;
         this.resizeColumnsToFit.set(resizeColumnsToFit);
         this.extraFileColumnsEnabled.set(extraFileColumnsEnabled);

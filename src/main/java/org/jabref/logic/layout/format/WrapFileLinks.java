@@ -1,16 +1,16 @@
 package org.jabref.logic.layout.format;
 
+import org.jabref.logic.importer.util.FileFieldParser;
+import org.jabref.logic.layout.AbstractParamLayoutFormatter;
+import org.jabref.logic.util.io.FileUtil;
+import org.jabref.model.entry.LinkedFile;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.jabref.logic.importer.util.FileFieldParser;
-import org.jabref.logic.layout.AbstractParamLayoutFormatter;
-import org.jabref.logic.util.io.FileUtil;
-import org.jabref.model.entry.LinkedFile;
 
 /**
  * This formatter iterates over all file links, or all file links of a specified
@@ -202,9 +202,10 @@ public class WrapFileLinks extends AbstractParamLayoutFormatter {
                                 dirs = fileDirectories;
                             }
 
-                            String pathString = flEntry.findIn(dirs)
-                                                       .map(path -> path.toAbsolutePath().toString())
-                                                       .orElse(flEntry.getLink());
+                            String pathString =
+                                    flEntry.findIn(dirs)
+                                            .map(path -> path.toAbsolutePath().toString())
+                                            .orElse(flEntry.getLink());
 
                             sb.append(replaceStrings(pathString));
                             break;
@@ -220,7 +221,7 @@ public class WrapFileLinks extends AbstractParamLayoutFormatter {
                             break;
                         case FILE_EXTENSION:
                             FileUtil.getFileExtension(flEntry.getLink())
-                                      .ifPresent(extension -> sb.append(replaceStrings(extension)));
+                                    .ifPresent(extension -> sb.append(replaceStrings(extension)));
                             break;
                         case FILE_TYPE:
                             sb.append(replaceStrings(flEntry.getFileType()));

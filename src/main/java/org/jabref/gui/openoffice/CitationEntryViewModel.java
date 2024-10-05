@@ -18,7 +18,10 @@ public class CitationEntryViewModel {
     }
 
     public CitationEntryViewModel(CitationEntry citationEntry) {
-        this(citationEntry.getRefMarkName(), citationEntry.getContext(), citationEntry.getPageInfo().orElse(""));
+        this(
+                citationEntry.getRefMarkName(),
+                citationEntry.getContext(),
+                citationEntry.getPageInfo().orElse(""));
     }
 
     public CitationEntry toCitationEntry() {

@@ -1,12 +1,11 @@
 package org.jabref.logic.formatter.bibtexfields;
 
-import java.util.Objects;
-
 import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 /**
  * Trim all whitespace characters (as defined in Java) in the beginning and at the end of the string.

@@ -1,15 +1,15 @@
 package org.jabref.logic.cleanup;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.jabref.logic.bibtex.FieldPreferences;
 import org.jabref.logic.formatter.bibtexfields.NormalizeWhitespaceFormatter;
 import org.jabref.model.FieldChange;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class NormalizeWhitespacesCleanup implements CleanupJob {
 

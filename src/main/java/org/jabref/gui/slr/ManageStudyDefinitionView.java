@@ -1,12 +1,8 @@
 package org.jabref.gui.slr;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Optional;
-import java.util.StringJoiner;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
@@ -34,11 +30,16 @@ import org.jabref.gui.util.ValueTableCellFactory;
 import org.jabref.gui.util.ViewModelTableRowFactory;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.study.Study;
-
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
+import java.util.StringJoiner;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * This class controls the user interface of the study definition management dialog. The UI elements and their layout
@@ -99,9 +100,7 @@ public class ManageStudyDefinitionView extends BaseDialog<SlrStudyAndDirectory> 
         this.setTitle(Localization.lang("Define study parameters"));
         this.study = Optional.empty();
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         setupSaveSurveyButton(false);
 
@@ -119,9 +118,7 @@ public class ManageStudyDefinitionView extends BaseDialog<SlrStudyAndDirectory> 
         this.setTitle(Localization.lang("Manage study definition"));
         this.study = Optional.of(study);
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         setupSaveSurveyButton(true);
 
@@ -135,47 +132,60 @@ public class ManageStudyDefinitionView extends BaseDialog<SlrStudyAndDirectory> 
             saveSurveyButton.setText(Localization.lang("Start survey"));
         }
 
-        saveSurveyButton.disableProperty().bind(Bindings.or(Bindings.or(Bindings.or(Bindings.or(Bindings.or(
-                                                Bindings.isEmpty(viewModel.getQueries()),
-                                                Bindings.isEmpty(viewModel.getCatalogs())),
-                                                Bindings.isEmpty(viewModel.getAuthors())),
+        saveSurveyButton
+                .disableProperty()
+                .bind(
+                        Bindings.or(
+                                Bindings.or(
+                                        Bindings.or(
+                                                Bindings.or(
+                                                        Bindings.or(
+                                                                Bindings.isEmpty(
+                                                                        viewModel.getQueries()),
+                                                                Bindings.isEmpty(
+                                                                        viewModel.getCatalogs())),
+                                                        Bindings.isEmpty(viewModel.getAuthors())),
                                                 viewModel.getTitle().isEmpty()),
-                                                viewModel.getDirectory().isEmpty()),
-                                                directoryWarning.visibleProperty()));
+                                        viewModel.getDirectory().isEmpty()),
+                                directoryWarning.visibleProperty()));
 
-        setResultConverter(button -> {
-            if (button == saveSurveyButtonType) {
-                viewModel.updateSelectedCatalogs();
-                return viewModel.saveStudy();
-            }
-            // Cancel button will return null
-            return null;
-        });
+        setResultConverter(
+                button -> {
+                    if (button == saveSurveyButtonType) {
+                        viewModel.updateSelectedCatalogs();
+                        return viewModel.saveStudy();
+                    }
+                    // Cancel button will return null
+                    return null;
+                });
     }
 
     @FXML
     private void initialize() {
         if (study.isEmpty()) {
-            viewModel = new ManageStudyDefinitionViewModel(
-                    preferences.getImportFormatPreferences(),
-                    preferences.getImporterPreferences(),
-                    preferences.getWorkspacePreferences(),
-                    dialogService);
+            viewModel =
+                    new ManageStudyDefinitionViewModel(
+                            preferences.getImportFormatPreferences(),
+                            preferences.getImporterPreferences(),
+                            preferences.getWorkspacePreferences(),
+                            dialogService);
         } else {
-            viewModel = new ManageStudyDefinitionViewModel(
-                    study.get(),
-                    pathToStudyDataDirectory,
-                    preferences.getImportFormatPreferences(),
-                    preferences.getImporterPreferences(),
-                    preferences.getWorkspacePreferences(),
-                    dialogService);
+            viewModel =
+                    new ManageStudyDefinitionViewModel(
+                            study.get(),
+                            pathToStudyDataDirectory,
+                            preferences.getImportFormatPreferences(),
+                            preferences.getImporterPreferences(),
+                            preferences.getWorkspacePreferences(),
+                            dialogService);
 
             // The directory of the study cannot be changed
             studyDirectory.setEditable(false);
             selectStudyDirectory.setDisable(true);
         }
 
-        // Listen whether any catalogs are removed from selection -> Add back to the catalog selector
+        // Listen whether any catalogs are removed from selection -> Add back to the catalog
+        // selector
         studyTitle.textProperty().bindBidirectional(viewModel.titleProperty());
         studyDirectory.textProperty().bindBidirectional(viewModel.getDirectory());
 
@@ -187,57 +197,76 @@ public class ManageStudyDefinitionView extends BaseDialog<SlrStudyAndDirectory> 
 
     private void updateDirectoryWarning(Path directory) {
         if (!Files.isDirectory(directory)) {
-            directoryWarning.setText(Localization.lang("Warning: The selected directory is not a valid directory."));
+            directoryWarning.setText(
+                    Localization.lang("Warning: The selected directory is not a valid directory."));
             directoryWarning.setVisible(true);
         } else {
             try (Stream<Path> entries = Files.list(directory)) {
                 if (entries.findAny().isPresent()) {
-                    directoryWarning.setText(Localization.lang("Warning: The selected directory is not empty."));
+                    directoryWarning.setText(
+                            Localization.lang("Warning: The selected directory is not empty."));
                     directoryWarning.setVisible(true);
                 } else {
                     directoryWarning.setVisible(false);
                 }
-            } catch (
-                    IOException e) {
-                directoryWarning.setText(Localization.lang("Warning: Failed to check if the directory is empty."));
+            } catch (IOException e) {
+                directoryWarning.setText(
+                        Localization.lang("Warning: Failed to check if the directory is empty."));
                 directoryWarning.setVisible(true);
             }
         }
     }
 
     private void initAuthorTab() {
-        setupCommonPropertiesForTables(addAuthor, this::addAuthor, authorsColumn, authorsActionColumn);
+        setupCommonPropertiesForTables(
+                addAuthor, this::addAuthor, authorsColumn, authorsActionColumn);
         setupCellFactories(authorsColumn, authorsActionColumn, viewModel::deleteAuthor);
         authorTableView.setItems(viewModel.getAuthors());
     }
 
     private void initQuestionsTab() {
-        setupCommonPropertiesForTables(addResearchQuestion, this::addResearchQuestion, questionsColumn, questionsActionColumn);
+        setupCommonPropertiesForTables(
+                addResearchQuestion,
+                this::addResearchQuestion,
+                questionsColumn,
+                questionsActionColumn);
         setupCellFactories(questionsColumn, questionsActionColumn, viewModel::deleteQuestion);
         questionTableView.setItems(viewModel.getResearchQuestions());
     }
 
     private void initQueriesTab() {
-        setupCommonPropertiesForTables(addQuery, this::addQuery, queriesColumn, queriesActionColumn);
+        setupCommonPropertiesForTables(
+                addQuery, this::addQuery, queriesColumn, queriesActionColumn);
         setupCellFactories(queriesColumn, queriesActionColumn, viewModel::deleteQuery);
         queryTableView.setItems(viewModel.getQueries());
 
         // TODO: Keep until PR #7279 is merged
-        helpIcon.setTooltip(new Tooltip(new StringJoiner("\n")
-                .add(Localization.lang("Query terms are separated by spaces."))
-                .add(Localization.lang("All query terms are joined using the logical AND, and OR operators") + ".")
-                .add(Localization.lang("If the sequence of terms is relevant wrap them in double quotes") + "(\").")
-                .add(Localization.lang("An example:") + " rain AND (clouds OR drops) AND \"precipitation distribution\"")
-                .toString()));
+        helpIcon.setTooltip(
+                new Tooltip(
+                        new StringJoiner("\n")
+                                .add(Localization.lang("Query terms are separated by spaces."))
+                                .add(
+                                        Localization.lang(
+                                                        "All query terms are joined using the logical AND, and OR operators")
+                                                + ".")
+                                .add(
+                                        Localization.lang(
+                                                        "If the sequence of terms is relevant wrap them in double quotes")
+                                                + "(\").")
+                                .add(
+                                        Localization.lang("An example:")
+                                                + " rain AND (clouds OR drops) AND \"precipitation distribution\"")
+                                .toString()));
     }
 
     private void initCatalogsTab() {
         new ViewModelTableRowFactory<StudyCatalogItem>()
-                .withOnMouseClickedEvent((entry, event) -> {
-                    if (event.getButton() == MouseButton.PRIMARY) {
-                        entry.setEnabled(!entry.isEnabled());
-                    }
-                })
+                .withOnMouseClickedEvent(
+                        (entry, event) -> {
+                            if (event.getButton() == MouseButton.PRIMARY) {
+                                entry.setEnabled(!entry.isEnabled());
+                            }
+                        })
                 .install(catalogTable);
 
         if (study.isEmpty()) {
@@ -258,15 +287,17 @@ public class ManageStudyDefinitionView extends BaseDialog<SlrStudyAndDirectory> 
         catalogTable.setItems(viewModel.getCatalogs());
     }
 
-    private void setupCommonPropertiesForTables(Node addControl,
-                                                Runnable addAction,
-                                                TableColumn<?, String> contentColumn,
-                                                TableColumn<?, String> actionColumn) {
-        addControl.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                addAction.run();
-            }
-        });
+    private void setupCommonPropertiesForTables(
+            Node addControl,
+            Runnable addAction,
+            TableColumn<?, String> contentColumn,
+            TableColumn<?, String> actionColumn) {
+        addControl.setOnKeyPressed(
+                event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        addAction.run();
+                    }
+                });
 
         contentColumn.setReorderable(false);
         contentColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -274,16 +305,16 @@ public class ManageStudyDefinitionView extends BaseDialog<SlrStudyAndDirectory> 
         actionColumn.setResizable(false);
     }
 
-    private void setupCellFactories(TableColumn<String, String> contentColumn,
-                                    TableColumn<String, String> actionColumn,
-                                    Consumer<String> removeAction) {
+    private void setupCellFactories(
+            TableColumn<String, String> contentColumn,
+            TableColumn<String, String> actionColumn,
+            Consumer<String> removeAction) {
         contentColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue()));
         actionColumn.setCellValueFactory(param -> new SimpleStringProperty(param.getValue()));
         new ValueTableCellFactory<String, String>()
                 .withGraphic(item -> IconTheme.JabRefIcons.DELETE_ENTRY.getGraphicNode())
                 .withTooltip(name -> Localization.lang("Remove"))
-                .withOnMouseClickedEvent(item -> evt ->
-                        removeAction.accept(item))
+                .withOnMouseClickedEvent(item -> evt -> removeAction.accept(item))
                 .install(actionColumn);
     }
 
@@ -307,14 +338,17 @@ public class ManageStudyDefinitionView extends BaseDialog<SlrStudyAndDirectory> 
 
     @FXML
     public void selectStudyDirectory() {
-        DirectoryDialogConfiguration directoryDialogConfiguration = new DirectoryDialogConfiguration.Builder()
-                .withInitialDirectory(pathToStudyDataDirectory)
-                .build();
+        DirectoryDialogConfiguration directoryDialogConfiguration =
+                new DirectoryDialogConfiguration.Builder()
+                        .withInitialDirectory(pathToStudyDataDirectory)
+                        .build();
 
-        Optional<Path> selectedDirectoryOptional = dialogService.showDirectorySelectionDialog(directoryDialogConfiguration);
-        selectedDirectoryOptional.ifPresent(selectedDirectory -> {
-            viewModel.setStudyDirectory(Optional.of(selectedDirectory));
-            updateDirectoryWarning(selectedDirectory);
-        });
+        Optional<Path> selectedDirectoryOptional =
+                dialogService.showDirectorySelectionDialog(directoryDialogConfiguration);
+        selectedDirectoryOptional.ifPresent(
+                selectedDirectory -> {
+                    viewModel.setStudyDirectory(Optional.of(selectedDirectory));
+                    updateDirectoryWarning(selectedDirectory);
+                });
     }
 }

@@ -1,7 +1,7 @@
 package org.jabref.logic.bibtex.comparator;
 
-import java.util.List;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.jabref.logic.groups.DefaultGroupsFactory;
 import org.jabref.model.entry.field.StandardField;
@@ -10,11 +10,10 @@ import org.jabref.model.groups.GroupHierarchyType;
 import org.jabref.model.groups.GroupTreeNode;
 import org.jabref.model.metadata.ContentSelector;
 import org.jabref.model.metadata.MetaData;
-
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import java.util.List;
+import java.util.Optional;
 
 class MetaDataDiffTest {
     @Test

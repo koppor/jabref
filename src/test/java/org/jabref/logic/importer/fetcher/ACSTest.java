@@ -1,17 +1,16 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.net.URI;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.logic.importer.FulltextFetcher;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.support.DisabledOnCIServer;
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.net.URI;
+import java.util.Optional;
 
 @FetcherTest
 class ACSTest {
@@ -23,9 +22,10 @@ class ACSTest {
         // DOI randomly chosen from https://pubs.acs.org/toc/acscii/0/0
         BibEntry entry = new BibEntry().withField(StandardField.DOI, "10.1021/acscentsci.4c00971");
         assertEquals(
-                Optional.of(URI.create("https://pubs.acs.org/doi/pdf/10.1021/acscentsci.4c00971").toURL()),
-                fetcher.findFullText(entry)
-        );
+                Optional.of(
+                        URI.create("https://pubs.acs.org/doi/pdf/10.1021/acscentsci.4c00971")
+                                .toURL()),
+                fetcher.findFullText(entry));
     }
 
     @Test

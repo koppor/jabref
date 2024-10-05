@@ -1,19 +1,19 @@
 package org.jabref.gui.autosaveandbackup;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import org.jabref.logic.util.CoarseChangeFilter;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.database.event.AutosaveEvent;
 import org.jabref.model.database.event.BibDatabaseContextChangedEvent;
-
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Saves the given {@link BibDatabaseContext} on every {@link BibDatabaseContextChangedEvent} by posting a new {@link AutosaveEvent}.
@@ -45,8 +45,8 @@ public class AutosaveManager {
         this.executor.scheduleAtFixedRate(
                 () -> {
                     if (needsSave) {
-                       eventBus.post(new AutosaveEvent());
-                       needsSave = false;
+                        eventBus.post(new AutosaveEvent());
+                        needsSave = false;
                     }
                 },
                 DELAY_BETWEEN_AUTOSAVE_ATTEMPTS_IN_SECONDS,
@@ -84,8 +84,11 @@ public class AutosaveManager {
      * @param bibDatabaseContext Associated {@link BibDatabaseContext}
      */
     public static void shutdown(BibDatabaseContext bibDatabaseContext) {
-        runningInstances.stream().filter(instance -> instance.bibDatabaseContext == bibDatabaseContext).findAny()
-                        .ifPresent(instance -> {
+        runningInstances.stream()
+                .filter(instance -> instance.bibDatabaseContext == bibDatabaseContext)
+                .findAny()
+                .ifPresent(
+                        instance -> {
                             instance.shutdown();
                             runningInstances.remove(instance);
                         });

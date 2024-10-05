@@ -1,9 +1,9 @@
 package org.jabref.logic.formatter.bibtexfields;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LatexCleanupFormatterTest {
 
@@ -19,7 +19,8 @@ class LatexCleanupFormatterTest {
         assertEquals("$\\alpha\\beta$", formatter.format("$\\alpha$$\\beta$"));
         assertEquals("{VLSI DSP}", formatter.format("{VLSI} {DSP}"));
         assertEquals("\\textbf{VLSI} {DSP}", formatter.format("\\textbf{VLSI} {DSP}"));
-        assertEquals("A ${\\Delta\\Sigma}$ modulator for {FPGA DSP}",
+        assertEquals(
+                "A ${\\Delta\\Sigma}$ modulator for {FPGA DSP}",
                 formatter.format("A ${\\Delta}$${\\Sigma}$ modulator for {FPGA} {DSP}"));
     }
 

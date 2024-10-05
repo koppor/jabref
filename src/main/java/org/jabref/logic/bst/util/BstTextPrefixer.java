@@ -20,8 +20,7 @@ import org.slf4j.LoggerFactory;
 public class BstTextPrefixer {
     private static final Logger LOGGER = LoggerFactory.getLogger(BstTextPrefixer.class);
 
-    private BstTextPrefixer() {
-    }
+    private BstTextPrefixer() {}
 
     public static String textPrefix(int numOfChars, String toPrefix) {
         StringBuilder sb = new StringBuilder();
@@ -49,7 +48,9 @@ public class BstTextPrefixer {
             return;
         }
         prefixState.braceLevel++;
-        if ((prefixState.braceLevel == 1) && (prefixState.index < cs.length) && (cs[prefixState.index] == '\\')) {
+        if ((prefixState.braceLevel == 1)
+                && (prefixState.index < cs.length)
+                && (cs[prefixState.index] == '\\')) {
             prefixState.index++; // skip backslash
             while ((prefixState.index < cs.length) && (prefixState.braceLevel > 0)) {
                 if (cs[prefixState.index] == '}') {
@@ -78,6 +79,7 @@ public class BstTextPrefixer {
         public int index;
         public int braceLevel;
         public int numOfChars;
+
         public PrefixState(int index, int braceLevel, int numOfChars) {
             this.index = index;
             this.braceLevel = braceLevel;

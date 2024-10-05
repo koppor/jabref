@@ -1,13 +1,13 @@
 package org.jabref.logic.preferences;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 import org.jabref.model.entry.field.Field;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class TimestampPreferences {
     private final BooleanProperty addCreationDate;
@@ -18,7 +18,12 @@ public class TimestampPreferences {
     private final Field timestampField;
     private final String timestampFormat;
 
-    public TimestampPreferences(boolean addCreationDate, boolean modifyTimestamp, boolean updateTimestamp, Field timestampField, String timestampFormat) {
+    public TimestampPreferences(
+            boolean addCreationDate,
+            boolean modifyTimestamp,
+            boolean updateTimestamp,
+            Field timestampField,
+            String timestampFormat) {
         this.addCreationDate = new SimpleBooleanProperty(addCreationDate);
         this.addModificationDate = new SimpleBooleanProperty(modifyTimestamp);
         this.updateTimestamp = updateTimestamp;
@@ -28,7 +33,8 @@ public class TimestampPreferences {
 
     public String now() {
         // Milli-, Micro-, and Nanoseconds are not relevant to us, so we remove them
-        return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(
+                LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     }
 
     public boolean shouldAddCreationDate() {

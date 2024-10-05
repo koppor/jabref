@@ -121,9 +121,13 @@ recipeList:
   - org.openrewrite.staticanalysis.BooleanChecksNotInverted
   - org.openrewrite.staticanalysis.CaseInsensitiveComparisonsDoNotChangeCase
   - org.openrewrite.staticanalysis.CatchClauseOnlyRethrows
-  - org.openrewrite.staticanalysis.ChainStringBuilderAppendCalls
+
+  # Removes GJF newlines - https://github.com/openrewrite/rewrite-static-analysis/issues/354
+  # - org.openrewrite.staticanalysis.ChainStringBuilderAppendCalls
+
   # Might need manual intervention, because negations are not treated properly
   - org.openrewrite.staticanalysis.CompareEnumsWithEqualityOperator
+
   - org.openrewrite.staticanalysis.ControlFlowIndentation
   - org.openrewrite.staticanalysis.CovariantEquals
   # Needs manual intervention

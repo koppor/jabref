@@ -60,7 +60,9 @@ public class BibtexString implements Cloneable {
             // Second character is not upper case
             // aStallman -> AUTHOR
             // asdf -> OTHER
-            if (!(String.valueOf(key.charAt(1))).toUpperCase(Locale.ROOT).equals(String.valueOf(key.charAt(1)))) {
+            if (!(String.valueOf(key.charAt(1)))
+                    .toUpperCase(Locale.ROOT)
+                    .equals(String.valueOf(key.charAt(1)))) {
                 return OTHER;
             }
             for (Type t : Type.values()) {
@@ -170,7 +172,7 @@ public class BibtexString implements Cloneable {
     public Object clone() {
         BibtexString clone;
         if (parsedSerialization == null) {
-             clone = new BibtexString(name, content);
+            clone = new BibtexString(name, content);
         } else {
             clone = new BibtexString(name, content, parsedSerialization);
         }
@@ -192,11 +194,11 @@ public class BibtexString implements Cloneable {
             return false;
         }
         BibtexString that = (BibtexString) o;
-        return Objects.equals(hasChanged, that.hasChanged) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(content, that.content) &&
-                Objects.equals(type, that.type) &&
-                Objects.equals(parsedSerialization, that.parsedSerialization);
+        return Objects.equals(hasChanged, that.hasChanged)
+                && Objects.equals(name, that.name)
+                && Objects.equals(content, that.content)
+                && Objects.equals(type, that.type)
+                && Objects.equals(parsedSerialization, that.parsedSerialization);
     }
 
     @Override

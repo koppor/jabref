@@ -1,10 +1,10 @@
 package org.jabref.logic.layout.format;
 
-import java.net.URI;
-
 import org.jabref.logic.layout.LayoutFormatter;
 import org.jabref.logic.preferences.DOIPreferences;
 import org.jabref.model.entry.identifier.DOI;
+
+import java.net.URI;
 
 /**
  * Used to fix [ 1588028 ] export HTML table DOI URL.
@@ -32,9 +32,10 @@ public class DOICheck implements LayoutFormatter {
 
         if (doiPreferences.isUseCustom()) {
             var base = URI.create(doiPreferences.getDefaultBaseURI());
-            return DOI.parse(result).flatMap(doi -> doi.getExternalURIFromBase(base))
-                      .map(URI::toASCIIString)
-                      .orElse(result);
+            return DOI.parse(result)
+                    .flatMap(doi -> doi.getExternalURIFromBase(base))
+                    .map(URI::toASCIIString)
+                    .orElse(result);
         }
 
         return DOI.parse(result).map(DOI::getURIAsASCIIString).orElse(result);

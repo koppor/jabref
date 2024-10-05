@@ -1,5 +1,12 @@
 package org.jabref.model.search;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.highlight.QueryTermExtractor;
+import org.apache.lucene.search.highlight.WeightedTerm;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -11,13 +18,6 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.highlight.QueryTermExtractor;
-import org.apache.lucene.search.highlight.WeightedTerm;
 
 public class SearchQuery {
     /**
@@ -46,7 +46,8 @@ public class SearchQuery {
         /**
          * Regex pattern for escaping special characters in javascript regular expressions
          */
-        private static final Pattern JAVASCRIPT_ESCAPED_CHARS_PATTERN = Pattern.compile("[.*+?^${}()|\\[\\]\\\\/]");
+        private static final Pattern JAVASCRIPT_ESCAPED_CHARS_PATTERN =
+                Pattern.compile("[.*+?^${}()|\\[\\]\\\\/]");
 
         /**
          * Attempt to escape all regex special characters.
@@ -73,10 +74,11 @@ public class SearchQuery {
 
         if (searchFlags.contains(SearchFlags.FULLTEXT)) {
             boosts.put(SearchFieldConstants.DEFAULT_FIELD.toString(), 4F);
-            SearchFieldConstants.PDF_FIELDS.forEach(field -> {
-                boosts.put(field, 1F);
-                fieldAnalyzers.put(field, SearchFieldConstants.LINKED_FILES_ANALYZER);
-            });
+            SearchFieldConstants.PDF_FIELDS.forEach(
+                    field -> {
+                        boosts.put(field, 1F);
+                        fieldAnalyzers.put(field, SearchFieldConstants.LINKED_FILES_ANALYZER);
+                    });
         } else {
             boosts.put(SearchFieldConstants.DEFAULT_FIELD.toString(), 1F);
         }
@@ -84,8 +86,11 @@ public class SearchQuery {
         String[] fieldsToSearchArray = new String[boosts.size()];
         boosts.keySet().toArray(fieldsToSearchArray);
 
-        PerFieldAnalyzerWrapper analyzerWrapper = new PerFieldAnalyzerWrapper(SearchFieldConstants.LATEX_AWARE_ANALYZER, fieldAnalyzers);
-        MultiFieldQueryParser queryParser = new MultiFieldQueryParser(fieldsToSearchArray, analyzerWrapper, boosts);
+        PerFieldAnalyzerWrapper analyzerWrapper =
+                new PerFieldAnalyzerWrapper(
+                        SearchFieldConstants.LATEX_AWARE_ANALYZER, fieldAnalyzers);
+        MultiFieldQueryParser queryParser =
+                new MultiFieldQueryParser(fieldsToSearchArray, analyzerWrapper, boosts);
         queryParser.setAllowLeadingWildcard(true);
 
         try {
@@ -122,8 +127,7 @@ public class SearchQuery {
         if (!(o instanceof SearchQuery that)) {
             return false;
         }
-        return Objects.equals(query, that.query)
-                && Objects.equals(searchFlags, that.searchFlags);
+        return Objects.equals(query, that.query) && Objects.equals(searchFlags, that.searchFlags);
     }
 
     @Override
@@ -154,16 +158,18 @@ public class SearchQuery {
             return List.of();
         }
         return Arrays.stream(QueryTermExtractor.getTerms(parsedQuery))
-                     .map(WeightedTerm::getTerm)
-                     .toList();
+                .map(WeightedTerm::getTerm)
+                .toList();
     }
 
-    // Returns a regular expression pattern in the form (w1)|(w2)| ... wi are escaped if no regular expression search is enabled
+    // Returns a regular expression pattern in the form (w1)|(w2)| ... wi are escaped if no regular
+    // expression search is enabled
     public Optional<Pattern> getPatternForWords() {
         return joinWordsToPattern(EscapeMode.JAVA);
     }
 
-    // Returns a regular expression pattern in the form (w1)|(w2)| ... wi are escaped for javascript if no regular expression search is enabled
+    // Returns a regular expression pattern in the form (w1)|(w2)| ... wi are escaped for javascript
+    // if no regular expression search is enabled
     public Optional<Pattern> getJavaScriptPatternForWords() {
         return joinWordsToPattern(EscapeMode.JAVASCRIPT);
     }

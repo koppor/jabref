@@ -1,5 +1,12 @@
 package org.jabref.model.openoffice.style;
 
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.openoffice.util.OOListUtil;
+import org.jabref.model.openoffice.util.OOPair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -8,14 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.openoffice.util.OOListUtil;
-import org.jabref.model.openoffice.util.OOPair;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * CitationGroups : the set of citation groups in the document.
@@ -55,9 +54,8 @@ public class CitationGroups {
     /**
      * For each citation in {@code where} call {@code fun.accept(new Pair(citation, value));}
      */
-    public <T> void distributeToCitations(List<CitationPath> where,
-                                          Consumer<OOPair<Citation, T>> fun,
-                                          T value) {
+    public <T> void distributeToCitations(
+            List<CitationPath> where, Consumer<OOPair<Citation, T>> fun, T value) {
 
         for (CitationPath p : where) {
             CitationGroup group = citationGroupsUnordered.get(p.group);
@@ -123,7 +121,8 @@ public class CitationGroups {
     public void setGlobalOrder(List<CitationGroupId> globalOrder) {
         Objects.requireNonNull(globalOrder);
         if (globalOrder.size() != numberOfCitationGroups()) {
-            throw new IllegalStateException("setGlobalOrder: globalOrder.size() != numberOfCitationGroups()");
+            throw new IllegalStateException(
+                    "setGlobalOrder: globalOrder.size() != numberOfCitationGroups()");
         }
         this.globalOrder = Optional.of(globalOrder);
 
@@ -212,8 +211,9 @@ public class CitationGroups {
 
     public void createNumberedBibliographySortedInOrderOfAppearance() {
         if (bibliography.isPresent()) {
-            throw new IllegalStateException("createNumberedBibliographySortedInOrderOfAppearance:"
-                    + " already have a bibliography");
+            throw new IllegalStateException(
+                    "createNumberedBibliographySortedInOrderOfAppearance:"
+                            + " already have a bibliography");
         }
         CitedKeys citedKeys = getCitedKeysSortedInOrderOfAppearance();
         citedKeys.numberCitedKeysInCurrentOrder();
@@ -226,7 +226,8 @@ public class CitationGroups {
      */
     public void createPlainBibliographySortedByComparator(Comparator<BibEntry> entryComparator) {
         if (bibliography.isPresent()) {
-            throw new IllegalStateException("createPlainBibliographySortedByComparator: already have a bibliography");
+            throw new IllegalStateException(
+                    "createPlainBibliographySortedByComparator: already have a bibliography");
         }
         CitedKeys citedKeys = getCitedKeysUnordered();
         citedKeys.sortByComparator(entryComparator);
@@ -238,7 +239,8 @@ public class CitationGroups {
      */
     public void createNumberedBibliographySortedByComparator(Comparator<BibEntry> entryComparator) {
         if (bibliography.isPresent()) {
-            throw new IllegalStateException("createNumberedBibliographySortedByComparator: already have a bibliography");
+            throw new IllegalStateException(
+                    "createNumberedBibliographySortedByComparator: already have a bibliography");
         }
         CitedKeys citedKeys = getCitedKeysUnordered();
         citedKeys.sortByComparator(entryComparator);

@@ -1,8 +1,8 @@
 package org.jabref.logic.formatter.bibtexfields;
 
-import java.text.Normalizer;
-
 import org.jabref.logic.cleanup.Formatter;
+
+import java.text.Normalizer;
 
 /**
  * Clean up field values by formatting Unicode values by using the <a href="https://en.wikipedia.org/wiki/Unicode_equivalence#Normal_forms">Normal form "Normalization Form Canonical Composition" (NFC)</a>: Characters are decomposed and then recomposed by canonical equivalence.

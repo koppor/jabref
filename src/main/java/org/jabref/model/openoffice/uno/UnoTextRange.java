@@ -1,16 +1,15 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Optional;
-
 import com.sun.star.text.XFootnote;
 import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextRangeCompare;
 
+import java.util.Optional;
+
 public class UnoTextRange {
 
-    private UnoTextRange() {
-    }
+    private UnoTextRange() {}
 
     /**
      * If original is in a footnote, return a range containing the corresponding footnote marker.
@@ -63,7 +62,8 @@ public class UnoTextRange {
     /*
      * Assumes a and b belong to the same XText as compare.
      */
-    public static int compareStartsThenEndsUnsafe(XTextRangeCompare compare, XTextRange a, XTextRange b) {
+    public static int compareStartsThenEndsUnsafe(
+            XTextRangeCompare compare, XTextRange a, XTextRange b) {
         int res = compare.compareRegionStarts(a, b);
         if (res != 0) {
             return -1 * res;
@@ -73,7 +73,8 @@ public class UnoTextRange {
 
     public static int compareStartsThenEnds(XTextRange a, XTextRange b) {
         if (!comparables(a, b)) {
-            throw new java.lang.IllegalArgumentException("compareStartsThenEnds: got incomparable regions");
+            throw new java.lang.IllegalArgumentException(
+                    "compareStartsThenEnds: got incomparable regions");
         }
         final XTextRangeCompare compare = UnoCast.cast(XTextRangeCompare.class, a.getText()).get();
         return compareStartsThenEndsUnsafe(compare, a, b);

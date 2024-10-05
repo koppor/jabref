@@ -1,8 +1,8 @@
 package org.jabref.logic.importer;
 
-import java.util.List;
-
 import org.jabref.model.entry.BibEntry;
+
+import java.util.List;
 
 /**
  * Searches web resources for bibliographic information based on a {@link BibEntry}.

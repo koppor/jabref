@@ -1,13 +1,5 @@
 package org.jabref.gui.externalfiles;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.externalfiletype.ExternalFileType;
 import org.jabref.gui.externalfiletype.ExternalFileTypes;
@@ -23,9 +15,16 @@ import org.jabref.logic.util.io.FileUtil;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class ExternalFilesEntryLinker {
 
@@ -38,7 +37,11 @@ public class ExternalFilesEntryLinker {
     private final RenamePdfCleanup renameFilesCleanup;
     private final DialogService dialogService;
 
-    public ExternalFilesEntryLinker(ExternalApplicationsPreferences externalApplicationsPreferences, FilePreferences filePreferences, BibDatabaseContext bibDatabaseContext, DialogService dialogService) {
+    public ExternalFilesEntryLinker(
+            ExternalApplicationsPreferences externalApplicationsPreferences,
+            FilePreferences filePreferences,
+            BibDatabaseContext bibDatabaseContext,
+            DialogService dialogService) {
         this.externalApplicationsPreferences = externalApplicationsPreferences;
         this.filePreferences = filePreferences;
         this.bibDatabaseContext = bibDatabaseContext;
@@ -48,7 +51,8 @@ public class ExternalFilesEntryLinker {
     }
 
     public Optional<Path> copyFileToFileDir(Path file) {
-        Optional<Path> firstExistingFileDir = bibDatabaseContext.getFirstExistingFileDir(filePreferences);
+        Optional<Path> firstExistingFileDir =
+                bibDatabaseContext.getFirstExistingFileDir(filePreferences);
         if (firstExistingFileDir.isPresent()) {
             Path targetFile = firstExistingFileDir.get().resolve(file.getFileName());
             if (FileUtil.copyFile(file, targetFile, false)) {
@@ -69,17 +73,25 @@ public class ExternalFilesEntryLinker {
     public void addFilesToEntry(BibEntry entry, List<Path> files) {
         List<Path> validFiles = getValidFileNames(files);
         for (Path file : validFiles) {
-            FileUtil.getFileExtension(file).ifPresent(ext -> {
-                ExternalFileType type = ExternalFileTypes.getExternalFileTypeByExt(ext, externalApplicationsPreferences)
-                                                         .orElse(new UnknownExternalFileType(ext));
-                Path relativePath = FileUtil.relativize(file, bibDatabaseContext, filePreferences);
-                LinkedFile linkedfile = new LinkedFile("", relativePath, type.getName());
-                entry.addFile(linkedfile);
-            });
+            FileUtil.getFileExtension(file)
+                    .ifPresent(
+                            ext -> {
+                                ExternalFileType type =
+                                        ExternalFileTypes.getExternalFileTypeByExt(
+                                                        ext, externalApplicationsPreferences)
+                                                .orElse(new UnknownExternalFileType(ext));
+                                Path relativePath =
+                                        FileUtil.relativize(
+                                                file, bibDatabaseContext, filePreferences);
+                                LinkedFile linkedfile =
+                                        new LinkedFile("", relativePath, type.getName());
+                                entry.addFile(linkedfile);
+                            });
         }
     }
 
-    public void moveFilesToFileDirRenameAndAddToEntry(BibEntry entry, List<Path> files, LuceneManager luceneManager) {
+    public void moveFilesToFileDirRenameAndAddToEntry(
+            BibEntry entry, List<Path> files, LuceneManager luceneManager) {
         try (AutoCloseable blocker = luceneManager.blockLinkedFileIndexer()) {
             addFilesToEntry(entry, files);
             moveLinkedFilesToFileDir(entry);
@@ -90,11 +102,15 @@ public class ExternalFilesEntryLinker {
         luceneManager.updateAfterDropFiles(entry);
     }
 
-    public void copyFilesToFileDirAndAddToEntry(BibEntry entry, List<Path> files, LuceneManager luceneManager) {
+    public void copyFilesToFileDirAndAddToEntry(
+            BibEntry entry, List<Path> files, LuceneManager luceneManager) {
         try (AutoCloseable blocker = luceneManager.blockLinkedFileIndexer()) {
             for (Path file : files) {
                 copyFileToFileDir(file)
-                        .ifPresent(copiedFile -> addFilesToEntry(entry, Collections.singletonList(copiedFile)));
+                        .ifPresent(
+                                copiedFile ->
+                                        addFilesToEntry(
+                                                entry, Collections.singletonList(copiedFile)));
             }
             renameLinkedFilesToPattern(entry);
         } catch (Exception e) {
@@ -108,11 +124,17 @@ public class ExternalFilesEntryLinker {
 
         for (Path fileToAdd : filesToAdd) {
             if (FileUtil.detectBadFileName(fileToAdd.toString())) {
-                String newFilename = FileNameCleaner.cleanFileName(fileToAdd.getFileName().toString());
+                String newFilename =
+                        FileNameCleaner.cleanFileName(fileToAdd.getFileName().toString());
 
-                boolean correctButtonPressed = dialogService.showConfirmationDialogAndWait(Localization.lang("File \"%0\" cannot be added!", fileToAdd.getFileName()),
-                        Localization.lang("Illegal characters in the file name detected.\nFile will be renamed to \"%0\" and added.", newFilename),
-                        Localization.lang("Rename and add"));
+                boolean correctButtonPressed =
+                        dialogService.showConfirmationDialogAndWait(
+                                Localization.lang(
+                                        "File \"%0\" cannot be added!", fileToAdd.getFileName()),
+                                Localization.lang(
+                                        "Illegal characters in the file name detected.\nFile will be renamed to \"%0\" and added.",
+                                        newFilename),
+                                Localization.lang("Rename and add"));
 
                 if (correctButtonPressed) {
                     Path correctPath = fileToAdd.resolveSibling(newFilename);

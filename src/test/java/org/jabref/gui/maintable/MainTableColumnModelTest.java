@@ -1,13 +1,13 @@
 package org.jabref.gui.maintable;
 
-import org.jabref.logic.preferences.CliPreferences;
-
-import com.airhacks.afterburner.injection.Injector;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
+
+import com.airhacks.afterburner.injection.Injector;
+
+import org.jabref.logic.preferences.CliPreferences;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 class MainTableColumnModelTest {
 
@@ -16,7 +16,8 @@ class MainTableColumnModelTest {
     private static String testQualifier = "author";
 
     private static String testTypeOnlyName = "linked_id";
-    private static MainTableColumnModel.Type testTypeOnlyType = MainTableColumnModel.Type.LINKED_IDENTIFIER;
+    private static MainTableColumnModel.Type testTypeOnlyType =
+            MainTableColumnModel.Type.LINKED_IDENTIFIER;
 
     @BeforeAll
     static void setup() {

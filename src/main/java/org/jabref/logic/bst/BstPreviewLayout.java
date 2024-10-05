@@ -1,10 +1,5 @@
 package org.jabref.logic.bst;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
 import org.jabref.logic.cleanup.ConvertToBibtexCleanup;
 import org.jabref.logic.formatter.bibtexfields.RemoveNewlinesFormatter;
 import org.jabref.logic.l10n.Localization;
@@ -15,9 +10,13 @@ import org.jabref.logic.preview.PreviewLayout;
 import org.jabref.logic.util.StandardFileType;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 public final class BstPreviewLayout implements PreviewLayout {
 
@@ -62,10 +61,12 @@ public final class BstPreviewLayout implements PreviewLayout {
         // Remove all comments
         result = result.replaceAll("%.*", "");
         // Remove all LaTeX comments
-        // The RemoveLatexCommandsFormatter keeps the words inside latex environments. Therefore, we remove them manually
+        // The RemoveLatexCommandsFormatter keeps the words inside latex environments. Therefore, we
+        // remove them manually
         result = result.replace("\\begin{thebibliography}{1}", "");
         result = result.replace("\\end{thebibliography}", "");
-        // The RemoveLatexCommandsFormatter keeps the word inside the latex command, but we want to remove that completely
+        // The RemoveLatexCommandsFormatter keeps the word inside the latex command, but we want to
+        // remove that completely
         result = result.replaceAll("\\\\bibitem[{].*[}]", "");
         // We want to replace \newblock by a space instead of completely removing it
         result = result.replace("\\newblock", " ");

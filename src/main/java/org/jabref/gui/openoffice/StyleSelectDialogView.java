@@ -1,8 +1,9 @@
 package org.jabref.gui.openoffice;
 
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.IntStream;
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import jakarta.inject.Inject;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -19,6 +20,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 
+import org.controlsfx.control.textfield.CustomTextField;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.preferences.GuiPreferences;
@@ -42,10 +44,9 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.types.StandardEntryType;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import jakarta.inject.Inject;
-import org.controlsfx.control.textfield.CustomTextField;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.IntStream;
 
 public class StyleSelectDialogView extends BaseDialog<OOStyle> {
 
@@ -80,23 +81,24 @@ public class StyleSelectDialogView extends BaseDialog<OOStyle> {
     public StyleSelectDialogView(StyleLoader loader) {
         this.loader = loader;
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
-        setResultConverter(button -> {
-            if (button == ButtonType.OK) {
-                viewModel.storePrefs();
-                return viewModel.getSelectedStyle();
-            }
-            return null;
-        });
+        setResultConverter(
+                button -> {
+                    if (button == ButtonType.OK) {
+                        viewModel.storePrefs();
+                        return viewModel.getSelectedStyle();
+                    }
+                    return null;
+                });
         setTitle(Localization.lang("Style selection"));
     }
 
     @FXML
     private void initialize() {
-        viewModel = new StyleSelectDialogViewModel(dialogService, loader, preferences, taskExecutor, bibEntryTypesManager);
+        viewModel =
+                new StyleSelectDialogViewModel(
+                        dialogService, loader, preferences, taskExecutor, bibEntryTypesManager);
 
         availableListView.setItems(viewModel.getAvailableLayouts());
         new ViewModelListCellFactory<CitationStylePreviewLayout>()
@@ -105,14 +107,22 @@ public class StyleSelectDialogView extends BaseDialog<OOStyle> {
 
         this.setOnShown(this::onDialogShown);
 
-        availableListView.getItems().addListener((ListChangeListener<CitationStylePreviewLayout>) c -> {
-            if (c.next() && c.wasAdded() && !initialScrollPerformed.get()) {
-                Platform.runLater(this::scrollToCurrentStyle);
-            }
-        });
+        availableListView
+                .getItems()
+                .addListener(
+                        (ListChangeListener<CitationStylePreviewLayout>)
+                                c -> {
+                                    if (c.next() && c.wasAdded() && !initialScrollPerformed.get()) {
+                                        Platform.runLater(this::scrollToCurrentStyle);
+                                    }
+                                });
 
-        availableListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
-                viewModel.selectedLayoutProperty().set(newValue));
+        availableListView
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable, oldValue, newValue) ->
+                                viewModel.selectedLayoutProperty().set(newValue));
 
         PreviewViewer cslPreviewViewer = initializePreviewViewer(TestEntry.getTestEntry());
         EasyBind.subscribe(viewModel.selectedLayoutProperty(), cslPreviewViewer::setLayout);
@@ -130,12 +140,13 @@ public class StyleSelectDialogView extends BaseDialog<OOStyle> {
         colDeleteIcon.setCellValueFactory(cellData -> cellData.getValue().internalStyleProperty());
 
         new ValueTableCellFactory<StyleSelectItemViewModel, Boolean>()
-                .withGraphic(internalStyle -> {
-                    if (!internalStyle) {
-                        return IconTheme.JabRefIcons.DELETE_ENTRY.getGraphicNode();
-                    }
-                    return null;
-                })
+                .withGraphic(
+                        internalStyle -> {
+                            if (!internalStyle) {
+                                return IconTheme.JabRefIcons.DELETE_ENTRY.getGraphicNode();
+                            }
+                            return null;
+                        })
                 .withOnMouseClickedEvent(item -> evt -> viewModel.deleteStyle())
                 .withTooltip(item -> Localization.lang("Remove style"))
                 .install(colDeleteIcon);
@@ -143,50 +154,71 @@ public class StyleSelectDialogView extends BaseDialog<OOStyle> {
         edit.setOnAction(e -> viewModel.editStyle());
 
         new ViewModelTableRowFactory<StyleSelectItemViewModel>()
-                .withOnMouseClickedEvent((item, event) -> {
-                    if (event.getClickCount() == 2) {
-                        viewModel.viewStyle(item);
-                    }
-                })
+                .withOnMouseClickedEvent(
+                        (item, event) -> {
+                            if (event.getClickCount() == 2) {
+                                viewModel.viewStyle(item);
+                            }
+                        })
                 .withContextMenu(item -> createContextMenu())
                 .install(tvStyles);
 
-        tvStyles.getSelectionModel().selectedItemProperty().addListener((observable, oldvalue, newvalue) -> {
-            if (newvalue == null) {
-                viewModel.selectedItemProperty().setValue(oldvalue);
-            } else {
-                viewModel.selectedItemProperty().setValue(newvalue);
-            }
-        });
+        tvStyles.getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable, oldvalue, newvalue) -> {
+                            if (newvalue == null) {
+                                viewModel.selectedItemProperty().setValue(oldvalue);
+                            } else {
+                                viewModel.selectedItemProperty().setValue(newvalue);
+                            }
+                        });
 
         tvStyles.setItems(viewModel.stylesProperty());
 
         add.setGraphic(IconTheme.JabRefIcons.ADD.getGraphicNode());
 
-        EasyBind.subscribe(viewModel.selectedItemProperty(), style -> {
-            if (viewModel.getSelectedStyle() instanceof JStyle) {
-                tvStyles.getSelectionModel().select(style);
-                previewArticle.setLayout(new TextBasedPreviewLayout(style.getJStyle().getReferenceFormat(StandardEntryType.Article)));
-                previewBook.setLayout(new TextBasedPreviewLayout(style.getJStyle().getReferenceFormat(StandardEntryType.Book)));
-            }
-        });
+        EasyBind.subscribe(
+                viewModel.selectedItemProperty(),
+                style -> {
+                    if (viewModel.getSelectedStyle() instanceof JStyle) {
+                        tvStyles.getSelectionModel().select(style);
+                        previewArticle.setLayout(
+                                new TextBasedPreviewLayout(
+                                        style.getJStyle()
+                                                .getReferenceFormat(StandardEntryType.Article)));
+                        previewBook.setLayout(
+                                new TextBasedPreviewLayout(
+                                        style.getJStyle()
+                                                .getReferenceFormat(StandardEntryType.Book)));
+                    }
+                });
 
         availableListView.setItems(viewModel.getAvailableLayouts());
-        searchBox.textProperty().addListener((observable, oldValue, newValue) ->
-                viewModel.setAvailableLayoutsFilter(newValue));
+        searchBox
+                .textProperty()
+                .addListener(
+                        (observable, oldValue, newValue) ->
+                                viewModel.setAvailableLayoutsFilter(newValue));
 
         viewModel.setSelectedTab(tabPane.getSelectionModel().getSelectedItem());
-        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            viewModel.setSelectedTab(newValue);
-        });
+        tabPane.getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            viewModel.setSelectedTab(newValue);
+                        });
 
-        availableListView.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                viewModel.handleCslStyleSelection(); // Only CSL styles can be selected with a double click, JStyles show a style description instead
-                this.setResult(viewModel.getSelectedStyle());
-                this.close();
-            }
-        });
+        availableListView.setOnMouseClicked(
+                event -> {
+                    if (event.getClickCount() == 2) {
+                        viewModel.handleCslStyleSelection(); // Only CSL styles can be selected with
+                        // a double click, JStyles show a style
+                        // description instead
+                        this.setResult(viewModel.getSelectedStyle());
+                        this.close();
+                    }
+                });
 
         OOStyle currentStyle = preferences.getOpenOfficePreferences().getCurrentStyle();
         if (currentStyle instanceof JStyle) {
@@ -196,9 +228,12 @@ public class StyleSelectDialogView extends BaseDialog<OOStyle> {
         }
 
         viewModel.setSelectedTab(tabPane.getSelectionModel().getSelectedItem());
-        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            viewModel.setSelectedTab(newValue);
-        });
+        tabPane.getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+                            viewModel.setSelectedTab(newValue);
+                        });
 
         updateCurrentStyleLabel();
     }
@@ -215,7 +250,13 @@ public class StyleSelectDialogView extends BaseDialog<OOStyle> {
     }
 
     private PreviewViewer initializePreviewViewer(BibEntry entry) {
-        PreviewViewer viewer = new PreviewViewer(new BibDatabaseContext(), dialogService, preferences, themeManager, taskExecutor);
+        PreviewViewer viewer =
+                new PreviewViewer(
+                        new BibDatabaseContext(),
+                        dialogService,
+                        preferences,
+                        themeManager,
+                        taskExecutor);
         viewer.setEntry(entry);
         return viewer;
     }
@@ -242,19 +283,23 @@ public class StyleSelectDialogView extends BaseDialog<OOStyle> {
 
         OOStyle currentStyle = preferences.getOpenOfficePreferences().getCurrentStyle();
         if (currentStyle instanceof CitationStyle currentCitationStyle) {
-            findIndexOfCurrentStyle(currentCitationStyle).ifPresent(index -> {
-                int itemsPerPage = calculateItemsPerPage();
-                int totalItems = availableListView.getItems().size();
-                int scrollToIndex = Math.max(0, Math.min(index, totalItems - itemsPerPage));
+            findIndexOfCurrentStyle(currentCitationStyle)
+                    .ifPresent(
+                            index -> {
+                                int itemsPerPage = calculateItemsPerPage();
+                                int totalItems = availableListView.getItems().size();
+                                int scrollToIndex =
+                                        Math.max(0, Math.min(index, totalItems - itemsPerPage));
 
-                availableListView.scrollTo(scrollToIndex);
-                availableListView.getSelectionModel().select(index);
+                                availableListView.scrollTo(scrollToIndex);
+                                availableListView.getSelectionModel().select(index);
 
-                Platform.runLater(() -> {
-                    availableListView.scrollTo(Math.max(0, index - 1));
-                    availableListView.scrollTo(index);
-                });
-            });
+                                Platform.runLater(
+                                        () -> {
+                                            availableListView.scrollTo(Math.max(0, index - 1));
+                                            availableListView.scrollTo(index);
+                                        });
+                            });
         }
     }
 
@@ -265,8 +310,14 @@ public class StyleSelectDialogView extends BaseDialog<OOStyle> {
 
     private Optional<Integer> findIndexOfCurrentStyle(CitationStyle currentStyle) {
         return IntStream.range(0, availableListView.getItems().size())
-                        .boxed()
-                        .filter(i -> availableListView.getItems().get(i).getFilePath().equals(currentStyle.getFilePath()))
-                        .findFirst();
+                .boxed()
+                .filter(
+                        i ->
+                                availableListView
+                                        .getItems()
+                                        .get(i)
+                                        .getFilePath()
+                                        .equals(currentStyle.getFilePath()))
+                .findFirst();
     }
 }

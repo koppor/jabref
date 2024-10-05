@@ -1,12 +1,5 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.regex.Pattern;
-
 import org.jabref.logic.importer.Importer;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.l10n.Localization;
@@ -17,6 +10,13 @@ import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.entry.types.StandardEntryType;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Importer for COPAC format.
@@ -135,11 +135,24 @@ public class CopacImporter extends Importer {
                     case "NT- " ->
                             setOrAppend(b, StandardField.NOTE, line.substring(4).trim(), ", ");
                     case "PD- " ->
-                            setOrAppend(b, new UnknownField("physicaldimensions"), line.substring(4).trim(), ", ");
+                            setOrAppend(
+                                    b,
+                                    new UnknownField("physicaldimensions"),
+                                    line.substring(4).trim(),
+                                    ", ");
                     case "DT- " ->
-                            setOrAppend(b, new UnknownField("documenttype"), line.substring(4).trim(), ", ");
+                            setOrAppend(
+                                    b,
+                                    new UnknownField("documenttype"),
+                                    line.substring(4).trim(),
+                                    ", ");
                     default ->
-                            setOrAppend(b, FieldFactory.parseField(StandardEntryType.Book, line.substring(0, 2)), line.substring(4).trim(), ", ");
+                            setOrAppend(
+                                    b,
+                                    FieldFactory.parseField(
+                                            StandardEntryType.Book, line.substring(0, 2)),
+                                    line.substring(4).trim(),
+                                    ", ");
                 }
             }
             results.add(b);

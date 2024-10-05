@@ -1,5 +1,8 @@
 package org.jabref.gui.preferences.citationkeypattern;
 
+import com.airhacks.afterburner.injection.Injector;
+import com.airhacks.afterburner.views.ViewLoader;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -16,10 +19,8 @@ import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntryTypesManager;
 
-import com.airhacks.afterburner.injection.Injector;
-import com.airhacks.afterburner.views.ViewLoader;
-
-public class CitationKeyPatternTab extends AbstractPreferenceTabView<CitationKeyPatternTabViewModel> implements PreferencesTab {
+public class CitationKeyPatternTab extends AbstractPreferenceTabView<CitationKeyPatternTabViewModel>
+        implements PreferencesTab {
 
     @FXML private CheckBox overwriteAllow;
     @FXML private CheckBox overwriteWarning;
@@ -34,9 +35,7 @@ public class CitationKeyPatternTab extends AbstractPreferenceTabView<CitationKey
     @FXML private CitationKeyPatternsPanel bibtexKeyPatternTable;
 
     public CitationKeyPatternTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -45,7 +44,8 @@ public class CitationKeyPatternTab extends AbstractPreferenceTabView<CitationKey
     }
 
     public void initialize() {
-        this.viewModel = new CitationKeyPatternTabViewModel(preferences.getCitationKeyPatternPreferences());
+        this.viewModel =
+                new CitationKeyPatternTabViewModel(preferences.getCitationKeyPatternPreferences());
 
         overwriteAllow.selectedProperty().bindBidirectional(viewModel.overwriteAllowProperty());
         overwriteWarning.selectedProperty().bindBidirectional(viewModel.overwriteWarningProperty());
@@ -54,22 +54,36 @@ public class CitationKeyPatternTab extends AbstractPreferenceTabView<CitationKey
         letterStartB.selectedProperty().bindBidirectional(viewModel.letterStartBProperty());
         letterAlwaysAdd.selectedProperty().bindBidirectional(viewModel.letterAlwaysAddProperty());
         keyPatternRegex.textProperty().bindBidirectional(viewModel.keyPatternRegexProperty());
-        keyPatternReplacement.textProperty().bindBidirectional(viewModel.keyPatternReplacementProperty());
+        keyPatternReplacement
+                .textProperty()
+                .bindBidirectional(viewModel.keyPatternReplacementProperty());
         unwantedCharacters.textProperty().bindBidirectional(viewModel.unwantedCharactersProperty());
 
-        bibtexKeyPatternTable.patternListProperty().bindBidirectional(viewModel.patternListProperty());
-        bibtexKeyPatternTable.defaultKeyPatternProperty().bindBidirectional(viewModel.defaultKeyPatternProperty());
+        bibtexKeyPatternTable
+                .patternListProperty()
+                .bindBidirectional(viewModel.patternListProperty());
+        bibtexKeyPatternTable
+                .defaultKeyPatternProperty()
+                .bindBidirectional(viewModel.defaultKeyPatternProperty());
 
         ActionFactory actionFactory = new ActionFactory();
-        actionFactory.configureIconButton(StandardActions.HELP_KEY_PATTERNS, new HelpAction(HelpFile.CITATION_KEY_PATTERN, dialogService, preferences.getExternalApplicationsPreferences()), keyPatternHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP_KEY_PATTERNS,
+                new HelpAction(
+                        HelpFile.CITATION_KEY_PATTERN,
+                        dialogService,
+                        preferences.getExternalApplicationsPreferences()),
+                keyPatternHelp);
     }
 
     @Override
     public void setValues() {
         viewModel.setValues();
-        BibEntryTypesManager entryTypesManager = Injector.instantiateModelOrService(BibEntryTypesManager.class);
+        BibEntryTypesManager entryTypesManager =
+                Injector.instantiateModelOrService(BibEntryTypesManager.class);
         bibtexKeyPatternTable.setValues(
-                entryTypesManager.getAllTypes(preferences.getLibraryPreferences().getDefaultBibDatabaseMode()),
+                entryTypesManager.getAllTypes(
+                        preferences.getLibraryPreferences().getDefaultBibDatabaseMode()),
                 preferences.getCitationKeyPatternPreferences().getKeyPatterns());
     }
 

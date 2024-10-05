@@ -1,13 +1,5 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import org.jabref.logic.formatter.bibtexfields.HtmlToUnicodeFormatter;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.ImportFormatPreferences;
@@ -17,15 +9,26 @@ import org.jabref.logic.importer.fileformat.BibtexParser;
 import org.jabref.logic.net.URLDownload;
 import org.jabref.model.entry.BibEntry;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 public class CollectionOfComputerScienceBibliographiesParser implements Parser {
 
-    final static Pattern REGEX_FOR_LINKS = Pattern.compile("<item>[\\s\\S]*?<link>([\\s\\S]*?)<\\/link>[\\s\\S]*?<\\/item>");
-    final static Pattern REGEX_FOR_BIBTEX = Pattern.compile("<pre class=\"bibtex\">([\\s\\S]*?)<\\/pre>");
+    static final Pattern REGEX_FOR_LINKS =
+            Pattern.compile("<item>[\\s\\S]*?<link>([\\s\\S]*?)<\\/link>[\\s\\S]*?<\\/item>");
+    static final Pattern REGEX_FOR_BIBTEX =
+            Pattern.compile("<pre class=\"bibtex\">([\\s\\S]*?)<\\/pre>");
 
     final BibtexParser bibtexParser;
     final HtmlToUnicodeFormatter htmlToUnicodeFormatter;
 
-    public CollectionOfComputerScienceBibliographiesParser(ImportFormatPreferences importFormatPreferences) {
+    public CollectionOfComputerScienceBibliographiesParser(
+            ImportFormatPreferences importFormatPreferences) {
         this.bibtexParser = new BibtexParser(importFormatPreferences);
         this.htmlToUnicodeFormatter = new HtmlToUnicodeFormatter();
     }
@@ -34,9 +37,8 @@ public class CollectionOfComputerScienceBibliographiesParser implements Parser {
     public List<BibEntry> parseEntries(InputStream inputStream) throws ParseException {
         try {
             List<String> links = matchRegexFromInputStreamHtml(inputStream, REGEX_FOR_LINKS);
-            String bibtexDataString = parseBibtexStringsFromLinks(links)
-                    .stream()
-                    .collect(Collectors.joining());
+            String bibtexDataString =
+                    parseBibtexStringsFromLinks(links).stream().collect(Collectors.joining());
 
             return bibtexParser.parseEntries(bibtexDataString);
         } catch (IOException | FetcherException e) {
@@ -47,16 +49,18 @@ public class CollectionOfComputerScienceBibliographiesParser implements Parser {
     private List<String> matchRegexFromInputStreamHtml(InputStream inputStream, Pattern pattern) {
         try (Scanner scanner = new Scanner(inputStream)) {
             return scanner.findAll(pattern)
-                          .map(match -> htmlToUnicodeFormatter.format(match.group(1)))
-                          .collect(Collectors.toList());
+                    .map(match -> htmlToUnicodeFormatter.format(match.group(1)))
+                    .collect(Collectors.toList());
         }
     }
 
-    private List<String> parseBibtexStringsFromLinks(List<String> links) throws IOException, FetcherException {
+    private List<String> parseBibtexStringsFromLinks(List<String> links)
+            throws IOException, FetcherException {
         List<String> bibtexStringsFromAllLinks = new ArrayList<>();
         for (String link : links) {
             try (InputStream inputStream = new URLDownload(link).asInputStream()) {
-                List<String> bibtexStringsFromLink = matchRegexFromInputStreamHtml(inputStream, REGEX_FOR_BIBTEX);
+                List<String> bibtexStringsFromLink =
+                        matchRegexFromInputStreamHtml(inputStream, REGEX_FOR_BIBTEX);
                 bibtexStringsFromAllLinks.addAll(bibtexStringsFromLink);
             }
         }
@@ -64,4 +68,3 @@ public class CollectionOfComputerScienceBibliographiesParser implements Parser {
         return bibtexStringsFromAllLinks;
     }
 }
-

@@ -1,15 +1,7 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.SequencedSet;
-import java.util.stream.Stream;
-
-import javax.swing.undo.UndoManager;
+import com.tobiasdiez.easybind.EasyBind;
+import com.tobiasdiez.easybind.Subscription;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.VPos;
@@ -43,8 +35,16 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.search.SearchQuery;
 
-import com.tobiasdiez.easybind.EasyBind;
-import com.tobiasdiez.easybind.Subscription;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.SequencedSet;
+import java.util.stream.Stream;
+
+import javax.swing.undo.UndoManager;
 
 /**
  * A single tab displayed in the EntryEditor holding several FieldEditors.
@@ -67,22 +67,24 @@ abstract class FieldsEditorTab extends EntryEditorTab implements OffersPreview {
     private final LuceneManager luceneManager;
     private final OptionalObjectProperty<SearchQuery> searchQueryProperty;
     private Collection<Field> fields = new ArrayList<>();
+
     @SuppressWarnings("FieldCanBeLocal")
     private Subscription dividerPositionSubscription;
 
-    public FieldsEditorTab(boolean compressed,
-                           BibDatabaseContext databaseContext,
-                           SuggestionProviders suggestionProviders,
-                           UndoManager undoManager,
-                           UndoAction undoAction,
-                           RedoAction redoAction,
-                           DialogService dialogService,
-                           GuiPreferences preferences,
-                           ThemeManager themeManager,
-                           TaskExecutor taskExecutor,
-                           JournalAbbreviationRepository journalAbbreviationRepository,
-                           LuceneManager luceneManager,
-                           OptionalObjectProperty<SearchQuery> searchQueryProperty) {
+    public FieldsEditorTab(
+            boolean compressed,
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            UndoAction undoAction,
+            RedoAction redoAction,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            ThemeManager themeManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository,
+            LuceneManager luceneManager,
+            OptionalObjectProperty<SearchQuery> searchQueryProperty) {
         this.isCompressed = compressed;
         this.databaseContext = Objects.requireNonNull(databaseContext);
         this.suggestionProviders = Objects.requireNonNull(suggestionProviders);
@@ -120,10 +122,8 @@ abstract class FieldsEditorTab extends EntryEditorTab implements OffersPreview {
 
         fields = determineFieldsToShow(entry);
 
-        List<Label> labels = fields
-                .stream()
-                .map(field -> createLabelAndEditor(entry, field))
-                .toList();
+        List<Label> labels =
+                fields.stream().map(field -> createLabelAndEditor(entry, field)).toList();
 
         ColumnConstraints columnExpand = new ColumnConstraints();
         columnExpand.setHgrow(Priority.ALWAYS);
@@ -134,13 +134,20 @@ abstract class FieldsEditorTab extends EntryEditorTab implements OffersPreview {
             int rows = (int) Math.ceil((double) fields.size() / 2);
 
             addColumn(gridPane, 0, labels.subList(0, rows));
-            addColumn(gridPane, 1, editors.values().stream().map(FieldEditorFX::getNode).limit(rows));
+            addColumn(
+                    gridPane, 1, editors.values().stream().map(FieldEditorFX::getNode).limit(rows));
             addColumn(gridPane, 3, labels.subList(rows, labels.size()));
-            addColumn(gridPane, 4, editors.values().stream().map(FieldEditorFX::getNode).skip(rows));
+            addColumn(
+                    gridPane, 4, editors.values().stream().map(FieldEditorFX::getNode).skip(rows));
 
             columnExpand.setPercentWidth(40);
-            gridPane.getColumnConstraints().addAll(columnDoNotContract, columnExpand, new ColumnConstraints(10),
-                    columnDoNotContract, columnExpand);
+            gridPane.getColumnConstraints()
+                    .addAll(
+                            columnDoNotContract,
+                            columnExpand,
+                            new ColumnConstraints(10),
+                            columnDoNotContract,
+                            columnExpand);
 
             setCompressedRowLayout(gridPane, rows);
         } else {
@@ -154,36 +161,39 @@ abstract class FieldsEditorTab extends EntryEditorTab implements OffersPreview {
     }
 
     protected Label createLabelAndEditor(BibEntry entry, Field field) {
-        FieldEditorFX fieldEditor = FieldEditors.getForField(
-                field,
-                taskExecutor,
-                dialogService,
-                journalAbbreviationRepository,
-                preferences,
-                databaseContext,
-                entry.getType(),
-                suggestionProviders,
-                undoManager,
-                undoAction,
-                redoAction);
+        FieldEditorFX fieldEditor =
+                FieldEditors.getForField(
+                        field,
+                        taskExecutor,
+                        dialogService,
+                        journalAbbreviationRepository,
+                        preferences,
+                        databaseContext,
+                        entry.getType(),
+                        suggestionProviders,
+                        undoManager,
+                        undoAction,
+                        redoAction);
         fieldEditor.bindToEntry(entry);
         editors.put(field, fieldEditor);
         return new FieldNameLabel(field);
     }
 
     private void setRegularRowLayout(GridPane gridPane) {
-        double totalWeight = fields.stream()
-                                   .mapToDouble(field -> editors.get(field).getWeight())
-                                   .sum();
-        List<RowConstraints> constraints = fields
-                .stream()
-                .map(field -> {
-                    RowConstraints rowExpand = new RowConstraints();
-                    rowExpand.setVgrow(Priority.ALWAYS);
-                    rowExpand.setValignment(VPos.TOP);
-                    rowExpand.setPercentHeight(100 * editors.get(field).getWeight() / totalWeight);
-                    return rowExpand;
-                }).toList();
+        double totalWeight =
+                fields.stream().mapToDouble(field -> editors.get(field).getWeight()).sum();
+        List<RowConstraints> constraints =
+                fields.stream()
+                        .map(
+                                field -> {
+                                    RowConstraints rowExpand = new RowConstraints();
+                                    rowExpand.setVgrow(Priority.ALWAYS);
+                                    rowExpand.setValignment(VPos.TOP);
+                                    rowExpand.setPercentHeight(
+                                            100 * editors.get(field).getWeight() / totalWeight);
+                                    return rowExpand;
+                                })
+                        .toList();
         gridPane.getRowConstraints().addAll(constraints);
     }
 
@@ -258,36 +268,44 @@ abstract class FieldsEditorTab extends EntryEditorTab implements OffersPreview {
             scrollPane.setFitToHeight(true);
 
             SplitPane container = new SplitPane(scrollPane);
-            previewPanel = new PreviewPanel(
-                    databaseContext,
-                    dialogService,
-                    preferences.getKeyBindingRepository(),
-                    preferences,
-                    themeManager,
-                    taskExecutor,
-                    luceneManager,
-                    searchQueryProperty);
-            EasyBind.subscribe(preferences.getPreviewPreferences().showPreviewAsExtraTabProperty(), show -> {
-                if (show) {
-                    container.getItems().remove(previewPanel);
-                } else {
-                    container.getItems().add(1, previewPanel);
-                    container.setDividerPositions(preferences.getEntryEditorPreferences().getPreviewWidthDividerPosition());
-                }
-            });
+            previewPanel =
+                    new PreviewPanel(
+                            databaseContext,
+                            dialogService,
+                            preferences.getKeyBindingRepository(),
+                            preferences,
+                            themeManager,
+                            taskExecutor,
+                            luceneManager,
+                            searchQueryProperty);
+            EasyBind.subscribe(
+                    preferences.getPreviewPreferences().showPreviewAsExtraTabProperty(),
+                    show -> {
+                        if (show) {
+                            container.getItems().remove(previewPanel);
+                        } else {
+                            container.getItems().add(1, previewPanel);
+                            container.setDividerPositions(
+                                    preferences
+                                            .getEntryEditorPreferences()
+                                            .getPreviewWidthDividerPosition());
+                        }
+                    });
 
             // save position
-            dividerPositionSubscription = EasyBind.valueAt(container.getDividers(), 0)
-                                                  .mapObservable(SplitPane.Divider::positionProperty)
-                                                  .subscribeToValues(this::savePreviewWidthDividerPosition);
+            dividerPositionSubscription =
+                    EasyBind.valueAt(container.getDividers(), 0)
+                            .mapObservable(SplitPane.Divider::positionProperty)
+                            .subscribeToValues(this::savePreviewWidthDividerPosition);
             setContent(container);
         }
     }
 
     private void savePreviewWidthDividerPosition(Number position) {
         if (!preferences.getPreviewPreferences().shouldShowPreviewAsExtraTab()) {
-            preferences.getEntryEditorPreferences().setPreviewWidthDividerPosition(position.doubleValue());
+            preferences
+                    .getEntryEditorPreferences()
+                    .setPreviewWidthDividerPosition(position.doubleValue());
         }
     }
 }
-

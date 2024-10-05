@@ -26,15 +26,16 @@
  */
 package org.jabref.gui.autocompleter;
 
+import com.google.common.base.Equivalence;
+
+import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.google.common.base.Equivalence;
-import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
 
 /**
  * This is a simple implementation of a generic suggestion provider callback.
@@ -47,13 +48,15 @@ public abstract class SuggestionProvider<T> {
         if (!request.getUserText().isEmpty()) {
             Comparator<T> comparator = getComparator();
             Equivalence<T> equivalence = getEquivalence();
-            return getSource().filter(candidate -> isMatch(candidate, request))
-                              .map(equivalence::wrap) // Need to do a bit of acrobatic as there is no distinctBy method
-                              .distinct()
-                              .limit(10)
-                              .map(Equivalence.Wrapper::get)
-                              .sorted(comparator)
-                              .collect(Collectors.toList());
+            return getSource()
+                    .filter(candidate -> isMatch(candidate, request))
+                    .map(equivalence::wrap) // Need to do a bit of acrobatic as there is no
+                    // distinctBy method
+                    .distinct()
+                    .limit(10)
+                    .map(Equivalence.Wrapper::get)
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
@@ -64,11 +67,13 @@ public abstract class SuggestionProvider<T> {
     public List<T> getPossibleSuggestions() {
         Comparator<T> comparator = getComparator().reversed();
         Equivalence<T> equivalence = getEquivalence();
-        return getSource().map(equivalence::wrap) // Need to do a bit of acrobatic as there is no distinctBy method
-                          .distinct()
-                          .map(Equivalence.Wrapper::get)
-                          .sorted(comparator)
-                          .collect(Collectors.toList());
+        return getSource()
+                .map(equivalence::wrap) // Need to do a bit of acrobatic as there is no distinctBy
+                // method
+                .distinct()
+                .map(Equivalence.Wrapper::get)
+                .sorted(comparator)
+                .collect(Collectors.toList());
     }
 
     /**

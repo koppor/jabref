@@ -1,7 +1,7 @@
 package org.jabref.logic.msbib;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.InternalField;
@@ -11,8 +11,8 @@ import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.IEEETranEntryType;
 import org.jabref.model.entry.types.StandardEntryType;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Mapping between Msbib and biblatex All Fields: <a href = "https://msdn.microsoft.com/de-de/library/office/documentformat.openxml.bibliography">List
@@ -28,7 +28,8 @@ public class MSBibMapping {
     private static final Map<EntryType, MSBibEntryType> BIB_ENTRYTYPE_MAPPING = new HashMap<>();
 
     static {
-        // see https://learn.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a
+        // see
+        // https://learn.microsoft.com/en-us/openspecs/office_standards/ms-oe376/6c085406-a698-4e12-9d4d-c3b0ee3dbc4a
         LANG_TO_LCID.put("basque", 1609);
         LANG_TO_LCID.put("bulgarian", 1026);
         LANG_TO_LCID.put("catalan", 1027);
@@ -107,7 +108,8 @@ public class MSBibMapping {
         BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + StandardField.DAY), "Day");
         BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "accessed"), "Accessed");
         BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "medium"), "Medium");
-        BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "recordingnumber"), "RecordingNumber");
+        BIBLATEX_TO_MS_BIB.put(
+                new UnknownField(MSBIB_PREFIX + "recordingnumber"), "RecordingNumber");
         BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "theater"), "Theater");
         BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "distributor"), "Distributor");
         BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "broadcaster"), "Broadcaster");
@@ -116,20 +118,23 @@ public class MSBibMapping {
         BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "court"), "Court");
         BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "reporter"), "Reporter");
         BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "casenumber"), "CaseNumber");
-        BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "abbreviatedcasenumber"), "AbbreviatedCaseNumber");
-        BIBLATEX_TO_MS_BIB.put(new UnknownField(MSBIB_PREFIX + "productioncompany"), "ProductionCompany");
+        BIBLATEX_TO_MS_BIB.put(
+                new UnknownField(MSBIB_PREFIX + "abbreviatedcasenumber"), "AbbreviatedCaseNumber");
+        BIBLATEX_TO_MS_BIB.put(
+                new UnknownField(MSBIB_PREFIX + "productioncompany"), "ProductionCompany");
     }
 
     static {
-        MSBIB_ENTRYTYPE_MAPPING = Map.of(
-                "Book", StandardEntryType.Book,
-                "BookSection", StandardEntryType.Book,
-                "JournalArticle", StandardEntryType.Article,
-                "ArticleInAPeriodical", IEEETranEntryType.Periodical,
-                "ConferenceProceedings", StandardEntryType.InProceedings,
-                "Report", StandardEntryType.TechReport,
-                "Patent", IEEETranEntryType.Patent,
-                "InternetSite", StandardEntryType.Online);
+        MSBIB_ENTRYTYPE_MAPPING =
+                Map.of(
+                        "Book", StandardEntryType.Book,
+                        "BookSection", StandardEntryType.Book,
+                        "JournalArticle", StandardEntryType.Article,
+                        "ArticleInAPeriodical", IEEETranEntryType.Periodical,
+                        "ConferenceProceedings", StandardEntryType.InProceedings,
+                        "Report", StandardEntryType.TechReport,
+                        "Patent", IEEETranEntryType.Patent,
+                        "InternetSite", StandardEntryType.Online);
     }
 
     static {
@@ -139,10 +144,14 @@ public class MSBibMapping {
         BIB_ENTRYTYPE_MAPPING.put(StandardEntryType.Booklet, MSBibEntryType.BookSection);
         BIB_ENTRYTYPE_MAPPING.put(StandardEntryType.InCollection, MSBibEntryType.BookSection);
         BIB_ENTRYTYPE_MAPPING.put(StandardEntryType.Article, MSBibEntryType.JournalArticle);
-        BIB_ENTRYTYPE_MAPPING.put(StandardEntryType.InProceedings, MSBibEntryType.ConferenceProceedings);
-        BIB_ENTRYTYPE_MAPPING.put(StandardEntryType.Conference, MSBibEntryType.ConferenceProceedings);
-        BIB_ENTRYTYPE_MAPPING.put(StandardEntryType.Proceedings, MSBibEntryType.ConferenceProceedings);
-        BIB_ENTRYTYPE_MAPPING.put(StandardEntryType.Collection, MSBibEntryType.ConferenceProceedings);
+        BIB_ENTRYTYPE_MAPPING.put(
+                StandardEntryType.InProceedings, MSBibEntryType.ConferenceProceedings);
+        BIB_ENTRYTYPE_MAPPING.put(
+                StandardEntryType.Conference, MSBibEntryType.ConferenceProceedings);
+        BIB_ENTRYTYPE_MAPPING.put(
+                StandardEntryType.Proceedings, MSBibEntryType.ConferenceProceedings);
+        BIB_ENTRYTYPE_MAPPING.put(
+                StandardEntryType.Collection, MSBibEntryType.ConferenceProceedings);
         BIB_ENTRYTYPE_MAPPING.put(StandardEntryType.TechReport, MSBibEntryType.Report);
         BIB_ENTRYTYPE_MAPPING.put(StandardEntryType.Manual, MSBibEntryType.Report);
         BIB_ENTRYTYPE_MAPPING.put(StandardEntryType.MastersThesis, MSBibEntryType.Report);
@@ -154,8 +163,7 @@ public class MSBibMapping {
         BIB_ENTRYTYPE_MAPPING.put(StandardEntryType.Online, MSBibEntryType.InternetSite);
     }
 
-    private MSBibMapping() {
-    }
+    private MSBibMapping() {}
 
     public static EntryType getBiblatexEntryType(String msbibType) {
         return MSBIB_ENTRYTYPE_MAPPING.getOrDefault(msbibType, StandardEntryType.Misc);

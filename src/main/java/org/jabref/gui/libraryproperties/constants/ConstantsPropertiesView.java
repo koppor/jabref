@@ -1,6 +1,8 @@
 package org.jabref.gui.libraryproperties.constants;
 
-import java.util.Optional;
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,10 +21,10 @@ import org.jabref.gui.util.ViewModelTextFieldTableCellVisualizationFactory;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import java.util.Optional;
 
-public class ConstantsPropertiesView extends AbstractPropertiesTabView<ConstantsPropertiesViewModel> implements PropertiesTab {
+public class ConstantsPropertiesView extends AbstractPropertiesTabView<ConstantsPropertiesViewModel>
+        implements PropertiesTab {
 
     @FXML private TableView<ConstantsItemModel> stringsList;
     @FXML private TableColumn<ConstantsItemModel, String> labelColumn;
@@ -36,9 +38,7 @@ public class ConstantsPropertiesView extends AbstractPropertiesTabView<Constants
     public ConstantsPropertiesView(BibDatabaseContext databaseContext) {
         this.databaseContext = databaseContext;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -47,7 +47,11 @@ public class ConstantsPropertiesView extends AbstractPropertiesTabView<Constants
     }
 
     public void initialize() {
-        this.viewModel = new ConstantsPropertiesViewModel(databaseContext, dialogService, preferences.getExternalApplicationsPreferences());
+        this.viewModel =
+                new ConstantsPropertiesViewModel(
+                        databaseContext,
+                        dialogService,
+                        preferences.getExternalApplicationsPreferences());
 
         addStringButton.setTooltip(new Tooltip(Localization.lang("New string")));
 
@@ -58,31 +62,34 @@ public class ConstantsPropertiesView extends AbstractPropertiesTabView<Constants
         new ViewModelTextFieldTableCellVisualizationFactory<ConstantsItemModel, String>()
                 .withValidation(ConstantsItemModel::labelValidation)
                 .install(labelColumn, new DefaultStringConverter());
-        labelColumn.setOnEditCommit((TableColumn.CellEditEvent<ConstantsItemModel, String> cellEvent) -> {
+        labelColumn.setOnEditCommit(
+                (TableColumn.CellEditEvent<ConstantsItemModel, String> cellEvent) -> {
+                    var tableView = cellEvent.getTableView();
+                    ConstantsItemModel cellItem =
+                            tableView.getItems().get(cellEvent.getTablePosition().getRow());
 
-            var tableView = cellEvent.getTableView();
-            ConstantsItemModel cellItem = tableView.getItems()
-                                                   .get(cellEvent.getTablePosition().getRow());
+                    Optional<ConstantsItemModel> existingItem =
+                            viewModel.labelAlreadyExists(cellEvent.getNewValue());
 
-            Optional<ConstantsItemModel> existingItem = viewModel.labelAlreadyExists(cellEvent.getNewValue());
+                    if (existingItem.isPresent() && !existingItem.get().equals(cellItem)) {
+                        dialogService.showErrorDialogAndWait(
+                                Localization.lang(
+                                        "A string with the label '%0' already exists.",
+                                        cellEvent.getNewValue()));
+                        cellItem.setLabel(cellEvent.getOldValue());
+                    } else {
+                        cellItem.setLabel(cellEvent.getNewValue());
+                    }
 
-            if (existingItem.isPresent() && !existingItem.get().equals(cellItem)) {
-                dialogService.showErrorDialogAndWait(Localization.lang(
-                        "A string with the label '%0' already exists.",
-                        cellEvent.getNewValue()));
-                cellItem.setLabel(cellEvent.getOldValue());
-            } else {
-                cellItem.setLabel(cellEvent.getNewValue());
-            }
-
-            // Resort the entries based on the keys and set the focus to the newly-created entry
-            viewModel.resortStrings();
-            var selectionModel = tableView.getSelectionModel();
-            selectionModel.select(cellItem);
-            selectionModel.focus(selectionModel.getSelectedIndex());
-            tableView.refresh();
-            tableView.scrollTo(cellItem);
-        });
+                    // Resort the entries based on the keys and set the focus to the newly-created
+                    // entry
+                    viewModel.resortStrings();
+                    var selectionModel = tableView.getSelectionModel();
+                    selectionModel.select(cellItem);
+                    selectionModel.focus(selectionModel.getSelectedIndex());
+                    tableView.refresh();
+                    tableView.scrollTo(cellItem);
+                });
 
         contentColumn.setSortable(true);
         contentColumn.setReorderable(false);
@@ -90,8 +97,9 @@ public class ConstantsPropertiesView extends AbstractPropertiesTabView<Constants
         new ViewModelTextFieldTableCellVisualizationFactory<ConstantsItemModel, String>()
                 .withValidation(ConstantsItemModel::contentValidation)
                 .install(contentColumn, new DefaultStringConverter());
-        contentColumn.setOnEditCommit((TableColumn.CellEditEvent<ConstantsItemModel, String> cell) ->
-                cell.getRowValue().setContent(cell.getNewValue()));
+        contentColumn.setOnEditCommit(
+                (TableColumn.CellEditEvent<ConstantsItemModel, String> cell) ->
+                        cell.getRowValue().setContent(cell.getNewValue()));
 
         actionsColumn.setSortable(false);
         actionsColumn.setReorderable(false);
@@ -99,8 +107,11 @@ public class ConstantsPropertiesView extends AbstractPropertiesTabView<Constants
         new ValueTableCellFactory<ConstantsItemModel, String>()
                 .withGraphic(label -> IconTheme.JabRefIcons.DELETE_ENTRY.getGraphicNode())
                 .withTooltip(label -> Localization.lang("Remove string %0", label))
-                .withOnMouseClickedEvent(item -> evt ->
-                        viewModel.removeString(stringsList.getFocusModel().getFocusedItem()))
+                .withOnMouseClickedEvent(
+                        item ->
+                                evt ->
+                                        viewModel.removeString(
+                                                stringsList.getFocusModel().getFocusedItem()))
                 .install(actionsColumn);
 
         stringsList.itemsProperty().bindBidirectional(viewModel.stringsListProperty());

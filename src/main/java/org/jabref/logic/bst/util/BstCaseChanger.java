@@ -1,10 +1,10 @@
 package org.jabref.logic.bst.util;
 
-import java.util.Locale;
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Locale;
+import java.util.Optional;
 
 public final class BstCaseChanger {
 
@@ -17,7 +17,8 @@ public final class BstCaseChanger {
     private int braceLevel;
 
     public enum FormatMode {
-        // First character and character after a ":" as upper case - everything else in lower case. Obey {}.
+        // First character and character after a ":" as upper case - everything else in lower case.
+        // Obey {}.
         TITLE_LOWERS('t'),
 
         // All characters lower case - Obey {}
@@ -26,13 +27,16 @@ public final class BstCaseChanger {
         // all characters upper case - Obey {}
         ALL_UPPERS('u');
 
-        // the following would have to be done if the functionality of CaseChangers would be included here
-        // However, we decided against it and will probably do the other way round: https://github.com/JabRef/jabref/pull/215#issuecomment-146981624
+        // the following would have to be done if the functionality of CaseChangers would be
+        // included here
+        // However, we decided against it and will probably do the other way round:
+        // https://github.com/JabRef/jabref/pull/215#issuecomment-146981624
 
         // Each word should start with a capital letter
         // EACH_FIRST_UPPERS('f'),
 
-        // Converts all words to upper case, but converts articles, prepositions, and conjunctions to lower case
+        // Converts all words to upper case, but converts articles, prepositions, and conjunctions
+        // to lower case
         // Capitalizes first and last word
         // Does not change words starting with "{"
         // DIFFERENCE to old CaseChangers.TITLE: last word is NOT capitalized in all cases
@@ -67,8 +71,7 @@ public final class BstCaseChanger {
         }
     }
 
-    private BstCaseChanger() {
-    }
+    private BstCaseChanger() {}
 
     /**
      * Changes case of the given string s
@@ -97,7 +100,8 @@ public final class BstCaseChanger {
                     i++;
                     continue;
                 }
-                if ((format == FormatMode.TITLE_LOWERS) && ((i == 0) || (prevColon && Character.isWhitespace(c[i - 1])))) {
+                if ((format == FormatMode.TITLE_LOWERS)
+                        && ((i == 0) || (prevColon && Character.isWhitespace(c[i - 1])))) {
                     sb.append('{');
                     i++;
                     prevColon = false;
@@ -177,7 +181,8 @@ public final class BstCaseChanger {
      *
      * @return the new position
      */
-    private int convertAccented(char[] c, int start, String s, StringBuilder sb, FormatMode format) {
+    private int convertAccented(
+            char[] c, int start, String s, StringBuilder sb, FormatMode format) {
         int pos = start;
         pos += s.length();
 
@@ -221,13 +226,13 @@ public final class BstCaseChanger {
                 sb.append(Character.toUpperCase(c[pos]));
                 pos++;
             }
-            default ->
-                    LOGGER.info("convertNonControl - Unknown format: {}", format);
+            default -> LOGGER.info("convertNonControl - Unknown format: {}", format);
         }
         return pos;
     }
 
-    private int convertCharIfBraceLevelIsZero(char[] c, int start, StringBuilder sb, FormatMode format) {
+    private int convertCharIfBraceLevelIsZero(
+            char[] c, int start, StringBuilder sb, FormatMode format) {
         int i = start;
         switch (format) {
             case TITLE_LOWERS -> {
@@ -242,12 +247,9 @@ public final class BstCaseChanger {
                     prevColon = false;
                 }
             }
-            case ALL_LOWERS ->
-                    sb.append(Character.toLowerCase(c[i]));
-            case ALL_UPPERS ->
-                    sb.append(Character.toUpperCase(c[i]));
-            default ->
-                    LOGGER.info("convertCharIfBraceLevelIsZero - Unknown format: {}", format);
+            case ALL_LOWERS -> sb.append(Character.toLowerCase(c[i]));
+            case ALL_UPPERS -> sb.append(Character.toUpperCase(c[i]));
+            default -> LOGGER.info("convertCharIfBraceLevelIsZero - Unknown format: {}", format);
         }
         i++;
         return i;

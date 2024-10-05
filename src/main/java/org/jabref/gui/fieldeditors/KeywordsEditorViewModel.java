@@ -1,10 +1,5 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -17,8 +12,12 @@ import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.model.entry.Keyword;
 import org.jabref.model.entry.KeywordList;
 import org.jabref.model.entry.field.Field;
-
 import org.tinylog.Logger;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.swing.undo.UndoManager;
 
 public class KeywordsEditorViewModel extends AbstractEditorViewModel {
 
@@ -26,11 +25,12 @@ public class KeywordsEditorViewModel extends AbstractEditorViewModel {
     private final Character keywordSeparator;
     private final SuggestionProvider<?> suggestionProvider;
 
-    public KeywordsEditorViewModel(Field field,
-                                   SuggestionProvider<?> suggestionProvider,
-                                   FieldCheckers fieldCheckers,
-                                   CliPreferences preferences,
-                                   UndoManager undoManager) {
+    public KeywordsEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            CliPreferences preferences,
+            UndoManager undoManager) {
 
         super(field, suggestionProvider, fieldCheckers, undoManager);
 
@@ -39,10 +39,7 @@ public class KeywordsEditorViewModel extends AbstractEditorViewModel {
         this.suggestionProvider = suggestionProvider;
 
         BindingsHelper.bindContentBidirectional(
-                keywordListProperty,
-                text,
-                this::serializeKeywords,
-                this::parseKeywords);
+                keywordListProperty, text, this::serializeKeywords, this::parseKeywords);
     }
 
     private String serializeKeywords(List<Keyword> keywords) {
@@ -76,12 +73,13 @@ public class KeywordsEditorViewModel extends AbstractEditorViewModel {
     }
 
     public List<Keyword> getSuggestions(String request) {
-        List<Keyword> suggestions = suggestionProvider.getPossibleSuggestions().stream()
-                                                      .map(String.class::cast)
-                                                      .filter(keyword -> keyword.toLowerCase().contains(request.toLowerCase()))
-                                                      .map(Keyword::new)
-                                                      .distinct()
-                                                      .collect(Collectors.toList());
+        List<Keyword> suggestions =
+                suggestionProvider.getPossibleSuggestions().stream()
+                        .map(String.class::cast)
+                        .filter(keyword -> keyword.toLowerCase().contains(request.toLowerCase()))
+                        .map(Keyword::new)
+                        .distinct()
+                        .collect(Collectors.toList());
 
         Keyword requestedKeyword = new Keyword(request);
         if (!suggestions.contains(requestedKeyword)) {

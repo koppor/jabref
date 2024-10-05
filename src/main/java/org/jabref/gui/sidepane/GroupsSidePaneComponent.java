@@ -1,7 +1,5 @@
 package org.jabref.gui.sidepane;
 
-import java.util.EnumSet;
-
 import javafx.collections.SetChangeListener;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
@@ -15,19 +13,23 @@ import org.jabref.gui.groups.GroupsPreferences;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.logic.l10n.Localization;
 
+import java.util.EnumSet;
+
 public class GroupsSidePaneComponent extends SidePaneComponent {
     private final GroupsPreferences groupsPreferences;
     private final DialogService dialogService;
-    private final Button intersectionUnionToggle = IconTheme.JabRefIcons.GROUP_INTERSECTION.asButton();
+    private final Button intersectionUnionToggle =
+            IconTheme.JabRefIcons.GROUP_INTERSECTION.asButton();
     private final ToggleButton filterToggle = IconTheme.JabRefIcons.FILTER.asToggleButton();
     private final ToggleButton invertToggle = IconTheme.JabRefIcons.INVERT.asToggleButton();
 
-    public GroupsSidePaneComponent(SimpleCommand closeCommand,
-                                   SimpleCommand moveUpCommand,
-                                   SimpleCommand moveDownCommand,
-                                   SidePaneContentFactory contentFactory,
-                                   GroupsPreferences groupsPreferences,
-                                   DialogService dialogService) {
+    public GroupsSidePaneComponent(
+            SimpleCommand closeCommand,
+            SimpleCommand moveUpCommand,
+            SimpleCommand moveDownCommand,
+            SidePaneContentFactory contentFactory,
+            GroupsPreferences groupsPreferences,
+            DialogService dialogService) {
         super(SidePaneType.GROUPS, closeCommand, moveUpCommand, moveDownCommand, contentFactory);
         this.groupsPreferences = groupsPreferences;
         this.dialogService = dialogService;
@@ -36,11 +38,19 @@ public class GroupsSidePaneComponent extends SidePaneComponent {
         setupFilterToggle();
         setupIntersectionUnionToggle();
 
-        groupsPreferences.groupViewModeProperty().addListener((SetChangeListener<GroupViewMode>) change -> {
-            GroupModeViewModel modeViewModel = new GroupModeViewModel(groupsPreferences.groupViewModeProperty());
-            intersectionUnionToggle.setGraphic(modeViewModel.getUnionIntersectionGraphic());
-            intersectionUnionToggle.setTooltip(modeViewModel.getUnionIntersectionTooltip());
-        });
+        groupsPreferences
+                .groupViewModeProperty()
+                .addListener(
+                        (SetChangeListener<GroupViewMode>)
+                                change -> {
+                                    GroupModeViewModel modeViewModel =
+                                            new GroupModeViewModel(
+                                                    groupsPreferences.groupViewModeProperty());
+                                    intersectionUnionToggle.setGraphic(
+                                            modeViewModel.getUnionIntersectionGraphic());
+                                    intersectionUnionToggle.setTooltip(
+                                            modeViewModel.getUnionIntersectionTooltip());
+                                });
     }
 
     private void setupIntersectionUnionToggle() {
@@ -51,15 +61,25 @@ public class GroupsSidePaneComponent extends SidePaneComponent {
     private void setupFilterToggle() {
         addExtraNodeToHeader(filterToggle, 0);
         filterToggle.setTooltip(new Tooltip(Localization.lang("Filter by groups")));
-        filterToggle.setSelected(groupsPreferences.groupViewModeProperty().contains(GroupViewMode.FILTER));
-        filterToggle.selectedProperty().addListener((observable, oldValue, newValue) -> groupsPreferences.setGroupViewMode(GroupViewMode.FILTER, newValue));
+        filterToggle.setSelected(
+                groupsPreferences.groupViewModeProperty().contains(GroupViewMode.FILTER));
+        filterToggle
+                .selectedProperty()
+                .addListener(
+                        (observable, oldValue, newValue) ->
+                                groupsPreferences.setGroupViewMode(GroupViewMode.FILTER, newValue));
     }
 
     private void setupInvertToggle() {
         addExtraNodeToHeader(invertToggle, 0);
         invertToggle.setTooltip(new Tooltip(Localization.lang("Invert groups")));
-        invertToggle.setSelected(groupsPreferences.groupViewModeProperty().contains(GroupViewMode.INVERT));
-        invertToggle.selectedProperty().addListener((observable, oldValue, newValue) -> groupsPreferences.setGroupViewMode(GroupViewMode.INVERT, newValue));
+        invertToggle.setSelected(
+                groupsPreferences.groupViewModeProperty().contains(GroupViewMode.INVERT));
+        invertToggle
+                .selectedProperty()
+                .addListener(
+                        (observable, oldValue, newValue) ->
+                                groupsPreferences.setGroupViewMode(GroupViewMode.INVERT, newValue));
     }
 
     private class ToggleUnionIntersectionAction extends SimpleCommand {

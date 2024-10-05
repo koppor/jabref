@@ -1,5 +1,29 @@
 package org.jabref.logic.ai.ingestion;
 
+import static org.jabref.logic.ai.ingestion.FileEmbeddingsManager.LINK_METADATA_KEY;
+
+import static java.util.Comparator.comparingDouble;
+
+import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.store.embedding.CosineSimilarity;
+import dev.langchain4j.store.embedding.EmbeddingMatch;
+import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
+import dev.langchain4j.store.embedding.EmbeddingSearchResult;
+import dev.langchain4j.store.embedding.EmbeddingStore;
+import dev.langchain4j.store.embedding.RelevanceScore;
+import dev.langchain4j.store.embedding.filter.Filter;
+import dev.langchain4j.store.embedding.filter.comparison.IsEqualTo;
+import dev.langchain4j.store.embedding.filter.comparison.IsIn;
+
+import jakarta.annotation.Nullable;
+
+import org.h2.mvstore.MVStore;
+import org.jabref.logic.ai.util.MVStoreBase;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.util.NotificationService;
+
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,28 +38,6 @@ import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import org.jabref.logic.ai.util.MVStoreBase;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.util.NotificationService;
-
-import dev.langchain4j.data.document.Metadata;
-import dev.langchain4j.data.embedding.Embedding;
-import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.store.embedding.CosineSimilarity;
-import dev.langchain4j.store.embedding.EmbeddingMatch;
-import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
-import dev.langchain4j.store.embedding.EmbeddingSearchResult;
-import dev.langchain4j.store.embedding.EmbeddingStore;
-import dev.langchain4j.store.embedding.RelevanceScore;
-import dev.langchain4j.store.embedding.filter.Filter;
-import dev.langchain4j.store.embedding.filter.comparison.IsEqualTo;
-import dev.langchain4j.store.embedding.filter.comparison.IsIn;
-import jakarta.annotation.Nullable;
-import org.h2.mvstore.MVStore;
-
-import static java.util.Comparator.comparingDouble;
-import static org.jabref.logic.ai.ingestion.FileEmbeddingsManager.LINK_METADATA_KEY;
-
 /**
  * A custom implementation of langchain4j's {@link EmbeddingStore} that uses a {@link MVStore} as an embedded database.
  * <p>
@@ -45,7 +47,8 @@ import static org.jabref.logic.ai.ingestion.FileEmbeddingsManager.LINK_METADATA_
  */
 public class MVStoreEmbeddingStore extends MVStoreBase implements EmbeddingStore<TextSegment> {
     // `file` field is nullable, because {@link Optional} can't be serialized.
-    private record EmbeddingRecord(@Nullable String file, String content, float[] embeddingVector) implements Serializable { }
+    private record EmbeddingRecord(@Nullable String file, String content, float[] embeddingVector)
+            implements Serializable {}
 
     private static final String EMBEDDINGS_MAP_NAME = "embeddings";
 
@@ -74,7 +77,8 @@ public class MVStoreEmbeddingStore extends MVStoreBase implements EmbeddingStore
 
     @Override
     public void add(String id, Embedding embedding) {
-        // It does not make much sense to store single embedding vector, but this is a requirement from langchain4j's
+        // It does not make much sense to store single embedding vector, but this is a requirement
+        // from langchain4j's
         // {@link EmbeddingStore}.
         embeddingsMap.put(id, new EmbeddingRecord(null, "", embedding.vector()));
     }
@@ -83,13 +87,16 @@ public class MVStoreEmbeddingStore extends MVStoreBase implements EmbeddingStore
     public String add(Embedding embedding, TextSegment textSegment) {
         String id = String.valueOf(UUID.randomUUID());
         String linkedFile = textSegment.metadata().getString(LINK_METADATA_KEY);
-        embeddingsMap.put(id, new EmbeddingRecord(linkedFile, textSegment.text(), embedding.vector()));
+        embeddingsMap.put(
+                id, new EmbeddingRecord(linkedFile, textSegment.text(), embedding.vector()));
         return id;
     }
 
     @Override
     public List<String> addAll(List<Embedding> embeddings, List<TextSegment> embedded) {
-        return IntStream.range(0, embeddings.size()).mapToObj(i -> add(embeddings.get(i), embedded.get(i))).toList();
+        return IntStream.range(0, embeddings.size())
+                .mapToObj(i -> add(embeddings.get(i), embedded.get(i)))
+                .toList();
     }
 
     @Override
@@ -125,28 +132,37 @@ public class MVStoreEmbeddingStore extends MVStoreBase implements EmbeddingStore
         Comparator<EmbeddingMatch<TextSegment>> comparator = comparingDouble(EmbeddingMatch::score);
         PriorityQueue<EmbeddingMatch<TextSegment>> matches = new PriorityQueue<>(comparator);
 
-        applyFilter(request.filter()).forEach(id -> {
-            EmbeddingRecord eRecord = embeddingsMap.get(id);
+        applyFilter(request.filter())
+                .forEach(
+                        id -> {
+                            EmbeddingRecord eRecord = embeddingsMap.get(id);
 
-            double cosineSimilarity = CosineSimilarity.between(Embedding.from(eRecord.embeddingVector), request.queryEmbedding());
-            double score = RelevanceScore.fromCosineSimilarity(cosineSimilarity);
+                            double cosineSimilarity =
+                                    CosineSimilarity.between(
+                                            Embedding.from(eRecord.embeddingVector),
+                                            request.queryEmbedding());
+                            double score = RelevanceScore.fromCosineSimilarity(cosineSimilarity);
 
-            if (score >= request.minScore()) {
-                matches.add(
-                        new EmbeddingMatch<>(
-                                score,
-                                id,
-                                Embedding.from(eRecord.embeddingVector),
-                                new TextSegment(
-                                        eRecord.content,
-                                        new Metadata(
-                                                eRecord.file == null ? Map.of() : Map.of(LINK_METADATA_KEY, eRecord.file)))));
+                            if (score >= request.minScore()) {
+                                matches.add(
+                                        new EmbeddingMatch<>(
+                                                score,
+                                                id,
+                                                Embedding.from(eRecord.embeddingVector),
+                                                new TextSegment(
+                                                        eRecord.content,
+                                                        new Metadata(
+                                                                eRecord.file == null
+                                                                        ? Map.of()
+                                                                        : Map.of(
+                                                                                LINK_METADATA_KEY,
+                                                                                eRecord.file)))));
 
-                if (matches.size() > request.maxResults()) {
-                    matches.poll();
-                }
-            }
-        });
+                                if (matches.size() > request.maxResults()) {
+                                    matches.poll();
+                                }
+                            }
+                        });
 
         List<EmbeddingMatch<TextSegment>> result = new ArrayList<>(matches);
         result.sort(comparator.reversed());
@@ -164,12 +180,20 @@ public class MVStoreEmbeddingStore extends MVStoreBase implements EmbeddingStore
             case null -> embeddingsMap.keySet().stream();
 
             case IsIn isInFilter when Objects.equals(isInFilter.key(), LINK_METADATA_KEY) ->
-                    filterEntries(entry -> isInFilter.comparisonValues().contains(entry.getValue().file));
+                    filterEntries(
+                            entry -> isInFilter.comparisonValues().contains(entry.getValue().file));
 
-            case IsEqualTo isEqualToFilter when Objects.equals(isEqualToFilter.key(), LINK_METADATA_KEY) ->
-                    filterEntries(entry -> isEqualToFilter.comparisonValue().equals(entry.getValue().file));
+            case IsEqualTo isEqualToFilter when Objects.equals(
+                            isEqualToFilter.key(), LINK_METADATA_KEY) ->
+                    filterEntries(
+                            entry ->
+                                    isEqualToFilter
+                                            .comparisonValue()
+                                            .equals(entry.getValue().file));
 
-            default -> throw new IllegalArgumentException("Wrong filter passed to MVStoreEmbeddingStore");
+            default ->
+                    throw new IllegalArgumentException(
+                            "Wrong filter passed to MVStoreEmbeddingStore");
         };
     }
 
@@ -184,6 +208,7 @@ public class MVStoreEmbeddingStore extends MVStoreBase implements EmbeddingStore
 
     @Override
     protected String errorMessageForOpeningLocalized() {
-        return Localization.lang("An error occurred while opening the embeddings cache file. Embeddings will not be stored in the next session.");
+        return Localization.lang(
+                "An error occurred while opening the embeddings cache file. Embeddings will not be stored in the next session.");
     }
 }

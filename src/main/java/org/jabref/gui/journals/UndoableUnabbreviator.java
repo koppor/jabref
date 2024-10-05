@@ -1,7 +1,5 @@
 package org.jabref.gui.journals;
 
-import javax.swing.undo.CompoundEdit;
-
 import org.jabref.gui.undo.UndoableFieldChange;
 import org.jabref.logic.journals.Abbreviation;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
@@ -10,6 +8,8 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.AMSField;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
+
+import javax.swing.undo.CompoundEdit;
 
 public class UndoableUnabbreviator {
 
@@ -27,7 +27,8 @@ public class UndoableUnabbreviator {
      * @param ce    If the entry is changed, add an edit to this compound.
      * @return true if the entry was changed, false otherwise.
      */
-    public boolean unabbreviate(BibDatabase database, BibEntry entry, Field field, CompoundEdit ce) {
+    public boolean unabbreviate(
+            BibDatabase database, BibEntry entry, Field field, CompoundEdit ce) {
         if (!entry.hasField(field)) {
             return false;
         }
@@ -58,7 +59,8 @@ public class UndoableUnabbreviator {
     }
 
     public boolean restoreFromFJournal(BibEntry entry, Field field, CompoundEdit ce) {
-        if ((StandardField.JOURNAL != field && StandardField.JOURNALTITLE != field) || !entry.hasField(AMSField.FJOURNAL)) {
+        if ((StandardField.JOURNAL != field && StandardField.JOURNALTITLE != field)
+                || !entry.hasField(AMSField.FJOURNAL)) {
             return false;
         }
 

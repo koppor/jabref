@@ -1,10 +1,8 @@
 package org.jabref.gui.autosaveandbackup;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import org.jabref.gui.LibraryTab;
 import org.jabref.logic.exporter.AtomicFileWriter;
@@ -19,15 +17,16 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.metadata.SaveOrder;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Answers;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Test for "discarded" flag
@@ -53,35 +52,50 @@ class BackupManagerDiscardedTest {
         bibDatabaseContext.setDatabasePath(testBib);
 
         bibEntryTypesManager = new BibEntryTypesManager();
-        saveConfiguration = new SelfContainedSaveConfiguration(SaveOrder.getDefaultSaveOrder(), false, BibDatabaseWriter.SaveType.WITH_JABREF_META_DATA, false);
+        saveConfiguration =
+                new SelfContainedSaveConfiguration(
+                        SaveOrder.getDefaultSaveOrder(),
+                        false,
+                        BibDatabaseWriter.SaveType.WITH_JABREF_META_DATA,
+                        false);
         preferences = mock(CliPreferences.class, Answers.RETURNS_DEEP_STUBS);
 
         saveDatabase();
 
-        backupManager = new BackupManager(mock(LibraryTab.class), bibDatabaseContext, bibEntryTypesManager, preferences);
+        backupManager =
+                new BackupManager(
+                        mock(LibraryTab.class),
+                        bibDatabaseContext,
+                        bibEntryTypesManager,
+                        preferences);
 
         makeBackup();
     }
 
     private void saveDatabase() throws IOException {
         try (Writer writer = new AtomicFileWriter(testBib, StandardCharsets.UTF_8, false)) {
-            BibWriter bibWriter = new BibWriter(writer, bibDatabaseContext.getDatabase().getNewLineSeparator());
+            BibWriter bibWriter =
+                    new BibWriter(writer, bibDatabaseContext.getDatabase().getNewLineSeparator());
             new BibtexDatabaseWriter(
-                    bibWriter,
-                    saveConfiguration,
-                    preferences.getFieldPreferences(),
-                    preferences.getCitationKeyPatternPreferences(),
-                    bibEntryTypesManager)
+                            bibWriter,
+                            saveConfiguration,
+                            preferences.getFieldPreferences(),
+                            preferences.getCitationKeyPatternPreferences(),
+                            bibEntryTypesManager)
                     .saveDatabase(bibDatabaseContext);
         }
     }
 
     private void databaseModification() {
-        bibDatabaseContext.getDatabase().insertEntry(new BibEntry().withField(StandardField.NOTE, "test"));
+        bibDatabaseContext
+                .getDatabase()
+                .insertEntry(new BibEntry().withField(StandardField.NOTE, "test"));
     }
 
     private void makeBackup() {
-        backupManager.determineBackupPathForNewBackup(backupDir).ifPresent(path -> backupManager.performBackup(path));
+        backupManager
+                .determineBackupPathForNewBackup(backupDir)
+                .ifPresent(path -> backupManager.performBackup(path));
     }
 
     @Test

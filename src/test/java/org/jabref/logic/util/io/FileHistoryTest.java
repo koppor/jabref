@@ -1,15 +1,15 @@
 package org.jabref.logic.util.io;
 
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
 
 class FileHistoryTest {
     private FileHistory history;
@@ -69,5 +69,3 @@ class FileHistoryTest {
         assertEquals(Path.of("bb"), history.get(1));
     }
 }
-
-

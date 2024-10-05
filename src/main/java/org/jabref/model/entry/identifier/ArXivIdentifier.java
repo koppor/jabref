@@ -1,16 +1,15 @@
 package org.jabref.model.entry.identifier;
 
+import org.jabref.model.strings.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.model.strings.StringUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Identifier for the arXiv. See https://arxiv.org/help/arxiv_identifier
@@ -39,13 +38,21 @@ public class ArXivIdentifier extends EprintIdentifier {
 
     public static Optional<ArXivIdentifier> parse(String value) {
         String identifier = value.replace(" ", "");
-        Pattern identifierPattern = Pattern.compile("(" + ARXIV_PREFIX + ")?\\s?:?\\s?(?<id>\\d{4}\\.\\d{4,5})(v(?<version>\\d+))?\\s?(\\[(?<classification>\\S+)\\])?");
+        Pattern identifierPattern =
+                Pattern.compile(
+                        "("
+                                + ARXIV_PREFIX
+                                + ")?\\s?:?\\s?(?<id>\\d{4}\\.\\d{4,5})(v(?<version>\\d+))?\\s?(\\[(?<classification>\\S+)\\])?");
         Matcher identifierMatcher = identifierPattern.matcher(identifier);
         if (identifierMatcher.matches()) {
             return getArXivIdentifier(identifierMatcher);
         }
 
-        Pattern oldIdentifierPattern = Pattern.compile("(" + ARXIV_PREFIX + ")?\\s?:?\\s?(?<id>(?<classification>[a-z\\-]+(\\.[A-Z]{2})?)/\\d{7})(v(?<version>\\d+))?");
+        Pattern oldIdentifierPattern =
+                Pattern.compile(
+                        "("
+                                + ARXIV_PREFIX
+                                + ")?\\s?:?\\s?(?<id>(?<classification>[a-z\\-]+(\\.[A-Z]{2})?)/\\d{7})(v(?<version>\\d+))?");
         Matcher oldIdentifierMatcher = oldIdentifierPattern.matcher(identifier);
         if (oldIdentifierMatcher.matches()) {
             return getArXivIdentifier(oldIdentifierMatcher);
@@ -93,10 +100,14 @@ public class ArXivIdentifier extends EprintIdentifier {
 
     @Override
     public String toString() {
-        return "ArXivIdentifier{" +
-                "identifier='" + identifier + '\'' +
-                ", classification='" + classification + '\'' +
-                '}';
+        return "ArXivIdentifier{"
+                + "identifier='"
+                + identifier
+                + '\''
+                + ", classification='"
+                + classification
+                + '\''
+                + '}';
     }
 
     @Override
@@ -109,8 +120,8 @@ public class ArXivIdentifier extends EprintIdentifier {
         }
 
         ArXivIdentifier that = (ArXivIdentifier) o;
-        return Objects.equals(identifier, that.identifier) &&
-                Objects.equals(classification, that.classification);
+        return Objects.equals(identifier, that.identifier)
+                && Objects.equals(classification, that.classification);
     }
 
     @Override

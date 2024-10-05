@@ -1,18 +1,17 @@
 package org.jabref.logic.layout;
 
+import org.jabref.logic.journals.JournalAbbreviationRepository;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.jabref.logic.journals.JournalAbbreviationRepository;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Layout {
 
@@ -22,10 +21,11 @@ public class Layout {
 
     private final List<String> missingFormatters = new ArrayList<>();
 
-    public Layout(List<StringInt> parsedEntries,
-                  List<Path> fileDirForDatabase,
-                  LayoutFormatterPreferences layoutPreferences,
-                  JournalAbbreviationRepository abbreviationRepository) {
+    public Layout(
+            List<StringInt> parsedEntries,
+            List<Path> fileDirForDatabase,
+            LayoutFormatterPreferences layoutPreferences,
+            JournalAbbreviationRepository abbreviationRepository) {
         List<LayoutEntry> tmpEntries = new ArrayList<>(parsedEntries.size());
 
         List<StringInt> blockEntries = null;
@@ -49,11 +49,15 @@ public class Layout {
                     if ((blockStart != null) && (blockEntries != null)) {
                         if (blockStart.equals(parsedEntry.s)) {
                             blockEntries.add(parsedEntry);
-                            le = new LayoutEntry(blockEntries,
-                                    parsedEntry.i == LayoutHelper.IS_FIELD_END ? LayoutHelper.IS_FIELD_START : LayoutHelper.IS_GROUP_START,
-                                    fileDirForDatabase,
-                                    layoutPreferences,
-                                    abbreviationRepository);
+                            le =
+                                    new LayoutEntry(
+                                            blockEntries,
+                                            parsedEntry.i == LayoutHelper.IS_FIELD_END
+                                                    ? LayoutHelper.IS_FIELD_START
+                                                    : LayoutHelper.IS_GROUP_START,
+                                            fileDirForDatabase,
+                                            layoutPreferences,
+                                            abbreviationRepository);
                             tmpEntries.add(le);
                             blockEntries = null;
                         } else {
@@ -68,7 +72,12 @@ public class Layout {
             }
 
             if (blockEntries == null) {
-                tmpEntries.add(new LayoutEntry(parsedEntry, fileDirForDatabase, layoutPreferences, abbreviationRepository));
+                tmpEntries.add(
+                        new LayoutEntry(
+                                parsedEntry,
+                                fileDirForDatabase,
+                                layoutPreferences,
+                                abbreviationRepository));
             } else {
                 blockEntries.add(parsedEntry);
             }

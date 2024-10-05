@@ -1,18 +1,17 @@
 package org.jabref.logic.cleanup;
 
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import org.jabref.logic.FilePreferences;
 import org.jabref.logic.preferences.TimestampPreferences;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
+import java.util.Optional;
 
 class ISSNCleanupTest {
 
@@ -20,15 +19,17 @@ class ISSNCleanupTest {
 
     @BeforeEach
     void setUp() {
-        worker = new CleanupWorker(
-                mock(BibDatabaseContext.class),
-                mock(FilePreferences.class),
-                mock(TimestampPreferences.class));
+        worker =
+                new CleanupWorker(
+                        mock(BibDatabaseContext.class),
+                        mock(FilePreferences.class),
+                        mock(TimestampPreferences.class));
     }
 
     @Test
     void cleanupISSNReturnsCorrectISSN() {
-        CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_ISSN);
+        CleanupPreferences preset =
+                new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_ISSN);
         BibEntry entry = new BibEntry();
         entry.setField(StandardField.ISSN, "0123-4567");
 
@@ -38,7 +39,8 @@ class ISSNCleanupTest {
 
     @Test
     void cleanupISSNAddsMissingDash() {
-        CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_ISSN);
+        CleanupPreferences preset =
+                new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_ISSN);
         BibEntry entry = new BibEntry();
         entry.setField(StandardField.ISSN, "01234567");
 
@@ -48,7 +50,8 @@ class ISSNCleanupTest {
 
     @Test
     void cleanupISSNJunkStaysJunk() {
-        CleanupPreferences preset = new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_ISSN);
+        CleanupPreferences preset =
+                new CleanupPreferences(CleanupPreferences.CleanupStep.CLEAN_UP_ISSN);
         BibEntry entry = new BibEntry();
         entry.setField(StandardField.ISSN, "Banana");
 

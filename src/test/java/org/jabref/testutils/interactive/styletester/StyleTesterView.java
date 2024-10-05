@@ -1,11 +1,11 @@
 package org.jabref.testutils.interactive.styletester;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
 import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-
-import com.airhacks.afterburner.views.ViewLoader;
 
 public class StyleTesterView {
     @FXML private Button normalButtonHover;
@@ -20,9 +20,7 @@ public class StyleTesterView {
     private Parent content;
 
     StyleTesterView() {
-        content = ViewLoader.view(this)
-                            .load()
-                            .getView();
+        content = ViewLoader.view(this).load().getView();
 
         setStates();
     }

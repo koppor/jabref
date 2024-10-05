@@ -1,5 +1,9 @@
 package org.jabref.logic.importer.util;
 
+import org.jabref.architecture.AllowedToUseClassGetResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -11,11 +15,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import org.jabref.architecture.AllowedToUseClassGetResource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @AllowedToUseClassGetResource("to determine the root directory")
 public class MathMLParser {
@@ -41,7 +40,10 @@ public class MathMLParser {
             Source xmlSource = new StreamSource(new StringReader(xmlContent));
 
             // No SystemId required, because no relative URLs need to be resolved
-            Source xsltSource = new StreamSource(xsltResource, MathMLParser.class.getResource(XSLT_FILE_PATH).toExternalForm());
+            Source xsltSource =
+                    new StreamSource(
+                            xsltResource,
+                            MathMLParser.class.getResource(XSLT_FILE_PATH).toExternalForm());
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer(xsltSource);
@@ -59,4 +61,3 @@ public class MathMLParser {
         return latexResult;
     }
 }
-

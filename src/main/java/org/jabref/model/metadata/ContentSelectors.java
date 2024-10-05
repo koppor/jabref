@@ -1,5 +1,9 @@
 package org.jabref.model.metadata;
 
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.FieldProperty;
+import org.jabref.model.entry.field.StandardField;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,33 +15,40 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.FieldProperty;
-import org.jabref.model.entry.field.StandardField;
-
 public class ContentSelectors {
 
-    public static final List<Field> DEFAULT_FIELD_NAMES = List.of(StandardField.AUTHOR, StandardField.JOURNAL, StandardField.KEYWORDS, StandardField.PUBLISHER);
+    public static final List<Field> DEFAULT_FIELD_NAMES =
+            List.of(
+                    StandardField.AUTHOR,
+                    StandardField.JOURNAL,
+                    StandardField.KEYWORDS,
+                    StandardField.PUBLISHER);
 
     private final SortedSet<ContentSelector> contentSelectors;
 
     public ContentSelectors() {
-        contentSelectors = new TreeSet<>(new Comparator<ContentSelector>() {
-            @Override
-            public int compare(ContentSelector o1, ContentSelector o2) {
-                // First, check the field name
-                int result = o1.getField().getName().compareTo(o2.getField().getName());
-                if (result != 0) {
-                    return result;
-                }
+        contentSelectors =
+                new TreeSet<>(
+                        new Comparator<ContentSelector>() {
+                            @Override
+                            public int compare(ContentSelector o1, ContentSelector o2) {
+                                // First, check the field name
+                                int result =
+                                        o1.getField().getName().compareTo(o2.getField().getName());
+                                if (result != 0) {
+                                    return result;
+                                }
 
-                // If the field names are equal, compare the properties
-                // We did not find any other way to compare enum sets, so we convert them to lists and compare them using the toString method
-                List<FieldProperty> properties1 = o1.getField().getProperties().stream().sorted().toList();
-                List<FieldProperty> properties2 = o2.getField().getProperties().stream().sorted().toList();
-                return properties1.toString().compareTo(properties2.toString());
-            }
-        });
+                                // If the field names are equal, compare the properties
+                                // We did not find any other way to compare enum sets, so we convert
+                                // them to lists and compare them using the toString method
+                                List<FieldProperty> properties1 =
+                                        o1.getField().getProperties().stream().sorted().toList();
+                                List<FieldProperty> properties2 =
+                                        o2.getField().getProperties().stream().sorted().toList();
+                                return properties1.toString().compareTo(properties2.toString());
+                            }
+                        });
     }
 
     public void addContentSelector(ContentSelector contentSelector) {
@@ -113,10 +124,12 @@ public class ContentSelectors {
 
     @Override
     public String toString() {
-        return "ContentSelectors{" +
-                "contentSelectors=" + contentSelectors +
-                ", fieldsWithSelectors=" + getFieldsWithSelectors() +
-                '}';
+        return "ContentSelectors{"
+                + "contentSelectors="
+                + contentSelectors
+                + ", fieldsWithSelectors="
+                + getFieldsWithSelectors()
+                + '}';
     }
 
     /**
@@ -137,11 +150,14 @@ public class ContentSelectors {
         return true;
     }
 
-    public static Map<Field, List<String>> getFieldKeywordsMap(SortedSet<ContentSelector> contentSelectors) {
+    public static Map<Field, List<String>> getFieldKeywordsMap(
+            SortedSet<ContentSelector> contentSelectors) {
         final Map<Field, List<String>> fieldKeywordsMap = new HashMap<>();
         contentSelectors.forEach(
-                existingContentSelector -> fieldKeywordsMap.put(existingContentSelector.getField(), new ArrayList<>(existingContentSelector.getValues()))
-        );
+                existingContentSelector ->
+                        fieldKeywordsMap.put(
+                                existingContentSelector.getField(),
+                                new ArrayList<>(existingContentSelector.getValues())));
         return fieldKeywordsMap;
     }
 }

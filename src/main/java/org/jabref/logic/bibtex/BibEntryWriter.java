@@ -1,5 +1,19 @@
 package org.jabref.logic.bibtex;
 
+import org.jabref.logic.exporter.BibWriter;
+import org.jabref.logic.os.OS;
+import org.jabref.model.database.BibDatabaseMode;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.BibEntryType;
+import org.jabref.model.entry.BibEntryTypesManager;
+import org.jabref.model.entry.field.BibField;
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.InternalField;
+import org.jabref.model.entry.field.OrFields;
+import org.jabref.model.strings.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
@@ -14,21 +28,6 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.jabref.logic.exporter.BibWriter;
-import org.jabref.logic.os.OS;
-import org.jabref.model.database.BibDatabaseMode;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.BibEntryType;
-import org.jabref.model.entry.BibEntryTypesManager;
-import org.jabref.model.entry.field.BibField;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.InternalField;
-import org.jabref.model.entry.field.OrFields;
-import org.jabref.model.strings.StringUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class BibEntryWriter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BibEntryWriter.class);
@@ -41,7 +40,8 @@ public class BibEntryWriter {
         this.entryTypesManager = entryTypesManager;
     }
 
-    public String serializeAll(List<BibEntry> entries, BibDatabaseMode databaseMode) throws IOException {
+    public String serializeAll(List<BibEntry> entries, BibDatabaseMode databaseMode)
+            throws IOException {
         StringWriter writer = new StringWriter();
         BibWriter bibWriter = new BibWriter(writer, OS.NEWLINE);
         for (BibEntry entry : entries) {
@@ -50,7 +50,8 @@ public class BibEntryWriter {
         return writer.toString();
     }
 
-    public void write(BibEntry entry, BibWriter out, BibDatabaseMode bibDatabaseMode) throws IOException {
+    public void write(BibEntry entry, BibWriter out, BibDatabaseMode bibDatabaseMode)
+            throws IOException {
         write(entry, out, bibDatabaseMode, false);
     }
 
@@ -62,7 +63,9 @@ public class BibEntryWriter {
      * @param bibDatabaseMode The database mode (bibtex or biblatex)
      * @param reformat        Should the entry be in any case, even if no change occurred?
      */
-    public void write(BibEntry entry, BibWriter out, BibDatabaseMode bibDatabaseMode, Boolean reformat) throws IOException {
+    public void write(
+            BibEntry entry, BibWriter out, BibDatabaseMode bibDatabaseMode, Boolean reformat)
+            throws IOException {
         // if the entry has not been modified, write it as it was
         if (!reformat && !entry.hasChanged()) {
             out.write(entry.getParsedSerialization());
@@ -88,8 +91,8 @@ public class BibEntryWriter {
     /**
      * Writes fields in the order of requiredFields, optionalFields and other fields, but does not sort the fields.
      */
-    private void writeRequiredFieldsFirstRemainingFieldsSecond(BibEntry entry, BibWriter out,
-                                                               BibDatabaseMode bibDatabaseMode) throws IOException {
+    private void writeRequiredFieldsFirstRemainingFieldsSecond(
+            BibEntry entry, BibWriter out, BibDatabaseMode bibDatabaseMode) throws IOException {
         // Write header with type and bibtex-key
         TypedBibEntry typedEntry = new TypedBibEntry(entry, bibDatabaseMode);
         out.write('@' + typedEntry.getTypeForDisplay() + '{');
@@ -103,25 +106,23 @@ public class BibEntryWriter {
         Optional<BibEntryType> type = entryTypesManager.enrich(entry.getType(), bibDatabaseMode);
         if (type.isPresent()) {
             // Write required fields first
-            List<Field> requiredFields = type.get()
-                                             .getRequiredFields()
-                                             .stream()
-                                             .map(OrFields::getFields)
-                                             .flatMap(Collection::stream)
-                                             .sorted(Comparator.comparing(Field::getName))
-                                             .toList();
+            List<Field> requiredFields =
+                    type.get().getRequiredFields().stream()
+                            .map(OrFields::getFields)
+                            .flatMap(Collection::stream)
+                            .sorted(Comparator.comparing(Field::getName))
+                            .toList();
             for (Field field : requiredFields) {
                 writeField(entry, out, field, indent);
             }
             written.addAll(requiredFields);
 
             // Then optional fields
-            List<Field> optionalFields = type.get()
-                                             .getOptionalFields()
-                                             .stream()
-                                             .map(BibField::field)
-                                             .sorted(Comparator.comparing(Field::getName))
-                                             .toList();
+            List<Field> optionalFields =
+                    type.get().getOptionalFields().stream()
+                            .map(BibField::field)
+                            .sorted(Comparator.comparing(Field::getName))
+                            .toList();
             for (Field field : optionalFields) {
                 writeField(entry, out, field, indent);
             }
@@ -129,10 +130,12 @@ public class BibEntryWriter {
         }
 
         // Then write remaining fields in alphabetic order.
-        SortedSet<Field> remainingFields = entry.getFields()
-                                                .stream()
-                                                .filter(key -> !written.contains(key))
-                                                .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Field::getName))));
+        SortedSet<Field> remainingFields =
+                entry.getFields().stream()
+                        .filter(key -> !written.contains(key))
+                        .collect(
+                                Collectors.toCollection(
+                                        () -> new TreeSet<>(Comparator.comparing(Field::getName))));
         for (Field field : remainingFields) {
             writeField(entry, out, field, indent);
         }
@@ -154,7 +157,8 @@ public class BibEntryWriter {
      * @param field the field
      * @throws IOException In case of an IO error
      */
-    private void writeField(BibEntry entry, BibWriter out, Field field, int indent) throws IOException {
+    private void writeField(BibEntry entry, BibWriter out, Field field, int indent)
+            throws IOException {
         Optional<String> value = entry.getField(field);
         // only write field if it is not empty
         // field.ifPresent does not work as an IOException may be thrown
@@ -164,8 +168,20 @@ public class BibEntryWriter {
             try {
                 out.write(fieldWriter.write(field, value.get()));
             } catch (InvalidFieldValueException ex) {
-                LOGGER.warn("Invalid field value {} of field {} of entry {]", value.get(), field, entry.getCitationKey().orElse(""), ex);
-                throw new IOException("Error in field '" + field + " of entry " + entry.getCitationKey().orElse("") + "': " + ex.getMessage(), ex);
+                LOGGER.warn(
+                        "Invalid field value {} of field {} of entry {]",
+                        value.get(),
+                        field,
+                        entry.getCitationKey().orElse(""),
+                        ex);
+                throw new IOException(
+                        "Error in field '"
+                                + field
+                                + " of entry "
+                                + entry.getCitationKey().orElse("")
+                                + "': "
+                                + ex.getMessage(),
+                        ex);
             }
             out.writeLine(",");
         }
@@ -173,12 +189,11 @@ public class BibEntryWriter {
 
     static int getLengthOfLongestFieldName(BibEntry entry) {
         Predicate<Field> isNotCitationKey = field -> InternalField.KEY_FIELD != field;
-        return entry.getFields()
-                    .stream()
-                    .filter(isNotCitationKey)
-                    .mapToInt(field -> field.getName().length())
-                    .max()
-                    .orElse(0);
+        return entry.getFields().stream()
+                .filter(isNotCitationKey)
+                .mapToInt(field -> field.getName().length())
+                .max()
+                .orElse(0);
     }
 
     /**
@@ -195,6 +210,8 @@ public class BibEntryWriter {
      */
     static String getFormattedFieldName(Field field, int indent) {
         String fieldName = field.getName();
-        return fieldName.toLowerCase(Locale.ROOT) + StringUtil.repeatSpaces(indent - fieldName.length()) + " = ";
+        return fieldName.toLowerCase(Locale.ROOT)
+                + StringUtil.repeatSpaces(indent - fieldName.length())
+                + " = ";
     }
 }

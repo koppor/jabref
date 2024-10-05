@@ -1,8 +1,5 @@
 package org.jabref.gui.preview;
 
-import java.nio.file.Path;
-import java.util.List;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -17,6 +14,9 @@ import javafx.collections.ObservableList;
 import org.jabref.logic.layout.TextBasedPreviewLayout;
 import org.jabref.logic.preview.PreviewLayout;
 
+import java.nio.file.Path;
+import java.util.List;
+
 public class PreviewPreferences {
 
     private final ObservableList<PreviewLayout> layoutCycle;
@@ -27,13 +27,14 @@ public class PreviewPreferences {
     private final BooleanProperty showPreviewEntryTableTooltip;
     private final ObservableList<Path> bstPreviewLayoutPaths;
 
-    public PreviewPreferences(List<PreviewLayout> layoutCycle,
-                              int layoutCyclePosition,
-                              TextBasedPreviewLayout customPreviewLayout,
-                              String defaultCustomPreviewLayout,
-                              boolean showPreviewAsExtraTab,
-                              boolean showPreviewEntryTableTooltip,
-                              List<Path> bstPreviewLayoutPaths) {
+    public PreviewPreferences(
+            List<PreviewLayout> layoutCycle,
+            int layoutCyclePosition,
+            TextBasedPreviewLayout customPreviewLayout,
+            String defaultCustomPreviewLayout,
+            boolean showPreviewAsExtraTab,
+            boolean showPreviewEntryTableTooltip,
+            List<Path> bstPreviewLayoutPaths) {
         this.layoutCycle = FXCollections.observableArrayList(layoutCycle);
         this.layoutCyclePosition = new SimpleIntegerProperty(layoutCyclePosition);
         this.customPreviewLayout = new SimpleObjectProperty<>(customPreviewLayout);

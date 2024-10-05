@@ -1,7 +1,5 @@
 package org.jabref.gui.mergeentries.newmergedialog.cell.sidebuttons;
 
-import java.util.Optional;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -16,8 +14,11 @@ import org.jabref.gui.icon.JabRefIcon;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.field.Field;
 
+import java.util.Optional;
+
 public class ToggleMergeUnmergeButton extends Button {
-    private final ObjectProperty<FieldState> fieldState = new SimpleObjectProperty<>(FieldState.UNMERGED);
+    private final ObjectProperty<FieldState> fieldState =
+            new SimpleObjectProperty<>(FieldState.UNMERGED);
     private final BooleanProperty canMerge = new SimpleBooleanProperty(Boolean.TRUE);
 
     private final ActionFactory actionFactory = new ActionFactory();
@@ -71,29 +72,31 @@ public class ToggleMergeUnmergeButton extends Button {
     }
 
     private class ToggleMergeCommand extends SimpleCommand {
-        private final Action mergeAction = new Action() {
-            @Override
-            public Optional<JabRefIcon> getIcon() {
-                return Optional.of(IconTheme.JabRefIcons.MERGE_GROUPS);
-            }
+        private final Action mergeAction =
+                new Action() {
+                    @Override
+                    public Optional<JabRefIcon> getIcon() {
+                        return Optional.of(IconTheme.JabRefIcons.MERGE_GROUPS);
+                    }
 
-            @Override
-            public String getText() {
-                return Localization.lang("Merge %0", field.getDisplayName());
-            }
-        };
+                    @Override
+                    public String getText() {
+                        return Localization.lang("Merge %0", field.getDisplayName());
+                    }
+                };
 
-        private final Action unmergeAction = new Action() {
-            @Override
-            public Optional<JabRefIcon> getIcon() {
-                return Optional.of(IconTheme.JabRefIcons.UNDO);
-            }
+        private final Action unmergeAction =
+                new Action() {
+                    @Override
+                    public Optional<JabRefIcon> getIcon() {
+                        return Optional.of(IconTheme.JabRefIcons.UNDO);
+                    }
 
-            @Override
-            public String getText() {
-                return Localization.lang("Unmerge %0", field.getDisplayName());
-            }
-        };
+                    @Override
+                    public String getText() {
+                        return Localization.lang("Unmerge %0", field.getDisplayName());
+                    }
+                };
 
         @Override
         public void execute() {
@@ -108,6 +111,7 @@ public class ToggleMergeUnmergeButton extends Button {
     }
 
     public enum FieldState {
-        MERGED, UNMERGED
+        MERGED,
+        UNMERGED
     }
 }

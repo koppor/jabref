@@ -4,7 +4,6 @@ import org.jabref.logic.layout.LayoutFormatter;
 import org.jabref.logic.layout.StringInt;
 import org.jabref.logic.util.strings.RtfCharMap;
 import org.jabref.model.strings.StringUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +54,8 @@ public class RTFChars implements LayoutFormatter {
                     currentCommand.append(c);
                     testCharCom:
                     if ((currentCommand.length() == 1)
-                            && StringUtil.SPECIAL_COMMAND_CHARS.contains(currentCommand.toString())) {
+                            && StringUtil.SPECIAL_COMMAND_CHARS.contains(
+                                    currentCommand.toString())) {
                         // This indicates that we are in a command of the type
                         // \^o or \~{n}
                         if (i >= (field.length() - 1)) {
@@ -120,7 +120,9 @@ public class RTFChars implements LayoutFormatter {
                         String command = currentCommand.toString();
                         // Then test if we are dealing with a italics or bold
                         // command. If so, handle.
-                        if ("em".equals(command) || "emph".equals(command) || "textit".equals(command)
+                        if ("em".equals(command)
+                                || "emph".equals(command)
+                                || "textit".equals(command)
                                 || "it".equals(command)) {
                             StringInt part = getPart(field, i, c == '{');
                             i += part.i;
@@ -156,8 +158,11 @@ public class RTFChars implements LayoutFormatter {
             }
         }
 
-        return sb.toString().replace("---", "{\\emdash}").replace("--", "{\\endash}").replace("``", "{\\ldblquote}")
-                 .replace("''", "{\\rdblquote}");
+        return sb.toString()
+                .replace("---", "{\\emdash}")
+                .replace("--", "{\\endash}")
+                .replace("``", "{\\ldblquote}")
+                .replace("''", "{\\rdblquote}");
     }
 
     /**
@@ -223,10 +228,20 @@ public class RTFChars implements LayoutFormatter {
         if ((240 == c) || (273 == c)) {
             return "d";
         }
-        if (((200 <= c) && (c <= 203)) || (274 == c) || (276 == c) || (278 == c) || (280 == c) || (282 == c)) {
+        if (((200 <= c) && (c <= 203))
+                || (274 == c)
+                || (276 == c)
+                || (278 == c)
+                || (280 == c)
+                || (282 == c)) {
             return "E";
         }
-        if (((232 <= c) && (c <= 235)) || (275 == c) || (277 == c) || (279 == c) || (281 == c) || (283 == c)) {
+        if (((232 <= c) && (c <= 235))
+                || (275 == c)
+                || (277 == c)
+                || (279 == c)
+                || (281 == c)
+                || (283 == c)) {
             return "e";
         }
         if (((284 == c) || (286 == c)) || (288 == c) || (290 == c) || (330 == c)) {
@@ -241,7 +256,12 @@ public class RTFChars implements LayoutFormatter {
         if ((293 == c) || (295 == c)) {
             return "h";
         }
-        if (((204 <= c) && (c <= 207)) || (296 == c) || (298 == c) || (300 == c) || (302 == c) || (304 == c)) {
+        if (((204 <= c) && (c <= 207))
+                || (296 == c)
+                || (298 == c)
+                || (300 == c)
+                || (302 == c)
+                || (304 == c)) {
             return "I";
         }
         if (((236 <= c) && (c <= 239)) || (297 == c) || (299 == c) || (301 == c) || (303 == c)) {
@@ -295,10 +315,20 @@ public class RTFChars implements LayoutFormatter {
         if ((355 == c) || (359 == c)) {
             return "t";
         }
-        if (((217 <= c) && (c <= 220)) || (360 == c) || (362 == c) || (364 == c) || (366 == c) || (370 == c)) {
+        if (((217 <= c) && (c <= 220))
+                || (360 == c)
+                || (362 == c)
+                || (364 == c)
+                || (366 == c)
+                || (370 == c)) {
             return "U";
         }
-        if (((249 <= c) && (c <= 251)) || (361 == c) || (363 == c) || (365 == c) || (367 == c) || (371 == c)) {
+        if (((249 <= c) && (c <= 251))
+                || (361 == c)
+                || (363 == c)
+                || (365 == c)
+                || (367 == c)
+                || (371 == c)) {
             return "u";
         }
         if (372 == c) {

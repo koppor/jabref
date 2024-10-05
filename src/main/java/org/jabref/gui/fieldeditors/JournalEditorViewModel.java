@@ -1,7 +1,5 @@
 package org.jabref.gui.fieldeditors;
 
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.control.Button;
 
 import org.jabref.gui.DialogService;
@@ -11,6 +9,8 @@ import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.strings.StringUtil;
+
+import javax.swing.undo.UndoManager;
 
 public class JournalEditorViewModel extends AbstractEditorViewModel {
     private final JournalAbbreviationRepository journalAbbreviationRepository;
@@ -39,11 +39,15 @@ public class JournalEditorViewModel extends AbstractEditorViewModel {
         // Ignore brackets when matching abbreviations.
         final String name = StringUtil.ignoreCurlyBracket(text.get());
 
-        journalAbbreviationRepository.getNextAbbreviation(name).ifPresent(nextAbbreviation -> {
-            text.set(nextAbbreviation);
-            // TODO: Add undo
-            // panel.getUndoManager().addEdit(new UndoableFieldChange(entry, editor.getName(), text, nextAbbreviation));
-        });
+        journalAbbreviationRepository
+                .getNextAbbreviation(name)
+                .ifPresent(
+                        nextAbbreviation -> {
+                            text.set(nextAbbreviation);
+                            // TODO: Add undo
+                            // panel.getUndoManager().addEdit(new UndoableFieldChange(entry,
+                            // editor.getName(), text, nextAbbreviation));
+                        });
     }
 
     public void showJournalInfo(Button journalInfoButton) {

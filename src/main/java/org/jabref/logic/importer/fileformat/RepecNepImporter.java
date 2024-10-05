@@ -1,13 +1,5 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.logic.importer.Importer;
 import org.jabref.logic.importer.ParserResult;
@@ -18,9 +10,16 @@ import org.jabref.model.entry.Date;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.entry.types.StandardEntryType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Imports a New Economics Papers-Message from the REPEC-NEP Service.
@@ -143,7 +142,8 @@ public class RepecNepImporter extends Importer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RepecNepImporter.class);
 
-    private static final Collection<String> RECOGNIZED_FIELDS = Arrays.asList("Keywords", "JEL", "Date", "URL", "By");
+    private static final Collection<String> RECOGNIZED_FIELDS =
+            Arrays.asList("Keywords", "JEL", "Date", "URL", "By");
     private final ImportFormatPreferences importFormatPreferences;
     private int line;
     private String lastLine = "";
@@ -171,7 +171,8 @@ public class RepecNepImporter extends Importer {
 
     @Override
     public String getDescription() {
-        return Localization.lang("Imports a New Economics Papers-Message from the REPEC-NEP Service.");
+        return Localization.lang(
+                "Imports a New Economics Papers-Message from the REPEC-NEP Service.");
     }
 
     @Override
@@ -185,8 +186,8 @@ public class RepecNepImporter extends Importer {
             startOfMessage.append(tmpLine);
             tmpLine = reader.readLine();
         }
-        return startOfMessage.toString().contains("NEP: New Economics Papers") || startOfMessage.toString().contains(
-                "nep.repec.org");
+        return startOfMessage.toString().contains("NEP: New Economics Papers")
+                || startOfMessage.toString().contains("nep.repec.org");
     }
 
     private boolean startsWithKeyword(Collection<String> keywords) {
@@ -221,8 +222,12 @@ public class RepecNepImporter extends Importer {
     private String readMultipleLines(BufferedReader in) throws IOException {
         StringBuilder result = new StringBuilder(this.lastLine.trim());
         readLine(in);
-        while ((this.lastLine != null) && !this.lastLine.trim().isEmpty() && !startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS) && !isStartOfWorkingPaper()) {
-            result.append(this.lastLine.isEmpty() ? this.lastLine.trim() : " " + this.lastLine.trim());
+        while ((this.lastLine != null)
+                && !this.lastLine.trim().isEmpty()
+                && !startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS)
+                && !isStartOfWorkingPaper()) {
+            result.append(
+                    this.lastLine.isEmpty() ? this.lastLine.trim() : " " + this.lastLine.trim());
             readLine(in);
         }
         return result.toString();
@@ -248,7 +253,9 @@ public class RepecNepImporter extends Importer {
         // read authors and institutions
         List<String> authors = new ArrayList<>();
         StringBuilder institutions = new StringBuilder();
-        while ((this.lastLine != null) && !this.lastLine.isEmpty() && !startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS)) {
+        while ((this.lastLine != null)
+                && !this.lastLine.isEmpty()
+                && !startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS)) {
             // read single author
             String author;
             StringBuilder institution = new StringBuilder();
@@ -256,12 +263,16 @@ public class RepecNepImporter extends Importer {
             if (this.lastLine.indexOf('(') >= 0) {
                 author = this.lastLine.substring(0, this.lastLine.indexOf('(')).trim();
                 institutionDone = this.lastLine.indexOf(')') >= 1;
-                institution
-                        .append(this.lastLine.substring(this.lastLine.indexOf('(') + 1,
-                                institutionDone && (this.lastLine
-                                        .indexOf(')') > (this.lastLine.indexOf('(') + 1)) ? this.lastLine
-                                        .indexOf(')') : this.lastLine.length())
-                                             .trim());
+                institution.append(
+                        this.lastLine
+                                .substring(
+                                        this.lastLine.indexOf('(') + 1,
+                                        institutionDone
+                                                        && (this.lastLine.indexOf(')')
+                                                                > (this.lastLine.indexOf('(') + 1))
+                                                ? this.lastLine.indexOf(')')
+                                                : this.lastLine.length())
+                                .trim());
             } else {
                 author = this.lastLine.trim();
                 institutionDone = true;
@@ -270,8 +281,14 @@ public class RepecNepImporter extends Importer {
             readLine(in);
             while (!institutionDone && (this.lastLine != null)) {
                 institutionDone = this.lastLine.indexOf(')') >= 1;
-                institution.append(this.lastLine
-                        .substring(0, institutionDone ? this.lastLine.indexOf(')') : this.lastLine.length()).trim());
+                institution.append(
+                        this.lastLine
+                                .substring(
+                                        0,
+                                        institutionDone
+                                                ? this.lastLine.indexOf(')')
+                                                : this.lastLine.length())
+                                .trim());
                 readLine(in);
             }
 
@@ -279,7 +296,9 @@ public class RepecNepImporter extends Importer {
 
             if (!institution.isEmpty()) {
                 institutions.append(
-                        institutions.isEmpty() ? institution.toString() : " and " + institution.toString());
+                        institutions.isEmpty()
+                                ? institution.toString()
+                                : " and " + institution.toString());
             }
         }
 
@@ -308,8 +327,8 @@ public class RepecNepImporter extends Importer {
      * Implements grammar rule "AdditionalFields".
      *
      */
-    private void parseAdditionalFields(BibEntry be, boolean multilineUrlFieldAllowed, BufferedReader in)
-            throws IOException {
+    private void parseAdditionalFields(
+            BibEntry be, boolean multilineUrlFieldAllowed, BufferedReader in) throws IOException {
 
         // one empty line is possible before fields start
         if ((this.lastLine != null) && this.lastLine.trim().isEmpty()) {
@@ -317,17 +336,28 @@ public class RepecNepImporter extends Importer {
         }
 
         // read other fields
-        while ((this.lastLine != null) && !isStartOfWorkingPaper() && (startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS) || "".equals(this.lastLine))) {
-            // if multiple lines for a field are allowed and field consists of multiple lines, join them
-            String keyword = "".equals(this.lastLine) ? "" : this.lastLine.substring(0, this.lastLine.indexOf(':')).trim();
+        while ((this.lastLine != null)
+                && !isStartOfWorkingPaper()
+                && (startsWithKeyword(RepecNepImporter.RECOGNIZED_FIELDS)
+                        || "".equals(this.lastLine))) {
+            // if multiple lines for a field are allowed and field consists of multiple lines, join
+            // them
+            String keyword =
+                    "".equals(this.lastLine)
+                            ? ""
+                            : this.lastLine.substring(0, this.lastLine.indexOf(':')).trim();
             // skip keyword
-            this.lastLine = "".equals(this.lastLine) ? "" : this.lastLine.substring(this.lastLine.indexOf(':') + 1).trim();
+            this.lastLine =
+                    "".equals(this.lastLine)
+                            ? ""
+                            : this.lastLine.substring(this.lastLine.indexOf(':') + 1).trim();
 
             if ("Keywords".equals(keyword)) {
                 // parse keywords field
                 String content = readMultipleLines(in);
                 String[] keywords = content.split("[,;]");
-                be.addKeywords(Arrays.asList(keywords),
+                be.addKeywords(
+                        Arrays.asList(keywords),
                         importFormatPreferences.bibEntryPreferences().getKeywordSeparator());
             } else if ("JEL".equals(keyword)) {
                 // parse JEL field
@@ -360,7 +390,9 @@ public class RepecNepImporter extends Importer {
      * section, we have a working paper entry we are interested in
      */
     private boolean isStartOfWorkingPaper() {
-        return this.lastLine.matches("\\d+\\.\\s.*") && !this.inOverviewSection && this.preLine.trim().isEmpty();
+        return this.lastLine.matches("\\d+\\.\\s.*")
+                && !this.inOverviewSection
+                && this.preLine.trim().isEmpty();
     }
 
     @Override

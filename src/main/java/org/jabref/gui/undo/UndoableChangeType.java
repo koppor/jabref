@@ -16,7 +16,10 @@ public class UndoableChangeType extends AbstractUndoableJabRefEdit {
     private final BibEntry entry;
 
     public UndoableChangeType(FieldChange change) {
-        this(change.getEntry(), EntryTypeFactory.parse(change.getOldValue()), EntryTypeFactory.parse(change.getNewValue()));
+        this(
+                change.getEntry(),
+                EntryTypeFactory.parse(change.getOldValue()),
+                EntryTypeFactory.parse(change.getNewValue()));
     }
 
     public UndoableChangeType(BibEntry entry, EntryType oldType, EntryType newType) {
@@ -27,7 +30,8 @@ public class UndoableChangeType extends AbstractUndoableJabRefEdit {
 
     @Override
     public String getPresentationName() {
-        return Localization.lang("change type of entry %0 from %1 to %2",
+        return Localization.lang(
+                "change type of entry %0 from %1 to %2",
                 StringUtil.boldHTML(entry.getCitationKey().orElse(Localization.lang("undefined"))),
                 StringUtil.boldHTML(oldType.getDisplayName(), Localization.lang("undefined")),
                 StringUtil.boldHTML(newType.getDisplayName()));

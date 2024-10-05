@@ -1,5 +1,16 @@
 package org.jabref.logic.bibtex;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+
+import org.jabref.logic.importer.ImportFormatPreferences;
+import org.jabref.logic.importer.Importer;
+import org.jabref.logic.importer.ParserResult;
+import org.jabref.logic.importer.fileformat.BibtexParser;
+import org.jabref.model.entry.BibEntry;
+import org.junit.jupiter.api.Assertions;
+import org.mockito.Answers;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,18 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-
-import org.jabref.logic.importer.ImportFormatPreferences;
-import org.jabref.logic.importer.Importer;
-import org.jabref.logic.importer.ParserResult;
-import org.jabref.logic.importer.fileformat.BibtexParser;
-import org.jabref.model.entry.BibEntry;
-
-import org.junit.jupiter.api.Assertions;
-import org.mockito.Answers;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
 
 public class BibEntryAssert {
 
@@ -64,7 +63,9 @@ public class BibEntryAssert {
     private static List<BibEntry> getListFromInputStream(InputStream is) throws IOException {
         ParserResult result;
         try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-            BibtexParser parser = new BibtexParser(mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS));
+            BibtexParser parser =
+                    new BibtexParser(
+                            mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS));
             result = parser.parse(reader);
         }
         assertNotNull(result);
@@ -83,7 +84,8 @@ public class BibEntryAssert {
             throws IOException {
         assertNotNull(expectedInputStream);
         assertNotNull(actualEntries);
-        // explicit reference of Assertions is needed here to disambiguate from the methods defined by this class
+        // explicit reference of Assertions is needed here to disambiguate from the methods defined
+        // by this class
         List<BibEntry> expectedEntries = getListFromInputStream(expectedInputStream);
         Assertions.assertEquals(expectedEntries, actualEntries);
     }
@@ -92,7 +94,8 @@ public class BibEntryAssert {
             throws IOException {
         assertNotNull(actualInputStream);
         assertNotNull(expectedEntries);
-        // explicit reference of Assertions is needed here to disambiguate from the methods defined by this class
+        // explicit reference of Assertions is needed here to disambiguate from the methods defined
+        // by this class
         Assertions.assertEquals(expectedEntries, getListFromInputStream(actualInputStream));
     }
 
@@ -103,8 +106,7 @@ public class BibEntryAssert {
      * @param expected the inputStream reading the entry from
      * @param actual   the entry to compare with
      */
-    public static void assertEquals(InputStream expected, BibEntry actual)
-            throws IOException {
+    public static void assertEquals(InputStream expected, BibEntry actual) throws IOException {
         assertEquals(expected, Collections.singletonList(actual));
     }
 
@@ -138,9 +140,10 @@ public class BibEntryAssert {
      */
     public static void assertEquals(List<BibEntry> expected, Path fileToImport, Importer importer)
             throws IOException {
-        List<BibEntry> actualEntries = importer.importDatabase(fileToImport)
-                                               .getDatabase().getEntries();
-        // explicit reference of Assertions is needed here to disambiguate from the methods defined by this class
+        List<BibEntry> actualEntries =
+                importer.importDatabase(fileToImport).getDatabase().getEntries();
+        // explicit reference of Assertions is needed here to disambiguate from the methods defined
+        // by this class
         Assertions.assertEquals(expected, actualEntries);
     }
 

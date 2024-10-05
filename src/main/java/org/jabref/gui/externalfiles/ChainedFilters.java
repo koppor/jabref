@@ -1,12 +1,12 @@
 package org.jabref.gui.externalfiles;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
 import java.util.Arrays;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Chains the given filters - if ALL of them accept, the result is also accepted
@@ -23,13 +23,15 @@ public class ChainedFilters implements DirectoryStream.Filter<Path> {
 
     @Override
     public boolean accept(Path entry) throws IOException {
-        return Arrays.stream(filters).allMatch(filter -> {
-            try {
-                return filter.accept(entry);
-            } catch (IOException e) {
-                LOGGER.error("Could not apply filter", e);
-                return true;
-            }
-        });
+        return Arrays.stream(filters)
+                .allMatch(
+                        filter -> {
+                            try {
+                                return filter.accept(entry);
+                            } catch (IOException e) {
+                                LOGGER.error("Could not apply filter", e);
+                                return true;
+                            }
+                        });
     }
 }
