@@ -18,6 +18,16 @@ Execute the Gradle task `rewriteRun` from the `rewrite` group of the Gradle Tool
 
 Background: [OpenRewrite](https://docs.openrewrite.org/) is an automated refactoring ecosystem for source code.
 
+### Failing Google Java Format (AOSP) tests
+
+Please ensure that you setup and configured the Google Java Format IntelliJ plugin correctly.
+
+On Windows, to fix using the CLI, you can run the following command in the root directory of the project:
+
+```bash
+find . -name "*.java" -exec /c/Users/{username}/Downloads/google-java-format_windows-x86-64.exe -r -a --skip-reflowing-long-strings --skip-javadoc-formatting "{}" \;
+```
+
 ### `org.jabref.logic.l10n.LocalizationConsistencyTest findMissingLocalizationKeys` <span style="color:red">FAILED</span>
 
 You have probably used Strings that are visible on the UI (to the user) but not wrapped them using `Localization.lang(...)` and added them to the [localization properties file](https://github.com/JabRef/jabref/blob/main/src/main/resources/l10n/JabRef_en.properties).
