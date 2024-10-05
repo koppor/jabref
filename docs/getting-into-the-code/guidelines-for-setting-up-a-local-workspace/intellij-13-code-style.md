@@ -35,7 +35,7 @@ without extra configuration. To use the plugin, you need to
 [add some options to your IDE's Java runtime](https://www.jetbrains.com/help/idea/tuning-the-ide.html#procedure-jvm-options).
 To do that, go to `Help→Edit Custom VM Options...` and paste in these lines:
 
-```
+```text
 --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
 --add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
 --add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
