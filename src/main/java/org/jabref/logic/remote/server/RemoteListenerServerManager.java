@@ -41,8 +41,7 @@ public class RemoteListenerServerManager implements AutoCloseable {
         try {
             remoteServerThread = new RemoteListenerServerThread(messageHandler, port);
         } catch (BindException e) {
-            LOGGER.error("There was an error opening the configured network port {}. Please ensure there isn't another" +
-                    " application already using that port.", port);
+            LOGGER.error("There was an error opening the configured network port {}. Please ensure there isn't another application already using that port.", port);
             remoteServerThread = null;
         } catch (IOException e) {
             LOGGER.error("Unknown error while opening the network port.", e);
