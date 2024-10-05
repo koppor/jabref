@@ -41,7 +41,7 @@ jobs:
           distribution: 'temurin'
       - uses: axel-op/googlejavaformat-action@v3
         with:
-          args: "--skip-javadoc-formatting --skip-reflowing-long-strings --set-exit-if-changed  --aosp"
+          args: "--skip-javadoc-formatting --skip-reflowing-long-strings --set-exit-if-changed --aosp -r"
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run checkstyle reporter
         uses: dbelyaev/action-checkstyle@master
