@@ -230,7 +230,7 @@ public class TemplateExporter extends Exporter {
 
         if (entries
                 .isEmpty()) { // Do not export if no entries to export -- avoids exports with only
-                              // template text
+            // template text
             return;
         }
 

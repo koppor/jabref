@@ -83,10 +83,8 @@ public class PushToLyx extends AbstractPushToApplication {
         if (!commandPath.endsWith(".in")) {
             commandPath = commandPath + ".in";
         }
-        File lp =
-                new File(
-                        commandPath); // this needs to fixed because it gives "asdf" when going
-                                      // prefs.get("lyxpipe")
+        File lp = new File(commandPath); // this needs to fixed because it gives "asdf" when going
+        // prefs.get("lyxpipe")
         if (!lp.exists() || !lp.canWrite()) {
             // See if it helps to append ".in":
             lp = new File(commandPath + ".in");

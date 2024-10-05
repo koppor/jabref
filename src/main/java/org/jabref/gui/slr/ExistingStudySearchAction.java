@@ -130,7 +130,7 @@ public class ExistingStudySearchAction extends SimpleCommand {
                         () -> {
                             crawler.performCrawl();
                             return 0; // Return any value to make this a callable instead of a
-                                      // runnable. This allows throwing exceptions.
+                            // runnable. This allows throwing exceptions.
                         })
                 .onFailure(
                         e -> {

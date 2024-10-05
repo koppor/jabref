@@ -45,7 +45,7 @@ class XmpExporterTest {
                         "\n",
                         Files.readAllLines(
                                 file)); // we are using \n to join, so we need it in the expected
-                                        // string as well, \r\n would fail
+        // string as well, \r\n would fail
         String expected =
                 """
                   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
@@ -87,7 +87,7 @@ class XmpExporterTest {
                         "\n",
                         Files.readAllLines(
                                 file)); // we are using \n to join, so we need it in the expected
-                                        // string as well, \r\n would fail
+        // string as well, \r\n would fail
 
         String expected =
                 """

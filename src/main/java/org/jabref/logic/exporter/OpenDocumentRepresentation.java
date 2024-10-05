@@ -158,9 +158,8 @@ class OpenDocumentRepresentation {
                         row,
                         getField(
                                 e,
-                                StandardField
-                                        .AUTHOR)); // new AuthorLastFirst().format(getField(e,
-                                                   // StandardField.AUTHOR_FIELD)));
+                                StandardField.AUTHOR)); // new AuthorLastFirst().format(getField(e,
+                // StandardField.AUTHOR_FIELD)));
                 addTableCell(result, row, getField(e, StandardField.BOOKTITLE));
                 addTableCell(result, row, getField(e, StandardField.CHAPTER));
                 addTableCell(result, row, getField(e, StandardField.DAY));
@@ -171,9 +170,8 @@ class OpenDocumentRepresentation {
                         row,
                         getField(
                                 e,
-                                StandardField
-                                        .EDITOR)); // new AuthorLastFirst().format(getField(e,
-                                                   // StandardField.EDITOR_FIELD)));
+                                StandardField.EDITOR)); // new AuthorLastFirst().format(getField(e,
+                // StandardField.EDITOR_FIELD)));
                 addTableCell(result, row, getField(e, StandardField.HOWPUBLISHED));
                 addTableCell(result, row, getField(e, StandardField.INSTITUTION));
                 addTableCell(result, row, getField(e, StandardField.JOURNAL));

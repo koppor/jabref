@@ -50,32 +50,30 @@ public class DOI implements Identifier {
                     + "(?:\\.[0-9]+)+" // registrant codes
                     + "[/:]" // divider
                     + "(?:[^\\s,]+[^,;(\\.\\s)])" // suffix alphanumeric without " "/"," and not
-                                                  // ending on "."/","/";"
+                    // ending on "."/","/";"
                     + ")"; // end group \1
 
     // Regex (Short DOI)
     private static final String SHORT_DOI_SHORTCUT =
-            ""
-                    + "^\\s*(?:https?://)?(?:www\\.)?(?:doi\\.org/)([a-z0-9]{4,10})\\s*$"; // eg
-                                                                                           // https://doi.org/bfrhmx
+            "" + "^\\s*(?:https?://)?(?:www\\.)?(?:doi\\.org/)([a-z0-9]{4,10})\\s*$"; // eg
+    // https://doi.org/bfrhmx
     private static final String IN_TEXT_SHORT_DOI_SHORTCUT =
-            ""
-                    + "(?:https?://)?(?:www\\.)?(?:doi\\.org/)([a-z0-9]{4,10})"; // eg
-                                                                                 // https://doi.org/bfrhmx somewhere in the text
+            "" + "(?:https?://)?(?:www\\.)?(?:doi\\.org/)([a-z0-9]{4,10})"; // eg
+    // https://doi.org/bfrhmx somewhere in the text
     private static final String SHORT_DOI_EXP_PREFIX =
             ""
                     + "^(?:" // can begin with...
                     + "\\s*(?:https?://)?(?:www\\.)?" // optional url parts "http(s)://"+"www."
                     + "[a-zA-Z\\.]*doi[a-zA-Z\\.]*" //  eg "dx.doi." or "doi.acm." or "doi." if with
-                                                    // url, must include "doi", otherwise too
-                                                    // ambiguous
+                    // url, must include "doi", otherwise too
+                    // ambiguous
                     + "\\.[a-zA-Z]{2,10}/)?"; // ".org" or ".de" or ".academy"
     private static final String SHORT_DOI_EXP =
             ""
                     + "(?:" // begin "any one of these"
                     + "(?:[\\s/]?(?:(?:urn:)|(?:doi:)|(?:urn:doi:)))" // "doi:10/12ab" or "
-                                                                      // urn:10/12ab" or
-                                                                      // "/urn:doi:/10/12ab" ...
+                    // urn:10/12ab" or
+                    // "/urn:doi:/10/12ab" ...
                     + "|(?:\\s?/?)" // or "/10/12ab" or " /10/12ab" or "10/12ab" or " 10/12ab"
                     + ")" // end "any one of these"
                     + "(" // begin group \1
@@ -90,10 +88,10 @@ public class DOI implements Identifier {
                     + "(?:(?:www\\.)?doi\\.org/)" // either doi.org
                     + "|" // or any of the following with doi.org or not...
                     + "(?:(?:doi.org/)?(?:(?:urn:)|(?:doi:)|(?:urn:doi:)))" // "doi:10/12ab" or "
-                                                                            // urn:10/12ab" or
-                                                                            // "/urn:doi:/10/12ab"
-                                                                            // or
-                                                                            // "doi.org/doi:10/12ab"...
+                    // urn:10/12ab" or
+                    // "/urn:doi:/10/12ab"
+                    // or
+                    // "doi.org/doi:10/12ab"...
                     + ")" // end "any one of these"
                     + "(" // begin group \1
                     + "10" // directory indicator

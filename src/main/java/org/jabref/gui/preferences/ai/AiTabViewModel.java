@@ -70,7 +70,7 @@ public class AiTabViewModel implements PreferenceTabViewModel {
     private final BooleanProperty disableApiBaseUrl =
             new SimpleBooleanProperty(
                     true); // {@link HuggingFaceChatModel} and {@link GoogleAiGeminiChatModel}
-                           // doesn't support setting API base URL
+    // doesn't support setting API base URL
 
     private final StringProperty openAiApiBaseUrl = new SimpleStringProperty();
     private final StringProperty mistralAiApiBaseUrl = new SimpleStringProperty();

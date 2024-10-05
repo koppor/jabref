@@ -230,7 +230,7 @@ public class PdfContentImporter extends Importer {
 
         lineIndex =
                 0; // to prevent array index out of bounds exception on second run we need to reset
-                   // i to zero
+        // i to zero
 
         proceedToNextNonEmptyLine();
         if (lineIndex >= lines.length) {
@@ -385,9 +385,8 @@ public class PdfContentImporter extends Importer {
                 if (posWithEditor > curString.length()) {
                     curString =
                             curString.substring(
-                                    posWithEditor
-                                            - 2); // we don't have any spaces after Eds so we
-                                                  // substract the 2
+                                    posWithEditor - 2); // we don't have any spaces after Eds so we
+                    // substract the 2
                 } else {
                     curString = curString.substring(posWithEditor);
                 }

@@ -129,10 +129,8 @@ public class FieldWriter {
 
             if (pos2 == -1) {
                 if (neverFailOnHashes) {
-                    pos1 =
-                            content
-                                    .length(); // just write out the rest of the text, and throw no
-                                               // exception
+                    pos1 = content.length(); // just write out the rest of the text, and throw no
+                    // exception
                 } else {
                     LOGGER.error(
                             "The character {} is not allowed in BibTeX strings unless escaped as in '\\{}'. "

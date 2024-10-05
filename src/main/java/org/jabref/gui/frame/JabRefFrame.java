@@ -381,7 +381,7 @@ public class JabRefFrame extends BorderPane implements LibraryTabContainer, UiMe
                                 break;
                             case PASTE:
                                 if (OS.OS_X) { // Workaround for a jdk issue that executes paste
-                                               // twice when using cmd+v in a TextField
+                                    // twice when using cmd+v in a TextField
                                     // Extra workaround for CodeArea, which does not inherit from
                                     // TextInputControl
                                     if (!(stateManager.getFocusOwner().isPresent()
@@ -492,7 +492,7 @@ public class JabRefFrame extends BorderPane implements LibraryTabContainer, UiMe
                                             libraryTab.textProperty().getValue()
                                                     + " – "
                                                     + FRAME_TITLE, // not a minus, but codepoint
-                                                                   // 2013
+                                    // 2013
                                     libraryTab.textProperty());
                     mainStage.titleProperty().bind(windowTitle);
                 });

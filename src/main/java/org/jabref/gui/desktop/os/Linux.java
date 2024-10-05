@@ -138,7 +138,7 @@ public class Linux extends NativeDesktop {
                         new String[] {
                             "nemo", absoluteFilePath
                         }; // Although nemo is based on nautilus it does not support --select, it
-                           // directly highlights the file
+                // directly highlights the file
             } else if (desktopSession.contains("xfce")) {
                 cmd = new String[] {"thunar", absoluteFilePath};
             }

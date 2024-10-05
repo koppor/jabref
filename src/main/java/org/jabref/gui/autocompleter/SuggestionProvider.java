@@ -50,10 +50,8 @@ public abstract class SuggestionProvider<T> {
             Equivalence<T> equivalence = getEquivalence();
             return getSource()
                     .filter(candidate -> isMatch(candidate, request))
-                    .map(
-                            equivalence
-                                    ::wrap) // Need to do a bit of acrobatic as there is no
-                                            // distinctBy method
+                    .map(equivalence::wrap) // Need to do a bit of acrobatic as there is no
+                    // distinctBy method
                     .distinct()
                     .limit(10)
                     .map(Equivalence.Wrapper::get)
@@ -70,10 +68,8 @@ public abstract class SuggestionProvider<T> {
         Comparator<T> comparator = getComparator().reversed();
         Equivalence<T> equivalence = getEquivalence();
         return getSource()
-                .map(
-                        equivalence
-                                ::wrap) // Need to do a bit of acrobatic as there is no distinctBy
-                                        // method
+                .map(equivalence::wrap) // Need to do a bit of acrobatic as there is no distinctBy
+                // method
                 .distinct()
                 .map(Equivalence.Wrapper::get)
                 .sorted(comparator)

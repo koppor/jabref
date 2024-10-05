@@ -47,8 +47,8 @@ public interface FieldEditorFX {
                     if (e.getEventType()
                                     == KeyEvent
                                             .KEY_PRESSED // if not checked, it will be fired twice:
-                                                         // once for key pressed and once for key
-                                                         // released
+                            // once for key pressed and once for key
+                            // released
                             && e.isShortcutDown()) {
                         if (keyBindingRepository.matches(e, KeyBinding.UNDO)) {
                             undoAction.execute();

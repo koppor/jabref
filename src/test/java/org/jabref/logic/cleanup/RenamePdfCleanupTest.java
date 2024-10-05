@@ -48,7 +48,7 @@ class RenamePdfCleanupTest {
         when(filePreferences.shouldStoreFilesRelativeToBibFile())
                 .thenReturn(
                         true); // Set Biblocation as Primary Directory, otherwise the tmp folders
-                               // won't be cleaned up correctly
+        // won't be cleaned up correctly
         cleanup = new RenamePdfCleanup(false, context, filePreferences);
     }
 

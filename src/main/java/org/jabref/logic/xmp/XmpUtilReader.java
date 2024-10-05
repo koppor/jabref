@@ -33,7 +33,7 @@ public class XmpUtilReader {
         System.setProperty(
                 "sun.java2d.cmm",
                 "sun.java2d.cmm.kcms.KcmsServiceProvider"); // To get higher rendering speed on java
-                                                            // 8 oder 9 for images
+        // 8 oder 9 for images
     }
 
     /**

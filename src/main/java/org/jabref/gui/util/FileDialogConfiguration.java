@@ -70,7 +70,7 @@ public class FileDialogConfiguration {
         public Builder withInitialDirectory(Path directory) {
             if (directory
                     == null) { // It could be that somehow the path is null, for example if it got
-                               // deleted in the meantime
+                // deleted in the meantime
                 initialDirectory = null;
             } else { // Dir must be a folder, not a file
                 if (!Files.isDirectory(directory)) {

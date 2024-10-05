@@ -226,7 +226,7 @@ public class AiChatComponent extends VBox {
                                     assert ingestionStatus
                                             .getException()
                                             .isPresent(); // When the state is ERROR, the exception
-                                                          // must be present.
+                                    // must be present.
 
                                     notifications.add(
                                             new Notification(

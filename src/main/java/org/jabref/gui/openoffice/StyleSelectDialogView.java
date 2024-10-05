@@ -212,10 +212,9 @@ public class StyleSelectDialogView extends BaseDialog<OOStyle> {
         availableListView.setOnMouseClicked(
                 event -> {
                     if (event.getClickCount() == 2) {
-                        viewModel
-                                .handleCslStyleSelection(); // Only CSL styles can be selected with
-                                                            // a double click, JStyles show a style
-                                                            // description instead
+                        viewModel.handleCslStyleSelection(); // Only CSL styles can be selected with
+                        // a double click, JStyles show a style
+                        // description instead
                         this.setResult(viewModel.getSelectedStyle());
                         this.close();
                     }

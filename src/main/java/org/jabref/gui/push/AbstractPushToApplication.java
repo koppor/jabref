@@ -28,10 +28,10 @@ public abstract class AbstractPushToApplication implements PushToApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPushToApplication.class);
     protected boolean
             couldNotCall; // Set to true in case the command could not be executed, e.g., if the
-                          // file is not found
+    // file is not found
     protected boolean
             couldNotPush; // Set to true in case the tunnel to the program (if one is used) does not
-                          // operate
+    // operate
     protected boolean
             notDefined; // Set to true if the corresponding path is not defined in the preferences
 

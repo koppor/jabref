@@ -28,7 +28,7 @@ public class JabRefCLI {
             100; // Number of characters per line before a line break must be added.
     private static final String WRAPPED_LINE_PREFIX =
             ""; // If a line break is added, this prefix will be inserted at the beginning of the
-                // next line
+    // next line
     private static final String STRING_TABLE_DELIMITER = " : ";
 
     private final CommandLine cl;

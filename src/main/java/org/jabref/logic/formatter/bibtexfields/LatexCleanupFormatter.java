@@ -58,7 +58,7 @@ public class LatexCleanupFormatter extends Formatter {
                         .matcher(newValue)
                         .replaceAll(
                                 "\\$$1"); // Move numbers, possibly with operators +, -, or /,  left
-                                          // of $ into the equation
+        // of $ into the equation
         newValue =
                 MOVE_NUMBERS_RIGHT_INTO_EQUATION
                         .matcher(newValue)
@@ -72,9 +72,8 @@ public class LatexCleanupFormatter extends Formatter {
         newValue =
                 ESCAPE_PERCENT_SIGN_ONCE
                         .matcher(newValue)
-                        .replaceAll(
-                                "$1\\\\%"); // escape %, but do not escapee \% again,  used for
-                                            // comments in TeX
+                        .replaceAll("$1\\\\%"); // escape %, but do not escapee \% again,  used for
+        // comments in TeX
 
         return newValue;
     }

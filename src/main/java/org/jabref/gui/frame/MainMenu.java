@@ -641,7 +641,7 @@ public class MainMenu extends MenuBar {
                                         stateManager,
                                         (UiTaskExecutor)
                                                 taskExecutor)), // we know at this point that this
-                                                                // is a UITaskExecutor
+                        // is a UITaskExecutor
                         new SeparatorMenuItem(),
                         createSendSubMenu(factory, dialogService, stateManager, preferences),
                         pushToApplicationMenuItem,

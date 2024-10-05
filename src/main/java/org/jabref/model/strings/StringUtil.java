@@ -540,10 +540,8 @@ public class StringUtil {
         char current; // Used to reference the current character.
 
         for (int i = 0; i < in.length(); i++) {
-            current =
-                    in.charAt(
-                            i); // NOTE: No IndexOutOfBoundsException caught here; it should not
-                                // happen.
+            current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not
+            // happen.
             if ((current == 0x9)
                     || (current == 0xA)
                     || (current == 0xD)

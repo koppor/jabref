@@ -215,9 +215,8 @@ public class TrustStoreManager {
             throws NoSuchAlgorithmException, KeyStoreException {
         TrustManagerFactory tmf =
                 TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        tmf.init(
-                keyStore); // If keyStore is null, tmf will be initialized with the default trust
-                           // store
+        tmf.init(keyStore); // If keyStore is null, tmf will be initialized with the default trust
+        // store
 
         for (TrustManager tm : tmf.getTrustManagers()) {
             if (tm instanceof X509TrustManager manager) {

@@ -65,7 +65,7 @@ class MoveFilesCleanupTest {
         when(filePreferences.shouldStoreFilesRelativeToBibFile())
                 .thenReturn(
                         false); // Biblocation as Primary overwrites all other dirs, therefore we
-                                // set it to false here
+        // set it to false here
         cleanup = new MoveFilesCleanup(databaseContext, filePreferences);
     }
 

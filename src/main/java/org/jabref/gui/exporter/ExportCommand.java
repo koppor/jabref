@@ -159,7 +159,7 @@ public class ExportCommand extends SimpleCommand {
                                     fileDirForDatabase,
                                     abbreviationRepository);
                             return null; // can not use BackgroundTask.wrap(Runnable) because
-                                         // Runnable.run() can't throw Exceptions
+                            // Runnable.run() can't throw Exceptions
                         })
                 .onSuccess(
                         save -> {

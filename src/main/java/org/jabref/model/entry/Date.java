@@ -87,7 +87,7 @@ public class Date {
                         + // covers YYYY.MM.DD, YYYY.M.DD, YYYY.MM.D, YYYY.M.D
                         "(January|February|March|April|May|June|July|August|September|"
                         + "October|November|December) \\d{1,2}, \\d{4}"; // covers Month DD, YYYY &
-                                                                         // Month D, YYYY
+        // Month D, YYYY
     }
 
     private final TemporalAccessor date;
@@ -197,7 +197,7 @@ public class Date {
                         "\\d{1,4}-\\d{1,2} BC/\\d{1,4}-\\d{1,2} BC|"
                         + // 5 AD/10 AD and 0005 AD/0010 AD
                         "\\d{1,4}-\\d{1,2} AD/\\d{1,4}-\\d{1,2} AD" // 5 AD/10 AD and 0005 AD/0010
-                                                                    // AD
+                // AD
                 )) {
             try {
                 String[] strDates = dateString.split("/");
@@ -220,7 +220,7 @@ public class Date {
                         "\\d{1,4}-\\d{1,2} BC / \\d{1,4}-\\d{1,2} BC|"
                         + // 5 AD/10 AD and 0005 AD/0010 AD
                         "\\d{1,4}-\\d{1,2} AD / \\d{1,4}-\\d{1,2} AD" // 5 AD/10 AD and 0005 AD/0010
-                                                                      // AD
+                // AD
                 )) {
             try {
                 String[] strDates = dateString.split(" / ");
