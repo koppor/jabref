@@ -1,12 +1,12 @@
 package org.jabref.gui.texparser;
 
-import java.util.Collection;
-
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import org.jabref.model.texparser.Citation;
+
+import java.util.Collection;
 
 public class ReferenceViewModel {
 
@@ -14,7 +14,8 @@ public class ReferenceViewModel {
     private final boolean highlighted;
     private final ObservableList<Citation> citationList;
 
-    public ReferenceViewModel(String entry, boolean highlighted, Collection<Citation> citationColl) {
+    public ReferenceViewModel(
+            String entry, boolean highlighted, Collection<Citation> citationColl) {
         this.entry = entry;
         this.highlighted = highlighted;
         this.citationList = FXCollections.observableArrayList();
@@ -39,9 +40,7 @@ public class ReferenceViewModel {
 
     @Override
     public String toString() {
-        return "ReferenceViewModel{entry='%s', highlighted=%s, citationList=%s}".formatted(
-                this.entry,
-                this.highlighted,
-                this.citationList);
+        return "ReferenceViewModel{entry='%s', highlighted=%s, citationList=%s}"
+                .formatted(this.entry, this.highlighted, this.citationList);
     }
 }

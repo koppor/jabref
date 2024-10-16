@@ -1,11 +1,11 @@
 package org.jabref.logic.importer.fileformat;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.io.IOException;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 class MedlineImporterFilesTest {
 
@@ -14,8 +14,11 @@ class MedlineImporterFilesTest {
     private static final String MALFORMED_KEY_WORD = "Malformed";
 
     private static Stream<String> fileNames() throws IOException {
-        Predicate<String> fileName = name -> name.startsWith("MedlineImporterTest") && name.endsWith(FILE_ENDING)
-                && !name.contains(MALFORMED_KEY_WORD);
+        Predicate<String> fileName =
+                name ->
+                        name.startsWith("MedlineImporterTest")
+                                && name.endsWith(FILE_ENDING)
+                                && !name.contains(MALFORMED_KEY_WORD);
         return ImporterTestEngine.getTestFiles(fileName).stream();
     }
 
@@ -43,8 +46,10 @@ class MedlineImporterFilesTest {
     }
 
     private static Stream<String> malformedFileNames() throws IOException {
-        Predicate<String> fileName = name -> name.startsWith("MedlineImporterTest" + MALFORMED_KEY_WORD)
-                && name.endsWith(FILE_ENDING);
+        Predicate<String> fileName =
+                name ->
+                        name.startsWith("MedlineImporterTest" + MALFORMED_KEY_WORD)
+                                && name.endsWith(FILE_ENDING);
         return ImporterTestEngine.getTestFiles(fileName).stream();
     }
 

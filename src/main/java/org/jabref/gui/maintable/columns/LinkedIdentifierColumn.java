@@ -1,8 +1,5 @@
 package org.jabref.gui.maintable.columns;
 
-import java.io.IOException;
-import java.util.Map;
-
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -26,6 +23,9 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.field.Field;
 
+import java.io.IOException;
+import java.util.Map;
+
 /**
  * A clickable icons column for DOIs, URLs, URIs and EPrints.
  */
@@ -36,12 +36,13 @@ public class LinkedIdentifierColumn extends MainTableColumn<Map<Field, String>> 
     private final DialogService dialogService;
     private final GuiPreferences preferences;
 
-    public LinkedIdentifierColumn(MainTableColumnModel model,
-                                  CellFactory cellFactory,
-                                  BibDatabaseContext database,
-                                  DialogService dialogService,
-                                  GuiPreferences preferences,
-                                  StateManager stateManager) {
+    public LinkedIdentifierColumn(
+            MainTableColumnModel model,
+            CellFactory cellFactory,
+            BibDatabaseContext database,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            StateManager stateManager) {
         super(model);
         this.database = database;
         this.cellFactory = cellFactory;
@@ -59,12 +60,16 @@ public class LinkedIdentifierColumn extends MainTableColumn<Map<Field, String>> 
                 .withGraphic(this::createIdentifierGraphic)
                 .withTooltip(this::createIdentifierTooltip)
                 .withMenu(this::createIdentifierMenu)
-                .withOnMouseClickedEvent((entry, linkedFiles) -> event -> {
-                    // If we only have one identifer, open directly
-                    if ((linkedFiles.size() == 1) && (event.getButton() == MouseButton.PRIMARY)) {
-                       new OpenUrlAction(dialogService, stateManager, preferences).execute();
-                    }
-                })
+                .withOnMouseClickedEvent(
+                        (entry, linkedFiles) ->
+                                event -> {
+                                    // If we only have one identifer, open directly
+                                    if ((linkedFiles.size() == 1)
+                                            && (event.getButton() == MouseButton.PRIMARY)) {
+                                        new OpenUrlAction(dialogService, stateManager, preferences)
+                                                .execute();
+                                    }
+                                })
                 .install(this);
     }
 
@@ -80,31 +85,56 @@ public class LinkedIdentifierColumn extends MainTableColumn<Map<Field, String>> 
 
     private String createIdentifierTooltip(Map<Field, String> values) {
         StringBuilder identifiers = new StringBuilder();
-        values.keySet().forEach(field -> identifiers.append(field.getDisplayName()).append(": ").append(values.get(field)).append("\n"));
+        values.keySet()
+                .forEach(
+                        field ->
+                                identifiers
+                                        .append(field.getDisplayName())
+                                        .append(": ")
+                                        .append(values.get(field))
+                                        .append("\n"));
         return identifiers.toString();
     }
 
-    private ContextMenu createIdentifierMenu(BibEntryTableViewModel entry, Map<Field, String> values) {
+    private ContextMenu createIdentifierMenu(
+            BibEntryTableViewModel entry, Map<Field, String> values) {
         ContextMenu contextMenu = new ContextMenu();
 
         if (values.size() <= 1) {
             return null;
         }
 
-        values.keySet().forEach(field -> {
-            MenuItem menuItem = new MenuItem(field.getDisplayName() + ": " +
-                    ControlHelper.truncateString(values.get(field), -1, "...", ControlHelper.EllipsisPosition.CENTER),
-                    cellFactory.getTableIcon(field));
-            menuItem.setOnAction(event -> {
-                try {
-                    NativeDesktop.openExternalViewer(database, preferences, values.get(field), field, dialogService, entry.getEntry());
-                } catch (IOException e) {
-                    dialogService.showErrorDialogAndWait(Localization.lang("Unable to open link."), e);
-                }
-                event.consume();
-            });
-            contextMenu.getItems().add(menuItem);
-        });
+        values.keySet()
+                .forEach(
+                        field -> {
+                            MenuItem menuItem =
+                                    new MenuItem(
+                                            field.getDisplayName()
+                                                    + ": "
+                                                    + ControlHelper.truncateString(
+                                                            values.get(field),
+                                                            -1,
+                                                            "...",
+                                                            ControlHelper.EllipsisPosition.CENTER),
+                                            cellFactory.getTableIcon(field));
+                            menuItem.setOnAction(
+                                    event -> {
+                                        try {
+                                            NativeDesktop.openExternalViewer(
+                                                    database,
+                                                    preferences,
+                                                    values.get(field),
+                                                    field,
+                                                    dialogService,
+                                                    entry.getEntry());
+                                        } catch (IOException e) {
+                                            dialogService.showErrorDialogAndWait(
+                                                    Localization.lang("Unable to open link."), e);
+                                        }
+                                        event.consume();
+                                    });
+                            contextMenu.getItems().add(menuItem);
+                        });
 
         return contextMenu;
     }

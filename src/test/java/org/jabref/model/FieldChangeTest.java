@@ -1,24 +1,24 @@
 package org.jabref.model;
 
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.junit.jupiter.api.Test;
+
 class FieldChangeTest {
 
-    private BibEntry entry = new BibEntry()
-            .withField(StandardField.DOI, "foo");
+    private BibEntry entry = new BibEntry().withField(StandardField.DOI, "foo");
     private BibEntry entryOther = new BibEntry();
     private FieldChange fc = new FieldChange(entry, StandardField.DOI, "foo", "bar");
 
     @Test
     void fieldChangeOnNullEntryNotAllowed() {
-        assertThrows(NullPointerException.class, () -> new FieldChange(null, StandardField.DOI, "foo", "bar"));
+        assertThrows(
+                NullPointerException.class,
+                () -> new FieldChange(null, StandardField.DOI, "foo", "bar"));
     }
 
     @Test

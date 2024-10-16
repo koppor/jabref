@@ -1,13 +1,13 @@
 package org.jabref.model.pdf;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 class FileAnnotationTest {
 
@@ -41,10 +41,14 @@ class FileAnnotationTest {
 
     @Test
     void abbreviateAnnotationName() {
-        final FileAnnotation fileAnnotation = new FileAnnotation("John Robertson",
-                LocalDateTime.of(2020, 4, 18, 17, 10), 1,
-                "this is an annotation that is very long and goes over the character limit of 45",
-                FileAnnotationType.FREETEXT, Optional.empty());
+        final FileAnnotation fileAnnotation =
+                new FileAnnotation(
+                        "John Robertson",
+                        LocalDateTime.of(2020, 4, 18, 17, 10),
+                        1,
+                        "this is an annotation that is very long and goes over the character limit of 45",
+                        FileAnnotationType.FREETEXT,
+                        Optional.empty());
 
         assertEquals("this is an annotation that is very long and g...", fileAnnotation.toString());
     }

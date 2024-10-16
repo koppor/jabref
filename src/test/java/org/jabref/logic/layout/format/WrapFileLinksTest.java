@@ -1,15 +1,15 @@
 package org.jabref.logic.layout.format;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collections;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collections;
 
 class WrapFileLinksTest {
 
@@ -97,9 +97,12 @@ class WrapFileLinksTest {
 
     @Test
     void path() throws IOException {
-        formatter = new WrapFileLinks(Collections.singletonList(Path.of("src/test/resources/pdfs/")), "");
+        formatter =
+                new WrapFileLinks(
+                        Collections.singletonList(Path.of("src/test/resources/pdfs/")), "");
         formatter.setArgument("\\p");
-        assertEquals(new File("src/test/resources/pdfs/encrypted.pdf").getCanonicalPath(),
+        assertEquals(
+                new File("src/test/resources/pdfs/encrypted.pdf").getCanonicalPath(),
                 formatter.format("Preferences:encrypted.pdf:PDF"));
     }
 
@@ -107,13 +110,16 @@ class WrapFileLinksTest {
     void pathFallBackToGeneratedDir() throws IOException {
         formatter = new WrapFileLinks(Collections.emptyList(), "src/test/resources/pdfs/");
         formatter.setArgument("\\p");
-        assertEquals(new File("src/test/resources/pdfs/encrypted.pdf").getCanonicalPath(),
+        assertEquals(
+                new File("src/test/resources/pdfs/encrypted.pdf").getCanonicalPath(),
                 formatter.format("Preferences:encrypted.pdf:PDF"));
     }
 
     @Test
     void pathReturnsRelativePathIfNotFound() {
-        formatter = new WrapFileLinks(Collections.singletonList(Path.of("src/test/resources/pdfs/")), "");
+        formatter =
+                new WrapFileLinks(
+                        Collections.singletonList(Path.of("src/test/resources/pdfs/")), "");
         formatter.setArgument("\\p");
         assertEquals("test.pdf", formatter.format("Preferences:test.pdf:PDF"));
     }

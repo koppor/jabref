@@ -1,16 +1,15 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.net.URI;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.net.URI;
+import java.util.Optional;
 
 @FetcherTest
 class ApsFetcherTest {
@@ -24,25 +23,39 @@ class ApsFetcherTest {
 
     @Test
     void findFullTextFromDoi() throws Exception {
-        BibEntry entry = new BibEntry().withField(StandardField.DOI, "10.1103/PhysRevLett.116.061102");
-        assertEquals(Optional.of(URI.create("https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.116.061102").toURL()), finder.findFullText(entry));
+        BibEntry entry =
+                new BibEntry().withField(StandardField.DOI, "10.1103/PhysRevLett.116.061102");
+        assertEquals(
+                Optional.of(
+                        URI.create(
+                                        "https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.116.061102")
+                                .toURL()),
+                finder.findFullText(entry));
     }
 
     @Test
     void findFullTextFromLowercaseDoi() throws Exception {
-        BibEntry entry = new BibEntry().withField(StandardField.DOI, "10.1103/physrevlett.124.029002");
-        assertEquals(Optional.of(URI.create("https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.124.029002").toURL()), finder.findFullText(entry));
+        BibEntry entry =
+                new BibEntry().withField(StandardField.DOI, "10.1103/physrevlett.124.029002");
+        assertEquals(
+                Optional.of(
+                        URI.create(
+                                        "https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.124.029002")
+                                .toURL()),
+                finder.findFullText(entry));
     }
 
     @Test
     void notFindFullTextForUnauthorized() throws Exception {
-        BibEntry entry = new BibEntry().withField(StandardField.DOI, "10.1103/PhysRevLett.89.127401");
+        BibEntry entry =
+                new BibEntry().withField(StandardField.DOI, "10.1103/PhysRevLett.89.127401");
         assertEquals(Optional.empty(), finder.findFullText(entry));
     }
 
     @Test
     void notFindFullTextForUnknownEntry() throws Exception {
-        BibEntry entry = new BibEntry().withField(StandardField.DOI, "10.1016/j.aasri.2014.0559.002");
+        BibEntry entry =
+                new BibEntry().withField(StandardField.DOI, "10.1016/j.aasri.2014.0559.002");
         assertEquals(Optional.empty(), finder.findFullText(entry));
     }
 }

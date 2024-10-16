@@ -1,5 +1,16 @@
 package org.jabref.logic.git;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import org.jabref.logic.crawler.StudyRepository;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -10,18 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
-
-import org.jabref.logic.crawler.StudyRepository;
-
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.diff.DiffFormatter;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
 public class SlrGitHandler extends GitHandler {
 
@@ -34,7 +33,8 @@ public class SlrGitHandler extends GitHandler {
         super(repositoryPath);
     }
 
-    public void appendLatestSearchResultsOntoCurrentBranch(String patchMessage, String searchBranchName) throws IOException, GitAPIException {
+    public void appendLatestSearchResultsOntoCurrentBranch(
+            String patchMessage, String searchBranchName) throws IOException, GitAPIException {
         // Calculate and apply new search results to work branch
         String patch = calculatePatchOfNewSearchResults(searchBranchName);
         Map<Path, String> result = parsePatchForAddedEntries(patch);
@@ -49,7 +49,8 @@ public class SlrGitHandler extends GitHandler {
      * @param sourceBranch The name of the branch that is the target of the calculation
      * @return Returns the patch (diff) between the head of the sourceBranch and its previous commit HEAD^1
      */
-    String calculatePatchOfNewSearchResults(String sourceBranch) throws IOException, GitAPIException {
+    String calculatePatchOfNewSearchResults(String sourceBranch)
+            throws IOException, GitAPIException {
         try (Git git = Git.open(this.repositoryPathAsFile)) {
             Optional<Ref> sourceBranchRef = getRefForBranch(sourceBranch);
             if (sourceBranchRef.isEmpty()) {
@@ -104,7 +105,9 @@ public class SlrGitHandler extends GitHandler {
                 // If the diff is related to a different file, save the diff for the previous file
                 if (!(relativePath == null || joiner == null)) {
                     if (!relativePath.contains(StudyRepository.STUDY_DEFINITION_FILE_NAME)) {
-                        diffsPerFile.put(Path.of(repositoryPath.toString(), relativePath), joiner.toString());
+                        diffsPerFile.put(
+                                Path.of(repositoryPath.toString(), relativePath),
+                                joiner.toString());
                     }
                 }
                 // Find the relative path of the file that is related with the current diff
@@ -138,20 +141,25 @@ public class SlrGitHandler extends GitHandler {
      * The patch is inserted between the encoding and the contents of the bib files.
      */
     void applyPatch(Map<Path, String> patch) {
-        patch.keySet().forEach(path -> {
-            try {
-                String currentContent = Files.readString(path);
-                String prefix = "";
-                if (currentContent.startsWith("% Encoding:")) {
-                    int endOfEncoding = currentContent.indexOf("\n");
-                    // Include Encoding and the empty line
-                    prefix = currentContent.substring(0, endOfEncoding + 1) + "\n";
-                    currentContent = currentContent.substring(endOfEncoding + 2);
-                }
-                Files.writeString(path, prefix + patch.get(path) + currentContent, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                LOGGER.error("Could not apply patch.");
-            }
-        });
+        patch.keySet()
+                .forEach(
+                        path -> {
+                            try {
+                                String currentContent = Files.readString(path);
+                                String prefix = "";
+                                if (currentContent.startsWith("% Encoding:")) {
+                                    int endOfEncoding = currentContent.indexOf("\n");
+                                    // Include Encoding and the empty line
+                                    prefix = currentContent.substring(0, endOfEncoding + 1) + "\n";
+                                    currentContent = currentContent.substring(endOfEncoding + 2);
+                                }
+                                Files.writeString(
+                                        path,
+                                        prefix + patch.get(path) + currentContent,
+                                        StandardCharsets.UTF_8);
+                            } catch (IOException e) {
+                                LOGGER.error("Could not apply patch.");
+                            }
+                        });
     }
 }

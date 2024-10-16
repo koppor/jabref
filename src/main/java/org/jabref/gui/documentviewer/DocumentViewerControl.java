@@ -1,8 +1,6 @@
 package org.jabref.gui.documentviewer;
 
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.property.DoubleProperty;
@@ -19,13 +17,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import org.jabref.logic.util.BackgroundTask;
-import org.jabref.logic.util.TaskExecutor;
-
-import com.tobiasdiez.easybind.EasyBind;
 import org.fxmisc.flowless.Cell;
 import org.fxmisc.flowless.VirtualFlow;
 import org.fxmisc.flowless.VirtualFlowHit;
+import org.jabref.logic.util.BackgroundTask;
+import org.jabref.logic.util.TaskExecutor;
+
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 
 public class DocumentViewerControl extends StackPane {
 
@@ -71,22 +71,31 @@ public class DocumentViewerControl extends StackPane {
     public void show(DocumentViewModel document) {
         flow = VirtualFlow.createVertical(document.getPages(), DocumentViewerPage::new);
         getChildren().setAll(flow);
-        flow.visibleCells().addListener((ListChangeListener<? super DocumentViewerPage>) c -> updateCurrentPage(flow.visibleCells()));
+        flow.visibleCells()
+                .addListener(
+                        (ListChangeListener<? super DocumentViewerPage>)
+                                c -> updateCurrentPage(flow.visibleCells()));
 
         // (Bidirectional) binding does not work, so use listeners instead
-        flow.estimatedScrollYProperty().addListener((observable, oldValue, newValue) -> scrollY.setValue(newValue));
-        scrollY.addListener((observable, oldValue, newValue) -> flow.estimatedScrollYProperty().setValue((double) newValue));
-        flow.totalLengthEstimateProperty().addListener((observable, oldValue, newValue) -> scrollYMax.setValue(newValue));
-        flow.addEventFilter(ScrollEvent.SCROLL, (ScrollEvent event) -> {
-            if (event.isControlDown()) {
-                event.consume();
-                if (event.getDeltaY() > 0) {
-                    changePageWidth(100);
-                } else {
-                    changePageWidth(-100);
-                }
-            }
-        });
+        flow.estimatedScrollYProperty()
+                .addListener((observable, oldValue, newValue) -> scrollY.setValue(newValue));
+        scrollY.addListener(
+                (observable, oldValue, newValue) ->
+                        flow.estimatedScrollYProperty().setValue((double) newValue));
+        flow.totalLengthEstimateProperty()
+                .addListener((observable, oldValue, newValue) -> scrollYMax.setValue(newValue));
+        flow.addEventFilter(
+                ScrollEvent.SCROLL,
+                (ScrollEvent event) -> {
+                    if (event.isControlDown()) {
+                        event.consume();
+                        if (event.getDeltaY() > 0) {
+                            changePageWidth(100);
+                        } else {
+                            changePageWidth(-100);
+                        }
+                    }
+                });
     }
 
     private void updateCurrentPage(ObservableList<DocumentViewerPage> visiblePages) {
@@ -112,7 +121,10 @@ public class DocumentViewerControl extends StackPane {
         } else {
             // Heuristic missed, so try to get page number from first shown page
             currentPage.set(
-                    visiblePages.stream().findFirst().map(DocumentViewerPage::getPageNumber).orElse(1));
+                    visiblePages.stream()
+                            .findFirst()
+                            .map(DocumentViewerPage::getPageNumber)
+                            .orElse(1));
         }
     }
 
@@ -143,7 +155,7 @@ public class DocumentViewerControl extends StackPane {
         // Limit zoom out to ~1 page due to occasional display errors when zooming out further
         int minWidth = (int) (flow.getHeight() / 2 * Math.sqrt(2));
         if (newWidth < minWidth) {
-            if (newWidth - delta == minWidth) {  // Attempting to zoom out when already at minWidth
+            if (newWidth - delta == minWidth) { // Attempting to zoom out when already at minWidth
                 return;
             }
             newWidth = minWidth;
@@ -176,13 +188,14 @@ public class DocumentViewerControl extends StackPane {
             background = new Rectangle(getDesiredWidth(), getDesiredHeight());
             background.setStyle("-fx-fill: WHITE");
             // imageView.setImage(new WritableImage(getDesiredWidth(), getDesiredHeight()));
-            BackgroundTask<Image> generateImage = BackgroundTask
-                    .wrap(() -> renderPage(initialPage))
-                    .onSuccess(image -> {
-                        imageView.setImage(image);
-                        progress.setVisible(false);
-                        background.setVisible(false);
-                    });
+            BackgroundTask<Image> generateImage =
+                    BackgroundTask.wrap(() -> renderPage(initialPage))
+                            .onSuccess(
+                                    image -> {
+                                        imageView.setImage(image);
+                                        progress.setVisible(false);
+                                        background.setVisible(false);
+                                    });
             taskExecutor.execute(generateImage);
 
             imageHolder.getChildren().setAll(background, progress, imageView);
@@ -210,23 +223,26 @@ public class DocumentViewerControl extends StackPane {
         public void updateItem(DocumentPageViewModel page) {
             this.page = page;
 
-            // First hide old page and show background instead (recalculate size of background to make sure its correct)
+            // First hide old page and show background instead (recalculate size of background to
+            // make sure its correct)
             background.setWidth(getDesiredWidth());
             background.setHeight(getDesiredHeight());
             background.setVisible(true);
             imageView.setOpacity(0);
 
-            BackgroundTask<Image> generateImage = BackgroundTask
-                    .wrap(() -> renderPage(page))
-                    .onSuccess(image -> {
-                        imageView.setImage(image);
+            BackgroundTask<Image> generateImage =
+                    BackgroundTask.wrap(() -> renderPage(page))
+                            .onSuccess(
+                                    image -> {
+                                        imageView.setImage(image);
 
-                        // Fade new page in for smoother transition
-                        FadeTransition fadeIn = new FadeTransition(Duration.millis(100), imageView);
-                        fadeIn.setFromValue(0);
-                        fadeIn.setToValue(1);
-                        fadeIn.play();
-                    });
+                                        // Fade new page in for smoother transition
+                                        FadeTransition fadeIn =
+                                                new FadeTransition(Duration.millis(100), imageView);
+                                        fadeIn.setFromValue(0);
+                                        fadeIn.setToValue(1);
+                                        fadeIn.play();
+                                    });
             taskExecutor.execute(generateImage);
         }
 

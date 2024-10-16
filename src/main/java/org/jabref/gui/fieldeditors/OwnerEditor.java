@@ -1,6 +1,8 @@
 package org.jabref.gui.fieldeditors;
 
-import javax.swing.undo.UndoManager;
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
 
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -16,8 +18,7 @@ import org.jabref.logic.integrity.FieldCheckers;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import javax.swing.undo.UndoManager;
 
 public class OwnerEditor extends HBox implements FieldEditorFX {
 
@@ -28,19 +29,23 @@ public class OwnerEditor extends HBox implements FieldEditorFX {
     @Inject private KeyBindingRepository keyBindingRepository;
     @Inject private UndoManager undoManager;
 
-    public OwnerEditor(Field field,
-                       SuggestionProvider<?> suggestionProvider,
-                       FieldCheckers fieldCheckers,
-                       UndoAction undoAction,
-                       RedoAction redoAction) {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+    public OwnerEditor(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            UndoAction undoAction,
+            RedoAction redoAction) {
+        ViewLoader.view(this).root(this).load();
 
-        this.viewModel = new OwnerEditorViewModel(field, suggestionProvider, preferences, fieldCheckers, undoManager);
-        establishBinding(textField, viewModel.textProperty(), keyBindingRepository, undoAction, redoAction);
+        this.viewModel =
+                new OwnerEditorViewModel(
+                        field, suggestionProvider, preferences, fieldCheckers, undoManager);
+        establishBinding(
+                textField, viewModel.textProperty(), keyBindingRepository, undoAction, redoAction);
         textField.initContextMenu(EditorMenus.getNameMenu(textField), keyBindingRepository);
-        new EditorValidator(preferences).configureValidation(viewModel.getFieldValidator().getValidationStatus(), textField);
+        new EditorValidator(preferences)
+                .configureValidation(
+                        viewModel.getFieldValidator().getValidationStatus(), textField);
     }
 
     public OwnerEditorViewModel getViewModel() {

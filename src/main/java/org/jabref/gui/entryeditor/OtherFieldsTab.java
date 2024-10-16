@@ -1,15 +1,5 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.SequencedSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.control.Tooltip;
 
 import org.jabref.gui.DialogService;
@@ -35,26 +25,38 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UserSpecificCommentField;
 import org.jabref.model.search.SearchQuery;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.SequencedSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.swing.undo.UndoManager;
+
 public class OtherFieldsTab extends FieldsEditorTab {
 
     public static final String NAME = "Other fields";
     private final List<Field> customTabsFieldNames;
     private final BibEntryTypesManager entryTypesManager;
 
-    public OtherFieldsTab(BibDatabaseContext databaseContext,
-                          SuggestionProviders suggestionProviders,
-                          UndoManager undoManager,
-                          UndoAction undoAction,
-                          RedoAction redoAction,
-                          DialogService dialogService,
-                          GuiPreferences preferences,
-                          ThemeManager themeManager,
-                          BibEntryTypesManager entryTypesManager,
-                          TaskExecutor taskExecutor,
-                          JournalAbbreviationRepository journalAbbreviationRepository,
-                          LuceneManager luceneManager,
-                          OptionalObjectProperty<SearchQuery> searchQueryProperty) {
-        super(false,
+    public OtherFieldsTab(
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            UndoAction undoAction,
+            RedoAction redoAction,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            ThemeManager themeManager,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository,
+            LuceneManager luceneManager,
+            OptionalObjectProperty<SearchQuery> searchQueryProperty) {
+        super(
+                false,
                 databaseContext,
                 suggestionProviders,
                 undoManager,
@@ -70,7 +72,11 @@ public class OtherFieldsTab extends FieldsEditorTab {
 
         this.entryTypesManager = entryTypesManager;
         this.customTabsFieldNames = new ArrayList<>();
-        preferences.getEntryEditorPreferences().getEntryEditorTabs().values().forEach(customTabsFieldNames::addAll);
+        preferences
+                .getEntryEditorPreferences()
+                .getEntryEditorTabs()
+                .values()
+                .forEach(customTabsFieldNames::addAll);
 
         setText(Localization.lang("Other fields"));
         setTooltip(new Tooltip(Localization.lang("Show remaining fields")));
@@ -85,9 +91,10 @@ public class OtherFieldsTab extends FieldsEditorTab {
             // Get all required and optional fields configured for the entry
             Set<Field> allKnownFields = entryType.get().getAllFields();
             // Remove all fields being required or optional
-            SequencedSet<Field> otherFields = entry.getFields().stream()
-                                          .filter(field -> !allKnownFields.contains(field))
-                                          .collect(Collectors.toCollection(LinkedHashSet::new));
+            SequencedSet<Field> otherFields =
+                    entry.getFields().stream()
+                            .filter(field -> !allKnownFields.contains(field))
+                            .collect(Collectors.toCollection(LinkedHashSet::new));
             // The key field is in the required tab, but has a special treatment
             otherFields.remove(InternalField.KEY_FIELD);
             // Remove all fields contained in JabRef's tab "Deprecated"

@@ -1,6 +1,10 @@
 package org.jabref.gui.preferences.xmp;
 
-import javax.swing.undo.UndoManager;
+import com.airhacks.afterburner.views.ViewLoader;
+
+import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+
+import jakarta.inject.Inject;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -24,11 +28,10 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
-import jakarta.inject.Inject;
+import javax.swing.undo.UndoManager;
 
-public class XmpPrivacyTab extends AbstractPreferenceTabView<XmpPrivacyTabViewModel> implements PreferencesTab {
+public class XmpPrivacyTab extends AbstractPreferenceTabView<XmpPrivacyTabViewModel>
+        implements PreferencesTab {
 
     @FXML private CheckBox enableXmpFilter;
     @FXML private TableView<Field> filterList;
@@ -43,9 +46,7 @@ public class XmpPrivacyTab extends AbstractPreferenceTabView<XmpPrivacyTabViewMo
     private final ControlsFxVisualizer validationVisualizer = new ControlsFxVisualizer();
 
     public XmpPrivacyTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -70,20 +71,26 @@ public class XmpPrivacyTab extends AbstractPreferenceTabView<XmpPrivacyTabViewMo
 
         actionsColumn.setSortable(false);
         actionsColumn.setReorderable(false);
-        actionsColumn.setCellValueFactory(cellData -> BindingsHelper.constantOf(cellData.getValue()));
+        actionsColumn.setCellValueFactory(
+                cellData -> BindingsHelper.constantOf(cellData.getValue()));
         new ValueTableCellFactory<Field, Field>()
                 .withGraphic(item -> IconTheme.JabRefIcons.DELETE_ENTRY.getGraphicNode())
                 .withTooltip(item -> Localization.lang("Remove") + " " + item.getName())
                 .withOnMouseClickedEvent(
-                        item -> evt -> viewModel.removeFilter(filterList.getFocusModel().getFocusedItem()))
+                        item ->
+                                evt ->
+                                        viewModel.removeFilter(
+                                                filterList.getFocusModel().getFocusedItem()))
                 .install(actionsColumn);
 
-        filterList.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.DELETE) {
-                viewModel.removeFilter(filterList.getSelectionModel().getSelectedItem());
-                event.consume();
-            }
-        });
+        filterList.addEventFilter(
+                KeyEvent.KEY_PRESSED,
+                event -> {
+                    if (event.getCode() == KeyCode.DELETE) {
+                        viewModel.removeFilter(filterList.getSelectionModel().getSelectedItem());
+                        event.consume();
+                    }
+                });
 
         filterList.itemsProperty().bind(viewModel.filterListProperty());
 
@@ -94,15 +101,20 @@ public class XmpPrivacyTab extends AbstractPreferenceTabView<XmpPrivacyTabViewMo
         addFieldName.itemsProperty().bind(viewModel.availableFieldsProperty());
         addFieldName.valueProperty().bindBidirectional(viewModel.addFieldNameProperty());
         addFieldName.setConverter(FieldsUtil.FIELD_STRING_CONVERTER);
-        addFieldName.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                viewModel.addField();
-                event.consume();
-            }
-        });
+        addFieldName.addEventFilter(
+                KeyEvent.KEY_PRESSED,
+                event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        viewModel.addField();
+                        event.consume();
+                    }
+                });
 
         validationVisualizer.setDecoration(new IconValidationDecorator());
-        Platform.runLater(() -> validationVisualizer.initVisualization(viewModel.xmpFilterListValidationStatus(), filterList));
+        Platform.runLater(
+                () ->
+                        validationVisualizer.initVisualization(
+                                viewModel.xmpFilterListValidationStatus(), filterList));
     }
 
     public void addField() {

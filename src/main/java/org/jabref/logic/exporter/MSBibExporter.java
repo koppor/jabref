@@ -1,5 +1,11 @@
 package org.jabref.logic.exporter;
 
+import org.jabref.logic.msbib.MSBibDatabase;
+import org.jabref.logic.util.StandardFileType;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+import org.jspecify.annotations.NonNull;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -14,13 +20,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.jabref.logic.msbib.MSBibDatabase;
-import org.jabref.logic.util.StandardFileType;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
-
-import org.jspecify.annotations.NonNull;
-
 /**
  * TemplateExporter for exporting in MSBIB XML format.
  */
@@ -34,9 +33,11 @@ class MSBibExporter extends Exporter {
     }
 
     @Override
-    public void export(@NonNull BibDatabaseContext databaseContext,
-                       @NonNull Path file,
-                       @NonNull List<BibEntry> entries) throws SaveException {
+    public void export(
+            @NonNull BibDatabaseContext databaseContext,
+            @NonNull Path file,
+            @NonNull List<BibEntry> entries)
+            throws SaveException {
         Objects.requireNonNull(databaseContext); // required by test case
         if (entries.isEmpty()) {
             return;
@@ -52,7 +53,9 @@ class MSBibExporter extends Exporter {
                 Transformer trans = transformerFactory.newTransformer();
                 trans.setOutputProperty(OutputKeys.INDENT, "yes");
                 trans.transform(source, result);
-            } catch (TransformerException | IllegalArgumentException | TransformerFactoryConfigurationError e) {
+            } catch (TransformerException
+                    | IllegalArgumentException
+                    | TransformerFactoryConfigurationError e) {
                 throw new SaveException(e);
             }
         } catch (IOException ex) {

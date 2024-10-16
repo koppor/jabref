@@ -1,7 +1,5 @@
 package org.jabref.gui.journals;
 
-import javax.swing.undo.CompoundEdit;
-
 import org.jabref.gui.undo.UndoableFieldChange;
 import org.jabref.logic.journals.Abbreviation;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
@@ -11,6 +9,8 @@ import org.jabref.model.entry.field.AMSField;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
 
+import javax.swing.undo.CompoundEdit;
+
 // Undo redo stuff
 public class UndoableAbbreviator {
 
@@ -18,7 +18,10 @@ public class UndoableAbbreviator {
     private final AbbreviationType abbreviationType;
     private final boolean useFJournalField;
 
-    public UndoableAbbreviator(JournalAbbreviationRepository journalAbbreviationRepository, AbbreviationType abbreviationType, boolean useFJournalField) {
+    public UndoableAbbreviator(
+            JournalAbbreviationRepository journalAbbreviationRepository,
+            AbbreviationType abbreviationType,
+            boolean useFJournalField) {
         this.journalAbbreviationRepository = journalAbbreviationRepository;
         this.abbreviationType = abbreviationType;
         this.useFJournalField = useFJournalField;
@@ -33,7 +36,8 @@ public class UndoableAbbreviator {
      * @param ce        If the entry is changed, add an edit to this compound.
      * @return true if the entry was changed, false otherwise.
      */
-    public boolean abbreviate(BibDatabase database, BibEntry entry, Field fieldName, CompoundEdit ce) {
+    public boolean abbreviate(
+            BibDatabase database, BibEntry entry, Field fieldName, CompoundEdit ce) {
         if (!entry.hasField(fieldName)) {
             return false;
         }
@@ -56,9 +60,13 @@ public class UndoableAbbreviator {
         }
 
         // Store full name into fjournal but only if it exists
-        if (useFJournalField && (StandardField.JOURNAL == fieldName || StandardField.JOURNALTITLE == fieldName)) {
+        if (useFJournalField
+                && (StandardField.JOURNAL == fieldName
+                        || StandardField.JOURNALTITLE == fieldName)) {
             entry.setField(AMSField.FJOURNAL, abbreviation.getName());
-            ce.addEdit(new UndoableFieldChange(entry, AMSField.FJOURNAL, null, abbreviation.getName()));
+            ce.addEdit(
+                    new UndoableFieldChange(
+                            entry, AMSField.FJOURNAL, null, abbreviation.getName()));
         }
 
         entry.setField(fieldName, newText);
@@ -68,14 +76,12 @@ public class UndoableAbbreviator {
 
     private String getAbbreviatedName(Abbreviation text) {
         return switch (abbreviationType) {
-            case DEFAULT ->
-                    text.getAbbreviation();
-            case DOTLESS ->
-                    text.getDotlessAbbreviation();
-            case SHORTEST_UNIQUE ->
-                    text.getShortestUniqueAbbreviation();
+            case DEFAULT -> text.getAbbreviation();
+            case DOTLESS -> text.getDotlessAbbreviation();
+            case SHORTEST_UNIQUE -> text.getShortestUniqueAbbreviation();
             default ->
-                    throw new IllegalStateException("Unexpected value: %s".formatted(abbreviationType));
+                    throw new IllegalStateException(
+                            "Unexpected value: %s".formatted(abbreviationType));
         };
     }
 }

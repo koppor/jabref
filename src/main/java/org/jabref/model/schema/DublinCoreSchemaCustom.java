@@ -1,8 +1,5 @@
 package org.jabref.model.schema;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.DublinCoreSchema;
@@ -12,6 +9,9 @@ import org.apache.xmpbox.type.DateType;
 import org.apache.xmpbox.type.StructuredType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *  A DublinCoreSchema extension Class.
@@ -32,10 +32,15 @@ public class DublinCoreSchemaCustom extends DublinCoreSchema {
         }
 
         try {
-            DublinCoreSchemaCustom dublinCoreSchemaCustom = new DublinCoreSchemaCustom(dcSchema.getMetadata());
-            FieldUtils.writeField(dublinCoreSchemaCustom, "container", dcSchema.getContainer(), true);
-            FieldUtils.writeField(dublinCoreSchemaCustom, "attributes",
-                    FieldUtils.readField(dcSchema, "attributes", true), true);
+            DublinCoreSchemaCustom dublinCoreSchemaCustom =
+                    new DublinCoreSchemaCustom(dcSchema.getMetadata());
+            FieldUtils.writeField(
+                    dublinCoreSchemaCustom, "container", dcSchema.getContainer(), true);
+            FieldUtils.writeField(
+                    dublinCoreSchemaCustom,
+                    "attributes",
+                    FieldUtils.readField(dcSchema, "attributes", true),
+                    true);
             return dublinCoreSchemaCustom;
         } catch (Exception e) {
             LOGGER.error("Error making custom DC Schema. Using the default", e);
@@ -52,9 +57,7 @@ public class DublinCoreSchemaCustom extends DublinCoreSchema {
         AbstractField abstractProperty = getAbstractProperty(seqName);
         if (abstractProperty instanceof ArrayProperty property) {
             if ("date".equals(seqName)) {
-                return property.getContainer()
-                        .getAllProperties()
-                        .stream()
+                return property.getContainer().getAllProperties().stream()
                         .map(field -> (String) ((DateType) field).getRawValue())
                         .collect(Collectors.toList());
             }

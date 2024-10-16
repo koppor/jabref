@@ -1,14 +1,15 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import com.sun.star.frame.XController;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.view.XSelectionSupplier;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Selection in the document.
@@ -17,8 +18,7 @@ public class UnoSelection {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UnoSelection.class);
 
-    private UnoSelection() {
-    }
+    private UnoSelection() {}
 
     private static Optional<XSelectionSupplier> getSelectionSupplier(XTextDocument doc) {
         if (doc == null) {
@@ -27,12 +27,15 @@ public class UnoSelection {
         }
         Optional<XController> controller = UnoTextDocument.getCurrentController(doc);
         if (controller.isEmpty()) {
-            LOGGER.warn("UnoSelection.getSelectionSupplier: getCurrentController(doc) returned empty");
+            LOGGER.warn(
+                    "UnoSelection.getSelectionSupplier: getCurrentController(doc) returned empty");
             return Optional.empty();
         }
-        Optional<XSelectionSupplier> supplier = UnoCast.cast(XSelectionSupplier.class, controller.get());
+        Optional<XSelectionSupplier> supplier =
+                UnoCast.cast(XSelectionSupplier.class, controller.get());
         if (supplier.isEmpty()) {
-            LOGGER.warn("UnoSelection.getSelectionSupplier: cast to XSelectionSupplier returned empty");
+            LOGGER.warn(
+                    "UnoSelection.getSelectionSupplier: cast to XSelectionSupplier returned empty");
             return Optional.empty();
         }
         return supplier;

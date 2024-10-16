@@ -1,7 +1,5 @@
 package org.jabref.gui;
 
-import java.util.List;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -13,6 +11,8 @@ import javafx.collections.ObservableList;
 
 import org.jabref.gui.theme.Theme;
 import org.jabref.logic.l10n.Language;
+
+import java.util.List;
 
 public class WorkspacePreferences {
     private final ObjectProperty<Language> language;
@@ -27,26 +27,29 @@ public class WorkspacePreferences {
     private final BooleanProperty confirmDelete;
     private final ObservableList<String> selectedSlrCatalogs;
 
-    public WorkspacePreferences(Language language,
-                                boolean shouldOverrideDefaultFontSize,
-                                int mainFontSize,
-                                int defaultFontSize,
-                                Theme theme,
-                                boolean themeSyncOs,
-                                boolean shouldOpenLastEdited,
-                                boolean showAdvancedHints,
-                                boolean warnAboutDuplicatesInInspection,
-                                boolean confirmDelete,
-                                List<String> selectedSlrCatalogs) {
+    public WorkspacePreferences(
+            Language language,
+            boolean shouldOverrideDefaultFontSize,
+            int mainFontSize,
+            int defaultFontSize,
+            Theme theme,
+            boolean themeSyncOs,
+            boolean shouldOpenLastEdited,
+            boolean showAdvancedHints,
+            boolean warnAboutDuplicatesInInspection,
+            boolean confirmDelete,
+            List<String> selectedSlrCatalogs) {
         this.language = new SimpleObjectProperty<>(language);
-        this.shouldOverrideDefaultFontSize = new SimpleBooleanProperty(shouldOverrideDefaultFontSize);
+        this.shouldOverrideDefaultFontSize =
+                new SimpleBooleanProperty(shouldOverrideDefaultFontSize);
         this.mainFontSize = new SimpleIntegerProperty(mainFontSize);
         this.defaultFontSize = new SimpleIntegerProperty(defaultFontSize);
         this.theme = new SimpleObjectProperty<>(theme);
         this.themeSyncOs = new SimpleBooleanProperty(themeSyncOs);
         this.shouldOpenLastEdited = new SimpleBooleanProperty(shouldOpenLastEdited);
         this.showAdvancedHints = new SimpleBooleanProperty(showAdvancedHints);
-        this.warnAboutDuplicatesInInspection = new SimpleBooleanProperty(warnAboutDuplicatesInInspection);
+        this.warnAboutDuplicatesInInspection =
+                new SimpleBooleanProperty(warnAboutDuplicatesInInspection);
         this.confirmDelete = new SimpleBooleanProperty(confirmDelete);
         this.selectedSlrCatalogs = FXCollections.observableArrayList(selectedSlrCatalogs);
     }

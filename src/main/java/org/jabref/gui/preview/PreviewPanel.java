@@ -1,11 +1,5 @@
 package org.jabref.gui.preview;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -31,9 +25,14 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.search.SearchQuery;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class PreviewPanel extends VBox {
 
@@ -46,64 +45,85 @@ public class PreviewPanel extends VBox {
     private final DialogService dialogService;
     private BibEntry entry;
 
-    public PreviewPanel(BibDatabaseContext database,
-                        DialogService dialogService,
-                        KeyBindingRepository keyBindingRepository,
-                        GuiPreferences preferences,
-                        ThemeManager themeManager,
-                        TaskExecutor taskExecutor,
-                        LuceneManager luceneManager,
-                        OptionalObjectProperty<SearchQuery> searchQueryProperty) {
+    public PreviewPanel(
+            BibDatabaseContext database,
+            DialogService dialogService,
+            KeyBindingRepository keyBindingRepository,
+            GuiPreferences preferences,
+            ThemeManager themeManager,
+            TaskExecutor taskExecutor,
+            LuceneManager luceneManager,
+            OptionalObjectProperty<SearchQuery> searchQueryProperty) {
         this.keyBindingRepository = keyBindingRepository;
         this.dialogService = dialogService;
         this.previewPreferences = preferences.getPreviewPreferences();
-        this.fileLinker = new ExternalFilesEntryLinker(preferences.getExternalApplicationsPreferences(), preferences.getFilePreferences(), database, dialogService);
+        this.fileLinker =
+                new ExternalFilesEntryLinker(
+                        preferences.getExternalApplicationsPreferences(),
+                        preferences.getFilePreferences(),
+                        database,
+                        dialogService);
 
         PreviewPreferences previewPreferences = preferences.getPreviewPreferences();
-        previewView = new PreviewViewer(database, dialogService, preferences, themeManager, taskExecutor, searchQueryProperty);
+        previewView =
+                new PreviewViewer(
+                        database,
+                        dialogService,
+                        preferences,
+                        themeManager,
+                        taskExecutor,
+                        searchQueryProperty);
         previewView.setLayout(previewPreferences.getSelectedPreviewLayout());
         previewView.setContextMenu(createPopupMenu());
-        previewView.setOnDragDetected(event -> {
-            previewView.startFullDrag();
+        previewView.setOnDragDetected(
+                event -> {
+                    previewView.startFullDrag();
 
-            Dragboard dragboard = previewView.startDragAndDrop(TransferMode.COPY);
-            ClipboardContent content = new ClipboardContent();
-            content.putHtml(previewView.getSelectionHtmlContent());
-            dragboard.setContent(content);
+                    Dragboard dragboard = previewView.startDragAndDrop(TransferMode.COPY);
+                    ClipboardContent content = new ClipboardContent();
+                    content.putHtml(previewView.getSelectionHtmlContent());
+                    dragboard.setContent(content);
 
-            event.consume();
-        });
+                    event.consume();
+                });
 
-        previewView.setOnDragOver(event -> {
-            if (event.getDragboard().hasFiles()) {
-                event.acceptTransferModes(TransferMode.COPY, TransferMode.MOVE, TransferMode.LINK);
-            }
-            event.consume();
-        });
+        previewView.setOnDragOver(
+                event -> {
+                    if (event.getDragboard().hasFiles()) {
+                        event.acceptTransferModes(
+                                TransferMode.COPY, TransferMode.MOVE, TransferMode.LINK);
+                    }
+                    event.consume();
+                });
 
-        previewView.setOnDragDropped(event -> {
-            boolean success = false;
-            if (event.getDragboard().hasContent(DataFormat.FILES)) {
-                List<Path> files = event.getDragboard().getFiles().stream().map(File::toPath).collect(Collectors.toList());
+        previewView.setOnDragDropped(
+                event -> {
+                    boolean success = false;
+                    if (event.getDragboard().hasContent(DataFormat.FILES)) {
+                        List<Path> files =
+                                event.getDragboard().getFiles().stream()
+                                        .map(File::toPath)
+                                        .collect(Collectors.toList());
 
-                if (event.getTransferMode() == TransferMode.MOVE) {
-                    LOGGER.debug("Mode MOVE"); // shift on win or no modifier
-                    fileLinker.moveFilesToFileDirRenameAndAddToEntry(entry, files, luceneManager);
-                }
-                if (event.getTransferMode() == TransferMode.LINK) {
-                    LOGGER.debug("Node LINK"); // alt on win
-                    fileLinker.addFilesToEntry(entry, files);
-                }
-                if (event.getTransferMode() == TransferMode.COPY) {
-                    LOGGER.debug("Mode Copy"); // ctrl on win, no modifier on Xubuntu
-                    fileLinker.copyFilesToFileDirAndAddToEntry(entry, files, luceneManager);
-                }
-                success = true;
-            }
+                        if (event.getTransferMode() == TransferMode.MOVE) {
+                            LOGGER.debug("Mode MOVE"); // shift on win or no modifier
+                            fileLinker.moveFilesToFileDirRenameAndAddToEntry(
+                                    entry, files, luceneManager);
+                        }
+                        if (event.getTransferMode() == TransferMode.LINK) {
+                            LOGGER.debug("Node LINK"); // alt on win
+                            fileLinker.addFilesToEntry(entry, files);
+                        }
+                        if (event.getTransferMode() == TransferMode.COPY) {
+                            LOGGER.debug("Mode Copy"); // ctrl on win, no modifier on Xubuntu
+                            fileLinker.copyFilesToFileDirAndAddToEntry(entry, files, luceneManager);
+                        }
+                        success = true;
+                    }
 
-            event.setDropCompleted(success);
-            event.consume();
-        });
+                    event.setDropCompleted(success);
+                    event.consume();
+                });
         this.getChildren().add(previewView);
 
         createKeyBindings();
@@ -111,30 +131,44 @@ public class PreviewPanel extends VBox {
     }
 
     private void createKeyBindings() {
-        previewView.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            Optional<KeyBinding> keyBinding = keyBindingRepository.mapToKeyBinding(event);
-            if (keyBinding.isPresent()) {
-                if (keyBinding.get() == KeyBinding.COPY_PREVIEW) {
-                    previewView.copyPreviewToClipBoard();
-                    event.consume();
-                }
-            }
-        });
+        previewView.addEventFilter(
+                KeyEvent.KEY_PRESSED,
+                event -> {
+                    Optional<KeyBinding> keyBinding = keyBindingRepository.mapToKeyBinding(event);
+                    if (keyBinding.isPresent()) {
+                        if (keyBinding.get() == KeyBinding.COPY_PREVIEW) {
+                            previewView.copyPreviewToClipBoard();
+                            event.consume();
+                        }
+                    }
+                });
     }
 
     private ContextMenu createPopupMenu() {
-        MenuItem copyPreview = new MenuItem(Localization.lang("Copy preview"), IconTheme.JabRefIcons.COPY.getGraphicNode());
-        keyBindingRepository.getKeyCombination(KeyBinding.COPY_PREVIEW).ifPresent(copyPreview::setAccelerator);
+        MenuItem copyPreview =
+                new MenuItem(
+                        Localization.lang("Copy preview"),
+                        IconTheme.JabRefIcons.COPY.getGraphicNode());
+        keyBindingRepository
+                .getKeyCombination(KeyBinding.COPY_PREVIEW)
+                .ifPresent(copyPreview::setAccelerator);
         copyPreview.setOnAction(event -> previewView.copyPreviewToClipBoard());
         MenuItem copySelection = new MenuItem(Localization.lang("Copy selection"));
         copySelection.setOnAction(event -> previewView.copySelectionToClipBoard());
-        MenuItem printEntryPreview = new MenuItem(Localization.lang("Print entry preview"), IconTheme.JabRefIcons.PRINTED.getGraphicNode());
+        MenuItem printEntryPreview =
+                new MenuItem(
+                        Localization.lang("Print entry preview"),
+                        IconTheme.JabRefIcons.PRINTED.getGraphicNode());
         printEntryPreview.setOnAction(event -> previewView.print());
         MenuItem previousPreviewLayout = new MenuItem(Localization.lang("Previous preview layout"));
-        keyBindingRepository.getKeyCombination(KeyBinding.PREVIOUS_PREVIEW_LAYOUT).ifPresent(previousPreviewLayout::setAccelerator);
+        keyBindingRepository
+                .getKeyCombination(KeyBinding.PREVIOUS_PREVIEW_LAYOUT)
+                .ifPresent(previousPreviewLayout::setAccelerator);
         previousPreviewLayout.setOnAction(event -> this.previousPreviewStyle());
         MenuItem nextPreviewLayout = new MenuItem(Localization.lang("Next preview layout"));
-        keyBindingRepository.getKeyCombination(KeyBinding.NEXT_PREVIEW_LAYOUT).ifPresent(nextPreviewLayout::setAccelerator);
+        keyBindingRepository
+                .getKeyCombination(KeyBinding.NEXT_PREVIEW_LAYOUT)
+                .ifPresent(nextPreviewLayout::setAccelerator);
         nextPreviewLayout.setOnAction(event -> this.nextPreviewStyle());
 
         ContextMenu menu = new ContextMenu();
@@ -170,6 +204,7 @@ public class PreviewPanel extends VBox {
 
         PreviewLayout layout = previewPreferences.getSelectedPreviewLayout();
         previewView.setLayout(layout);
-        dialogService.notify(Localization.lang("Preview style changed to: %0", layout.getDisplayName()));
+        dialogService.notify(
+                Localization.lang("Preview style changed to: %0", layout.getDisplayName()));
     }
 }

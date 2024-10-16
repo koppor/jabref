@@ -1,5 +1,9 @@
 package org.jabref.gui.errorconsole;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
+
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -30,9 +34,6 @@ import org.jabref.gui.util.ControlHelper;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.BuildInfo;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
-
 public class ErrorConsoleView extends BaseDialog<Void> {
 
     private ErrorConsoleViewModel viewModel;
@@ -54,9 +55,7 @@ public class ErrorConsoleView extends BaseDialog<Void> {
         this.setTitle(Localization.lang("Event log"));
         this.initModality(Modality.NONE);
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         ControlHelper.setAction(copyLogButton, getDialogPane(), event -> copyLog());
         ControlHelper.setAction(clearLogButton, getDialogPane(), event -> clearLog());
@@ -67,69 +66,76 @@ public class ErrorConsoleView extends BaseDialog<Void> {
 
     @FXML
     private void initialize() {
-        viewModel = new ErrorConsoleViewModel(dialogService, preferences, clipBoardManager, buildInfo);
+        viewModel =
+                new ErrorConsoleViewModel(dialogService, preferences, clipBoardManager, buildInfo);
         messagesListView.setCellFactory(createCellFactory());
         messagesListView.itemsProperty().bind(viewModel.allMessagesDataProperty());
         messagesListView.scrollTo(viewModel.allMessagesDataProperty().getSize() - 1);
         messagesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        viewModel.allMessagesDataProperty().addListener((ListChangeListener<LogEventViewModel>) (change -> {
-            int size = viewModel.allMessagesDataProperty().size();
-            if (size > 0) {
-                messagesListView.scrollTo(size - 1);
-            }
-        }));
+        viewModel
+                .allMessagesDataProperty()
+                .addListener(
+                        (ListChangeListener<LogEventViewModel>)
+                                (change -> {
+                                    int size = viewModel.allMessagesDataProperty().size();
+                                    if (size > 0) {
+                                        messagesListView.scrollTo(size - 1);
+                                    }
+                                }));
         descriptionLabel.setGraphic(IconTheme.JabRefIcons.CONSOLE.getGraphicNode());
     }
 
     private Callback<ListView<LogEventViewModel>, ListCell<LogEventViewModel>> createCellFactory() {
-        return cell -> new ListCell<>() {
-            private HBox graphic;
-            private Node icon;
-            private VBox message;
-            private Label heading;
-            private Label stacktrace;
+        return cell ->
+                new ListCell<>() {
+                    private HBox graphic;
+                    private Node icon;
+                    private VBox message;
+                    private Label heading;
+                    private Label stacktrace;
 
-            {
-                graphic = new HBox(10);
-                heading = new Label();
-                stacktrace = new Label();
-                message = new VBox();
-                message.getChildren().setAll(heading, stacktrace);
-                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-            }
+                    {
+                        graphic = new HBox(10);
+                        heading = new Label();
+                        stacktrace = new Label();
+                        message = new VBox();
+                        message.getChildren().setAll(heading, stacktrace);
+                        setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                    }
 
-            @Override
-            public void updateItem(LogEventViewModel event, boolean empty) {
-                super.updateItem(event, empty);
+                    @Override
+                    public void updateItem(LogEventViewModel event, boolean empty) {
+                        super.updateItem(event, empty);
 
-                if ((event == null) || empty) {
-                    setGraphic(null);
-                } else {
-                    icon = event.getIcon().getGraphicNode();
-                    heading.setText(event.getDisplayText());
-                    heading.getStyleClass().setAll(event.getStyleClass());
-                    stacktrace.setText(event.getStackTrace().orElse(""));
-                    graphic.getStyleClass().setAll(event.getStyleClass());
-                    graphic.getChildren().setAll(icon, message);
-                    setGraphic(graphic);
-                    setContextMenu(createContextMenu(event));
-                }
-            }
+                        if ((event == null) || empty) {
+                            setGraphic(null);
+                        } else {
+                            icon = event.getIcon().getGraphicNode();
+                            heading.setText(event.getDisplayText());
+                            heading.getStyleClass().setAll(event.getStyleClass());
+                            stacktrace.setText(event.getStackTrace().orElse(""));
+                            graphic.getStyleClass().setAll(event.getStyleClass());
+                            graphic.getChildren().setAll(icon, message);
+                            setGraphic(graphic);
+                            setContextMenu(createContextMenu(event));
+                        }
+                    }
 
-            private ContextMenu createContextMenu(LogEventViewModel selectedLogEntry) {
-                ContextMenu contextMenu = new ContextMenu();
-                MenuItem copyItem = new MenuItem("Copy");
-                copyItem.setOnAction(event -> viewModel.copyLogEntry(selectedLogEntry));
-                contextMenu.getItems().add(copyItem);
-                return contextMenu;
-            }
-        };
+                    private ContextMenu createContextMenu(LogEventViewModel selectedLogEntry) {
+                        ContextMenu contextMenu = new ContextMenu();
+                        MenuItem copyItem = new MenuItem("Copy");
+                        copyItem.setOnAction(event -> viewModel.copyLogEntry(selectedLogEntry));
+                        contextMenu.getItems().add(copyItem);
+                        return contextMenu;
+                    }
+                };
     }
 
     @FXML
     private void copySelectedLogEntries(KeyEvent event) {
         if (keyBindingRepository.checkKeyCombinationEquality(KeyBinding.COPY, event)) {
-            ObservableList<LogEventViewModel> selectedEntries = messagesListView.getSelectionModel().getSelectedItems();
+            ObservableList<LogEventViewModel> selectedEntries =
+                    messagesListView.getSelectionModel().getSelectedItems();
             viewModel.copyLog(selectedEntries);
         }
     }

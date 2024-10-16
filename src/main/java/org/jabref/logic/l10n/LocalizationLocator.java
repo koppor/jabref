@@ -1,8 +1,8 @@
 package org.jabref.logic.l10n;
 
-import java.util.ResourceBundle;
-
 import com.airhacks.afterburner.views.ResourceLocator;
+
+import java.util.ResourceBundle;
 
 public class LocalizationLocator implements ResourceLocator {
     @Override

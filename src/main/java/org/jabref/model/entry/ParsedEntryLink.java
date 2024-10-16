@@ -1,9 +1,9 @@
 package org.jabref.model.entry;
 
+import org.jabref.model.database.BibDatabase;
+
 import java.util.Objects;
 import java.util.Optional;
-
-import org.jabref.model.database.BibDatabase;
 
 public class ParsedEntryLink {
 

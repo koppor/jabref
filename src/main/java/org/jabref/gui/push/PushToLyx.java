@@ -1,12 +1,5 @@
 package org.jabref.gui.push;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
@@ -15,9 +8,15 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.HeadlessExecutorService;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class PushToLyx extends AbstractPushToApplication {
 
@@ -42,28 +41,39 @@ public class PushToLyx extends AbstractPushToApplication {
     @Override
     public void onOperationCompleted() {
         if (couldNotPush) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"),
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error pushing entries"),
                     Localization.lang("Verify that LyX is running and that the lyxpipe is valid.")
-                            + "[" + commandPath + "]");
+                            + "["
+                            + commandPath
+                            + "]");
         } else if (couldNotCall) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Unable to write to %0.", commandPath + ".in"));
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Unable to write to %0.", commandPath + ".in"));
         } else {
             super.onOperationCompleted();
         }
     }
 
     @Override
-    public PushToApplicationSettings getSettings(PushToApplication application, PushToApplicationPreferences preferences) {
-        return new PushToLyxSettings(application, dialogService, this.preferences.getFilePreferences(), preferences);
+    public PushToApplicationSettings getSettings(
+            PushToApplication application, PushToApplicationPreferences preferences) {
+        return new PushToLyxSettings(
+                application, dialogService, this.preferences.getFilePreferences(), preferences);
     }
 
     @Override
-    public void pushEntries(BibDatabaseContext database, final List<BibEntry> entries, final String keyString) {
+    public void pushEntries(
+            BibDatabaseContext database, final List<BibEntry> entries, final String keyString) {
         couldNotPush = false;
         couldNotCall = false;
         notDefined = false;
 
-        commandPath = preferences.getPushToApplicationPreferences().getCommandPaths().get(this.getDisplayName());
+        commandPath =
+                preferences
+                        .getPushToApplicationPreferences()
+                        .getCommandPaths()
+                        .get(this.getDisplayName());
 
         if ((commandPath == null) || commandPath.trim().isEmpty()) {
             notDefined = true;
@@ -73,7 +83,8 @@ public class PushToLyx extends AbstractPushToApplication {
         if (!commandPath.endsWith(".in")) {
             commandPath = commandPath + ".in";
         }
-        File lp = new File(commandPath); // this needs to fixed because it gives "asdf" when going prefs.get("lyxpipe")
+        File lp = new File(commandPath); // this needs to fixed because it gives "asdf" when going
+        // prefs.get("lyxpipe")
         if (!lp.exists() || !lp.canWrite()) {
             // See if it helps to append ".in":
             lp = new File(commandPath + ".in");
@@ -85,14 +96,16 @@ public class PushToLyx extends AbstractPushToApplication {
 
         final File lyxpipe = lp;
 
-        HeadlessExecutorService.INSTANCE.executeAndWait(() -> {
-            try (FileWriter fw = new FileWriter(lyxpipe, StandardCharsets.UTF_8); BufferedWriter lyxOut = new BufferedWriter(fw)) {
-                String citeStr = "LYXCMD:sampleclient:citation-insert:" + keyString;
-                lyxOut.write(citeStr + "\n");
-            } catch (IOException excep) {
-                couldNotCall = true;
-                LOGGER.warn("Problem pushing to LyX/Kile.", excep);
-            }
-        });
+        HeadlessExecutorService.INSTANCE.executeAndWait(
+                () -> {
+                    try (FileWriter fw = new FileWriter(lyxpipe, StandardCharsets.UTF_8);
+                            BufferedWriter lyxOut = new BufferedWriter(fw)) {
+                        String citeStr = "LYXCMD:sampleclient:citation-insert:" + keyString;
+                        lyxOut.write(citeStr + "\n");
+                    } catch (IOException excep) {
+                        couldNotCall = true;
+                        LOGGER.warn("Problem pushing to LyX/Kile.", excep);
+                    }
+                });
     }
 }

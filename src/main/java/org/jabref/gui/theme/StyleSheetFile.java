@@ -1,5 +1,10 @@
 package org.jabref.gui.theme;
 
+import com.google.common.base.Strings;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -10,10 +15,6 @@ import java.nio.file.Path;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.google.common.base.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class StyleSheetFile extends StyleSheet {
 
@@ -76,7 +77,8 @@ final class StyleSheetFile extends StyleSheet {
         }
 
         if (Files.isDirectory(path)) {
-            LOGGER.warn("Failed to loadCannot load additional css {} because it is a directory.", path);
+            LOGGER.warn(
+                    "Failed to loadCannot load additional css {} because it is a directory.", path);
             return null;
         }
 
@@ -112,11 +114,14 @@ final class StyleSheetFile extends StyleSheet {
             try (InputStream inputStream = conn.getInputStream()) {
                 byte[] data = inputStream.readNBytes(MAX_IN_MEMORY_CSS_LENGTH);
                 if (data.length < MAX_IN_MEMORY_CSS_LENGTH) {
-                    String embeddedDataUrl = DATA_URL_PREFIX + Base64.getEncoder().encodeToString(data);
+                    String embeddedDataUrl =
+                            DATA_URL_PREFIX + Base64.getEncoder().encodeToString(data);
                     LOGGER.trace("Embedded css in data URL of length {}", embeddedDataUrl.length());
                     return Optional.of(embeddedDataUrl);
                 } else {
-                    LOGGER.trace("Not embedding css in data URL as the length is >= {}", MAX_IN_MEMORY_CSS_LENGTH);
+                    LOGGER.trace(
+                            "Not embedding css in data URL as the length is >= {}",
+                            MAX_IN_MEMORY_CSS_LENGTH);
                 }
             }
         } catch (IOException e) {

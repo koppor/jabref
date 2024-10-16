@@ -36,13 +36,14 @@ public class DatabaseChangeDetailsViewFactory {
     private final PreviewViewer previewViewer;
     private final TaskExecutor taskExecutor;
 
-    public DatabaseChangeDetailsViewFactory(BibDatabaseContext databaseContext,
-                                            DialogService dialogService,
-                                            ThemeManager themeManager,
-                                            GuiPreferences preferences,
-                                            BibEntryTypesManager entryTypesManager,
-                                            PreviewViewer previewViewer,
-                                            TaskExecutor taskExecutor) {
+    public DatabaseChangeDetailsViewFactory(
+            BibDatabaseContext databaseContext,
+            DialogService dialogService,
+            ThemeManager themeManager,
+            GuiPreferences preferences,
+            BibEntryTypesManager entryTypesManager,
+            PreviewViewer previewViewer,
+            TaskExecutor taskExecutor) {
         this.databaseContext = databaseContext;
         this.dialogService = dialogService;
         this.themeManager = themeManager;
@@ -54,39 +55,39 @@ public class DatabaseChangeDetailsViewFactory {
 
     public DatabaseChangeDetailsView create(DatabaseChange databaseChange) {
         return switch (databaseChange) {
-            case EntryChange entryChange -> new EntryChangeDetailsView(
-                entryChange.getOldEntry(),
-                entryChange.getNewEntry(),
-                databaseContext,
-                dialogService,
-                themeManager,
-                preferences,
-                entryTypesManager,
-                previewViewer,
-                taskExecutor
-            );
-            case EntryAdd entryAdd -> new EntryWithPreviewAndSourceDetailsView(
-                entryAdd.getAddedEntry(),
-                databaseContext,
-                preferences,
-                entryTypesManager,
-                previewViewer
-            );
-            case EntryDelete entryDelete -> new EntryWithPreviewAndSourceDetailsView(
-                entryDelete.getDeletedEntry(),
-                databaseContext,
-                preferences,
-                entryTypesManager,
-                previewViewer
-            );
+            case EntryChange entryChange ->
+                    new EntryChangeDetailsView(
+                            entryChange.getOldEntry(),
+                            entryChange.getNewEntry(),
+                            databaseContext,
+                            dialogService,
+                            themeManager,
+                            preferences,
+                            entryTypesManager,
+                            previewViewer,
+                            taskExecutor);
+            case EntryAdd entryAdd ->
+                    new EntryWithPreviewAndSourceDetailsView(
+                            entryAdd.getAddedEntry(),
+                            databaseContext,
+                            preferences,
+                            entryTypesManager,
+                            previewViewer);
+            case EntryDelete entryDelete ->
+                    new EntryWithPreviewAndSourceDetailsView(
+                            entryDelete.getDeletedEntry(),
+                            databaseContext,
+                            preferences,
+                            entryTypesManager,
+                            previewViewer);
             case BibTexStringAdd stringAdd -> new BibTexStringAddDetailsView(stringAdd);
             case BibTexStringDelete stringDelete -> new BibTexStringDeleteDetailsView(stringDelete);
             case BibTexStringChange stringChange -> new BibTexStringChangeDetailsView(stringChange);
             case BibTexStringRename stringRename -> new BibTexStringRenameDetailsView(stringRename);
-            case MetadataChange metadataChange -> new MetadataChangeDetailsView(
-                metadataChange,
-                preferences.getCitationKeyPatternPreferences().getKeyPatterns()
-            );
+            case MetadataChange metadataChange ->
+                    new MetadataChangeDetailsView(
+                            metadataChange,
+                            preferences.getCitationKeyPatternPreferences().getKeyPatterns());
             case GroupChange groupChange -> new GroupChangeDetailsView(groupChange);
             case PreambleChange preambleChange -> new PreambleChangeDetailsView(preambleChange);
         };

@@ -1,5 +1,7 @@
 package org.jabref.gui.fieldeditors.optioneditors;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
@@ -11,8 +13,6 @@ import org.jabref.gui.fieldeditors.contextmenu.EditorContextAction;
 import org.jabref.gui.util.ViewModelListCellFactory;
 import org.jabref.model.entry.BibEntry;
 
-import com.airhacks.afterburner.views.ViewLoader;
-
 /**
  * Field editor that provides various pre-defined options as a drop-down combobox.
  */
@@ -22,22 +22,27 @@ public class OptionEditor<T> extends HBox implements FieldEditorFX {
     @FXML private ComboBox<T> comboBox;
 
     public OptionEditor(OptionEditorViewModel<T> viewModel) {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
 
         this.viewModel = viewModel;
 
         comboBox.setConverter(viewModel.getStringConverter());
-        comboBox.setCellFactory(new ViewModelListCellFactory<T>().withText(viewModel::convertToDisplayText));
+        comboBox.setCellFactory(
+                new ViewModelListCellFactory<T>().withText(viewModel::convertToDisplayText));
         comboBox.getItems().setAll(viewModel.getItems());
         comboBox.getEditor().textProperty().bindBidirectional(viewModel.textProperty());
 
-        comboBox.getEditor().setOnContextMenuRequested(event -> {
-            ContextMenu contextMenu = new ContextMenu();
-            contextMenu.getItems().setAll(EditorContextAction.getDefaultContextMenuItems(comboBox.getEditor()));
-            contextMenu.show(comboBox, event.getScreenX(), event.getScreenY());
-        });
+        comboBox.getEditor()
+                .setOnContextMenuRequested(
+                        event -> {
+                            ContextMenu contextMenu = new ContextMenu();
+                            contextMenu
+                                    .getItems()
+                                    .setAll(
+                                            EditorContextAction.getDefaultContextMenuItems(
+                                                    comboBox.getEditor()));
+                            contextMenu.show(comboBox, event.getScreenX(), event.getScreenY());
+                        });
     }
 
     public OptionEditorViewModel<T> getViewModel() {

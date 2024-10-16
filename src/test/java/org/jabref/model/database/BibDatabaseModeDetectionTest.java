@@ -1,17 +1,16 @@
 package org.jabref.model.database;
 
-import java.util.Arrays;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.entry.types.UnknownEntryType;
-
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Arrays;
+import java.util.List;
 
 class BibDatabaseModeDetectionTest {
 
@@ -21,7 +20,9 @@ class BibDatabaseModeDetectionTest {
     void detectBiblatex() {
         List<BibEntry> entries = Arrays.asList(new BibEntry(StandardEntryType.MvBook));
 
-        assertEquals(BibDatabaseMode.BIBLATEX, BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
+        assertEquals(
+                BibDatabaseMode.BIBLATEX,
+                BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
     }
 
     @Test
@@ -30,7 +31,9 @@ class BibDatabaseModeDetectionTest {
         entry.setField(StandardField.TITLE, "My cool paper");
         List<BibEntry> entries = Arrays.asList(entry);
 
-        assertEquals(BibDatabaseMode.BIBTEX, BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
+        assertEquals(
+                BibDatabaseMode.BIBTEX,
+                BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
     }
 
     @Test
@@ -41,7 +44,9 @@ class BibDatabaseModeDetectionTest {
         biblatex.setField(StandardField.TRANSLATOR, "Stefan Kolb");
         List<BibEntry> entries = Arrays.asList(bibtex, biblatex);
 
-        assertEquals(BibDatabaseMode.BIBTEX, BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
+        assertEquals(
+                BibDatabaseMode.BIBTEX,
+                BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
     }
 
     @Test
@@ -49,7 +54,9 @@ class BibDatabaseModeDetectionTest {
         BibEntry entry = new BibEntry(UNKNOWN_TYPE);
         List<BibEntry> entries = Arrays.asList(entry);
 
-        assertEquals(BibDatabaseMode.BIBTEX, BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
+        assertEquals(
+                BibDatabaseMode.BIBTEX,
+                BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
     }
 
     @Test
@@ -59,7 +66,9 @@ class BibDatabaseModeDetectionTest {
         BibEntry biblatex = new BibEntry(StandardEntryType.Article);
         List<BibEntry> entries = Arrays.asList(custom, bibtex, biblatex);
 
-        assertEquals(BibDatabaseMode.BIBTEX, BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
+        assertEquals(
+                BibDatabaseMode.BIBTEX,
+                BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
     }
 
     @Test
@@ -69,6 +78,8 @@ class BibDatabaseModeDetectionTest {
         BibEntry biblatex = new BibEntry(StandardEntryType.MvBook);
         List<BibEntry> entries = Arrays.asList(custom, bibtex, biblatex);
 
-        assertEquals(BibDatabaseMode.BIBLATEX, BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
+        assertEquals(
+                BibDatabaseMode.BIBLATEX,
+                BibDatabaseModeDetection.inferMode(new BibDatabase(entries)));
     }
 }

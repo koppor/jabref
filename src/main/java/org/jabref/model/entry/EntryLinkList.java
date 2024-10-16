@@ -1,18 +1,17 @@
 package org.jabref.model.entry;
 
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.strings.StringUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.strings.StringUtil;
 
 public class EntryLinkList {
 
     public static final String SEPARATOR = ",";
 
-    private EntryLinkList() {
-    }
+    private EntryLinkList() {}
 
     public static List<ParsedEntryLink> parse(String fieldValue, BibDatabase database) {
         List<ParsedEntryLink> result = new ArrayList<>();

@@ -1,10 +1,8 @@
 package org.jabref.logic.cleanup;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.jabref.logic.FilePreferences;
 import org.jabref.logic.bibtex.FileFieldWriter;
@@ -14,14 +12,15 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.metadata.MetaData;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Optional;
 
 class RenamePdfCleanupTest {
 
@@ -30,7 +29,8 @@ class RenamePdfCleanupTest {
     private FilePreferences filePreferences;
     private RenamePdfCleanup cleanup;
 
-    // Ensure that the folder stays the same for all tests. By default @TempDir creates a new folder for each usage
+    // Ensure that the folder stays the same for all tests. By default @TempDir creates a new folder
+    // for each usage
     private Path testFolder;
 
     @BeforeEach
@@ -45,7 +45,10 @@ class RenamePdfCleanupTest {
         entry.setCitationKey("Toot");
 
         filePreferences = mock(FilePreferences.class);
-        when(filePreferences.shouldStoreFilesRelativeToBibFile()).thenReturn(true); // Set Biblocation as Primary Directory, otherwise the tmp folders won't be cleaned up correctly
+        when(filePreferences.shouldStoreFilesRelativeToBibFile())
+                .thenReturn(
+                        true); // Set Biblocation as Primary Directory, otherwise the tmp folders
+        // won't be cleaned up correctly
         cleanup = new RenamePdfCleanup(false, context, filePreferences);
     }
 
@@ -64,7 +67,9 @@ class RenamePdfCleanupTest {
         cleanup.cleanup(entry);
 
         LinkedFile newFileField = new LinkedFile("", Path.of("Toot.tmp"), "");
-        assertEquals(Optional.of(FileFieldWriter.getStringRepresentation(newFileField)), entry.getField(StandardField.FILE));
+        assertEquals(
+                Optional.of(FileFieldWriter.getStringRepresentation(newFileField)),
+                entry.getField(StandardField.FILE));
     }
 
     @Test
@@ -73,20 +78,24 @@ class RenamePdfCleanupTest {
         Files.createFile(path);
 
         entry.setField(StandardField.TITLE, "test title");
-        entry.setField(StandardField.FILE, FileFieldWriter.getStringRepresentation(
-                Arrays.asList(
-                        new LinkedFile("", Path.of(""), ""),
-                        new LinkedFile("", path.toAbsolutePath(), ""),
-                        new LinkedFile("", Path.of(""), ""))));
+        entry.setField(
+                StandardField.FILE,
+                FileFieldWriter.getStringRepresentation(
+                        Arrays.asList(
+                                new LinkedFile("", Path.of(""), ""),
+                                new LinkedFile("", path.toAbsolutePath(), ""),
+                                new LinkedFile("", Path.of(""), ""))));
 
         when(filePreferences.getFileNamePattern()).thenReturn("[citationkey] - [fulltitle]");
         cleanup.cleanup(entry);
 
-        assertEquals(Optional.of(FileFieldWriter.getStringRepresentation(
-                Arrays.asList(
-                        new LinkedFile("", Path.of(""), ""),
-                        new LinkedFile("", Path.of("Toot - test title.tmp"), ""),
-                        new LinkedFile("", Path.of(""), "")))),
+        assertEquals(
+                Optional.of(
+                        FileFieldWriter.getStringRepresentation(
+                                Arrays.asList(
+                                        new LinkedFile("", Path.of(""), ""),
+                                        new LinkedFile("", Path.of("Toot - test title.tmp"), ""),
+                                        new LinkedFile("", Path.of(""), "")))),
                 entry.getField(StandardField.FILE));
     }
 
@@ -103,7 +112,9 @@ class RenamePdfCleanupTest {
         cleanup.cleanup(entry);
 
         LinkedFile newFileField = new LinkedFile("", Path.of("Toot - test title.tmp"), "");
-        assertEquals(Optional.of(FileFieldWriter.getStringRepresentation(newFileField)), entry.getField(StandardField.FILE));
+        assertEquals(
+                Optional.of(FileFieldWriter.getStringRepresentation(newFileField)),
+                entry.getField(StandardField.FILE));
     }
 
     @Test
@@ -118,6 +129,8 @@ class RenamePdfCleanupTest {
         cleanup.cleanup(entry);
 
         LinkedFile newFileField = new LinkedFile("", Path.of("Toot - test title.pdf"), "PDF");
-        assertEquals(Optional.of(FileFieldWriter.getStringRepresentation(newFileField)), entry.getField(StandardField.FILE));
+        assertEquals(
+                Optional.of(FileFieldWriter.getStringRepresentation(newFileField)),
+                entry.getField(StandardField.FILE));
     }
 }

@@ -1,16 +1,5 @@
 package org.jabref.logic.openoffice.oocsltext;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import org.jabref.logic.openoffice.ReferenceMark;
-import org.jabref.model.entry.BibEntry;
-
 import com.sun.star.container.NoSuchElementException;
 import com.sun.star.container.XNameAccess;
 import com.sun.star.container.XNamed;
@@ -26,9 +15,21 @@ import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextRangeCompare;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
+
 import io.github.thibaultmeyer.cuid.CUID;
+
+import org.jabref.logic.openoffice.ReferenceMark;
+import org.jabref.model.entry.BibEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class CSLReferenceMarkManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(CSLReferenceMarkManager.class);
@@ -45,20 +46,22 @@ public class CSLReferenceMarkManager {
     public CSLReferenceMarkManager(XTextDocument document) {
         this.document = document;
         this.factory = UnoRuntime.queryInterface(XMultiServiceFactory.class, document);
-        this.textRangeCompare = UnoRuntime.queryInterface(XTextRangeCompare.class, document.getText());
+        this.textRangeCompare =
+                UnoRuntime.queryInterface(XTextRangeCompare.class, document.getText());
         this.isUpdateRequired = false;
     }
 
     public CSLReferenceMark createReferenceMark(List<BibEntry> entries) throws Exception {
-        List<String> citationKeys = entries.stream()
-                                           .map(entry -> entry.getCitationKey().orElse(CUID.randomCUID2(8).toString()))
-                                           .collect(Collectors.toList());
+        List<String> citationKeys =
+                entries.stream()
+                        .map(entry -> entry.getCitationKey().orElse(CUID.randomCUID2(8).toString()))
+                        .collect(Collectors.toList());
 
-        List<Integer> citationNumbers = citationKeys.stream()
-                                                    .map(this::getCitationNumber)
-                                                    .collect(Collectors.toList());
+        List<Integer> citationNumbers =
+                citationKeys.stream().map(this::getCitationNumber).collect(Collectors.toList());
 
-        CSLReferenceMark referenceMark = CSLReferenceMark.of(citationKeys, citationNumbers, factory);
+        CSLReferenceMark referenceMark =
+                CSLReferenceMark.of(citationKeys, citationNumbers, factory);
         marksByName.put(referenceMark.getName(), referenceMark);
         marksInOrder.add(referenceMark);
         return referenceMark;
@@ -97,7 +100,10 @@ public class CSLReferenceMarkManager {
     }
 
     private void sortMarksInOrder() {
-        marksInOrder.sort((m1, m2) -> compareTextRanges(m2.getTextContent().getAnchor(), m1.getTextContent().getAnchor()));
+        marksInOrder.sort(
+                (m1, m2) ->
+                        compareTextRanges(
+                                m2.getTextContent().getAnchor(), m1.getTextContent().getAnchor()));
     }
 
     private int compareTextRanges(XTextRange r1, XTextRange r2) {
@@ -109,7 +115,8 @@ public class CSLReferenceMarkManager {
         }
     }
 
-    private void updateMarkAndText(CSLReferenceMark mark, List<Integer> newNumbers) throws Exception {
+    private void updateMarkAndText(CSLReferenceMark mark, List<Integer> newNumbers)
+            throws Exception {
         XTextContent oldContent = mark.getTextContent();
         XTextRange range = oldContent.getAnchor();
 
@@ -125,7 +132,8 @@ public class CSLReferenceMarkManager {
             // Update the citation numbers in the text
             String updatedText = updateCitationText(currentText, newNumbers);
 
-            // Remove the old reference mark without removing the text (The only way to edit a reference mark is to remove it and add a new one)
+            // Remove the old reference mark without removing the text (The only way to edit a
+            // reference mark is to remove it and add a new one)
             text.removeTextContent(oldContent);
 
             // Update the text
@@ -133,8 +141,10 @@ public class CSLReferenceMarkManager {
 
             // Create a new reference mark with updated name
             String updatedName = updateReferenceName(mark.getName(), newNumbers);
-            XNamed newNamed = UnoRuntime.queryInterface(XNamed.class,
-                    factory.createInstance("com.sun.star.text.ReferenceMark"));
+            XNamed newNamed =
+                    UnoRuntime.queryInterface(
+                            XNamed.class,
+                            factory.createInstance("com.sun.star.text.ReferenceMark"));
             newNamed.setName(updatedName);
             XTextContent newContent = UnoRuntime.queryInterface(XTextContent.class, newNamed);
 
@@ -153,7 +163,8 @@ public class CSLReferenceMarkManager {
         if (oldName.startsWith("JABREF_") && oldName.contains("CID") && parts.length >= 3) {
             StringBuilder newName = new StringBuilder();
             for (int i = 0; i < parts.length - 1; i += 2) {
-                // Each iteration of the loop (incrementing by 2) represents one full citation (key + number)
+                // Each iteration of the loop (incrementing by 2) represents one full citation (key
+                // + number)
                 if (i > 0) {
                     newName.append(", ");
                 }
@@ -198,11 +209,14 @@ public class CSLReferenceMarkManager {
         marksInOrder.clear();
         citationKeyToNumber.clear();
 
-        XReferenceMarksSupplier supplier = UnoRuntime.queryInterface(XReferenceMarksSupplier.class, document);
+        XReferenceMarksSupplier supplier =
+                UnoRuntime.queryInterface(XReferenceMarksSupplier.class, document);
         XNameAccess marks = supplier.getReferenceMarks();
 
         for (String name : marks.getElementNames()) {
-            if (name.startsWith(ReferenceMark.PREFIXES[0]) && name.contains(ReferenceMark.PREFIXES[1]) && name.split(" ").length >= 3) {
+            if (name.startsWith(ReferenceMark.PREFIXES[0])
+                    && name.contains(ReferenceMark.PREFIXES[1])
+                    && name.split(" ").length >= 3) {
                 XNamed named = UnoRuntime.queryInterface(XNamed.class, marks.getByName(name));
 
                 ReferenceMark referenceMark = new ReferenceMark(name);

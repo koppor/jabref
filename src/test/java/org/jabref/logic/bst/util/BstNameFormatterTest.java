@@ -1,10 +1,9 @@
 package org.jabref.logic.bst.util;
 
-import org.jabref.model.entry.AuthorList;
-
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.jabref.model.entry.AuthorList;
+import org.junit.jupiter.api.Test;
 
 class BstNameFormatterTest {
 
@@ -12,7 +11,8 @@ class BstNameFormatterTest {
     void umlautsFullNames() {
         AuthorList list = AuthorList.parse("Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
 
-        assertEquals("de~laVall{\\'e}e~PoussinCharles Louis Xavier~Joseph",
+        assertEquals(
+                "de~laVall{\\'e}e~PoussinCharles Louis Xavier~Joseph",
                 BstNameFormatter.formatName(list.getAuthor(0), "{vv}{ll}{jj}{ff}"));
     }
 
@@ -20,7 +20,8 @@ class BstNameFormatterTest {
     void umlautsAbbreviations() {
         AuthorList list = AuthorList.parse("Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
 
-        assertEquals("de~la Vall{\\'e}e~Poussin, C.~L. X.~J.",
+        assertEquals(
+                "de~la Vall{\\'e}e~Poussin, C.~L. X.~J.",
                 BstNameFormatter.formatName(list.getAuthor(0), "{vv~}{ll}{, jj}{, f.}"));
     }
 
@@ -28,7 +29,8 @@ class BstNameFormatterTest {
     void umlautsAbbreviationsWithQuestionMark() {
         AuthorList list = AuthorList.parse("Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
 
-        assertEquals("de~la Vall{\\'e}e~Poussin, C.~L. X.~J?",
+        assertEquals(
+                "de~la Vall{\\'e}e~Poussin, C.~L. X.~J?",
                 BstNameFormatter.formatName(list.getAuthor(0), "{vv~}{ll}{, jj}{, f}?"));
     }
 
@@ -38,18 +40,35 @@ class BstNameFormatterTest {
 
         assertEquals("dlVP", BstNameFormatter.formatName(list.getAuthor(0), "{v{}}{l{}}"));
 
-        assertNameFormatA("Meyer, J?", "Jonathan Meyer and Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
-        assertNameFormatB("J.~Meyer", "Jonathan Meyer and Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
-        assertNameFormatC("Jonathan Meyer", "Jonathan Meyer and Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
+        assertNameFormatA(
+                "Meyer, J?",
+                "Jonathan Meyer and Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
+        assertNameFormatB(
+                "J.~Meyer",
+                "Jonathan Meyer and Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
+        assertNameFormatC(
+                "Jonathan Meyer",
+                "Jonathan Meyer and Charles Louis Xavier Joseph de la Vall{\\'e}e Poussin");
         assertNameFormatA("Masterly, {\\'{E}}?", "{\\'{E}}douard Masterly");
         assertNameFormatB("{\\'{E}}.~Masterly", "{\\'{E}}douard Masterly");
         assertNameFormatC("{\\'{E}}douard Masterly", "{\\'{E}}douard Masterly");
-        assertNameFormatA("{\\\"{U}}nderwood, U?", "Ulrich {\\\"{U}}nderwood and Ned {\\~N}et and Paul {\\={P}}ot");
-        assertNameFormatB("U.~{\\\"{U}}nderwood", "Ulrich {\\\"{U}}nderwood and Ned {\\~N}et and Paul {\\={P}}ot");
-        assertNameFormatC("Ulrich {\\\"{U}}nderwood", "Ulrich {\\\"{U}}nderwood and Ned {\\~N}et and Paul {\\={P}}ot");
-        assertNameFormatA("Victor, P.~{\\'E}?", "Paul {\\'E}mile Victor and and de la Cierva y Codorn{\\’\\i}u, Juan");
-        assertNameFormatB("P.~{\\'E}. Victor", "Paul {\\'E}mile Victor and and de la Cierva y Codorn{\\’\\i}u, Juan");
-        assertNameFormatC("Paul~{\\'E}mile Victor",
+        assertNameFormatA(
+                "{\\\"{U}}nderwood, U?",
+                "Ulrich {\\\"{U}}nderwood and Ned {\\~N}et and Paul {\\={P}}ot");
+        assertNameFormatB(
+                "U.~{\\\"{U}}nderwood",
+                "Ulrich {\\\"{U}}nderwood and Ned {\\~N}et and Paul {\\={P}}ot");
+        assertNameFormatC(
+                "Ulrich {\\\"{U}}nderwood",
+                "Ulrich {\\\"{U}}nderwood and Ned {\\~N}et and Paul {\\={P}}ot");
+        assertNameFormatA(
+                "Victor, P.~{\\'E}?",
+                "Paul {\\'E}mile Victor and and de la Cierva y Codorn{\\’\\i}u, Juan");
+        assertNameFormatB(
+                "P.~{\\'E}. Victor",
+                "Paul {\\'E}mile Victor and and de la Cierva y Codorn{\\’\\i}u, Juan");
+        assertNameFormatC(
+                "Paul~{\\'E}mile Victor",
                 "Paul {\\'E}mile Victor and and de la Cierva y Codorn{\\’\\i}u, Juan");
     }
 
@@ -72,21 +91,28 @@ class BstNameFormatterTest {
     @Test
     void matchingBraceConsumedForCompleteWords() {
         StringBuilder sb = new StringBuilder();
-        assertEquals(6, BstNameFormatter.consumeToMatchingBrace(sb, "{HELLO} {WORLD}".toCharArray(), 0));
+        assertEquals(
+                6, BstNameFormatter.consumeToMatchingBrace(sb, "{HELLO} {WORLD}".toCharArray(), 0));
         assertEquals("{HELLO}", sb.toString());
     }
 
     @Test
     void matchingBraceConsumedForBracesInWords() {
         StringBuilder sb = new StringBuilder();
-        assertEquals(18, BstNameFormatter.consumeToMatchingBrace(sb, "{HE{L{}L}O} {WORLD}".toCharArray(), 12));
+        assertEquals(
+                18,
+                BstNameFormatter.consumeToMatchingBrace(
+                        sb, "{HE{L{}L}O} {WORLD}".toCharArray(), 12));
         assertEquals("{WORLD}", sb.toString());
     }
 
     @Test
     void consumeToMatchingBrace() {
         StringBuilder sb = new StringBuilder();
-        assertEquals(10, BstNameFormatter.consumeToMatchingBrace(sb, "{HE{L{}L}O} {WORLD}".toCharArray(), 0));
+        assertEquals(
+                10,
+                BstNameFormatter.consumeToMatchingBrace(
+                        sb, "{HE{L{}L}O} {WORLD}".toCharArray(), 0));
         assertEquals("{HE{L{}L}O}", sb.toString());
     }
 

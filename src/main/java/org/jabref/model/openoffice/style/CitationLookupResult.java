@@ -1,9 +1,9 @@
 package org.jabref.model.openoffice.style;
 
-import java.util.Objects;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
+
+import java.util.Objects;
 
 public class CitationLookupResult {
 
@@ -35,7 +35,8 @@ public class CitationLookupResult {
             return false;
         }
         CitationLookupResult that = (CitationLookupResult) otherObject;
-        return Objects.equals(this.entry, that.entry) && Objects.equals(this.database, that.database);
+        return Objects.equals(this.entry, that.entry)
+                && Objects.equals(this.database, that.database);
     }
 
     @Override

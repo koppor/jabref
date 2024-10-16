@@ -1,17 +1,16 @@
 package org.jabref.logic.layout.format;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.logic.layout.LayoutFormatter;
 import org.jabref.logic.layout.ParamLayoutFormatter;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.stream.Stream;
 
 class HTMLCharsTest {
 
@@ -29,9 +28,13 @@ class HTMLCharsTest {
         return Stream.of(
                 Arguments.of("", ""),
                 Arguments.of("hallo", "hallo"),
-                Arguments.of("Réflexions sur le timing de la quantité", "Réflexions sur le timing de la quantité"),
+                Arguments.of(
+                        "Réflexions sur le timing de la quantité",
+                        "Réflexions sur le timing de la quantité"),
                 Arguments.of("%%%", "\\%\\%\\%"),
-                Arguments.of("People remember 10%, 20%…Oh Really?", "{{People remember 10\\%, 20\\%…Oh Really?}}"),
+                Arguments.of(
+                        "People remember 10%, 20%…Oh Really?",
+                        "{{People remember 10\\%, 20\\%…Oh Really?}}"),
                 Arguments.of("h&aacute;llo", "h\\'allo"),
                 Arguments.of("&imath; &imath;", "\\i \\i"),
                 Arguments.of("&imath;", "\\i"),
@@ -43,8 +46,8 @@ class HTMLCharsTest {
                 Arguments.of("&Ccedil;", "{\\c{C}}"),
                 Arguments.of("&Ccedil;", "\\c{C}"),
                 Arguments.of("&Oogon;&imath;", "\\k{O}\\i"),
-                Arguments.of("&ntilde; &ntilde; &iacute; &imath; &imath;", "\\~{n} \\~n \\'i \\i \\i")
-        );
+                Arguments.of(
+                        "&ntilde; &ntilde; &iacute; &imath; &imath;", "\\~{n} \\~n \\'i \\i \\i"));
     }
 
     @ParameterizedTest
@@ -58,22 +61,17 @@ class HTMLCharsTest {
                 Arguments.of("<em>hallo</em>", "\\emph{hallo}"),
                 Arguments.of("<em>hallo</em>", "{\\emph hallo}"),
                 Arguments.of("<em>hallo</em>", "{\\em hallo}"),
-
                 Arguments.of("<i>hallo</i>", "\\textit{hallo}"),
                 Arguments.of("<i>hallo</i>", "{\\textit hallo}"),
                 Arguments.of("<i>hallo</i>", "{\\it hallo}"),
-
                 Arguments.of("<b>hallo</b>", "\\textbf{hallo}"),
                 Arguments.of("<b>hallo</b>", "{\\textbf hallo}"),
                 Arguments.of("<b>hallo</b>", "{\\bf hallo}"),
-
                 Arguments.of("<sup>hallo</sup>", "\\textsuperscript{hallo}"),
                 Arguments.of("<sub>hallo</sub>", "\\textsubscript{hallo}"),
-
                 Arguments.of("<u>hallo</u>", "\\underline{hallo}"),
                 Arguments.of("<s>hallo</s>", "\\sout{hallo}"),
-                Arguments.of("<tt>hallo</tt>", "\\texttt{hallo}")
-        );
+                Arguments.of("<tt>hallo</tt>", "\\texttt{hallo}"));
     }
 
     @ParameterizedTest
@@ -86,8 +84,9 @@ class HTMLCharsTest {
         return Stream.of(
                 Arguments.of("&dollar;", "\\$"),
                 Arguments.of("&sigma;", "$\\sigma$"),
-                Arguments.of("A 32&nbsp;mA &Sigma;&Delta;-modulator", "A 32~{mA} {$\\Sigma\\Delta$}-modulator")
-        );
+                Arguments.of(
+                        "A 32&nbsp;mA &Sigma;&Delta;-modulator",
+                        "A 32~{mA} {$\\Sigma\\Delta$}-modulator"));
     }
 
     @ParameterizedTest
@@ -97,10 +96,7 @@ class HTMLCharsTest {
     }
 
     private static Stream<Arguments> provideNewLineTestData() {
-        return Stream.of(
-                Arguments.of("a<br>b", "a\nb"),
-                Arguments.of("a<p>b", "a\n\nb")
-        );
+        return Stream.of(Arguments.of("a<br>b", "a\nb"), Arguments.of("a<p>b", "a\n\nb"));
     }
 
     @ParameterizedTest
@@ -140,8 +136,7 @@ class HTMLCharsTest {
                 Arguments.of("&amp;HelloWorld", "&HelloWorld"),
                 Arguments.of("&amp;amp;", "\\\\&"),
                 Arguments.of("&lt;", "&lt;"),
-                Arguments.of("&gt;", "&gt;")
-        );
+                Arguments.of("&gt;", "&gt;"));
     }
 
     @ParameterizedTest
@@ -152,15 +147,14 @@ class HTMLCharsTest {
 
     private static Stream<Arguments> provideBracesKeepFormattingData() {
         return Stream.of(
-            Arguments.of("{&auml;}", "{\\\"{a}}"),
-            Arguments.of("{&auml;}", "{\\\"a}"),
-            Arguments.of("{&Ccedil;}", "{\\c{C}}"),
-            Arguments.of("{<em>hallo</em>}", "{\\emph hallo}"),
-            Arguments.of("{<b>hallo</b>}", "{\\textbf hallo}"),
-            Arguments.of("{<b>hallo</b>}", "{\\bf hallo}"),
-            Arguments.of("{&#39;}", "{\\textquotesingle}"),
-            Arguments.of("{{ test }}", "{{ test }}")
-        );
+                Arguments.of("{&auml;}", "{\\\"{a}}"),
+                Arguments.of("{&auml;}", "{\\\"a}"),
+                Arguments.of("{&Ccedil;}", "{\\c{C}}"),
+                Arguments.of("{<em>hallo</em>}", "{\\emph hallo}"),
+                Arguments.of("{<b>hallo</b>}", "{\\textbf hallo}"),
+                Arguments.of("{<b>hallo</b>}", "{\\bf hallo}"),
+                Arguments.of("{&#39;}", "{\\textquotesingle}"),
+                Arguments.of("{{ test }}", "{{ test }}"));
     }
 
     @ParameterizedTest

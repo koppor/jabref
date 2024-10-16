@@ -1,21 +1,23 @@
 package org.jabref.logic.openoffice;
 
+import io.github.thibaultmeyer.cuid.CUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.thibaultmeyer.cuid.CUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ReferenceMark {
     public static final String[] PREFIXES = {"JABREF_", "CID_"};
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReferenceMark.class);
 
-    private static final Pattern REFERENCE_MARK_FORMAT = Pattern.compile("^(JABREF_\\w+ CID_\\d+(?:, JABREF_\\w+ CID_\\d+)*) (\\w+)$");
+    private static final Pattern REFERENCE_MARK_FORMAT =
+            Pattern.compile("^(JABREF_\\w+ CID_\\d+(?:, JABREF_\\w+ CID_\\d+)*) (\\w+)$");
     private static final Pattern ENTRY_PATTERN = Pattern.compile("JABREF_(\\w+) CID_(\\w+)");
 
     private final String name;
@@ -35,7 +37,11 @@ public class ReferenceMark {
         parse(name);
     }
 
-    public ReferenceMark(String name, List<String> citationKeys, List<Integer> citationNumbers, String uniqueId) {
+    public ReferenceMark(
+            String name,
+            List<String> citationKeys,
+            List<Integer> citationNumbers,
+            String uniqueId) {
         this.name = name;
         this.citationKeys = citationKeys;
         this.citationNumbers = citationNumbers;
@@ -45,7 +51,9 @@ public class ReferenceMark {
     private void parse(String name) {
         Matcher matcher = REFERENCE_MARK_FORMAT.matcher(name);
         if (!matcher.matches()) {
-            LOGGER.warn("CSLReferenceMark: name={} does not match pattern. Assuming random values", name);
+            LOGGER.warn(
+                    "CSLReferenceMark: name={} does not match pattern. Assuming random values",
+                    name);
             this.citationKeys = List.of(CUID.randomCUID2(8).toString());
             this.citationNumbers = List.of(0);
             this.uniqueId = this.citationKeys.getFirst();
@@ -53,7 +61,8 @@ public class ReferenceMark {
         }
 
         String entriesString = matcher.group(1).trim();
-        this.uniqueId = matcher.group(2) != null ? matcher.group(2).trim() : CUID.randomCUID2(8).toString();
+        this.uniqueId =
+                matcher.group(2) != null ? matcher.group(2).trim() : CUID.randomCUID2(8).toString();
 
         this.citationKeys = new ArrayList<>();
         this.citationNumbers = new ArrayList<>();
@@ -65,12 +74,18 @@ public class ReferenceMark {
         }
 
         if (this.citationKeys.isEmpty() || this.citationNumbers.isEmpty()) {
-            LOGGER.warn("CSLReferenceMark: Failed to parse any entries from name={}. Assuming random values", name);
+            LOGGER.warn(
+                    "CSLReferenceMark: Failed to parse any entries from name={}. Assuming random values",
+                    name);
             this.citationKeys = List.of(CUID.randomCUID2(8).toString());
             this.citationNumbers = List.of(0);
         }
 
-        LOGGER.debug("CSLReferenceMark: citationKeys={} citationNumbers={} uniqueId={}", getCitationKeys(), getCitationNumbers(), getUniqueId());
+        LOGGER.debug(
+                "CSLReferenceMark: citationKeys={} citationNumbers={} uniqueId={}",
+                getCitationKeys(),
+                getCitationNumbers(),
+                getUniqueId());
     }
 
     public String getName() {

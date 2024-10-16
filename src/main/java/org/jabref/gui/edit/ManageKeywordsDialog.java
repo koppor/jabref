@@ -1,6 +1,9 @@
 package org.jabref.gui.edit;
 
-import java.util.List;
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import jakarta.inject.Inject;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
@@ -17,9 +20,7 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.model.entry.BibEntry;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import jakarta.inject.Inject;
+import java.util.List;
 
 public class ManageKeywordsDialog extends BaseDialog<Void> {
     private final List<BibEntry> entries;
@@ -35,48 +36,61 @@ public class ManageKeywordsDialog extends BaseDialog<Void> {
         this.entries = entries;
         this.setTitle(Localization.lang("Manage keywords"));
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
-        setResultConverter(button -> {
-            if (button == ButtonType.APPLY) {
-                viewModel.saveChanges();
-            }
-            return null;
-        });
+        setResultConverter(
+                button -> {
+                    if (button == ButtonType.APPLY) {
+                        viewModel.saveChanges();
+                    }
+                    return null;
+                });
     }
 
     @FXML
     public void initialize() {
         viewModel = new ManageKeywordsViewModel(preferences.getBibEntryPreferences(), entries);
 
-        viewModel.displayTypeProperty().bind(
-                EasyBind.map(displayType.selectedToggleProperty(), toggle -> {
-                    if (toggle != null) {
-                        return (ManageKeywordsDisplayType) toggle.getUserData();
-                    } else {
-                        return ManageKeywordsDisplayType.CONTAINED_IN_ALL_ENTRIES;
-                    }
-                })
-        );
+        viewModel
+                .displayTypeProperty()
+                .bind(
+                        EasyBind.map(
+                                displayType.selectedToggleProperty(),
+                                toggle -> {
+                                    if (toggle != null) {
+                                        return (ManageKeywordsDisplayType) toggle.getUserData();
+                                    } else {
+                                        return ManageKeywordsDisplayType.CONTAINED_IN_ALL_ENTRIES;
+                                    }
+                                }));
 
         keywordsTable.setItems(viewModel.getKeywords());
-        keywordsTableMainColumn.setCellValueFactory(data -> BindingsHelper.constantOf(data.getValue()));
-        keywordsTableMainColumn.setOnEditCommit(event -> {
-            // Poor mans reverse databinding (necessary because we use a constant value above)
-            viewModel.getKeywords().set(event.getTablePosition().getRow(), event.getNewValue());
-        });
+        keywordsTableMainColumn.setCellValueFactory(
+                data -> BindingsHelper.constantOf(data.getValue()));
+        keywordsTableMainColumn.setOnEditCommit(
+                event -> {
+                    // Poor mans reverse databinding (necessary because we use a constant value
+                    // above)
+                    viewModel
+                            .getKeywords()
+                            .set(event.getTablePosition().getRow(), event.getNewValue());
+                });
         keywordsTableMainColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         keywordsTableEditColumn.setCellValueFactory(data -> BindingsHelper.constantOf(true));
         keywordsTableDeleteColumn.setCellValueFactory(data -> BindingsHelper.constantOf(true));
         new ValueTableCellFactory<String, Boolean>()
                 .withGraphic(none -> IconTheme.JabRefIcons.EDIT.getGraphicNode())
-                .withOnMouseClickedEvent(none -> event -> keywordsTable.edit(keywordsTable.getFocusModel().getFocusedIndex(), keywordsTableMainColumn))
+                .withOnMouseClickedEvent(
+                        none ->
+                                event ->
+                                        keywordsTable.edit(
+                                                keywordsTable.getFocusModel().getFocusedIndex(),
+                                                keywordsTableMainColumn))
                 .install(keywordsTableEditColumn);
         new ValueTableCellFactory<String, Boolean>()
                 .withGraphic(none -> IconTheme.JabRefIcons.REMOVE.getGraphicNode())
-                .withOnMouseClickedEvent((keyword, none) -> event -> viewModel.removeKeyword(keyword))
+                .withOnMouseClickedEvent(
+                        (keyword, none) -> event -> viewModel.removeKeyword(keyword))
                 .install(keywordsTableDeleteColumn);
     }
 }

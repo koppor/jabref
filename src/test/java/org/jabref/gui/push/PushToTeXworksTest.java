@@ -1,6 +1,10 @@
 package org.jabref.gui.push;
 
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import javafx.beans.property.SimpleMapProperty;
 import javafx.collections.FXCollections;
@@ -10,16 +14,11 @@ import org.jabref.gui.DialogService;
 import org.jabref.gui.frame.ExternalApplicationsPreferences;
 import org.jabref.gui.preferences.GuiPreferences;
 import org.jabref.logic.push.CitationCommandString;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.Map;
 
 class PushToTeXworksTest {
 
@@ -32,21 +31,27 @@ class PushToTeXworksTest {
     void setup() {
         DialogService dialogService = mock(DialogService.class, Answers.RETURNS_DEEP_STUBS);
         GuiPreferences preferences = mock(GuiPreferences.class);
-        PushToApplicationPreferences pushToApplicationPreferences = mock(PushToApplicationPreferences.class);
+        PushToApplicationPreferences pushToApplicationPreferences =
+                mock(PushToApplicationPreferences.class);
 
         // Mock the command path
         Map<String, String> commandPaths = Map.of(DISPLAY_NAME, TEXWORKS_CLIENT_PATH);
-        ObservableMap<String, String> observableCommandPaths = FXCollections.observableMap(commandPaths);
-        when(pushToApplicationPreferences.getCommandPaths()).thenReturn(new SimpleMapProperty<>(observableCommandPaths));
-        when(preferences.getPushToApplicationPreferences()).thenReturn(pushToApplicationPreferences);
+        ObservableMap<String, String> observableCommandPaths =
+                FXCollections.observableMap(commandPaths);
+        when(pushToApplicationPreferences.getCommandPaths())
+                .thenReturn(new SimpleMapProperty<>(observableCommandPaths));
+        when(preferences.getPushToApplicationPreferences())
+                .thenReturn(pushToApplicationPreferences);
 
         // Mock the return value for getCiteCommand()
-        ExternalApplicationsPreferences externalApplicationsPreferences = mock(ExternalApplicationsPreferences.class);
+        ExternalApplicationsPreferences externalApplicationsPreferences =
+                mock(ExternalApplicationsPreferences.class);
         CitationCommandString mockCiteCommand = mock(CitationCommandString.class);
         when(mockCiteCommand.prefix()).thenReturn("");
         when(mockCiteCommand.suffix()).thenReturn("");
         when(externalApplicationsPreferences.getCiteCommand()).thenReturn(mockCiteCommand);
-        when(preferences.getExternalApplicationsPreferences()).thenReturn(externalApplicationsPreferences);
+        when(preferences.getExternalApplicationsPreferences())
+                .thenReturn(externalApplicationsPreferences);
 
         // Create a new instance of PushToTeXworks
         pushToTeXworks = new PushToTeXworks(dialogService, preferences);
@@ -68,7 +73,10 @@ class PushToTeXworksTest {
     @Test
     void getCommandLine() {
         String keyString = "TestKey";
-        String[] expectedCommand = new String[] {null, "--insert-text", keyString}; // commandPath is only set in pushEntries
+        String[] expectedCommand =
+                new String[] {
+                    null, "--insert-text", keyString
+                }; // commandPath is only set in pushEntries
 
         String[] actualCommand = pushToTeXworks.getCommandLine(keyString);
 
@@ -96,6 +104,7 @@ class PushToTeXworksTest {
      */
     @Test
     void getTooltip() {
-        assertEquals("Push entries to external application (TeXworks)", pushToTeXworks.getTooltip());
+        assertEquals(
+                "Push entries to external application (TeXworks)", pushToTeXworks.getTooltip());
     }
 }

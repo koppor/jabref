@@ -1,7 +1,5 @@
 package org.jabref.gui.edit;
 
-import java.util.Optional;
-
 import javafx.scene.control.TextField;
 
 import org.jabref.gui.ClipBoardManager;
@@ -10,6 +8,8 @@ import org.jabref.gui.actions.SimpleCommand;
 import org.jabref.gui.actions.StandardActions;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.identifier.DOI;
+
+import java.util.Optional;
 
 /**
  * Copies the doi url to the clipboard
@@ -21,7 +21,11 @@ public class CopyDoiUrlAction extends SimpleCommand {
     private final DialogService dialogService;
     private final ClipBoardManager clipBoardManager;
 
-    public CopyDoiUrlAction(TextField component, StandardActions action, DialogService dialogService, ClipBoardManager clipBoardManager) {
+    public CopyDoiUrlAction(
+            TextField component,
+            StandardActions action,
+            DialogService dialogService,
+            ClipBoardManager clipBoardManager) {
         this.component = component;
         this.action = action;
         this.dialogService = dialogService;

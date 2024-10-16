@@ -1,8 +1,5 @@
 package org.jabref.gui.push;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
@@ -13,9 +10,11 @@ import org.jabref.logic.os.OS;
 import org.jabref.logic.util.HeadlessExecutorService;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
 
 public class PushToTexShop extends AbstractPushToApplication {
 
@@ -43,15 +42,21 @@ public class PushToTexShop extends AbstractPushToApplication {
         couldNotCall = false;
         notDefined = false;
 
-        commandPath = preferences.getPushToApplicationPreferences().getCommandPaths().get(this.getDisplayName());
+        commandPath =
+                preferences
+                        .getPushToApplicationPreferences()
+                        .getCommandPaths()
+                        .get(this.getDisplayName());
 
         try {
             LOGGER.debug("TexShop string: {}", String.join(" ", getCommandLine(keyString)));
             ProcessBuilder processBuilder = new ProcessBuilder(getCommandLine(keyString));
             processBuilder.inheritIO();
             Process process = processBuilder.start();
-            StreamGobbler streamGobblerInput = new StreamGobbler(process.getInputStream(), LOGGER::info);
-            StreamGobbler streamGobblerError = new StreamGobbler(process.getErrorStream(), LOGGER::info);
+            StreamGobbler streamGobblerInput =
+                    new StreamGobbler(process.getInputStream(), LOGGER::info);
+            StreamGobbler streamGobblerError =
+                    new StreamGobbler(process.getErrorStream(), LOGGER::info);
 
             HeadlessExecutorService.INSTANCE.execute(streamGobblerInput);
             HeadlessExecutorService.INSTANCE.execute(streamGobblerError);
@@ -73,16 +78,23 @@ public class PushToTexShop extends AbstractPushToApplication {
             citeCommand = sb.toString();
         }
 
-        String osascriptTexShop = "osascript -e 'tell application \"TeXShop\"\n" +
-                "activate\n" +
-                "set TheString to \"" + citeCommand + keyString + getCiteSuffix() + "\"\n" +
-                "set content of selection of front document to TheString\n" +
-                "end tell'";
+        String osascriptTexShop =
+                "osascript -e 'tell application \"TeXShop\"\n"
+                        + "activate\n"
+                        + "set TheString to \""
+                        + citeCommand
+                        + keyString
+                        + getCiteSuffix()
+                        + "\"\n"
+                        + "set content of selection of front document to TheString\n"
+                        + "end tell'";
 
         if (OS.OS_X) {
             return new String[] {"sh", "-c", osascriptTexShop};
         } else {
-            dialogService.showInformationDialogAndWait(Localization.lang("Push to application"), Localization.lang("Pushing citations to TeXShop is only possible on macOS!"));
+            dialogService.showInformationDialogAndWait(
+                    Localization.lang("Push to application"),
+                    Localization.lang("Pushing citations to TeXShop is only possible on macOS!"));
             return new String[] {};
         }
     }

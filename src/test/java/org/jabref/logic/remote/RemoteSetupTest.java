@@ -1,20 +1,5 @@
 package org.jabref.logic.remote;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-
-import org.jabref.logic.os.OS;
-import org.jabref.logic.remote.client.RemoteClient;
-import org.jabref.logic.remote.server.RemoteListenerServerManager;
-import org.jabref.logic.remote.server.RemoteMessageHandler;
-import org.jabref.support.DisabledOnCIServer;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -22,6 +7,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+
+import org.jabref.logic.os.OS;
+import org.jabref.logic.remote.client.RemoteClient;
+import org.jabref.logic.remote.server.RemoteListenerServerManager;
+import org.jabref.logic.remote.server.RemoteMessageHandler;
+import org.jabref.support.DisabledOnCIServer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 @DisabledOnCIServer("Tests fails sporadically on CI server")
 class RemoteSetupTest {
@@ -36,7 +35,7 @@ class RemoteSetupTest {
     @Test
     void goodCase() {
         final int port = 34567;
-        final String[] message = new String[]{"MYMESSAGE"};
+        final String[] message = new String[] {"MYMESSAGE"};
 
         try (RemoteListenerServerManager server = new RemoteListenerServerManager()) {
             assertFalse(server.isOpen());
@@ -52,7 +51,7 @@ class RemoteSetupTest {
     @Test
     void goodCaseWithAllLifecycleMethods() {
         final int port = 34567;
-        final String[] message = new String[]{"MYMESSAGE"};
+        final String[] message = new String[] {"MYMESSAGE"};
 
         try (RemoteListenerServerManager server = new RemoteListenerServerManager()) {
             assertFalse(server.isOpen());
@@ -98,7 +97,7 @@ class RemoteSetupTest {
         final int port = 34567;
         final String message = "MYMESSAGE";
 
-        assertFalse(new RemoteClient(port).sendCommandLineArguments(new String[]{message}));
+        assertFalse(new RemoteClient(port).sendCommandLineArguments(new String[] {message}));
     }
 
     @Test
@@ -107,13 +106,16 @@ class RemoteSetupTest {
 
         try (ServerSocket socket = new ServerSocket(port)) {
             // Setup dummy server always answering "whatever"
-            new Thread(() -> {
-                try (Socket message = socket.accept(); OutputStream os = message.getOutputStream()) {
-                    os.write("whatever".getBytes(StandardCharsets.UTF_8));
-                } catch (IOException e) {
-                    // Ignored
-                }
-            }).start();
+            new Thread(
+                            () -> {
+                                try (Socket message = socket.accept();
+                                        OutputStream os = message.getOutputStream()) {
+                                    os.write("whatever".getBytes(StandardCharsets.UTF_8));
+                                } catch (IOException e) {
+                                    // Ignored
+                                }
+                            })
+                    .start();
             Thread.sleep(100);
 
             assertFalse(new RemoteClient(port).ping());

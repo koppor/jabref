@@ -1,11 +1,5 @@
 package org.jabref.gui.help;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.frame.ExternalApplicationsPreferences;
 import org.jabref.gui.preferences.GuiPreferences;
@@ -14,9 +8,14 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.BackgroundTask;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.logic.util.Version;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This worker checks if there is a new version of JabRef available. If there is it will display a dialog to the user
@@ -40,10 +39,11 @@ public class VersionWorker {
     private final InternalPreferences internalPreferences;
     private final ExternalApplicationsPreferences externalApplicationsPreferences;
 
-    public VersionWorker(Version installedVersion,
-                         DialogService dialogService,
-                         TaskExecutor taskExecutor,
-                         GuiPreferences preferences) {
+    public VersionWorker(
+            Version installedVersion,
+            DialogService dialogService,
+            TaskExecutor taskExecutor,
+            GuiPreferences preferences) {
         this.installedVersion = Objects.requireNonNull(installedVersion);
         this.dialogService = Objects.requireNonNull(dialogService);
         this.taskExecutor = Objects.requireNonNull(taskExecutor);
@@ -62,16 +62,16 @@ public class VersionWorker {
 
     public void checkForNewVersionAsync() {
         BackgroundTask.wrap(this::getNewVersion)
-                      .onSuccess(version -> showUpdateInfo(version, true))
-                      .onFailure(exception -> showConnectionError(exception, true))
-                      .executeWith(taskExecutor);
+                .onSuccess(version -> showUpdateInfo(version, true))
+                .onFailure(exception -> showConnectionError(exception, true))
+                .executeWith(taskExecutor);
     }
 
     public void checkForNewVersionDelayed() {
         BackgroundTask.wrap(this::getNewVersion)
-                      .onSuccess(version -> showUpdateInfo(version, false))
-                      .onFailure(exception -> showConnectionError(exception, false))
-                      .scheduleWith(taskExecutor, 30, TimeUnit.SECONDS);
+                .onSuccess(version -> showUpdateInfo(version, false))
+                .onFailure(exception -> showConnectionError(exception, false))
+                .scheduleWith(taskExecutor, 30, TimeUnit.SECONDS);
     }
 
     /**
@@ -80,8 +80,11 @@ public class VersionWorker {
     private void showConnectionError(Exception exception, boolean manualExecution) {
         if (manualExecution) {
             String couldNotConnect = Localization.lang("Could not connect to the update server.");
-            String tryLater = Localization.lang("Please try again later and/or check your network connection.");
-            dialogService.showErrorDialogAndWait(Localization.lang("Error"), couldNotConnect + "\n" + tryLater, exception);
+            String tryLater =
+                    Localization.lang(
+                            "Please try again later and/or check your network connection.");
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error"), couldNotConnect + "\n" + tryLater, exception);
         }
         LOGGER.debug("Could not connect to the update server.", exception);
     }
@@ -91,16 +94,24 @@ public class VersionWorker {
      * Shows a "New Version" Dialog to the user if there is.
      */
     private void showUpdateInfo(Optional<Version> newerVersion, boolean manualExecution) {
-        // no new version could be found, only respect the ignored version on automated version checks
-        if (newerVersion.isEmpty() || (newerVersion.get().equals(internalPreferences.getIgnoredVersion()) && !manualExecution)) {
+        // no new version could be found, only respect the ignored version on automated version
+        // checks
+        if (newerVersion.isEmpty()
+                || (newerVersion.get().equals(internalPreferences.getIgnoredVersion())
+                        && !manualExecution)) {
             if (manualExecution) {
                 dialogService.notify(Localization.lang("JabRef is up-to-date."));
             }
         } else {
             // notify the user about a newer version
-            if (dialogService.showCustomDialogAndWait(
-                    new NewVersionDialog(installedVersion, newerVersion.get(), dialogService, externalApplicationsPreferences))
-                             .orElse(true)) {
+            if (dialogService
+                    .showCustomDialogAndWait(
+                            new NewVersionDialog(
+                                    installedVersion,
+                                    newerVersion.get(),
+                                    dialogService,
+                                    externalApplicationsPreferences))
+                    .orElse(true)) {
                 internalPreferences.setIgnoredVersion(newerVersion.get());
             }
         }

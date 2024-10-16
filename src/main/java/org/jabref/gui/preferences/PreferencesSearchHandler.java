@@ -1,8 +1,6 @@
 package org.jabref.gui.preferences;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import com.google.common.collect.ArrayListMultimap;
 
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -12,7 +10,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Labeled;
 
-import com.google.common.collect.ArrayListMultimap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 class PreferencesSearchHandler {
 
@@ -25,7 +25,8 @@ class PreferencesSearchHandler {
     PreferencesSearchHandler(List<PreferencesTab> preferenceTabs) {
         this.preferenceTabs = preferenceTabs;
         this.preferenceTabsLabelNames = getPrefsTabLabelMap();
-        this.filteredPreferenceTabs = new SimpleListProperty<>(FXCollections.observableArrayList(preferenceTabs));
+        this.filteredPreferenceTabs =
+                new SimpleListProperty<>(FXCollections.observableArrayList(preferenceTabs));
     }
 
     public void filterTabs(String text) {
@@ -44,7 +45,8 @@ class PreferencesSearchHandler {
                     highlightLabel(labeled);
                 }
             }
-            boolean tabNameIsMatchedByQuery = tab.getTabName().toLowerCase(Locale.ROOT).contains(text);
+            boolean tabNameIsMatchedByQuery =
+                    tab.getTabName().toLowerCase(Locale.ROOT).contains(text);
             if (tabContainsLabel || tabNameIsMatchedByQuery) {
                 filteredPreferenceTabs.add(tab);
             }
@@ -61,7 +63,8 @@ class PreferencesSearchHandler {
     }
 
     private void clearHighlights() {
-        highlightedLabels.forEach(labeled -> labeled.pseudoClassStateChanged(labelHighlight, false));
+        highlightedLabels.forEach(
+                labeled -> labeled.pseudoClassStateChanged(labelHighlight, false));
     }
 
     private void clearSearch() {
@@ -87,7 +90,10 @@ class PreferencesSearchHandler {
         return filteredPreferenceTabs;
     }
 
-    private static void scanLabeledControls(Parent parent, ArrayListMultimap<PreferencesTab, Labeled> prefsTabLabelMap, PreferencesTab preferencesTab) {
+    private static void scanLabeledControls(
+            Parent parent,
+            ArrayListMultimap<PreferencesTab, Labeled> prefsTabLabelMap,
+            PreferencesTab preferencesTab) {
         for (Node child : parent.getChildrenUnmodifiable()) {
             if (child instanceof Labeled labeled) {
                 if (!labeled.getText().isEmpty()) {

@@ -1,20 +1,20 @@
 package org.jabref.logic.importer;
 
+import org.jabref.http.dto.SimpleHttpResponse;
+import org.jabref.logic.JabRefException;
+import org.jabref.model.strings.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.jabref.http.dto.SimpleHttpResponse;
-import org.jabref.logic.JabRefException;
-import org.jabref.model.strings.StringUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class FetcherException extends JabRefException {
     private static final Logger LOGGER = LoggerFactory.getLogger(FetcherException.class);
-    private static final Pattern API_KEY_PATTERN = Pattern.compile("(?i)(api|key|api[-_]?key)=[^&]*");
+    private static final Pattern API_KEY_PATTERN =
+            Pattern.compile("(?i)(api|key|api[-_]?key)=[^&]*");
     private static String REDACTED_STRING = "[REDACTED]";
 
     private final String url;
@@ -72,12 +72,22 @@ public class FetcherException extends JabRefException {
 
     @Override
     public String getLocalizedMessage() {
-        // TODO: This should be moved to a separate class converting "any" exception object to a localized message
-        // TODO: 5% of the "new-ers" pass a "real" localized message. See org.jabref.logic.importer.fetcher.GoogleScholar.addHitsFromQuery. We should maybe make use of this (and rewrite the whole message handling)
-        // TODO: Try to convert IOException to some more meaningful information here (or at org.jabref.gui.DialogService.showErrorDialogAndWait(org.jabref.logic.importer.FetcherException)). See also org.jabref.logic.net.URLDownload.openConnection
+        // TODO: This should be moved to a separate class converting "any" exception object to a
+        // localized message
+        // TODO: 5% of the "new-ers" pass a "real" localized message. See
+        // org.jabref.logic.importer.fetcher.GoogleScholar.addHitsFromQuery. We should maybe make
+        // use of this (and rewrite the whole message handling)
+        // TODO: Try to convert IOException to some more meaningful information here (or at
+        // org.jabref.gui.DialogService.showErrorDialogAndWait(org.jabref.logic.importer.FetcherException)). See also org.jabref.logic.net.URLDownload.openConnection
         if (httpResponse != null) {
             // We decided to not "translate" technical terms (URL, HTTP)
-            return getPrefix() + "URL: %s\nHTTP %d %s\n%s".formatted(getRedactedUrl(), httpResponse.statusCode(), httpResponse.responseMessage(), httpResponse.responseBody());
+            return getPrefix()
+                    + "URL: %s\nHTTP %d %s\n%s"
+                            .formatted(
+                                    getRedactedUrl(),
+                                    httpResponse.statusCode(),
+                                    httpResponse.responseMessage(),
+                                    httpResponse.responseBody());
         } else if (url != null) {
             return getPrefix() + "URL: %s".formatted(getRedactedUrl());
         } else {

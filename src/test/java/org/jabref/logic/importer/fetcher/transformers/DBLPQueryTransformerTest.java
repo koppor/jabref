@@ -1,12 +1,12 @@
 package org.jabref.logic.importer.fetcher.transformers;
 
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.apache.lucene.queryparser.flexible.standard.parser.StandardSyntaxParser;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Optional;
 
 class DBLPQueryTransformerTest extends InfixTransformerTest<DBLPQueryTransformer> {
 
@@ -39,7 +39,9 @@ class DBLPQueryTransformerTest extends InfixTransformerTest<DBLPQueryTransformer
     @Test
     public void convertYearField() throws Exception {
         String queryString = "year:2015";
-        QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
+        QueryNode luceneQuery =
+                new StandardSyntaxParser()
+                        .parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         DBLPQueryTransformer transformer = getTransformer();
         Optional<String> searchQuery = transformer.transformLuceneQuery(luceneQuery);
         assertEquals(Optional.empty(), searchQuery);
@@ -51,7 +53,9 @@ class DBLPQueryTransformerTest extends InfixTransformerTest<DBLPQueryTransformer
     @Test
     public void convertYearRangeField() throws Exception {
         String queryString = "year-range:2012-2015";
-        QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
+        QueryNode luceneQuery =
+                new StandardSyntaxParser()
+                        .parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         DBLPQueryTransformer transformer = getTransformer();
         Optional<String> searchQuery = transformer.transformLuceneQuery(luceneQuery);
         assertEquals(Optional.empty(), searchQuery);

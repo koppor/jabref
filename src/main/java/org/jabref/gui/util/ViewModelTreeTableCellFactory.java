@@ -16,7 +16,8 @@ import org.jabref.model.strings.StringUtil;
  *
  * @param <S> view model
  */
-public class ViewModelTreeTableCellFactory<S> implements Callback<TreeTableColumn<S, S>, TreeTableCell<S, S>> {
+public class ViewModelTreeTableCellFactory<S>
+        implements Callback<TreeTableColumn<S, S>, TreeTableCell<S, S>> {
 
     private Callback<S, String> toText;
     private Callback<S, Node> toGraphic;

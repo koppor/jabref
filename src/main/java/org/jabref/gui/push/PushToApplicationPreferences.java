@@ -1,12 +1,12 @@
 package org.jabref.gui.push;
 
-import java.util.Map;
-
 import javafx.beans.property.MapProperty;
 import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+
+import java.util.Map;
 
 public class PushToApplicationPreferences {
     private final StringProperty activeApplicationName;
@@ -14,10 +14,11 @@ public class PushToApplicationPreferences {
     private final StringProperty emacsArguments;
     private final StringProperty vimServer;
 
-    public PushToApplicationPreferences(String activeApplicationName,
-                                        Map<String, String> commandPaths,
-                                        String emacsArguments,
-                                        String vimServer) {
+    public PushToApplicationPreferences(
+            String activeApplicationName,
+            Map<String, String> commandPaths,
+            String emacsArguments,
+            String vimServer) {
         this.activeApplicationName = new SimpleStringProperty(activeApplicationName);
         this.commandPaths = new SimpleMapProperty<>(FXCollections.observableMap(commandPaths));
         this.emacsArguments = new SimpleStringProperty(emacsArguments);

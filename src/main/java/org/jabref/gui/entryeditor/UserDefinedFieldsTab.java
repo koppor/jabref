@@ -1,11 +1,5 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.LinkedHashSet;
-import java.util.SequencedSet;
-import java.util.Set;
-
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.autocompleter.SuggestionProviders;
 import org.jabref.gui.icon.IconTheme;
@@ -22,24 +16,44 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.search.SearchQuery;
 
+import java.util.LinkedHashSet;
+import java.util.SequencedSet;
+import java.util.Set;
+
+import javax.swing.undo.UndoManager;
+
 public class UserDefinedFieldsTab extends FieldsEditorTab {
     private final LinkedHashSet<Field> fields;
 
-    public UserDefinedFieldsTab(String name,
-                                Set<Field> fields,
-                                BibDatabaseContext databaseContext,
-                                SuggestionProviders suggestionProviders,
-                                UndoManager undoManager,
-                                UndoAction undoAction,
-                                RedoAction redoAction,
-                                DialogService dialogService,
-                                GuiPreferences preferences,
-                                ThemeManager themeManager,
-                                TaskExecutor taskExecutor,
-                                JournalAbbreviationRepository journalAbbreviationRepository,
-                                LuceneManager luceneManager,
-                                OptionalObjectProperty<SearchQuery> searchQueryProperty) {
-        super(false, databaseContext, suggestionProviders, undoManager, undoAction, redoAction, dialogService, preferences, themeManager, taskExecutor, journalAbbreviationRepository, luceneManager, searchQueryProperty);
+    public UserDefinedFieldsTab(
+            String name,
+            Set<Field> fields,
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            UndoAction undoAction,
+            RedoAction redoAction,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            ThemeManager themeManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository,
+            LuceneManager luceneManager,
+            OptionalObjectProperty<SearchQuery> searchQueryProperty) {
+        super(
+                false,
+                databaseContext,
+                suggestionProviders,
+                undoManager,
+                undoAction,
+                redoAction,
+                dialogService,
+                preferences,
+                themeManager,
+                taskExecutor,
+                journalAbbreviationRepository,
+                luceneManager,
+                searchQueryProperty);
 
         this.fields = new LinkedHashSet<>(fields);
 

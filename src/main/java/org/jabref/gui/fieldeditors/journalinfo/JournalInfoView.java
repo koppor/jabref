@@ -1,6 +1,6 @@
 package org.jabref.gui.fieldeditors.journalinfo;
 
-import java.util.Objects;
+import com.airhacks.afterburner.views.ViewLoader;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox;
 import org.jabref.architecture.AllowedToUseClassGetResource;
 import org.jabref.logic.importer.FetcherException;
 
-import com.airhacks.afterburner.views.ViewLoader;
+import java.util.Objects;
 
 @AllowedToUseClassGetResource("JavaFX internally handles the passed URLs properly.")
 public class JournalInfoView extends VBox {
@@ -31,11 +31,12 @@ public class JournalInfoView extends VBox {
     public JournalInfoView() {
         this.viewModel = new JournalInfoViewModel();
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
 
-        this.getStylesheets().add(Objects.requireNonNull(JournalInfoView.class.getResource("JournalInfo.css")).toExternalForm());
+        this.getStylesheets()
+                .add(
+                        Objects.requireNonNull(JournalInfoView.class.getResource("JournalInfo.css"))
+                                .toExternalForm());
 
         title.textProperty().bind(viewModel.titleProperty());
         categories.textProperty().bind(viewModel.categoriesProperty());
@@ -45,7 +46,8 @@ public class JournalInfoView extends VBox {
         bindChartProperties();
     }
 
-    public Node populateJournalInformation(String issn, String journalName) throws FetcherException {
+    public Node populateJournalInformation(String issn, String journalName)
+            throws FetcherException {
         viewModel.populateJournalInformation(issn, journalName);
         return this;
     }
@@ -59,7 +61,8 @@ public class JournalInfoView extends VBox {
         citableDocsPrevious3YearsChart.setData(viewModel.getCitableDocsPrevious3YearsData());
         citesOutgoingChart.setData(viewModel.getCitesOutgoingData());
         citesOutgoingPerDocChart.setData(viewModel.getCitesOutgoingPerDocData());
-        citesIncomingByRecentlyPublishedChart.setData(viewModel.getCitesIncomingByRecentlyPublishedData());
+        citesIncomingByRecentlyPublishedChart.setData(
+                viewModel.getCitesIncomingByRecentlyPublishedData());
         docsThisYearChart.setData(viewModel.getDocsThisYearData());
     }
 }

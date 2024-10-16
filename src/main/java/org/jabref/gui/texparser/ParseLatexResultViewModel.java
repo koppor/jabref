@@ -1,9 +1,6 @@
 package org.jabref.gui.texparser;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.airhacks.afterburner.injection.Injector;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
@@ -21,7 +18,10 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.texparser.Citation;
 import org.jabref.model.texparser.LatexBibEntriesResolverResult;
 
-import com.airhacks.afterburner.injection.Injector;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ParseLatexResultViewModel extends AbstractViewModel {
 
@@ -31,19 +31,27 @@ public class ParseLatexResultViewModel extends AbstractViewModel {
     private final ObservableList<Citation> citationList;
     private final BooleanProperty importButtonDisabled;
 
-    public ParseLatexResultViewModel(LatexBibEntriesResolverResult resolverResult, BibDatabaseContext databaseContext) {
+    public ParseLatexResultViewModel(
+            LatexBibEntriesResolverResult resolverResult, BibDatabaseContext databaseContext) {
         this.resolverResult = resolverResult;
         this.databaseContext = databaseContext;
         this.referenceList = FXCollections.observableArrayList();
         this.citationList = FXCollections.observableArrayList();
 
-        Set<String> newEntryKeys = resolverResult.getNewEntries().stream().map(entry -> entry.getCitationKey().orElse("")).collect(Collectors.toSet());
-        for (Map.Entry<String, Collection<Citation>> entry : resolverResult.getCitations().asMap().entrySet()) {
+        Set<String> newEntryKeys =
+                resolverResult.getNewEntries().stream()
+                        .map(entry -> entry.getCitationKey().orElse(""))
+                        .collect(Collectors.toSet());
+        for (Map.Entry<String, Collection<Citation>> entry :
+                resolverResult.getCitations().asMap().entrySet()) {
             String key = entry.getKey();
-            referenceList.add(new ReferenceViewModel(key, newEntryKeys.contains(key), entry.getValue()));
+            referenceList.add(
+                    new ReferenceViewModel(key, newEntryKeys.contains(key), entry.getValue()));
         }
 
-        this.importButtonDisabled = new SimpleBooleanProperty(referenceList.stream().noneMatch(ReferenceViewModel::isHighlighted));
+        this.importButtonDisabled =
+                new SimpleBooleanProperty(
+                        referenceList.stream().noneMatch(ReferenceViewModel::isHighlighted));
     }
 
     public ObservableList<ReferenceViewModel> getReferenceList() {
@@ -74,7 +82,11 @@ public class ParseLatexResultViewModel extends AbstractViewModel {
      */
     public void importButtonClicked() {
         DialogService dialogService = Injector.instantiateModelOrService(DialogService.class);
-        ImportEntriesDialog dialog = new ImportEntriesDialog(databaseContext, BackgroundTask.wrap(() -> new ParserResult(resolverResult.getNewEntries())));
+        ImportEntriesDialog dialog =
+                new ImportEntriesDialog(
+                        databaseContext,
+                        BackgroundTask.wrap(
+                                () -> new ParserResult(resolverResult.getNewEntries())));
         dialog.setTitle(Localization.lang("Import entries from LaTeX files"));
         dialogService.showCustomDialogAndWait(dialog);
     }

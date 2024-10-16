@@ -1,5 +1,7 @@
 package org.jabref.logic.openoffice.backend;
 
+import org.jabref.model.openoffice.style.CitationType;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -8,8 +10,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.jabref.model.openoffice.style.CitationType;
 
 /**
  * How and what is encoded in reference mark names under JabRef 5.2.
@@ -23,8 +23,7 @@ class Codec52 {
             // citationType is always "1" "2" or "3"
             Pattern.compile(BIB_CITATION + "(\\d*)_([123])_(.*)");
 
-    private Codec52() {
-    }
+    private Codec52() {}
 
     /**
      * This is what we get back from parsing a refMarkName.
@@ -34,10 +33,12 @@ class Codec52 {
          * "", "0", "1" ...
          */
         public final String index;
+
         /**
          * in-text-citation type
          */
         public final CitationType citationType;
+
         /**
          * Citation keys embedded in the reference mark.
          */
@@ -83,9 +84,8 @@ class Codec52 {
      *                     <p>
      *                     Or the first unused in this series, after removals.
      */
-    public static String getUniqueMarkName(Set<String> usedNames,
-                                           List<String> citationKeys,
-                                           CitationType citationType) {
+    public static String getUniqueMarkName(
+            Set<String> usedNames, List<String> citationKeys, CitationType citationType) {
 
         String citationKeysPart = String.join(",", citationKeys);
 
@@ -131,7 +131,7 @@ class Codec52 {
      */
     public static List<String> filterIsJabRefReferenceMarkName(List<String> names) {
         return names.stream()
-                     .filter(Codec52::isJabRefReferenceMarkName)
-                     .collect(Collectors.toList());
+                .filter(Codec52::isJabRefReferenceMarkName)
+                .collect(Collectors.toList());
     }
 }

@@ -11,10 +11,11 @@ public class PushToEmacsSettings extends PushToApplicationSettings {
 
     private final TextField additionalParams = new TextField();
 
-    public PushToEmacsSettings(PushToApplication application,
-                               DialogService dialogService,
-                               FilePreferences filePreferences,
-                               PushToApplicationPreferences preferences) {
+    public PushToEmacsSettings(
+            PushToApplication application,
+            DialogService dialogService,
+            FilePreferences filePreferences,
+            PushToApplicationPreferences preferences) {
         super(application, dialogService, filePreferences, preferences);
 
         settingsPane.add(new Label(Localization.lang("Additional parameters") + ":"), 0, 1);

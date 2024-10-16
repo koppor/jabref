@@ -1,5 +1,26 @@
 package org.jabref.logic.importer.fetcher;
 
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import org.jabref.logic.help.HelpFile;
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.logic.importer.FulltextFetcher;
+import org.jabref.logic.importer.ImportFormatPreferences;
+import org.jabref.logic.importer.PagedSearchBasedFetcher;
+import org.jabref.logic.importer.ParserResult;
+import org.jabref.logic.importer.fetcher.transformers.ScholarQueryTransformer;
+import org.jabref.logic.importer.fileformat.BibtexParser;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.net.URLDownload;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.paging.Page;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.HttpCookie;
@@ -15,28 +36,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jabref.logic.help.HelpFile;
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.FulltextFetcher;
-import org.jabref.logic.importer.ImportFormatPreferences;
-import org.jabref.logic.importer.PagedSearchBasedFetcher;
-import org.jabref.logic.importer.ParserResult;
-import org.jabref.logic.importer.fetcher.transformers.ScholarQueryTransformer;
-import org.jabref.logic.importer.fileformat.BibtexParser;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.net.URLDownload;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.paging.Page;
-
-import org.apache.hc.core5.net.URIBuilder;
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * FulltextFetcher implementation that attempts to find a PDF URL at GoogleScholar.
  * <p>
@@ -45,7 +44,8 @@ import org.slf4j.LoggerFactory;
 public class GoogleScholar implements FulltextFetcher, PagedSearchBasedFetcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleScholar.class);
 
-    private static final Pattern LINK_TO_BIB_PATTERN = Pattern.compile("(https:\\/\\/scholar.googleusercontent.com\\/scholar.bib[^\"]*)");
+    private static final Pattern LINK_TO_BIB_PATTERN =
+            Pattern.compile("(https:\\/\\/scholar.googleusercontent.com\\/scholar.bib[^\"]*)");
 
     private static final String BASIC_SEARCH_URL = "https://scholar.google.ch/scholar?";
 
@@ -130,13 +130,18 @@ public class GoogleScholar implements FulltextFetcher, PagedSearchBasedFetcher {
         return Optional.of(HelpFile.FETCHER_GOOGLE_SCHOLAR);
     }
 
-    private void addHitsFromQuery(List<BibEntry> entryList, String queryURL) throws IOException, FetcherException {
+    private void addHitsFromQuery(List<BibEntry> entryList, String queryURL)
+            throws IOException, FetcherException {
         String content = new URLDownload(queryURL).asString();
 
         if (needsCaptcha(content)) {
             // TODO: Remove "null"
-            throw new FetcherException(queryURL, "Fetching from Google Scholar failed: Captacha hit." +
-                    Localization.lang("This might be caused by reaching the traffic limitation of Google Scholar (see 'Help' for details)."), null);
+            throw new FetcherException(
+                    queryURL,
+                    "Fetching from Google Scholar failed: Captacha hit."
+                            + Localization.lang(
+                                    "This might be caused by reaching the traffic limitation of Google Scholar (see 'Help' for details)."),
+                    null);
         }
 
         Matcher matcher = LINK_TO_BIB_PATTERN.matcher(content);
@@ -179,7 +184,8 @@ public class GoogleScholar implements FulltextFetcher, PagedSearchBasedFetcher {
     }
 
     @Override
-    public Page<BibEntry> performSearchPaged(QueryNode luceneQuery, int pageNumber) throws FetcherException {
+    public Page<BibEntry> performSearchPaged(QueryNode luceneQuery, int pageNumber)
+            throws FetcherException {
         ScholarQueryTransformer queryTransformer = new ScholarQueryTransformer();
         String transformedQuery = queryTransformer.transformLuceneQuery(luceneQuery).orElse("");
 
@@ -209,12 +215,17 @@ public class GoogleScholar implements FulltextFetcher, PagedSearchBasedFetcher {
             }
         } catch (IOException e) {
             LOGGER.info("IOException for URL {}", uriBuilder);
-            // if there are too much requests from the same IP adress google is answering with a 503 and redirecting to a captcha challenge
+            // if there are too much requests from the same IP adress google is answering with a 503
+            // and redirecting to a captcha challenge
             // The caught IOException looks for example like this:
-            // java.io.IOException: Server returned HTTP response code: 503 for URL: https://ipv4.google.com/sorry/index?continue=https://scholar.google.com/scholar%3Fhl%3Den%26btnG%3DSearch%26q%3Dbpmn&hl=en&q=CGMSBI0NBDkYuqy9wAUiGQDxp4NLQCWbIEY1HjpH5zFJhv4ANPGdWj0
+            // java.io.IOException: Server returned HTTP response code: 503 for URL:
+            // https://ipv4.google.com/sorry/index?continue=https://scholar.google.com/scholar%3Fhl%3Den%26btnG%3DSearch%26q%3Dbpmn&hl=en&q=CGMSBI0NBDkYuqy9wAUiGQDxp4NLQCWbIEY1HjpH5zFJhv4ANPGdWj0
             if (e.getMessage().contains("Server returned HTTP response code: 503 for URL")) {
-                throw new FetcherException("Fetching from Google Scholar failed.",
-                        Localization.lang("This might be caused by reaching the traffic limitation of Google Scholar (see 'Help' for details)."), e);
+                throw new FetcherException(
+                        "Fetching from Google Scholar failed.",
+                        Localization.lang(
+                                "This might be caused by reaching the traffic limitation of Google Scholar (see 'Help' for details)."),
+                        e);
             } else {
                 URL url;
                 try {

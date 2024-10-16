@@ -1,16 +1,11 @@
 package org.jabref.gui.entryeditor;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Optional;
-import java.util.concurrent.Future;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+
+import kong.unirest.core.json.JSONObject;
 
 import org.jabref.gui.AbstractViewModel;
 import org.jabref.gui.preferences.GuiPreferences;
@@ -21,10 +16,15 @@ import org.jabref.logic.util.BackgroundTask;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.identifier.DOI;
-
-import kong.unirest.core.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Optional;
+import java.util.concurrent.Future;
 
 public class SciteTabViewModel extends AbstractViewModel {
 
@@ -73,17 +73,20 @@ public class SciteTabViewModel extends AbstractViewModel {
             return;
         }
 
-        searchTask = BackgroundTask.wrap(() -> fetchTallies(entry.getDOI().get()))
-                                   .onRunning(() -> status.set(SciteStatus.IN_PROGRESS))
-                                   .onSuccess(result -> {
-                                       currentResult = Optional.of(result);
-                                       status.set(SciteStatus.FOUND);
-                                   })
-                                   .onFailure(error -> {
-                                       searchError.set(error.getMessage());
-                                       status.set(SciteStatus.ERROR);
-                                   })
-                                   .executeWith(taskExecutor);
+        searchTask =
+                BackgroundTask.wrap(() -> fetchTallies(entry.getDOI().get()))
+                        .onRunning(() -> status.set(SciteStatus.IN_PROGRESS))
+                        .onSuccess(
+                                result -> {
+                                    currentResult = Optional.of(result);
+                                    status.set(SciteStatus.FOUND);
+                                })
+                        .onFailure(
+                                error -> {
+                                    searchError.set(error.getMessage());
+                                    status.set(SciteStatus.ERROR);
+                                })
+                        .executeWith(taskExecutor);
     }
 
     private void cancelSearch() {

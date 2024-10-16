@@ -1,5 +1,9 @@
 package org.jabref.gui.preferences.linkedfiles;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
+import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,10 +22,8 @@ import org.jabref.gui.util.IconValidationDecorator;
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.l10n.Localization;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
-
-public class LinkedFilesTab extends AbstractPreferenceTabView<LinkedFilesTabViewModel> implements PreferencesTab {
+public class LinkedFilesTab extends AbstractPreferenceTabView<LinkedFilesTabViewModel>
+        implements PreferencesTab {
 
     @FXML private TextField mainFileDirectory;
     @FXML private RadioButton useMainFileDirectory;
@@ -43,9 +45,7 @@ public class LinkedFilesTab extends AbstractPreferenceTabView<LinkedFilesTabView
     private final ControlsFxVisualizer validationVisualizer = new ControlsFxVisualizer();
 
     public LinkedFilesTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -59,28 +59,49 @@ public class LinkedFilesTab extends AbstractPreferenceTabView<LinkedFilesTabView
         mainFileDirectory.textProperty().bindBidirectional(viewModel.mainFileDirectoryProperty());
         mainFileDirectory.disableProperty().bind(viewModel.useBibLocationAsPrimaryProperty());
         browseDirectory.disableProperty().bind(viewModel.useBibLocationAsPrimaryProperty());
-        useBibLocationAsPrimary.selectedProperty().bindBidirectional(viewModel.useBibLocationAsPrimaryProperty());
-        useMainFileDirectory.selectedProperty().bindBidirectional(viewModel.useMainFileDirectoryProperty());
+        useBibLocationAsPrimary
+                .selectedProperty()
+                .bindBidirectional(viewModel.useBibLocationAsPrimaryProperty());
+        useMainFileDirectory
+                .selectedProperty()
+                .bindBidirectional(viewModel.useMainFileDirectoryProperty());
 
         moveToTrash.selectedProperty().bindBidirectional(viewModel.moveToTrashProperty());
         moveToTrash.setDisable(!NativeDesktop.get().moveToTrashSupported());
 
-        autolinkFileStartsBibtex.selectedProperty().bindBidirectional(viewModel.autolinkFileStartsBibtexProperty());
-        autolinkFileExactBibtex.selectedProperty().bindBidirectional(viewModel.autolinkFileExactBibtexProperty());
+        autolinkFileStartsBibtex
+                .selectedProperty()
+                .bindBidirectional(viewModel.autolinkFileStartsBibtexProperty());
+        autolinkFileExactBibtex
+                .selectedProperty()
+                .bindBidirectional(viewModel.autolinkFileExactBibtexProperty());
         autolinkUseRegex.selectedProperty().bindBidirectional(viewModel.autolinkUseRegexProperty());
         autolinkRegexKey.textProperty().bindBidirectional(viewModel.autolinkRegexKeyProperty());
         autolinkRegexKey.disableProperty().bind(autolinkUseRegex.selectedProperty().not());
         fulltextIndex.selectedProperty().bindBidirectional(viewModel.fulltextIndexProperty());
         fileNamePattern.valueProperty().bindBidirectional(viewModel.fileNamePatternProperty());
         fileNamePattern.itemsProperty().bind(viewModel.defaultFileNamePatternsProperty());
-        fileDirectoryPattern.textProperty().bindBidirectional(viewModel.fileDirectoryPatternProperty());
-        confirmLinkedFileDelete.selectedProperty().bindBidirectional(viewModel.confirmLinkedFileDeleteProperty());
+        fileDirectoryPattern
+                .textProperty()
+                .bindBidirectional(viewModel.fileDirectoryPatternProperty());
+        confirmLinkedFileDelete
+                .selectedProperty()
+                .bindBidirectional(viewModel.confirmLinkedFileDeleteProperty());
 
         ActionFactory actionFactory = new ActionFactory();
-        actionFactory.configureIconButton(StandardActions.HELP_REGEX_SEARCH, new HelpAction(HelpFile.REGEX_SEARCH, dialogService, preferences.getExternalApplicationsPreferences()), autolinkRegexHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP_REGEX_SEARCH,
+                new HelpAction(
+                        HelpFile.REGEX_SEARCH,
+                        dialogService,
+                        preferences.getExternalApplicationsPreferences()),
+                autolinkRegexHelp);
 
         validationVisualizer.setDecoration(new IconValidationDecorator());
-        Platform.runLater(() -> validationVisualizer.initVisualization(viewModel.mainFileDirValidationStatus(), mainFileDirectory));
+        Platform.runLater(
+                () ->
+                        validationVisualizer.initVisualization(
+                                viewModel.mainFileDirValidationStatus(), mainFileDirectory));
     }
 
     public void mainFileDirBrowse() {

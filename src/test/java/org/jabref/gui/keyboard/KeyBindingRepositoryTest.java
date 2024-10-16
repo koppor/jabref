@@ -1,13 +1,13 @@
 package org.jabref.gui.keyboard;
 
-import java.util.List;
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.List;
+import java.util.stream.Stream;
 
 class KeyBindingRepositoryTest {
     private static Stream<Arguments> provideTestData() {
@@ -15,14 +15,14 @@ class KeyBindingRepositoryTest {
                 // Correctly mapped
                 Arguments.of(
                         List.of(KeyBinding.ABBREVIATE, KeyBinding.NEW_TECHREPORT, KeyBinding.PASTE),
-                        List.of("ctrl+1", "alt+2", "shift+3")
-                ),
+                        List.of("ctrl+1", "alt+2", "shift+3")),
 
                 // Defaults on faulty data
                 Arguments.of(
                         List.of(KeyBinding.ABBREVIATE, KeyBinding.NEW_TECHREPORT, KeyBinding.PASTE),
-                        List.of(KeyBinding.ABBREVIATE.getDefaultKeyBinding(), KeyBinding.NEW_TECHREPORT.getDefaultKeyBinding())
-                ));
+                        List.of(
+                                KeyBinding.ABBREVIATE.getDefaultKeyBinding(),
+                                KeyBinding.NEW_TECHREPORT.getDefaultKeyBinding())));
     }
 
     @ParameterizedTest

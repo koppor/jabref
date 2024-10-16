@@ -1,16 +1,15 @@
 package org.jabref.logic.importer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.paging.Page;
-
 import org.apache.lucene.queryparser.flexible.core.QueryNodeParseException;
 import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.apache.lucene.queryparser.flexible.core.parser.SyntaxParser;
 import org.apache.lucene.queryparser.flexible.standard.parser.StandardSyntaxParser;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.paging.Page;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public interface PagedSearchBasedFetcher extends SearchBasedFetcher {
 
@@ -19,21 +18,24 @@ public interface PagedSearchBasedFetcher extends SearchBasedFetcher {
      * @param pageNumber       requested site number indexed from 0
      * @return Page with search results
      */
-    Page<BibEntry> performSearchPaged(QueryNode luceneQuery, int pageNumber) throws FetcherException;
+    Page<BibEntry> performSearchPaged(QueryNode luceneQuery, int pageNumber)
+            throws FetcherException;
 
     /**
      * @param searchQuery query string that can be parsed into a lucene query
      * @param pageNumber  requested site number indexed from 0
      * @return Page with search results
      */
-    default Page<BibEntry> performSearchPaged(String searchQuery, int pageNumber) throws FetcherException {
+    default Page<BibEntry> performSearchPaged(String searchQuery, int pageNumber)
+            throws FetcherException {
         if (searchQuery.isBlank()) {
             return new Page<>(searchQuery, pageNumber, Collections.emptyList());
         }
         SyntaxParser parser = new StandardSyntaxParser();
         final String NO_EXPLICIT_FIELD = "default";
         try {
-            return this.performSearchPaged(parser.parse(searchQuery, NO_EXPLICIT_FIELD), pageNumber);
+            return this.performSearchPaged(
+                    parser.parse(searchQuery, NO_EXPLICIT_FIELD), pageNumber);
         } catch (QueryNodeParseException e) {
             throw new FetcherException("An error occurred during parsing of the query.");
         }

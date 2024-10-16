@@ -1,11 +1,5 @@
 package org.jabref.gui.mergeentries.newmergedialog;
 
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,6 +13,12 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.InternalField;
 
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class ThreeWayMergeViewModel extends AbstractViewModel {
 
     private final ObjectProperty<BibEntry> leftEntry = new SimpleObjectProperty<>();
@@ -29,7 +29,8 @@ public class ThreeWayMergeViewModel extends AbstractViewModel {
 
     private final ObservableList<Field> visibleFields = FXCollections.observableArrayList();
 
-    public ThreeWayMergeViewModel(BibEntry leftEntry, BibEntry rightEntry, String leftHeader, String rightHeader) {
+    public ThreeWayMergeViewModel(
+            BibEntry leftEntry, BibEntry rightEntry, String leftHeader, String rightHeader) {
         Objects.requireNonNull(leftEntry, "Left entry is required");
         Objects.requireNonNull(rightEntry, "Right entry is required");
         Objects.requireNonNull(leftHeader, "Left header entry is required");
@@ -42,9 +43,9 @@ public class ThreeWayMergeViewModel extends AbstractViewModel {
 
         mergedEntry.set(new BibEntry());
 
-        setVisibleFields(Stream.concat(
-                leftEntry.getFields().stream(),
-                rightEntry.getFields().stream()).collect(Collectors.toSet()));
+        setVisibleFields(
+                Stream.concat(leftEntry.getFields().stream(), rightEntry.getFields().stream())
+                        .collect(Collectors.toSet()));
     }
 
     public StringProperty leftHeaderProperty() {

@@ -1,17 +1,16 @@
 package org.jabref.migrations;
 
-import java.util.Collections;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Collections;
 
 class MergeReviewIntoCommentActionMigrationTest {
 
@@ -44,7 +43,9 @@ class MergeReviewIntoCommentActionMigrationTest {
 
         action.performMigration(actualParserResult);
 
-        assertEquals(expectedEntry, actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
+        assertEquals(
+                expectedEntry,
+                actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
     }
 
     @Test
@@ -68,22 +69,29 @@ class MergeReviewIntoCommentActionMigrationTest {
 
         action.performMigration(actualParserResult);
 
-        assertEquals(expectedEntry, actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
+        assertEquals(
+                expectedEntry,
+                actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
     }
 
     @Test
-    @Disabled("Re-enable if the MergeReviewIntoCommentMigration.mergeCommentFieldIfPresent() does not block and wait for user input.")
+    @Disabled(
+            "Re-enable if the MergeReviewIntoCommentMigration.mergeCommentFieldIfPresent() does not block and wait for user input.")
     void reviewAndCommentField() {
         entry.setField(StandardField.REVIEW, "My Review");
         entry.setField(StandardField.COMMENT, "My Comment");
 
         ParserResult actualParserResult = new ParserResult(Collections.singletonList(entry));
 
-        expectedEntry.setField(StandardField.COMMENT, "My Comment\n" + Localization.lang("Review") + ":\nMy Review");
+        expectedEntry.setField(
+                StandardField.COMMENT,
+                "My Comment\n" + Localization.lang("Review") + ":\nMy Review");
 
         action.performMigration(actualParserResult);
 
-        assertEquals(expectedEntry, actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
+        assertEquals(
+                expectedEntry,
+                actualParserResult.getDatabase().getEntryByCitationKey("Entry1").get());
     }
 
     private BibEntry createMinimalBibEntry() {

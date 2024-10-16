@@ -1,5 +1,18 @@
 package org.jabref.model.entry;
 
+import javafx.beans.Observable;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
+import org.jabref.architecture.AllowedToUseLogic;
+import org.jabref.logic.FilePreferences;
+import org.jabref.logic.util.FileType;
+import org.jabref.logic.util.io.FileUtil;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.strings.StringUtil;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,20 +26,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import javafx.beans.Observable;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
-import org.jabref.architecture.AllowedToUseLogic;
-import org.jabref.logic.FilePreferences;
-import org.jabref.logic.util.FileType;
-import org.jabref.logic.util.io.FileUtil;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.strings.StringUtil;
-
-import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
-
 /**
  * Represents the link to an external file (e.g. associated PDF file).
  * This class is {@link Serializable} which is needed for drag and drop in gui
@@ -35,7 +34,8 @@ import org.jspecify.annotations.Nullable;
 @NullMarked
 public class LinkedFile implements Serializable {
 
-    private static final String REGEX_URL = "^((?:https?\\:\\/\\/|www\\.)(?:[-a-z0-9]+\\.)*[-a-z0-9]+.*)";
+    private static final String REGEX_URL =
+            "^((?:https?\\:\\/\\/|www\\.)(?:[-a-z0-9]+\\.)*[-a-z0-9]+.*)";
     private static final Pattern URL_PATTERN = Pattern.compile(REGEX_URL);
 
     private static final LinkedFile NULL_OBJECT = new LinkedFile("", Path.of(""), "");
@@ -47,11 +47,18 @@ public class LinkedFile implements Serializable {
     private transient StringProperty sourceURL = new SimpleStringProperty();
 
     public LinkedFile(String description, Path link, String fileType) {
-        this(Objects.requireNonNull(description), Objects.requireNonNull(link).toString(), Objects.requireNonNull(fileType));
+        this(
+                Objects.requireNonNull(description),
+                Objects.requireNonNull(link).toString(),
+                Objects.requireNonNull(fileType));
     }
 
     public LinkedFile(String description, Path link, String fileType, String sourceUrl) {
-        this(Objects.requireNonNull(description), Objects.requireNonNull(link).toString(), Objects.requireNonNull(fileType), Objects.requireNonNull(sourceUrl));
+        this(
+                Objects.requireNonNull(description),
+                Objects.requireNonNull(link).toString(),
+                Objects.requireNonNull(fileType),
+                Objects.requireNonNull(sourceUrl));
     }
 
     public LinkedFile(String description, String link, FileType fileType) {
@@ -77,11 +84,18 @@ public class LinkedFile implements Serializable {
     }
 
     public LinkedFile(String description, URL link, String fileType) {
-        this(description, Objects.requireNonNull(link).toString(), Objects.requireNonNull(fileType));
+        this(
+                description,
+                Objects.requireNonNull(link).toString(),
+                Objects.requireNonNull(fileType));
     }
 
     public LinkedFile(String description, URL link, String fileType, String sourceUrl) {
-        this(description, Objects.requireNonNull(link).toString(), Objects.requireNonNull(fileType), Objects.requireNonNull(sourceUrl));
+        this(
+                description,
+                Objects.requireNonNull(link).toString(),
+                Objects.requireNonNull(fileType),
+                Objects.requireNonNull(sourceUrl));
     }
 
     /**
@@ -204,12 +218,20 @@ public class LinkedFile implements Serializable {
 
     @Override
     public String toString() {
-        return "ParsedFileField{" +
-                "description='" + description.get() + '\'' +
-                ", link='" + link.get() + '\'' +
-                ", fileType='" + fileType.get() + '\'' +
-                (StringUtil.isNullOrEmpty(sourceURL.get()) ? "" : (", sourceUrl='" + sourceURL.get() + '\'')) +
-                '}';
+        return "ParsedFileField{"
+                + "description='"
+                + description.get()
+                + '\''
+                + ", link='"
+                + link.get()
+                + '\''
+                + ", fileType='"
+                + fileType.get()
+                + '\''
+                + (StringUtil.isNullOrEmpty(sourceURL.get())
+                        ? ""
+                        : (", sourceUrl='" + sourceURL.get() + '\''))
+                + '}';
     }
 
     public boolean isEmpty() {
@@ -220,7 +242,8 @@ public class LinkedFile implements Serializable {
         return isOnlineLink(link.get());
     }
 
-    public Optional<Path> findIn(BibDatabaseContext databaseContext, FilePreferences filePreferences) {
+    public Optional<Path> findIn(
+            BibDatabaseContext databaseContext, FilePreferences filePreferences) {
         List<Path> dirs = databaseContext.getFileDirectories(filePreferences);
         return findIn(dirs);
     }

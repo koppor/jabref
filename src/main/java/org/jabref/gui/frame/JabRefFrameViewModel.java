@@ -1,17 +1,5 @@
 package org.jabref.gui.frame;
 
-import java.nio.file.Path;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.scene.control.ButtonType;
@@ -41,9 +29,20 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
+import javax.swing.undo.UndoManager;
 
 public class JabRefFrameViewModel implements UiMessageHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(JabRefFrameViewModel.class);
@@ -59,16 +58,17 @@ public class JabRefFrameViewModel implements UiMessageHandler {
     private final ClipBoardManager clipBoardManager;
     private final TaskExecutor taskExecutor;
 
-    public JabRefFrameViewModel(GuiPreferences preferences,
-                                AiService aiService,
-                                StateManager stateManager,
-                                DialogService dialogService,
-                                LibraryTabContainer tabContainer,
-                                BibEntryTypesManager entryTypesManager,
-                                FileUpdateMonitor fileUpdateMonitor,
-                                UndoManager undoManager,
-                                ClipBoardManager clipBoardManager,
-                                TaskExecutor taskExecutor) {
+    public JabRefFrameViewModel(
+            GuiPreferences preferences,
+            AiService aiService,
+            StateManager stateManager,
+            DialogService dialogService,
+            LibraryTabContainer tabContainer,
+            BibEntryTypesManager entryTypesManager,
+            FileUpdateMonitor fileUpdateMonitor,
+            UndoManager undoManager,
+            ClipBoardManager clipBoardManager,
+            TaskExecutor taskExecutor) {
         this.preferences = preferences;
         this.aiService = aiService;
         this.stateManager = stateManager;
@@ -83,7 +83,8 @@ public class JabRefFrameViewModel implements UiMessageHandler {
 
     void storeLastOpenedFiles(List<Path> filenames, Path focusedDatabase) {
         if (preferences.getWorkspacePreferences().shouldOpenLastEdited()) {
-            // Here we store the names of all current files. If there is no current file, we remove any
+            // Here we store the names of all current files. If there is no current file, we remove
+            // any
             // previously stored filename.
             if (filenames.isEmpty()) {
                 preferences.getLastFilesOpenedPreferences().getLastFilesOpened().clear();
@@ -103,34 +104,42 @@ public class JabRefFrameViewModel implements UiMessageHandler {
         // Ask if the user really wants to close, if there are still background tasks running
         // The background tasks may make changes themselves that need saving.
         if (stateManager.getAnyTasksThatWillNotBeRecoveredRunning().getValue()) {
-            Optional<ButtonType> shouldClose = dialogService.showBackgroundProgressDialogAndWait(
-                    Localization.lang("Please wait..."),
-                    Localization.lang("Waiting for background tasks to finish. Quit anyway?"),
-                    stateManager);
+            Optional<ButtonType> shouldClose =
+                    dialogService.showBackgroundProgressDialogAndWait(
+                            Localization.lang("Please wait..."),
+                            Localization.lang(
+                                    "Waiting for background tasks to finish. Quit anyway?"),
+                            stateManager);
             if (!(shouldClose.isPresent() && (shouldClose.get() == ButtonType.YES))) {
                 return false;
             }
         }
 
         // Read the opened and focused databases before closing them
-        List<Path> openedLibraries = tabContainer.getLibraryTabs().stream()
-                                          .map(LibraryTab::getBibDatabaseContext)
-                                          .map(BibDatabaseContext::getDatabasePath)
-                                          .flatMap(Optional::stream)
-                                          .toList();
-        Path focusedLibraries = Optional.ofNullable(tabContainer.getCurrentLibraryTab())
-                                        .map(LibraryTab::getBibDatabaseContext)
-                                        .flatMap(BibDatabaseContext::getDatabasePath)
-                                        .orElse(null);
+        List<Path> openedLibraries =
+                tabContainer.getLibraryTabs().stream()
+                        .map(LibraryTab::getBibDatabaseContext)
+                        .map(BibDatabaseContext::getDatabasePath)
+                        .flatMap(Optional::stream)
+                        .toList();
+        Path focusedLibraries =
+                Optional.ofNullable(tabContainer.getCurrentLibraryTab())
+                        .map(LibraryTab::getBibDatabaseContext)
+                        .flatMap(BibDatabaseContext::getDatabasePath)
+                        .orElse(null);
 
-        // Then ask if the user really wants to close, if the library has not been saved since last save.
+        // Then ask if the user really wants to close, if the library has not been saved since last
+        // save.
         if (!tabContainer.closeTabs(tabContainer.getLibraryTabs())) {
             return false;
         }
 
-        storeLastOpenedFiles(openedLibraries, focusedLibraries); // store only if successfully having closed the libraries
+        storeLastOpenedFiles(
+                openedLibraries,
+                focusedLibraries); // store only if successfully having closed the libraries
 
-        ProcessingLibraryDialog processingLibraryDialog = new ProcessingLibraryDialog(dialogService);
+        ProcessingLibraryDialog processingLibraryDialog =
+                new ProcessingLibraryDialog(dialogService);
         processingLibraryDialog.showAndWait(tabContainer.getLibraryTabs());
 
         return true;
@@ -162,47 +171,53 @@ public class JabRefFrameViewModel implements UiMessageHandler {
 
         // Handle automatically setting file links
         uiCommands.stream()
-                  .filter(UiCommand.AutoSetFileLinks.class::isInstance).findAny()
-                  .map(UiCommand.AutoSetFileLinks.class::cast)
-                  .ifPresent(autoSetFileLinks -> autoSetFileLinks(autoSetFileLinks.parserResults()));
+                .filter(UiCommand.AutoSetFileLinks.class::isInstance)
+                .findAny()
+                .map(UiCommand.AutoSetFileLinks.class::cast)
+                .ifPresent(autoSetFileLinks -> autoSetFileLinks(autoSetFileLinks.parserResults()));
 
         // Handle jumpToEntry
         // Needs to go last, because it requires all libraries opened
         uiCommands.stream()
-                  .filter(UiCommand.JumpToEntryKey.class::isInstance)
-                  .map(UiCommand.JumpToEntryKey.class::cast)
-                  .map(UiCommand.JumpToEntryKey::citationKey)
-                  .filter(Objects::nonNull)
-                  .findAny().ifPresent(entryKey -> {
-                      LOGGER.debug("Jump to entry {} requested", entryKey);
-                      // tabs must be present and contents async loaded for an entry to be selected
-                      waitForLoadingFinished(() -> jumpToEntry(entryKey));
-                  });
+                .filter(UiCommand.JumpToEntryKey.class::isInstance)
+                .map(UiCommand.JumpToEntryKey.class::cast)
+                .map(UiCommand.JumpToEntryKey::citationKey)
+                .filter(Objects::nonNull)
+                .findAny()
+                .ifPresent(
+                        entryKey -> {
+                            LOGGER.debug("Jump to entry {} requested", entryKey);
+                            // tabs must be present and contents async loaded for an entry to be
+                            // selected
+                            waitForLoadingFinished(() -> jumpToEntry(entryKey));
+                        });
     }
 
     private void openDatabases(List<ParserResult> parserResults) {
         final List<ParserResult> toOpenTab = new ArrayList<>();
 
         // Remove invalid databases
-        List<ParserResult> invalidDatabases = parserResults.stream()
-                                                           .filter(ParserResult::isInvalid)
-                                                           .toList();
+        List<ParserResult> invalidDatabases =
+                parserResults.stream().filter(ParserResult::isInvalid).toList();
         final List<ParserResult> failed = new ArrayList<>(invalidDatabases);
         parserResults.removeAll(invalidDatabases);
 
         // passed file (we take the first one) should be focused
-        Path focusedFile = parserResults.stream()
-                                        .findFirst()
-                                        .flatMap(ParserResult::getPath)
-                                        .orElse(preferences.getLastFilesOpenedPreferences()
-                                                           .getLastFocusedFile())
-                                        .toAbsolutePath();
+        Path focusedFile =
+                parserResults.stream()
+                        .findFirst()
+                        .flatMap(ParserResult::getPath)
+                        .orElse(preferences.getLastFilesOpenedPreferences().getLastFocusedFile())
+                        .toAbsolutePath();
 
         // Add all bibDatabases databases to the frame:
         boolean first = false;
         for (ParserResult parserResult : parserResults) {
             // Define focused tab
-            if (parserResult.getPath().filter(path -> path.toAbsolutePath().equals(focusedFile)).isPresent()) {
+            if (parserResult
+                    .getPath()
+                    .filter(path -> path.toAbsolutePath().equals(focusedFile))
+                    .isPresent()) {
                 first = true;
             }
 
@@ -220,11 +235,10 @@ public class JabRefFrameViewModel implements UiMessageHandler {
                             undoManager,
                             clipBoardManager,
                             taskExecutor);
-                } catch (
-                        SQLException |
-                        DatabaseNotSupportedException |
-                        InvalidDBMSConnectionPropertiesException |
-                        NotASharedDatabaseException e) {
+                } catch (SQLException
+                        | DatabaseNotSupportedException
+                        | InvalidDBMSConnectionPropertiesException
+                        | NotASharedDatabaseException e) {
                     LOGGER.error("Connection error", e);
                     dialogService.showErrorDialogAndWait(
                             Localization.lang("Connection error"),
@@ -249,16 +263,23 @@ public class JabRefFrameViewModel implements UiMessageHandler {
         }
 
         for (ParserResult parserResult : failed) {
-            String message = Localization.lang("Error opening file '%0'",
-                    parserResult.getPath().map(Path::toString).orElse("(File name unknown)")) + "\n" +
-                    parserResult.getErrorMessage();
+            String message =
+                    Localization.lang(
+                                    "Error opening file '%0'",
+                                    parserResult
+                                            .getPath()
+                                            .map(Path::toString)
+                                            .orElse("(File name unknown)"))
+                            + "\n"
+                            + parserResult.getErrorMessage();
             dialogService.showErrorDialogAndWait(Localization.lang("Error opening file"), message);
         }
 
         // Display warnings, if any
         for (ParserResult parserResult : parserResults) {
             if (parserResult.hasWarnings()) {
-                ParserResultWarningDialog.showParserResultWarningDialog(parserResult, dialogService);
+                ParserResultWarningDialog.showParserResultWarningDialog(
+                        parserResult, dialogService);
                 getLibraryTab(parserResult).ifPresent(tabContainer::showLibraryTab);
             }
         }
@@ -268,20 +289,21 @@ public class JabRefFrameViewModel implements UiMessageHandler {
         // if we found new entry types that can be imported, or checking
         // if the database contents should be modified due to new features
         // in this version of JabRef.
-        parserResults.forEach(pr -> {
-            OpenDatabaseAction.performPostOpenActions(pr, dialogService, preferences);
-            if (pr.getChangedOnMigration()) {
-                getLibraryTab(pr).ifPresent(LibraryTab::markBaseChanged);
-            }
-        });
+        parserResults.forEach(
+                pr -> {
+                    OpenDatabaseAction.performPostOpenActions(pr, dialogService, preferences);
+                    if (pr.getChangedOnMigration()) {
+                        getLibraryTab(pr).ifPresent(LibraryTab::markBaseChanged);
+                    }
+                });
 
         LOGGER.debug("Finished adding panels");
     }
 
     private Optional<LibraryTab> getLibraryTab(ParserResult parserResult) {
         return tabContainer.getLibraryTabs().stream()
-                           .filter(tab -> parserResult.getDatabase().equals(tab.getDatabase()))
-                           .findAny();
+                .filter(tab -> parserResult.getDatabase().equals(tab.getDatabase()))
+                .findAny();
     }
 
     /**
@@ -301,11 +323,14 @@ public class JabRefFrameViewModel implements UiMessageHandler {
             }
         } else {
             // only add tab if library is not already open
-            Optional<LibraryTab> libraryTab = tabContainer.getLibraryTabs().stream()
-                                                          .filter(p -> p.getBibDatabaseContext()
-                                                                        .getDatabasePath()
-                                                                        .equals(parserResult.getPath()))
-                                                          .findFirst();
+            Optional<LibraryTab> libraryTab =
+                    tabContainer.getLibraryTabs().stream()
+                            .filter(
+                                    p ->
+                                            p.getBibDatabaseContext()
+                                                    .getDatabasePath()
+                                                    .equals(parserResult.getPath()))
+                            .findFirst();
 
             if (libraryTab.isPresent()) {
                 tabContainer.showLibraryTab(libraryTab.get());
@@ -322,60 +347,66 @@ public class JabRefFrameViewModel implements UiMessageHandler {
 
         CompletableFuture<Void> future = new CompletableFuture<>();
 
-        List<ObservableBooleanValue> loadings = tabContainer.getLibraryTabs().stream()
-                                                            .map(LibraryTab::getLoading)
-                                                            .collect(Collectors.toList());
+        List<ObservableBooleanValue> loadings =
+                tabContainer.getLibraryTabs().stream()
+                        .map(LibraryTab::getLoading)
+                        .collect(Collectors.toList());
 
         // Create a listener for each observable
-        ChangeListener<Boolean> listener = (observable, oldValue, newValue) -> {
-            if (observable != null) {
-                loadings.remove(observable);
-            }
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("Count of loading tabs: {}", loadings.size());
-                LOGGER.trace("Count of loading tabs really true: {}", loadings.stream().filter(ObservableBooleanValue::get).count());
-            }
-            for (ObservableBooleanValue obs : loadings) {
-                if (obs.get()) {
-                    // Exit the listener if any of the observables is still true
-                    return;
-                }
-            }
-            // All observables are false, complete the future
-            LOGGER.trace("Future completed");
-            future.complete(null);
-        };
+        ChangeListener<Boolean> listener =
+                (observable, oldValue, newValue) -> {
+                    if (observable != null) {
+                        loadings.remove(observable);
+                    }
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace("Count of loading tabs: {}", loadings.size());
+                        LOGGER.trace(
+                                "Count of loading tabs really true: {}",
+                                loadings.stream().filter(ObservableBooleanValue::get).count());
+                    }
+                    for (ObservableBooleanValue obs : loadings) {
+                        if (obs.get()) {
+                            // Exit the listener if any of the observables is still true
+                            return;
+                        }
+                    }
+                    // All observables are false, complete the future
+                    LOGGER.trace("Future completed");
+                    future.complete(null);
+                };
 
         for (ObservableBooleanValue obs : loadings) {
             obs.addListener(listener);
         }
 
         LOGGER.trace("Fire once");
-        // Due to concurrency, it might be that the observables are already false, so we trigger one evaluation
+        // Due to concurrency, it might be that the observables are already false, so we trigger one
+        // evaluation
         listener.changed(null, null, false);
         LOGGER.trace("Waiting for state changes...");
 
-        future.thenRun(() -> {
-            LOGGER.debug("All tabs loaded. Jumping to entry.");
-            for (ObservableBooleanValue obs : loadings) {
-                obs.removeListener(listener);
-            }
-            runnable.run();
-        });
+        future.thenRun(
+                () -> {
+                    LOGGER.debug("All tabs loaded. Jumping to entry.");
+                    for (ObservableBooleanValue obs : loadings) {
+                        obs.removeListener(listener);
+                    }
+                    runnable.run();
+                });
     }
 
     private void jumpToEntry(String entryKey) {
         // check current library tab first
         LibraryTab currentLibraryTab = tabContainer.getCurrentLibraryTab();
-        List<LibraryTab> sortedTabs = tabContainer.getLibraryTabs().stream()
-                                                  .sorted(Comparator.comparing(tab -> tab != currentLibraryTab))
-                                                  .toList();
+        List<LibraryTab> sortedTabs =
+                tabContainer.getLibraryTabs().stream()
+                        .sorted(Comparator.comparing(tab -> tab != currentLibraryTab))
+                        .toList();
         for (LibraryTab libraryTab : sortedTabs) {
-            Optional<BibEntry> bibEntry = libraryTab.getDatabase()
-                                                    .getEntries().stream()
-                                                    .filter(entry -> entry.getCitationKey().orElse("")
-                                                                          .equals(entryKey))
-                                                    .findAny();
+            Optional<BibEntry> bibEntry =
+                    libraryTab.getDatabase().getEntries().stream()
+                            .filter(entry -> entry.getCitationKey().orElse("").equals(entryKey))
+                            .findAny();
             if (bibEntry.isPresent()) {
                 LOGGER.debug("Found entry {} in library tab {}", entryKey, libraryTab);
                 libraryTab.clearAndSelect(bibEntry.get());
@@ -387,7 +418,9 @@ public class JabRefFrameViewModel implements UiMessageHandler {
         LOGGER.trace("End of loop");
 
         if (stateManager.getSelectedEntries().isEmpty()) {
-            dialogService.notify(Localization.lang("Citation key '%0' to select not found in open libraries.", entryKey));
+            dialogService.notify(
+                    Localization.lang(
+                            "Citation key '%0' to select not found in open libraries.", entryKey));
         }
     }
 
@@ -399,7 +432,9 @@ public class JabRefFrameViewModel implements UiMessageHandler {
      */
     void addImportedEntries(final LibraryTab tab, final ParserResult parserResult) {
         BackgroundTask<ParserResult> task = BackgroundTask.wrap(() -> parserResult);
-        ImportCleanup cleanup = ImportCleanup.targeting(tab.getBibDatabaseContext().getMode(), preferences.getFieldPreferences());
+        ImportCleanup cleanup =
+                ImportCleanup.targeting(
+                        tab.getBibDatabaseContext().getMode(), preferences.getFieldPreferences());
         cleanup.doPostCleanup(parserResult.getDatabase().getEntries());
         ImportEntriesDialog dialog = new ImportEntriesDialog(tab.getBibDatabaseContext(), task);
         dialog.setTitle(Localization.lang("Import"));
@@ -408,7 +443,13 @@ public class JabRefFrameViewModel implements UiMessageHandler {
 
     void autoSetFileLinks(List<ParserResult> loaded) {
         for (ParserResult parserResult : loaded) {
-            new AutoLinkFilesAction(dialogService, preferences, stateManager, undoManager, (UiTaskExecutor) taskExecutor).execute();
+            new AutoLinkFilesAction(
+                            dialogService,
+                            preferences,
+                            stateManager,
+                            undoManager,
+                            (UiTaskExecutor) taskExecutor)
+                    .execute();
         }
     }
 }

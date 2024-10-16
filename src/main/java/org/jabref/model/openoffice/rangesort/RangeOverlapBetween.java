@@ -1,21 +1,20 @@
 package org.jabref.model.openoffice.rangesort;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jabref.model.openoffice.uno.UnoCast;
-import org.jabref.model.openoffice.uno.UnoTextRange;
-import org.jabref.model.openoffice.util.OOTuple3;
-
 import com.sun.star.text.XText;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextRangeCompare;
 
+import org.jabref.model.openoffice.uno.UnoCast;
+import org.jabref.model.openoffice.uno.UnoTextRange;
+import org.jabref.model.openoffice.util.OOTuple3;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class RangeOverlapBetween {
 
-    private RangeOverlapBetween() {
-    }
+    private RangeOverlapBetween() {}
 
     /**
      * Check for any overlap between two sets of XTextRange values.
@@ -24,11 +23,8 @@ public class RangeOverlapBetween {
      * <p>
      * Returns on first problem found.
      */
-    public static <V extends RangeHolder>
-    List<RangeOverlap<V>> findFirst(XTextDocument doc,
-                                    List<V> fewHolders,
-                                    List<V> manyHolders,
-                                    boolean includeTouching) {
+    public static <V extends RangeHolder> List<RangeOverlap<V>> findFirst(
+            XTextDocument doc, List<V> fewHolders, List<V> manyHolders, boolean includeTouching) {
 
         List<RangeOverlap<V>> result = new ArrayList<>();
 
@@ -44,9 +40,9 @@ public class RangeOverlapBetween {
 
         for (V aHolder : fewHolders) {
             XText aText = aHolder.getRange().getText();
-            fewTuples.add(new OOTuple3<>(aText,
-                    UnoCast.cast(XTextRangeCompare.class, aText).get(),
-                    aHolder));
+            fewTuples.add(
+                    new OOTuple3<>(
+                            aText, UnoCast.cast(XTextRangeCompare.class, aText).get(), aHolder));
         }
 
         /*
@@ -66,11 +62,13 @@ public class RangeOverlapBetween {
                 if (aText != bText) {
                     continue;
                 }
-                int abEndToStart = UnoTextRange.compareStartsUnsafe(cmp, aRange.getEnd(), bRangeStart);
+                int abEndToStart =
+                        UnoTextRange.compareStartsUnsafe(cmp, aRange.getEnd(), bRangeStart);
                 if (abEndToStart < 0 || (!includeTouching && (abEndToStart == 0))) {
                     continue;
                 }
-                int baEndToStart = UnoTextRange.compareStartsUnsafe(cmp, bRangeEnd, aRange.getStart());
+                int baEndToStart =
+                        UnoTextRange.compareStartsUnsafe(cmp, bRangeEnd, aRange.getStart());
                 if (baEndToStart < 0 || (!includeTouching && (baEndToStart == 0))) {
                     continue;
                 }
@@ -78,12 +76,14 @@ public class RangeOverlapBetween {
                 boolean equal = UnoTextRange.compareStartsThenEndsUnsafe(cmp, aRange, bRange) == 0;
                 boolean touching = abEndToStart == 0 || baEndToStart == 0;
 
-                // In case of two equal collapsed ranges there is an ambiguity : TOUCH or EQUAL_RANGE ?
+                // In case of two equal collapsed ranges there is an ambiguity : TOUCH or
+                // EQUAL_RANGE ?
                 //
                 // We return EQUAL_RANGE
-                RangeOverlapKind kind = equal ? RangeOverlapKind.EQUAL_RANGE
-                        : (touching ? RangeOverlapKind.TOUCH
-                        : RangeOverlapKind.OVERLAP);
+                RangeOverlapKind kind =
+                        equal
+                                ? RangeOverlapKind.EQUAL_RANGE
+                                : (touching ? RangeOverlapKind.TOUCH : RangeOverlapKind.OVERLAP);
 
                 List<V> valuesForOverlappingRanges = new ArrayList<>();
                 valuesForOverlappingRanges.add(aHolder);

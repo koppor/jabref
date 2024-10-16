@@ -1,13 +1,12 @@
 package org.jabref.logic.shared;
 
-import java.util.Optional;
-
-import org.jabref.testutils.category.DatabaseTest;
-
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.jabref.testutils.category.DatabaseTest;
+import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
 
 @DatabaseTest
 class DBMSTypeTest {
@@ -89,17 +88,22 @@ class DBMSTypeTest {
 
     @Test
     void getUrlForMysqlHasCorrectFormat() {
-        assertEquals("jdbc:mariadb://localhost:3306/xe", DBMSType.MYSQL.getUrl("localhost", 3306, "xe"));
+        assertEquals(
+                "jdbc:mariadb://localhost:3306/xe", DBMSType.MYSQL.getUrl("localhost", 3306, "xe"));
     }
 
     @Test
     void getUrlForOracleHasCorrectFormat() {
-        assertEquals("jdbc:oracle:thin:@localhost:1521/xe", DBMSType.ORACLE.getUrl("localhost", 1521, "xe"));
+        assertEquals(
+                "jdbc:oracle:thin:@localhost:1521/xe",
+                DBMSType.ORACLE.getUrl("localhost", 1521, "xe"));
     }
 
     @Test
     void getUrlForPostgresHasCorrectFormat() {
-        assertEquals("jdbc:postgresql://localhost:5432/xe", DBMSType.POSTGRESQL.getUrl("localhost", 5432, "xe"));
+        assertEquals(
+                "jdbc:postgresql://localhost:5432/xe",
+                DBMSType.POSTGRESQL.getUrl("localhost", 5432, "xe"));
     }
 
     @Test

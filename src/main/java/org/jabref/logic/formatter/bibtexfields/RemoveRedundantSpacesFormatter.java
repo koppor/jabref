@@ -1,10 +1,10 @@
 package org.jabref.logic.formatter.bibtexfields;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
-
 import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
+
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Finds any occurrence of consecutive spaces and replaces it with a single space
@@ -31,7 +31,8 @@ public class RemoveRedundantSpacesFormatter extends Formatter {
 
     @Override
     public String getDescription() {
-        return Localization.lang("Replaces consecutive spaces with a single space in the field content.");
+        return Localization.lang(
+                "Replaces consecutive spaces with a single space in the field content.");
     }
 
     @Override

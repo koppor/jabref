@@ -1,9 +1,8 @@
 package org.jabref.gui.commonfxcontrols;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.airhacks.afterburner.views.ViewLoader;
 
-import javax.swing.undo.UndoManager;
+import jakarta.inject.Inject;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -28,8 +27,10 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.swing.undo.UndoManager;
 
 public class SaveOrderConfigPanel extends VBox {
 
@@ -45,47 +46,64 @@ public class SaveOrderConfigPanel extends VBox {
     private SaveOrderConfigPanelViewModel viewModel;
 
     public SaveOrderConfigPanel() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @FXML
     private void initialize() {
         viewModel = new SaveOrderConfigPanelViewModel();
 
-        exportInOriginalOrder.selectedProperty().bindBidirectional(viewModel.saveInOriginalProperty());
-        exportInTableOrder.selectedProperty().bindBidirectional(viewModel.saveInTableOrderProperty());
-        exportInSpecifiedOrder.selectedProperty().bindBidirectional(viewModel.saveInSpecifiedOrderProperty());
+        exportInOriginalOrder
+                .selectedProperty()
+                .bindBidirectional(viewModel.saveInOriginalProperty());
+        exportInTableOrder
+                .selectedProperty()
+                .bindBidirectional(viewModel.saveInTableOrderProperty());
+        exportInSpecifiedOrder
+                .selectedProperty()
+                .bindBidirectional(viewModel.saveInSpecifiedOrderProperty());
 
-        viewModel.sortCriteriaProperty().addListener((ListChangeListener<SortCriterionViewModel>) change -> {
-            while (change.next()) {
-                if (change.wasReplaced()) {
-                        clearCriterionRow(change.getFrom());
-                        createCriterionRow(change.getAddedSubList().getFirst(), change.getFrom());
-                } else if (change.wasAdded()) {
-                    for (SortCriterionViewModel criterionViewModel : change.getAddedSubList()) {
-                        int row = change.getFrom() + change.getAddedSubList().indexOf(criterionViewModel);
-                        createCriterionRow(criterionViewModel, row);
-                    }
-                } else if (change.wasRemoved()) {
-                    for (SortCriterionViewModel criterionViewModel : change.getRemoved()) {
-                        clearCriterionRow(change.getFrom());
-                    }
-                }
-            }
-        });
+        viewModel
+                .sortCriteriaProperty()
+                .addListener(
+                        (ListChangeListener<SortCriterionViewModel>)
+                                change -> {
+                                    while (change.next()) {
+                                        if (change.wasReplaced()) {
+                                            clearCriterionRow(change.getFrom());
+                                            createCriterionRow(
+                                                    change.getAddedSubList().getFirst(),
+                                                    change.getFrom());
+                                        } else if (change.wasAdded()) {
+                                            for (SortCriterionViewModel criterionViewModel :
+                                                    change.getAddedSubList()) {
+                                                int row =
+                                                        change.getFrom()
+                                                                + change.getAddedSubList()
+                                                                        .indexOf(
+                                                                                criterionViewModel);
+                                                createCriterionRow(criterionViewModel, row);
+                                            }
+                                        } else if (change.wasRemoved()) {
+                                            for (SortCriterionViewModel criterionViewModel :
+                                                    change.getRemoved()) {
+                                                clearCriterionRow(change.getFrom());
+                                            }
+                                        }
+                                    }
+                                });
     }
 
     private void createCriterionRow(SortCriterionViewModel criterionViewModel, int row) {
         sortCriterionList.getChildren().stream()
-                         .filter(item -> GridPane.getRowIndex(item) >= row)
-                         .forEach(item -> {
-                             GridPane.setRowIndex(item, GridPane.getRowIndex(item) + 1);
-                             if (item instanceof Label label) {
-                                 label.setText(String.valueOf(GridPane.getRowIndex(item) + 1));
-                             }
-                         });
+                .filter(item -> GridPane.getRowIndex(item) >= row)
+                .forEach(
+                        item -> {
+                            GridPane.setRowIndex(item, GridPane.getRowIndex(item) + 1);
+                            if (item instanceof Label label) {
+                                label.setText(String.valueOf(GridPane.getRowIndex(item) + 1));
+                            }
+                        });
 
         Label label = new Label(String.valueOf(row + 1));
         sortCriterionList.add(label, 0, row);
@@ -134,28 +152,34 @@ public class SaveOrderConfigPanel extends VBox {
     }
 
     private void clearCriterionRow(int row) {
-        List<Node> criterionRow = sortCriterionList.getChildren().stream()
-                                                   .filter(item -> GridPane.getRowIndex(item) == row)
-                                                   .collect(Collectors.toList());
+        List<Node> criterionRow =
+                sortCriterionList.getChildren().stream()
+                        .filter(item -> GridPane.getRowIndex(item) == row)
+                        .collect(Collectors.toList());
         sortCriterionList.getChildren().removeAll(criterionRow);
 
         sortCriterionList.getChildren().stream()
-                         .filter(item -> GridPane.getRowIndex(item) > row)
-                         .forEach(item -> {
-                             GridPane.setRowIndex(item, GridPane.getRowIndex(item) - 1);
-                             if (item instanceof Label label) {
-                                 label.setText(String.valueOf(GridPane.getRowIndex(item) + 1));
-                             }
-                         });
+                .filter(item -> GridPane.getRowIndex(item) > row)
+                .forEach(
+                        item -> {
+                            GridPane.setRowIndex(item, GridPane.getRowIndex(item) - 1);
+                            if (item instanceof Label label) {
+                                label.setText(String.valueOf(GridPane.getRowIndex(item) + 1));
+                            }
+                        });
     }
 
     public void setCriteriaLimit(int limit) {
         addButton.disableProperty().unbind();
-        addButton.disableProperty().bind(
-                Bindings.createBooleanBinding(
-                        () -> viewModel.sortCriteriaProperty().size() >= limit || !exportInSpecifiedOrder.selectedProperty().get(),
-                        viewModel.sortCriteriaProperty().sizeProperty(),
-                        exportInSpecifiedOrder.selectedProperty()));
+        addButton
+                .disableProperty()
+                .bind(
+                        Bindings.createBooleanBinding(
+                                () ->
+                                        viewModel.sortCriteriaProperty().size() >= limit
+                                                || !exportInSpecifiedOrder.selectedProperty().get(),
+                                viewModel.sortCriteriaProperty().sizeProperty(),
+                                exportInSpecifiedOrder.selectedProperty()));
     }
 
     @FXML

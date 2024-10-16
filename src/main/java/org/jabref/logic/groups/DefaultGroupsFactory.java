@@ -10,8 +10,7 @@ public class DefaultGroupsFactory {
 
     public static final String ALL_ENTRIES_GROUP_DEFAULT_ICON = "ALL_ENTRIES_GROUP_ICON";
 
-    private DefaultGroupsFactory() {
-    }
+    private DefaultGroupsFactory() {}
 
     public static AllEntriesGroup getAllEntriesGroup() {
         AllEntriesGroup group = new AllEntriesGroup(Localization.lang("All entries"));

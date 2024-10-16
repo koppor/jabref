@@ -1,8 +1,6 @@
 package org.jabref.gui.preferences;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.prefs.BackingStoreException;
+import com.airhacks.afterburner.injection.Injector;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
@@ -40,10 +38,12 @@ import org.jabref.logic.JabRefException;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.StandardFileType;
 import org.jabref.model.entry.BibEntryTypesManager;
-
-import com.airhacks.afterburner.injection.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.prefs.BackingStoreException;
 
 public class PreferencesDialogViewModel extends AbstractViewModel {
 
@@ -62,31 +62,31 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
         // This enables passing unsaved preference values from the AI tab to the "web search" tab.
         AiTab aiTab = new AiTab();
 
-        preferenceTabs = FXCollections.observableArrayList(
-                new GeneralTab(),
-                new KeyBindingsTab(),
-                new GroupsTab(),
-                new WebSearchTab(aiTab.aiEnabledProperty()),
-                aiTab,
-                new EntryTab(),
-                new TableTab(),
-                new PreviewTab(),
-                new EntryEditorTab(),
-                new CustomEntryTypesTab(),
-                new CitationKeyPatternTab(),
-                new LinkedFilesTab(),
-                new ExportTab(),
-                new AutoCompletionTab(),
-                new ProtectedTermsTab(),
-                new ExternalTab(),
-                new ExternalFileTypesTab(),
-                new JournalAbbreviationsTab(),
-                new NameFormatterTab(),
-                new XmpPrivacyTab(),
-                new CustomImporterTab(),
-                new CustomExporterTab(),
-                new NetworkTab()
-        );
+        preferenceTabs =
+                FXCollections.observableArrayList(
+                        new GeneralTab(),
+                        new KeyBindingsTab(),
+                        new GroupsTab(),
+                        new WebSearchTab(aiTab.aiEnabledProperty()),
+                        aiTab,
+                        new EntryTab(),
+                        new TableTab(),
+                        new PreviewTab(),
+                        new EntryEditorTab(),
+                        new CustomEntryTypesTab(),
+                        new CitationKeyPatternTab(),
+                        new LinkedFilesTab(),
+                        new ExportTab(),
+                        new AutoCompletionTab(),
+                        new ProtectedTermsTab(),
+                        new ExternalTab(),
+                        new ExternalFileTypesTab(),
+                        new JournalAbbreviationsTab(),
+                        new NameFormatterTab(),
+                        new XmpPrivacyTab(),
+                        new CustomImporterTab(),
+                        new CustomExporterTab(),
+                        new NetworkTab());
     }
 
     public ObservableList<PreferencesTab> getPreferenceTabs() {
@@ -94,60 +94,79 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
     }
 
     public void importPreferences() {
-        FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
-                .addExtensionFilter(StandardFileType.XML)
-                .withDefaultExtension(StandardFileType.XML)
-                .withInitialDirectory(preferences.getInternalPreferences().getLastPreferencesExportPath()).build();
+        FileDialogConfiguration fileDialogConfiguration =
+                new FileDialogConfiguration.Builder()
+                        .addExtensionFilter(StandardFileType.XML)
+                        .withDefaultExtension(StandardFileType.XML)
+                        .withInitialDirectory(
+                                preferences.getInternalPreferences().getLastPreferencesExportPath())
+                        .build();
 
-        dialogService.showFileOpenDialog(fileDialogConfiguration)
-                     .ifPresent(file -> {
-                         try {
-                             preferences.importPreferences(file);
-                             setValues();
+        dialogService
+                .showFileOpenDialog(fileDialogConfiguration)
+                .ifPresent(
+                        file -> {
+                            try {
+                                preferences.importPreferences(file);
+                                setValues();
 
-                             dialogService.showWarningDialogAndWait(Localization.lang("Import preferences"),
-                                     Localization.lang("You must restart JabRef for this to come into effect."));
-                         } catch (JabRefException ex) {
-                             LOGGER.error("Error while importing preferences", ex);
-                             dialogService.showErrorDialogAndWait(Localization.lang("Import preferences"), ex);
-                         }
-                     });
+                                dialogService.showWarningDialogAndWait(
+                                        Localization.lang("Import preferences"),
+                                        Localization.lang(
+                                                "You must restart JabRef for this to come into effect."));
+                            } catch (JabRefException ex) {
+                                LOGGER.error("Error while importing preferences", ex);
+                                dialogService.showErrorDialogAndWait(
+                                        Localization.lang("Import preferences"), ex);
+                            }
+                        });
     }
 
     public void exportPreferences() {
-        FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
-                .addExtensionFilter(StandardFileType.XML)
-                .withDefaultExtension(StandardFileType.XML)
-                .withInitialDirectory(preferences.getInternalPreferences().getLastPreferencesExportPath())
-                .build();
+        FileDialogConfiguration fileDialogConfiguration =
+                new FileDialogConfiguration.Builder()
+                        .addExtensionFilter(StandardFileType.XML)
+                        .withDefaultExtension(StandardFileType.XML)
+                        .withInitialDirectory(
+                                preferences.getInternalPreferences().getLastPreferencesExportPath())
+                        .build();
 
-        dialogService.showFileSaveDialog(fileDialogConfiguration)
-                     .ifPresent(exportFile -> {
-                         try {
-                             storeAllSettings();
-                             preferences.exportPreferences(exportFile);
-                             preferences.getInternalPreferences().setLastPreferencesExportPath(exportFile);
-                         } catch (JabRefException ex) {
-                             LOGGER.warn(ex.getMessage(), ex);
-                             dialogService.showErrorDialogAndWait(Localization.lang("Export preferences"), ex);
-                         }
-                     });
+        dialogService
+                .showFileSaveDialog(fileDialogConfiguration)
+                .ifPresent(
+                        exportFile -> {
+                            try {
+                                storeAllSettings();
+                                preferences.exportPreferences(exportFile);
+                                preferences
+                                        .getInternalPreferences()
+                                        .setLastPreferencesExportPath(exportFile);
+                            } catch (JabRefException ex) {
+                                LOGGER.warn(ex.getMessage(), ex);
+                                dialogService.showErrorDialogAndWait(
+                                        Localization.lang("Export preferences"), ex);
+                            }
+                        });
     }
 
     public void showPreferences() {
-        dialogService.showCustomDialogAndWait(new PreferencesFilterDialog(new PreferencesFilter(preferences)));
+        dialogService.showCustomDialogAndWait(
+                new PreferencesFilterDialog(new PreferencesFilter(preferences)));
     }
 
     public void resetPreferences() {
-        boolean resetPreferencesConfirmed = dialogService.showConfirmationDialogAndWait(
-                Localization.lang("Reset preferences"),
-                Localization.lang("Are you sure you want to reset all settings to default values?"),
-                Localization.lang("Reset preferences"),
-                Localization.lang("Cancel"));
+        boolean resetPreferencesConfirmed =
+                dialogService.showConfirmationDialogAndWait(
+                        Localization.lang("Reset preferences"),
+                        Localization.lang(
+                                "Are you sure you want to reset all settings to default values?"),
+                        Localization.lang("Reset preferences"),
+                        Localization.lang("Cancel"));
         if (resetPreferencesConfirmed) {
             try {
                 preferences.clear();
-                dialogService.showWarningDialogAndWait(Localization.lang("Reset preferences"),
+                dialogService.showWarningDialogAndWait(
+                        Localization.lang("Reset preferences"),
                         Localization.lang("You must restart JabRef for this to come into effect."));
             } catch (BackingStoreException ex) {
                 LOGGER.error("Error while resetting preferences", ex);
@@ -184,13 +203,16 @@ public class PreferencesDialogViewModel extends AbstractViewModel {
         preferences.flush();
 
         if (!restartWarnings.isEmpty()) {
-            dialogService.showWarningDialogAndWait(Localization.lang("Restart required"),
+            dialogService.showWarningDialogAndWait(
+                    Localization.lang("Restart required"),
                     String.join(",\n", restartWarnings)
                             + "\n\n"
-                            + Localization.lang("You must restart JabRef for this to come into effect."));
+                            + Localization.lang(
+                                    "You must restart JabRef for this to come into effect."));
         }
 
-        Injector.setModelOrService(BibEntryTypesManager.class, preferences.getCustomEntryTypesRepository());
+        Injector.setModelOrService(
+                BibEntryTypesManager.class, preferences.getCustomEntryTypesRepository());
         dialogService.notify(Localization.lang("Preferences recorded."));
     }
 

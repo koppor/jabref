@@ -17,8 +17,8 @@ public enum SystematicLiteratureReviewStudyEntryType implements EntryType {
 
     public static Optional<SystematicLiteratureReviewStudyEntryType> fromName(String name) {
         return Arrays.stream(SystematicLiteratureReviewStudyEntryType.values())
-                     .filter(field -> field.getName().equalsIgnoreCase(name))
-                     .findAny();
+                .filter(field -> field.getName().equalsIgnoreCase(name))
+                .findAny();
     }
 
     @Override

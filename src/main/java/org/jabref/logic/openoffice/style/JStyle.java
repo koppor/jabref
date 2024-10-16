@@ -1,5 +1,25 @@
 package org.jabref.logic.openoffice.style;
 
+import org.jabref.logic.journals.JournalAbbreviationRepository;
+import org.jabref.logic.layout.Layout;
+import org.jabref.logic.layout.LayoutFormatter;
+import org.jabref.logic.layout.LayoutFormatterPreferences;
+import org.jabref.logic.layout.LayoutHelper;
+import org.jabref.model.entry.field.FieldFactory;
+import org.jabref.model.entry.field.OrFields;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.types.EntryType;
+import org.jabref.model.entry.types.EntryTypeFactory;
+import org.jabref.model.openoffice.ootext.OOFormat;
+import org.jabref.model.openoffice.ootext.OOText;
+import org.jabref.model.openoffice.style.CitationMarkerEntry;
+import org.jabref.model.openoffice.style.CitationMarkerNormEntry;
+import org.jabref.model.openoffice.style.CitationMarkerNumericBibEntry;
+import org.jabref.model.openoffice.style.CitationMarkerNumericEntry;
+import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,27 +38,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-
-import org.jabref.logic.journals.JournalAbbreviationRepository;
-import org.jabref.logic.layout.Layout;
-import org.jabref.logic.layout.LayoutFormatter;
-import org.jabref.logic.layout.LayoutFormatterPreferences;
-import org.jabref.logic.layout.LayoutHelper;
-import org.jabref.model.entry.field.FieldFactory;
-import org.jabref.model.entry.field.OrFields;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.types.EntryType;
-import org.jabref.model.entry.types.EntryTypeFactory;
-import org.jabref.model.openoffice.ootext.OOFormat;
-import org.jabref.model.openoffice.ootext.OOText;
-import org.jabref.model.openoffice.style.CitationMarkerEntry;
-import org.jabref.model.openoffice.style.CitationMarkerNormEntry;
-import org.jabref.model.openoffice.style.CitationMarkerNumericBibEntry;
-import org.jabref.model.openoffice.style.CitationMarkerNumericEntry;
-import org.jabref.model.openoffice.style.NonUniqueCitationMarker;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class embodies a bibliography formatting for OpenOffice, which is composed
@@ -142,7 +141,11 @@ public class JStyle implements Comparable<JStyle>, OOStyle {
     private String localCopy;
     private boolean isDefaultLayoutPresent;
 
-    public JStyle(Path styleFile, LayoutFormatterPreferences layoutPreferences, JournalAbbreviationRepository abbreviationRepository) throws IOException {
+    public JStyle(
+            Path styleFile,
+            LayoutFormatterPreferences layoutPreferences,
+            JournalAbbreviationRepository abbreviationRepository)
+            throws IOException {
         this.layoutPreferences = Objects.requireNonNull(layoutPreferences);
         this.abbreviationRepository = abbreviationRepository;
         this.styleFile = Objects.requireNonNull(styleFile);
@@ -152,7 +155,11 @@ public class JStyle implements Comparable<JStyle>, OOStyle {
         path = styleFile.toAbsolutePath().toString();
     }
 
-    public JStyle(String resourcePath, LayoutFormatterPreferences layoutPreferences, JournalAbbreviationRepository abbreviationRepository) throws IOException {
+    public JStyle(
+            String resourcePath,
+            LayoutFormatterPreferences layoutPreferences,
+            JournalAbbreviationRepository abbreviationRepository)
+            throws IOException {
         this.layoutPreferences = Objects.requireNonNull(layoutPreferences);
         this.abbreviationRepository = abbreviationRepository;
 
@@ -179,7 +186,9 @@ public class JStyle implements Comparable<JStyle>, OOStyle {
         properties.put(REFERENCE_HEADER_PARAGRAPH_FORMAT, "Heading 1");
 
         // Set default properties for the citation marker:
-        citProperties.put(AUTHOR_FIELD, FieldFactory.serializeOrFields(StandardField.AUTHOR, StandardField.EDITOR));
+        citProperties.put(
+                AUTHOR_FIELD,
+                FieldFactory.serializeOrFields(StandardField.AUTHOR, StandardField.EDITOR));
 
         citProperties.put(CITATION_GROUP_MARKUP_BEFORE, "");
         citProperties.put(CITATION_GROUP_MARKUP_AFTER, "");
@@ -285,7 +294,8 @@ public class JStyle implements Comparable<JStyle>, OOStyle {
             return true;
         } else {
             try {
-                return Files.getLastModifiedTime(styleFile).toMillis() == this.styleFileModificationTime;
+                return Files.getLastModifiedTime(styleFile).toMillis()
+                        == this.styleFileModificationTime;
             } catch (IOException e) {
                 return false;
             }
@@ -388,7 +398,12 @@ public class JStyle implements Comparable<JStyle>, OOStyle {
             try {
                 final String typeName = line.substring(0, index);
                 final String formatString = line.substring(index + 1);
-                Layout layout = new LayoutHelper(new StringReader(formatString), layoutPreferences, abbreviationRepository).getLayoutFromText();
+                Layout layout =
+                        new LayoutHelper(
+                                        new StringReader(formatString),
+                                        layoutPreferences,
+                                        abbreviationRepository)
+                                .getLayoutFromText();
                 EntryType type = EntryTypeFactory.parse(typeName);
 
                 if (!isDefaultLayoutPresent && JStyle.DEFAULT_MARK.equals(typeName)) {
@@ -683,19 +698,15 @@ public class JStyle implements Comparable<JStyle>, OOStyle {
      */
     public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries) {
         final int minGroupingCount = this.getMinimumGroupingCount();
-        return JStyleGetNumCitationMarker.getNumCitationMarker2(this,
-                                                                    entries,
-                                                                    minGroupingCount);
+        return JStyleGetNumCitationMarker.getNumCitationMarker2(this, entries, minGroupingCount);
     }
 
     /**
      * For some tests we need to override minGroupingCount.
      */
-    public OOText getNumCitationMarker2(List<CitationMarkerNumericEntry> entries,
-                                        int minGroupingCount) {
-        return JStyleGetNumCitationMarker.getNumCitationMarker2(this,
-                                                                    entries,
-                                                                    minGroupingCount);
+    public OOText getNumCitationMarker2(
+            List<CitationMarkerNumericEntry> entries, int minGroupingCount) {
+        return JStyleGetNumCitationMarker.getNumCitationMarker2(this, entries, minGroupingCount);
     }
 
     /**
@@ -740,13 +751,12 @@ public class JStyle implements Comparable<JStyle>, OOStyle {
      *         OOFormat.setLocaleNone() and OOFormat.setCharStyle().
      *         These are added by decorateCitationMarker()
      */
-    public OOText createCitationMarker(List<CitationMarkerEntry> citationMarkerEntries,
-                                       boolean inParenthesis,
-                                       NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
-        return JStyleGetCitationMarker.createCitationMarker(this,
-                                                                citationMarkerEntries,
-                                                                inParenthesis,
-                                                                nonUniqueCitationMarkerHandling);
+    public OOText createCitationMarker(
+            List<CitationMarkerEntry> citationMarkerEntries,
+            boolean inParenthesis,
+            NonUniqueCitationMarker nonUniqueCitationMarkerHandling) {
+        return JStyleGetCitationMarker.createCitationMarker(
+                this, citationMarkerEntries, inParenthesis, nonUniqueCitationMarkerHandling);
     }
 
     /**
@@ -931,8 +941,6 @@ public class JStyle implements Comparable<JStyle>, OOStyle {
         JStyle style = this;
         OOText title = style.getReferenceHeaderText();
         String parStyle = style.getReferenceHeaderParagraphFormat();
-        return parStyle == null
-                ? OOFormat.paragraph(title)
-                : OOFormat.paragraph(title, parStyle);
+        return parStyle == null ? OOFormat.paragraph(title) : OOFormat.paragraph(title, parStyle);
     }
 }

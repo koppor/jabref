@@ -1,5 +1,28 @@
 package org.jabref.model.database;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import org.jabref.logic.bibtex.FieldWriter;
+import org.jabref.model.database.event.EntriesAddedEvent;
+import org.jabref.model.database.event.EntriesRemovedEvent;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.BibtexString;
+import org.jabref.model.entry.Month;
+import org.jabref.model.entry.event.EntriesEventSource;
+import org.jabref.model.entry.event.EntryChangedEvent;
+import org.jabref.model.entry.event.FieldChangedEvent;
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.FieldFactory;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.strings.StringUtil;
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -19,29 +42,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import org.jabref.logic.bibtex.FieldWriter;
-import org.jabref.model.database.event.EntriesAddedEvent;
-import org.jabref.model.database.event.EntriesRemovedEvent;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.BibtexString;
-import org.jabref.model.entry.Month;
-import org.jabref.model.entry.event.EntriesEventSource;
-import org.jabref.model.entry.event.EntryChangedEvent;
-import org.jabref.model.entry.event.FieldChangedEvent;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.FieldFactory;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.strings.StringUtil;
-
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A bibliography database. This is the "bib" file (or the library stored in a shared SQL database)
  */
@@ -53,7 +53,9 @@ public class BibDatabase {
     /**
      * State attributes
      */
-    private final ObservableList<BibEntry> entries = FXCollections.synchronizedObservableList(FXCollections.observableArrayList(BibEntry::getObservables));
+    private final ObservableList<BibEntry> entries =
+            FXCollections.synchronizedObservableList(
+                    FXCollections.observableArrayList(BibEntry::getObservables));
 
     // BibEntryId to BibEntry
     private final Map<String, BibEntry> entriesId = new HashMap<>();
@@ -146,15 +148,18 @@ public class BibDatabase {
         for (BibEntry e : getEntries()) {
             allFields.addAll(e.getFields());
         }
-        return allFields.stream().filter(field -> !FieldFactory.isInternalField(field))
-                        .collect(Collectors.toSet());
+        return allFields.stream()
+                .filter(field -> !FieldFactory.isInternalField(field))
+                .collect(Collectors.toSet());
     }
 
     /**
      * Returns the entry with the given citation key.
      */
     public synchronized Optional<BibEntry> getEntryByCitationKey(String key) {
-        return entries.stream().filter(entry -> Objects.equals(entry.getCitationKey().orElse(null), key)).findFirst();
+        return entries.stream()
+                .filter(entry -> Objects.equals(entry.getCitationKey().orElse(null), key))
+                .findFirst();
     }
 
     /**
@@ -167,11 +172,13 @@ public class BibDatabase {
         List<BibEntry> result = new ArrayList<>();
 
         for (BibEntry entry : entries) {
-            entry.getCitationKey().ifPresent(entryKey -> {
-                if (key.equals(entryKey)) {
-                    result.add(entry);
-                }
-            });
+            entry.getCitationKey()
+                    .ifPresent(
+                            entryKey -> {
+                                if (key.equals(entryKey)) {
+                                    result.add(entry);
+                                }
+                            });
         }
         return result;
     }
@@ -198,7 +205,8 @@ public class BibDatabase {
         insertEntries(entries, EntriesEventSource.LOCAL);
     }
 
-    public synchronized void insertEntries(List<BibEntry> newEntries, EntriesEventSource eventSource) {
+    public synchronized void insertEntries(
+            List<BibEntry> newEntries, EntriesEventSource eventSource) {
         Objects.requireNonNull(newEntries);
         for (BibEntry entry : newEntries) {
             entry.registerListener(this);
@@ -237,7 +245,8 @@ public class BibDatabase {
      * @param toBeDeleted Entry to delete
      * @param eventSource Source the event is sent from
      */
-    public synchronized void removeEntries(List<BibEntry> toBeDeleted, EntriesEventSource eventSource) {
+    public synchronized void removeEntries(
+            List<BibEntry> toBeDeleted, EntriesEventSource eventSource) {
         Objects.requireNonNull(toBeDeleted);
 
         List<String> ids = new ArrayList<>();
@@ -332,7 +341,9 @@ public class BibDatabase {
      * Returns the string with the given name/label
      */
     public Optional<BibtexString> getStringByName(String name) {
-        return getStringValues().stream().filter(string -> string.getName().equals(name)).findFirst();
+        return getStringValues().stream()
+                .filter(string -> string.getName().equals(name))
+                .findFirst();
     }
 
     /**
@@ -405,7 +416,8 @@ public class BibDatabase {
      * @param inPlace          If inPlace is true then the given BibtexEntries will be modified, if false then copies of the BibtexEntries are made before resolving the strings.
      * @return a list of bibtexentries, with all strings resolved. It is dependent on the value of inPlace whether copies are made or the given BibtexEntries are modified.
      */
-    public List<BibEntry> resolveForStrings(Collection<BibEntry> entriesToResolve, boolean inPlace) {
+    public List<BibEntry> resolveForStrings(
+            Collection<BibEntry> entriesToResolve, boolean inPlace) {
         Objects.requireNonNull(entriesToResolve, "entries must not be null.");
 
         List<BibEntry> results = new ArrayList<>(entriesToResolve.size());
@@ -615,9 +627,9 @@ public class BibDatabase {
      */
     public long getNumberOfCitationKeyOccurrences(String key) {
         return entries.stream()
-                      .flatMap(entry -> entry.getCitationKey().stream())
-                      .filter(key::equals)
-                      .count();
+                .flatMap(entry -> entry.getCitationKey().stream())
+                .filter(key::equals)
+                .count();
     }
 
     /**
@@ -653,7 +665,8 @@ public class BibDatabase {
      * @implNote IDs are zero-padded strings, so there is no need to convert them to integers for comparison.
      */
     public int indexOf(BibEntry bibEntry) {
-        int index = Collections.binarySearch(entries, bibEntry, Comparator.comparing(BibEntry::getId));
+        int index =
+                Collections.binarySearch(entries, bibEntry, Comparator.comparing(BibEntry::getId));
         return index >= 0 ? index : -1;
     }
 
@@ -679,6 +692,7 @@ public class BibDatabase {
 
     @Override
     public int hashCode() {
-        return Objects.hash(entries, bibtexStrings, preamble, epilog, sharedDatabaseID, newLineSeparator);
+        return Objects.hash(
+                entries, bibtexStrings, preamble, epilog, sharedDatabaseID, newLineSeparator);
     }
 }

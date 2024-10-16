@@ -1,9 +1,8 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.List;
-import java.util.function.Supplier;
+import com.airhacks.afterburner.views.ViewLoader;
 
-import javax.swing.undo.UndoManager;
+import jakarta.inject.Inject;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,8 +23,10 @@ import org.jabref.logic.integrity.FieldCheckers;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import java.util.List;
+import java.util.function.Supplier;
+
+import javax.swing.undo.UndoManager;
 
 public class UrlEditor extends HBox implements FieldEditorFX {
 
@@ -37,26 +38,41 @@ public class UrlEditor extends HBox implements FieldEditorFX {
     @Inject private KeyBindingRepository keyBindingRepository;
     @Inject private UndoManager undoManager;
 
-    public UrlEditor(Field field,
-                     SuggestionProvider<?> suggestionProvider,
-                     FieldCheckers fieldCheckers,
-                     UndoAction undoAction,
-                     RedoAction redoAction) {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+    public UrlEditor(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            FieldCheckers fieldCheckers,
+            UndoAction undoAction,
+            RedoAction redoAction) {
+        ViewLoader.view(this).root(this).load();
 
-        this.viewModel = new UrlEditorViewModel(field, suggestionProvider, dialogService, preferences, fieldCheckers, undoManager);
+        this.viewModel =
+                new UrlEditorViewModel(
+                        field,
+                        suggestionProvider,
+                        dialogService,
+                        preferences,
+                        fieldCheckers,
+                        undoManager);
 
-        establishBinding(textField, viewModel.textProperty(), keyBindingRepository, undoAction, redoAction);
+        establishBinding(
+                textField, viewModel.textProperty(), keyBindingRepository, undoAction, redoAction);
 
         Supplier<List<MenuItem>> contextMenuSupplier = EditorMenus.getCleanupUrlMenu(textField);
         textField.initContextMenu(contextMenuSupplier, preferences.getKeyBindingRepository());
 
         // init paste handler for UrlEditor to format pasted url link in textArea
-        textField.setAdditionalPasteActionHandler(() -> textField.setText(new CleanupUrlFormatter().format(new TrimWhitespaceFormatter().format(textField.getText()))));
+        textField.setAdditionalPasteActionHandler(
+                () ->
+                        textField.setText(
+                                new CleanupUrlFormatter()
+                                        .format(
+                                                new TrimWhitespaceFormatter()
+                                                        .format(textField.getText()))));
 
-        new EditorValidator(preferences).configureValidation(viewModel.getFieldValidator().getValidationStatus(), textField);
+        new EditorValidator(preferences)
+                .configureValidation(
+                        viewModel.getFieldValidator().getValidationStatus(), textField);
     }
 
     public UrlEditorViewModel getViewModel() {

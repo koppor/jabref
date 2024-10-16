@@ -1,10 +1,10 @@
 package org.jabref.logic.util.io;
 
+import javafx.collections.ModifiableObservableListBase;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import javafx.collections.ModifiableObservableListBase;
 
 public class FileHistory extends ModifiableObservableListBase<Path> {
 

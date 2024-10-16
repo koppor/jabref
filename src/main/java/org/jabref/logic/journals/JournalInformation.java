@@ -1,8 +1,8 @@
 package org.jabref.logic.journals;
 
-import java.util.List;
-
 import javafx.util.Pair;
+
+import java.util.List;
 
 public record JournalInformation(
         String title,
@@ -23,6 +23,4 @@ public record JournalInformation(
         List<Pair<Integer, Double>> citesOutgoing,
         List<Pair<Integer, Double>> citesOutgoingPerDoc,
         List<Pair<Integer, Double>> citesIncomingByRecentlyPublished,
-        List<Pair<Integer, Double>> citesIncomingPerDocByRecentlyPublished
-) {
-}
+        List<Pair<Integer, Double>> citesIncomingPerDocByRecentlyPublished) {}

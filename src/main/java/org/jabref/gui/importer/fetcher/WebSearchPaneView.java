@@ -1,5 +1,7 @@
 package org.jabref.gui.importer.fetcher;
 
+import com.tobiasdiez.easybind.EasyBind;
+
 import javafx.beans.binding.BooleanExpression;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Button;
@@ -24,8 +26,6 @@ import org.jabref.gui.util.ViewModelListCellFactory;
 import org.jabref.logic.importer.SearchBasedFetcher;
 import org.jabref.logic.l10n.Localization;
 
-import com.tobiasdiez.easybind.EasyBind;
-
 public class WebSearchPaneView extends VBox {
 
     private static final PseudoClass QUERY_INVALID = PseudoClass.getPseudoClass("invalid");
@@ -34,7 +34,8 @@ public class WebSearchPaneView extends VBox {
     private final GuiPreferences preferences;
     private final DialogService dialogService;
 
-    public WebSearchPaneView(GuiPreferences preferences, DialogService dialogService, StateManager stateManager) {
+    public WebSearchPaneView(
+            GuiPreferences preferences, DialogService dialogService, StateManager stateManager) {
         this.preferences = preferences;
         this.dialogService = dialogService;
         this.viewModel = new WebSearchPaneViewModel(preferences, dialogService, stateManager);
@@ -69,18 +70,27 @@ public class WebSearchPaneView extends VBox {
      * Allows triggering search on pressing enter
      */
     private void enableEnterToTriggerSearch(TextField query) {
-        query.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                viewModel.search();
-            }
-        });
+        query.setOnKeyPressed(
+                event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        viewModel.search();
+                    }
+                });
     }
 
     private void addQueryValidationHints(TextField query) {
-        EasyBind.subscribe(viewModel.queryValidationStatus().validProperty(),
+        EasyBind.subscribe(
+                viewModel.queryValidationStatus().validProperty(),
                 valid -> {
-                    if (!valid && viewModel.queryValidationStatus().getHighestMessage().isPresent()) {
-                        query.setTooltip(new Tooltip(viewModel.queryValidationStatus().getHighestMessage().get().getMessage()));
+                    if (!valid
+                            && viewModel.queryValidationStatus().getHighestMessage().isPresent()) {
+                        query.setTooltip(
+                                new Tooltip(
+                                        viewModel
+                                                .queryValidationStatus()
+                                                .getHighestMessage()
+                                                .get()
+                                                .getMessage()));
                         query.pseudoClassStateChanged(QUERY_INVALID, true);
                     } else {
                         query.setTooltip(null);
@@ -93,7 +103,8 @@ public class WebSearchPaneView extends VBox {
      * Create button that triggers search
      */
     private Button createSearchButton() {
-        BooleanExpression importerEnabled = preferences.getImporterPreferences().importerEnabledProperty();
+        BooleanExpression importerEnabled =
+                preferences.getImporterPreferences().importerEnabledProperty();
         Button search = new Button(Localization.lang("Search"));
         search.setDefaultButton(false);
         search.setOnAction(event -> viewModel.search());
@@ -108,14 +119,22 @@ public class WebSearchPaneView extends VBox {
     private StackPane createHelpButtonContainer() {
         StackPane helpButtonContainer = new StackPane();
         ActionFactory factory = new ActionFactory();
-        EasyBind.subscribe(viewModel.selectedFetcherProperty(), fetcher -> {
-            if ((fetcher != null) && fetcher.getHelpPage().isPresent()) {
-                Button helpButton = factory.createIconButton(StandardActions.HELP, new HelpAction(fetcher.getHelpPage().get(), dialogService, preferences.getExternalApplicationsPreferences()));
-                helpButtonContainer.getChildren().setAll(helpButton);
-            } else {
-                helpButtonContainer.getChildren().clear();
-            }
-        });
+        EasyBind.subscribe(
+                viewModel.selectedFetcherProperty(),
+                fetcher -> {
+                    if ((fetcher != null) && fetcher.getHelpPage().isPresent()) {
+                        Button helpButton =
+                                factory.createIconButton(
+                                        StandardActions.HELP,
+                                        new HelpAction(
+                                                fetcher.getHelpPage().get(),
+                                                dialogService,
+                                                preferences.getExternalApplicationsPreferences()));
+                        helpButtonContainer.getChildren().setAll(helpButton);
+                    } else {
+                        helpButtonContainer.getChildren().clear();
+                    }
+                });
         return helpButtonContainer;
     }
 }

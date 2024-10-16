@@ -1,24 +1,5 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.XMLEvent;
-
 import org.jabref.logic.importer.Importer;
 import org.jabref.logic.importer.ParseException;
 import org.jabref.logic.importer.Parser;
@@ -40,9 +21,27 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.strings.StringUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.events.XMLEvent;
 
 /**
  * Importer for the Medline/Pubmed format.
@@ -135,7 +134,8 @@ public class MedlineImporter extends Importer implements Parser {
         return new ParserResult(bibItems);
     }
 
-    private void parseBookArticle(XMLStreamReader reader, List<BibEntry> bibItems, String startElement)
+    private void parseBookArticle(
+            XMLStreamReader reader, List<BibEntry> bibItems, String startElement)
             throws XMLStreamException {
         Map<Field, String> fields = new HashMap<>();
 
@@ -167,7 +167,8 @@ public class MedlineImporter extends Importer implements Parser {
         bibItems.add(entry);
     }
 
-    private void parseBookDocument(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+    private void parseBookDocument(
+            XMLStreamReader reader, Map<Field, String> fields, String startElement)
             throws XMLStreamException {
         // multiple occurrences of the following fields can be present
         List<String> sectionTitleList = new ArrayList<>();
@@ -240,7 +241,8 @@ public class MedlineImporter extends Importer implements Parser {
         }
     }
 
-    private void parseBookInformation(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+    private void parseBookInformation(
+            XMLStreamReader reader, Map<Field, String> fields, String startElement)
             throws XMLStreamException {
         List<String> isbnList = new ArrayList<>();
         List<String> titleList = new ArrayList<>();
@@ -259,7 +261,8 @@ public class MedlineImporter extends Importer implements Parser {
                     case "PublisherLocation" -> {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
-                            putIfValueNotNull(fields, new UnknownField("publocation"), reader.getText());
+                            putIfValueNotNull(
+                                    fields, new UnknownField("publocation"), reader.getText());
                         }
                     }
                     case "BookTitle" -> {
@@ -292,7 +295,8 @@ public class MedlineImporter extends Importer implements Parser {
                     case "ReportNumber" -> {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
-                            putIfValueNotNull(fields, new UnknownField("reportnumber"), reader.getText());
+                            putIfValueNotNull(
+                                    fields, new UnknownField("reportnumber"), reader.getText());
                         }
                     }
                     case "ELocationID" -> {
@@ -325,7 +329,8 @@ public class MedlineImporter extends Importer implements Parser {
         }
     }
 
-    private void handleElocationId(Map<Field, String> fields, XMLStreamReader reader, String eidType) {
+    private void handleElocationId(
+            Map<Field, String> fields, XMLStreamReader reader, String eidType) {
         if ("doi".equals(eidType)) {
             fields.put(StandardField.DOI, reader.getText());
         }
@@ -334,7 +339,8 @@ public class MedlineImporter extends Importer implements Parser {
         }
     }
 
-    private void parseSections(XMLStreamReader reader, List<String> sectionTitleList) throws XMLStreamException {
+    private void parseSections(XMLStreamReader reader, List<String> sectionTitleList)
+            throws XMLStreamException {
         int sectionLevel = 0;
 
         while (reader.hasNext()) {
@@ -394,7 +400,8 @@ public class MedlineImporter extends Importer implements Parser {
         bibItems.add(entry);
     }
 
-    private void parsePubmedData(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+    private void parsePubmedData(
+            XMLStreamReader reader, Map<Field, String> fields, String startElement)
             throws XMLStreamException {
         String publicationStatus = "";
         List<ArticleId> articleIdList = new ArrayList<>();
@@ -433,7 +440,8 @@ public class MedlineImporter extends Importer implements Parser {
         }
     }
 
-    private void parseMedlineCitation(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+    private void parseMedlineCitation(
+            XMLStreamReader reader, Map<Field, String> fields, String startElement)
             throws XMLStreamException {
         // multiple occurrences of the following fields can be present
         List<String> citationSubsets = new ArrayList<>();
@@ -494,7 +502,8 @@ public class MedlineImporter extends Importer implements Parser {
                     case "NumberOfReferences" -> {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
-                            putIfValueNotNull(fields, new UnknownField("references"), reader.getText());
+                            putIfValueNotNull(
+                                    fields, new UnknownField("references"), reader.getText());
                         }
                     }
                     case "PersonalNameSubject" -> {
@@ -546,13 +555,16 @@ public class MedlineImporter extends Importer implements Parser {
         addOtherId(fields, otherIdList);
         addKeywords(fields, keywordList);
         if (!spaceFlightMissionList.isEmpty()) {
-            fields.put(new UnknownField("space-flight-mission"), String.join(", ", spaceFlightMissionList));
+            fields.put(
+                    new UnknownField("space-flight-mission"),
+                    String.join(", ", spaceFlightMissionList));
         }
         addInvestigators(fields, investigatorList);
         addNotes(fields, generalNoteList);
     }
 
-    private void parseInvestigator(XMLStreamReader reader, List<Investigator> investigatorList, String startElement)
+    private void parseInvestigator(
+            XMLStreamReader reader, List<Investigator> investigatorList, String startElement)
             throws XMLStreamException {
         String lastName = "";
         String foreName = "";
@@ -592,7 +604,10 @@ public class MedlineImporter extends Importer implements Parser {
         investigatorList.add(new Investigator(lastName, foreName, affiliationList));
     }
 
-    private void parsePersonalNameSubject(XMLStreamReader reader, List<PersonalNameSubject> personalNameSubjectList, String startElement)
+    private void parsePersonalNameSubject(
+            XMLStreamReader reader,
+            List<PersonalNameSubject> personalNameSubjectList,
+            String startElement)
             throws XMLStreamException {
         String lastName = "";
         String foreName = "";
@@ -625,7 +640,8 @@ public class MedlineImporter extends Importer implements Parser {
         personalNameSubjectList.add(new PersonalNameSubject(lastName, foreName));
     }
 
-    private void parseMeshHeading(XMLStreamReader reader, List<MeshHeading> meshHeadingList, String startElement)
+    private void parseMeshHeading(
+            XMLStreamReader reader, List<MeshHeading> meshHeadingList, String startElement)
             throws XMLStreamException {
         String descriptorName = "";
         List<String> qualifierNames = new ArrayList<>();
@@ -658,7 +674,8 @@ public class MedlineImporter extends Importer implements Parser {
         meshHeadingList.add(new MeshHeading(descriptorName, qualifierNames));
     }
 
-    private void parseGeneSymbolList(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+    private void parseGeneSymbolList(
+            XMLStreamReader reader, Map<Field, String> fields, String startElement)
             throws XMLStreamException {
         List<String> geneSymbols = new ArrayList<>();
 
@@ -684,7 +701,8 @@ public class MedlineImporter extends Importer implements Parser {
         }
     }
 
-    private void parseChemicalList(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+    private void parseChemicalList(
+            XMLStreamReader reader, Map<Field, String> fields, String startElement)
             throws XMLStreamException {
         List<String> chemicalNames = new ArrayList<>();
 
@@ -708,7 +726,8 @@ public class MedlineImporter extends Importer implements Parser {
         fields.put(new UnknownField("chemicals"), String.join(", ", chemicalNames));
     }
 
-    private void parseMedlineJournalInfo(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+    private void parseMedlineJournalInfo(
+            XMLStreamReader reader, Map<Field, String> fields, String startElement)
             throws XMLStreamException {
         while (reader.hasNext()) {
             reader.next();
@@ -718,13 +737,17 @@ public class MedlineImporter extends Importer implements Parser {
                     case "Country" -> {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
-                            putIfValueNotNull(fields, new UnknownField("country"), reader.getText());
+                            putIfValueNotNull(
+                                    fields, new UnknownField("country"), reader.getText());
                         }
                     }
                     case "MedlineTA" -> {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
-                            putIfValueNotNull(fields, new UnknownField("journal-abbreviation"), reader.getText());
+                            putIfValueNotNull(
+                                    fields,
+                                    new UnknownField("journal-abbreviation"),
+                                    reader.getText());
                         }
                     }
                     case "NlmUniqueID" -> {
@@ -736,7 +759,8 @@ public class MedlineImporter extends Importer implements Parser {
                     case "ISSNLinking" -> {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
-                            putIfValueNotNull(fields, new UnknownField("issn-linking"), reader.getText());
+                            putIfValueNotNull(
+                                    fields, new UnknownField("issn-linking"), reader.getText());
                         }
                     }
                 }
@@ -748,7 +772,8 @@ public class MedlineImporter extends Importer implements Parser {
         }
     }
 
-    private void parseArticleInformation(XMLStreamReader reader, Map<Field, String> fields) throws XMLStreamException {
+    private void parseArticleInformation(XMLStreamReader reader, Map<Field, String> fields)
+            throws XMLStreamException {
         List<String> titleList = new ArrayList<>();
         String pubmodel = reader.getAttributeValue(null, "PubModel");
         fields.put(new UnknownField("pubmodel"), pubmodel);
@@ -794,7 +819,8 @@ public class MedlineImporter extends Importer implements Parser {
         }
     }
 
-    private void parseJournal(XMLStreamReader reader, Map<Field, String> fields) throws XMLStreamException {
+    private void parseJournal(XMLStreamReader reader, Map<Field, String> fields)
+            throws XMLStreamException {
         while (reader.hasNext()) {
             reader.next();
             if (isStartXMLEvent(reader)) {
@@ -843,13 +869,13 @@ public class MedlineImporter extends Importer implements Parser {
         Optional<String> day = Optional.empty();
 
         // mapping from date XML element to field name
-        Map<String, String> dateFieldMap = Map.of(
-                "DateCreated", "created",
-                "DateCompleted", "completed",
-                "DateRevised", "revised",
-                "ContributionDate", "contribution",
-                "PubDate", ""
-        );
+        Map<String, String> dateFieldMap =
+                Map.of(
+                        "DateCreated", "created",
+                        "DateCompleted", "completed",
+                        "DateRevised", "revised",
+                        "ContributionDate", "contribution",
+                        "PubDate", "");
 
         while (reader.hasNext()) {
             reader.next();
@@ -883,8 +909,11 @@ public class MedlineImporter extends Importer implements Parser {
         }
 
         Optional<Date> date = Date.parse(year, month, day);
-        date.ifPresent(dateValue ->
-                fields.put(new UnknownField(dateFieldMap.get(startElement)), dateValue.getNormalized()));
+        date.ifPresent(
+                dateValue ->
+                        fields.put(
+                                new UnknownField(dateFieldMap.get(startElement)),
+                                dateValue.getNormalized()));
     }
 
     private void addArticleIdList(Map<Field, String> fields, List<ArticleId> articleIdList) {
@@ -893,7 +922,9 @@ public class MedlineImporter extends Importer implements Parser {
                 if ("pubmed".equals(id.idType())) {
                     fields.computeIfAbsent(StandardField.PMID, k -> id.content());
                 } else {
-                    fields.computeIfAbsent(FieldFactory.parseField(StandardEntryType.Article, id.idType()), k -> id.content());
+                    fields.computeIfAbsent(
+                            FieldFactory.parseField(StandardEntryType.Article, id.idType()),
+                            k -> id.content());
                 }
             }
         }
@@ -957,12 +988,15 @@ public class MedlineImporter extends Importer implements Parser {
     private void addOtherId(Map<Field, String> fields, List<OtherId> otherIdList) {
         for (OtherId id : otherIdList) {
             if (!id.source().isBlank() && !id.content().isBlank()) {
-                fields.put(FieldFactory.parseField(StandardEntryType.Article, id.source()), id.content());
+                fields.put(
+                        FieldFactory.parseField(StandardEntryType.Article, id.source()),
+                        id.content());
             }
         }
     }
 
-    private void addPersonalNames(Map<Field, String> fields, List<PersonalNameSubject> personalNameSubjectList) {
+    private void addPersonalNames(
+            Map<Field, String> fields, List<PersonalNameSubject> personalNameSubjectList) {
         if (fields.get(StandardField.AUTHOR) == null) {
             // if no authors appear, then add the personal names as authors
             List<String> personalNames = new ArrayList<>();
@@ -999,7 +1033,8 @@ public class MedlineImporter extends Importer implements Parser {
         }
     }
 
-    private void addPubDate(XMLStreamReader reader, Map<Field, String> fields, String startElement) throws XMLStreamException {
+    private void addPubDate(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+            throws XMLStreamException {
         while (reader.hasNext()) {
             reader.next();
             if (isStartXMLEvent(reader)) {
@@ -1021,7 +1056,11 @@ public class MedlineImporter extends Importer implements Parser {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
                             Optional<Month> month = Month.parse(reader.getText());
-                            month.ifPresent(monthValue -> fields.put(StandardField.MONTH, monthValue.getJabRefFormat()));
+                            month.ifPresent(
+                                    monthValue ->
+                                            fields.put(
+                                                    StandardField.MONTH,
+                                                    monthValue.getJabRefFormat()));
                         }
                     }
                     case "Season" -> {
@@ -1051,7 +1090,8 @@ public class MedlineImporter extends Importer implements Parser {
                     case "CopyrightInformation" -> {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
-                            putIfValueNotNull(fields, new UnknownField("copyright"), reader.getText());
+                            putIfValueNotNull(
+                                    fields, new UnknownField("copyright"), reader.getText());
                         }
                     }
                     case "AbstractText" -> {
@@ -1075,7 +1115,8 @@ public class MedlineImporter extends Importer implements Parser {
      * We ignore the tags and return only the characters present in the enclosing parent element.
      *
      */
-    private void handleTextElement(XMLStreamReader reader, List<String> textList, String startElement)
+    private void handleTextElement(
+            XMLStreamReader reader, List<String> textList, String startElement)
             throws XMLStreamException {
         StringBuilder result = new StringBuilder();
 
@@ -1106,7 +1147,8 @@ public class MedlineImporter extends Importer implements Parser {
         textList.add(result.toString().trim());
     }
 
-    private void addPagination(XMLStreamReader reader, Map<Field, String> fields, String startElement)
+    private void addPagination(
+            XMLStreamReader reader, Map<Field, String> fields, String startElement)
             throws XMLStreamException {
         String startPage = "";
         String endPage = "";
@@ -1119,7 +1161,8 @@ public class MedlineImporter extends Importer implements Parser {
                     case "MedlinePgn" -> {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
-                            putIfValueNotNull(fields, StandardField.PAGES, fixPageRange(reader.getText()));
+                            putIfValueNotNull(
+                                    fields, StandardField.PAGES, fixPageRange(reader.getText()));
                         }
                     }
                     case "StartPage" -> {
@@ -1135,7 +1178,8 @@ public class MedlineImporter extends Importer implements Parser {
                         if (isCharacterXMLEvent(reader)) {
                             endPage = reader.getText();
                             // but it should not happen, that a endpage appears without startpage
-                            fields.put(StandardField.PAGES, fixPageRange(startPage + "-" + endPage));
+                            fields.put(
+                                    StandardField.PAGES, fixPageRange(startPage + "-" + endPage));
                         }
                     }
                 }
@@ -1152,7 +1196,9 @@ public class MedlineImporter extends Importer implements Parser {
         return medlineDate.substring(0, 4);
     }
 
-    private void handleAuthorList(XMLStreamReader reader, Map<Field, String> fields, String startElement) throws XMLStreamException {
+    private void handleAuthorList(
+            XMLStreamReader reader, Map<Field, String> fields, String startElement)
+            throws XMLStreamException {
         List<String> authorNames = new ArrayList<>();
 
         while (reader.hasNext()) {
@@ -1174,7 +1220,8 @@ public class MedlineImporter extends Importer implements Parser {
         fields.put(StandardField.AUTHOR, String.join(" and ", authorNames));
     }
 
-    private void parseAuthor(XMLStreamReader reader, List<String> authorNames) throws XMLStreamException {
+    private void parseAuthor(XMLStreamReader reader, List<String> authorNames)
+            throws XMLStreamException {
         StringBuilder authorName = new StringBuilder();
         List<String> collectiveNames = new ArrayList<>();
 
@@ -1258,7 +1305,10 @@ public class MedlineImporter extends Importer implements Parser {
     public List<BibEntry> parseEntries(InputStream inputStream) throws ParseException {
         try {
             return importDatabase(
-                    new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))).getDatabase().getEntries();
+                            new BufferedReader(
+                                    new InputStreamReader(inputStream, StandardCharsets.UTF_8)))
+                    .getDatabase()
+                    .getEntries();
         } catch (IOException e) {
             LOGGER.error(e.getLocalizedMessage(), e);
         }

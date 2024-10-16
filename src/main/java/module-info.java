@@ -12,35 +12,34 @@ open module org.jabref {
     requires javafx.controls;
     requires javafx.web;
     requires javafx.fxml;
-
     requires afterburner.fx;
-    provides com.airhacks.afterburner.views.ResourceLocator
-            with org.jabref.gui.util.JabRefResourceLocator;
+
+    provides com.airhacks.afterburner.views.ResourceLocator with
+            org.jabref.gui.util.JabRefResourceLocator;
 
     requires com.dlsc.gemsfx;
+
     uses com.dlsc.gemsfx.TagsField;
+
     // Provides number input fields for parameters in AI expert settings
     requires com.dlsc.unitfx;
-
     requires com.tobiasdiez.easybind;
-
     requires de.saxsys.mvvmfx;
     requires de.saxsys.mvvmfx.validation;
-
     requires org.controlsfx.controls;
     requires org.fxmisc.flowless;
     requires org.fxmisc.richtext;
-
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.ikonli.materialdesign2;
+
     uses org.kordamp.ikonli.IkonHandler;
     uses org.kordamp.ikonli.IkonProvider;
 
-    provides org.kordamp.ikonli.IkonHandler
-            with org.jabref.gui.icon.JabRefIkonHandler;
-    provides org.kordamp.ikonli.IkonProvider
-            with org.jabref.gui.icon.JabrefIconProvider;
+    provides org.kordamp.ikonli.IkonHandler with
+            org.jabref.gui.icon.JabRefIkonHandler;
+    provides org.kordamp.ikonli.IkonProvider with
+            org.jabref.gui.icon.JabrefIconProvider;
 
     requires reactfx;
     // endregion
@@ -52,10 +51,11 @@ open module org.jabref {
     requires org.tinylog.api;
     requires org.tinylog.api.slf4j;
     requires org.tinylog.impl;
+
     // endregion
 
-    provides org.tinylog.writers.Writer
-    with org.jabref.gui.logging.GuiWriter;
+    provides org.tinylog.writers.Writer with
+            org.jabref.gui.logging.GuiWriter;
 
     // Preferences and XML
     requires java.prefs;
@@ -100,7 +100,9 @@ open module org.jabref {
     requires ojdbc10;
     requires org.postgresql.jdbc;
     requires org.mariadb.jdbc;
+
     uses org.mariadb.jdbc.credential.CredentialPlugin;
+
     // endregion
 
     // region: Apache Commons and other (similar) helper libraries
@@ -123,23 +125,17 @@ open module org.jabref {
 
     requires jbibtex;
     requires citeproc.java;
-
     requires snuggletex.core;
-
     requires org.apache.pdfbox;
     requires org.apache.xmpbox;
     requires com.ibm.icu;
-
     requires flexmark;
     requires flexmark.html2md.converter;
     requires flexmark.util.ast;
     requires flexmark.util.data;
-
     requires com.h2database.mvstore;
-
     requires java.keyring;
     requires org.freedesktop.dbus;
-
     requires org.jooq.jool;
 
     // region AI
@@ -153,6 +149,7 @@ open module org.jabref {
     requires langchain4j.hugging.face;
     requires langchain4j.mistral.ai;
     requires langchain4j.open.ai;
+
     uses ai.djl.engine.EngineProvider;
     uses ai.djl.repository.RepositoryFactory;
     uses ai.djl.repository.zoo.ZooProvider;
@@ -164,6 +161,7 @@ open module org.jabref {
      * In case the version is updated, please also increment {@link org.jabref.model.search.SearchFieldConstants#VERSION} to trigger reindexing.
      */
     uses org.apache.lucene.codecs.lucene100.Lucene100Codec;
+
     requires org.apache.lucene.analysis.common;
     requires org.apache.lucene.core;
     requires org.apache.lucene.highlighter;
@@ -173,8 +171,8 @@ open module org.jabref {
     requires net.harawata.appdirs;
     requires com.sun.jna;
     requires com.sun.jna.platform;
-
     requires org.eclipse.jgit;
+
     uses org.eclipse.jgit.transport.SshSessionFactory;
     uses org.eclipse.jgit.lib.Signer;
 
@@ -189,5 +187,5 @@ open module org.jabref {
     requires mslinks;
     requires org.antlr.antlr4.runtime;
     requires org.libreoffice.uno;
-    // endregion
+// endregion
 }

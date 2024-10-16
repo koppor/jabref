@@ -23,7 +23,12 @@ public class MergeEntriesDialog extends BaseDialog<EntriesMergeResult> {
         init();
     }
 
-    public MergeEntriesDialog(BibEntry one, BibEntry two, String leftHeader, String rightHeader, GuiPreferences preferences) {
+    public MergeEntriesDialog(
+            BibEntry one,
+            BibEntry two,
+            String leftHeader,
+            String rightHeader,
+            GuiPreferences preferences) {
         threeWayMergeView = new ThreeWayMergeView(one, two, leftHeader, rightHeader, preferences);
         this.one = one;
         this.two = two;
@@ -41,16 +46,23 @@ public class MergeEntriesDialog extends BaseDialog<EntriesMergeResult> {
         this.getDialogPane().setContent(threeWayMergeView);
 
         // Create buttons
-        ButtonType replaceEntries = new ButtonType(Localization.lang("Merge entries"), ButtonBar.ButtonData.OK_DONE);
+        ButtonType replaceEntries =
+                new ButtonType(Localization.lang("Merge entries"), ButtonBar.ButtonData.OK_DONE);
         this.getDialogPane().getButtonTypes().setAll(ButtonType.CANCEL, replaceEntries);
-        this.setResultConverter(buttonType -> {
-            threeWayMergeView.saveConfiguration();
-            if (buttonType.equals(replaceEntries)) {
-                return new EntriesMergeResult(one, two, threeWayMergeView.getLeftEntry(), threeWayMergeView.getRightEntry(), threeWayMergeView.getMergedEntry());
-            } else {
-                return null;
-            }
-        });
+        this.setResultConverter(
+                buttonType -> {
+                    threeWayMergeView.saveConfiguration();
+                    if (buttonType.equals(replaceEntries)) {
+                        return new EntriesMergeResult(
+                                one,
+                                two,
+                                threeWayMergeView.getLeftEntry(),
+                                threeWayMergeView.getRightEntry(),
+                                threeWayMergeView.getMergedEntry());
+                    } else {
+                        return null;
+                    }
+                });
     }
 
     public void setLeftHeaderText(String leftHeaderText) {

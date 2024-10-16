@@ -1,6 +1,6 @@
 package org.jabref;
 
-import java.util.List;
+import com.airhacks.afterburner.injection.Injector;
 
 import org.jabref.cli.JabKit;
 import org.jabref.gui.JabRefGUI;
@@ -12,7 +12,7 @@ import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.logic.util.HeadlessExecutorService;
 import org.jabref.migrations.PreferencesMigrations;
 
-import com.airhacks.afterburner.injection.Injector;
+import java.util.List;
 
 /// The main entry point for the JabRef application.
 ///
@@ -31,7 +31,8 @@ public class Launcher {
         Injector.setModelOrService(GuiPreferences.class, preferences);
 
         DefaultFileUpdateMonitor fileUpdateMonitor = new DefaultFileUpdateMonitor();
-        HeadlessExecutorService.INSTANCE.executeInterruptableTask(fileUpdateMonitor, "FileUpdateMonitor");
+        HeadlessExecutorService.INSTANCE.executeInterruptableTask(
+                fileUpdateMonitor, "FileUpdateMonitor");
 
         List<UiCommand> uiCommands = JabKit.processArguments(args, preferences, fileUpdateMonitor);
         // The method `processArguments` quites the whole JVM if no GUI is needed.

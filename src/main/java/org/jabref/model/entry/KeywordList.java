@@ -1,5 +1,7 @@
 package org.jabref.model.entry;
 
+import org.jabref.model.strings.StringUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,8 +13,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jabref.model.strings.StringUtil;
 
 /**
  * Represents a list of keyword chains.
@@ -43,7 +43,8 @@ public class KeywordList implements Iterable<Keyword> {
         this(Arrays.asList(keywordChains));
     }
 
-    public static KeywordList parse(String keywordString, Character delimiter, Character hierarchicalDelimiter) {
+    public static KeywordList parse(
+            String keywordString, Character delimiter, Character hierarchicalDelimiter) {
         if (StringUtil.isBlank(keywordString)) {
             return new KeywordList();
         }
@@ -74,13 +75,17 @@ public class KeywordList implements Iterable<Keyword> {
     }
 
     public static String serialize(List<Keyword> keywords, Character delimiter) {
-        return keywords.stream().map(Keyword::get).collect(Collectors.joining(delimiter.toString()));
+        return keywords.stream()
+                .map(Keyword::get)
+                .collect(Collectors.joining(delimiter.toString()));
     }
 
-    public static KeywordList merge(String keywordStringA, String keywordStringB, Character delimiter) {
+    public static KeywordList merge(
+            String keywordStringA, String keywordStringB, Character delimiter) {
         KeywordList keywordListA = parse(keywordStringA, delimiter);
         KeywordList keywordListB = parse(keywordStringB, delimiter);
-        List<Keyword> distinctKeywords = Stream.concat(keywordListA.stream(), keywordListB.stream()).distinct().toList();
+        List<Keyword> distinctKeywords =
+                Stream.concat(keywordListA.stream(), keywordListB.stream()).distinct().toList();
         return new KeywordList(distinctKeywords);
     }
 
@@ -124,7 +129,9 @@ public class KeywordList implements Iterable<Keyword> {
      * Keywords are separated by the given delimiter and an additional space, i.e. "one, two".
      */
     public String getAsString(Character delimiter) {
-        return keywordChains.stream().map(Keyword::toString).collect(Collectors.joining(delimiter + " "));
+        return keywordChains.stream()
+                .map(Keyword::toString)
+                .collect(Collectors.joining(delimiter + " "));
     }
 
     public void add(String keywordsString) {

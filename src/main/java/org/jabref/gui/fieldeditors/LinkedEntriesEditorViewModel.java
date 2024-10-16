@@ -1,11 +1,5 @@
 package org.jabref.gui.fieldeditors;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -21,6 +15,12 @@ import org.jabref.model.entry.EntryLinkList;
 import org.jabref.model.entry.ParsedEntryLink;
 import org.jabref.model.entry.field.Field;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
+import javax.swing.undo.UndoManager;
+
 public class LinkedEntriesEditorViewModel extends AbstractEditorViewModel {
 
     private final BibDatabaseContext databaseContext;
@@ -28,12 +28,13 @@ public class LinkedEntriesEditorViewModel extends AbstractEditorViewModel {
     private final ListProperty<ParsedEntryLink> linkedEntries;
     private final StateManager stateManager;
 
-    public LinkedEntriesEditorViewModel(Field field,
-                                        SuggestionProvider<?> suggestionProvider,
-                                        BibDatabaseContext databaseContext,
-                                        FieldCheckers fieldCheckers,
-                                        UndoManager undoManager,
-                                        StateManager stateManager) {
+    public LinkedEntriesEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            BibDatabaseContext databaseContext,
+            FieldCheckers fieldCheckers,
+            UndoManager undoManager,
+            StateManager stateManager) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
 
         this.databaseContext = databaseContext;
@@ -70,14 +71,24 @@ public class LinkedEntriesEditorViewModel extends AbstractEditorViewModel {
     }
 
     public List<ParsedEntryLink> getSuggestions(String request) {
-        List<ParsedEntryLink> suggestions = suggestionProvider
-                .getPossibleSuggestions()
-                .stream()
-                .map(suggestion -> suggestion instanceof BibEntry bibEntry ? bibEntry.getCitationKey().orElse("") : (String) suggestion)
-                .filter(suggestion -> suggestion.toLowerCase(Locale.ROOT).contains(request.toLowerCase(Locale.ROOT)))
-                .map(suggestion -> new ParsedEntryLink(suggestion, databaseContext.getDatabase()))
-                .distinct()
-                .collect(Collectors.toList());
+        List<ParsedEntryLink> suggestions =
+                suggestionProvider.getPossibleSuggestions().stream()
+                        .map(
+                                suggestion ->
+                                        suggestion instanceof BibEntry bibEntry
+                                                ? bibEntry.getCitationKey().orElse("")
+                                                : (String) suggestion)
+                        .filter(
+                                suggestion ->
+                                        suggestion
+                                                .toLowerCase(Locale.ROOT)
+                                                .contains(request.toLowerCase(Locale.ROOT)))
+                        .map(
+                                suggestion ->
+                                        new ParsedEntryLink(
+                                                suggestion, databaseContext.getDatabase()))
+                        .distinct()
+                        .collect(Collectors.toList());
 
         ParsedEntryLink requestedLink = new ParsedEntryLink(request, databaseContext.getDatabase());
         if (!suggestions.contains(requestedLink)) {
@@ -88,7 +99,13 @@ public class LinkedEntriesEditorViewModel extends AbstractEditorViewModel {
     }
 
     public void jumpToEntry(ParsedEntryLink parsedEntryLink) {
-        parsedEntryLink.getLinkedEntry().ifPresent(entry ->
-                stateManager.activeTabProperty().get().ifPresent(tab -> tab.clearAndSelect(entry)));
+        parsedEntryLink
+                .getLinkedEntry()
+                .ifPresent(
+                        entry ->
+                                stateManager
+                                        .activeTabProperty()
+                                        .get()
+                                        .ifPresent(tab -> tab.clearAndSelect(entry)));
     }
 }

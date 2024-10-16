@@ -1,13 +1,13 @@
 package org.jabref.gui.mergeentries.newmergedialog.cell;
 
+import static org.jabref.gui.mergeentries.newmergedialog.cell.ThreeWayMergeCell.HEADER_ROW;
+
+import com.tobiasdiez.easybind.EasyBind;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
-import com.tobiasdiez.easybind.EasyBind;
-
-import static org.jabref.gui.mergeentries.newmergedialog.cell.ThreeWayMergeCell.HEADER_ROW;
 
 public class ThreeWayMergeCellViewModel {
     private final StringProperty text = new SimpleStringProperty();
@@ -24,13 +24,17 @@ public class ThreeWayMergeCellViewModel {
             }
         }
 
-        EasyBind.subscribe(odd, isOdd -> {
-            setEven(!isOdd);
-        });
+        EasyBind.subscribe(
+                odd,
+                isOdd -> {
+                    setEven(!isOdd);
+                });
 
-        EasyBind.subscribe(even, isEven -> {
-            setOdd(!isEven);
-        });
+        EasyBind.subscribe(
+                even,
+                isEven -> {
+                    setOdd(!isEven);
+                });
     }
 
     public String getText() {

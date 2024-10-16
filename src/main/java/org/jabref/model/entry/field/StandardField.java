@@ -1,13 +1,13 @@
 package org.jabref.model.entry.field;
 
+import org.jabref.gui.fieldeditors.FieldNameLabel;
+
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import org.jabref.gui.fieldeditors.FieldNameLabel;
 
 /**
  * Standard BibTeX and BibLaTeX fields, as well as "normal" JabRef specific fields.
@@ -32,7 +32,8 @@ public enum StandardField implements Field {
     BOOKTITLEADDON("booktitleaddon"),
     CHAPTER("chapter"),
     COMMENTATOR("commentator", FieldProperty.PERSON_NAMES),
-    // Comments of users are handled at {@link org.jabref.model.entry.field.UserSpecificCommentField}
+    // Comments of users are handled at {@link
+    // org.jabref.model.entry.field.UserSpecificCommentField}
     COMMENT("comment", FieldProperty.MULTILINE_TEXT, FieldProperty.MARKDOWN),
     CROSSREF("crossref", FieldProperty.SINGLE_ENTRY_LINK),
     CITES("cites", FieldProperty.MULTIPLE_ENTRY_LINK),
@@ -141,7 +142,8 @@ public enum StandardField implements Field {
     CREATIONDATE("creationdate", FieldProperty.DATE),
     MODIFICATIONDATE("modificationdate", FieldProperty.DATE);
 
-    public static final Set<Field> AUTOMATIC_FIELDS = Set.of(OWNER, TIMESTAMP, CREATIONDATE, MODIFICATIONDATE);
+    public static final Set<Field> AUTOMATIC_FIELDS =
+            Set.of(OWNER, TIMESTAMP, CREATIONDATE, MODIFICATIONDATE);
 
     private static final Map<String, StandardField> NAME_TO_STANDARD_FIELD = new HashMap<>();
 

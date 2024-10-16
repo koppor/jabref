@@ -1,14 +1,14 @@
 package org.jabref.logic.formatter.casechanger;
 
-import java.io.IOException;
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.IOException;
+import java.util.stream.Stream;
 
 /**
  * Tests in addition to the general tests from {@link org.jabref.logic.formatter.FormatterTest}
@@ -32,9 +32,15 @@ class UnprotectTermsFormatterTest {
                 Arguments.of("BPEL", "{BPEL}"),
                 Arguments.of("3GPP 3G", "{3GPP} {3G}"),
                 Arguments.of("{A} and {B}}", "{A} and {B}}"),
-                Arguments.of("Testing BPEL Engine Performance: A Survey", "{Testing BPEL Engine Performance: A Survey}"),
-                Arguments.of("Testing BPEL Engine Performance: A Survey", "Testing {BPEL} Engine Performance: A Survey"),
-                Arguments.of("Testing BPEL Engine Performance: A Survey", "{Testing {BPEL} Engine Performance: A Survey}"),
+                Arguments.of(
+                        "Testing BPEL Engine Performance: A Survey",
+                        "{Testing BPEL Engine Performance: A Survey}"),
+                Arguments.of(
+                        "Testing BPEL Engine Performance: A Survey",
+                        "Testing {BPEL} Engine Performance: A Survey"),
+                Arguments.of(
+                        "Testing BPEL Engine Performance: A Survey",
+                        "{Testing {BPEL} Engine Performance: A Survey}"),
                 Arguments.of("In CDMA", new UnprotectTermsFormatter().getExampleInput()));
     }
 

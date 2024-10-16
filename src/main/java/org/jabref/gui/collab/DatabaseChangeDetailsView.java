@@ -13,16 +13,16 @@ import org.jabref.gui.collab.stringchange.BibTexStringChangeDetailsView;
 import org.jabref.gui.collab.stringdelete.BibTexStringDeleteDetailsView;
 import org.jabref.gui.collab.stringrename.BibTexStringRenameDetailsView;
 
-public sealed abstract class DatabaseChangeDetailsView extends AnchorPane permits
-        EntryWithPreviewAndSourceDetailsView,
-        GroupChangeDetailsView,
-        MetadataChangeDetailsView,
-        PreambleChangeDetailsView,
-        BibTexStringAddDetailsView,
-        BibTexStringChangeDetailsView,
-        BibTexStringDeleteDetailsView,
-        BibTexStringRenameDetailsView,
-        EntryChangeDetailsView {
+public abstract sealed class DatabaseChangeDetailsView extends AnchorPane
+        permits EntryWithPreviewAndSourceDetailsView,
+                GroupChangeDetailsView,
+                MetadataChangeDetailsView,
+                PreambleChangeDetailsView,
+                BibTexStringAddDetailsView,
+                BibTexStringChangeDetailsView,
+                BibTexStringDeleteDetailsView,
+                BibTexStringRenameDetailsView,
+                EntryChangeDetailsView {
 
     private static Double ANCHOR_PANE_OFFSET = 8D;
 

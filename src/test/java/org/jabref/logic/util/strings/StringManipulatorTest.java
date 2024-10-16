@@ -1,15 +1,14 @@
 package org.jabref.logic.util.strings;
 
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.model.util.ResultingStringState;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.stream.Stream;
 
 class StringManipulatorTest {
 
@@ -83,7 +82,8 @@ class StringManipulatorTest {
     void backwardsKillWordTrimsPreceedingWhitespace() {
         int caretPosition = 1; // Second space
         String input = "  hello";
-        // One space should be preserved since we are deleting everything preceding the second space.
+        // One space should be preserved since we are deleting everything preceding the second
+        // space.
         String expectedResult = " hello";
         ResultingStringState textOutput = StringManipulator.backwardKillWord(caretPosition, input);
         assertEquals(expectedResult, textOutput.text);
@@ -140,7 +140,11 @@ class StringManipulatorTest {
 
     @ParameterizedTest
     @MethodSource("wordBoundaryTestData")
-    void getNextWordBoundary(String text, int caretPosition, int expectedPosition, StringManipulator.Direction direction) {
+    void getNextWordBoundary(
+            String text,
+            int caretPosition,
+            int expectedPosition,
+            StringManipulator.Direction direction) {
         int result = StringManipulator.getNextWordBoundary(caretPosition, text, direction);
         assertEquals(expectedPosition, result);
     }

@@ -1,11 +1,11 @@
 package org.jabref.gui.ai.components.util.notifications;
 
-import java.util.List;
-
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+
+import java.util.List;
 
 /**
  * A {@link ScrollPane} for displaying AI chat {@link Notification}s. See the documentation of {@link Notification} for
@@ -21,7 +21,8 @@ public class NotificationsComponent extends ScrollPane {
         setMaxHeight(SCROLL_PANE_MAX_HEIGHT);
 
         fill(notifications);
-        notifications.addListener((ListChangeListener<? super Notification>) change -> fill(notifications));
+        notifications.addListener(
+                (ListChangeListener<? super Notification>) change -> fill(notifications));
     }
 
     private void fill(List<Notification> notifications) {

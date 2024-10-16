@@ -1,12 +1,12 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 
 class RISImporterTest {
 

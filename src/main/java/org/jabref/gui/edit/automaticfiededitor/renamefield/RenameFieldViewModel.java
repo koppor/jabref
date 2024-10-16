@@ -1,6 +1,9 @@
 package org.jabref.gui.edit.automaticfiededitor.renamefield;
 
-import java.util.List;
+import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
+import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
+import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
+import de.saxsys.mvvmfx.utils.validation.Validator;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -21,15 +24,13 @@ import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.strings.StringUtil;
 
-import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
-import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
-import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
-import de.saxsys.mvvmfx.utils.validation.Validator;
+import java.util.List;
 
 public class RenameFieldViewModel extends AbstractAutomaticFieldEditorTabViewModel {
     public static final int TAB_INDEX = 2;
     private final StringProperty newFieldName = new SimpleStringProperty("");
-    private final ObjectProperty<Field> selectedField = new SimpleObjectProperty<>(StandardField.AUTHOR);
+    private final ObjectProperty<Field> selectedField =
+            new SimpleObjectProperty<>(StandardField.AUTHOR);
     private final List<BibEntry> selectedEntries;
 
     private final Validator fieldValidator;
@@ -38,22 +39,33 @@ public class RenameFieldViewModel extends AbstractAutomaticFieldEditorTabViewMod
 
     private final BooleanBinding canRename;
 
-    public RenameFieldViewModel(List<BibEntry> selectedEntries, BibDatabase database, StateManager stateManager) {
+    public RenameFieldViewModel(
+            List<BibEntry> selectedEntries, BibDatabase database, StateManager stateManager) {
         super(database, stateManager);
         this.selectedEntries = selectedEntries;
 
-        fieldValidator = new FunctionBasedValidator<>(selectedField, field -> StringUtil.isNotBlank(field.getName()),
-                ValidationMessage.error("Field cannot be empty"));
-        fieldNameValidator = new FunctionBasedValidator<>(newFieldName, fieldName -> {
-            if (StringUtil.isBlank(fieldName)) {
-                return ValidationMessage.error("Field name cannot be empty");
-            } else if (StringUtil.containsWhitespace(fieldName)) {
-                return ValidationMessage.error("Field name cannot have whitespace characters");
-            }
-            return null;
-        });
+        fieldValidator =
+                new FunctionBasedValidator<>(
+                        selectedField,
+                        field -> StringUtil.isNotBlank(field.getName()),
+                        ValidationMessage.error("Field cannot be empty"));
+        fieldNameValidator =
+                new FunctionBasedValidator<>(
+                        newFieldName,
+                        fieldName -> {
+                            if (StringUtil.isBlank(fieldName)) {
+                                return ValidationMessage.error("Field name cannot be empty");
+                            } else if (StringUtil.containsWhitespace(fieldName)) {
+                                return ValidationMessage.error(
+                                        "Field name cannot have whitespace characters");
+                            }
+                            return null;
+                        });
 
-        canRename = Bindings.and(fieldValidationStatus().validProperty(), fieldNameValidationStatus().validProperty());
+        canRename =
+                Bindings.and(
+                        fieldValidationStatus().validProperty(),
+                        fieldNameValidationStatus().validProperty());
     }
 
     public ValidationStatus fieldValidationStatus() {
@@ -96,19 +108,21 @@ public class RenameFieldViewModel extends AbstractAutomaticFieldEditorTabViewMod
         NamedCompound renameEdit = new NamedCompound("RENAME_EDIT");
         int affectedEntriesCount = 0;
         if (fieldNameValidationStatus().isValid()) {
-            affectedEntriesCount = new MoveFieldValueAction(selectedField.get(),
-                    FieldFactory.parseField(newFieldName.get()),
-                    selectedEntries,
-                    renameEdit,
-                    false).executeAndGetAffectedEntriesCount();
+            affectedEntriesCount =
+                    new MoveFieldValueAction(
+                                    selectedField.get(),
+                                    FieldFactory.parseField(newFieldName.get()),
+                                    selectedEntries,
+                                    renameEdit,
+                                    false)
+                            .executeAndGetAffectedEntriesCount();
 
             if (renameEdit.hasEdits()) {
                 renameEdit.end();
             }
         }
 
-        stateManager.setLastAutomaticFieldEditorEdit(new LastAutomaticFieldEditorEdit(
-                affectedEntriesCount, TAB_INDEX, renameEdit
-        ));
+        stateManager.setLastAutomaticFieldEditorEdit(
+                new LastAutomaticFieldEditorEdit(affectedEntriesCount, TAB_INDEX, renameEdit));
     }
 }

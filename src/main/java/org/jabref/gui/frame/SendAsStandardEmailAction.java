@@ -1,9 +1,5 @@
 package org.jabref.gui.frame;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.List;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.ActionHelper;
@@ -16,9 +12,12 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.List;
 
 /**
  * Sends the selected entries to any specifiable email
@@ -30,11 +29,12 @@ public class SendAsStandardEmailAction extends SendAsEMailAction {
     private final StateManager stateManager;
     private final BibEntryTypesManager entryTypesManager;
 
-    public SendAsStandardEmailAction(DialogService dialogService,
-                                     GuiPreferences preferences,
-                                     StateManager stateManager,
-                                     BibEntryTypesManager entryTypesManager,
-                                     TaskExecutor taskExecutor) {
+    public SendAsStandardEmailAction(
+            DialogService dialogService,
+            GuiPreferences preferences,
+            StateManager stateManager,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor) {
         super(dialogService, preferences, stateManager, taskExecutor);
         this.preferences = preferences;
         this.stateManager = stateManager;
@@ -59,7 +59,9 @@ public class SendAsStandardEmailAction extends SendAsEMailAction {
         StringWriter rawEntries = new StringWriter();
         BibWriter bibWriter = new BibWriter(rawEntries, OS.NEWLINE);
 
-        BibEntryWriter bibtexEntryWriter = new BibEntryWriter(new FieldWriter(preferences.getFieldPreferences()), entryTypesManager);
+        BibEntryWriter bibtexEntryWriter =
+                new BibEntryWriter(
+                        new FieldWriter(preferences.getFieldPreferences()), entryTypesManager);
 
         for (BibEntry entry : entries) {
             try {

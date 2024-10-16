@@ -1,9 +1,5 @@
 package org.jabref.gui.plaincitationparser;
 
-import java.util.List;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -29,12 +25,16 @@ import org.jabref.logic.util.BackgroundTask;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.util.FileUpdateMonitor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
+import javax.swing.undo.UndoManager;
+
 public class PlainCitationParserViewModel {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlainCitationParserViewModel.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(PlainCitationParserViewModel.class);
 
     private final DialogService dialogService;
     private final AiService aiService;
@@ -43,31 +43,34 @@ public class PlainCitationParserViewModel {
     private final ImportHandler importHandler;
 
     private final StringProperty inputTextProperty = new SimpleStringProperty("");
-    private final ListProperty<PlainCitationParserChoice> plainCitationParsers
-            = new SimpleListProperty<>(FXCollections.observableArrayList(List.of(PlainCitationParserChoice.RULE_BASED)));
+    private final ListProperty<PlainCitationParserChoice> plainCitationParsers =
+            new SimpleListProperty<>(
+                    FXCollections.observableArrayList(
+                            List.of(PlainCitationParserChoice.RULE_BASED)));
     private final ObjectProperty<PlainCitationParserChoice> parserChoice;
 
-    public PlainCitationParserViewModel(BibDatabaseContext bibdatabaseContext,
-                                        DialogService dialogService,
-                                        AiService aiService,
-                                        GuiPreferences preferences,
-                                        FileUpdateMonitor fileUpdateMonitor,
-                                        TaskExecutor taskExecutor,
-                                        UndoManager undoManager,
-                                        StateManager stateManager
-    ) {
+    public PlainCitationParserViewModel(
+            BibDatabaseContext bibdatabaseContext,
+            DialogService dialogService,
+            AiService aiService,
+            GuiPreferences preferences,
+            FileUpdateMonitor fileUpdateMonitor,
+            TaskExecutor taskExecutor,
+            UndoManager undoManager,
+            StateManager stateManager) {
         this.dialogService = dialogService;
         this.aiService = aiService;
         this.preferences = preferences;
         this.taskExecutor = taskExecutor;
-        this.importHandler = new ImportHandler(
-                bibdatabaseContext,
-                preferences,
-                fileUpdateMonitor,
-                undoManager,
-                stateManager,
-                dialogService,
-                taskExecutor);
+        this.importHandler =
+                new ImportHandler(
+                        bibdatabaseContext,
+                        preferences,
+                        fileUpdateMonitor,
+                        undoManager,
+                        stateManager,
+                        dialogService,
+                        taskExecutor);
 
         if (preferences.getGrobidPreferences().isGrobidEnabled()) {
             plainCitationParsers.add(PlainCitationParserChoice.GROBID);
@@ -77,35 +80,60 @@ public class PlainCitationParserViewModel {
             plainCitationParsers.add(PlainCitationParserChoice.LLM);
         }
 
-        this.parserChoice = new SimpleObjectProperty<>(preferences.getImporterPreferences().defaultPlainCitationParserProperty().get());
+        this.parserChoice =
+                new SimpleObjectProperty<>(
+                        preferences
+                                .getImporterPreferences()
+                                .defaultPlainCitationParserProperty()
+                                .get());
     }
 
     public void startParsing() {
-        BackgroundTask
-                .wrap(() -> new SeveralPlainCitationParser(
-                                switch (parserChoice.get()) {
-                                    case RULE_BASED ->
-                                            new RuleBasedPlainCitationParser();
-                                    case GROBID ->
-                                            new GrobidPlainCitationParser(preferences.getGrobidPreferences(), preferences.getImportFormatPreferences());
-                                    case LLM ->
-                                            new LlmPlainCitationParser(preferences.getImportFormatPreferences(), aiService.getChatLanguageModel());
-                                }
-                        ).parseSeveralPlainCitations(inputTextProperty.getValue()))
-                .onRunning(() -> dialogService.notify(Localization.lang("Your text is being parsed...")))
-                .onFailure(e -> {
-                    if (e instanceof FetcherException) {
-                        String msg = Localization.lang("Unable to parse plain citations. Detailed information: %0",
-                                e.getMessage());
-                        dialogService.notify(msg);
-                    } else {
-                        LOGGER.warn("Missing exception handling.", e);
-                    }
-                })
-                .onSuccess(parsedEntries -> {
-                    dialogService.notify(Localization.lang("%0 entries were parsed from your query.", String.valueOf(parsedEntries.size())));
-                    importHandler.importEntries(parsedEntries);
-                }).executeWith(taskExecutor);
+        BackgroundTask.wrap(
+                        () ->
+                                new SeveralPlainCitationParser(
+                                                switch (parserChoice.get()) {
+                                                    case RULE_BASED ->
+                                                            new RuleBasedPlainCitationParser();
+                                                    case GROBID ->
+                                                            new GrobidPlainCitationParser(
+                                                                    preferences
+                                                                            .getGrobidPreferences(),
+                                                                    preferences
+                                                                            .getImportFormatPreferences());
+                                                    case LLM ->
+                                                            new LlmPlainCitationParser(
+                                                                    preferences
+                                                                            .getImportFormatPreferences(),
+                                                                    aiService
+                                                                            .getChatLanguageModel());
+                                                })
+                                        .parseSeveralPlainCitations(inputTextProperty.getValue()))
+                .onRunning(
+                        () ->
+                                dialogService.notify(
+                                        Localization.lang("Your text is being parsed...")))
+                .onFailure(
+                        e -> {
+                            if (e instanceof FetcherException) {
+                                String msg =
+                                        Localization.lang(
+                                                "Unable to parse plain citations. Detailed information: %0",
+                                                e.getMessage());
+                                dialogService.notify(msg);
+                            } else {
+                                LOGGER.warn("Missing exception handling.", e);
+                            }
+                        })
+                .onSuccess(
+                        parsedEntries -> {
+                            dialogService.notify(
+                                    Localization.lang(
+                                            "%0 entries were parsed from your query.",
+                                            String.valueOf(parsedEntries.size())));
+                            importHandler.importEntries(parsedEntries);
+                        })
+                .executeWith(taskExecutor);
     }
 
     public StringProperty inputTextProperty() {

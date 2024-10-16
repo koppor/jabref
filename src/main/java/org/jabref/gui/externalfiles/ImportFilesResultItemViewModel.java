@@ -1,7 +1,5 @@
 package org.jabref.gui.externalfiles;
 
-import java.nio.file.Path;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -11,10 +9,13 @@ import javafx.scene.paint.Color;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
 
+import java.nio.file.Path;
+
 public class ImportFilesResultItemViewModel {
 
     private final StringProperty file = new SimpleStringProperty("");
-    private final ObjectProperty<JabRefIcon> icon = new SimpleObjectProperty<>(IconTheme.JabRefIcons.WARNING);
+    private final ObjectProperty<JabRefIcon> icon =
+            new SimpleObjectProperty<>(IconTheme.JabRefIcons.WARNING);
     private final StringProperty message = new SimpleStringProperty("");
 
     public ImportFilesResultItemViewModel(Path file, boolean success, String message) {
@@ -41,6 +42,10 @@ public class ImportFilesResultItemViewModel {
 
     @Override
     public String toString() {
-        return "ImportFilesResultItemViewModel [file=" + file.get() + ", message=" + message.get() + "]";
+        return "ImportFilesResultItemViewModel [file="
+                + file.get()
+                + ", message="
+                + message.get()
+                + "]";
     }
 }

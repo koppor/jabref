@@ -1,6 +1,11 @@
 package org.jabref.gui.shared;
 
-import javax.swing.undo.UndoManager;
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+
+import jakarta.inject.Inject;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -27,10 +32,7 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
-import jakarta.inject.Inject;
+import javax.swing.undo.UndoManager;
 
 /**
  * This offers the user to connect to a remove SQL database.
@@ -74,15 +76,21 @@ public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
         this.tabContainer = tabContainer;
         this.setTitle(Localization.lang("Connect to shared database"));
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         ControlHelper.setAction(connectButton, this.getDialogPane(), event -> openDatabase());
         Button btnConnect = (Button) this.getDialogPane().lookupButton(connectButton);
         // must be set here, because in initialize the button is still null
         btnConnect.disableProperty().bind(viewModel.formValidation().validProperty().not());
-        btnConnect.textProperty().bind(EasyBind.map(viewModel.loadingProperty(), loading -> loading ? Localization.lang("Connecting...") : Localization.lang("Connect")));
+        btnConnect
+                .textProperty()
+                .bind(
+                        EasyBind.map(
+                                viewModel.loadingProperty(),
+                                loading ->
+                                        loading
+                                                ? Localization.lang("Connecting...")
+                                                : Localization.lang("Connect")));
     }
 
     @FXML
@@ -98,17 +106,18 @@ public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
     private void initialize() {
         visualizer.setDecoration(new IconValidationDecorator());
 
-        viewModel = new SharedDatabaseLoginDialogViewModel(
-                tabContainer,
-                dialogService,
-                preferences,
-                aiService,
-                stateManager,
-                entryTypesManager,
-                fileUpdateMonitor,
-                undoManager,
-                clipBoardManager,
-                taskExecutor);
+        viewModel =
+                new SharedDatabaseLoginDialogViewModel(
+                        tabContainer,
+                        dialogService,
+                        preferences,
+                        aiService,
+                        stateManager,
+                        entryTypesManager,
+                        fileUpdateMonitor,
+                        undoManager,
+                        clipBoardManager,
+                        taskExecutor);
         databaseType.getItems().addAll(DBMSType.values());
         databaseType.getSelectionModel().select(0);
 
@@ -139,18 +148,25 @@ public class SharedDatabaseLoginDialogView extends BaseDialog<Void> {
         rememberPassword.selectedProperty().bindBidirectional(viewModel.rememberPasswordProperty());
 
         // Must be executed after the initialization of the view, otherwise it doesn't work
-        Platform.runLater(() -> {
-            visualizer.initVisualization(viewModel.dbValidation(), database, true);
-            visualizer.initVisualization(viewModel.hostValidation(), host, true);
-            visualizer.initVisualization(viewModel.portValidation(), port, true);
-            visualizer.initVisualization(viewModel.userValidation(), user, true);
+        Platform.runLater(
+                () -> {
+                    visualizer.initVisualization(viewModel.dbValidation(), database, true);
+                    visualizer.initVisualization(viewModel.hostValidation(), host, true);
+                    visualizer.initVisualization(viewModel.portValidation(), port, true);
+                    visualizer.initVisualization(viewModel.userValidation(), user, true);
 
-            EasyBind.subscribe(autosave.selectedProperty(), selected ->
-                    visualizer.initVisualization(viewModel.folderValidation(), folder, true));
+                    EasyBind.subscribe(
+                            autosave.selectedProperty(),
+                            selected ->
+                                    visualizer.initVisualization(
+                                            viewModel.folderValidation(), folder, true));
 
-            EasyBind.subscribe(useSSL.selectedProperty(), selected ->
-                    visualizer.initVisualization(viewModel.keystoreValidation(), fileKeystore, true));
-        });
+                    EasyBind.subscribe(
+                            useSSL.selectedProperty(),
+                            selected ->
+                                    visualizer.initVisualization(
+                                            viewModel.keystoreValidation(), fileKeystore, true));
+                });
     }
 
     @FXML

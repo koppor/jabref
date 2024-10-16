@@ -1,18 +1,17 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Optional;
-
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.importer.Parser;
 import org.jabref.logic.importer.SearchBasedParserFetcher;
 import org.jabref.logic.importer.fetcher.transformers.DefaultQueryTransformer;
 import org.jabref.logic.importer.fileformat.MarcXmlParser;
 
-import org.apache.hc.core5.net.URIBuilder;
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Optional;
 
 /**
  * Fetcher for <a href="Bibliotheksverbund Bayern (BVB)">https://www.bib-bvb.de/</a>.
@@ -37,7 +36,8 @@ public class BvbFetcher implements SearchBasedParserFetcher {
         uriBuilder.addParameter("version", "1.1");
         uriBuilder.addParameter("recordSchema", "marcxml");
         uriBuilder.addParameter("operation", "searchRetrieve");
-        uriBuilder.addParameter("query", new DefaultQueryTransformer().transformLuceneQuery(query).orElse(""));
+        uriBuilder.addParameter(
+                "query", new DefaultQueryTransformer().transformLuceneQuery(query).orElse(""));
         uriBuilder.addParameter("maximumRecords", "30");
         return uriBuilder.build().toURL();
     }

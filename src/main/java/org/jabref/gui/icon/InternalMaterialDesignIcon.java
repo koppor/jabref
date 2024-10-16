@@ -1,17 +1,16 @@
 package org.jabref.gui.icon;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
 import org.jabref.gui.util.ColorUtil;
-
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class InternalMaterialDesignIcon implements JabRefIcon {
 
@@ -34,7 +33,11 @@ public class InternalMaterialDesignIcon implements JabRefIcon {
 
     public InternalMaterialDesignIcon(List<Ikon> icons) {
         this.icons = icons;
-        this.unicode = icons.stream().map(Ikon::getCode).map(String::valueOf).collect(Collectors.joining());
+        this.unicode =
+                icons.stream()
+                        .map(Ikon::getCode)
+                        .map(String::valueOf)
+                        .collect(Collectors.joining());
         this.color = Optional.empty();
     }
 
@@ -45,9 +48,13 @@ public class InternalMaterialDesignIcon implements JabRefIcon {
         fontIcon.getStyleClass().add("glyph-icon");
 
         // Override the default color from the css files
-        color.ifPresent(color -> fontIcon.setStyle(fontIcon.getStyle() +
-                "-fx-fill: %s;".formatted(ColorUtil.toRGBCode(color)) +
-                "-fx-icon-color: %s;".formatted(ColorUtil.toRGBCode(color))));
+        color.ifPresent(
+                color ->
+                        fontIcon.setStyle(
+                                fontIcon.getStyle()
+                                        + "-fx-fill: %s;".formatted(ColorUtil.toRGBCode(color))
+                                        + "-fx-icon-color: %s;"
+                                                .formatted(ColorUtil.toRGBCode(color))));
 
         return fontIcon;
     }

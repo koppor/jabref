@@ -35,6 +35,8 @@ public interface ExternalFileType {
      * @return A String[] containing all information about this file type.
      */
     default String[] toStringArray() {
-        return new String[]{getName(), getExtension(), getMimeType(), getOpenWithApplication(), getIcon().name()};
+        return new String[] {
+            getName(), getExtension(), getMimeType(), getOpenWithApplication(), getIcon().name()
+        };
     }
 }

@@ -1,5 +1,8 @@
 package org.jabref.gui.fieldeditors;
 
+import org.jabref.gui.externalfiletype.ExternalFileTypes;
+import org.jabref.gui.frame.ExternalApplicationsPreferences;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -8,17 +11,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.jabref.gui.externalfiletype.ExternalFileTypes;
-import org.jabref.gui.frame.ExternalApplicationsPreferences;
-
 public class URLUtil {
     private static final String URL_EXP = "^(https?|ftp)://.+";
 
     // Detect Google search URL
-    private static final String GOOGLE_SEARCH_EXP = "^https?://(?:www\\.)?google\\.[\\.a-z]+?/url.*";
+    private static final String GOOGLE_SEARCH_EXP =
+            "^https?://(?:www\\.)?google\\.[\\.a-z]+?/url.*";
 
-    private URLUtil() {
-    }
+    private URLUtil() {}
 
     /**
      * Cleans URLs returned by Google search.
@@ -92,7 +92,8 @@ public class URLUtil {
      * @param link The link
      * @return The suffix, excluding the dot (e.g. "pdf")
      */
-    public static Optional<String> getSuffix(final String link, ExternalApplicationsPreferences externalApplicationsPreferences) {
+    public static Optional<String> getSuffix(
+            final String link, ExternalApplicationsPreferences externalApplicationsPreferences) {
         String strippedLink = link;
         try {
             // Try to strip the query string, if any, to get the correct suffix:

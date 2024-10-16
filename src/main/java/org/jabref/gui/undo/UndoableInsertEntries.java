@@ -1,15 +1,14 @@
 package org.jabref.gui.undo;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.strings.StringUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class represents the removal of entries. The constructor needs
@@ -43,8 +42,12 @@ public class UndoableInsertEntries extends AbstractUndoableJabRefEdit {
             if (entries.size() > 1) {
                 return Localization.lang("paste entries");
             } else if (entries.size() == 1) {
-                return Localization.lang("paste entry %0",
-                        StringUtil.boldHTML(entries.getFirst().getCitationKey().orElse(Localization.lang("undefined"))));
+                return Localization.lang(
+                        "paste entry %0",
+                        StringUtil.boldHTML(
+                                entries.getFirst()
+                                        .getCitationKey()
+                                        .orElse(Localization.lang("undefined"))));
             } else {
                 return null;
             }
@@ -52,8 +55,12 @@ public class UndoableInsertEntries extends AbstractUndoableJabRefEdit {
             if (entries.size() > 1) {
                 return Localization.lang("insert entries");
             } else if (entries.size() == 1) {
-                return Localization.lang("insert entry %0",
-                        StringUtil.boldHTML(entries.getFirst().getCitationKey().orElse(Localization.lang("undefined"))));
+                return Localization.lang(
+                        "insert entry %0",
+                        StringUtil.boldHTML(
+                                entries.getFirst()
+                                        .getCitationKey()
+                                        .orElse(Localization.lang("undefined"))));
             } else {
                 return null;
             }

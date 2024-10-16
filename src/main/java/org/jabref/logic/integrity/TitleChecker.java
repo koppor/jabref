@@ -1,18 +1,19 @@
 package org.jabref.logic.integrity;
 
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 public class TitleChecker implements ValueChecker {
 
     private static final Pattern INSIDE_CURLY_BRAKETS = Pattern.compile("\\{[^}\\{]*\\}");
     private static final Pattern DELIMITERS = Pattern.compile("\\.|\\!|\\?|\\;|\\:|\\[");
-    private static final Predicate<String> HAS_CAPITAL_LETTERS = Pattern.compile("[\\p{Lu}\\p{Lt}]").asPredicate();
+    private static final Predicate<String> HAS_CAPITAL_LETTERS =
+            Pattern.compile("[\\p{Lu}\\p{Lt}]").asPredicate();
 
     private final BibDatabaseContext databaseContext;
 
@@ -40,7 +41,8 @@ public class TitleChecker implements ValueChecker {
             return Optional.empty();
         }
 
-        String valueOnlySpacesWithinCurlyBraces = INSIDE_CURLY_BRAKETS.matcher(value).replaceAll("");
+        String valueOnlySpacesWithinCurlyBraces =
+                INSIDE_CURLY_BRAKETS.matcher(value).replaceAll("");
 
         String[] splitTitle = DELIMITERS.split(valueOnlySpacesWithinCurlyBraces);
         for (String subTitle : splitTitle) {
@@ -48,7 +50,9 @@ public class TitleChecker implements ValueChecker {
             if (!subTitle.isEmpty()) {
                 subTitle = subTitle.substring(1);
                 if (HAS_CAPITAL_LETTERS.test(subTitle)) {
-                    return Optional.of(Localization.lang("capital letters are not masked using curly brackets {}"));
+                    return Optional.of(
+                            Localization.lang(
+                                    "capital letters are not masked using curly brackets {}"));
                 }
             }
         }

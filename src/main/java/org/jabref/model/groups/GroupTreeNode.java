@@ -1,13 +1,5 @@
 package org.jabref.model.groups;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
@@ -18,6 +10,14 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.search.SearchMatcher;
 import org.jabref.model.search.matchers.MatcherSet;
 import org.jabref.model.search.matchers.MatcherSets;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * A node in the groups tree that holds exactly one AbstractGroup.
@@ -73,17 +73,24 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
      * @param shouldRemovePreviousAssignments specifies whether previous matched entries should be removed from the old group
      * @param entriesInDatabase               list of entries in the database
      */
-    public List<FieldChange> setGroup(AbstractGroup newGroup, boolean shouldKeepPreviousAssignments,
-                                      boolean shouldRemovePreviousAssignments, List<BibEntry> entriesInDatabase) {
+    public List<FieldChange> setGroup(
+            AbstractGroup newGroup,
+            boolean shouldKeepPreviousAssignments,
+            boolean shouldRemovePreviousAssignments,
+            List<BibEntry> entriesInDatabase) {
         AbstractGroup oldGroup = getGroup();
         groupProperty.set(Objects.requireNonNull(newGroup));
 
         List<FieldChange> changes = new ArrayList<>();
-        boolean shouldRemoveFromOldGroup = shouldRemovePreviousAssignments && (oldGroup instanceof GroupEntryChanger);
-        boolean shouldAddToNewGroup = shouldKeepPreviousAssignments && (newGroup instanceof GroupEntryChanger);
+        boolean shouldRemoveFromOldGroup =
+                shouldRemovePreviousAssignments && (oldGroup instanceof GroupEntryChanger);
+        boolean shouldAddToNewGroup =
+                shouldKeepPreviousAssignments && (newGroup instanceof GroupEntryChanger);
         if (shouldAddToNewGroup || shouldRemoveFromOldGroup) {
-            List<BibEntry> entriesMatchedByOldGroup = entriesInDatabase.stream().filter(oldGroup::isMatch)
-                                                                       .collect(Collectors.toList());
+            List<BibEntry> entriesMatchedByOldGroup =
+                    entriesInDatabase.stream()
+                            .filter(oldGroup::isMatch)
+                            .collect(Collectors.toList());
             if (shouldRemoveFromOldGroup) {
                 GroupEntryChanger entryChanger = (GroupEntryChanger) oldGroup;
                 changes.addAll(entryChanger.remove(entriesMatchedByOldGroup));
@@ -109,15 +116,20 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
         if (context == GroupHierarchyType.INDEPENDENT) {
             return getGroup();
         }
-        MatcherSet searchRule = MatcherSets.build(
-                context == GroupHierarchyType.REFINING ? MatcherSets.MatcherType.AND : MatcherSets.MatcherType.OR);
+        MatcherSet searchRule =
+                MatcherSets.build(
+                        context == GroupHierarchyType.REFINING
+                                ? MatcherSets.MatcherType.AND
+                                : MatcherSets.MatcherType.OR);
         searchRule.addRule(getGroup());
-        if ((context == GroupHierarchyType.INCLUDING) && (originalContext != GroupHierarchyType.REFINING)) {
+        if ((context == GroupHierarchyType.INCLUDING)
+                && (originalContext != GroupHierarchyType.REFINING)) {
             for (GroupTreeNode child : getChildren()) {
                 searchRule.addRule(child.getSearchMatcher(originalContext));
             }
-        } else if ((context == GroupHierarchyType.REFINING) && !isRoot() && (originalContext
-                != GroupHierarchyType.INCLUDING)) {
+        } else if ((context == GroupHierarchyType.REFINING)
+                && !isRoot()
+                && (originalContext != GroupHierarchyType.INCLUDING)) {
             // noinspection OptionalGetWithoutIsPresent
             searchRule.addRule(getParent().get().getSearchMatcher(originalContext));
         }
@@ -133,8 +145,8 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
             return false;
         }
         GroupTreeNode that = (GroupTreeNode) o;
-        return Objects.equals(getGroup(), that.getGroup()) &&
-                Objects.equals(getChildren(), that.getChildren());
+        return Objects.equals(getGroup(), that.getGroup())
+                && Objects.equals(getChildren(), that.getChildren());
     }
 
     @Override
@@ -239,9 +251,7 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
      */
     public List<BibEntry> findMatches(List<BibEntry> entries) {
         SearchMatcher matcher = getSearchMatcher();
-        return entries.stream()
-                      .filter(matcher::isMatch)
-                      .collect(Collectors.toList());
+        return entries.stream().filter(matcher::isMatch).collect(Collectors.toList());
     }
 
     /**
@@ -268,16 +278,14 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
      */
     public String getPath() {
         return getPathFromRoot().stream()
-                                .skip(1) // Skip root
-                                .map(GroupTreeNode::getName)
-                                .collect(Collectors.joining(PATH_DELIMITER));
+                .skip(1) // Skip root
+                .map(GroupTreeNode::getName)
+                .collect(Collectors.joining(PATH_DELIMITER));
     }
 
     @Override
     public String toString() {
-        return "GroupTreeNode{" +
-                "group=" + getGroup() +
-                '}';
+        return "GroupTreeNode{" + "group=" + getGroup() + '}';
     }
 
     /**
@@ -288,10 +296,10 @@ public class GroupTreeNode extends TreeNode<GroupTreeNode> {
     public Optional<GroupTreeNode> getChildByPath(String pathToSource) {
         GroupTreeNode present = this;
         for (String groupName : pathToSource.split(PATH_DELIMITER)) {
-            Optional<GroupTreeNode> childWithName = present
-                    .getChildren().stream()
-                    .filter(group -> Objects.equals(group.getName(), groupName))
-                    .findFirst();
+            Optional<GroupTreeNode> childWithName =
+                    present.getChildren().stream()
+                            .filter(group -> Objects.equals(group.getName(), groupName))
+                            .findFirst();
             if (childWithName.isPresent()) {
                 present = childWithName.get();
             } else {

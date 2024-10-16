@@ -1,19 +1,10 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.Objects;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.jabref.logic.importer.Importer;
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.msbib.MSBibDatabase;
 import org.jabref.logic.util.StandardFileType;
-
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +14,14 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.Objects;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 /**
  * Importer for the MS Office 2007 XML bibliography format
  */
@@ -31,8 +30,10 @@ public class MsBibImporter extends Importer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MsBibImporter.class);
     private static final String DISABLEDTD = "http://apache.org/xml/features/disallow-doctype-decl";
-    private static final String DISABLEEXTERNALDTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
-    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = makeSafeDocBuilderFactory(DocumentBuilderFactory.newInstance());
+    private static final String DISABLEEXTERNALDTD =
+            "http://apache.org/xml/features/nonvalidating/load-external-dtd";
+    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY =
+            makeSafeDocBuilderFactory(DocumentBuilderFactory.newInstance());
 
     /**
      * The correct behavior is to return false if it is certain that the file is
@@ -45,22 +46,23 @@ public class MsBibImporter extends Importer {
         Document docin;
         try {
             DocumentBuilder dbuild = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
-            dbuild.setErrorHandler(new ErrorHandler() {
-                @Override
-                public void warning(SAXParseException exception) throws SAXException {
-                    // ignore warnings
-                }
+            dbuild.setErrorHandler(
+                    new ErrorHandler() {
+                        @Override
+                        public void warning(SAXParseException exception) throws SAXException {
+                            // ignore warnings
+                        }
 
-                @Override
-                public void fatalError(SAXParseException exception) throws SAXException {
-                    throw exception;
-                }
+                        @Override
+                        public void fatalError(SAXParseException exception) throws SAXException {
+                            throw exception;
+                        }
 
-                @Override
-                public void error(SAXParseException exception) throws SAXException {
-                    throw exception;
-                }
-            });
+                        @Override
+                        public void error(SAXParseException exception) throws SAXException {
+                            throw exception;
+                        }
+                    });
 
             docin = dbuild.parse(new InputSource(reader));
         } catch (Exception e) {
@@ -111,7 +113,10 @@ public class MsBibImporter extends Importer {
             dBuild.setXIncludeAware(false);
             dBuild.setExpandEntityReferences(false);
         } catch (ParserConfigurationException e) {
-            LOGGER.warn("Builder not fully configured. Feature:'{}' is probably not supported by current XML processor. {}", feature, e);
+            LOGGER.warn(
+                    "Builder not fully configured. Feature:'{}' is probably not supported by current XML processor. {}",
+                    feature,
+                    e);
         }
 
         return dBuild;

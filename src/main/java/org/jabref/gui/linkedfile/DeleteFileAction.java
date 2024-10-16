@@ -1,11 +1,5 @@
 package org.jabref.gui.linkedfile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-
 import javafx.collections.FXCollections;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -26,11 +20,16 @@ import org.jabref.logic.FilePreferences;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.LinkedFile;
-
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 
 @NullMarked
 public class DeleteFileAction extends SimpleCommand {
@@ -44,11 +43,12 @@ public class DeleteFileAction extends SimpleCommand {
     private final List<LinkedFileViewModel> filesToDelete;
     private boolean success = false;
 
-    public DeleteFileAction(DialogService dialogService,
-                            FilePreferences filePreferences,
-                            BibDatabaseContext databaseContext,
-                            @Nullable LinkedFilesEditorViewModel viewModel,
-                            List<LinkedFileViewModel> filesToDelete) {
+    public DeleteFileAction(
+            DialogService dialogService,
+            FilePreferences filePreferences,
+            BibDatabaseContext databaseContext,
+            @Nullable LinkedFilesEditorViewModel viewModel,
+            List<LinkedFileViewModel> filesToDelete) {
         this.dialogService = dialogService;
         this.filePreferences = filePreferences;
         this.databaseContext = databaseContext;
@@ -59,10 +59,11 @@ public class DeleteFileAction extends SimpleCommand {
     /**
      * Called when the user wants to delete a complete entry.
      */
-    public DeleteFileAction(DialogService dialogService,
-                            FilePreferences filePreferences,
-                            BibDatabaseContext databaseContext,
-                            List<LinkedFileViewModel> filesToDelete) {
+    public DeleteFileAction(
+            DialogService dialogService,
+            FilePreferences filePreferences,
+            BibDatabaseContext databaseContext,
+            List<LinkedFileViewModel> filesToDelete) {
         this(dialogService, filePreferences, databaseContext, null, filesToDelete);
     }
 
@@ -73,7 +74,8 @@ public class DeleteFileAction extends SimpleCommand {
     @Override
     public void execute() {
         if (filesToDelete.isEmpty()) {
-            dialogService.notify(Localization.lang("This operation requires selected linked files."));
+            dialogService.notify(
+                    Localization.lang("This operation requires selected linked files."));
             return;
         }
 
@@ -98,7 +100,8 @@ public class DeleteFileAction extends SimpleCommand {
                 Path path = file.get();
                 dialogTitle = Localization.lang("Delete '%0'", path.getFileName().toString());
             } else {
-                dialogService.notify(Localization.lang("Error accessing file '%0'.", linkedFile.getLink()));
+                dialogService.notify(
+                        Localization.lang("Error accessing file '%0'.", linkedFile.getLink()));
                 // Deleting a non-existing file is a success
                 success = true;
                 return;
@@ -115,10 +118,16 @@ public class DeleteFileAction extends SimpleCommand {
         }
         ButtonType deleteFromDisk = new ButtonType(label);
 
-        ButtonType removeFromEntry = new ButtonType(Localization.lang("Keep file(s)"), ButtonBar.ButtonData.YES);
+        ButtonType removeFromEntry =
+                new ButtonType(Localization.lang("Keep file(s)"), ButtonBar.ButtonData.YES);
 
-        Optional<ButtonType> buttonType = dialogService.showCustomDialogAndWait(
-                dialogTitle, dialogPane, removeFromEntry, deleteFromDisk, ButtonType.CANCEL);
+        Optional<ButtonType> buttonType =
+                dialogService.showCustomDialogAndWait(
+                        dialogTitle,
+                        dialogPane,
+                        removeFromEntry,
+                        deleteFromDisk,
+                        ButtonType.CANCEL);
 
         if (buttonType.isPresent()) {
             ButtonType theButtonType = buttonType.get();
@@ -135,11 +144,13 @@ public class DeleteFileAction extends SimpleCommand {
         warning.setGlyphSize(24.0);
         Label header = new Label(description, warning);
         header.setWrapText(true);
-        header.setStyle("""
+        header.setStyle(
+                """
                 -fx-padding: 10px;
                 -fx-background-color: -fx-background;""");
 
-        ListView<LinkedFileViewModel> filesToDeleteList = new ListView<>(FXCollections.observableArrayList(filesToDelete));
+        ListView<LinkedFileViewModel> filesToDeleteList =
+                new ListView<>(FXCollections.observableArrayList(filesToDelete));
         new ViewModelListCellFactory<LinkedFileViewModel>()
                 .withText(item -> item.getFile().getLink())
                 .install(filesToDeleteList);
@@ -179,7 +190,8 @@ public class DeleteFileAction extends SimpleCommand {
 
         if (file.isEmpty()) {
             LOGGER.warn("Could not find file {}", linkedFile.getLink());
-            dialogService.notify(Localization.lang("Error accessing file '%0'.", linkedFile.getLink()));
+            dialogService.notify(
+                    Localization.lang("Error accessing file '%0'.", linkedFile.getLink()));
             // Deleting a non-existing file is a success
             success = true;
             return;
@@ -199,7 +211,9 @@ public class DeleteFileAction extends SimpleCommand {
             success = true;
         } catch (IOException ex) {
             success = false;
-            dialogService.showErrorDialogAndWait(Localization.lang("Cannot delete file '%0'", theFile), Localization.lang("File permission error"));
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Cannot delete file '%0'", theFile),
+                    Localization.lang("File permission error"));
             LOGGER.warn("Error while deleting: {}", linkedFile, ex);
         }
     }

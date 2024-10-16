@@ -1,8 +1,5 @@
 package org.jabref.gui.importer;
 
-import java.util.Optional;
-import java.util.function.Supplier;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
@@ -12,9 +9,11 @@ import org.jabref.gui.entrytype.EntryTypeView;
 import org.jabref.gui.preferences.GuiPreferences;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.types.EntryType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
+import java.util.function.Supplier;
 
 public class NewEntryAction extends SimpleCommand {
 
@@ -31,7 +30,11 @@ public class NewEntryAction extends SimpleCommand {
 
     private final GuiPreferences preferences;
 
-    public NewEntryAction(Supplier<LibraryTab> tabSupplier, DialogService dialogService, GuiPreferences preferences, StateManager stateManager) {
+    public NewEntryAction(
+            Supplier<LibraryTab> tabSupplier,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            StateManager stateManager) {
         this.tabSupplier = tabSupplier;
         this.dialogService = dialogService;
         this.preferences = preferences;
@@ -41,7 +44,12 @@ public class NewEntryAction extends SimpleCommand {
         this.executable.bind(ActionHelper.needsDatabase(stateManager));
     }
 
-    public NewEntryAction(Supplier<LibraryTab> tabSupplier, EntryType type, DialogService dialogService, GuiPreferences preferences, StateManager stateManager) {
+    public NewEntryAction(
+            Supplier<LibraryTab> tabSupplier,
+            EntryType type,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            StateManager stateManager) {
         this(tabSupplier, dialogService, preferences, stateManager);
         this.type = Optional.ofNullable(type);
     }
@@ -56,8 +64,10 @@ public class NewEntryAction extends SimpleCommand {
         if (type.isPresent()) {
             tabSupplier.get().insertEntry(new BibEntry(type.get()));
         } else {
-            EntryTypeView typeChoiceDialog = new EntryTypeView(tabSupplier.get(), dialogService, preferences);
-            EntryType selectedType = dialogService.showCustomDialogAndWait(typeChoiceDialog).orElse(null);
+            EntryTypeView typeChoiceDialog =
+                    new EntryTypeView(tabSupplier.get(), dialogService, preferences);
+            EntryType selectedType =
+                    dialogService.showCustomDialogAndWait(typeChoiceDialog).orElse(null);
             if (selectedType == null) {
                 return;
             }

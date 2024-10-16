@@ -1,5 +1,23 @@
 package org.jabref.logic.importer.fetcher;
 
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.logic.importer.FulltextFetcher;
+import org.jabref.logic.importer.IdBasedParserFetcher;
+import org.jabref.logic.importer.ImportFormatPreferences;
+import org.jabref.logic.importer.ParseException;
+import org.jabref.logic.importer.Parser;
+import org.jabref.logic.importer.SearchBasedParserFetcher;
+import org.jabref.logic.importer.fetcher.transformers.JstorQueryTransformer;
+import org.jabref.logic.importer.fileformat.BibtexParser;
+import org.jabref.logic.net.URLDownload;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,29 +31,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.FulltextFetcher;
-import org.jabref.logic.importer.IdBasedParserFetcher;
-import org.jabref.logic.importer.ImportFormatPreferences;
-import org.jabref.logic.importer.ParseException;
-import org.jabref.logic.importer.Parser;
-import org.jabref.logic.importer.SearchBasedParserFetcher;
-import org.jabref.logic.importer.fetcher.transformers.JstorQueryTransformer;
-import org.jabref.logic.importer.fileformat.BibtexParser;
-import org.jabref.logic.net.URLDownload;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-
-import org.apache.hc.core5.net.URIBuilder;
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
 /**
  * Fetcher for jstor.org
  **/
-public class JstorFetcher implements SearchBasedParserFetcher, FulltextFetcher, IdBasedParserFetcher {
+public class JstorFetcher
+        implements SearchBasedParserFetcher, FulltextFetcher, IdBasedParserFetcher {
 
     private static final String HOST = "https://www.jstor.org";
     private static final String SEARCH_HOST = HOST + "/open/search";
@@ -49,9 +49,11 @@ public class JstorFetcher implements SearchBasedParserFetcher, FulltextFetcher, 
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery) throws URISyntaxException, MalformedURLException {
+    public URL getURLForQuery(QueryNode luceneQuery)
+            throws URISyntaxException, MalformedURLException {
         URIBuilder uriBuilder = new URIBuilder(SEARCH_HOST);
-        uriBuilder.addParameter("Query", new JstorQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
+        uriBuilder.addParameter(
+                "Query", new JstorQueryTransformer().transformLuceneQuery(luceneQuery).orElse(""));
         return uriBuilder.build().toURL();
     }
 
@@ -76,8 +78,10 @@ public class JstorFetcher implements SearchBasedParserFetcher, FulltextFetcher, 
     public Parser getParser() {
         return inputStream -> {
             BibtexParser parser = new BibtexParser(importFormatPreferences);
-            String text = new BufferedReader(
-                    new InputStreamReader(inputStream, StandardCharsets.UTF_8)).lines().collect(Collectors.joining());
+            String text =
+                    new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+                            .lines()
+                            .collect(Collectors.joining());
 
             // does the input stream contain bibtex ?
             if (text.startsWith("@")) {

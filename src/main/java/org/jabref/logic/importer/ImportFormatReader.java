@@ -1,14 +1,5 @@
 package org.jabref.logic.importer;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.jabref.logic.citationkeypattern.CitationKeyPatternPreferences;
 import org.jabref.logic.importer.fileformat.BiblioscapeImporter;
 import org.jabref.logic.importer.fileformat.BibtexImporter;
@@ -37,6 +28,15 @@ import org.jabref.model.database.BibDatabases;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.util.FileUpdateMonitor;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 public class ImportFormatReader {
 
     public static final String BIBTEX_FORMAT = "BibTeX";
@@ -52,10 +52,11 @@ public class ImportFormatReader {
     private final FileUpdateMonitor fileUpdateMonitor;
     private final CitationKeyPatternPreferences citationKeyPatternPreferences;
 
-    public ImportFormatReader(ImporterPreferences importerPreferences,
-                              ImportFormatPreferences importFormatPreferences,
-                              CitationKeyPatternPreferences citationKeyPatternPreferences,
-                              FileUpdateMonitor fileUpdateMonitor) {
+    public ImportFormatReader(
+            ImporterPreferences importerPreferences,
+            ImportFormatPreferences importFormatPreferences,
+            CitationKeyPatternPreferences citationKeyPatternPreferences,
+            FileUpdateMonitor fileUpdateMonitor) {
         this.importerPreferences = importerPreferences;
         this.importFormatPreferences = importFormatPreferences;
         this.fileUpdateMonitor = fileUpdateMonitor;
@@ -137,8 +138,7 @@ public class ImportFormatReader {
         return new TreeSet<>(this.formats);
     }
 
-    public record UnknownFormatImport(String format, ParserResult parserResult) {
-    }
+    public record UnknownFormatImport(String format, ParserResult parserResult) {}
 
     /**
      * Tries to import a file by iterating through the available import filters,
@@ -148,18 +148,24 @@ public class ImportFormatReader {
      *
      * @throws ImportException if the import fails (for example, if no suitable importer is found)
      */
-    public UnknownFormatImport importUnknownFormat(Path filePath, FileUpdateMonitor fileMonitor) throws ImportException {
+    public UnknownFormatImport importUnknownFormat(Path filePath, FileUpdateMonitor fileMonitor)
+            throws ImportException {
         Objects.requireNonNull(filePath);
 
         try {
-            UnknownFormatImport unknownFormatImport = importUnknownFormat(importer -> importer.importDatabase(filePath), importer -> importer.isRecognizedFormat(filePath));
+            UnknownFormatImport unknownFormatImport =
+                    importUnknownFormat(
+                            importer -> importer.importDatabase(filePath),
+                            importer -> importer.isRecognizedFormat(filePath));
             unknownFormatImport.parserResult.setPath(filePath);
             return unknownFormatImport;
         } catch (ImportException e) {
             // If all importers fail, try to read the file as BibTeX
             try {
-                ParserResult parserResult = OpenDatabase.loadDatabase(filePath, importFormatPreferences, fileMonitor);
-                if (parserResult.getDatabase().hasEntries() || !parserResult.getDatabase().hasNoStrings()) {
+                ParserResult parserResult =
+                        OpenDatabase.loadDatabase(filePath, importFormatPreferences, fileMonitor);
+                if (parserResult.getDatabase().hasEntries()
+                        || !parserResult.getDatabase().hasNoStrings()) {
                     parserResult.setPath(filePath);
                     return new UnknownFormatImport(ImportFormatReader.BIBTEX_FORMAT, parserResult);
                 } else {
@@ -167,7 +173,8 @@ public class ImportFormatReader {
                 }
             } catch (IOException ignore) {
                 // Ignored
-                throw new ImportException(Localization.lang("Could not find a suitable import format."));
+                throw new ImportException(
+                        Localization.lang("Could not find a suitable import format."));
             }
         }
     }
@@ -181,7 +188,10 @@ public class ImportFormatReader {
      * @return an UnknownFormatImport with the imported entries and metadata
      * @throws ImportException if the import fails (for example, if no suitable importer is found)
      */
-    private UnknownFormatImport importUnknownFormat(CheckedFunction<Importer, ParserResult> importDatabase, CheckedFunction<Importer, Boolean> isRecognizedFormat) throws ImportException {
+    private UnknownFormatImport importUnknownFormat(
+            CheckedFunction<Importer, ParserResult> importDatabase,
+            CheckedFunction<Importer, Boolean> isRecognizedFormat)
+            throws ImportException {
         // stores ref to best result, gets updated at the next loop
         List<BibEntry> bestResult = null;
         int bestResultCount = 0;
@@ -236,6 +246,8 @@ public class ImportFormatReader {
     public UnknownFormatImport importUnknownFormat(String data) throws ImportException {
         Objects.requireNonNull(data);
 
-        return importUnknownFormat(importer -> importer.importDatabase(data), importer -> importer.isRecognizedFormat(data));
+        return importUnknownFormat(
+                importer -> importer.importDatabase(data),
+                importer -> importer.isRecognizedFormat(data));
     }
 }

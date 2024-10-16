@@ -1,12 +1,12 @@
 package org.jabref.model.texparser;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import com.google.common.collect.Multimap;
 
 import org.jabref.model.entry.BibEntry;
 
-import com.google.common.collect.Multimap;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 public class LatexBibEntriesResolverResult {
 
@@ -32,9 +32,8 @@ public class LatexBibEntriesResolverResult {
 
     @Override
     public String toString() {
-        return "TexBibEntriesResolverResult{latexParserResults=%s, newEntries=%s}".formatted(
-                this.latexParserResults,
-                this.newEntries);
+        return "TexBibEntriesResolverResult{latexParserResults=%s, newEntries=%s}"
+                .formatted(this.latexParserResults, this.newEntries);
     }
 
     @Override

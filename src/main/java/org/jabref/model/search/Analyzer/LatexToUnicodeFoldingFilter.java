@@ -1,18 +1,17 @@
 package org.jabref.model.search.Analyzer;
 
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.jabref.architecture.AllowedToUseLogic;
-import org.jabref.logic.cleanup.Formatter;
-import org.jabref.logic.layout.format.LatexToUnicodeFormatter;
-
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
+import org.jabref.architecture.AllowedToUseLogic;
+import org.jabref.logic.cleanup.Formatter;
+import org.jabref.logic.layout.format.LatexToUnicodeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @implNote Implementation based on {@link org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter}
@@ -32,8 +31,7 @@ public final class LatexToUnicodeFoldingFilter extends TokenFilter {
         super(input);
     }
 
-    private record FoldingResult(char[] output, int length) {
-    }
+    private record FoldingResult(char[] output, int length) {}
 
     @Override
     public boolean incrementToken() throws IOException {

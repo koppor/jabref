@@ -1,8 +1,5 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.Map;
-import java.util.Set;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.MapProperty;
@@ -15,6 +12,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
 import org.jabref.model.entry.field.Field;
+
+import java.util.Map;
+import java.util.Set;
 
 public class EntryEditorPreferences {
 
@@ -53,25 +53,28 @@ public class EntryEditorPreferences {
     private final BooleanProperty showUserCommentsFields;
     private final DoubleProperty previewWidthDividerPosition;
 
-    public EntryEditorPreferences(Map<String, Set<Field>> entryEditorTabList,
-                                  Map<String, Set<Field>> defaultEntryEditorTabList,
-                                  boolean shouldOpenOnNewEntry,
-                                  boolean shouldShowRecommendationsTab,
-                                  boolean shouldShowAiSummaryTab,
-                                  boolean shouldShowAiChatTab,
-                                  boolean shouldShowLatexCitationsTab,
-                                  boolean showSourceTabByDefault,
-                                  boolean enableValidation,
-                                  boolean allowIntegerEditionBibtex,
-                                  double dividerPosition,
-                                  boolean autolinkFilesEnabled,
-                                  JournalPopupEnabled journalPopupEnabled,
-                                  boolean showSciteTab,
-                                  boolean showUserCommentsFields,
-                                  double previewWidthDividerPosition) {
+    public EntryEditorPreferences(
+            Map<String, Set<Field>> entryEditorTabList,
+            Map<String, Set<Field>> defaultEntryEditorTabList,
+            boolean shouldOpenOnNewEntry,
+            boolean shouldShowRecommendationsTab,
+            boolean shouldShowAiSummaryTab,
+            boolean shouldShowAiChatTab,
+            boolean shouldShowLatexCitationsTab,
+            boolean showSourceTabByDefault,
+            boolean enableValidation,
+            boolean allowIntegerEditionBibtex,
+            double dividerPosition,
+            boolean autolinkFilesEnabled,
+            JournalPopupEnabled journalPopupEnabled,
+            boolean showSciteTab,
+            boolean showUserCommentsFields,
+            double previewWidthDividerPosition) {
 
-        this.entryEditorTabList = new SimpleMapProperty<>(FXCollections.observableMap(entryEditorTabList));
-        this.defaultEntryEditorTabList = new SimpleMapProperty<>(FXCollections.observableMap(defaultEntryEditorTabList));
+        this.entryEditorTabList =
+                new SimpleMapProperty<>(FXCollections.observableMap(entryEditorTabList));
+        this.defaultEntryEditorTabList =
+                new SimpleMapProperty<>(FXCollections.observableMap(defaultEntryEditorTabList));
         this.shouldOpenOnNewEntry = new SimpleBooleanProperty(shouldOpenOnNewEntry);
         this.shouldShowRecommendationsTab = new SimpleBooleanProperty(shouldShowRecommendationsTab);
         this.shouldShowAiSummaryTab = new SimpleBooleanProperty(shouldShowAiSummaryTab);

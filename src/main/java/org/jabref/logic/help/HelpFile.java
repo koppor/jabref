@@ -10,15 +10,18 @@ public enum HelpFile {
     CONTENTS(""), // this is always the index
     ENTRY_EDITOR("advanced/entryeditor"),
     STRING_EDITOR("setup/stringeditor"),
-    GROUPS("finding-sorting-and-cleaning-entries/groups#groups-structure-creating-and-removing-groups"),
+    GROUPS(
+            "finding-sorting-and-cleaning-entries/groups#groups-structure-creating-and-removing-groups"),
     SPECIAL_FIELDS("finding-sorting-and-cleaning-entries/specialfields"),
     CITATION_KEY_PATTERN("setup/citationkeypatterns"),
     OWNER("advanced/entryeditor/owner"),
     TIMESTAMP("advanced/entryeditor/timestamp"),
-    CUSTOM_EXPORTS_NAME_FORMATTER("collaborative-work/export/customexports#using-custom-name-formatters"),
+    CUSTOM_EXPORTS_NAME_FORMATTER(
+            "collaborative-work/export/customexports#using-custom-name-formatters"),
     GENERAL_FIELDS("setup/generalfields"),
     REMOTE("advanced/remote"),
-    REGEX_SEARCH("finding-sorting-and-cleaning-entries/filelinks#using-regular-expression-search-for-auto-linking"),
+    REGEX_SEARCH(
+            "finding-sorting-and-cleaning-entries/filelinks#using-regular-expression-search-for-auto-linking"),
     PREVIEW("setup/preview"),
     AUTOSAVE("advanced/autosave"),
     // The help page covers both OO and LO.

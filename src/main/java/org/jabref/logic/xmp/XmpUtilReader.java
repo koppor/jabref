@@ -1,17 +1,5 @@
 package org.jabref.logic.xmp;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.LinkedFile;
-import org.jabref.model.schema.DublinCoreSchemaCustom;
-
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
@@ -19,8 +7,19 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.DublinCoreSchema;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.LinkedFile;
+import org.jabref.model.schema.DublinCoreSchemaCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 public class XmpUtilReader {
 
@@ -31,7 +30,10 @@ public class XmpUtilReader {
 
     public XmpUtilReader() {
         // See: https://pdfbox.apache.org/2.0/getting-started.html
-        System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider"); // To get higher rendering speed on java 8 oder 9 for images
+        System.setProperty(
+                "sun.java2d.cmm",
+                "sun.java2d.cmm.kcms.KcmsServiceProvider"); // To get higher rendering speed on java
+        // 8 oder 9 for images
     }
 
     /**
@@ -57,8 +59,7 @@ public class XmpUtilReader {
      * @throws IOException Throws an IOException if the file cannot be read, so the user than remove a lock or cancel
      *                     the operation.
      */
-    public List<BibEntry> readXmp(Path path, XmpPreferences xmpPreferences)
-            throws IOException {
+    public List<BibEntry> readXmp(Path path, XmpPreferences xmpPreferences) throws IOException {
 
         List<BibEntry> result = new LinkedList<>();
 
@@ -68,9 +69,12 @@ public class XmpUtilReader {
             if (!xmpMetaList.isEmpty()) {
                 // Only support Dublin Core since JabRef 4.2
                 for (XMPMetadata xmpMeta : xmpMetaList) {
-                    DublinCoreSchema dcSchema = DublinCoreSchemaCustom.copyDublinCoreSchema(xmpMeta.getDublinCoreSchema());
+                    DublinCoreSchema dcSchema =
+                            DublinCoreSchemaCustom.copyDublinCoreSchema(
+                                    xmpMeta.getDublinCoreSchema());
                     if (dcSchema != null) {
-                        DublinCoreExtractor dcExtractor = new DublinCoreExtractor(dcSchema, xmpPreferences, new BibEntry());
+                        DublinCoreExtractor dcExtractor =
+                                new DublinCoreExtractor(dcSchema, xmpPreferences, new BibEntry());
                         Optional<BibEntry> entry = dcExtractor.extractBibtexEntry();
                         entry.ifPresent(result::add);
                     }
@@ -79,7 +83,8 @@ public class XmpUtilReader {
             if (result.isEmpty()) {
                 // If we did not find any XMP metadata, search for non XMP metadata
                 PDDocumentInformation documentInformation = document.getDocumentInformation();
-                DocumentInformationExtractor diExtractor = new DocumentInformationExtractor(documentInformation);
+                DocumentInformationExtractor diExtractor =
+                        new DocumentInformationExtractor(documentInformation);
                 Optional<BibEntry> entry = diExtractor.extractBibtexEntry();
                 entry.ifPresent(result::add);
             }
@@ -112,14 +117,17 @@ public class XmpUtilReader {
         int startDescriptionSection = xmp.indexOf(START_TAG);
         int endDescriptionSection = xmp.lastIndexOf(END_TAG) + END_TAG.length();
 
-        if ((startDescriptionSection < 0) || (startDescriptionSection > endDescriptionSection) || (endDescriptionSection == (END_TAG.length() - 1))) {
+        if ((startDescriptionSection < 0)
+                || (startDescriptionSection > endDescriptionSection)
+                || (endDescriptionSection == (END_TAG.length() - 1))) {
             return metaList;
         }
 
         // XML header for the xmpDomParser
         String start = xmp.substring(0, startDescriptionSection);
         // descriptionArray - mid part of the textual metadata
-        String[] descriptionsArray = xmp.substring(startDescriptionSection, endDescriptionSection).split(END_TAG);
+        String[] descriptionsArray =
+                xmp.substring(startDescriptionSection, endDescriptionSection).split(END_TAG);
         // XML footer for the xmpDomParser
         String end = xmp.substring(endDescriptionSection);
 
@@ -127,7 +135,9 @@ public class XmpUtilReader {
             // END_TAG is appended, because of the split operation above
             String xmpMetaString = start + s + END_TAG + end;
             try {
-                metaList.add(XmpUtilShared.parseXmpMetadata(new ByteArrayInputStream(xmpMetaString.getBytes())));
+                metaList.add(
+                        XmpUtilShared.parseXmpMetadata(
+                                new ByteArrayInputStream(xmpMetaString.getBytes())));
             } catch (IOException ex) {
                 LOGGER.debug("Problem parsing XMP schema. Continuing with other schemas.", ex);
             }

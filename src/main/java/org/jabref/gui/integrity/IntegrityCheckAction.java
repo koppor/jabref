@@ -1,8 +1,6 @@
 package org.jabref.gui.integrity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
+import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -20,7 +18,9 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 
-import static org.jabref.gui.actions.ActionHelper.needsDatabase;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class IntegrityCheckAction extends SimpleCommand {
 
@@ -31,12 +31,13 @@ public class IntegrityCheckAction extends SimpleCommand {
     private final StateManager stateManager;
     private final JournalAbbreviationRepository abbreviationRepository;
 
-    public IntegrityCheckAction(Supplier<LibraryTab> tabSupplier,
-                                GuiPreferences preferences,
-                                DialogService dialogService,
-                                StateManager stateManager,
-                                UiTaskExecutor taskExecutor,
-                                JournalAbbreviationRepository abbreviationRepository) {
+    public IntegrityCheckAction(
+            Supplier<LibraryTab> tabSupplier,
+            GuiPreferences preferences,
+            DialogService dialogService,
+            StateManager stateManager,
+            UiTaskExecutor taskExecutor,
+            JournalAbbreviationRepository abbreviationRepository) {
         this.tabSupplier = tabSupplier;
         this.stateManager = stateManager;
         this.taskExecutor = taskExecutor;
@@ -48,40 +49,52 @@ public class IntegrityCheckAction extends SimpleCommand {
 
     @Override
     public void execute() {
-        BibDatabaseContext database = stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
-        IntegrityCheck check = new IntegrityCheck(database,
-                preferences.getFilePreferences(),
-                preferences.getCitationKeyPatternPreferences(),
-                abbreviationRepository,
-                preferences.getEntryEditorPreferences().shouldAllowIntegerEditionBibtex());
+        BibDatabaseContext database =
+                stateManager
+                        .getActiveDatabase()
+                        .orElseThrow(() -> new NullPointerException("Database null"));
+        IntegrityCheck check =
+                new IntegrityCheck(
+                        database,
+                        preferences.getFilePreferences(),
+                        preferences.getCitationKeyPatternPreferences(),
+                        abbreviationRepository,
+                        preferences.getEntryEditorPreferences().shouldAllowIntegerEditionBibtex());
 
-        Task<List<IntegrityMessage>> task = new Task<>() {
-            @Override
-            protected List<IntegrityMessage> call() {
-                ObservableList<BibEntry> entries = database.getDatabase().getEntries();
-                List<IntegrityMessage> result = new ArrayList<>(check.checkDatabase(database.getDatabase()));
-                for (int i = 0; i < entries.size(); i++) {
-                    if (isCancelled()) {
-                        break;
+        Task<List<IntegrityMessage>> task =
+                new Task<>() {
+                    @Override
+                    protected List<IntegrityMessage> call() {
+                        ObservableList<BibEntry> entries = database.getDatabase().getEntries();
+                        List<IntegrityMessage> result =
+                                new ArrayList<>(check.checkDatabase(database.getDatabase()));
+                        for (int i = 0; i < entries.size(); i++) {
+                            if (isCancelled()) {
+                                break;
+                            }
+
+                            BibEntry entry = entries.get(i);
+                            result.addAll(check.checkEntry(entry));
+                            updateProgress(i, entries.size());
+                        }
+
+                        return result;
                     }
-
-                    BibEntry entry = entries.get(i);
-                    result.addAll(check.checkEntry(entry));
-                    updateProgress(i, entries.size());
-                }
-
-                return result;
-            }
-        };
-        task.setOnSucceeded(value -> {
-            List<IntegrityMessage> messages = task.getValue();
-            if (messages.isEmpty()) {
-                dialogService.notify(Localization.lang("No problems found."));
-            } else {
-                dialogService.showCustomDialogAndWait(new IntegrityCheckDialog(messages, tabSupplier.get()));
-            }
-        });
-        task.setOnFailed(event -> dialogService.showErrorDialogAndWait("Integrity check failed.", task.getException()));
+                };
+        task.setOnSucceeded(
+                value -> {
+                    List<IntegrityMessage> messages = task.getValue();
+                    if (messages.isEmpty()) {
+                        dialogService.notify(Localization.lang("No problems found."));
+                    } else {
+                        dialogService.showCustomDialogAndWait(
+                                new IntegrityCheckDialog(messages, tabSupplier.get()));
+                    }
+                });
+        task.setOnFailed(
+                event ->
+                        dialogService.showErrorDialogAndWait(
+                                "Integrity check failed.", task.getException()));
 
         dialogService.showProgressDialog(
                 Localization.lang("Checking integrity..."),

@@ -1,7 +1,9 @@
 package org.jabref.logic.openoffice.frontend;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
+import com.sun.star.text.XTextRange;
 
 import org.jabref.logic.openoffice.style.JStyle;
 import org.jabref.logic.openoffice.style.OOFormatBibliography;
@@ -14,46 +16,35 @@ import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.uno.UnoBookmark;
 import org.jabref.model.openoffice.uno.UnoTextSection;
 
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XTextCursor;
-import com.sun.star.text.XTextDocument;
-import com.sun.star.text.XTextRange;
+import java.io.IOException;
+import java.util.Optional;
 
 public class UpdateBibliography {
 
     private static final String BIB_SECTION_NAME = "JR_bib";
     private static final String BIB_SECTION_END_NAME = "JR_bib_end";
 
-    private UpdateBibliography() {
-    }
+    private UpdateBibliography() {}
 
     public static Optional<XTextRange> getBibliographyRange(XTextDocument doc)
-            throws
-            NoDocumentException,
-            WrappedTargetException {
+            throws NoDocumentException, WrappedTargetException {
         return UnoTextSection.getAnchor(doc, BIB_SECTION_NAME);
     }
 
     /**
      * Rebuilds the bibliography.
      */
-    public static void rebuildBibTextSection(XTextDocument doc,
-                                             OOFrontend frontend,
-                                             CitedKeys bibliography,
-                                             JStyle style,
-                                             boolean alwaysAddCitedOnPages)
-            throws
-            WrappedTargetException,
-            CreationException,
-            NoDocumentException, IOException {
+    public static void rebuildBibTextSection(
+            XTextDocument doc,
+            OOFrontend frontend,
+            CitedKeys bibliography,
+            JStyle style,
+            boolean alwaysAddCitedOnPages)
+            throws WrappedTargetException, CreationException, NoDocumentException, IOException {
 
         clearBibTextSectionContent2(doc);
 
-        populateBibTextSection(doc,
-                frontend,
-                bibliography,
-                style,
-                alwaysAddCitedOnPages);
+        populateBibTextSection(doc, frontend, bibliography, style, alwaysAddCitedOnPages);
     }
 
     /**
@@ -61,15 +52,14 @@ public class UpdateBibliography {
      * <p>
      * Only called from `clearBibTextSectionContent2`
      */
-    private static void createBibTextSection2(XTextDocument doc)
-            throws
-            CreationException {
+    private static void createBibTextSection2(XTextDocument doc) throws CreationException {
 
         // Always creating at the end of the document.
         // Alternatively, we could receive a cursor.
         XTextCursor textCursor = doc.getText().createTextCursor();
         textCursor.gotoEnd(false);
-        DocumentAnnotation annotation = new DocumentAnnotation(doc, BIB_SECTION_NAME, textCursor, false);
+        DocumentAnnotation annotation =
+                new DocumentAnnotation(doc, BIB_SECTION_NAME, textCursor, false);
         UnoTextSection.create(annotation);
     }
 
@@ -79,10 +69,7 @@ public class UpdateBibliography {
      * Only called from: `rebuildBibTextSection`
      */
     private static void clearBibTextSectionContent2(XTextDocument doc)
-            throws
-            CreationException,
-            NoDocumentException,
-            WrappedTargetException {
+            throws CreationException, NoDocumentException, WrappedTargetException {
 
         // Optional<XTextRange> sectionRange = UnoTextSection.getAnchor(doc, BIB_SECTION_NAME);
         Optional<XTextRange> sectionRange = getBibliographyRange(doc);
@@ -100,16 +87,17 @@ public class UpdateBibliography {
      * <p>
      * Assumes the section named BIB_SECTION_NAME exists.
      */
-    private static void populateBibTextSection(XTextDocument doc,
-                                               OOFrontend frontend,
-                                               CitedKeys bibliography,
-                                               JStyle style,
-                                               boolean alwaysAddCitedOnPages)
-            throws
-            CreationException,
-            IllegalArgumentException,
-            NoDocumentException,
-            WrappedTargetException, IOException {
+    private static void populateBibTextSection(
+            XTextDocument doc,
+            OOFrontend frontend,
+            CitedKeys bibliography,
+            JStyle style,
+            boolean alwaysAddCitedOnPages)
+            throws CreationException,
+                    IllegalArgumentException,
+                    NoDocumentException,
+                    WrappedTargetException,
+                    IOException {
 
         XTextRange sectionRange = getBibliographyRange(doc).orElseThrow(IllegalStateException::new);
 
@@ -117,10 +105,9 @@ public class UpdateBibliography {
 
         // emit the title of the bibliography
         OOTextIntoOO.removeDirectFormatting(cursor);
-        OOText bibliographyText = OOFormatBibliography.formatBibliography(frontend.citationGroups,
-                bibliography,
-                style,
-                alwaysAddCitedOnPages);
+        OOText bibliographyText =
+                OOFormatBibliography.formatBibliography(
+                        frontend.citationGroups, bibliography, style, alwaysAddCitedOnPages);
         OOTextIntoOO.write(doc, cursor, bibliographyText);
         cursor.collapseToEnd();
 
@@ -132,7 +119,8 @@ public class UpdateBibliography {
         initialParagraph.setString("");
 
         UnoBookmark.removeIfExists(doc, BIB_SECTION_END_NAME);
-        DocumentAnnotation documentAnnotation = new DocumentAnnotation(doc, BIB_SECTION_END_NAME, cursor, true);
+        DocumentAnnotation documentAnnotation =
+                new DocumentAnnotation(doc, BIB_SECTION_END_NAME, cursor, true);
         UnoBookmark.create(documentAnnotation);
 
         cursor.collapseToEnd();

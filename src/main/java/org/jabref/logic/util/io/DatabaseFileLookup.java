@@ -1,5 +1,10 @@
 package org.jabref.logic.util.io;
 
+import org.jabref.logic.FilePreferences;
+import org.jabref.model.database.BibDatabase;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -9,11 +14,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.jabref.logic.FilePreferences;
-import org.jabref.model.database.BibDatabase;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
 
 /**
  * Search class for files. <br>
@@ -33,8 +33,9 @@ public class DatabaseFileLookup {
      */
     public DatabaseFileLookup(BibDatabaseContext databaseContext, FilePreferences filePreferences) {
         Objects.requireNonNull(databaseContext);
-        possibleFilePaths = Optional.ofNullable(databaseContext.getFileDirectories(filePreferences))
-                                    .orElse(new ArrayList<>());
+        possibleFilePaths =
+                Optional.ofNullable(databaseContext.getFileDirectories(filePreferences))
+                        .orElse(new ArrayList<>());
 
         for (BibEntry entry : databaseContext.getDatabase().getEntries()) {
             fileCache.addAll(parseFileField(entry));
@@ -63,11 +64,12 @@ public class DatabaseFileLookup {
         Objects.requireNonNull(entry);
 
         return entry.getFiles().stream()
-                    .filter(file -> !file.isOnlineLink()) // Do not query external file links (huge performance leak)
-                    .map(file -> file.findIn(possibleFilePaths))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
+                .filter(file -> !file.isOnlineLink()) // Do not query external file links (huge
+                // performance leak)
+                .map(file -> file.findIn(possibleFilePaths))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     /**

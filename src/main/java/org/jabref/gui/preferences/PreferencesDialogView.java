@@ -1,7 +1,9 @@
 package org.jabref.gui.preferences;
 
-import java.util.Locale;
-import java.util.Optional;
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import jakarta.inject.Inject;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
@@ -10,6 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
 
+import org.controlsfx.control.textfield.CustomTextField;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.keyboard.KeyBinding;
@@ -19,10 +22,8 @@ import org.jabref.gui.util.ControlHelper;
 import org.jabref.gui.util.ViewModelListCellFactory;
 import org.jabref.logic.l10n.Localization;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import jakarta.inject.Inject;
-import org.controlsfx.control.textfield.CustomTextField;
+import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Preferences dialog. Contains a TabbedPane, and tabs will be defined in separate classes. Tabs MUST implement the
@@ -48,18 +49,18 @@ public class PreferencesDialogView extends BaseDialog<PreferencesDialogViewModel
         this.setTitle(Localization.lang("JabRef preferences"));
         this.preferencesTabToSelectClass = preferencesTabToSelectClass;
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
-        ControlHelper.setAction(saveButton, getDialogPane(), event -> savePreferencesAndCloseDialog());
+        ControlHelper.setAction(
+                saveButton, getDialogPane(), event -> savePreferencesAndCloseDialog());
 
         // Stop the default button from firing when the user hits enter within the search box
-        searchBox.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                event.consume();
-            }
-        });
+        searchBox.setOnKeyPressed(
+                event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        event.consume();
+                    }
+                });
 
         themeManager.updateFontStyle(getDialogPane().getScene());
     }
@@ -75,38 +76,54 @@ public class PreferencesDialogView extends BaseDialog<PreferencesDialogViewModel
         preferenceTabList.itemsProperty().setValue(viewModel.getPreferenceTabs());
 
         // The list view does not respect the listener for the dialog and needs its own
-        preferenceTabList.setOnKeyReleased(key -> {
-            if (preferences.getKeyBindingRepository().checkKeyCombinationEquality(KeyBinding.CLOSE, key)) {
-                this.closeDialog();
-            }
-        });
+        preferenceTabList.setOnKeyReleased(
+                key -> {
+                    if (preferences
+                            .getKeyBindingRepository()
+                            .checkKeyCombinationEquality(KeyBinding.CLOSE, key)) {
+                        this.closeDialog();
+                    }
+                });
 
-        PreferencesSearchHandler searchHandler = new PreferencesSearchHandler(viewModel.getPreferenceTabs());
-        preferenceTabList.itemsProperty().bindBidirectional(searchHandler.filteredPreferenceTabsProperty());
-        searchBox.textProperty().addListener((observable, previousText, newText) -> {
-            searchHandler.filterTabs(newText.toLowerCase(Locale.ROOT));
-            preferenceTabList.getSelectionModel().clearSelection();
-            preferenceTabList.getSelectionModel().selectFirst();
-        });
+        PreferencesSearchHandler searchHandler =
+                new PreferencesSearchHandler(viewModel.getPreferenceTabs());
+        preferenceTabList
+                .itemsProperty()
+                .bindBidirectional(searchHandler.filteredPreferenceTabsProperty());
+        searchBox
+                .textProperty()
+                .addListener(
+                        (observable, previousText, newText) -> {
+                            searchHandler.filterTabs(newText.toLowerCase(Locale.ROOT));
+                            preferenceTabList.getSelectionModel().clearSelection();
+                            preferenceTabList.getSelectionModel().selectFirst();
+                        });
         searchBox.setPromptText(Localization.lang("Search..."));
         searchBox.setLeft(IconTheme.JabRefIcons.SEARCH.getGraphicNode());
 
-        EasyBind.subscribe(preferenceTabList.getSelectionModel().selectedItemProperty(), tab -> {
-            if (tab instanceof AbstractPreferenceTabView<?> preferencesTab) {
-                preferencesContainer.setContent(preferencesTab.getBuilder());
-                preferencesTab.prefWidthProperty().bind(preferencesContainer.widthProperty().subtract(10d));
-                preferencesTab.getStyleClass().add("preferencesTab");
-            } else {
-                preferencesContainer.setContent(null);
-            }
-        });
+        EasyBind.subscribe(
+                preferenceTabList.getSelectionModel().selectedItemProperty(),
+                tab -> {
+                    if (tab instanceof AbstractPreferenceTabView<?> preferencesTab) {
+                        preferencesContainer.setContent(preferencesTab.getBuilder());
+                        preferencesTab
+                                .prefWidthProperty()
+                                .bind(preferencesContainer.widthProperty().subtract(10d));
+                        preferencesTab.getStyleClass().add("preferencesTab");
+                    } else {
+                        preferencesContainer.setContent(null);
+                    }
+                });
 
         if (this.preferencesTabToSelectClass != null) {
-            Optional<PreferencesTab> tabToSelectIfExist = preferenceTabList.getItems()
-                                                                           .stream()
-                                                                           .filter(prefTab -> prefTab.getClass().equals(preferencesTabToSelectClass))
-                                                                           .findFirst();
-            tabToSelectIfExist.ifPresent(preferencesTab -> preferenceTabList.getSelectionModel().select(preferencesTab));
+            Optional<PreferencesTab> tabToSelectIfExist =
+                    preferenceTabList.getItems().stream()
+                            .filter(
+                                    prefTab ->
+                                            prefTab.getClass().equals(preferencesTabToSelectClass))
+                            .findFirst();
+            tabToSelectIfExist.ifPresent(
+                    preferencesTab -> preferenceTabList.getSelectionModel().select(preferencesTab));
         } else {
             preferenceTabList.getSelectionModel().selectFirst();
         }

@@ -1,6 +1,6 @@
 package org.jabref.gui.fieldeditors.contextmenu;
 
-import java.util.List;
+import com.sun.javafx.scene.control.Properties;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -16,7 +16,7 @@ import org.jabref.gui.actions.StandardActions;
 import org.jabref.gui.util.BindingsHelper;
 import org.jabref.logic.os.OS;
 
-import com.sun.javafx.scene.control.Properties;
+import java.util.List;
 
 public class EditorContextAction extends SimpleCommand {
 
@@ -30,17 +30,37 @@ public class EditorContextAction extends SimpleCommand {
         this.textInputControl = textInputControl;
 
         BooleanProperty editableBinding = textInputControl.editableProperty();
-        BooleanBinding hasTextBinding = Bindings.createBooleanBinding(() -> textInputControl.getLength() > 0, textInputControl.textProperty());
-        BooleanBinding hasStringInClipboardBinding = (BooleanBinding) BindingsHelper.constantOf(Clipboard.getSystemClipboard().hasString());
-        BooleanBinding hasSelectionBinding = Bindings.createBooleanBinding(() -> textInputControl.getSelection().getLength() > 0, textInputControl.selectionProperty());
-        BooleanBinding allSelectedBinding = Bindings.createBooleanBinding(() -> textInputControl.getSelection().getLength() == textInputControl.getLength());
-        BooleanBinding maskTextBinding = (BooleanBinding) BindingsHelper.constantOf(textInputControl instanceof PasswordField); // (maskText("A") != "A");
-        BooleanBinding undoableBinding = Bindings.createBooleanBinding(textInputControl::isUndoable, textInputControl.undoableProperty());
-        BooleanBinding redoableBinding = Bindings.createBooleanBinding(textInputControl::isRedoable, textInputControl.redoableProperty());
+        BooleanBinding hasTextBinding =
+                Bindings.createBooleanBinding(
+                        () -> textInputControl.getLength() > 0, textInputControl.textProperty());
+        BooleanBinding hasStringInClipboardBinding =
+                (BooleanBinding)
+                        BindingsHelper.constantOf(Clipboard.getSystemClipboard().hasString());
+        BooleanBinding hasSelectionBinding =
+                Bindings.createBooleanBinding(
+                        () -> textInputControl.getSelection().getLength() > 0,
+                        textInputControl.selectionProperty());
+        BooleanBinding allSelectedBinding =
+                Bindings.createBooleanBinding(
+                        () ->
+                                textInputControl.getSelection().getLength()
+                                        == textInputControl.getLength());
+        BooleanBinding maskTextBinding =
+                (BooleanBinding)
+                        BindingsHelper.constantOf(
+                                textInputControl
+                                        instanceof PasswordField); // (maskText("A") != "A");
+        BooleanBinding undoableBinding =
+                Bindings.createBooleanBinding(
+                        textInputControl::isUndoable, textInputControl.undoableProperty());
+        BooleanBinding redoableBinding =
+                Bindings.createBooleanBinding(
+                        textInputControl::isRedoable, textInputControl.redoableProperty());
 
         this.executable.bind(
                 switch (command) {
-                    case COPY -> editableBinding.and(maskTextBinding.not()).and(hasSelectionBinding);
+                    case COPY ->
+                            editableBinding.and(maskTextBinding.not()).and(hasSelectionBinding);
                     case CUT -> maskTextBinding.not().and(hasSelectionBinding);
                     case PASTE -> editableBinding.and(hasStringInClipboardBinding);
                     case DELETE -> editableBinding.and(hasSelectionBinding);
@@ -77,17 +97,27 @@ public class EditorContextAction extends SimpleCommand {
     public static List<MenuItem> getDefaultContextMenuItems(TextInputControl textInputControl) {
         ActionFactory factory = new ActionFactory();
 
-        MenuItem selectAllMenuItem = factory.createMenuItem(StandardActions.SELECT_ALL,
-                new EditorContextAction(StandardActions.SELECT_ALL, textInputControl));
+        MenuItem selectAllMenuItem =
+                factory.createMenuItem(
+                        StandardActions.SELECT_ALL,
+                        new EditorContextAction(StandardActions.SELECT_ALL, textInputControl));
         if (SHOW_HANDLES) {
             selectAllMenuItem.getProperties().put("refreshMenu", Boolean.TRUE);
         }
 
         return List.of(
-                factory.createMenuItem(StandardActions.CUT, new EditorContextAction(StandardActions.CUT, textInputControl)),
-                factory.createMenuItem(StandardActions.COPY, new EditorContextAction(StandardActions.COPY, textInputControl)),
-                factory.createMenuItem(StandardActions.PASTE, new EditorContextAction(StandardActions.PASTE, textInputControl)),
-                factory.createMenuItem(StandardActions.DELETE, new EditorContextAction(StandardActions.DELETE, textInputControl)),
+                factory.createMenuItem(
+                        StandardActions.CUT,
+                        new EditorContextAction(StandardActions.CUT, textInputControl)),
+                factory.createMenuItem(
+                        StandardActions.COPY,
+                        new EditorContextAction(StandardActions.COPY, textInputControl)),
+                factory.createMenuItem(
+                        StandardActions.PASTE,
+                        new EditorContextAction(StandardActions.PASTE, textInputControl)),
+                factory.createMenuItem(
+                        StandardActions.DELETE,
+                        new EditorContextAction(StandardActions.DELETE, textInputControl)),
                 selectAllMenuItem);
     }
 }

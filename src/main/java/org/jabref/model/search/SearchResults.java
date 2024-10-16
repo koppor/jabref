@@ -1,13 +1,13 @@
 package org.jabref.model.search;
 
+import org.jabref.model.entry.BibEntry;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.jabref.model.entry.BibEntry;
 
 public class SearchResults {
 
@@ -27,19 +27,17 @@ public class SearchResults {
 
     public float getSearchScoreForEntry(BibEntry entry) {
         if (searchResults.containsKey(entry.getId())) {
-            return searchResults.get(entry.getId())
-                                .stream()
-                                .map(SearchResult::getSearchScore)
-                                .reduce(0f, Float::max);
+            return searchResults.get(entry.getId()).stream()
+                    .map(SearchResult::getSearchScore)
+                    .reduce(0f, Float::max);
         }
         return 0f;
     }
 
     public boolean hasFulltextResults(BibEntry entry) {
         if (searchResults.containsKey(entry.getId())) {
-            return searchResults.get(entry.getId())
-                                .stream()
-                                .anyMatch(SearchResult::hasFulltextResults);
+            return searchResults.get(entry.getId()).stream()
+                    .anyMatch(SearchResult::hasFulltextResults);
         }
         return false;
     }

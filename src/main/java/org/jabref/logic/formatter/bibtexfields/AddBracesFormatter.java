@@ -1,9 +1,9 @@
 package org.jabref.logic.formatter.bibtexfields;
 
-import java.util.Objects;
-
 import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
+
+import java.util.Objects;
 
 public class AddBracesFormatter extends Formatter {
 
@@ -21,8 +21,11 @@ public class AddBracesFormatter extends Formatter {
     public String format(String value) {
         Objects.requireNonNull(value);
 
-        if ((value.length() >= 2) && (value.charAt(0) != '{') && (value.charAt(value.length() - 1) != '}')) {
-            // Title does not start with { and does not end with }, then this formatter can be applied
+        if ((value.length() >= 2)
+                && (value.charAt(0) != '{')
+                && (value.charAt(value.length() - 1) != '}')) {
+            // Title does not start with { and does not end with }, then this formatter can be
+            // applied
             return "{" + value + "}";
         } else {
             return value;

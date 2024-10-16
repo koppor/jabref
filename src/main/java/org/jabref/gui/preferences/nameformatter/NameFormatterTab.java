@@ -1,5 +1,7 @@
 package org.jabref.gui.preferences.nameformatter;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
@@ -19,9 +21,8 @@ import org.jabref.gui.util.ValueTableCellFactory;
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.l10n.Localization;
 
-import com.airhacks.afterburner.views.ViewLoader;
-
-public class NameFormatterTab extends AbstractPreferenceTabView<NameFormatterTabViewModel> implements PreferencesTab {
+public class NameFormatterTab extends AbstractPreferenceTabView<NameFormatterTabViewModel>
+        implements PreferencesTab {
 
     @FXML private TableView<NameFormatterItemModel> formatterList;
     @FXML private TableColumn<NameFormatterItemModel, String> formatterNameColumn;
@@ -32,9 +33,7 @@ public class NameFormatterTab extends AbstractPreferenceTabView<NameFormatterTab
     @FXML private Button formatterHelp;
 
     public NameFormatterTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -69,40 +68,56 @@ public class NameFormatterTab extends AbstractPreferenceTabView<NameFormatterTab
         new ValueTableCellFactory<NameFormatterItemModel, String>()
                 .withGraphic(name -> IconTheme.JabRefIcons.DELETE_ENTRY.getGraphicNode())
                 .withTooltip(name -> Localization.lang("Remove formatter '%0'", name))
-                .withOnMouseClickedEvent(item -> evt ->
-                        viewModel.removeFormatter(formatterList.getFocusModel().getFocusedItem()))
+                .withOnMouseClickedEvent(
+                        item ->
+                                evt ->
+                                        viewModel.removeFormatter(
+                                                formatterList.getFocusModel().getFocusedItem()))
                 .install(actionsColumn);
 
-        formatterList.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.DELETE) {
-                viewModel.removeFormatter(formatterList.getSelectionModel().getSelectedItem());
-                event.consume();
-            }
-        });
+        formatterList.addEventFilter(
+                KeyEvent.KEY_PRESSED,
+                event -> {
+                    if (event.getCode() == KeyCode.DELETE) {
+                        viewModel.removeFormatter(
+                                formatterList.getSelectionModel().getSelectedItem());
+                        event.consume();
+                    }
+                });
 
         formatterList.setEditable(true);
         formatterList.itemsProperty().bindBidirectional(viewModel.formatterListProperty());
 
         addFormatterName.textProperty().bindBidirectional(viewModel.addFormatterNameProperty());
-        addFormatterName.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                addFormatterString.requestFocus();
-                addFormatterString.selectAll();
-                event.consume();
-            }
-        });
+        addFormatterName.addEventFilter(
+                KeyEvent.KEY_PRESSED,
+                event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        addFormatterString.requestFocus();
+                        addFormatterString.selectAll();
+                        event.consume();
+                    }
+                });
 
         addFormatterString.textProperty().bindBidirectional(viewModel.addFormatterStringProperty());
-        addFormatterString.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                viewModel.addFormatter();
-                addFormatterName.requestFocus();
-                event.consume();
-            }
-        });
+        addFormatterString.addEventFilter(
+                KeyEvent.KEY_PRESSED,
+                event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        viewModel.addFormatter();
+                        addFormatterName.requestFocus();
+                        event.consume();
+                    }
+                });
 
         ActionFactory actionFactory = new ActionFactory();
-        actionFactory.configureIconButton(StandardActions.HELP_NAME_FORMATTER, new HelpAction(HelpFile.CUSTOM_EXPORTS_NAME_FORMATTER, dialogService, preferences.getExternalApplicationsPreferences()), formatterHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP_NAME_FORMATTER,
+                new HelpAction(
+                        HelpFile.CUSTOM_EXPORTS_NAME_FORMATTER,
+                        dialogService,
+                        preferences.getExternalApplicationsPreferences()),
+                formatterHelp);
     }
 
     public void addFormatter() {

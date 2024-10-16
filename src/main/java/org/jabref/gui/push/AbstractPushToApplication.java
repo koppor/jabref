@@ -1,8 +1,6 @@
 package org.jabref.gui.push;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import com.google.common.annotations.VisibleForTesting;
 
 import org.jabref.gui.DialogService;
 import org.jabref.gui.actions.Action;
@@ -15,10 +13,12 @@ import org.jabref.logic.os.OS;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.strings.StringUtil;
-
-import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Abstract class for pushing entries into different editors.
@@ -26,9 +26,14 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractPushToApplication implements PushToApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPushToApplication.class);
-    protected boolean couldNotCall; // Set to true in case the command could not be executed, e.g., if the file is not found
-    protected boolean couldNotPush; // Set to true in case the tunnel to the program (if one is used) does not operate
-    protected boolean notDefined; // Set to true if the corresponding path is not defined in the preferences
+    protected boolean
+            couldNotCall; // Set to true in case the command could not be executed, e.g., if the
+    // file is not found
+    protected boolean
+            couldNotPush; // Set to true in case the tunnel to the program (if one is used) does not
+    // operate
+    protected boolean
+            notDefined; // Set to true if the corresponding path is not defined in the preferences
 
     protected String commandPath;
 
@@ -61,12 +66,20 @@ public abstract class AbstractPushToApplication implements PushToApplication {
     }
 
     @VisibleForTesting
-    protected void pushEntries(BibDatabaseContext database, List<BibEntry> entries, String keyString, ProcessBuilder processBuilder) {
+    protected void pushEntries(
+            BibDatabaseContext database,
+            List<BibEntry> entries,
+            String keyString,
+            ProcessBuilder processBuilder) {
         couldNotPush = false;
         couldNotCall = false;
         notDefined = false;
 
-        commandPath = preferences.getPushToApplicationPreferences().getCommandPaths().get(this.getDisplayName());
+        commandPath =
+                preferences
+                        .getPushToApplicationPreferences()
+                        .getCommandPaths()
+                        .get(this.getDisplayName());
 
         // Check if a path to the command has been specified
         if (StringUtil.isNullOrEmpty(commandPath)) {
@@ -79,18 +92,12 @@ public abstract class AbstractPushToApplication implements PushToApplication {
             if (OS.OS_X) {
                 String[] commands = getCommandLine(keyString);
                 if (commands.length < 3) {
-                    LOGGER.error("Commandline does not contain enough parameters to \"push to application\"");
+                    LOGGER.error(
+                            "Commandline does not contain enough parameters to \"push to application\"");
                     return;
                 }
                 processBuilder.command(
-                        "open",
-                        "-a",
-                        commands[0],
-                        "-n",
-                        "--args",
-                        commands[1],
-                        commands[2]
-                );
+                        "open", "-a", commands[0], "-n", "--args", commands[1], commands[2]);
                 processBuilder.start();
             } else {
                 processBuilder.command(getCommandLine(keyString));
@@ -117,7 +124,8 @@ public abstract class AbstractPushToApplication implements PushToApplication {
                     Localization.lang("Error pushing entries"),
                     Localization.lang("Could not connect to %0", getDisplayName()) + ".");
         } else {
-            dialogService.notify(Localization.lang("Pushed citations to %0", getDisplayName()) + ".");
+            dialogService.notify(
+                    Localization.lang("Pushed citations to %0", getDisplayName()) + ".");
         }
     }
 
@@ -161,8 +169,10 @@ public abstract class AbstractPushToApplication implements PushToApplication {
     }
 
     @Override
-    public PushToApplicationSettings getSettings(PushToApplication application, PushToApplicationPreferences preferences) {
-        return new PushToApplicationSettings(application, dialogService, this.preferences.getFilePreferences(), preferences);
+    public PushToApplicationSettings getSettings(
+            PushToApplication application, PushToApplicationPreferences preferences) {
+        return new PushToApplicationSettings(
+                application, dialogService, this.preferences.getFilePreferences(), preferences);
     }
 
     protected class PushToApplicationAction implements Action {

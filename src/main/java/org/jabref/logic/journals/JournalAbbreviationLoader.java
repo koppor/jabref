@@ -1,5 +1,8 @@
 package org.jabref.logic.journals;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -7,9 +10,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -24,18 +24,22 @@ public class JournalAbbreviationLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JournalAbbreviationLoader.class);
 
-    public static Collection<Abbreviation> readAbbreviationsFromCsvFile(Path file) throws IOException {
+    public static Collection<Abbreviation> readAbbreviationsFromCsvFile(Path file)
+            throws IOException {
         LOGGER.debug("Reading journal list from file {}", file);
         AbbreviationParser parser = new AbbreviationParser();
         parser.readJournalListFromFile(file);
         return parser.getAbbreviations();
     }
 
-    public static JournalAbbreviationRepository loadRepository(JournalAbbreviationPreferences journalAbbreviationPreferences) {
+    public static JournalAbbreviationRepository loadRepository(
+            JournalAbbreviationPreferences journalAbbreviationPreferences) {
         JournalAbbreviationRepository repository;
 
         // Initialize with built-in list
-        try (InputStream resourceAsStream = JournalAbbreviationRepository.class.getResourceAsStream("/journals/journal-list.mv")) {
+        try (InputStream resourceAsStream =
+                JournalAbbreviationRepository.class.getResourceAsStream(
+                        "/journals/journal-list.mv")) {
             if (resourceAsStream == null) {
                 LOGGER.warn("There is no journal-list.mv. We use a default journal list");
                 repository = new JournalAbbreviationRepository();
@@ -60,7 +64,8 @@ public class JournalAbbreviationLoader {
             Collections.reverse(lists);
             for (String filename : lists) {
                 try {
-                    repository.addCustomAbbreviations(readAbbreviationsFromCsvFile(Path.of(filename)));
+                    repository.addCustomAbbreviations(
+                            readAbbreviationsFromCsvFile(Path.of(filename)));
                 } catch (IOException e) {
                     LOGGER.error("Cannot read external journal list file {}", filename, e);
                 }

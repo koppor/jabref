@@ -1,17 +1,16 @@
 package org.jabref.logic.integrity;
 
-import java.util.Optional;
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.database.BibDatabaseMode;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class PagesCheckerBibtexTest {
 
@@ -25,7 +24,8 @@ public class PagesCheckerBibtexTest {
     }
 
     public static Stream<String> bibtexAccepts() {
-        return Stream.of("",
+        return Stream.of(
+                "",
                 // double dash
                 "1--2",
                 // one page number
@@ -35,8 +35,7 @@ public class PagesCheckerBibtexTest {
                 // bibTexAcceptsNoSimpleRangeOfNumbers
                 "43+",
                 // bibTexAcceptsMorePageNumbersWithRangeOfNumbers
-                "7+,41--43,73"
-                );
+                "7+,41--43,73");
     }
 
     @ParameterizedTest
@@ -54,8 +53,7 @@ public class PagesCheckerBibtexTest {
                 // bibTexDoesNotAcceptMorePageNumbersWithoutComma
                 "1 2",
                 // bibTexDoesNotAcceptBrackets
-                "{1}-{2}"
-                );
+                "{1}-{2}");
     }
 
     @ParameterizedTest

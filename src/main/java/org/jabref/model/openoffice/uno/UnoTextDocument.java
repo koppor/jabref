@@ -1,7 +1,5 @@
 package org.jabref.model.openoffice.uno;
 
-import java.util.Optional;
-
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.document.XDocumentProperties;
 import com.sun.star.document.XDocumentPropertiesSupplier;
@@ -10,15 +8,17 @@ import com.sun.star.frame.XFrame;
 import com.sun.star.lang.DisposedException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.text.XTextDocument;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 public class UnoTextDocument {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UnoTextDocument.class);
 
-    private UnoTextDocument() {
-    }
+    private UnoTextDocument() {}
 
     /**
      * @return True if we cannot reach the current document.
@@ -65,7 +65,8 @@ public class UnoTextDocument {
         }
 
         try {
-            Optional<Object> frameTitleObj = UnoProperties.getValueAsObject(propertySet.get(), "Title");
+            Optional<Object> frameTitleObj =
+                    UnoProperties.getValueAsObject(propertySet.get(), "Title");
             if (frameTitleObj.isEmpty()) {
                 return Optional.empty();
             }
@@ -79,8 +80,7 @@ public class UnoTextDocument {
 
     static Optional<XDocumentProperties> getDocumentProperties(XTextDocument doc) {
         return Optional.ofNullable(doc)
-                        .flatMap(e -> UnoCast.cast(XDocumentPropertiesSupplier.class, e))
-                        .map(XDocumentPropertiesSupplier::getDocumentProperties);
+                .flatMap(e -> UnoCast.cast(XDocumentPropertiesSupplier.class, e))
+                .map(XDocumentPropertiesSupplier::getDocumentProperties);
     }
 }
-

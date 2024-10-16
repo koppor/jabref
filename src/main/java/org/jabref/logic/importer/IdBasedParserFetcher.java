@@ -1,5 +1,10 @@
 package org.jabref.logic.importer;
 
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.strings.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -7,12 +12,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.strings.StringUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides a convenient interface for ID-based fetcher, which follow the usual three-step procedure:
@@ -53,7 +52,10 @@ public interface IdBasedParserFetcher extends IdBasedFetcher, ParserFetcher {
                 return Optional.empty();
             }
             if (fetchedEntries.size() > 1) {
-                LOGGER.info("Fetcher {} found more than one result for identifier {}. We will use the first entry.", getName(), identifier);
+                LOGGER.info(
+                        "Fetcher {} found more than one result for identifier {}. We will use the first entry.",
+                        getName(),
+                        identifier);
             }
             BibEntry entry = fetchedEntries.getFirst();
             doPostCleanup(entry);

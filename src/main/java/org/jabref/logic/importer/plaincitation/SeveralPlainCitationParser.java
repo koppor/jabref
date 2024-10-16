@@ -1,16 +1,15 @@
 package org.jabref.logic.importer.plaincitation;
 
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.model.entry.BibEntry;
+import org.jooq.lambda.Unchecked;
+import org.jooq.lambda.UncheckedException;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.model.entry.BibEntry;
-
-import org.jooq.lambda.Unchecked;
-import org.jooq.lambda.UncheckedException;
 
 public class SeveralPlainCitationParser {
     private final PlainCitationParser parser;
@@ -32,7 +31,7 @@ public class SeveralPlainCitationParser {
 
     public Stream<String> splitCitations(String text) {
         return Arrays.stream(text.split("\\r\\r+|\\n\\n+|\\r\\n(\\r\\n)+"))
-                     .map(String::trim)
-                     .filter(str -> !str.isBlank());
+                .map(String::trim)
+                .filter(str -> !str.isBlank());
     }
 }

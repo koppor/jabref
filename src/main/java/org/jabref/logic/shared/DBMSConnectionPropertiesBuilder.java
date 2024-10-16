@@ -49,7 +49,8 @@ public class DBMSConnectionPropertiesBuilder {
         return this;
     }
 
-    public DBMSConnectionPropertiesBuilder setAllowPublicKeyRetrieval(boolean allowPublicKeyRetrieval) {
+    public DBMSConnectionPropertiesBuilder setAllowPublicKeyRetrieval(
+            boolean allowPublicKeyRetrieval) {
         this.allowPublicKeyRetrieval = allowPublicKeyRetrieval;
         return this;
     }
@@ -78,6 +79,18 @@ public class DBMSConnectionPropertiesBuilder {
         if (port == -1) {
             port = type.getDefaultPort();
         }
-        return new DBMSConnectionProperties(type, host, port, database, user, password, useSSL, allowPublicKeyRetrieval, serverTimezone, keyStore, jdbcUrl, expertMode);
+        return new DBMSConnectionProperties(
+                type,
+                host,
+                port,
+                database,
+                user,
+                password,
+                useSSL,
+                allowPublicKeyRetrieval,
+                serverTimezone,
+                keyStore,
+                jdbcUrl,
+                expertMode);
     }
 }

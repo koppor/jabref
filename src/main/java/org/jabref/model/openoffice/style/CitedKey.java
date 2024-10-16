@@ -1,22 +1,20 @@
 package org.jabref.model.openoffice.style;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.ootext.OOText;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Cited keys are collected from the citations in citation groups.
  * <p>
  * They contain backreferences to the corresponding citations in {@code where}. This allows the extra information generated using CitedKeys to be distributed back to the in-text citations.
  */
-public class CitedKey implements
-        ComparableCitedKey,
-        CitationMarkerNormEntry,
-        CitationMarkerNumericBibEntry {
+public class CitedKey
+        implements ComparableCitedKey, CitationMarkerNormEntry, CitationMarkerNumericBibEntry {
 
     public final String citationKey;
     private final List<CitationPath> where;
@@ -24,7 +22,7 @@ public class CitedKey implements
     private Optional<CitationLookupResult> db;
     private Optional<Integer> number; // For Numbered citation styles.
     private Optional<String> uniqueLetter; // For AuthorYear citation styles.
-    private Optional<OOText> normCitMarker;  // For AuthorYear citation styles.
+    private Optional<OOText> normCitMarker; // For AuthorYear citation styles.
 
     CitedKey(String citationKey, CitationPath path, Citation citation) {
         this.citationKey = citationKey;

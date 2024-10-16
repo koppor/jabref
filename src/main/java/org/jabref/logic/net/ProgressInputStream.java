@@ -1,11 +1,11 @@
 package org.jabref.logic.net;
 
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleLongProperty;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleLongProperty;
 
 /**
  * An input stream that keeps track of the amount of bytes already read.

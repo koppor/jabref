@@ -1,8 +1,13 @@
 package org.jabref.gui.fieldeditors.identifier;
 
-import java.util.Optional;
+import static org.jabref.model.entry.field.StandardField.DOI;
+import static org.jabref.model.entry.field.StandardField.EPRINT;
+import static org.jabref.model.entry.field.StandardField.ISBN;
 
-import javax.swing.undo.UndoManager;
+import com.airhacks.afterburner.injection.Injector;
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
 
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -25,13 +30,9 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.Field;
 
-import com.airhacks.afterburner.injection.Injector;
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import java.util.Optional;
 
-import static org.jabref.model.entry.field.StandardField.DOI;
-import static org.jabref.model.entry.field.StandardField.EPRINT;
-import static org.jabref.model.entry.field.StandardField.ISBN;
+import javax.swing.undo.UndoManager;
 
 public class IdentifierEditor extends HBox implements FieldEditorFX {
 
@@ -48,9 +49,8 @@ public class IdentifierEditor extends HBox implements FieldEditorFX {
 
     private Optional<BibEntry> entry = Optional.empty();
 
-    public IdentifierEditor(Field field,
-                            SuggestionProvider<?> suggestionProvider,
-                            FieldCheckers fieldCheckers) {
+    public IdentifierEditor(
+            Field field, SuggestionProvider<?> suggestionProvider, FieldCheckers fieldCheckers) {
 
         // Viewloader must be called after the viewmodel is loaded,
         // but we need the injected vars to create the viewmodels.
@@ -58,36 +58,66 @@ public class IdentifierEditor extends HBox implements FieldEditorFX {
 
         switch (field) {
             case DOI ->
-                    this.viewModel = new DoiIdentifierEditorViewModel(suggestionProvider, fieldCheckers, dialogService, taskExecutor, preferences, undoManager, stateManager);
+                    this.viewModel =
+                            new DoiIdentifierEditorViewModel(
+                                    suggestionProvider,
+                                    fieldCheckers,
+                                    dialogService,
+                                    taskExecutor,
+                                    preferences,
+                                    undoManager,
+                                    stateManager);
             case ISBN ->
-                    this.viewModel = new ISBNIdentifierEditorViewModel(suggestionProvider, fieldCheckers, dialogService, taskExecutor, preferences, undoManager, stateManager);
+                    this.viewModel =
+                            new ISBNIdentifierEditorViewModel(
+                                    suggestionProvider,
+                                    fieldCheckers,
+                                    dialogService,
+                                    taskExecutor,
+                                    preferences,
+                                    undoManager,
+                                    stateManager);
             case EPRINT ->
-                    this.viewModel = new EprintIdentifierEditorViewModel(suggestionProvider, fieldCheckers, dialogService, taskExecutor, preferences, undoManager);
+                    this.viewModel =
+                            new EprintIdentifierEditorViewModel(
+                                    suggestionProvider,
+                                    fieldCheckers,
+                                    dialogService,
+                                    taskExecutor,
+                                    preferences,
+                                    undoManager);
             // TODO: Add support for PMID
             case null, default -> {
                 assert field != null;
-                throw new IllegalStateException("Unable to instantiate a view model for identifier field editor '%s'".formatted(field.getDisplayName()));
+                throw new IllegalStateException(
+                        "Unable to instantiate a view model for identifier field editor '%s'"
+                                .formatted(field.getDisplayName()));
             }
         }
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
 
         textField.textProperty().bindBidirectional(viewModel.textProperty());
 
         fetchInformationByIdentifierButton.setTooltip(
-                new Tooltip(Localization.lang("Get bibliographic data from %0", field.getDisplayName())));
+                new Tooltip(
+                        Localization.lang(
+                                "Get bibliographic data from %0", field.getDisplayName())));
         lookupIdentifierButton.setTooltip(
                 new Tooltip(Localization.lang("Look up %0", field.getDisplayName())));
 
         if (field.equals(DOI)) {
-            textField.initContextMenu(EditorMenus.getDOIMenu(textField, dialogService), preferences.getKeyBindingRepository());
+            textField.initContextMenu(
+                    EditorMenus.getDOIMenu(textField, dialogService),
+                    preferences.getKeyBindingRepository());
         } else {
-            textField.initContextMenu(new DefaultMenu(textField), preferences.getKeyBindingRepository());
+            textField.initContextMenu(
+                    new DefaultMenu(textField), preferences.getKeyBindingRepository());
         }
 
-        new EditorValidator(preferences).configureValidation(viewModel.getFieldValidator().getValidationStatus(), textField);
+        new EditorValidator(preferences)
+                .configureValidation(
+                        viewModel.getFieldValidator().getValidationStatus(), textField);
     }
 
     public BaseIdentifierEditorViewModel<?> getViewModel() {

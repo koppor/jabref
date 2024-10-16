@@ -1,9 +1,7 @@
 package org.jabref.gui.preview;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import com.airhacks.afterburner.injection.Injector;
+import com.google.common.annotations.VisibleForTesting;
 
 import javafx.scene.input.ClipboardContent;
 
@@ -21,8 +19,10 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.BibEntryTypesManager;
 
-import com.airhacks.afterburner.injection.Injector;
-import com.google.common.annotations.VisibleForTesting;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClipboardContentGenerator {
 
@@ -30,16 +30,22 @@ public class ClipboardContentGenerator {
     private final LayoutFormatterPreferences layoutFormatterPreferences;
     private final JournalAbbreviationRepository abbreviationRepository;
 
-    public ClipboardContentGenerator(PreviewPreferences previewPreferences,
-                                     LayoutFormatterPreferences layoutFormatterPreferences,
-                                     JournalAbbreviationRepository abbreviationRepository) {
+    public ClipboardContentGenerator(
+            PreviewPreferences previewPreferences,
+            LayoutFormatterPreferences layoutFormatterPreferences,
+            JournalAbbreviationRepository abbreviationRepository) {
         this.previewPreferences = previewPreferences;
         this.layoutFormatterPreferences = layoutFormatterPreferences;
         this.abbreviationRepository = abbreviationRepository;
     }
 
-    public ClipboardContent generate(List<BibEntry> selectedEntries, CitationStyleOutputFormat outputFormat, BibDatabaseContext bibDatabaseContext) throws IOException {
-        List<String> citations = generateCitations(selectedEntries, outputFormat, bibDatabaseContext);
+    public ClipboardContent generate(
+            List<BibEntry> selectedEntries,
+            CitationStyleOutputFormat outputFormat,
+            BibDatabaseContext bibDatabaseContext)
+            throws IOException {
+        List<String> citations =
+                generateCitations(selectedEntries, outputFormat, bibDatabaseContext);
         PreviewLayout previewLayout = previewPreferences.getSelectedPreviewLayout();
 
         // if it is not a citation style take care of the preview
@@ -55,8 +61,13 @@ public class ClipboardContentGenerator {
         }
     }
 
-    private List<String> generateCitations(List<BibEntry> selectedEntries, CitationStyleOutputFormat outputFormat, BibDatabaseContext bibDatabaseContext) throws IOException {
-        // This worker stored the style as filename. The CSLAdapter and the CitationStyleCache store the source of the
+    private List<String> generateCitations(
+            List<BibEntry> selectedEntries,
+            CitationStyleOutputFormat outputFormat,
+            BibDatabaseContext bibDatabaseContext)
+            throws IOException {
+        // This worker stored the style as filename. The CSLAdapter and the CitationStyleCache store
+        // the source of the
         // style. Therefore, we extract the style source from the file.
         String styleSource = null;
         PreviewLayout previewLayout = previewPreferences.getSelectedPreviewLayout();
@@ -85,7 +96,8 @@ public class ClipboardContentGenerator {
     static ClipboardContent processPreview(List<String> citations) {
         ClipboardContent content = new ClipboardContent();
         content.putHtml(String.join(CitationStyleOutputFormat.HTML.getLineSeparator(), citations));
-        content.putString(String.join(CitationStyleOutputFormat.HTML.getLineSeparator(), citations));
+        content.putString(
+                String.join(CitationStyleOutputFormat.HTML.getLineSeparator(), citations));
         return content;
     }
 
@@ -95,7 +107,8 @@ public class ClipboardContentGenerator {
     @VisibleForTesting
     static ClipboardContent processText(List<String> citations) {
         ClipboardContent content = new ClipboardContent();
-        content.putString(String.join(CitationStyleOutputFormat.TEXT.getLineSeparator(), citations));
+        content.putString(
+                String.join(CitationStyleOutputFormat.TEXT.getLineSeparator(), citations));
         return content;
     }
 
@@ -105,17 +118,23 @@ public class ClipboardContentGenerator {
      */
     @VisibleForTesting
     static ClipboardContent processHtml(List<String> citations) {
-        String result = "<!DOCTYPE html>" + OS.NEWLINE +
-                "<html>" + OS.NEWLINE +
-                "   <head>" + OS.NEWLINE +
-                "      <meta charset=\"utf-8\">" + OS.NEWLINE +
-                "   </head>" + OS.NEWLINE +
-                "   <body>" + OS.NEWLINE + OS.NEWLINE;
+        String result =
+                "<!DOCTYPE html>"
+                        + OS.NEWLINE
+                        + "<html>"
+                        + OS.NEWLINE
+                        + "   <head>"
+                        + OS.NEWLINE
+                        + "      <meta charset=\"utf-8\">"
+                        + OS.NEWLINE
+                        + "   </head>"
+                        + OS.NEWLINE
+                        + "   <body>"
+                        + OS.NEWLINE
+                        + OS.NEWLINE;
 
         result += String.join(CitationStyleOutputFormat.HTML.getLineSeparator(), citations);
-        result += OS.NEWLINE +
-                "   </body>" + OS.NEWLINE +
-                "</html>" + OS.NEWLINE;
+        result += OS.NEWLINE + "   </body>" + OS.NEWLINE + "</html>" + OS.NEWLINE;
 
         ClipboardContent content = new ClipboardContent();
         content.putString(result);
@@ -123,10 +142,18 @@ public class ClipboardContentGenerator {
         return content;
     }
 
-    private List<String> generateTextBasedPreviewLayoutCitations(List<BibEntry> selectedEntries, BibDatabaseContext bibDatabaseContext) throws IOException {
+    private List<String> generateTextBasedPreviewLayoutCitations(
+            List<BibEntry> selectedEntries, BibDatabaseContext bibDatabaseContext)
+            throws IOException {
         TextBasedPreviewLayout customPreviewLayout = previewPreferences.getCustomPreviewLayout();
-        StringReader customLayoutReader = new StringReader(customPreviewLayout.getText().replace("__NEWLINE__", "\n"));
-        Layout layout = new LayoutHelper(customLayoutReader, layoutFormatterPreferences, abbreviationRepository).getLayoutFromText();
+        StringReader customLayoutReader =
+                new StringReader(customPreviewLayout.getText().replace("__NEWLINE__", "\n"));
+        Layout layout =
+                new LayoutHelper(
+                                customLayoutReader,
+                                layoutFormatterPreferences,
+                                abbreviationRepository)
+                        .getLayoutFromText();
         List<String> citations = new ArrayList<>(selectedEntries.size());
         for (BibEntry entry : selectedEntries) {
             citations.add(layout.doLayout(entry, bibDatabaseContext.getDatabase()));

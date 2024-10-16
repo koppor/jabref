@@ -1,11 +1,11 @@
 package org.jabref.model.groups;
 
+import org.jabref.model.entry.field.StandardField;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import org.jabref.model.entry.field.StandardField;
 
 /**
  * This group contains entries, which were manually assigned to it.
@@ -31,7 +31,8 @@ public class ExplicitGroup extends WordKeywordGroup {
 
     @Override
     public AbstractGroup deepCopy() {
-        ExplicitGroup copy = new ExplicitGroup(getName(), getHierarchicalContext(), keywordSeparator);
+        ExplicitGroup copy =
+                new ExplicitGroup(getName(), getHierarchicalContext(), keywordSeparator);
         copy.legacyEntryKeys.addAll(legacyEntryKeys);
         return copy;
     }
@@ -63,7 +64,14 @@ public class ExplicitGroup extends WordKeywordGroup {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name.getValue(), context, legacyEntryKeys, iconName, color, description, isExpanded);
+        return Objects.hash(
+                name.getValue(),
+                context,
+                legacyEntryKeys,
+                iconName,
+                color,
+                description,
+                isExpanded);
     }
 
     @Override

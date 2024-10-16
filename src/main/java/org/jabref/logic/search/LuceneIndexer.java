@@ -1,11 +1,10 @@
 package org.jabref.logic.search;
 
-import java.util.Collection;
-
+import org.apache.lucene.search.SearcherManager;
 import org.jabref.logic.util.BackgroundTask;
 import org.jabref.model.entry.BibEntry;
 
-import org.apache.lucene.search.SearcherManager;
+import java.util.Collection;
 
 public interface LuceneIndexer {
     void updateOnStart(BackgroundTask<?> task);

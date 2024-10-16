@@ -1,13 +1,10 @@
 package org.jabref.logic.importer.fetcher.isbntobibtex;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import kong.unirest.core.json.JSONArray;
+import kong.unirest.core.json.JSONException;
+import kong.unirest.core.json.JSONObject;
 
+import org.apache.hc.core5.net.URIBuilder;
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.logic.importer.ParseException;
 import org.jabref.logic.importer.Parser;
@@ -18,10 +15,13 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.strings.StringUtil;
 
-import kong.unirest.core.json.JSONArray;
-import kong.unirest.core.json.JSONException;
-import kong.unirest.core.json.JSONObject;
-import org.apache.hc.core5.net.URIBuilder;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Fetcher for ISBN using <a href="https://doi-to-bibtex-converter.herokuapp.com">doi-to-bibtex-converter.herokuapp</a>.
@@ -39,7 +39,8 @@ public class DoiToBibtexConverterComIsbnFetcher extends AbstractIsbnFetcher {
     }
 
     @Override
-    public URL getUrlForIdentifier(String identifier) throws URISyntaxException, MalformedURLException {
+    public URL getUrlForIdentifier(String identifier)
+            throws URISyntaxException, MalformedURLException {
         this.ensureThatIsbnIsValid(identifier);
         return new URIBuilder(BASE_URL)
                 .setPathSegments("getInfo.php")
@@ -68,8 +69,7 @@ public class DoiToBibtexConverterComIsbnFetcher extends AbstractIsbnFetcher {
     }
 
     @Override
-    public void doPostCleanup(BibEntry entry) {
-    }
+    public void doPostCleanup(BibEntry entry) {}
 
     private BibEntry jsonItemToBibEntry(JSONObject item) throws ParseException {
         try {
@@ -92,16 +92,16 @@ public class DoiToBibtexConverterComIsbnFetcher extends AbstractIsbnFetcher {
 
     private String getElementFromJSONArrayByKey(JSONArray jsonArray, String key) {
         return IntStream.range(0, jsonArray.length())
-                        .mapToObj(jsonArray::getJSONObject)
-                        .map(obj -> obj.getString(key))
-                        .findFirst()
-                        .orElse("");
+                .mapToObj(jsonArray::getJSONObject)
+                .map(obj -> obj.getString(key))
+                .findFirst()
+                .orElse("");
     }
 
     private StandardEntryType evaluateBibEntryTypeFromString(String type) {
         return Stream.of(StandardEntryType.values())
-                     .filter(entryType -> entryType.name().equalsIgnoreCase(type))
-                     .findAny()
-                     .orElse(StandardEntryType.Book);
+                .filter(entryType -> entryType.name().equalsIgnoreCase(type))
+                .findAny()
+                .orElse(StandardEntryType.Book);
     }
 }

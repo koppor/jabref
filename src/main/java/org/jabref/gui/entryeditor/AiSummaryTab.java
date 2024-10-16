@@ -22,11 +22,11 @@ public class AiSummaryTab extends EntryEditorTab {
     private final CitationKeyPatternPreferences citationKeyPatternPreferences;
     private final EntryEditorPreferences entryEditorPreferences;
 
-    public AiSummaryTab(BibDatabaseContext bibDatabaseContext,
-                        AiService aiService,
-                        DialogService dialogService,
-                        GuiPreferences preferences
-    ) {
+    public AiSummaryTab(
+            BibDatabaseContext bibDatabaseContext,
+            AiService aiService,
+            DialogService dialogService,
+            GuiPreferences preferences) {
         this.bibDatabaseContext = bibDatabaseContext;
 
         this.aiService = aiService;
@@ -51,14 +51,14 @@ public class AiSummaryTab extends EntryEditorTab {
      */
     @Override
     protected void bindToEntry(BibEntry entry) {
-        setContent(new SummaryComponent(
-                bibDatabaseContext,
-                entry,
-                aiService,
-                aiPreferences,
-                externalApplicationsPreferences,
-                citationKeyPatternPreferences,
-                dialogService
-        ));
+        setContent(
+                new SummaryComponent(
+                        bibDatabaseContext,
+                        entry,
+                        aiService,
+                        aiPreferences,
+                        externalApplicationsPreferences,
+                        citationKeyPatternPreferences,
+                        dialogService));
     }
 }

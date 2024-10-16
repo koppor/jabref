@@ -1,9 +1,9 @@
 package org.jabref.logic.importer.fetcher.transformers;
 
-import java.util.Optional;
-
 import org.jabref.logic.formatter.casechanger.Word;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.Optional;
 
 /**
  * Needs to be instantiated for each new query
@@ -11,7 +11,8 @@ import org.jabref.model.strings.StringUtil;
  * Stop words are ignored. See ADR-0022.
  */
 public class IEEEQueryTransformer extends YearRangeByFilteringQueryTransformer {
-    // These have to be integrated into the IEEE query URL as these are just supported as query parameters
+    // These have to be integrated into the IEEE query URL as these are just supported as query
+    // parameters
     // Journal is wrapped in quotes by the transformer
     private String journal;
     private String articleNumber;

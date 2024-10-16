@@ -1,8 +1,5 @@
 package org.jabref.gui.frame;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import javafx.beans.InvalidationListener;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -14,6 +11,9 @@ import org.jabref.gui.importer.actions.OpenDatabaseAction;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.io.FileHistory;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class FileHistoryMenu extends Menu {
 
     protected final MenuItem clearRecentLibraries;
@@ -21,7 +21,10 @@ public class FileHistoryMenu extends Menu {
     private final DialogService dialogService;
     private final OpenDatabaseAction openDatabaseAction;
 
-    public FileHistoryMenu(FileHistory fileHistory, DialogService dialogService, OpenDatabaseAction openDatabaseAction) {
+    public FileHistoryMenu(
+            FileHistory fileHistory,
+            DialogService dialogService,
+            OpenDatabaseAction openDatabaseAction) {
         setText(Localization.lang("Recent libraries"));
 
         this.clearRecentLibraries = new MenuItem();
@@ -73,20 +76,20 @@ public class FileHistoryMenu extends Menu {
         for (int index = 0; index < history.size(); index++) {
             addItem(history.get(index), index + 1);
         }
-        getItems().addAll(
-                new SeparatorMenuItem(),
-                clearRecentLibraries
-        );
+        getItems().addAll(new SeparatorMenuItem(), clearRecentLibraries);
     }
 
     private void addItem(Path file, int num) {
         String number = Integer.toString(num);
         MenuItem item = new MenuItem(number + ". " + file);
-        // By default mnemonic parsing is set to true for anything that is Labeled, if an underscore character
-        // is present, it would create a key combination ALT+the succeeding character (at least for Windows OS)
+        // By default mnemonic parsing is set to true for anything that is Labeled, if an underscore
+        // character
+        // is present, it would create a key combination ALT+the succeeding character (at least for
+        // Windows OS)
         // and the underscore character will be parsed (deleted).
         // i.e if the file name was called "bib_test.bib", a key combination "ALT+t" will be created
-        // so to avoid this, mnemonic parsing should be set to false to print normally the underscore character.
+        // so to avoid this, mnemonic parsing should be set to false to print normally the
+        // underscore character.
         item.setMnemonicParsing(false);
         item.setOnAction(event -> openFile(file));
         getItems().add(item);

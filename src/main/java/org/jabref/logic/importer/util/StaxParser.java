@@ -60,7 +60,8 @@ public class StaxParser {
                 content.append(getXMLComment(reader));
             } else if (event == XMLStreamConstants.PROCESSING_INSTRUCTION) {
                 content.append(getXMLProcessingInstruction(reader));
-            } else if (event == XMLStreamConstants.SPACE || event == XMLStreamConstants.ENTITY_REFERENCE) {
+            } else if (event == XMLStreamConstants.SPACE
+                    || event == XMLStreamConstants.ENTITY_REFERENCE) {
                 content.append(getXMLText(reader));
             }
         }
@@ -87,7 +88,11 @@ public class StaxParser {
         }
 
         for (int i = 0; i < reader.getAttributeCount(); i++) {
-            startTag.append(" ").append(reader.getAttributeLocalName(i)).append("=\"").append(reader.getAttributeValue(i)).append("\"");
+            startTag.append(" ")
+                    .append(reader.getAttributeLocalName(i))
+                    .append("=\"")
+                    .append(reader.getAttributeValue(i))
+                    .append("\"");
         }
 
         if (reader.isEndElement()) {
@@ -103,9 +108,9 @@ public class StaxParser {
         String prefix = reader.getPrefix();
 
         endTag.append("</")
-              .append(prefix != null && !prefix.isBlank() ? prefix + ":" : "")
-              .append(reader.getName().getLocalPart())
-              .append(">");
+                .append(prefix != null && !prefix.isBlank() ? prefix + ":" : "")
+                .append(reader.getName().getLocalPart())
+                .append(">");
 
         return endTag.toString();
     }

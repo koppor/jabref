@@ -1,26 +1,25 @@
 package org.jabref.logic.texparser;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.jabref.model.texparser.LatexParserResult;
+import org.jabref.model.texparser.LatexParserResults;
+import org.junit.jupiter.api.Test;
+
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
-import org.jabref.model.texparser.LatexParserResult;
-import org.jabref.model.texparser.LatexParserResults;
-
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class DefaultTexParserTest {
 
-    private final static String DARWIN = "Darwin1888";
-    private final static String EINSTEIN = "Einstein1920";
-    private final static String NEWTON = "Newton1999";
-    private final static String EINSTEIN_A = "Einstein1920a";
-    private final static String EINSTEIN_C = "Einstein1920c";
-    private final static String UNRESOLVED = "UnresolvedKey";
-    private final static String UNKNOWN = "UnknownKey";
+    private static final String DARWIN = "Darwin1888";
+    private static final String EINSTEIN = "Einstein1920";
+    private static final String NEWTON = "Newton1999";
+    private static final String EINSTEIN_A = "Einstein1920a";
+    private static final String EINSTEIN_C = "Einstein1920c";
+    private static final String UNRESOLVED = "UnresolvedKey";
+    private static final String UNKNOWN = "UnknownKey";
 
     private void testMatchCite(String key, String citeString) {
         Path path = Path.of("");
@@ -78,7 +77,8 @@ class DefaultTexParserTest {
         LatexParserResult parserResult = new DefaultLatexParser().parse(texFile).get();
         LatexParserResult expectedParserResult = new LatexParserResult(texFile);
 
-        expectedParserResult.addKey("anykey", texFile, 1, 32, 45, "Danach wir anschließend mittels \\cite{anykey}.");
+        expectedParserResult.addKey(
+                "anykey", texFile, 1, 32, 45, "Danach wir anschließend mittels \\cite{anykey}.");
 
         assertEquals(expectedParserResult, parserResult);
     }
@@ -90,8 +90,10 @@ class DefaultTexParserTest {
         LatexParserResult parserResult = new DefaultLatexParser().parse(texFile).get();
         LatexParserResult expectedParserResult = new LatexParserResult(texFile);
 
-        // The character � is on purpose - we cannot use Apache Tika's CharsetDetector - see ADR-0005
-        expectedParserResult.addKey("anykey", texFile, 1, 32, 45, "Danach wir anschlie�end mittels \\cite{anykey}.");
+        // The character � is on purpose - we cannot use Apache Tika's CharsetDetector - see
+        // ADR-0005
+        expectedParserResult.addKey(
+                "anykey", texFile, 1, 32, 45, "Danach wir anschlie�end mittels \\cite{anykey}.");
 
         assertEquals(expectedParserResult, parserResult);
     }
@@ -103,8 +105,10 @@ class DefaultTexParserTest {
         LatexParserResult parserResult = new DefaultLatexParser().parse(texFile).get();
         LatexParserResult expectedParserResult = new LatexParserResult(texFile);
 
-        // The character � is on purpose - we cannot use Apache Tika's CharsetDetector - see ADR-0005
-        expectedParserResult.addKey("anykey", texFile, 1, 32, 45, "Danach wir anschlie�end mittels \\cite{anykey}.");
+        // The character � is on purpose - we cannot use Apache Tika's CharsetDetector - see
+        // ADR-0005
+        expectedParserResult.addKey(
+                "anykey", texFile, 1, 32, 45, "Danach wir anschlie�end mittels \\cite{anykey}.");
 
         assertEquals(expectedParserResult, parserResult);
     }
@@ -115,16 +119,21 @@ class DefaultTexParserTest {
         Path texFile2 = Path.of(DefaultTexParserTest.class.getResource("iso-8859-1.tex").toURI());
         Path texFile3 = Path.of(DefaultTexParserTest.class.getResource("iso-8859-15.tex").toURI());
 
-        LatexParserResults parserResults = new DefaultLatexParser().parse(List.of(texFile, texFile2, texFile3));
+        LatexParserResults parserResults =
+                new DefaultLatexParser().parse(List.of(texFile, texFile2, texFile3));
 
         LatexParserResult result1 = new LatexParserResult(texFile);
-        result1.addKey("anykey", texFile, 1, 32, 45, "Danach wir anschließend mittels \\cite{anykey}.");
+        result1.addKey(
+                "anykey", texFile, 1, 32, 45, "Danach wir anschließend mittels \\cite{anykey}.");
         LatexParserResult result2 = new LatexParserResult(texFile2);
-        result2.addKey("anykey", texFile2, 1, 32, 45, "Danach wir anschlie�end mittels \\cite{anykey}.");
+        result2.addKey(
+                "anykey", texFile2, 1, 32, 45, "Danach wir anschlie�end mittels \\cite{anykey}.");
         LatexParserResult result3 = new LatexParserResult(texFile3);
-        result3.addKey("anykey", texFile3, 1, 32, 45, "Danach wir anschlie�end mittels \\cite{anykey}.");
+        result3.addKey(
+                "anykey", texFile3, 1, 32, 45, "Danach wir anschlie�end mittels \\cite{anykey}.");
 
-        LatexParserResults expectedParserResults = new LatexParserResults(result1, result2, result3);
+        LatexParserResults expectedParserResults =
+                new LatexParserResults(result1, result2, result3);
 
         assertEquals(expectedParserResults, parserResults);
     }
@@ -139,8 +148,20 @@ class DefaultTexParserTest {
         expectedParserResult.addBibFile(texFile.getParent().resolve("origin.bib"));
         expectedParserResult.addKey(EINSTEIN, texFile, 4, 0, 19, "\\cite{Einstein1920}");
         expectedParserResult.addKey(DARWIN, texFile, 5, 0, 17, "\\cite{Darwin1888}.");
-        expectedParserResult.addKey(EINSTEIN, texFile, 6, 14, 33, "Einstein said \\cite{Einstein1920} that lorem impsum, consectetur adipiscing elit.");
-        expectedParserResult.addKey(DARWIN, texFile, 7, 67, 84, "Nunc ultricies leo nec libero rhoncus, eu vehicula enim efficitur. \\cite{Darwin1888}");
+        expectedParserResult.addKey(
+                EINSTEIN,
+                texFile,
+                6,
+                14,
+                33,
+                "Einstein said \\cite{Einstein1920} that lorem impsum, consectetur adipiscing elit.");
+        expectedParserResult.addKey(
+                DARWIN,
+                texFile,
+                7,
+                67,
+                84,
+                "Nunc ultricies leo nec libero rhoncus, eu vehicula enim efficitur. \\cite{Darwin1888}");
 
         assertEquals(expectedParserResult, parserResult);
     }
@@ -150,20 +171,51 @@ class DefaultTexParserTest {
         Path texFile = Path.of(DefaultTexParserTest.class.getResource("paper.tex").toURI());
         Path texFile2 = Path.of(DefaultTexParserTest.class.getResource("paper2.tex").toURI());
 
-        LatexParserResults parserResults = new DefaultLatexParser().parse(List.of(texFile, texFile2));
+        LatexParserResults parserResults =
+                new DefaultLatexParser().parse(List.of(texFile, texFile2));
 
         LatexParserResult result1 = new LatexParserResult(texFile);
         result1.addBibFile(texFile.getParent().resolve("origin.bib"));
         result1.addKey(EINSTEIN, texFile, 4, 0, 19, "\\cite{Einstein1920}");
         result1.addKey(DARWIN, texFile, 5, 0, 17, "\\cite{Darwin1888}.");
-        result1.addKey(EINSTEIN, texFile, 6, 14, 33, "Einstein said \\cite{Einstein1920} that lorem impsum, consectetur adipiscing elit.");
-        result1.addKey(DARWIN, texFile, 7, 67, 84, "Nunc ultricies leo nec libero rhoncus, eu vehicula enim efficitur. \\cite{Darwin1888}");
+        result1.addKey(
+                EINSTEIN,
+                texFile,
+                6,
+                14,
+                33,
+                "Einstein said \\cite{Einstein1920} that lorem impsum, consectetur adipiscing elit.");
+        result1.addKey(
+                DARWIN,
+                texFile,
+                7,
+                67,
+                84,
+                "Nunc ultricies leo nec libero rhoncus, eu vehicula enim efficitur. \\cite{Darwin1888}");
 
         LatexParserResult result2 = new LatexParserResult(texFile2);
         result2.addBibFile(texFile2.getParent().resolve("origin.bib"));
-        result2.addKey(DARWIN, texFile2, 4, 48, 65, "This is some content trying to cite a bib file: \\cite{Darwin1888}");
-        result2.addKey(EINSTEIN, texFile2, 5, 48, 67, "This is some content trying to cite a bib file: \\cite{Einstein1920}");
-        result2.addKey(NEWTON, texFile2, 6, 48, 65, "This is some content trying to cite a bib file: \\cite{Newton1999}");
+        result2.addKey(
+                DARWIN,
+                texFile2,
+                4,
+                48,
+                65,
+                "This is some content trying to cite a bib file: \\cite{Darwin1888}");
+        result2.addKey(
+                EINSTEIN,
+                texFile2,
+                5,
+                48,
+                67,
+                "This is some content trying to cite a bib file: \\cite{Einstein1920}");
+        result2.addKey(
+                NEWTON,
+                texFile2,
+                6,
+                48,
+                65,
+                "This is some content trying to cite a bib file: \\cite{Newton1999}");
 
         LatexParserResults expectedParserResults = new LatexParserResults(result1, result2);
 
@@ -174,15 +226,28 @@ class DefaultTexParserTest {
     void duplicateFiles() throws URISyntaxException {
         Path texFile = Path.of(DefaultTexParserTest.class.getResource("paper.tex").toURI());
 
-        LatexParserResults parserResults = new DefaultLatexParser().parse(List.of(texFile, texFile));
+        LatexParserResults parserResults =
+                new DefaultLatexParser().parse(List.of(texFile, texFile));
 
         LatexParserResult result = new LatexParserResult(texFile);
 
         result.addBibFile(texFile.getParent().resolve("origin.bib"));
         result.addKey(EINSTEIN, texFile, 4, 0, 19, "\\cite{Einstein1920}");
         result.addKey(DARWIN, texFile, 5, 0, 17, "\\cite{Darwin1888}.");
-        result.addKey(EINSTEIN, texFile, 6, 14, 33, "Einstein said \\cite{Einstein1920} that lorem impsum, consectetur adipiscing elit.");
-        result.addKey(DARWIN, texFile, 7, 67, 84, "Nunc ultricies leo nec libero rhoncus, eu vehicula enim efficitur. \\cite{Darwin1888}");
+        result.addKey(
+                EINSTEIN,
+                texFile,
+                6,
+                14,
+                33,
+                "Einstein said \\cite{Einstein1920} that lorem impsum, consectetur adipiscing elit.");
+        result.addKey(
+                DARWIN,
+                texFile,
+                7,
+                67,
+                84,
+                "Nunc ultricies leo nec libero rhoncus, eu vehicula enim efficitur. \\cite{Darwin1888}");
 
         LatexParserResults expectedParserResults = new LatexParserResults(result, result);
 
@@ -197,9 +262,27 @@ class DefaultTexParserTest {
         LatexParserResult expectedParserResult = new LatexParserResult(texFile);
 
         expectedParserResult.addBibFile(texFile.getParent().resolve("origin.bib"));
-        expectedParserResult.addKey(DARWIN, texFile, 4, 48, 65, "This is some content trying to cite a bib file: \\cite{Darwin1888}");
-        expectedParserResult.addKey(EINSTEIN, texFile, 5, 48, 67, "This is some content trying to cite a bib file: \\cite{Einstein1920}");
-        expectedParserResult.addKey(UNKNOWN, texFile, 6, 48, 65, "This is some content trying to cite a bib file: \\cite{UnknownKey}");
+        expectedParserResult.addKey(
+                DARWIN,
+                texFile,
+                4,
+                48,
+                65,
+                "This is some content trying to cite a bib file: \\cite{Darwin1888}");
+        expectedParserResult.addKey(
+                EINSTEIN,
+                texFile,
+                5,
+                48,
+                67,
+                "This is some content trying to cite a bib file: \\cite{Einstein1920}");
+        expectedParserResult.addKey(
+                UNKNOWN,
+                texFile,
+                6,
+                48,
+                65,
+                "This is some content trying to cite a bib file: \\cite{UnknownKey}");
 
         assertEquals(expectedParserResult, parserResult);
     }

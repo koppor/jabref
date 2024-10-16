@@ -1,16 +1,15 @@
 package org.jabref.logic.importer.util;
 
+import org.jabref.model.entry.LinkedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jabref.model.entry.LinkedFile;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FileFieldParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileFieldParser.class);
@@ -44,7 +43,8 @@ public class FileFieldParser {
      * </ul>
      */
     public static List<LinkedFile> parse(String value) {
-        // We need state to have a more clean code. Thus, we instantiate the class and then return the result
+        // We need state to have a more clean code. Thus, we instantiate the class and then return
+        // the result
         FileFieldParser fileFieldParser = new FileFieldParser(value);
         return fileFieldParser.parse();
     }
@@ -95,16 +95,20 @@ public class FileFieldParser {
                 charactersOfCurrentElement.append(c);
                 inXmlChar = false;
             } else if (!escaped && (c == ':')) {
-                if ((linkedFileData.size() == 1) && // we already parsed the description
+                if ((linkedFileData.size() == 1)
+                        && // we already parsed the description
                         (charactersOfCurrentElement.length() == 1)) { // we parsed one character
                     // special case of Windows paths
                     // Example: ":c:\test.pdf:PDF"
-                    // We are at the second : (position 3 in the example) and "just" add it to the current element
+                    // We are at the second : (position 3 in the example) and "just" add it to the
+                    // current element
                     charactersOfCurrentElement.append(c);
                     windowsPath = true;
-                    // special case for zotero absolute path on windows that do not have a colon in front
+                    // special case for zotero absolute path on windows that do not have a colon in
+                    // front
                     // e.g. A:\zotero\paper.pdf
-                } else if (charactersOfCurrentElement.length() == 1 && value.charAt(i + 1) == '\\') {
+                } else if (charactersOfCurrentElement.length() == 1
+                        && value.charAt(i + 1) == '\\') {
                     charactersOfCurrentElement.append(c);
                     windowsPath = true;
                 } else {
@@ -157,7 +161,9 @@ public class FileFieldParser {
         LinkedFile field = null;
         if (LinkedFile.isOnlineLink(entry.get(1))) {
             try {
-                field = new LinkedFile(entry.getFirst(), URI.create(entry.get(1)).toURL(), entry.get(2));
+                field =
+                        new LinkedFile(
+                                entry.getFirst(), URI.create(entry.get(1)).toURL(), entry.get(2));
             } catch (MalformedURLException e) {
                 // in case the URL is malformed, store it nevertheless
                 field = new LinkedFile(entry.getFirst(), entry.get(1), entry.get(2));
@@ -165,7 +171,8 @@ public class FileFieldParser {
         } else {
             String pathStr = entry.get(1);
             if (pathStr.contains("//")) {
-                // In case the path contains //, we assume it is a malformed URL, not a malformed path.
+                // In case the path contains //, we assume it is a malformed URL, not a malformed
+                // path.
                 // On linux, the double slash would be converted to a single slash.
                 field = new LinkedFile(entry.getFirst(), pathStr, entry.get(2));
             } else {
@@ -185,9 +192,13 @@ public class FileFieldParser {
         }
 
         // link is the only mandatory field
-        if (field.getDescription().isEmpty() && field.getLink().isEmpty() && !field.getFileType().isEmpty()) {
+        if (field.getDescription().isEmpty()
+                && field.getLink().isEmpty()
+                && !field.getFileType().isEmpty()) {
             field = new LinkedFile("", Path.of(field.getFileType()), "");
-        } else if (!field.getDescription().isEmpty() && field.getLink().isEmpty() && field.getFileType().isEmpty()) {
+        } else if (!field.getDescription().isEmpty()
+                && field.getLink().isEmpty()
+                && field.getFileType().isEmpty()) {
             field = new LinkedFile("", Path.of(field.getDescription()), "");
         }
         entry.clear();
