@@ -20,9 +20,12 @@ Background: [OpenRewrite](https://docs.openrewrite.org/) is an automated refacto
 
 ### Failing Google Java Format (AOSP) tests
 
-Please ensure that you setup and configured the Google Java Format IntelliJ plugin correctly.
+Please ensure that you set up and configured the Google Java Format IntelliJ plugin correctly.
 
-On Windows, to fix using the CLI, you can run the following command in the root directory of the project:
+It is also possible to run it on the command line.
+Download the bineary from the [Google Java Format project](https://github.com/google/google-java-format).
+
+On Windows, to fix using the command line, you can run the following command in the root directory of the project:
 
 ```bash
 find . -name "*.java" -exec /c/Users/{username}/Downloads/google-java-format_windows-x86-64.exe -r -a --skip-reflowing-long-strings --skip-javadoc-formatting "{}" \;
@@ -31,7 +34,7 @@ find . -name "*.java" -exec /c/Users/{username}/Downloads/google-java-format_win
 On Linux, it is similar to following call:
 
 ```bash
-find . -name "*.java" -exec /c/Program\ Files/OpenJDK/jdk-21.0.2/bin/java  --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED -jar /c/Users/{username}/Downloads/google-java-format-1.24.0-all-deps.jar -r -a --skip-reflowing-long-strings --skip-javadoc-formatting "{}" \;
+find . -name "*.java" -exec /c/Program\ Files/OpenJDK/jdk-21.0.2/bin/java  --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED -jar /c/Users/{username}/Downloads/`google-java-format-1.24.0-al`l-deps.jar -r -a --skip-reflowing-long-strings --skip-javadoc-formatting "{}" \;
 ```
 
 Note that the `.exe` does not produce the same results - thus the following command does not work:
