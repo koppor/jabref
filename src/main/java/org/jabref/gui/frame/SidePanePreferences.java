@@ -1,8 +1,5 @@
 package org.jabref.gui.frame;
 
-import java.util.Map;
-import java.util.Set;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -11,14 +8,18 @@ import javafx.collections.ObservableSet;
 
 import org.jabref.gui.sidepane.SidePaneType;
 
+import java.util.Map;
+import java.util.Set;
+
 public class SidePanePreferences {
     private final ObservableSet<SidePaneType> visiblePanes;
     private final ObservableMap<SidePaneType, Integer> preferredPositions;
     private final IntegerProperty webSearchFetcherSelected;
 
-    public SidePanePreferences(Set<SidePaneType> visiblePanes,
-                               Map<SidePaneType, Integer> preferredPositions,
-                               int webSearchFetcherSelected) {
+    public SidePanePreferences(
+            Set<SidePaneType> visiblePanes,
+            Map<SidePaneType, Integer> preferredPositions,
+            int webSearchFetcherSelected) {
         this.visiblePanes = FXCollections.observableSet(visiblePanes);
         this.preferredPositions = FXCollections.observableMap(preferredPositions);
         this.webSearchFetcherSelected = new SimpleIntegerProperty(webSearchFetcherSelected);

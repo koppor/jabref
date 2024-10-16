@@ -1,13 +1,13 @@
 package org.jabref.logic.importer.fetcher.transformers;
 
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.apache.lucene.queryparser.flexible.standard.parser.StandardSyntaxParser;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Optional;
 
 class GVKQueryTransformerTest extends InfixTransformerTest<GVKQueryTransformer> {
 
@@ -40,7 +40,9 @@ class GVKQueryTransformerTest extends InfixTransformerTest<GVKQueryTransformer> 
     @Test
     public void convertYearField() throws Exception {
         String queryString = "year:2018";
-        QueryNode luceneQuery = new StandardSyntaxParser().parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
+        QueryNode luceneQuery =
+                new StandardSyntaxParser()
+                        .parse(queryString, AbstractQueryTransformer.NO_EXPLICIT_FIELD);
         Optional<String> query = getTransformer().transformLuceneQuery(luceneQuery);
 
         Optional<String> expected = Optional.of("pica.erj=2018");
@@ -50,6 +52,5 @@ class GVKQueryTransformerTest extends InfixTransformerTest<GVKQueryTransformer> 
     @Disabled("Not supported by GVK")
     @Override
     @Test
-    public void convertYearRangeField() throws Exception {
-    }
+    public void convertYearRangeField() throws Exception {}
 }

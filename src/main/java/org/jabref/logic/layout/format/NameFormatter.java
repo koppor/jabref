@@ -1,13 +1,13 @@
 package org.jabref.logic.layout.format;
 
+import org.jabref.logic.bst.util.BstNameFormatter;
+import org.jabref.logic.layout.LayoutFormatter;
+import org.jabref.model.entry.AuthorList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import org.jabref.logic.bst.util.BstNameFormatter;
-import org.jabref.logic.layout.LayoutFormatter;
-import org.jabref.model.entry.AuthorList;
 
 /**
  * This layout formatter uses the Bibtex name.format$ method and provides ultimate flexibility:
@@ -74,7 +74,8 @@ import org.jabref.model.entry.AuthorList;
  */
 public class NameFormatter implements LayoutFormatter {
 
-    public static final String DEFAULT_FORMAT = "1@*@{ff }{vv }{ll}{, jj}@@*@1@{ff }{vv }{ll}{, jj}@*@, {ff }{vv }{ll}{, jj}";
+    public static final String DEFAULT_FORMAT =
+            "1@*@{ff }{vv }{ll}{, jj}@@*@1@{ff }{vv }{ll}{, jj}@*@, {ff }{vv }{ll}{, jj}";
 
     private String parameter = NameFormatter.DEFAULT_FORMAT;
 

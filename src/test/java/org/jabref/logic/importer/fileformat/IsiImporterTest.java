@@ -1,5 +1,18 @@
 package org.jabref.logic.importer.fileformat;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.jabref.logic.util.StandardFileType;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.Month;
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -9,29 +22,17 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.jabref.logic.util.StandardFileType;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.Month;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.field.UnknownField;
-import org.jabref.model.entry.types.StandardEntryType;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class IsiImporterTest {
 
     private static final String FILE_ENDING = ".isi";
     private final IsiImporter importer = new IsiImporter();
 
     private static Stream<String> fileNames() throws IOException {
-        Predicate<String> fileName = name -> name.startsWith("IsiImporterTest")
-                && !name.contains("Empty")
-                && name.endsWith(FILE_ENDING);
+        Predicate<String> fileName =
+                name ->
+                        name.startsWith("IsiImporterTest")
+                                && !name.contains("Empty")
+                                && name.endsWith(FILE_ENDING);
         return ImporterTestEngine.getTestFiles(fileName).stream();
     }
 
@@ -124,7 +125,8 @@ class IsiImporterTest {
         BibEntry entry = entries.getFirst();
 
         assertEquals(1, entries.size());
-        assertEquals(Optional.of("Optical properties of MgO doped LiNbO$_3$ single crystals"),
+        assertEquals(
+                Optional.of("Optical properties of MgO doped LiNbO$_3$ single crystals"),
                 entry.getField(StandardField.TITLE));
         assertEquals(
                 Optional.of(
@@ -145,7 +147,8 @@ class IsiImporterTest {
         BibEntry entry = entries.getFirst();
 
         assertEquals(3, entries.size());
-        assertEquals(Optional.of("Optical properties of MgO doped LiNbO$_3$ single crystals"),
+        assertEquals(
+                Optional.of("Optical properties of MgO doped LiNbO$_3$ single crystals"),
                 entry.getField(StandardField.TITLE));
         assertEquals(StandardEntryType.Misc, entry.getType());
         assertEquals(Optional.of("Optical Materials"), entry.getField(StandardField.JOURNAL));
@@ -163,8 +166,10 @@ class IsiImporterTest {
         BibEntry first = entries.getFirst();
         BibEntry second = entries.get(1);
 
-        if (first.getField(StandardField.TITLE).equals(
-                Optional.of("Optical and photoelectric spectroscopy of photorefractive Sn$_2$P$_2$S$_6$ crystals"))) {
+        if (first.getField(StandardField.TITLE)
+                .equals(
+                        Optional.of(
+                                "Optical and photoelectric spectroscopy of photorefractive Sn$_2$P$_2$S$_6$ crystals"))) {
             BibEntry tmp = first;
             first = second;
             second = tmp;
@@ -177,7 +182,8 @@ class IsiImporterTest {
                 first.getField(StandardField.TITLE));
         assertEquals(StandardEntryType.Article, first.getType());
 
-        assertEquals(Optional.of("Degl'Innocenti, R. and Guarino, A. and Poberaj, G. and Gunter, P."),
+        assertEquals(
+                Optional.of("Degl'Innocenti, R. and Guarino, A. and Poberaj, G. and Gunter, P."),
                 first.getField(StandardField.AUTHOR));
         assertEquals(Optional.of("Applied Physics Letters"), first.getField(StandardField.JOURNAL));
         assertEquals(Optional.of("2006"), first.getField(StandardField.YEAR));
@@ -187,7 +193,8 @@ class IsiImporterTest {
         assertEquals(Optional.of("Lorem ipsum abstract"), first.getField(StandardField.ABSTRACT));
         assertEquals(Optional.of("Aip"), first.getField(StandardField.PUBLISHER));
         assertEquals(
-                Optional.of("Optical and photoelectric spectroscopy of photorefractive Sn$_2$P$_2$S$_6$ crystals"),
+                Optional.of(
+                        "Optical and photoelectric spectroscopy of photorefractive Sn$_2$P$_2$S$_6$ crystals"),
                 second.getField(StandardField.TITLE));
         assertEquals(StandardEntryType.Article, second.getType());
     }
@@ -202,12 +209,18 @@ class IsiImporterTest {
 
         assertEquals(2, entries.size());
 
-        assertEquals(Optional.of("Optical and photoelectric spectroscopy of photorefractive Sn2P2S6 crystals"),
+        assertEquals(
+                Optional.of(
+                        "Optical and photoelectric spectroscopy of photorefractive Sn2P2S6 crystals"),
                 first.getField(StandardField.TITLE));
-        assertEquals(Optional.of("Optical waveguides in Sn2P2S6 by low fluence MeV He+ ion implantation"),
+        assertEquals(
+                Optional.of(
+                        "Optical waveguides in Sn2P2S6 by low fluence MeV He+ ion implantation"),
                 second.getField(StandardField.TITLE));
 
-        assertEquals(Optional.of("Journal of Physics-Condensed Matter"), first.getField(StandardField.JOURNAL));
+        assertEquals(
+                Optional.of("Journal of Physics-Condensed Matter"),
+                first.getField(StandardField.JOURNAL));
     }
 
     @Test
@@ -256,17 +269,25 @@ class IsiImporterTest {
 
         assertEquals(1, entries.size());
         assertEquals(StandardEntryType.Article, entry.getType());
-        assertEquals(Optional.of("Geoscience and Remote Sensing Letters, IEEE"), entry.getField(StandardField.JOURNAL));
-        assertEquals(Optional.of("Improving Urban Road Extraction in High-Resolution "
-                        + "Images Exploiting Directional Filtering, Perceptual " + "Grouping, and Simple Topological Concepts"),
+        assertEquals(
+                Optional.of("Geoscience and Remote Sensing Letters, IEEE"),
+                entry.getField(StandardField.JOURNAL));
+        assertEquals(
+                Optional.of(
+                        "Improving Urban Road Extraction in High-Resolution "
+                                + "Images Exploiting Directional Filtering, Perceptual "
+                                + "Grouping, and Simple Topological Concepts"),
                 entry.getField(StandardField.TITLE));
         assertEquals(Optional.of("4"), entry.getField(StandardField.VOLUME));
         assertEquals(Optional.of("3"), entry.getField(StandardField.NUMBER));
         assertEquals(Optional.of("1545-598X"), entry.getField(new UnknownField("SN")));
         assertEquals(Optional.of("387--391"), entry.getField(StandardField.PAGES));
-        assertEquals(Optional.of("Gamba, P. and Dell'Acqua, F. and Lisini, G."), entry.getField(StandardField.AUTHOR));
+        assertEquals(
+                Optional.of("Gamba, P. and Dell'Acqua, F. and Lisini, G."),
+                entry.getField(StandardField.AUTHOR));
         assertEquals(Optional.of("2006"), entry.getField(StandardField.YEAR));
-        assertEquals(Optional.of("Perceptual grouping, street extraction, urban remote sensing"),
+        assertEquals(
+                Optional.of("Perceptual grouping, street extraction, urban remote sensing"),
                 entry.getField(StandardField.KEYWORDS));
         assertEquals(Optional.of("Lorem ipsum abstract"), entry.getField(StandardField.ABSTRACT));
     }
@@ -279,7 +300,9 @@ class IsiImporterTest {
 
         assertEquals(1, entries.size());
         assertEquals(StandardEntryType.Article, entry.getType());
-        assertEquals(Optional.of("Geoscience and Remote Sensing Letters, IEEE"), entry.getField(StandardField.JOURNAL));
+        assertEquals(
+                Optional.of("Geoscience and Remote Sensing Letters, IEEE"),
+                entry.getField(StandardField.JOURNAL));
         assertEquals(
                 Optional.of(
                         "Improving Urban Road Extraction in High-Resolution Images Exploiting Directional Filtering, Perceptual Grouping, and Simple Topological Concepts"),
@@ -288,16 +311,20 @@ class IsiImporterTest {
         assertEquals(Optional.of("3"), entry.getField(StandardField.NUMBER));
         assertEquals(Optional.of("1545-598X"), entry.getField(new UnknownField("SN")));
         assertEquals(Optional.of("387--391"), entry.getField(StandardField.PAGES));
-        assertEquals(Optional.of("Gamba, P. and Dell'Acqua, F. and Lisini, G."), entry.getField(StandardField.AUTHOR));
+        assertEquals(
+                Optional.of("Gamba, P. and Dell'Acqua, F. and Lisini, G."),
+                entry.getField(StandardField.AUTHOR));
         assertEquals(Optional.of("2006"), entry.getField(StandardField.YEAR));
-        assertEquals(Optional.of("Perceptual grouping, street extraction, urban remote sensing"),
+        assertEquals(
+                Optional.of("Perceptual grouping, street extraction, urban remote sensing"),
                 entry.getField(StandardField.KEYWORDS));
         assertEquals(Optional.of("Lorem ipsum abstract"), entry.getField(StandardField.ABSTRACT));
     }
 
     @Test
     void importEntriesMedline() throws IOException, URISyntaxException {
-        Path file = Path.of(IsiImporterTest.class.getResource("IsiImporterTestMedline.isi").toURI());
+        Path file =
+                Path.of(IsiImporterTest.class.getResource("IsiImporterTestMedline.isi").toURI());
         List<BibEntry> entries = importer.importDatabase(file).getDatabase().getEntries();
 
         BibEntry first = entries.getFirst();
@@ -305,7 +332,8 @@ class IsiImporterTest {
 
         assertEquals(2, entries.size());
         assertEquals(
-                Optional.of("Effects of modafinil on cognitive performance and alertness during sleep deprivation."),
+                Optional.of(
+                        "Effects of modafinil on cognitive performance and alertness during sleep deprivation."),
                 first.getField(StandardField.TITLE));
         assertEquals(Optional.of("Wesensten, Nancy J."), first.getField(StandardField.AUTHOR));
         assertEquals(Optional.of("Curr Pharm Des"), first.getField(StandardField.JOURNAL));

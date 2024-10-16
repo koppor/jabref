@@ -1,5 +1,14 @@
 package org.jabref.logic.importer;
 
+import com.ibm.icu.text.CharsetDetector;
+import com.ibm.icu.text.CharsetMatch;
+
+import org.jabref.logic.util.FileType;
+import org.jabref.logic.util.io.FileUtil;
+import org.jabref.model.database.BibDatabaseModeDetection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,15 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Objects;
-
-import org.jabref.logic.util.FileType;
-import org.jabref.logic.util.io.FileUtil;
-import org.jabref.model.database.BibDatabaseModeDetection;
-
-import com.ibm.icu.text.CharsetDetector;
-import com.ibm.icu.text.CharsetMatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Role of an importer for JabRef.
@@ -63,7 +63,7 @@ public abstract class Importer implements Comparable<Importer> {
      */
     public boolean isRecognizedFormat(String data) throws IOException {
         try (StringReader stringReader = new StringReader(data);
-             BufferedReader bufferedReader = new BufferedReader(stringReader)) {
+                BufferedReader bufferedReader = new BufferedReader(stringReader)) {
             return isRecognizedFormat(bufferedReader);
         }
     }
@@ -94,14 +94,17 @@ public abstract class Importer implements Comparable<Importer> {
 
             Charset charset = StandardCharsets.UTF_8;
 
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(bufferedInputStream, charset));
+            BufferedReader bufferedReader =
+                    new BufferedReader(new InputStreamReader(bufferedInputStream, charset));
             ParserResult parserResult = importDatabase(bufferedReader);
             parserResult.getMetaData().setEncoding(charset);
             parserResult.setPath(filePath);
 
             // Make sure the mode is always set
             if (parserResult.getMetaData().getMode().isEmpty()) {
-                parserResult.getMetaData().setMode(BibDatabaseModeDetection.inferMode(parserResult.getDatabase()));
+                parserResult
+                        .getMetaData()
+                        .setMode(BibDatabaseModeDetection.inferMode(parserResult.getDatabase()));
             }
             return parserResult;
         }
@@ -110,8 +113,10 @@ public abstract class Importer implements Comparable<Importer> {
     protected static Charset getCharset(BufferedInputStream bufferedInputStream) {
         Charset defaultCharSet = StandardCharsets.UTF_8;
 
-        // This reads the first 8000 bytes only, thus the default size of 8192 of the bufferedInputStream is OK.
-        // See https://github.com/unicode-org/icu/blob/06ef8867f35befee7340e35082fefc9d3561d230/icu4j/main/classes/core/src/com/ibm/icu/text/CharsetDetector.java#L125 for details
+        // This reads the first 8000 bytes only, thus the default size of 8192 of the
+        // bufferedInputStream is OK.
+        // See
+        // https://github.com/unicode-org/icu/blob/06ef8867f35befee7340e35082fefc9d3561d230/icu4j/main/classes/core/src/com/ibm/icu/text/CharsetDetector.java#L125 for details
         CharsetDetector charsetDetector = new CharsetDetector();
         try {
             charsetDetector.setText(bufferedInputStream);
@@ -146,7 +151,7 @@ public abstract class Importer implements Comparable<Importer> {
      */
     public ParserResult importDatabase(String data) throws IOException {
         try (StringReader stringReader = new StringReader(data);
-             BufferedReader bufferedReader = new BufferedReader(stringReader)) {
+                BufferedReader bufferedReader = new BufferedReader(stringReader)) {
             return importDatabase(bufferedReader);
         }
     }

@@ -1,9 +1,6 @@
 package org.jabref.gui.libraryproperties.constants;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
@@ -22,7 +19,10 @@ import org.jabref.logic.help.HelpFile;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibtexString;
 
-import com.tobiasdiez.easybind.EasyBind;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 public class ConstantsPropertiesViewModel implements PropertiesTabViewModel {
 
@@ -38,22 +38,28 @@ public class ConstantsPropertiesViewModel implements PropertiesTabViewModel {
     private final DialogService dialogService;
     private final ExternalApplicationsPreferences externalApplicationsPreferences;
 
-    public ConstantsPropertiesViewModel(BibDatabaseContext databaseContext, DialogService dialogService, ExternalApplicationsPreferences externalApplicationsPreferences) {
+    public ConstantsPropertiesViewModel(
+            BibDatabaseContext databaseContext,
+            DialogService dialogService,
+            ExternalApplicationsPreferences externalApplicationsPreferences) {
         this.databaseContext = databaseContext;
         this.dialogService = dialogService;
         this.externalApplicationsPreferences = externalApplicationsPreferences;
 
         ObservableList<ObservableValue<Boolean>> allValidProperty =
-                EasyBind.map(stringsListProperty, ConstantsItemModel::combinedValidationValidProperty);
-        validProperty.bind(EasyBind.combine(allValidProperty, stream -> stream.allMatch(valid -> valid)));
+                EasyBind.map(
+                        stringsListProperty, ConstantsItemModel::combinedValidationValidProperty);
+        validProperty.bind(
+                EasyBind.combine(allValidProperty, stream -> stream.allMatch(valid -> valid)));
     }
 
     @Override
     public void setValues() {
-        stringsListProperty.addAll(databaseContext.getDatabase().getStringValues().stream()
-                                                  .sorted(new BibtexStringComparator(false))
-                                                  .map(this::convertFromBibTexString)
-                                                  .toList());
+        stringsListProperty.addAll(
+                databaseContext.getDatabase().getStringValues().stream()
+                        .sorted(new BibtexStringComparator(false))
+                        .map(this::convertFromBibTexString)
+                        .toList());
     }
 
     public void addNewString() {
@@ -77,7 +83,8 @@ public class ConstantsPropertiesViewModel implements PropertiesTabViewModel {
 
     public void resortStrings() {
         // Resort the strings list in the same order as setValues() does
-        stringsListProperty.sort(Comparator.comparing(c -> c.labelProperty().get().toLowerCase(Locale.ROOT)));
+        stringsListProperty.sort(
+                Comparator.comparing(c -> c.labelProperty().get().toLowerCase(Locale.ROOT)));
     }
 
     private ConstantsItemModel convertFromBibTexString(BibtexString bibtexString) {
@@ -86,9 +93,8 @@ public class ConstantsPropertiesViewModel implements PropertiesTabViewModel {
 
     @Override
     public void storeSettings() {
-        List<BibtexString> strings = stringsListProperty.stream()
-                                                        .map(this::fromBibtexStringViewModel)
-                                                        .toList();
+        List<BibtexString> strings =
+                stringsListProperty.stream().map(this::fromBibtexStringViewModel).toList();
         databaseContext.getDatabase().setStrings(strings);
     }
 
@@ -100,12 +106,13 @@ public class ConstantsPropertiesViewModel implements PropertiesTabViewModel {
 
     public Optional<ConstantsItemModel> labelAlreadyExists(String label) {
         return stringsListProperty.stream()
-                                  .filter(item -> item.labelProperty().getValue().equals(label))
-                                  .findFirst();
+                .filter(item -> item.labelProperty().getValue().equals(label))
+                .findFirst();
     }
 
     public void openHelpPage() {
-        new HelpAction(HelpFile.STRING_EDITOR, dialogService, externalApplicationsPreferences).execute();
+        new HelpAction(HelpFile.STRING_EDITOR, dialogService, externalApplicationsPreferences)
+                .execute();
     }
 
     public ListProperty<ConstantsItemModel> stringsListProperty() {

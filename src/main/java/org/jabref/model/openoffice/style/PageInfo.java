@@ -1,19 +1,20 @@
 package org.jabref.model.openoffice.style;
 
-import java.util.Optional;
-
 import org.jabref.model.openoffice.ootext.OOText;
+
+import java.util.Optional;
 
 public class PageInfo {
 
-    private PageInfo() {
-    }
+    private PageInfo() {}
 
     /*
      * pageInfo normalization
      */
     public static Optional<OOText> normalizePageInfo(Optional<OOText> optionalText) {
-        if (optionalText == null || optionalText.isEmpty() || "".equals(OOText.toString(optionalText.get()))) {
+        if (optionalText == null
+                || optionalText.isEmpty()
+                || "".equals(OOText.toString(optionalText.get()))) {
             return Optional.empty();
         }
         String str = OOText.toString(optionalText.get());

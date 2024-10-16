@@ -1,5 +1,7 @@
 package org.jabref.gui.openoffice;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.RadioButton;
@@ -8,8 +10,6 @@ import javafx.scene.control.ToggleGroup;
 
 import org.jabref.gui.util.BaseDialog;
 import org.jabref.logic.l10n.Localization;
-
-import com.airhacks.afterburner.views.ViewLoader;
 
 public class AdvancedCiteDialogView extends BaseDialog<AdvancedCiteDialogViewModel> {
 
@@ -20,16 +20,15 @@ public class AdvancedCiteDialogView extends BaseDialog<AdvancedCiteDialogViewMod
     private AdvancedCiteDialogViewModel viewModel;
 
     public AdvancedCiteDialogView() {
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
-        setResultConverter(btn -> {
-            if (btn == ButtonType.OK) {
-                return viewModel;
-            }
-            return null;
-        });
+        setResultConverter(
+                btn -> {
+                    if (btn == ButtonType.OK) {
+                        return viewModel;
+                    }
+                    return null;
+                });
 
         setTitle(Localization.lang("Cite special"));
     }

@@ -1,7 +1,6 @@
 package org.jabref.migrations;
 
-import java.util.Collections;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.logic.importer.ParserResult;
 import org.jabref.model.entry.BibEntry;
@@ -10,11 +9,11 @@ import org.jabref.model.groups.AllEntriesGroup;
 import org.jabref.model.groups.ExplicitGroup;
 import org.jabref.model.groups.GroupHierarchyType;
 import org.jabref.model.groups.GroupTreeNode;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Collections;
+import java.util.Optional;
 
 class ConvertLegacyExplicitGroupsTest {
 

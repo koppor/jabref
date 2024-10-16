@@ -1,7 +1,7 @@
 package org.jabref.gui.edit;
 
-import java.util.List;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import org.jabref.gui.StateManager;
 import org.jabref.gui.edit.automaticfiededitor.renamefield.RenameFieldViewModel;
@@ -11,12 +11,11 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.FieldFactory;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
+import java.util.List;
+import java.util.Optional;
 
 class RenameFieldViewModelTest {
     RenameFieldViewModel renameFieldViewModel;
@@ -29,18 +28,21 @@ class RenameFieldViewModelTest {
 
     @BeforeEach
     void setup() {
-        entryA = new BibEntry(BibEntry.DEFAULT_TYPE)
-                .withField(StandardField.YEAR, "2015")
-                .withField(StandardField.DATE, "2014")
-                .withField(StandardField.AUTHOR, "Doe");
+        entryA =
+                new BibEntry(BibEntry.DEFAULT_TYPE)
+                        .withField(StandardField.YEAR, "2015")
+                        .withField(StandardField.DATE, "2014")
+                        .withField(StandardField.AUTHOR, "Doe");
 
-        entryB = new BibEntry(BibEntry.DEFAULT_TYPE)
-                .withField(StandardField.DATE, "1998")
-                .withField(StandardField.YEAR, "")
-                .withField(StandardField.AUTHOR, "Eddie");
+        entryB =
+                new BibEntry(BibEntry.DEFAULT_TYPE)
+                        .withField(StandardField.DATE, "1998")
+                        .withField(StandardField.YEAR, "")
+                        .withField(StandardField.AUTHOR, "Eddie");
 
         bibDatabase = new BibDatabase();
-        renameFieldViewModel = new RenameFieldViewModel(List.of(entryA, entryB), bibDatabase, stateManager);
+        renameFieldViewModel =
+                new RenameFieldViewModel(List.of(entryA, entryB), bibDatabase, stateManager);
     }
 
     @Test

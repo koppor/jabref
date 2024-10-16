@@ -21,13 +21,16 @@ import java.util.Optional;
  *
  * @param <T> the type of the class
  */
-@SuppressWarnings("unchecked") // We use some explicit casts of the form "(T) this". The constructor ensures that this cast is valid.
+@SuppressWarnings(
+        "unchecked") // We use some explicit casts of the form "(T) this". The constructor ensures
+// that this cast is valid.
 public abstract class ChainNode<T extends ChainNode<T>> {
 
     /**
      * This node's parent, or null if this node has no parent
      */
     private T parent;
+
     /**
      * This node's child, or null if this node has no child
      */
@@ -44,7 +47,8 @@ public abstract class ChainNode<T extends ChainNode<T>> {
         child = null;
 
         if (!derivingClass.isInstance(this)) {
-            throw new UnsupportedOperationException("The class extending ChainNode<T> has to derive from T");
+            throw new UnsupportedOperationException(
+                    "The class extending ChainNode<T> has to derive from T");
         }
     }
 
@@ -89,7 +93,8 @@ public abstract class ChainNode<T extends ChainNode<T>> {
     public T setChild(T child) {
         Objects.requireNonNull(child);
         if (child.getParent().isPresent()) {
-            throw new UnsupportedOperationException("Cannot add a node which already has a parent, use moveTo instead");
+            throw new UnsupportedOperationException(
+                    "Cannot add a node which already has a parent, use moveTo instead");
         }
 
         child.setParent((T) this);
@@ -109,9 +114,11 @@ public abstract class ChainNode<T extends ChainNode<T>> {
     public void moveTo(T target) {
         Objects.requireNonNull(target);
 
-        // Check that the target node is not an ancestor of this node, because this would create loops in the tree
+        // Check that the target node is not an ancestor of this node, because this would create
+        // loops in the tree
         if (this.isAncestorOf(target)) {
-            throw new UnsupportedOperationException("the target cannot be a descendant of this node");
+            throw new UnsupportedOperationException(
+                    "the target cannot be a descendant of this node");
         }
 
         // Remove from previous parent

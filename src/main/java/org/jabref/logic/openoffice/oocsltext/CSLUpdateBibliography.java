@@ -1,7 +1,10 @@
 package org.jabref.logic.openoffice.oocsltext;
 
-import java.util.List;
-import java.util.Optional;
+import com.sun.star.container.NoSuchElementException;
+import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.text.XTextCursor;
+import com.sun.star.text.XTextDocument;
+import com.sun.star.text.XTextRange;
 
 import org.jabref.logic.citationstyle.CitationStyle;
 import org.jabref.model.database.BibDatabaseContext;
@@ -11,14 +14,11 @@ import org.jabref.model.openoffice.DocumentAnnotation;
 import org.jabref.model.openoffice.uno.CreationException;
 import org.jabref.model.openoffice.uno.NoDocumentException;
 import org.jabref.model.openoffice.uno.UnoTextSection;
-
-import com.sun.star.container.NoSuchElementException;
-import com.sun.star.lang.WrappedTargetException;
-import com.sun.star.text.XTextCursor;
-import com.sun.star.text.XTextDocument;
-import com.sun.star.text.XTextRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Optional;
 
 public class CSLUpdateBibliography {
 
@@ -36,13 +36,17 @@ public class CSLUpdateBibliography {
     /**
      * Rebuilds the bibliography using CSL.
      */
-    public void rebuildCSLBibliography(XTextDocument doc,
-                                       CSLCitationOOAdapter cslAdapter,
-                                       List<BibEntry> entries,
-                                       CitationStyle citationStyle,
-                                       BibDatabaseContext bibDatabaseContext,
-                                       BibEntryTypesManager bibEntryTypesManager)
-            throws WrappedTargetException, NoDocumentException, CreationException, NoSuchElementException {
+    public void rebuildCSLBibliography(
+            XTextDocument doc,
+            CSLCitationOOAdapter cslAdapter,
+            List<BibEntry> entries,
+            CitationStyle citationStyle,
+            BibDatabaseContext bibDatabaseContext,
+            BibEntryTypesManager bibEntryTypesManager)
+            throws WrappedTargetException,
+                    NoDocumentException,
+                    CreationException,
+                    NoSuchElementException {
         LOGGER.debug("Starting to rebuild CSL bibliography");
 
         // Ensure the bibliography section exists
@@ -55,16 +59,17 @@ public class CSLUpdateBibliography {
             clearCSLBibTextSectionContent(doc);
         }
 
-        populateCSLBibTextSection(doc, cslAdapter, entries, citationStyle, bibDatabaseContext, bibEntryTypesManager);
+        populateCSLBibTextSection(
+                doc, cslAdapter, entries, citationStyle, bibDatabaseContext, bibEntryTypesManager);
         LOGGER.debug("Finished rebuilding CSL bibliography");
     }
 
-    private void createCSLBibTextSection(XTextDocument doc)
-            throws CreationException {
+    private void createCSLBibTextSection(XTextDocument doc) throws CreationException {
         LOGGER.debug("Creating new CSL bibliography section");
         XTextCursor textCursor = doc.getText().createTextCursor();
         textCursor.gotoEnd(false);
-        DocumentAnnotation annotation = new DocumentAnnotation(doc, CSL_BIB_SECTION_NAME, textCursor, false);
+        DocumentAnnotation annotation =
+                new DocumentAnnotation(doc, CSL_BIB_SECTION_NAME, textCursor, false);
         UnoTextSection.create(annotation);
         LOGGER.debug("CSL bibliography section created");
     }
@@ -82,13 +87,17 @@ public class CSLUpdateBibliography {
         }
     }
 
-    private void populateCSLBibTextSection(XTextDocument doc,
-                                           CSLCitationOOAdapter cslAdapter,
-                                           List<BibEntry> entries,
-                                           CitationStyle citationStyle,
-                                           BibDatabaseContext bibDatabaseContext,
-                                           BibEntryTypesManager bibEntryTypesManager)
-            throws WrappedTargetException, NoDocumentException, CreationException, NoSuchElementException {
+    private void populateCSLBibTextSection(
+            XTextDocument doc,
+            CSLCitationOOAdapter cslAdapter,
+            List<BibEntry> entries,
+            CitationStyle citationStyle,
+            BibDatabaseContext bibDatabaseContext,
+            BibEntryTypesManager bibEntryTypesManager)
+            throws WrappedTargetException,
+                    NoDocumentException,
+                    CreationException,
+                    NoSuchElementException {
         LOGGER.debug("Populating CSL bibliography section");
 
         Optional<XTextRange> sectionRange = getBibliographyRange(doc);
@@ -100,7 +109,8 @@ public class CSLUpdateBibliography {
         XTextCursor cursor = doc.getText().createTextCursorByRange(sectionRange.get());
 
         // Use CSLCitationOOAdapter to insert the bibliography
-        cslAdapter.insertBibliography(cursor, citationStyle, entries, bibDatabaseContext, bibEntryTypesManager);
+        cslAdapter.insertBibliography(
+                cursor, citationStyle, entries, bibDatabaseContext, bibEntryTypesManager);
         LOGGER.debug("Bibliography inserted using CSLCitationOOAdapter");
 
         cursor.collapseToEnd();

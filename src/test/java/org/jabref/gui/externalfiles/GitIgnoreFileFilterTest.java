@@ -1,19 +1,21 @@
 package org.jabref.gui.externalfiles;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 class GitIgnoreFileFilterTest {
 
     @Test
     void checkSimpleGitIgnore(@TempDir Path dir) throws Exception {
-        Files.writeString(dir.resolve(".gitignore"), """
+        Files.writeString(
+                dir.resolve(".gitignore"),
+                """
                 *.png
                 """);
         GitIgnoreFileFilter gitIgnoreFileFilter = new GitIgnoreFileFilter(dir);
@@ -22,7 +24,9 @@ class GitIgnoreFileFilterTest {
 
     @Test
     void checkSimpleGitIgnoreWithAllowing(@TempDir Path dir) throws Exception {
-        Files.writeString(dir.resolve(".gitignore"), """
+        Files.writeString(
+                dir.resolve(".gitignore"),
+                """
                 !*.png
                 """);
         GitIgnoreFileFilter gitIgnoreFileFilter = new GitIgnoreFileFilter(dir);
@@ -31,7 +35,9 @@ class GitIgnoreFileFilterTest {
 
     @Test
     void checkSimpleGitIgnoreWithOverwritingDefs(@TempDir Path dir) throws Exception {
-        Files.writeString(dir.resolve(".gitignore"), """
+        Files.writeString(
+                dir.resolve(".gitignore"),
+                """
                 !*.png
                 *.png
                 """);
@@ -41,7 +47,9 @@ class GitIgnoreFileFilterTest {
 
     @Test
     void checkDirectoryGitIgnore(@TempDir Path dir) throws Exception {
-        Files.writeString(dir.resolve(".gitignore"), """
+        Files.writeString(
+                dir.resolve(".gitignore"),
+                """
                 **/*.png
                 """);
         GitIgnoreFileFilter gitIgnoreFileFilter = new GitIgnoreFileFilter(dir);

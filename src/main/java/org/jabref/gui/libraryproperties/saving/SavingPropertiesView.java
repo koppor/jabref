@@ -1,5 +1,9 @@
 package org.jabref.gui.libraryproperties.saving;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 
@@ -11,10 +15,8 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.model.database.BibDatabaseContext;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
-
-public class SavingPropertiesView extends AbstractPropertiesTabView<SavingPropertiesViewModel> implements PropertiesTab {
+public class SavingPropertiesView extends AbstractPropertiesTabView<SavingPropertiesViewModel>
+        implements PropertiesTab {
 
     @FXML private CheckBox protect;
     @FXML private SaveOrderConfigPanel saveOrderConfigPanel;
@@ -25,9 +27,7 @@ public class SavingPropertiesView extends AbstractPropertiesTabView<SavingProper
     public SavingPropertiesView(BibDatabaseContext databaseContext) {
         this.databaseContext = databaseContext;
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -41,13 +41,25 @@ public class SavingPropertiesView extends AbstractPropertiesTabView<SavingProper
         protect.disableProperty().bind(viewModel.protectDisableProperty());
         protect.selectedProperty().bindBidirectional(viewModel.libraryProtectedProperty());
 
-        saveOrderConfigPanel.saveInOriginalProperty().bindBidirectional(viewModel.saveInOriginalProperty());
-        saveOrderConfigPanel.saveInTableOrderProperty().bindBidirectional(viewModel.saveInTableOrderProperty());
-        saveOrderConfigPanel.saveInSpecifiedOrderProperty().bindBidirectional(viewModel.saveInSpecifiedOrderProperty());
+        saveOrderConfigPanel
+                .saveInOriginalProperty()
+                .bindBidirectional(viewModel.saveInOriginalProperty());
+        saveOrderConfigPanel
+                .saveInTableOrderProperty()
+                .bindBidirectional(viewModel.saveInTableOrderProperty());
+        saveOrderConfigPanel
+                .saveInSpecifiedOrderProperty()
+                .bindBidirectional(viewModel.saveInSpecifiedOrderProperty());
         saveOrderConfigPanel.sortableFieldsProperty().bind(viewModel.sortableFieldsProperty());
-        saveOrderConfigPanel.sortCriteriaProperty().bindBidirectional(viewModel.sortCriteriaProperty());
+        saveOrderConfigPanel
+                .sortCriteriaProperty()
+                .bindBidirectional(viewModel.sortCriteriaProperty());
 
-        fieldFormatterCleanupsPanel.cleanupsDisableProperty().bindBidirectional(viewModel.cleanupsDisableProperty());
-        fieldFormatterCleanupsPanel.cleanupsProperty().bindBidirectional(viewModel.cleanupsProperty());
+        fieldFormatterCleanupsPanel
+                .cleanupsDisableProperty()
+                .bindBidirectional(viewModel.cleanupsDisableProperty());
+        fieldFormatterCleanupsPanel
+                .cleanupsProperty()
+                .bindBidirectional(viewModel.cleanupsProperty());
     }
 }

@@ -1,19 +1,10 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import kong.unirest.core.json.JSONArray;
+import kong.unirest.core.json.JSONObject;
 
+import org.apache.hc.core5.net.URIBuilder;
+import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.FulltextFetcher;
@@ -30,13 +21,22 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.identifier.DOI;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.strings.StringUtil;
-
-import kong.unirest.core.json.JSONArray;
-import kong.unirest.core.json.JSONObject;
-import org.apache.hc.core5.net.URIBuilder;
-import org.apache.lucene.queryparser.flexible.core.nodes.QueryNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Class for finding PDF URLs for entries on IEEE.
@@ -45,27 +45,33 @@ import org.slf4j.LoggerFactory;
  *
  * @see <a href="https://developer.ieee.org/docs">API documentation</a>
  */
-public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, CustomizableKeyFetcher {
+public class IEEE
+        implements FulltextFetcher, PagedSearchBasedParserFetcher, CustomizableKeyFetcher {
 
     public static final String FETCHER_NAME = "IEEEXplore";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IEEE.class);
 
     private static final String STAMP_BASE_STRING_DOCUMENT = "/stamp/stamp.jsp?tp=&arnumber=";
-    private static final Pattern STAMP_PATTERN = Pattern.compile("(/stamp/stamp.jsp\\?t?p?=?&?arnumber=[0-9]+)");
+    private static final Pattern STAMP_PATTERN =
+            Pattern.compile("(/stamp/stamp.jsp\\?t?p?=?&?arnumber=[0-9]+)");
     private static final Pattern DOCUMENT_PATTERN = Pattern.compile("document/([0-9]+)/");
 
-    private static final Pattern PDF_PATTERN = Pattern.compile("\"(https://ieeexplore.ieee.org/ielx[0-9/]+\\.pdf[^\"]+)\"");
+    private static final Pattern PDF_PATTERN =
+            Pattern.compile("\"(https://ieeexplore.ieee.org/ielx[0-9/]+\\.pdf[^\"]+)\"");
     private static final String IEEE_DOI = "10.1109";
     private static final String BASE_URL = "https://ieeexplore.ieee.org";
-    private static final String TEST_URL_WITHOUT_API_KEY = "https://ieeexploreapi.ieee.org/api/v1/search/articles?max_records=0&apikey=";
+    private static final String TEST_URL_WITHOUT_API_KEY =
+            "https://ieeexploreapi.ieee.org/api/v1/search/articles?max_records=0&apikey=";
 
     private final ImportFormatPreferences importFormatPreferences;
     private final ImporterPreferences importerPreferences;
 
     private IEEEQueryTransformer transformer;
 
-    public IEEE(ImportFormatPreferences importFormatPreferences, ImporterPreferences importerPreferences) {
+    public IEEE(
+            ImportFormatPreferences importFormatPreferences,
+            ImporterPreferences importerPreferences) {
         this.importFormatPreferences = Objects.requireNonNull(importFormatPreferences);
         this.importerPreferences = Objects.requireNonNull(importerPreferences);
     }
@@ -88,29 +94,42 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
 
         final List<String> authors = new ArrayList<>();
         JSONObject authorsContainer = jsonEntry.optJSONObject("authors");
-        authorsContainer.getJSONArray("authors").forEach(authorPure -> {
-            JSONObject author = (JSONObject) authorPure;
-            authors.add(author.optString("full_name"));
-        });
+        authorsContainer
+                .getJSONArray("authors")
+                .forEach(
+                        authorPure -> {
+                            JSONObject author = (JSONObject) authorPure;
+                            authors.add(author.optString("full_name"));
+                        });
         entry.setField(StandardField.AUTHOR, String.join(" and ", authors));
         entry.setField(StandardField.LOCATION, jsonEntry.optString("conference_location"));
         entry.setField(StandardField.DOI, jsonEntry.optString("doi"));
         entry.setField(StandardField.YEAR, jsonEntry.optString("publication_year"));
-        entry.setField(StandardField.PAGES, jsonEntry.optString("start_page") + "--" + jsonEntry.optString("end_page"));
+        entry.setField(
+                StandardField.PAGES,
+                jsonEntry.optString("start_page") + "--" + jsonEntry.optString("end_page"));
 
         JSONObject keywordsContainer = jsonEntry.optJSONObject("index_terms");
         if (keywordsContainer != null) {
             if (keywordsContainer.has("ieee_terms")) {
-                keywordsContainer.getJSONObject("ieee_terms").getJSONArray("terms").forEach(data -> {
-                    String keyword = (String) data;
-                    entry.addKeyword(keyword, keywordSeparator);
-                });
+                keywordsContainer
+                        .getJSONObject("ieee_terms")
+                        .getJSONArray("terms")
+                        .forEach(
+                                data -> {
+                                    String keyword = (String) data;
+                                    entry.addKeyword(keyword, keywordSeparator);
+                                });
             }
             if (keywordsContainer.has("author_terms")) {
-                keywordsContainer.getJSONObject("author_terms").getJSONArray("terms").forEach(data -> {
-                    String keyword = (String) data;
-                    entry.addKeyword(keyword, keywordSeparator);
-                });
+                keywordsContainer
+                        .getJSONObject("author_terms")
+                        .getJSONArray("terms")
+                        .forEach(
+                                data -> {
+                                    String keyword = (String) data;
+                                    entry.addKeyword(keyword, keywordSeparator);
+                                });
             }
         }
 
@@ -158,7 +177,9 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
         // If not, try DOI
         if (stampString.isEmpty()) {
             Optional<DOI> doi = entry.getField(StandardField.DOI).flatMap(DOI::parse);
-            if (doi.isPresent() && doi.get().getDOI().startsWith(IEEE_DOI) && doi.get().getExternalURI().isPresent()) {
+            if (doi.isPresent()
+                    && doi.get().getDOI().startsWith(IEEE_DOI)
+                    && doi.get().getExternalURI().isPresent()) {
                 // Download the HTML page from IEEE
                 URLDownload urlDownload = null;
                 try {
@@ -219,7 +240,10 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
     @Override
     public Parser getParser() {
         return inputStream -> {
-            String response = new BufferedReader(new InputStreamReader(inputStream)).lines().collect(Collectors.joining(OS.NEWLINE));
+            String response =
+                    new BufferedReader(new InputStreamReader(inputStream))
+                            .lines()
+                            .collect(Collectors.joining(OS.NEWLINE));
             JSONObject jsonObject = new JSONObject(response);
 
             List<BibEntry> entries = new ArrayList<>();
@@ -227,18 +251,38 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
                 JSONArray results = jsonObject.getJSONArray("articles");
                 for (int i = 0; i < results.length(); i++) {
                     JSONObject jsonEntry = results.getJSONObject(i);
-                    BibEntry entry = parseJsonResponse(jsonEntry, importFormatPreferences.bibEntryPreferences().getKeywordSeparator());
+                    BibEntry entry =
+                            parseJsonResponse(
+                                    jsonEntry,
+                                    importFormatPreferences
+                                            .bibEntryPreferences()
+                                            .getKeywordSeparator());
                     boolean addEntry;
                     // In case entry has no year, add it
                     // In case an entry has a year, check if its in the year range
                     // The implementation uses some Java 8 Optional magic to implement that
                     if (entry.hasField(StandardField.YEAR)) {
-                        addEntry = entry.getField(StandardField.YEAR).filter(year -> {
-                            int yearAsInteger = Integer.parseInt(year);
-                            return
-                                    transformer.getStartYear().map(startYear -> yearAsInteger >= startYear).orElse(true) &&
-                                            transformer.getEndYear().map(endYear -> yearAsInteger <= endYear).orElse(true);
-                        }).isPresent();
+                        addEntry =
+                                entry.getField(StandardField.YEAR)
+                                        .filter(
+                                                year -> {
+                                                    int yearAsInteger = Integer.parseInt(year);
+                                                    return transformer
+                                                                    .getStartYear()
+                                                                    .map(
+                                                                            startYear ->
+                                                                                    yearAsInteger
+                                                                                            >= startYear)
+                                                                    .orElse(true)
+                                                            && transformer
+                                                                    .getEndYear()
+                                                                    .map(
+                                                                            endYear ->
+                                                                                    yearAsInteger
+                                                                                            <= endYear)
+                                                                    .orElse(true);
+                                                })
+                                        .isPresent();
                     } else {
                         addEntry = true;
                     }
@@ -268,13 +312,18 @@ public class IEEE implements FulltextFetcher, PagedSearchBasedParserFetcher, Cus
     }
 
     @Override
-    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber) throws URISyntaxException, MalformedURLException {
-        // transformer is stored globally, because we need to filter out the bib entries by the year manually
+    public URL getURLForQuery(QueryNode luceneQuery, int pageNumber)
+            throws URISyntaxException, MalformedURLException {
+        // transformer is stored globally, because we need to filter out the bib entries by the year
+        // manually
         // the transformer stores the min and max year
         transformer = new IEEEQueryTransformer();
         String transformedQuery = transformer.transformLuceneQuery(luceneQuery).orElse("");
-        URIBuilder uriBuilder = new URIBuilder("https://ieeexploreapi.ieee.org/api/v1/search/articles");
-        importerPreferences.getApiKey(FETCHER_NAME).ifPresent(apiKey -> uriBuilder.addParameter("apikey", apiKey));
+        URIBuilder uriBuilder =
+                new URIBuilder("https://ieeexploreapi.ieee.org/api/v1/search/articles");
+        importerPreferences
+                .getApiKey(FETCHER_NAME)
+                .ifPresent(apiKey -> uriBuilder.addParameter("apikey", apiKey));
         if (!transformedQuery.isBlank()) {
             uriBuilder.addParameter("querytext", transformedQuery);
         }

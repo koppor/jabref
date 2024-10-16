@@ -1,12 +1,7 @@
 package org.jabref.migrations;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 
 import javafx.collections.ObservableList;
 
@@ -19,8 +14,13 @@ import org.jabref.model.groups.ExplicitGroup;
 import org.jabref.model.groups.GroupHierarchyType;
 import org.jabref.model.groups.GroupTreeNode;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Converts legacy explicit groups, where the group contained a list of assigned entries, to the new format,
@@ -37,20 +37,28 @@ public class ConvertMarkingToGroups implements PostOpenMigration {
         ObservableList<BibEntry> entries = parserResult.getDatabase().getEntries();
         Multimap<String, BibEntry> markings = getMarkingWithEntries(entries);
         if (!markings.isEmpty()) {
-            GroupTreeNode markingRoot = GroupTreeNode.fromGroup(
-                    new ExplicitGroup(Localization.lang("Markings"), GroupHierarchyType.INCLUDING, ','));
+            GroupTreeNode markingRoot =
+                    GroupTreeNode.fromGroup(
+                            new ExplicitGroup(
+                                    Localization.lang("Markings"),
+                                    GroupHierarchyType.INCLUDING,
+                                    ','));
 
             for (Map.Entry<String, Collection<BibEntry>> marking : markings.asMap().entrySet()) {
                 String markingName = marking.getKey();
                 Collection<BibEntry> markingMatchedEntries = marking.getValue();
 
-                GroupTreeNode markingGroup = markingRoot.addSubgroup(
-                        new ExplicitGroup(markingName, GroupHierarchyType.INCLUDING, ','));
+                GroupTreeNode markingGroup =
+                        markingRoot.addSubgroup(
+                                new ExplicitGroup(markingName, GroupHierarchyType.INCLUDING, ','));
                 markingGroup.addEntriesToGroup(markingMatchedEntries);
             }
 
             if (parserResult.getMetaData().getGroups().isEmpty()) {
-                parserResult.getMetaData().setGroups(GroupTreeNode.fromGroup(DefaultGroupsFactory.getAllEntriesGroup()));
+                parserResult
+                        .getMetaData()
+                        .setGroups(
+                                GroupTreeNode.fromGroup(DefaultGroupsFactory.getAllEntriesGroup()));
             }
             GroupTreeNode root = parserResult.getMetaData().getGroups().get();
             root.addChild(markingRoot, 0);

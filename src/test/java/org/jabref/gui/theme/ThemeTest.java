@@ -1,11 +1,11 @@
 package org.jabref.gui.theme;
 
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Optional;
 
 class ThemeTest {
     @Test
@@ -13,7 +13,9 @@ class ThemeTest {
         Theme theme = new Theme("");
 
         assertEquals(Theme.Type.DEFAULT, theme.getType());
-        assertEquals(Optional.empty(), theme.getAdditionalStylesheet(),
+        assertEquals(
+                Optional.empty(),
+                theme.getAdditionalStylesheet(),
                 "didn't expect additional stylesheet to be available");
     }
 
@@ -22,7 +24,9 @@ class ThemeTest {
         Theme theme = new Theme("Base.css");
 
         assertEquals(Theme.Type.DEFAULT, theme.getType());
-        assertEquals(Optional.empty(), theme.getAdditionalStylesheet(),
+        assertEquals(
+                Optional.empty(),
+                theme.getAdditionalStylesheet(),
                 "didn't expect additional stylesheet to be available");
     }
 
@@ -32,7 +36,9 @@ class ThemeTest {
 
         assertEquals(Theme.Type.EMBEDDED, theme.getType());
         assertTrue(theme.getAdditionalStylesheet().isPresent());
-        assertEquals("Dark.css", theme.getAdditionalStylesheet().get().getWatchPath().getFileName().toString(),
+        assertEquals(
+                "Dark.css",
+                theme.getAdditionalStylesheet().get().getWatchPath().getFileName().toString(),
                 "expected dark theme stylesheet to be available");
     }
 
@@ -41,7 +47,9 @@ class ThemeTest {
         Theme theme = new Theme(".");
 
         assertEquals(Theme.Type.DEFAULT, theme.getType());
-        assertEquals(Optional.empty(), theme.getAdditionalStylesheet(),
+        assertEquals(
+                Optional.empty(),
+                theme.getAdditionalStylesheet(),
                 "didn't expect additional stylesheet to be available when location is a directory");
     }
 
@@ -50,7 +58,9 @@ class ThemeTest {
         Theme theme = new Theme("\0\0\0");
 
         assertEquals(Theme.Type.DEFAULT, theme.getType());
-        assertEquals(Optional.empty(), theme.getAdditionalStylesheet(),
+        assertEquals(
+                Optional.empty(),
+                theme.getAdditionalStylesheet(),
                 "didn't expect additional stylesheet when CSS location is just some null terminators!");
     }
 
@@ -60,6 +70,8 @@ class ThemeTest {
 
         assertEquals(Theme.Type.CUSTOM, theme.getType());
         assertTrue(theme.getAdditionalStylesheet().isPresent());
-        assertEquals("Idonotexist.css", theme.getAdditionalStylesheet().get().getWatchPath().getFileName().toString());
+        assertEquals(
+                "Idonotexist.css",
+                theme.getAdditionalStylesheet().get().getWatchPath().getFileName().toString());
     }
 }

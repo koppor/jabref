@@ -1,13 +1,6 @@
 package org.jabref.logic.openoffice.oocsltext;
 
-import java.util.List;
-
-import org.jabref.logic.openoffice.ReferenceMark;
-import org.jabref.model.openoffice.DocumentAnnotation;
-import org.jabref.model.openoffice.ootext.OOText;
-import org.jabref.model.openoffice.ootext.OOTextIntoOO;
-import org.jabref.model.openoffice.uno.CreationException;
-import org.jabref.model.openoffice.uno.UnoReferenceMark;
+import static org.jabref.logic.openoffice.backend.NamedRangeReferenceMark.safeInsertSpacesBetweenReferenceMarks;
 
 import com.sun.star.container.XNamed;
 import com.sun.star.lang.WrappedTargetException;
@@ -18,9 +11,17 @@ import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
+
 import io.github.thibaultmeyer.cuid.CUID;
 
-import static org.jabref.logic.openoffice.backend.NamedRangeReferenceMark.safeInsertSpacesBetweenReferenceMarks;
+import org.jabref.logic.openoffice.ReferenceMark;
+import org.jabref.model.openoffice.DocumentAnnotation;
+import org.jabref.model.openoffice.ootext.OOText;
+import org.jabref.model.openoffice.ootext.OOTextIntoOO;
+import org.jabref.model.openoffice.uno.CreationException;
+import org.jabref.model.openoffice.uno.UnoReferenceMark;
+
+import java.util.List;
 
 /**
  * Class to handle a reference mark. See {@link CSLReferenceMarkManager} for the management of all reference marks.
@@ -38,23 +39,33 @@ public class CSLReferenceMark {
         this.citationNumbers = referenceMark.getCitationNumbers();
     }
 
-    public static CSLReferenceMark of(List<String> citationKeys, List<Integer> citationNumbers, XMultiServiceFactory factory) throws Exception {
+    public static CSLReferenceMark of(
+            List<String> citationKeys, List<Integer> citationNumbers, XMultiServiceFactory factory)
+            throws Exception {
         String uniqueId = CUID.randomCUID2(8).toString();
         String name = buildReferenceName(citationKeys, citationNumbers, uniqueId);
-        XNamed named = UnoRuntime.queryInterface(XNamed.class, factory.createInstance("com.sun.star.text.ReferenceMark"));
+        XNamed named =
+                UnoRuntime.queryInterface(
+                        XNamed.class, factory.createInstance("com.sun.star.text.ReferenceMark"));
         named.setName(name);
-        ReferenceMark referenceMark = new ReferenceMark(name, citationKeys, citationNumbers, uniqueId);
+        ReferenceMark referenceMark =
+                new ReferenceMark(name, citationKeys, citationNumbers, uniqueId);
         return new CSLReferenceMark(named, referenceMark);
     }
 
-    private static String buildReferenceName(List<String> citationKeys, List<Integer> citationNumbers, String uniqueId) {
+    private static String buildReferenceName(
+            List<String> citationKeys, List<Integer> citationNumbers, String uniqueId) {
         StringBuilder nameBuilder = new StringBuilder();
         for (int i = 0; i < citationKeys.size(); i++) {
             if (i > 0) {
                 nameBuilder.append(", ");
             }
-            nameBuilder.append(ReferenceMark.PREFIXES[0]).append(citationKeys.get(i))
-                       .append(" ").append(ReferenceMark.PREFIXES[1]).append(citationNumbers.get(i));
+            nameBuilder
+                    .append(ReferenceMark.PREFIXES[0])
+                    .append(citationKeys.get(i))
+                    .append(" ")
+                    .append(ReferenceMark.PREFIXES[1])
+                    .append(citationNumbers.get(i));
         }
         nameBuilder.append(" ").append(uniqueId);
         return nameBuilder.toString();
@@ -76,7 +87,12 @@ public class CSLReferenceMark {
         return referenceMark.getName();
     }
 
-    public void insertReferenceIntoOO(XTextDocument doc, XTextCursor position, OOText ooText, boolean insertSpaceBefore, boolean insertSpaceAfter)
+    public void insertReferenceIntoOO(
+            XTextDocument doc,
+            XTextCursor position,
+            OOText ooText,
+            boolean insertSpaceBefore,
+            boolean insertSpaceAfter)
             throws CreationException, WrappedTargetException {
         // Ensure the cursor is at the end of its range
         position.collapseToEnd();
@@ -106,7 +122,8 @@ public class CSLReferenceMark {
         cursor.gotoRange(endRange, true);
 
         // Create DocumentAnnotation and attach it
-        DocumentAnnotation documentAnnotation = new DocumentAnnotation(doc, referenceMark.getName(), cursor, true);
+        DocumentAnnotation documentAnnotation =
+                new DocumentAnnotation(doc, referenceMark.getName(), cursor, true);
         UnoReferenceMark.create(documentAnnotation);
 
         // Move cursor to the end of the inserted content
@@ -131,6 +148,11 @@ public class CSLReferenceMark {
     }
 
     public void updateName(String newName) {
-        this.referenceMark = new ReferenceMark(newName, this.citationKeys, this.citationNumbers, this.referenceMark.getUniqueId());
+        this.referenceMark =
+                new ReferenceMark(
+                        newName,
+                        this.citationKeys,
+                        this.citationNumbers,
+                        this.referenceMark.getUniqueId());
     }
 }

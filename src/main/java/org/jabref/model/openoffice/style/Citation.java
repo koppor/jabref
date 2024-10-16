@@ -1,14 +1,15 @@
 package org.jabref.model.openoffice.style;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.openoffice.ootext.OOText;
 import org.jabref.model.openoffice.util.OOPair;
 
-public class Citation implements ComparableCitation, CitationMarkerEntry, CitationMarkerNumericEntry {
+import java.util.List;
+import java.util.Optional;
+
+public class Citation
+        implements ComparableCitation, CitationMarkerEntry, CitationMarkerNumericEntry {
 
     /**
      * key in database
@@ -70,17 +71,16 @@ public class Citation implements ComparableCitation, CitationMarkerEntry, Citati
     }
 
     public static Optional<CitationLookupResult> lookup(BibDatabase database, String key) {
-        return database
-                .getEntryByCitationKey(key)
+        return database.getEntryByCitationKey(key)
                 .map(bibEntry -> new CitationLookupResult(bibEntry, database));
     }
 
     public static Optional<CitationLookupResult> lookup(List<BibDatabase> databases, String key) {
         return databases.stream()
-                         .map(database -> Citation.lookup(database, key))
-                         .filter(Optional::isPresent)
-                         .map(Optional::get)
-                         .findFirst();
+                .map(database -> Citation.lookup(database, key))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst();
     }
 
     public void lookupInDatabases(List<BibDatabase> databases) {

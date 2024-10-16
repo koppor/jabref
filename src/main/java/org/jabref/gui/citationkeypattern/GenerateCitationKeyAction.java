@@ -1,11 +1,5 @@
 package org.jabref.gui.citationkeypattern;
 
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
@@ -21,6 +15,12 @@ import org.jabref.logic.util.BackgroundTask;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.BibEntry;
 
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import javax.swing.undo.UndoManager;
+
 public class GenerateCitationKeyAction extends SimpleCommand {
 
     private final Supplier<LibraryTab> tabSupplier;
@@ -34,12 +34,13 @@ public class GenerateCitationKeyAction extends SimpleCommand {
     private final CliPreferences preferences;
     private final UndoManager undoManager;
 
-    public GenerateCitationKeyAction(Supplier<LibraryTab> tabSupplier,
-                                     DialogService dialogService,
-                                     StateManager stateManager,
-                                     TaskExecutor taskExecutor,
-                                     CliPreferences preferences,
-                                     UndoManager undoManager) {
+    public GenerateCitationKeyAction(
+            Supplier<LibraryTab> tabSupplier,
+            DialogService dialogService,
+            StateManager stateManager,
+            TaskExecutor taskExecutor,
+            CliPreferences preferences,
+            UndoManager undoManager) {
         this.tabSupplier = tabSupplier;
         this.dialogService = dialogService;
         this.stateManager = stateManager;
@@ -55,11 +56,15 @@ public class GenerateCitationKeyAction extends SimpleCommand {
         entries = stateManager.getSelectedEntries();
 
         if (entries.isEmpty()) {
-            dialogService.showWarningDialogAndWait(Localization.lang("Autogenerate citation keys"),
-                    Localization.lang("First select the entries you want keys to be generated for."));
+            dialogService.showWarningDialogAndWait(
+                    Localization.lang("Autogenerate citation keys"),
+                    Localization.lang(
+                            "First select the entries you want keys to be generated for."));
             return;
         }
-        dialogService.notify(formatOutputMessage(Localization.lang("Generating citation key for"), entries.size()));
+        dialogService.notify(
+                formatOutputMessage(
+                        Localization.lang("Generating citation key for"), entries.size()));
 
         checkOverwriteKeysChosen();
 
@@ -67,13 +72,16 @@ public class GenerateCitationKeyAction extends SimpleCommand {
             BackgroundTask<Void> backgroundTask = this.generateKeysInBackground();
             backgroundTask.showToUser(true);
             backgroundTask.titleProperty().set(Localization.lang("Autogenerate citation keys"));
-            backgroundTask.messageProperty().set(Localization.lang("%0/%1 entries", 0, entries.size()));
+            backgroundTask
+                    .messageProperty()
+                    .set(Localization.lang("%0/%1 entries", 0, entries.size()));
 
             backgroundTask.executeWith(this.taskExecutor);
         }
     }
 
-    public static boolean confirmOverwriteKeys(DialogService dialogService, CliPreferences preferences) {
+    public static boolean confirmOverwriteKeys(
+            DialogService dialogService, CliPreferences preferences) {
         if (preferences.getCitationKeyPatternPreferences().shouldWarnBeforeOverwriteCiteKey()) {
             return dialogService.showConfirmationDialogWithOptOutAndWait(
                     Localization.lang("Overwrite keys"),
@@ -81,7 +89,10 @@ public class GenerateCitationKeyAction extends SimpleCommand {
                     Localization.lang("Overwrite keys"),
                     Localization.lang("Cancel"),
                     Localization.lang("Do not ask again"),
-                    optOut -> preferences.getCitationKeyPatternPreferences().setWarnBeforeOverwriteCiteKey(!optOut));
+                    optOut ->
+                            preferences
+                                    .getCitationKeyPatternPreferences()
+                                    .setWarnBeforeOverwriteCiteKey(!optOut));
         } else {
             // Always overwrite keys by default
             return true;
@@ -109,32 +120,54 @@ public class GenerateCitationKeyAction extends SimpleCommand {
 
             @Override
             public Void call() {
-                    if (isCanceled) {
-                        return null;
-                    }
-                UiTaskExecutor.runInJavaFXThread(() -> {
-                        updateProgress(0, entries.size());
-                        messageProperty().set(Localization.lang("%0/%1 entries", 0, entries.size()));
-                    });
-                    stateManager.getActiveDatabase().ifPresent(databaseContext -> {
-                        // generate the new citation keys for each entry
-                        compound = new NamedCompound(Localization.lang("Autogenerate citation keys"));
-                        CitationKeyGenerator keyGenerator =
-                                new CitationKeyGenerator(databaseContext, preferences.getCitationKeyPatternPreferences());
-                        int entriesDone = 0;
-                        for (BibEntry entry : entries) {
-                            keyGenerator.generateAndSetKey(entry)
-                                        .ifPresent(fieldChange -> compound.addEdit(new UndoableKeyChange(fieldChange)));
-                            entriesDone++;
-                            int finalEntriesDone = entriesDone;
-                            UiTaskExecutor.runInJavaFXThread(() -> {
-                                updateProgress(finalEntriesDone, entries.size());
-                                messageProperty().set(Localization.lang("%0/%1 entries", finalEntriesDone, entries.size()));
-                            });
-                        }
-                        compound.end();
-                    });
+                if (isCanceled) {
                     return null;
+                }
+                UiTaskExecutor.runInJavaFXThread(
+                        () -> {
+                            updateProgress(0, entries.size());
+                            messageProperty()
+                                    .set(Localization.lang("%0/%1 entries", 0, entries.size()));
+                        });
+                stateManager
+                        .getActiveDatabase()
+                        .ifPresent(
+                                databaseContext -> {
+                                    // generate the new citation keys for each entry
+                                    compound =
+                                            new NamedCompound(
+                                                    Localization.lang(
+                                                            "Autogenerate citation keys"));
+                                    CitationKeyGenerator keyGenerator =
+                                            new CitationKeyGenerator(
+                                                    databaseContext,
+                                                    preferences.getCitationKeyPatternPreferences());
+                                    int entriesDone = 0;
+                                    for (BibEntry entry : entries) {
+                                        keyGenerator
+                                                .generateAndSetKey(entry)
+                                                .ifPresent(
+                                                        fieldChange ->
+                                                                compound.addEdit(
+                                                                        new UndoableKeyChange(
+                                                                                fieldChange)));
+                                        entriesDone++;
+                                        int finalEntriesDone = entriesDone;
+                                        UiTaskExecutor.runInJavaFXThread(
+                                                () -> {
+                                                    updateProgress(
+                                                            finalEntriesDone, entries.size());
+                                                    messageProperty()
+                                                            .set(
+                                                                    Localization.lang(
+                                                                            "%0/%1 entries",
+                                                                            finalEntriesDone,
+                                                                            entries.size()));
+                                                });
+                                    }
+                                    compound.end();
+                                });
+                return null;
             }
 
             @Override
@@ -145,14 +178,19 @@ public class GenerateCitationKeyAction extends SimpleCommand {
                 }
 
                 tabSupplier.get().markBaseChanged();
-                dialogService.notify(formatOutputMessage(Localization.lang("Generated citation key for"), entries.size()));
+                dialogService.notify(
+                        formatOutputMessage(
+                                Localization.lang("Generated citation key for"), entries.size()));
                 return super.onSuccess(onSuccess);
             }
         };
     }
 
     private String formatOutputMessage(String start, int count) {
-        return "%s %d %s.".formatted(start, count,
-                (count > 1 ? Localization.lang("entries") : Localization.lang("entry")));
+        return "%s %d %s."
+                .formatted(
+                        start,
+                        count,
+                        (count > 1 ? Localization.lang("entries") : Localization.lang("entry")));
     }
 }

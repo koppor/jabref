@@ -1,9 +1,9 @@
 package org.jabref.logic.layout.format;
 
-import java.util.Objects;
-
 import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.logic.layout.LayoutFormatter;
+
+import java.util.Objects;
 
 /**
  * JournalAbbreviator formats the given text in an abbreviated form according to the journal abbreviation lists.

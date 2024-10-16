@@ -1,8 +1,8 @@
 package org.jabref.gui.util.comparator;
 
-import java.util.Comparator;
-
 import org.jabref.model.strings.StringUtil;
+
+import java.util.Comparator;
 
 /**
  * Comparator for numeric cases. The purpose of this class is to add the numeric comparison, because values are sorted
@@ -16,7 +16,8 @@ public class NumericFieldComparator implements Comparator<String> {
             return 0;
         }
 
-        // Similar implementation as in {@link org.jabref.logic.bibtex.comparator.FieldComparator.compare}.
+        // Similar implementation as in {@link
+        // org.jabref.logic.bibtex.comparator.FieldComparator.compare}.
         int i1;
         boolean i1present;
         try {

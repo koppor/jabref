@@ -62,12 +62,13 @@ public class DuplicateResolverDialog extends BaseDialog<DuplicateResolverResult>
     private final ActionFactory actionFactory;
     private final GuiPreferences preferences;
 
-    public DuplicateResolverDialog(BibEntry one,
-                                   BibEntry two,
-                                   DuplicateResolverType type,
-                                   StateManager stateManager,
-                                   DialogService dialogService,
-                                   GuiPreferences preferences) {
+    public DuplicateResolverDialog(
+            BibEntry one,
+            BibEntry two,
+            DuplicateResolverType type,
+            StateManager stateManager,
+            DialogService dialogService,
+            GuiPreferences preferences) {
         this.setTitle(Localization.lang("Possible duplicate entries"));
         this.stateManager = stateManager;
         this.dialogService = dialogService;
@@ -83,7 +84,10 @@ public class DuplicateResolverDialog extends BaseDialog<DuplicateResolverResult>
         ButtonType both;
         ButtonType second;
         ButtonType first;
-        ButtonType removeExact = new ButtonType(Localization.lang("Automatically remove exact duplicates"), ButtonData.LEFT);
+        ButtonType removeExact =
+                new ButtonType(
+                        Localization.lang("Automatically remove exact duplicates"),
+                        ButtonData.LEFT);
         boolean removeExactVisible = false;
 
         switch (type) {
@@ -104,8 +108,13 @@ public class DuplicateResolverDialog extends BaseDialog<DuplicateResolverResult>
                 first = new ButtonType(Localization.lang("Keep existing entry"), ButtonData.LEFT);
                 second = new ButtonType(Localization.lang("Keep from import"), ButtonData.LEFT);
                 both = new ButtonType(Localization.lang("Keep both"), ButtonData.LEFT);
-                threeWayMerge = new ThreeWayMergeView(one, two, Localization.lang("Existing entry"),
-                        Localization.lang("From import"), preferences);
+                threeWayMerge =
+                        new ThreeWayMergeView(
+                                one,
+                                two,
+                                Localization.lang("Existing entry"),
+                                Localization.lang("From import"),
+                                preferences);
             }
             default -> throw new IllegalStateException("Switch expression should be exhaustive");
         }
@@ -117,13 +126,15 @@ public class DuplicateResolverDialog extends BaseDialog<DuplicateResolverResult>
             this.getDialogPane().getButtonTypes().add(removeExact);
 
             // This will prevent all dialog buttons from having the same size
-            // Read more: https://stackoverflow.com/questions/45866249/javafx-8-alert-different-button-sizes
+            // Read more:
+            // https://stackoverflow.com/questions/45866249/javafx-8-alert-different-button-sizes
             getDialogPane().getButtonTypes().stream()
-                           .map(getDialogPane()::lookupButton)
-                           .forEach(btn -> ButtonBar.setButtonUniformSize(btn, false));
+                    .map(getDialogPane()::lookupButton)
+                    .forEach(btn -> ButtonBar.setButtonUniformSize(btn, false));
         }
 
-        // Retrieves the previous window state and sets the new dialog window size and position to match it
+        // Retrieves the previous window state and sets the new dialog window size and position to
+        // match it
         DialogWindowState state = stateManager.getDialogWindowState(getClass().getSimpleName());
         if (state != null) {
             this.getDialogPane().setPrefSize(state.getWidth(), state.getHeight());
@@ -133,28 +144,39 @@ public class DuplicateResolverDialog extends BaseDialog<DuplicateResolverResult>
 
         BorderPane borderPane = new BorderPane(threeWayMerge);
 
-        this.setResultConverter(button -> {
-            // Updates the window state on button press
-            stateManager.setDialogWindowState(getClass().getSimpleName(), new DialogWindowState(this.getX(), this.getY(), this.getDialogPane().getHeight(), this.getDialogPane().getWidth()));
-            threeWayMerge.saveConfiguration();
+        this.setResultConverter(
+                button -> {
+                    // Updates the window state on button press
+                    stateManager.setDialogWindowState(
+                            getClass().getSimpleName(),
+                            new DialogWindowState(
+                                    this.getX(),
+                                    this.getY(),
+                                    this.getDialogPane().getHeight(),
+                                    this.getDialogPane().getWidth()));
+                    threeWayMerge.saveConfiguration();
 
-            if (button.equals(first)) {
-                return DuplicateResolverResult.KEEP_LEFT;
-            } else if (button.equals(second)) {
-                return DuplicateResolverResult.KEEP_RIGHT;
-            } else if (button.equals(both)) {
-                return DuplicateResolverResult.KEEP_BOTH;
-            } else if (button.equals(merge)) {
-                return DuplicateResolverResult.KEEP_MERGE;
-            } else if (button.equals(removeExact)) {
-                return DuplicateResolverResult.AUTOREMOVE_EXACT;
-            } else if (button.equals(cancel)) {
-                return DuplicateResolverResult.KEEP_LEFT;
-            }
-            return null;
-        });
+                    if (button.equals(first)) {
+                        return DuplicateResolverResult.KEEP_LEFT;
+                    } else if (button.equals(second)) {
+                        return DuplicateResolverResult.KEEP_RIGHT;
+                    } else if (button.equals(both)) {
+                        return DuplicateResolverResult.KEEP_BOTH;
+                    } else if (button.equals(merge)) {
+                        return DuplicateResolverResult.KEEP_MERGE;
+                    } else if (button.equals(removeExact)) {
+                        return DuplicateResolverResult.AUTOREMOVE_EXACT;
+                    } else if (button.equals(cancel)) {
+                        return DuplicateResolverResult.KEEP_LEFT;
+                    }
+                    return null;
+                });
 
-        HelpAction helpCommand = new HelpAction(HelpFile.FIND_DUPLICATES, dialogService, preferences.getExternalApplicationsPreferences());
+        HelpAction helpCommand =
+                new HelpAction(
+                        HelpFile.FIND_DUPLICATES,
+                        dialogService,
+                        preferences.getExternalApplicationsPreferences());
         Button helpButton = actionFactory.createIconButton(StandardActions.HELP, helpCommand);
         borderPane.setRight(helpButton);
 

@@ -1,11 +1,5 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.SequencedSet;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.control.Tooltip;
 
 import org.jabref.gui.DialogService;
@@ -29,26 +23,45 @@ import org.jabref.model.entry.field.InternalField;
 import org.jabref.model.entry.field.OrFields;
 import org.jabref.model.search.SearchQuery;
 
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.SequencedSet;
+
+import javax.swing.undo.UndoManager;
+
 public class RequiredFieldsTab extends FieldsEditorTab {
 
     public static final String NAME = "Required fields";
     private final BibEntryTypesManager entryTypesManager;
 
-    public RequiredFieldsTab(BibDatabaseContext databaseContext,
-                             SuggestionProviders suggestionProviders,
-                             UndoManager undoManager,
-                             UndoAction undoAction,
-                             RedoAction redoAction,
-                             DialogService dialogService,
-                             GuiPreferences preferences,
-                             ThemeManager themeManager,
-                             BibEntryTypesManager entryTypesManager,
-                             TaskExecutor taskExecutor,
-                             JournalAbbreviationRepository journalAbbreviationRepository,
-                             LuceneManager luceneManager,
-                             OptionalObjectProperty<SearchQuery> searchQueryProperty) {
-        super(false, databaseContext, suggestionProviders, undoManager, undoAction, redoAction, dialogService,
-                preferences, themeManager, taskExecutor, journalAbbreviationRepository, luceneManager, searchQueryProperty);
+    public RequiredFieldsTab(
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            UndoAction undoAction,
+            RedoAction redoAction,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            ThemeManager themeManager,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository,
+            LuceneManager luceneManager,
+            OptionalObjectProperty<SearchQuery> searchQueryProperty) {
+        super(
+                false,
+                databaseContext,
+                suggestionProviders,
+                undoManager,
+                undoAction,
+                redoAction,
+                dialogService,
+                preferences,
+                themeManager,
+                taskExecutor,
+                journalAbbreviationRepository,
+                luceneManager,
+                searchQueryProperty);
         this.entryTypesManager = entryTypesManager;
         setText(Localization.lang("Required fields"));
         setTooltip(new Tooltip(Localization.lang("Show required fields")));
@@ -57,7 +70,8 @@ public class RequiredFieldsTab extends FieldsEditorTab {
 
     @Override
     protected SequencedSet<Field> determineFieldsToShow(BibEntry entry) {
-        Optional<BibEntryType> entryType = entryTypesManager.enrich(entry.getType(), databaseContext.getMode());
+        Optional<BibEntryType> entryType =
+                entryTypesManager.enrich(entry.getType(), databaseContext.getMode());
         SequencedSet<Field> fields = new LinkedHashSet<>();
         if (entryType.isPresent()) {
             for (OrFields orFields : entryType.get().getRequiredFields()) {

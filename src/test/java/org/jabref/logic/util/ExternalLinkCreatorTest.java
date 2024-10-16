@@ -1,18 +1,17 @@
 package org.jabref.logic.util;
 
+import static org.jabref.logic.util.ExternalLinkCreator.getShortScienceSearchURL;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.junit.jupiter.api.Test;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-
-import org.junit.jupiter.api.Test;
-
-import static org.jabref.logic.util.ExternalLinkCreator.getShortScienceSearchURL;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ExternalLinkCreatorTest {
 
@@ -48,9 +47,13 @@ class ExternalLinkCreatorTest {
     @Test
     void getShortScienceSearchURLLinksToSearchResults() {
         // Take an arbitrary article name
-        BibEntry entry = new BibEntry().withField(StandardField.TITLE, "JabRef bibliography management");
+        BibEntry entry =
+                new BibEntry().withField(StandardField.TITLE, "JabRef bibliography management");
         Optional<String> url = getShortScienceSearchURL(entry);
         // Expected behaviour is to link to the search results page, /internalsearch
-        assertEquals(Optional.of("https://www.shortscience.org/internalsearch?q=JabRef%20bibliography%20management"), url);
+        assertEquals(
+                Optional.of(
+                        "https://www.shortscience.org/internalsearch?q=JabRef%20bibliography%20management"),
+                url);
     }
 }

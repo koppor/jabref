@@ -1,17 +1,16 @@
 package org.jabref.model.entry.identifier;
 
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.StandardField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.StandardField;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IacrEprint implements Identifier {
     public static final URI RESOLVER = URI.create("https://ia.cr");
@@ -30,14 +29,14 @@ public class IacrEprint implements Identifier {
             matcher.find();
             this.iacrEprint = matcher.group(0);
         } else {
-            throw new IllegalArgumentException(trimmedId + " is not a valid IacrEprint identifier.");
+            throw new IllegalArgumentException(
+                    trimmedId + " is not a valid IacrEprint identifier.");
         }
     }
 
     private static boolean matchesExcepted(String identifier) {
         return identifier.matches(
-                "(https\\:\\/\\/)?(ia\\.cr\\/|eprint\\.iacr\\.org\\/)?" + IACR_EPRINT_EXP
-        );
+                "(https\\:\\/\\/)?(ia\\.cr\\/|eprint\\.iacr\\.org\\/)?" + IACR_EPRINT_EXP);
     }
 
     public static Optional<IacrEprint> parse(String identifier) {

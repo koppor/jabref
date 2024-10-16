@@ -1,16 +1,10 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.common.annotations.VisibleForTesting;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.jabref.architecture.AllowedToUseApacheCommonsLang3;
 import org.jabref.logic.citationkeypattern.CitationKeyGenerator;
 import org.jabref.logic.citationkeypattern.CitationKeyPatternPreferences;
@@ -30,13 +24,19 @@ import org.jabref.model.entry.Date;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
-
-import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Parses the references from the "References" section from a PDF.
@@ -52,30 +52,37 @@ public class BibliographyFromPdfImporter extends Importer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BibliographyFromPdfImporter.class);
 
-    private static final Pattern REFERENCES = Pattern.compile("References", Pattern.CASE_INSENSITIVE);
-    private static final Pattern REFERENCE_PATTERN = Pattern.compile("\\[(\\d+)\\](.*?)(?=\\[|$)", Pattern.DOTALL);
+    private static final Pattern REFERENCES =
+            Pattern.compile("References", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REFERENCE_PATTERN =
+            Pattern.compile("\\[(\\d+)\\](.*?)(?=\\[|$)", Pattern.DOTALL);
     private static final Pattern YEAR_AT_END = Pattern.compile(", (\\d{4})\\.$");
     private static final Pattern YEAR = Pattern.compile(", (\\d{4})(.*)");
     private static final Pattern PAGES = Pattern.compile(", pp\\. (\\d+--?\\d+)\\.?(.*)");
     private static final Pattern PAGE = Pattern.compile(", p\\. (\\d+)(.*)");
     private static final Pattern SERIES = Pattern.compile(", ser\\. ([^.,]+)(.*)");
-    private static final Pattern MONTH_RANGE_AND_YEAR = Pattern.compile(", ([A-Z][a-z]{2,7}\\.?)-[A-Z][a-z]{2,7}\\.? (\\d+)(.*)");
-    private static final Pattern MONTH_AND_YEAR = Pattern.compile(", ([A-Z][a-z]{2,7}\\.? \\d+),? ?(.*)");
+    private static final Pattern MONTH_RANGE_AND_YEAR =
+            Pattern.compile(", ([A-Z][a-z]{2,7}\\.?)-[A-Z][a-z]{2,7}\\.? (\\d+)(.*)");
+    private static final Pattern MONTH_AND_YEAR =
+            Pattern.compile(", ([A-Z][a-z]{2,7}\\.? \\d+),? ?(.*)");
     private static final Pattern VOLUME = Pattern.compile(", vol\\. (\\d+)(.*)");
     private static final Pattern NO = Pattern.compile(", no\\. (\\d+)(.*)");
     private static final Pattern PROCEEDINGS_INDICATION = Pattern.compile("^in (Proc\\. )?(.*)");
     private static final Pattern WORKSHOP = Pattern.compile("Workshop");
-    private static final Pattern AUTHORS_AND_TITLE_AT_BEGINNING = Pattern.compile("^([^“]+), “(.*?)(”,|,”) ");
+    private static final Pattern AUTHORS_AND_TITLE_AT_BEGINNING =
+            Pattern.compile("^([^“]+), “(.*?)(”,|,”) ");
     private static final Pattern TITLE = Pattern.compile("“(.*?)”, (.*)");
 
     private final CitationKeyPatternPreferences citationKeyPatternPreferences;
-    private final NormalizeUnicodeFormatter normalizeUnicodeFormatter = new NormalizeUnicodeFormatter();
+    private final NormalizeUnicodeFormatter normalizeUnicodeFormatter =
+            new NormalizeUnicodeFormatter();
 
     public BibliographyFromPdfImporter() {
         this.citationKeyPatternPreferences = null;
     }
 
-    public BibliographyFromPdfImporter(CitationKeyPatternPreferences citationKeyPatternPreferences) {
+    public BibliographyFromPdfImporter(
+            CitationKeyPatternPreferences citationKeyPatternPreferences) {
         this.citationKeyPatternPreferences = citationKeyPatternPreferences;
     }
 
@@ -87,8 +94,9 @@ public class BibliographyFromPdfImporter extends Importer {
     @Override
     public ParserResult importDatabase(BufferedReader reader) throws IOException {
         Objects.requireNonNull(reader);
-        throw new UnsupportedOperationException("BibliopgraphyFromPdfImporter does not support importDatabase(BufferedReader reader)."
-                + "Instead use importDatabase(Path filePath).");
+        throw new UnsupportedOperationException(
+                "BibliopgraphyFromPdfImporter does not support importDatabase(BufferedReader reader)."
+                        + "Instead use importDatabase(Path filePath).");
     }
 
     @Override
@@ -98,7 +106,8 @@ public class BibliographyFromPdfImporter extends Importer {
 
     @Override
     public String getDescription() {
-        return Localization.lang("Reads the references from the 'References' section of a PDF file.");
+        return Localization.lang(
+                "Reads the references from the 'References' section of a PDF file.");
     }
 
     @Override
@@ -126,15 +135,16 @@ public class BibliographyFromPdfImporter extends Importer {
         }
 
         // Generate citation keys for result
-        CitationKeyGenerator citationKeyGenerator = new CitationKeyGenerator(parserResult.getDatabaseContext(), citationKeyPatternPreferences);
+        CitationKeyGenerator citationKeyGenerator =
+                new CitationKeyGenerator(
+                        parserResult.getDatabaseContext(), citationKeyPatternPreferences);
         parserResult.getDatabase().getEntries().forEach(citationKeyGenerator::generateAndSetKey);
 
         return parserResult;
     }
 
     @VisibleForTesting
-    record IntermediateData(String number, String reference) {
-    }
+    record IntermediateData(String number, String reference) {}
 
     /**
      * In: <code>"[1] ...\n...\n...[2]...\n...\n...\n[3]..."</code><br>
@@ -144,8 +154,8 @@ public class BibliographyFromPdfImporter extends Importer {
         List<IntermediateData> referencesStrings = getIntermediateData(contents);
 
         return referencesStrings.stream()
-                                .map(data -> parseReference(data.number(), data.reference()))
-                                .toList();
+                .map(data -> parseReference(data.number(), data.reference()))
+                .toList();
     }
 
     @VisibleForTesting
@@ -183,7 +193,9 @@ public class BibliographyFromPdfImporter extends Importer {
         return matcher.find();
     }
 
-    private String prependToResult(String currentText, PDDocument document, PDFTextStripper stripper, int pageNumber) throws IOException {
+    private String prependToResult(
+            String currentText, PDDocument document, PDFTextStripper stripper, int pageNumber)
+            throws IOException {
         String pageContents = getPageContents(document, stripper, pageNumber);
         String result = pageContents + currentText;
         if (!containsWordReferences(pageContents) && (pageNumber > 0)) {
@@ -192,7 +204,8 @@ public class BibliographyFromPdfImporter extends Importer {
         return result;
     }
 
-    private static String getPageContents(PDDocument document, PDFTextStripper stripper, int lastPage) throws IOException {
+    private static String getPageContents(
+            PDDocument document, PDFTextStripper stripper, int lastPage) throws IOException {
         stripper.setStartPage(lastPage);
         stripper.setEndPage(lastPage);
         StringWriter writer = new StringWriter();
@@ -209,15 +222,15 @@ public class BibliographyFromPdfImporter extends Importer {
     BibEntry parseReference(String number, String reference) {
         reference = normalizeUnicodeFormatter.format(reference);
         String originalReference = "[" + number + "] " + reference;
-        BibEntry result = new BibEntry(StandardEntryType.Article)
-                .withCitationKey(number);
+        BibEntry result = new BibEntry(StandardEntryType.Article).withCitationKey(number);
 
-        reference = reference
-                .replace(".-", "-")
-                // Unicode en dash (used as page separator)
-                .replace("–", "-")
-                // Remove "- " introduced by linebreaks in the PDF
-                .replaceAll("([^ ])- ", "$1");
+        reference =
+                reference
+                        .replace(".-", "-")
+                        // Unicode en dash (used as page separator)
+                        .replace("–", "-")
+                        // Remove "- " introduced by linebreaks in the PDF
+                        .replaceAll("([^ ])- ", "$1");
 
         // Move URL to URL field
         Matcher urlPatternMatcher = URLCleanup.URL_PATTERN.matcher(reference);
@@ -230,8 +243,11 @@ public class BibliographyFromPdfImporter extends Importer {
             }
         }
 
-        // J. Knaster et al., “Overview of the IFMIF/EVEDA project”, Nucl. Fusion, vol. 57, p. 102016, 2017. doi:10.1088/ 1741-4326/aa6a6a
-        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in Proc. IPAC’19, Mel- bourne, Australia, May 2019, pp. 977-979. doi:10.18429/ JACoW-IPAC2019-MOPTS051
+        // J. Knaster et al., “Overview of the IFMIF/EVEDA project”, Nucl. Fusion, vol. 57, p.
+        // 102016, 2017. doi:10.1088/ 1741-4326/aa6a6a
+        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in
+        // Proc. IPAC’19, Mel- bourne, Australia, May 2019, pp. 977-979. doi:10.18429/
+        // JACoW-IPAC2019-MOPTS051
         int pos = reference.indexOf("doi:");
         if (pos >= 0) {
             String doi = reference.substring(pos + "doi:".length()).trim();
@@ -240,29 +256,49 @@ public class BibliographyFromPdfImporter extends Importer {
             reference = reference.substring(0, pos).trim();
         }
 
-        reference = updateEntryAndReferenceIfMatches(reference, PAGES, result, StandardField.PAGES).newReference;
+        reference =
+                updateEntryAndReferenceIfMatches(reference, PAGES, result, StandardField.PAGES)
+                        .newReference;
 
-        // J. Knaster et al., “Overview of the IFMIF/EVEDA project”, Nucl. Fusion, vol. 57, p. 102016
-        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in Proc. IPAC’19, Mel- bourne, Australia, May 2019
-        reference = updateEntryAndReferenceIfMatches(reference, PAGE, result, StandardField.PAGES).newReference;
+        // J. Knaster et al., “Overview of the IFMIF/EVEDA project”, Nucl. Fusion, vol. 57, p.
+        // 102016
+        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in
+        // Proc. IPAC’19, Mel- bourne, Australia, May 2019
+        reference =
+                updateEntryAndReferenceIfMatches(reference, PAGE, result, StandardField.PAGES)
+                        .newReference;
 
-        reference = updateEntryAndReferenceIfMatches(reference, SERIES, result, StandardField.SERIES).newReference;
+        reference =
+                updateEntryAndReferenceIfMatches(reference, SERIES, result, StandardField.SERIES)
+                        .newReference;
 
         Matcher matcher = MONTH_RANGE_AND_YEAR.matcher(reference);
         if (matcher.find()) {
             // strip out second monthp
-            reference = reference.substring(0, matcher.start()) + ", " + matcher.group(1) + " " + matcher.group(2) + matcher.group(3);
+            reference =
+                    reference.substring(0, matcher.start())
+                            + ", "
+                            + matcher.group(1)
+                            + " "
+                            + matcher.group(2)
+                            + matcher.group(3);
         }
 
         // J. Knaster et al., “Overview of the IFMIF/EVEDA project”, Nucl. Fusion, vol. 57
-        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in Proc. IPAC’19, Mel- bourne, Australia, May 2019
+        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in
+        // Proc. IPAC’19, Mel- bourne, Australia, May 2019
         matcher = MONTH_AND_YEAR.matcher(reference);
         if (matcher.find()) {
             Optional<Date> parsedDate = Date.parse(matcher.group(1));
             if (parsedDate.isPresent()) {
                 Date date = parsedDate.get();
-                date.getYear().ifPresent(year -> result.setField(StandardField.YEAR, year.toString()));
-                date.getMonth().ifPresent(month -> result.setField(StandardField.MONTH, month.getJabRefFormat()));
+                date.getYear()
+                        .ifPresent(year -> result.setField(StandardField.YEAR, year.toString()));
+                date.getMonth()
+                        .ifPresent(
+                                month ->
+                                        result.setField(
+                                                StandardField.MONTH, month.getJabRefFormat()));
 
                 String prefix = reference.substring(0, matcher.start()).trim();
                 String suffix = matcher.group(2);
@@ -275,50 +311,66 @@ public class BibliographyFromPdfImporter extends Importer {
             }
         }
 
-        // J. Knaster et al., “Overview of the IFMIF/EVEDA project”, Nucl. Fusion, vol. 57, p. 102016, 2017.
-        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in Proc. IPAC’19, Mel- bourne, Australia, May 2019, pp. 977-979
+        // J. Knaster et al., “Overview of the IFMIF/EVEDA project”, Nucl. Fusion, vol. 57, p.
+        // 102016, 2017.
+        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in
+        // Proc. IPAC’19, Mel- bourne, Australia, May 2019, pp. 977-979
         matcher = YEAR_AT_END.matcher(reference);
         if (matcher.find()) {
             result.setField(StandardField.YEAR, matcher.group(1));
             reference = reference.substring(0, matcher.start()).trim();
         }
 
-        reference = updateEntryAndReferenceIfMatches(reference, YEAR, result, StandardField.YEAR).newReference;
+        reference =
+                updateEntryAndReferenceIfMatches(reference, YEAR, result, StandardField.YEAR)
+                        .newReference;
 
         // J. Knaster et al., “Overview of the IFMIF/EVEDA project”, Nucl. Fusion, vol. 57
-        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in Proc. IPAC’19, Mel- bourne, Australia
-        EntryUpdateResult entryUpdateResult = updateEntryAndReferenceIfMatches(reference, VOLUME, result, StandardField.VOLUME);
+        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in
+        // Proc. IPAC’19, Mel- bourne, Australia
+        EntryUpdateResult entryUpdateResult =
+                updateEntryAndReferenceIfMatches(reference, VOLUME, result, StandardField.VOLUME);
         boolean volumeFound = entryUpdateResult.modified;
         reference = entryUpdateResult.newReference;
 
-        entryUpdateResult = updateEntryAndReferenceIfMatches(reference, NO, result, StandardField.NUMBER);
+        entryUpdateResult =
+                updateEntryAndReferenceIfMatches(reference, NO, result, StandardField.NUMBER);
         boolean numberFound = entryUpdateResult.modified;
         reference = entryUpdateResult.newReference;
 
         // J. Knaster et al., “Overview of the IFMIF/EVEDA project”, Nucl. Fusion
-        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in Proc. IPAC’19, Mel- bourne, Australia
+        // Y. Shimosaki et al., “Lattice design for 5 MeV – 125 mA CW RFQ operation in LIPAc”, in
+        // Proc. IPAC’19, Mel- bourne, Australia
         matcher = AUTHORS_AND_TITLE_AT_BEGINNING.matcher(reference);
         if (matcher.find()) {
             String authors = matcher.group(1).replaceAll("et al\\.?", "and others");
 
             // Alternative: AuthorList.fixAuthorFirstNameFirst(authors) only
-            // However, this does not work with special cases. Thus, we do a simple transformation only.
-            String fixedAuthors = AuthorListParser.normalizeSimply(authors).orElseGet(() -> AuthorList.fixAuthorFirstNameFirst(authors));
+            // However, this does not work with special cases. Thus, we do a simple transformation
+            // only.
+            String fixedAuthors =
+                    AuthorListParser.normalizeSimply(authors)
+                            .orElseGet(() -> AuthorList.fixAuthorFirstNameFirst(authors));
 
             result.setField(StandardField.AUTHOR, fixedAuthors);
-            result.setField(StandardField.TITLE, matcher.group(2).replaceAll("et al\\.?", "and others"));
+            result.setField(
+                    StandardField.TITLE, matcher.group(2).replaceAll("et al\\.?", "and others"));
             reference = reference.substring(matcher.end()).trim();
         } else {
             // No authors present
             // Example: “AF4.1.1 SRF Linac Engineering Design Report”, Internal note.
-            reference = updateEntryAndReferenceIfMatches(reference, TITLE, result, StandardField.TITLE).newReference;
+            reference =
+                    updateEntryAndReferenceIfMatches(reference, TITLE, result, StandardField.TITLE)
+                            .newReference;
         }
 
         // Nucl. Fusion
         // in Proc. IPAC’19, Mel- bourne, Australia
-        // presented at th 8th DITANET Topical Workshop on Beam Position Monitors, CERN, Geneva, Switzreland
+        // presented at th 8th DITANET Topical Workshop on Beam Position Monitors, CERN, Geneva,
+        // Switzreland
         List<String> stringsToRemove = List.of("presented at", "to be presented at");
-        // need to use "for" loop instead of "stream().foreach", because "reference" is modified inside the loop
+        // need to use "for" loop instead of "stream().foreach", because "reference" is modified
+        // inside the loop
         for (String check : stringsToRemove) {
             if (reference.startsWith(check)) {
                 reference = reference.substring(check.length()).trim();
@@ -354,8 +406,10 @@ public class BibliographyFromPdfImporter extends Importer {
             }
             if (lastDot > offset) {
                 String textAfterDot = bookTitle.substring(offset + lastDot + 1).trim();
-                // We use Apache Commons here, because it is fastest - see table at https://stackoverflow.com/a/35242882/873282
-                if (!textAfterDot.contains("http") && (StringUtils.countMatches(textAfterDot, ' ') <= 1)) {
+                // We use Apache Commons here, because it is fastest - see table at
+                // https://stackoverflow.com/a/35242882/873282
+                if (!textAfterDot.contains("http")
+                        && (StringUtils.countMatches(textAfterDot, ' ') <= 1)) {
                     bookTitle = bookTitle.substring(0, offset + lastDot).trim();
                     if (bookTitle.startsWith("in ")) {
                         bookTitle = bookTitle.substring(3);
@@ -383,7 +437,9 @@ public class BibliographyFromPdfImporter extends Importer {
                 result.setField(StandardField.NOTE, reference);
                 result.setType(StandardEntryType.TechReport);
             } else {
-                LOGGER.debug("Falling back to journal even if no volume and no number was found. Reference: {}", reference);
+                LOGGER.debug(
+                        "Falling back to journal even if no volume and no number was found. Reference: {}",
+                        reference);
                 result.setField(StandardField.JOURNAL, reference);
             }
         } else {
@@ -404,7 +460,8 @@ public class BibliographyFromPdfImporter extends Importer {
     /**
      * @param pattern A pattern matching two groups: The first one to take, the second one to leave at the end of the string
      */
-    private static EntryUpdateResult updateEntryAndReferenceIfMatches(String reference, Pattern pattern, BibEntry result, Field field) {
+    private static EntryUpdateResult updateEntryAndReferenceIfMatches(
+            String reference, Pattern pattern, BibEntry result, Field field) {
         Matcher matcher;
         matcher = pattern.matcher(reference);
         if (!matcher.find()) {
@@ -416,6 +473,5 @@ public class BibliographyFromPdfImporter extends Importer {
         return new EntryUpdateResult(true, reference);
     }
 
-    private record EntryUpdateResult(boolean modified, String newReference) {
-    }
+    private record EntryUpdateResult(boolean modified, String newReference) {}
 }

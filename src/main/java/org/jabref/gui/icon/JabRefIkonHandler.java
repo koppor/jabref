@@ -1,12 +1,11 @@
 package org.jabref.gui.icon;
 
-import java.io.InputStream;
-import java.net.URL;
-
 import org.jabref.architecture.AllowedToUseClassGetResource;
-
 import org.kordamp.ikonli.AbstractIkonHandler;
 import org.kordamp.ikonli.Ikon;
+
+import java.io.InputStream;
+import java.net.URL;
 
 @AllowedToUseClassGetResource("JavaFX internally handles the passed URLs properly.")
 public class JabRefIkonHandler extends AbstractIkonHandler {

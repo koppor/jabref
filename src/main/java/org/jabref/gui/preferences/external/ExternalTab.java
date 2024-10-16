@@ -1,5 +1,9 @@
 package org.jabref.gui.preferences.external;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
+import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,10 +22,8 @@ import org.jabref.gui.util.ViewModelListCellFactory;
 import org.jabref.logic.help.HelpFile;
 import org.jabref.logic.l10n.Localization;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
-
-public class ExternalTab extends AbstractPreferenceTabView<ExternalTabViewModel> implements PreferencesTab {
+public class ExternalTab extends AbstractPreferenceTabView<ExternalTabViewModel>
+        implements PreferencesTab {
 
     @FXML private TextField eMailReferenceSubject;
     @FXML private CheckBox autoOpenAttachedFolders;
@@ -40,9 +42,7 @@ public class ExternalTab extends AbstractPreferenceTabView<ExternalTabViewModel>
     private final ControlsFxVisualizer validationVisualizer = new ControlsFxVisualizer();
 
     public ExternalTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -58,33 +58,61 @@ public class ExternalTab extends AbstractPreferenceTabView<ExternalTabViewModel>
                 .withIcon(PushToApplication::getApplicationIcon)
                 .install(pushToApplicationCombo);
 
-        eMailReferenceSubject.textProperty().bindBidirectional(viewModel.eMailReferenceSubjectProperty());
-        autoOpenAttachedFolders.selectedProperty().bindBidirectional(viewModel.autoOpenAttachedFoldersProperty());
+        eMailReferenceSubject
+                .textProperty()
+                .bindBidirectional(viewModel.eMailReferenceSubjectProperty());
+        autoOpenAttachedFolders
+                .selectedProperty()
+                .bindBidirectional(viewModel.autoOpenAttachedFoldersProperty());
 
         pushToApplicationCombo.itemsProperty().bind(viewModel.pushToApplicationsListProperty());
-        pushToApplicationCombo.valueProperty().bindBidirectional(viewModel.selectedPushToApplication());
+        pushToApplicationCombo
+                .valueProperty()
+                .bindBidirectional(viewModel.selectedPushToApplication());
         citeCommand.textProperty().bindBidirectional(viewModel.citeCommandProperty());
 
-        useCustomTerminal.selectedProperty().bindBidirectional(viewModel.useCustomTerminalProperty());
-        customTerminalCommand.textProperty().bindBidirectional(viewModel.customTerminalCommandProperty());
+        useCustomTerminal
+                .selectedProperty()
+                .bindBidirectional(viewModel.useCustomTerminalProperty());
+        customTerminalCommand
+                .textProperty()
+                .bindBidirectional(viewModel.customTerminalCommandProperty());
         customTerminalCommand.disableProperty().bind(useCustomTerminal.selectedProperty().not());
         customTerminalBrowse.disableProperty().bind(useCustomTerminal.selectedProperty().not());
 
-        useCustomFileBrowser.selectedProperty().bindBidirectional(viewModel.useCustomFileBrowserProperty());
-        customFileBrowserCommand.textProperty().bindBidirectional(viewModel.customFileBrowserCommandProperty());
-        customFileBrowserCommand.disableProperty().bind(useCustomFileBrowser.selectedProperty().not());
-        customFileBrowserBrowse.disableProperty().bind(useCustomFileBrowser.selectedProperty().not());
+        useCustomFileBrowser
+                .selectedProperty()
+                .bindBidirectional(viewModel.useCustomFileBrowserProperty());
+        customFileBrowserCommand
+                .textProperty()
+                .bindBidirectional(viewModel.customFileBrowserCommandProperty());
+        customFileBrowserCommand
+                .disableProperty()
+                .bind(useCustomFileBrowser.selectedProperty().not());
+        customFileBrowserBrowse
+                .disableProperty()
+                .bind(useCustomFileBrowser.selectedProperty().not());
 
         kindleEmail.textProperty().bindBidirectional(viewModel.kindleEmailProperty());
 
         validationVisualizer.setDecoration(new IconValidationDecorator());
-        Platform.runLater(() -> {
-            validationVisualizer.initVisualization(viewModel.terminalCommandValidationStatus(), customTerminalCommand);
-            validationVisualizer.initVisualization(viewModel.fileBrowserCommandValidationStatus(), customFileBrowserCommand);
-        });
+        Platform.runLater(
+                () -> {
+                    validationVisualizer.initVisualization(
+                            viewModel.terminalCommandValidationStatus(), customTerminalCommand);
+                    validationVisualizer.initVisualization(
+                            viewModel.fileBrowserCommandValidationStatus(),
+                            customFileBrowserCommand);
+                });
 
         ActionFactory actionFactory = new ActionFactory();
-        actionFactory.configureIconButton(StandardActions.HELP_PUSH_TO_APPLICATION, new HelpAction(HelpFile.PUSH_TO_APPLICATION, dialogService, preferences.getExternalApplicationsPreferences()), autolinkExternalHelp);
+        actionFactory.configureIconButton(
+                StandardActions.HELP_PUSH_TO_APPLICATION,
+                new HelpAction(
+                        HelpFile.PUSH_TO_APPLICATION,
+                        dialogService,
+                        preferences.getExternalApplicationsPreferences()),
+                autolinkExternalHelp);
     }
 
     @FXML

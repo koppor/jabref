@@ -1,5 +1,7 @@
 package org.jabref.gui.ai.components.util;
 
+import com.google.common.eventbus.Subscribe;
+
 import javafx.scene.Node;
 
 import org.jabref.gui.DialogService;
@@ -12,8 +14,6 @@ import org.jabref.logic.ai.AiService;
 import org.jabref.logic.ai.ingestion.model.JabRefEmbeddingModel;
 import org.jabref.logic.l10n.Localization;
 
-import com.google.common.eventbus.Subscribe;
-
 /**
  * Class that has similar logic to {@link AiPrivacyNoticeGuardedComponent}. It extends from it, so that means,
  * if a component needs embedding model, then it should also be guarded with accepting AI privacy policy.
@@ -21,11 +21,11 @@ import com.google.common.eventbus.Subscribe;
 public abstract class EmbeddingModelGuardedComponent extends AiPrivacyNoticeGuardedComponent {
     private final AiService aiService;
 
-    public EmbeddingModelGuardedComponent(AiService aiService,
-                                          AiPreferences aiPreferences,
-                                          ExternalApplicationsPreferences externalApplicationsPreferences,
-                                          DialogService dialogService
-    ) {
+    public EmbeddingModelGuardedComponent(
+            AiService aiService,
+            AiPreferences aiPreferences,
+            ExternalApplicationsPreferences externalApplicationsPreferences,
+            DialogService dialogService) {
         super(aiPreferences, externalApplicationsPreferences, dialogService);
 
         this.aiService = aiService;
@@ -54,15 +54,14 @@ public abstract class EmbeddingModelGuardedComponent extends AiPrivacyNoticeGuar
                 Localization.lang("An error occurred while building the embedding model"),
                 aiService.getEmbeddingModel().getErrorWhileBuildingModel(),
                 Localization.lang("Rebuild"),
-                () -> aiService.getEmbeddingModel().startRebuildingTask()
-        );
+                () -> aiService.getEmbeddingModel().startRebuildingTask());
     }
 
     public Node showBuildingEmbeddingModel() {
         return ErrorStateComponent.withSpinner(
                 Localization.lang("Downloading..."),
-                Localization.lang("Downloading embedding model... Afterward, you will be able to chat with your files.")
-        );
+                Localization.lang(
+                        "Downloading embedding model... Afterward, you will be able to chat with your files."));
     }
 
     @Subscribe

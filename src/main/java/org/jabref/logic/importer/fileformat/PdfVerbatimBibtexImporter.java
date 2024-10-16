@@ -1,12 +1,7 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Objects;
-
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.logic.importer.ParseException;
 import org.jabref.logic.importer.ParserResult;
@@ -17,8 +12,12 @@ import org.jabref.logic.xmp.XmpUtilReader;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * This importer imports a verbatim BibTeX entry from the first page of the PDF.
@@ -39,15 +38,17 @@ public class PdfVerbatimBibtexImporter extends PdfImporter {
     @Override
     public ParserResult importDatabase(BufferedReader reader) throws IOException {
         Objects.requireNonNull(reader);
-        throw new UnsupportedOperationException("PdfVerbatimBibTextImporter does not support importDatabase(BufferedReader reader)."
-                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException(
+                "PdfVerbatimBibTextImporter does not support importDatabase(BufferedReader reader)."
+                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override
     public ParserResult importDatabase(String data) throws IOException {
         Objects.requireNonNull(data);
-        throw new UnsupportedOperationException("PdfVerbatimBibTextImporter does not support importDatabase(String data)."
-                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException(
+                "PdfVerbatimBibTextImporter does not support importDatabase(String data)."
+                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override
@@ -63,7 +64,8 @@ public class PdfVerbatimBibtexImporter extends PdfImporter {
             return ParserResult.fromError(e);
         }
 
-        result.forEach(entry -> entry.addFile(new LinkedFile("", filePath.toAbsolutePath(), "PDF")));
+        result.forEach(
+                entry -> entry.addFile(new LinkedFile("", filePath.toAbsolutePath(), "PDF")));
         result.forEach(entry -> entry.setCommentsBeforeEntry(""));
         return new ParserResult(result);
     }

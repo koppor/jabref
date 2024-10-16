@@ -32,20 +32,29 @@ public class StringManipulator {
      *
      * @return              The resulting text and caret position.
      */
-    private static ResultingStringState setWordCase(String text, int caretPosition, LetterCase targetCase) {
+    private static ResultingStringState setWordCase(
+            String text, int caretPosition, LetterCase targetCase) {
         int nextWordBoundary = getNextWordBoundary(caretPosition, text, Direction.NEXT);
 
         // Preserve whitespaces
         int wordStartPosition = caretPosition;
-        while (wordStartPosition < nextWordBoundary && Character.isWhitespace(text.charAt(wordStartPosition))) {
+        while (wordStartPosition < nextWordBoundary
+                && Character.isWhitespace(text.charAt(wordStartPosition))) {
             wordStartPosition++;
         }
 
-        String result = switch (targetCase) {
-            case UPPER -> (new UpperCaseFormatter()).format(text.substring(wordStartPosition, nextWordBoundary));
-            case LOWER -> (new LowerCaseFormatter()).format(text.substring(wordStartPosition, nextWordBoundary));
-            case CAPITALIZED -> (new CapitalizeFormatter()).format(text.substring(wordStartPosition, nextWordBoundary));
-        };
+        String result =
+                switch (targetCase) {
+                    case UPPER ->
+                            (new UpperCaseFormatter())
+                                    .format(text.substring(wordStartPosition, nextWordBoundary));
+                    case LOWER ->
+                            (new LowerCaseFormatter())
+                                    .format(text.substring(wordStartPosition, nextWordBoundary));
+                    case CAPITALIZED ->
+                            (new CapitalizeFormatter())
+                                    .format(text.substring(wordStartPosition, nextWordBoundary));
+                };
 
         return new ResultingStringState(
                 nextWordBoundary,
@@ -61,18 +70,21 @@ public class StringManipulator {
      *
      * @return              The resulting text and caret position.
      */
-    static ResultingStringState deleteUntilWordBoundary(int caretPosition, String text, Direction direction) {
+    static ResultingStringState deleteUntilWordBoundary(
+            int caretPosition, String text, Direction direction) {
         // Define cutout range
         int nextWordBoundary = getNextWordBoundary(caretPosition, text, direction);
 
         // Construct new string without cutout
         return switch (direction) {
-            case NEXT -> new ResultingStringState(
-                    caretPosition,
-                    text.substring(0, caretPosition) + text.substring(nextWordBoundary));
-            case PREVIOUS -> new ResultingStringState(
-                    nextWordBoundary,
-                    text.substring(0, nextWordBoundary) + text.substring(caretPosition));
+            case NEXT ->
+                    new ResultingStringState(
+                            caretPosition,
+                            text.substring(0, caretPosition) + text.substring(nextWordBoundary));
+            case PREVIOUS ->
+                    new ResultingStringState(
+                            nextWordBoundary,
+                            text.substring(0, nextWordBoundary) + text.substring(caretPosition));
         };
     }
 

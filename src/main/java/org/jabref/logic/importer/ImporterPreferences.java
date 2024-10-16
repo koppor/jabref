@@ -1,11 +1,5 @@
 package org.jabref.logic.importer;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -17,6 +11,12 @@ import javafx.collections.ObservableSet;
 import org.jabref.logic.importer.fileformat.CustomImporter;
 import org.jabref.logic.importer.plaincitation.PlainCitationParserChoice;
 import org.jabref.logic.preferences.FetcherApiKey;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class ImporterPreferences {
     private final BooleanProperty importerEnabled;
@@ -30,17 +30,17 @@ public class ImporterPreferences {
     private final ObservableList<String> catalogs;
     private final ObjectProperty<PlainCitationParserChoice> defaultPlainCitationParser;
 
-    public ImporterPreferences(boolean importerEnabled,
-                               boolean generateNewKeyOnImport,
-                               Path importWorkingDirectory,
-                               boolean warnAboutDuplicatesOnImport,
-                               Set<CustomImporter> customImporters,
-                               Set<FetcherApiKey> apiKeys,
-                               Map<String, String> defaultApiKeys,
-                               boolean persistCustomKeys,
-                               List<String> catalogs,
-                               PlainCitationParserChoice defaultPlainCitationParser
-    ) {
+    public ImporterPreferences(
+            boolean importerEnabled,
+            boolean generateNewKeyOnImport,
+            Path importWorkingDirectory,
+            boolean warnAboutDuplicatesOnImport,
+            Set<CustomImporter> customImporters,
+            Set<FetcherApiKey> apiKeys,
+            Map<String, String> defaultApiKeys,
+            boolean persistCustomKeys,
+            List<String> catalogs,
+            PlainCitationParserChoice defaultPlainCitationParser) {
         this.importerEnabled = new SimpleBooleanProperty(importerEnabled);
         this.generateNewKeyOnImport = new SimpleBooleanProperty(generateNewKeyOnImport);
         this.importWorkingDirectory = new SimpleObjectProperty<>(importWorkingDirectory);
@@ -132,11 +132,11 @@ public class ImporterPreferences {
      */
     public Optional<String> getApiKey(String name) {
         return apiKeys.stream()
-                      .filter(key -> key.getName().equalsIgnoreCase(name))
-                      .filter(FetcherApiKey::shouldUse)
-                      .findFirst()
-                      .map(FetcherApiKey::getKey)
-                      .or(() -> Optional.ofNullable(defaultApiKeys.get(name)));
+                .filter(key -> key.getName().equalsIgnoreCase(name))
+                .filter(FetcherApiKey::shouldUse)
+                .findFirst()
+                .map(FetcherApiKey::getKey)
+                .or(() -> Optional.ofNullable(defaultApiKeys.get(name)));
     }
 
     public void setCatalogs(List<String> catalogs) {
@@ -145,7 +145,7 @@ public class ImporterPreferences {
     }
 
     public ObservableList<String> getCatalogs() {
-          return catalogs;
+        return catalogs;
     }
 
     public PlainCitationParserChoice getDefaultPlainCitationParser() {
@@ -156,7 +156,8 @@ public class ImporterPreferences {
         return defaultPlainCitationParser;
     }
 
-    public void setDefaultPlainCitationParser(PlainCitationParserChoice defaultPlainCitationParser) {
+    public void setDefaultPlainCitationParser(
+            PlainCitationParserChoice defaultPlainCitationParser) {
         this.defaultPlainCitationParser.set(defaultPlainCitationParser);
     }
 }

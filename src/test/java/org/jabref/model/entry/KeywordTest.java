@@ -1,11 +1,11 @@
 package org.jabref.model.entry;
 
-import java.util.HashSet;
-import java.util.Set;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.HashSet;
+import java.util.Set;
 
 class KeywordTest {
 

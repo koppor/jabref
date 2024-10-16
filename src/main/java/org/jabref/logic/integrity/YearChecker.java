@@ -1,17 +1,18 @@
 package org.jabref.logic.integrity;
 
+import org.jabref.logic.l10n.Localization;
+import org.jabref.model.strings.StringUtil;
+
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import org.jabref.logic.l10n.Localization;
-import org.jabref.model.strings.StringUtil;
-
 public class YearChecker implements ValueChecker {
 
-    private static final Predicate<String> CONTAINS_FOUR_DIGIT = Pattern.compile("([^0-9]|^)[0-9]{4}([^0-9]|$)")
-                                                                        .asPredicate();
-    private static final Predicate<String> ENDS_WITH_FOUR_DIGIT = Pattern.compile("[0-9]{4}$").asPredicate();
+    private static final Predicate<String> CONTAINS_FOUR_DIGIT =
+            Pattern.compile("([^0-9]|^)[0-9]{4}([^0-9]|$)").asPredicate();
+    private static final Predicate<String> ENDS_WITH_FOUR_DIGIT =
+            Pattern.compile("[0-9]{4}$").asPredicate();
     private static final String PUNCTUATION_MARKS = "[(){},.;!?<>%&$]";
 
     /**
@@ -32,7 +33,8 @@ public class YearChecker implements ValueChecker {
         }
 
         if (!ENDS_WITH_FOUR_DIGIT.test(value.replaceAll(PUNCTUATION_MARKS, ""))) {
-            return Optional.of(Localization.lang("last four nonpunctuation characters should be numerals"));
+            return Optional.of(
+                    Localization.lang("last four nonpunctuation characters should be numerals"));
         }
 
         return Optional.empty();

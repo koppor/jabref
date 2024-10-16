@@ -1,5 +1,9 @@
 package org.jabref.gui.edit;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
+import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -11,9 +15,6 @@ import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.ControlHelper;
 import org.jabref.gui.util.IconValidationDecorator;
 import org.jabref.logic.l10n.Localization;
-
-import com.airhacks.afterburner.views.ViewLoader;
-import de.saxsys.mvvmfx.utils.validation.visualization.ControlsFxVisualizer;
 
 public class ReplaceStringView extends BaseDialog<Void> {
 
@@ -33,9 +34,7 @@ public class ReplaceStringView extends BaseDialog<Void> {
 
         viewModel = new ReplaceStringViewModel(libraryTab);
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         ControlHelper.setAction(replaceButton, getDialogPane(), event -> buttonReplace());
     }

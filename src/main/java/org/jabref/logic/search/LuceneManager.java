@@ -1,8 +1,5 @@
 package org.jabref.logic.search;
 
-import java.io.IOException;
-import java.util.List;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -22,9 +19,11 @@ import org.jabref.model.search.event.IndexAddedOrUpdatedEvent;
 import org.jabref.model.search.event.IndexClosedEvent;
 import org.jabref.model.search.event.IndexRemovedEvent;
 import org.jabref.model.search.event.IndexStartedEvent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
 
 public class LuceneManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(LuceneManager.class);
@@ -38,7 +37,10 @@ public class LuceneManager {
     private final LuceneIndexer linkedFilesIndexer;
     private final LuceneSearcher luceneSearcher;
 
-    public LuceneManager(BibDatabaseContext databaseContext, TaskExecutor executor, FilePreferences preferences) {
+    public LuceneManager(
+            BibDatabaseContext databaseContext,
+            TaskExecutor executor,
+            FilePreferences preferences) {
         this.taskExecutor = executor;
         this.databaseContext = databaseContext;
         this.shouldIndexLinkedFiles = preferences.fulltextIndexLinkedFilesProperty();
@@ -56,7 +58,9 @@ public class LuceneManager {
         }
         linkedFilesIndexer = indexer;
 
-        this.luceneSearcher = new LuceneSearcher(databaseContext, bibFieldsIndexer, linkedFilesIndexer, preferences);
+        this.luceneSearcher =
+                new LuceneSearcher(
+                        databaseContext, bibFieldsIndexer, linkedFilesIndexer, preferences);
         updateOnStart();
     }
 
@@ -82,8 +86,9 @@ public class LuceneManager {
                 return null;
             }
         }.willBeRecoveredAutomatically(true)
-         .onFinished(() -> this.databaseContext.getDatabase().postEvent(new IndexStartedEvent()))
-         .executeWith(taskExecutor);
+                .onFinished(
+                        () -> this.databaseContext.getDatabase().postEvent(new IndexStartedEvent()))
+                .executeWith(taskExecutor);
 
         if (shouldIndexLinkedFiles.get()) {
             new BackgroundTask<>() {
@@ -103,8 +108,12 @@ public class LuceneManager {
                 bibFieldsIndexer.addToIndex(entries, this);
                 return null;
             }
-        }.onFinished(() -> this.databaseContext.getDatabase().postEvent(new IndexAddedOrUpdatedEvent(entries)))
-         .executeWith(taskExecutor);
+        }.onFinished(
+                        () ->
+                                this.databaseContext
+                                        .getDatabase()
+                                        .postEvent(new IndexAddedOrUpdatedEvent(entries)))
+                .executeWith(taskExecutor);
 
         if (shouldIndexLinkedFiles.get() && !isLinkedFilesIndexerBlocked.get()) {
             new BackgroundTask<>() {
@@ -124,8 +133,12 @@ public class LuceneManager {
                 bibFieldsIndexer.removeFromIndex(entries, this);
                 return null;
             }
-        }.onFinished(() -> this.databaseContext.getDatabase().postEvent(new IndexRemovedEvent(entries)))
-         .executeWith(taskExecutor);
+        }.onFinished(
+                        () ->
+                                this.databaseContext
+                                        .getDatabase()
+                                        .postEvent(new IndexRemovedEvent(entries)))
+                .executeWith(taskExecutor);
 
         if (shouldIndexLinkedFiles.get()) {
             new BackgroundTask<>() {
@@ -138,15 +151,20 @@ public class LuceneManager {
         }
     }
 
-    public void updateEntry(BibEntry entry, String oldValue, String newValue, boolean isLinkedFile) {
+    public void updateEntry(
+            BibEntry entry, String oldValue, String newValue, boolean isLinkedFile) {
         new BackgroundTask<>() {
             @Override
             public Object call() {
                 bibFieldsIndexer.updateEntry(entry, oldValue, newValue, this);
                 return null;
             }
-        }.onFinished(() -> this.databaseContext.getDatabase().postEvent(new IndexAddedOrUpdatedEvent(List.of(entry))))
-         .executeWith(taskExecutor);
+        }.onFinished(
+                        () ->
+                                this.databaseContext
+                                        .getDatabase()
+                                        .postEvent(new IndexAddedOrUpdatedEvent(List.of(entry))))
+                .executeWith(taskExecutor);
 
         if (isLinkedFile && shouldIndexLinkedFiles.get() && !isLinkedFilesIndexerBlocked.get()) {
             new BackgroundTask<>() {
@@ -166,8 +184,12 @@ public class LuceneManager {
                 bibFieldsIndexer.updateEntry(entry, "", "", this);
                 return null;
             }
-        }.onFinished(() -> this.databaseContext.getDatabase().postEvent(new IndexAddedOrUpdatedEvent(List.of(entry))))
-         .executeWith(taskExecutor);
+        }.onFinished(
+                        () ->
+                                this.databaseContext
+                                        .getDatabase()
+                                        .postEvent(new IndexAddedOrUpdatedEvent(List.of(entry))))
+                .executeWith(taskExecutor);
 
         if (shouldIndexLinkedFiles.get() && !isLinkedFilesIndexerBlocked.get()) {
             new BackgroundTask<>() {
@@ -188,7 +210,7 @@ public class LuceneManager {
                 return null;
             }
         }.onFinished(() -> this.databaseContext.getDatabase().postEvent(new IndexStartedEvent()))
-         .executeWith(taskExecutor);
+                .executeWith(taskExecutor);
 
         if (shouldIndexLinkedFiles.get()) {
             new BackgroundTask<>() {
@@ -223,7 +245,8 @@ public class LuceneManager {
 
     public SearchResults search(SearchQuery query) {
         if (query.isValid()) {
-            query.setSearchResults(luceneSearcher.search(query.getParsedQuery(), query.getSearchFlags()));
+            query.setSearchResults(
+                    luceneSearcher.search(query.getParsedQuery(), query.getSearchFlags()));
         } else {
             query.setSearchResults(new SearchResults());
         }

@@ -1,10 +1,10 @@
 package org.jabref.model.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DirectoryMonitorManager {
 

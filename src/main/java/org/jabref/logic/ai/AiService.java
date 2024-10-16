@@ -1,7 +1,6 @@
 package org.jabref.logic.ai;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -23,7 +22,8 @@ import org.jabref.logic.util.NotificationService;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  *  The main class for the AI functionality.
@@ -39,13 +39,14 @@ public class AiService implements AutoCloseable {
     private static final String CHAT_HISTORY_FILE_NAME = "chat-histories.mv";
 
     // This field is used to shut down AI-related background tasks.
-    // If a background task processes a big document and has a loop, then the task should check the status
+    // If a background task processes a big document and has a loop, then the task should check the
+    // status
     // of this property for being true. If it's true, then it should abort the cycle.
     private final BooleanProperty shutdownSignal = new SimpleBooleanProperty(false);
 
-    private final ExecutorService cachedThreadPool = Executors.newCachedThreadPool(
-            new ThreadFactoryBuilder().setNameFormat("ai-retrieval-pool-%d").build()
-    );
+    private final ExecutorService cachedThreadPool =
+            Executors.newCachedThreadPool(
+                    new ThreadFactoryBuilder().setNameFormat("ai-retrieval-pool-%d").build());
 
     private final MVStoreChatHistoryStorage mvStoreChatHistoryStorage;
     private final MVStoreEmbeddingStore mvStoreEmbeddingStore;
@@ -59,42 +60,62 @@ public class AiService implements AutoCloseable {
     private final IngestionService ingestionService;
     private final SummariesService summariesService;
 
-    public AiService(AiPreferences aiPreferences,
-                     FilePreferences filePreferences,
-                     CitationKeyPatternPreferences citationKeyPatternPreferences,
-                     NotificationService notificationService,
-                     TaskExecutor taskExecutor
-    ) {
+    public AiService(
+            AiPreferences aiPreferences,
+            FilePreferences filePreferences,
+            CitationKeyPatternPreferences citationKeyPatternPreferences,
+            NotificationService notificationService,
+            TaskExecutor taskExecutor) {
 
-        this.mvStoreChatHistoryStorage = new MVStoreChatHistoryStorage(Directories.getAiFilesDirectory().resolve(CHAT_HISTORY_FILE_NAME), notificationService);
-        this.mvStoreEmbeddingStore = new MVStoreEmbeddingStore(Directories.getAiFilesDirectory().resolve(EMBEDDINGS_FILE_NAME), notificationService);
-        this.mvStoreFullyIngestedDocumentsTracker = new MVStoreFullyIngestedDocumentsTracker(Directories.getAiFilesDirectory().resolve(FULLY_INGESTED_FILE_NAME), notificationService);
-        this.mvStoreSummariesStorage = new MVStoreSummariesStorage(Directories.getAiFilesDirectory().resolve(SUMMARIES_FILE_NAME), notificationService);
+        this.mvStoreChatHistoryStorage =
+                new MVStoreChatHistoryStorage(
+                        Directories.getAiFilesDirectory().resolve(CHAT_HISTORY_FILE_NAME),
+                        notificationService);
+        this.mvStoreEmbeddingStore =
+                new MVStoreEmbeddingStore(
+                        Directories.getAiFilesDirectory().resolve(EMBEDDINGS_FILE_NAME),
+                        notificationService);
+        this.mvStoreFullyIngestedDocumentsTracker =
+                new MVStoreFullyIngestedDocumentsTracker(
+                        Directories.getAiFilesDirectory().resolve(FULLY_INGESTED_FILE_NAME),
+                        notificationService);
+        this.mvStoreSummariesStorage =
+                new MVStoreSummariesStorage(
+                        Directories.getAiFilesDirectory().resolve(SUMMARIES_FILE_NAME),
+                        notificationService);
 
-        this.chatHistoryService = new ChatHistoryService(citationKeyPatternPreferences, mvStoreChatHistoryStorage);
+        this.chatHistoryService =
+                new ChatHistoryService(citationKeyPatternPreferences, mvStoreChatHistoryStorage);
         this.jabRefChatLanguageModel = new JabRefChatLanguageModel(aiPreferences);
-        this.jabRefEmbeddingModel = new JabRefEmbeddingModel(aiPreferences, notificationService, taskExecutor);
+        this.jabRefEmbeddingModel =
+                new JabRefEmbeddingModel(aiPreferences, notificationService, taskExecutor);
 
-        this.aiChatService = new AiChatService(aiPreferences, jabRefChatLanguageModel, jabRefEmbeddingModel, mvStoreEmbeddingStore, cachedThreadPool);
+        this.aiChatService =
+                new AiChatService(
+                        aiPreferences,
+                        jabRefChatLanguageModel,
+                        jabRefEmbeddingModel,
+                        mvStoreEmbeddingStore,
+                        cachedThreadPool);
 
-        this.ingestionService = new IngestionService(
-                aiPreferences,
-                shutdownSignal,
-                jabRefEmbeddingModel,
-                mvStoreEmbeddingStore,
-                mvStoreFullyIngestedDocumentsTracker,
-                filePreferences,
-                taskExecutor
-        );
+        this.ingestionService =
+                new IngestionService(
+                        aiPreferences,
+                        shutdownSignal,
+                        jabRefEmbeddingModel,
+                        mvStoreEmbeddingStore,
+                        mvStoreFullyIngestedDocumentsTracker,
+                        filePreferences,
+                        taskExecutor);
 
-        this.summariesService = new SummariesService(
-                aiPreferences,
-                mvStoreSummariesStorage,
-                jabRefChatLanguageModel,
-                shutdownSignal,
-                filePreferences,
-                taskExecutor
-        );
+        this.summariesService =
+                new SummariesService(
+                        aiPreferences,
+                        mvStoreSummariesStorage,
+                        jabRefChatLanguageModel,
+                        shutdownSignal,
+                        filePreferences,
+                        taskExecutor);
     }
 
     public JabRefChatLanguageModel getChatLanguageModel() {

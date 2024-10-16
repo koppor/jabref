@@ -1,19 +1,21 @@
 package org.jabref.logic.layout.format;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.regex.Pattern;
-
 import org.jabref.logic.layout.ParamLayoutFormatter;
 import org.jabref.logic.util.strings.HTMLUnicodeConversionMaps;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * This formatter escapes characters so that they are suitable for HTML.
  */
 public class HTMLChars implements ParamLayoutFormatter {
 
-    private static final Map<String, String> HTML_CHARS = HTMLUnicodeConversionMaps.LATEX_HTML_CONVERSION_MAP;
+    private static final Map<String, String> HTML_CHARS =
+            HTMLUnicodeConversionMaps.LATEX_HTML_CONVERSION_MAP;
+
     /**
      * This regex matches '<b>&</b>' that DO NOT BEGIN an HTML entity.
      * <p>
@@ -21,7 +23,8 @@ public class HTMLChars implements ParamLayoutFormatter {
      * <b>&</b>{@literal #34;} <b>Not Matched</b><br>
      * <b>&</b>Hey <b>Matched</b>
      * */
-    private static final Pattern HTML_ENTITY_PATTERN = Pattern.compile("&(?!(?:[a-z0-9]+|#[0-9]{1,6}|#x[0-9a-fA-F]{1,6});)");
+    private static final Pattern HTML_ENTITY_PATTERN =
+            Pattern.compile("&(?!(?:[a-z0-9]+|#[0-9]{1,6}|#x[0-9a-fA-F]{1,6});)");
 
     private boolean keepCurlyBraces = false;
 
@@ -60,7 +63,8 @@ public class HTMLChars implements ParamLayoutFormatter {
                 currentCommand = new StringBuilder();
             } else if (!this.keepCurlyBraces && !incommand && ((c == '{') || (c == '}'))) {
                 // Swallow the brace.
-            } else if (Character.isLetter(c) || StringUtil.SPECIAL_COMMAND_CHARS.contains(String.valueOf(c))) {
+            } else if (Character.isLetter(c)
+                    || StringUtil.SPECIAL_COMMAND_CHARS.contains(String.valueOf(c))) {
                 escaped = false;
 
                 if (!incommand) {
@@ -69,7 +73,8 @@ public class HTMLChars implements ParamLayoutFormatter {
                     currentCommand.append(c);
                     testCharCom:
                     if ((currentCommand.length() == 1)
-                            && StringUtil.SPECIAL_COMMAND_CHARS.contains(currentCommand.toString())) {
+                            && StringUtil.SPECIAL_COMMAND_CHARS.contains(
+                                    currentCommand.toString())) {
                         // This indicates that we are in a command of the type
                         // \^o or \~{n}
                         if (i >= (field.length() - 1)) {
@@ -121,7 +126,13 @@ public class HTMLChars implements ParamLayoutFormatter {
                             i++;
                         }
                         i += part.length();
-                        sb.append('<').append(tag).append('>').append(part).append("</").append(tag).append('>');
+                        sb.append('<')
+                                .append(tag)
+                                .append('>')
+                                .append(part)
+                                .append("</")
+                                .append(tag)
+                                .append('>');
                     } else if (c == '{') {
                         String argument = StringUtil.getPart(field, i, true);
                         i += this.keepCurlyBraces ? argument.length() + 1 : argument.length();
@@ -175,17 +186,22 @@ public class HTMLChars implements ParamLayoutFormatter {
             }
         }
 
-        return sb.toString().replace("~", "&nbsp;"); // Replace any remaining ~ with &nbsp; (non-breaking spaces)
+        return sb.toString()
+                .replace(
+                        "~", "&nbsp;"); // Replace any remaining ~ with &nbsp; (non-breaking spaces)
     }
 
     private String normalizedField(String inField) {
-        // Cannot use StringEscapeUtils#escapeHtml4 because it does not handle LaTeX characters and commands.
-        return HTML_ENTITY_PATTERN.matcher(inField).replaceAll("&amp;") // Replace & with &amp; if it does not begin an HTML entity
-                                  .replaceAll("\\\\&", "&amp;") // Replace \& with &amp;
-                                  .replaceAll("[\\n]{2,}", "<p>") // Replace double line breaks with <p>
-                                  .replace("\n", "<br>") // Replace single line breaks with <br>
-                                  .replace("\\$", "&dollar;") // Replace \$ with &dollar;
-                                  .replaceAll("\\$([^$]*)\\$", this.keepCurlyBraces ? "\\\\{$1\\\\}" : "$1}");
+        // Cannot use StringEscapeUtils#escapeHtml4 because it does not handle LaTeX characters and
+        // commands.
+        return HTML_ENTITY_PATTERN
+                .matcher(inField)
+                .replaceAll("&amp;") // Replace & with &amp; if it does not begin an HTML entity
+                .replaceAll("\\\\&", "&amp;") // Replace \& with &amp;
+                .replaceAll("[\\n]{2,}", "<p>") // Replace double line breaks with <p>
+                .replace("\n", "<br>") // Replace single line breaks with <br>
+                .replace("\\$", "&dollar;") // Replace \$ with &dollar;
+                .replaceAll("\\$([^$]*)\\$", this.keepCurlyBraces ? "\\\\{$1\\\\}" : "$1}");
     }
 
     private String getHTMLTag(String latexCommand) {
@@ -210,7 +226,8 @@ public class HTMLChars implements ParamLayoutFormatter {
             case "underline":
                 result = "u";
                 break;
-            // Strikeout, sout is the "standard" command, although it is actually based on the package ulem
+            // Strikeout, sout is the "standard" command, although it is actually based on the
+            // package ulem
             case "sout":
                 result = "s";
                 break;

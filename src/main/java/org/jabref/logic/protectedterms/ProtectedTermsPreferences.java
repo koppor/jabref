@@ -1,9 +1,9 @@
 package org.jabref.logic.protectedterms;
 
-import java.util.List;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import java.util.List;
 
 public class ProtectedTermsPreferences {
 
@@ -12,14 +12,17 @@ public class ProtectedTermsPreferences {
     private final ObservableList<String> disabledInternalTermLists;
     private final ObservableList<String> disabledExternalTermLists;
 
-    public ProtectedTermsPreferences(List<String> enabledInternalTermLists,
-                                     List<String> enabledExternalTermLists,
-                                     List<String> disabledInternalTermLists,
-                                     List<String> disabledExternalTermLists) {
+    public ProtectedTermsPreferences(
+            List<String> enabledInternalTermLists,
+            List<String> enabledExternalTermLists,
+            List<String> disabledInternalTermLists,
+            List<String> disabledExternalTermLists) {
         this.enabledInternalTermLists = FXCollections.observableArrayList(enabledInternalTermLists);
-        this.disabledInternalTermLists = FXCollections.observableArrayList(disabledInternalTermLists);
+        this.disabledInternalTermLists =
+                FXCollections.observableArrayList(disabledInternalTermLists);
         this.enabledExternalTermLists = FXCollections.observableArrayList(enabledExternalTermLists);
-        this.disabledExternalTermLists = FXCollections.observableArrayList(disabledExternalTermLists);
+        this.disabledExternalTermLists =
+                FXCollections.observableArrayList(disabledExternalTermLists);
     }
 
     public ObservableList<String> getEnabledInternalTermLists() {

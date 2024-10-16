@@ -1,13 +1,9 @@
 package org.jabref.logic.citationstyle;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.SequencedCollection;
-import java.util.stream.Collectors;
+import de.undercouch.citeproc.ItemDataProvider;
+import de.undercouch.citeproc.bibtex.BibTeXConverter;
+import de.undercouch.citeproc.csl.CSLItemData;
+import de.undercouch.citeproc.helper.json.StringJsonBuilderFactory;
 
 import org.jabref.logic.formatter.bibtexfields.RemoveNewlinesFormatter;
 import org.jabref.logic.integrity.PagesChecker;
@@ -21,14 +17,18 @@ import org.jabref.model.entry.field.Field;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.model.strings.LatexToUnicodeAdapter;
-
-import de.undercouch.citeproc.ItemDataProvider;
-import de.undercouch.citeproc.bibtex.BibTeXConverter;
-import de.undercouch.citeproc.csl.CSLItemData;
-import de.undercouch.citeproc.helper.json.StringJsonBuilderFactory;
 import org.jbibtex.BibTeXEntry;
 import org.jbibtex.DigitStringValue;
 import org.jbibtex.Key;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.SequencedCollection;
+import java.util.stream.Collectors;
 
 /**
  * Custom {@link ItemDataProvider} that allows to set the data so that we don't have to instantiate a new CSL object
@@ -97,55 +97,70 @@ public class JabRefItemDataProvider implements ItemDataProvider {
      * </tbody>
      * </table>
      */
-    private CSLItemData bibEntryToCSLItemData(BibEntry originalBibEntry, BibDatabaseContext bibDatabaseContext, BibEntryTypesManager entryTypesManager) {
-        // We need to make a deep copy, because we modify the entry according to the logic presented at
+    private CSLItemData bibEntryToCSLItemData(
+            BibEntry originalBibEntry,
+            BibDatabaseContext bibDatabaseContext,
+            BibEntryTypesManager entryTypesManager) {
+        // We need to make a deep copy, because we modify the entry according to the logic presented
+        // at
         // https://github.com/JabRef/jabref/issues/8372#issuecomment-1014941935
         BibEntry bibEntry = (BibEntry) originalBibEntry.clone();
         String citeKey = bibEntry.getCitationKey().orElse("");
-        BibTeXEntry bibTeXEntry = new BibTeXEntry(new Key(bibEntry.getType().getName()), new Key(citeKey));
+        BibTeXEntry bibTeXEntry =
+                new BibTeXEntry(new Key(bibEntry.getType().getName()), new Key(citeKey));
 
         // Not every field is already generated into latex free fields
         RemoveNewlinesFormatter removeNewlinesFormatter = new RemoveNewlinesFormatter();
 
-        Optional<BibEntryType> entryType = entryTypesManager.enrich(bibEntry.getType(), bibDatabaseContext.getMode());
+        Optional<BibEntryType> entryType =
+                entryTypesManager.enrich(bibEntry.getType(), bibDatabaseContext.getMode());
 
         if (bibEntry.getType().equals(StandardEntryType.Article)) {
             // Patch bibEntry to contain the right BibTeX (not BibLaTeX) fields
-            // Note that we do not need to convert from "pages" to "page", because CiteProc already handles it
+            // Note that we do not need to convert from "pages" to "page", because CiteProc already
+            // handles it
             // See BibTeXConverter
             if (bibDatabaseContext.isBiblatexMode()) {
                 // Map "number" to CSL "issue", unless no number exists
                 Optional<String> numberField = bibEntry.getField(StandardField.NUMBER);
-                numberField.ifPresent(number -> {
+                numberField.ifPresent(
+                        number -> {
                             bibEntry.setField(StandardField.ISSUE, number);
                             bibEntry.clearField(StandardField.NUMBER);
-                        }
-                );
+                        });
 
-                bibEntry.getField(StandardField.EID).ifPresent(eid -> {
-                    if (!bibEntry.hasField(StandardField.NUMBER)) {
-                        bibEntry.setField(StandardField.NUMBER, eid);
-                        bibEntry.clearField(StandardField.EID);
-                    }
-                });
+                bibEntry.getField(StandardField.EID)
+                        .ifPresent(
+                                eid -> {
+                                    if (!bibEntry.hasField(StandardField.NUMBER)) {
+                                        bibEntry.setField(StandardField.NUMBER, eid);
+                                        bibEntry.clearField(StandardField.EID);
+                                    }
+                                });
             } else {
                 // BibTeX mode
-                bibEntry.getField(StandardField.NUMBER).ifPresent(number -> {
-                    bibEntry.setField(StandardField.ISSUE, number);
-                    bibEntry.clearField(StandardField.NUMBER);
-                });
-                bibEntry.getField(StandardField.PAGES).ifPresent(pages -> {
-                    if (pages.toLowerCase(Locale.ROOT).startsWith("article ")) {
-                        pages = pages.substring("Article ".length());
-                        bibEntry.setField(StandardField.NUMBER, pages);
-                    }
-                });
-                bibEntry.getField(StandardField.EID).ifPresent(eid -> {
-                    if (!bibEntry.hasField(StandardField.PAGES)) {
-                        bibEntry.setField(StandardField.PAGES, eid);
-                        bibEntry.clearField(StandardField.EID);
-                    }
-                });
+                bibEntry.getField(StandardField.NUMBER)
+                        .ifPresent(
+                                number -> {
+                                    bibEntry.setField(StandardField.ISSUE, number);
+                                    bibEntry.clearField(StandardField.NUMBER);
+                                });
+                bibEntry.getField(StandardField.PAGES)
+                        .ifPresent(
+                                pages -> {
+                                    if (pages.toLowerCase(Locale.ROOT).startsWith("article ")) {
+                                        pages = pages.substring("Article ".length());
+                                        bibEntry.setField(StandardField.NUMBER, pages);
+                                    }
+                                });
+                bibEntry.getField(StandardField.EID)
+                        .ifPresent(
+                                eid -> {
+                                    if (!bibEntry.hasField(StandardField.PAGES)) {
+                                        bibEntry.setField(StandardField.PAGES, eid);
+                                        bibEntry.clearField(StandardField.EID);
+                                    }
+                                });
             }
         }
 
@@ -160,13 +175,19 @@ public class JabRefItemDataProvider implements ItemDataProvider {
             bibEntry.getResolvedFieldOrAlias(key, bibDatabaseContext.getDatabase())
                     .map(removeNewlinesFormatter::format)
                     .map(LatexToUnicodeAdapter::format)
-                    .ifPresent(value -> {
-                        if (StandardField.MONTH == key) {
-                            // Change month from #mon# to mon because CSL does not support the former format
-                            value = bibEntry.getMonth().map(Month::getShortName).orElse(value);
-                        }
-                        bibTeXEntry.addField(new Key(key.getName()), new DigitStringValue(value));
-                    });
+                    .ifPresent(
+                            value -> {
+                                if (StandardField.MONTH == key) {
+                                    // Change month from #mon# to mon because CSL does not support
+                                    // the former format
+                                    value =
+                                            bibEntry.getMonth()
+                                                    .map(Month::getShortName)
+                                                    .orElse(value);
+                                }
+                                bibTeXEntry.addField(
+                                        new Key(key.getName()), new DigitStringValue(value));
+                            });
         }
         return BIBTEX_CONVERTER.toItemData(bibTeXEntry);
     }
@@ -174,17 +195,22 @@ public class JabRefItemDataProvider implements ItemDataProvider {
     /**
      * Fills the data with all entries in given bibDatabaseContext
      */
-    public void setData(BibDatabaseContext bibDatabaseContext, BibEntryTypesManager entryTypesManager) {
+    public void setData(
+            BibDatabaseContext bibDatabaseContext, BibEntryTypesManager entryTypesManager) {
         this.setData(bibDatabaseContext.getEntries(), bibDatabaseContext, entryTypesManager);
     }
 
-    public void setData(List<BibEntry> data, BibDatabaseContext bibDatabaseContext, BibEntryTypesManager entryTypesManager) {
+    public void setData(
+            List<BibEntry> data,
+            BibDatabaseContext bibDatabaseContext,
+            BibEntryTypesManager entryTypesManager) {
         this.data.clear();
         this.data.addAll(data);
         this.bibDatabaseContext = bibDatabaseContext;
         this.entryTypesManager = entryTypesManager;
 
-        // Quick solution to always use BibLaTeX mode at the checker to allow pages ranges with single dash, too
+        // Quick solution to always use BibLaTeX mode at the checker to allow pages ranges with
+        // single dash, too
         // Example: pages = {1-2}
         BibDatabaseContext ctx = new BibDatabaseContext();
         ctx.setMode(BibDatabaseMode.BIBLATEX);
@@ -194,25 +220,24 @@ public class JabRefItemDataProvider implements ItemDataProvider {
     @Override
     public CSLItemData retrieveItem(String id) {
         return data.stream()
-                   .filter(entry -> entry.getCitationKey().orElse("").equals(id))
-                   .map(entry -> bibEntryToCSLItemData(entry, bibDatabaseContext, entryTypesManager))
-                   .findFirst().orElse(null);
+                .filter(entry -> entry.getCitationKey().orElse("").equals(id))
+                .map(entry -> bibEntryToCSLItemData(entry, bibDatabaseContext, entryTypesManager))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public Collection<String> getIds() {
-        return data.stream()
-                   .map(entry -> entry.getCitationKey().orElse(""))
-                   .toList();
+        return data.stream().map(entry -> entry.getCitationKey().orElse("")).toList();
     }
 
     public String toJson() {
         List<BibEntry> entries = bibDatabaseContext.getEntries();
         this.setData(entries, bibDatabaseContext, entryTypesManager);
         return entries.stream()
-                      .map(entry -> bibEntryToCSLItemData(entry, bibDatabaseContext, entryTypesManager))
-                      .map(item -> item.toJson(stringJsonBuilderFactory.createJsonBuilder()))
-                      .map(String.class::cast)
-                      .collect(Collectors.joining(",", "[", "]"));
+                .map(entry -> bibEntryToCSLItemData(entry, bibDatabaseContext, entryTypesManager))
+                .map(item -> item.toJson(stringJsonBuilderFactory.createJsonBuilder()))
+                .map(String.class::cast)
+                .collect(Collectors.joining(",", "[", "]"));
     }
 }

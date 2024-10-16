@@ -1,9 +1,5 @@
 package org.jabref.logic.preferences;
 
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.prefs.BackingStoreException;
-
 import org.jabref.logic.FilePreferences;
 import org.jabref.logic.InternalPreferences;
 import org.jabref.logic.JabRefException;
@@ -31,8 +27,11 @@ import org.jabref.logic.util.io.AutoLinkPreferences;
 import org.jabref.logic.xmp.XmpPreferences;
 import org.jabref.model.entry.BibEntryPreferences;
 import org.jabref.model.entry.BibEntryTypesManager;
-
 import org.jvnet.hk2.annotations.Contract;
+
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.prefs.BackingStoreException;
 
 @Contract
 public interface CliPreferences {

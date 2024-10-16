@@ -1,13 +1,13 @@
 package org.jabref.logic.layout.format;
 
+import org.jabref.logic.layout.AbstractParamLayoutFormatter;
+import org.jabref.model.entry.Author;
+import org.jabref.model.entry.AuthorList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
-import org.jabref.logic.layout.AbstractParamLayoutFormatter;
-import org.jabref.model.entry.Author;
-import org.jabref.model.entry.AuthorList;
 
 /**
  * Versatile author name formatter that takes arguments to control the formatting style.
@@ -150,7 +150,8 @@ public class Authors extends AbstractParamLayoutFormatter {
                 abbrDots = false;
                 lastFirstSeparator = ", ";
             }
-        } else if (Authors.SEPARATORS.contains(key.trim().toLowerCase(Locale.ROOT)) || Authors.LAST_SEPARATORS.contains(key.trim().toLowerCase(Locale.ROOT))) {
+        } else if (Authors.SEPARATORS.contains(key.trim().toLowerCase(Locale.ROOT))
+                || Authors.LAST_SEPARATORS.contains(key.trim().toLowerCase(Locale.ROOT))) {
             // AuthorSep = [Comma | And | Colon | Semicolon | sep=<string>]
             // AuthorLastSep = [And | Comma | Colon | Semicolon | Amp | Oxford | lastsep=<string>]
 
@@ -231,7 +232,10 @@ public class Authors extends AbstractParamLayoutFormatter {
             for (int i = 0; i < al.getNumberOfAuthors(); i++) {
                 Author a = al.getAuthor(i);
 
-                addSingleName(sb, a, (flMode == Authors.FIRST_FIRST) || ((flMode == Authors.LF_FF) && (i > 0)));
+                addSingleName(
+                        sb,
+                        a,
+                        (flMode == Authors.FIRST_FIRST) || ((flMode == Authors.LF_FF) && (i > 0)));
 
                 if (i < (al.getNumberOfAuthors() - 2)) {
                     sb.append(separator);
@@ -254,10 +258,14 @@ public class Authors extends AbstractParamLayoutFormatter {
 
     private void addSingleName(StringBuilder sb, Author a, boolean firstFirst) {
         StringBuilder lastNameSB = new StringBuilder();
-        a.getNamePrefix().filter(von -> !von.isEmpty()).ifPresent(von -> lastNameSB.append(von).append(' '));
+        a.getNamePrefix()
+                .filter(von -> !von.isEmpty())
+                .ifPresent(von -> lastNameSB.append(von).append(' '));
         a.getFamilyName().ifPresent(lastNameSB::append);
         String jrSeparator = " ";
-        a.getNameSuffix().filter(jr -> !jr.isEmpty()).ifPresent(jr -> lastNameSB.append(jrSeparator).append(jr));
+        a.getNameSuffix()
+                .filter(jr -> !jr.isEmpty())
+                .ifPresent(jr -> lastNameSB.append(jrSeparator).append(jr));
 
         String firstNameResult = "";
         if (a.getGivenName().isPresent()) {

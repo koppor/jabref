@@ -1,5 +1,10 @@
 package org.jabref.gui.auximport;
 
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
+import jakarta.inject.Inject;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -17,10 +22,6 @@ import org.jabref.gui.util.ViewModelListCellFactory;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.model.database.BibDatabaseContext;
-
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-import jakarta.inject.Inject;
 
 /**
  * A wizard dialog for generating a new sub database from existing TeX AUX file
@@ -44,26 +45,26 @@ public class FromAuxDialog extends BaseDialog<Void> {
         this.tabContainer = tabContainer;
         this.setTitle(Localization.lang("AUX file import"));
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         Button generateButton = (Button) this.getDialogPane().lookupButton(generateButtonType);
         generateButton.disableProperty().bind(viewModel.parseFailedProperty());
         generateButton.defaultButtonProperty().bind(generateButton.disableProperty().not());
-        setResultConverter(button -> {
-            if (button == generateButtonType) {
-                viewModel.addResultToTabContainer();
-            }
-            return null;
-        });
+        setResultConverter(
+                button -> {
+                    if (button == generateButtonType) {
+                        viewModel.addResultToTabContainer();
+                    }
+                    return null;
+                });
 
         themeManager.updateFontStyle(getDialogPane().getScene());
     }
 
     @FXML
     private void initialize() {
-        viewModel = new FromAuxDialogViewModel(tabContainer, dialogService, preferences, stateManager);
+        viewModel =
+                new FromAuxDialogViewModel(tabContainer, dialogService, preferences, stateManager);
 
         auxFileField.textProperty().bindBidirectional(viewModel.auxFileProperty());
         statusInfos.textProperty().bindBidirectional(viewModel.statusTextProperty());
@@ -75,7 +76,9 @@ public class FromAuxDialog extends BaseDialog<Void> {
         new ViewModelListCellFactory<BibDatabaseContext>()
                 .withText(viewModel::getDatabaseName)
                 .install(libraryListView);
-        EasyBind.listen(libraryListView.getSelectionModel().selectedItemProperty(), (obs, oldValue, newValue) -> parseActionPerformed());
+        EasyBind.listen(
+                libraryListView.getSelectionModel().selectedItemProperty(),
+                (obs, oldValue, newValue) -> parseActionPerformed());
     }
 
     @FXML

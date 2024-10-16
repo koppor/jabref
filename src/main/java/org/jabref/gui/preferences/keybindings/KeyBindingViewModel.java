@@ -1,6 +1,6 @@
 package org.jabref.gui.preferences.keybindings;
 
-import java.util.Optional;
+import com.google.common.base.CaseFormat;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -15,7 +15,7 @@ import org.jabref.gui.keyboard.KeyBinding;
 import org.jabref.gui.keyboard.KeyBindingCategory;
 import org.jabref.gui.keyboard.KeyBindingRepository;
 
-import com.google.common.base.CaseFormat;
+import java.util.Optional;
 
 /**
  * This class represents a view model for objects of the KeyBinding
@@ -28,21 +28,24 @@ public class KeyBindingViewModel {
 
     private KeyBinding keyBinding = null;
     private String realBinding = "";
-    private final ObservableList<KeyBindingViewModel> children = FXCollections.observableArrayList();
+    private final ObservableList<KeyBindingViewModel> children =
+            FXCollections.observableArrayList();
     private final KeyBindingRepository keyBindingRepository;
     private final SimpleStringProperty displayName = new SimpleStringProperty();
     private final SimpleStringProperty shownBinding = new SimpleStringProperty();
 
     private final KeyBindingCategory category;
 
-    public KeyBindingViewModel(KeyBindingRepository keyBindingRepository, KeyBinding keyBinding, String binding) {
+    public KeyBindingViewModel(
+            KeyBindingRepository keyBindingRepository, KeyBinding keyBinding, String binding) {
         this(keyBindingRepository, keyBinding.getCategory());
         this.keyBinding = keyBinding;
         setDisplayName();
         setBinding(binding);
     }
 
-    public KeyBindingViewModel(KeyBindingRepository keyBindingRepository, KeyBindingCategory category) {
+    public KeyBindingViewModel(
+            KeyBindingRepository keyBindingRepository, KeyBindingCategory category) {
         this.keyBindingRepository = keyBindingRepository;
         this.category = category;
         setDisplayName();
@@ -75,7 +78,8 @@ public class KeyBindingViewModel {
     }
 
     private void setDisplayName() {
-        this.displayName.set(keyBinding == null ? this.category.getName() : keyBinding.getLocalization());
+        this.displayName.set(
+                keyBinding == null ? this.category.getName() : keyBinding.getLocalization());
     }
 
     public StringProperty nameProperty() {
@@ -97,8 +101,12 @@ public class KeyBindingViewModel {
         // validate the shortcut is no modifier key
 
         KeyCode code = evt.getCode();
-        if (code.isModifierKey() || (code == KeyCode.BACK_SPACE) || (code == KeyCode.SPACE) || (code == KeyCode.TAB)
-                || (code == KeyCode.ENTER) || (code == KeyCode.UNDEFINED)) {
+        if (code.isModifierKey()
+                || (code == KeyCode.BACK_SPACE)
+                || (code == KeyCode.SPACE)
+                || (code == KeyCode.TAB)
+                || (code == KeyCode.ENTER)
+                || (code == KeyCode.UNDEFINED)) {
             return false;
         }
 

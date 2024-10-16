@@ -1,15 +1,5 @@
 package org.jabref.gui.sidepane;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
@@ -26,9 +16,18 @@ import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
+
+import javax.swing.undo.UndoManager;
 
 public class SidePaneViewModel extends AbstractViewModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(SidePaneViewModel.class);
@@ -40,62 +39,77 @@ public class SidePaneViewModel extends AbstractViewModel {
     private final SidePaneContentFactory sidePaneContentFactory;
     private final DialogService dialogService;
 
-    public SidePaneViewModel(LibraryTabContainer tabContainer,
-                             GuiPreferences preferences,
-                             JournalAbbreviationRepository abbreviationRepository,
-                             StateManager stateManager,
-                             TaskExecutor taskExecutor,
-                             DialogService dialogService,
-                             AiService aiService,
-                             FileUpdateMonitor fileUpdateMonitor,
-                             BibEntryTypesManager entryTypesManager,
-                             ClipBoardManager clipBoardManager,
-                             UndoManager undoManager) {
+    public SidePaneViewModel(
+            LibraryTabContainer tabContainer,
+            GuiPreferences preferences,
+            JournalAbbreviationRepository abbreviationRepository,
+            StateManager stateManager,
+            TaskExecutor taskExecutor,
+            DialogService dialogService,
+            AiService aiService,
+            FileUpdateMonitor fileUpdateMonitor,
+            BibEntryTypesManager entryTypesManager,
+            ClipBoardManager clipBoardManager,
+            UndoManager undoManager) {
         this.preferences = preferences;
         this.stateManager = stateManager;
         this.dialogService = dialogService;
-        this.sidePaneContentFactory = new SidePaneContentFactory(
-                tabContainer,
-                preferences,
-                abbreviationRepository,
-                taskExecutor,
-                dialogService,
-                aiService,
-                stateManager,
-                fileUpdateMonitor,
-                entryTypesManager,
-                clipBoardManager,
-                undoManager);
+        this.sidePaneContentFactory =
+                new SidePaneContentFactory(
+                        tabContainer,
+                        preferences,
+                        abbreviationRepository,
+                        taskExecutor,
+                        dialogService,
+                        aiService,
+                        stateManager,
+                        fileUpdateMonitor,
+                        entryTypesManager,
+                        clipBoardManager,
+                        undoManager);
 
         preferences.getSidePanePreferences().visiblePanes().forEach(this::show);
-        getPanes().addListener((ListChangeListener<? super SidePaneType>) change -> {
-            while (change.next()) {
-                if (change.wasAdded()) {
-                    preferences.getSidePanePreferences().visiblePanes().add(change.getAddedSubList().getFirst());
-                } else if (change.wasRemoved()) {
-                    preferences.getSidePanePreferences().visiblePanes().remove(change.getRemoved().getFirst());
-                }
-            }
-        });
+        getPanes()
+                .addListener(
+                        (ListChangeListener<? super SidePaneType>)
+                                change -> {
+                                    while (change.next()) {
+                                        if (change.wasAdded()) {
+                                            preferences
+                                                    .getSidePanePreferences()
+                                                    .visiblePanes()
+                                                    .add(change.getAddedSubList().getFirst());
+                                        } else if (change.wasRemoved()) {
+                                            preferences
+                                                    .getSidePanePreferences()
+                                                    .visiblePanes()
+                                                    .remove(change.getRemoved().getFirst());
+                                        }
+                                    }
+                                });
     }
 
     protected SidePaneComponent getSidePaneComponent(SidePaneType pane) {
         SidePaneComponent sidePaneComponent = sidePaneComponentLookup.get(pane);
         if (sidePaneComponent == null) {
-            sidePaneComponent = switch (pane) {
-                case GROUPS -> new GroupsSidePaneComponent(
-                        new ClosePaneAction(pane),
-                        new MoveUpAction(pane),
-                        new MoveDownAction(pane),
-                        sidePaneContentFactory,
-                        preferences.getGroupsPreferences(),
-                        dialogService);
-                case WEB_SEARCH, OPEN_OFFICE -> new SidePaneComponent(pane,
-                        new ClosePaneAction(pane),
-                        new MoveUpAction(pane),
-                        new MoveDownAction(pane),
-                        sidePaneContentFactory);
-            };
+            sidePaneComponent =
+                    switch (pane) {
+                        case GROUPS ->
+                                new GroupsSidePaneComponent(
+                                        new ClosePaneAction(pane),
+                                        new MoveUpAction(pane),
+                                        new MoveDownAction(pane),
+                                        sidePaneContentFactory,
+                                        preferences.getGroupsPreferences(),
+                                        dialogService);
+                        case WEB_SEARCH, OPEN_OFFICE ->
+                                new SidePaneComponent(
+                                        pane,
+                                        new ClosePaneAction(pane),
+                                        new MoveUpAction(pane),
+                                        new MoveDownAction(pane),
+                                        sidePaneContentFactory);
+                    };
             sidePaneComponentLookup.put(pane, sidePaneComponent);
         }
         return sidePaneComponent;
@@ -106,9 +120,10 @@ public class SidePaneViewModel extends AbstractViewModel {
      * position next time.
      */
     private void updatePreferredPositions() {
-        Map<SidePaneType, Integer> preferredPositions = new HashMap<>(preferences.getSidePanePreferences()
-                                                                                 .getPreferredPositions());
-        IntStream.range(0, getPanes().size()).forEach(i -> preferredPositions.put(getPanes().get(i), i));
+        Map<SidePaneType, Integer> preferredPositions =
+                new HashMap<>(preferences.getSidePanePreferences().getPreferredPositions());
+        IntStream.range(0, getPanes().size())
+                .forEach(i -> preferredPositions.put(getPanes().get(i), i));
         preferences.getSidePanePreferences().setPreferredPositions(preferredPositions);
     }
 

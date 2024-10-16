@@ -12,7 +12,10 @@ public class PersonNameStringConverter extends StringConverter<Author> {
     private final boolean autoCompLF;
     private final AutoCompleteFirstNameMode autoCompleteFirstNameMode;
 
-    public PersonNameStringConverter(boolean autoCompFF, boolean autoCompLF, AutoCompleteFirstNameMode autoCompleteFirstNameMode) {
+    public PersonNameStringConverter(
+            boolean autoCompFF,
+            boolean autoCompLF,
+            AutoCompleteFirstNameMode autoCompleteFirstNameMode) {
         this.autoCompFF = autoCompFF;
         this.autoCompLF = autoCompLF;
         this.autoCompleteFirstNameMode = autoCompleteFirstNameMode;

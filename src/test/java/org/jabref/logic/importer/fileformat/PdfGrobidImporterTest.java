@@ -1,10 +1,10 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.logic.importer.util.GrobidPreferences;
@@ -12,17 +12,16 @@ import org.jabref.logic.util.StandardFileType;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 
 @FetcherTest
 class PdfGrobidImporterTest {
@@ -31,11 +30,13 @@ class PdfGrobidImporterTest {
 
     @BeforeEach
     void setUp() {
-        GrobidPreferences grobidPreferences = mock(GrobidPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        GrobidPreferences grobidPreferences =
+                mock(GrobidPreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(grobidPreferences.isGrobidEnabled()).thenReturn(true);
         when(grobidPreferences.getGrobidURL()).thenReturn("http://grobid.jabref.org:8070");
 
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
         when(importFormatPreferences.bibEntryPreferences().getKeywordSeparator()).thenReturn(',');
         when(importFormatPreferences.grobidPreferences()).thenReturn(grobidPreferences);
 
@@ -69,7 +70,11 @@ class PdfGrobidImporterTest {
 
     @Test
     void isRecognizedFormatReject() throws IOException, URISyntaxException {
-        Path file = Path.of(PdfGrobidImporterTest.class.getResource("BibtexImporter.examples.bib").toURI());
+        Path file =
+                Path.of(
+                        PdfGrobidImporterTest.class
+                                .getResource("BibtexImporter.examples.bib")
+                                .toURI());
         assertFalse(importer.isRecognizedFormat(file));
     }
 

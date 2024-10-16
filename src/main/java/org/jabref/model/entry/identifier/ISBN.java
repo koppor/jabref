@@ -1,5 +1,8 @@
 package org.jabref.model.entry.identifier;
 
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.StandardField;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Locale;
@@ -7,9 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.StandardField;
 
 public class ISBN implements Identifier {
 
@@ -54,7 +54,8 @@ public class ISBN implements Identifier {
         return isbn13check();
     }
 
-    // Check that the control digit is correct, see e.g. https://en.wikipedia.org/wiki/International_Standard_Book_Number#Check_digits
+    // Check that the control digit is correct, see e.g.
+    // https://en.wikipedia.org/wiki/International_Standard_Book_Number#Check_digits
     private boolean isbn10check() {
         if (isbnString.length() != 10) {
             return false;
@@ -72,7 +73,8 @@ public class ISBN implements Identifier {
         return (sum % 11) == 0;
     }
 
-    // Check that the control digit is correct, see e.g. https://en.wikipedia.org/wiki/International_Standard_Book_Number#Check_digits
+    // Check that the control digit is correct, see e.g.
+    // https://en.wikipedia.org/wiki/International_Standard_Book_Number#Check_digits
     private boolean isbn13check() {
         if (isbnString.length() != 13) {
             return false;

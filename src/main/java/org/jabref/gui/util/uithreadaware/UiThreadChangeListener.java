@@ -13,7 +13,8 @@ class UiThreadChangeListener<T> implements ChangeListener<T> {
 
     @Override
     public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
-        UiThreadHelper.ensureUiThreadExecution(() -> delegate.changed(observable, oldValue, newValue));
+        UiThreadHelper.ensureUiThreadExecution(
+                () -> delegate.changed(observable, oldValue, newValue));
     }
 
     @Override

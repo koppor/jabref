@@ -1,10 +1,10 @@
 package org.jabref.logic.formatter.bibtexfields;
 
-import java.util.Optional;
-
 import org.jabref.logic.cleanup.Formatter;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.Date;
+
+import java.util.Optional;
 
 /**
  * This class transforms date to the format yyyy-mm-dd or yyyy-mm..

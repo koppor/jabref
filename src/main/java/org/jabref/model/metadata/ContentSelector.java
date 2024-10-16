@@ -1,11 +1,11 @@
 package org.jabref.model.metadata;
 
+import org.jabref.model.entry.field.Field;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import org.jabref.model.entry.field.Field;
 
 public class ContentSelector {
 
@@ -31,8 +31,7 @@ public class ContentSelector {
         }
 
         ContentSelector that = (ContentSelector) o;
-        return Objects.equals(field, that.field) &&
-                Objects.equals(values, that.values);
+        return Objects.equals(field, that.field) && Objects.equals(values, that.values);
     }
 
     @Override

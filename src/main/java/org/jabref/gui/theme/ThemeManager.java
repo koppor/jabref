@@ -1,15 +1,6 @@
 package org.jabref.gui.theme;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.function.Consumer;
+import com.google.common.annotations.VisibleForTesting;
 
 import javafx.application.ColorScheme;
 import javafx.application.Platform;
@@ -24,10 +15,19 @@ import org.jabref.gui.util.UiTaskExecutor;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.util.FileUpdateListener;
 import org.jabref.model.util.FileUpdateMonitor;
-
-import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.function.Consumer;
 
 /**
  * Installs and manages style files and provides live reloading. JabRef provides two inbuilt themes and a user
@@ -44,9 +44,10 @@ import org.slf4j.LoggerFactory;
  */
 public class ThemeManager {
 
-    public static Map<String, Node> getDownloadIconTitleMap = Map.of(
-            Localization.lang("Downloading"), IconTheme.JabRefIcons.DOWNLOAD.getGraphicNode()
-    );
+    public static Map<String, Node> getDownloadIconTitleMap =
+            Map.of(
+                    Localization.lang("Downloading"),
+                    IconTheme.JabRefIcons.DOWNLOAD.getGraphicNode());
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ThemeManager.class);
 
@@ -60,9 +61,10 @@ public class ThemeManager {
     private Scene mainWindowScene;
     private final Set<WebEngine> webEngines = Collections.newSetFromMap(new WeakHashMap<>());
 
-    public ThemeManager(WorkspacePreferences workspacePreferences,
-                        FileUpdateMonitor fileUpdateMonitor,
-                        Consumer<Runnable> updateRunner) {
+    public ThemeManager(
+            WorkspacePreferences workspacePreferences,
+            FileUpdateMonitor fileUpdateMonitor,
+            Consumer<Runnable> updateRunner) {
         this.workspacePreferences = Objects.requireNonNull(workspacePreferences);
         this.fileUpdateMonitor = Objects.requireNonNull(fileUpdateMonitor);
         this.updateRunner = Objects.requireNonNull(updateRunner);
@@ -70,16 +72,25 @@ public class ThemeManager {
         this.baseStyleSheet = StyleSheet.create(Theme.BASE_CSS).get();
         this.theme = workspacePreferences.getTheme();
 
-        // Watching base CSS only works in development and test scenarios, where the build system exposes the CSS as a
-        // file (e.g. for Gradle run task it will be in build/resources/main/org/jabref/gui/Base.css)
+        // Watching base CSS only works in development and test scenarios, where the build system
+        // exposes the CSS as a
+        // file (e.g. for Gradle run task it will be in
+        // build/resources/main/org/jabref/gui/Base.css)
         addStylesheetToWatchlist(this.baseStyleSheet, this::baseCssLiveUpdate);
         baseCssLiveUpdate();
 
-        BindingsHelper.subscribeFuture(workspacePreferences.themeProperty(), theme -> updateThemeSettings());
-        BindingsHelper.subscribeFuture(workspacePreferences.themeSyncOsProperty(), theme -> updateThemeSettings());
-        BindingsHelper.subscribeFuture(workspacePreferences.shouldOverrideDefaultFontSizeProperty(), should -> updateFontSettings());
-        BindingsHelper.subscribeFuture(workspacePreferences.mainFontSizeProperty(), size -> updateFontSettings());
-        BindingsHelper.subscribeFuture(Platform.getPreferences().colorSchemeProperty(), colorScheme -> updateThemeSettings());
+        BindingsHelper.subscribeFuture(
+                workspacePreferences.themeProperty(), theme -> updateThemeSettings());
+        BindingsHelper.subscribeFuture(
+                workspacePreferences.themeSyncOsProperty(), theme -> updateThemeSettings());
+        BindingsHelper.subscribeFuture(
+                workspacePreferences.shouldOverrideDefaultFontSizeProperty(),
+                should -> updateFontSettings());
+        BindingsHelper.subscribeFuture(
+                workspacePreferences.mainFontSizeProperty(), size -> updateFontSettings());
+        BindingsHelper.subscribeFuture(
+                Platform.getPreferences().colorSchemeProperty(),
+                colorScheme -> updateThemeSettings());
         updateThemeSettings();
     }
 
@@ -103,15 +114,20 @@ public class ThemeManager {
         this.theme = newTheme;
         LOGGER.info("Theme set to {} with base css {}", newTheme, baseStyleSheet);
 
-        this.theme.getAdditionalStylesheet().ifPresent(
-                styleSheet -> addStylesheetToWatchlist(styleSheet, this::additionalCssLiveUpdate));
+        this.theme
+                .getAdditionalStylesheet()
+                .ifPresent(
+                        styleSheet ->
+                                addStylesheetToWatchlist(
+                                        styleSheet, this::additionalCssLiveUpdate));
 
         additionalCssLiveUpdate();
         updateFontSettings();
     }
 
     private void updateFontSettings() {
-        UiTaskExecutor.runInJavaFXThread(() -> updateRunner.accept(() -> updateFontStyle(mainWindowScene)));
+        UiTaskExecutor.runInJavaFXThread(
+                () -> updateRunner.accept(() -> updateFontStyle(mainWindowScene)));
     }
 
     private void removeStylesheetFromWatchList(StyleSheet styleSheet) {
@@ -146,26 +162,38 @@ public class ThemeManager {
     }
 
     private void additionalCssLiveUpdate() {
-        final String newStyleSheetLocation = this.theme.getAdditionalStylesheet().map(styleSheet -> {
-            styleSheet.reload();
-            return styleSheet.getWebEngineStylesheet();
-        }).orElse("");
+        final String newStyleSheetLocation =
+                this.theme
+                        .getAdditionalStylesheet()
+                        .map(
+                                styleSheet -> {
+                                    styleSheet.reload();
+                                    return styleSheet.getWebEngineStylesheet();
+                                })
+                        .orElse("");
 
-        LOGGER.debug("Updating additional CSS for main window scene and {} web engines", webEngines.size());
+        LOGGER.debug(
+                "Updating additional CSS for main window scene and {} web engines",
+                webEngines.size());
 
-        UiTaskExecutor.runInJavaFXThread(() ->
-                updateRunner.accept(() -> {
-                    updateAdditionalCss();
+        UiTaskExecutor.runInJavaFXThread(
+                () ->
+                        updateRunner.accept(
+                                () -> {
+                                    updateAdditionalCss();
 
-                    webEngines.forEach(webEngine -> {
-                        // force refresh by unloading style sheet, if the location hasn't changed
-                        if (newStyleSheetLocation.equals(webEngine.getUserStyleSheetLocation())) {
-                            webEngine.setUserStyleSheetLocation(null);
-                        }
-                        webEngine.setUserStyleSheetLocation(newStyleSheetLocation);
-                    });
-                })
-        );
+                                    webEngines.forEach(
+                                            webEngine -> {
+                                                // force refresh by unloading style sheet, if the
+                                                // location hasn't changed
+                                                if (newStyleSheetLocation.equals(
+                                                        webEngine.getUserStyleSheetLocation())) {
+                                                    webEngine.setUserStyleSheetLocation(null);
+                                                }
+                                                webEngine.setUserStyleSheetLocation(
+                                                        newStyleSheetLocation);
+                                            });
+                                }));
     }
 
     private void updateBaseCss() {
@@ -186,18 +214,23 @@ public class ThemeManager {
             return;
         }
 
-        mainWindowScene.getStylesheets().setAll(List.of(
-                baseStyleSheet.getSceneStylesheet().toExternalForm(),
-                theme.getAdditionalStylesheet().map(styleSheet -> {
-                         URL stylesheetUrl = styleSheet.getSceneStylesheet();
-                         if (stylesheetUrl != null) {
-                             return stylesheetUrl.toExternalForm();
-                         } else {
-                             return "";
-                         }
-                     })
-                     .orElse("")
-        ));
+        mainWindowScene
+                .getStylesheets()
+                .setAll(
+                        List.of(
+                                baseStyleSheet.getSceneStylesheet().toExternalForm(),
+                                theme.getAdditionalStylesheet()
+                                        .map(
+                                                styleSheet -> {
+                                                    URL stylesheetUrl =
+                                                            styleSheet.getSceneStylesheet();
+                                                    if (stylesheetUrl != null) {
+                                                        return stylesheetUrl.toExternalForm();
+                                                    } else {
+                                                        return "";
+                                                    }
+                                                })
+                                        .orElse("")));
     }
 
     /**
@@ -208,11 +241,12 @@ public class ThemeManager {
      */
     public void installCss(Scene mainWindowScene) {
         Objects.requireNonNull(mainWindowScene, "scene is required");
-        updateRunner.accept(() -> {
-            this.mainWindowScene = mainWindowScene;
-            updateBaseCss();
-            updateAdditionalCss();
-        });
+        updateRunner.accept(
+                () -> {
+                    this.mainWindowScene = mainWindowScene;
+                    updateBaseCss();
+                    updateAdditionalCss();
+                });
     }
 
     /**
@@ -222,12 +256,18 @@ public class ThemeManager {
      * @param webEngine the web engine to install the css into
      */
     public void installCss(WebEngine webEngine) {
-        updateRunner.accept(() -> {
-            if (this.webEngines.add(webEngine)) {
-                webEngine.setUserStyleSheetLocation(this.theme.getAdditionalStylesheet().isPresent() ?
-                        this.theme.getAdditionalStylesheet().get().getWebEngineStylesheet() : "");
-            }
-        });
+        updateRunner.accept(
+                () -> {
+                    if (this.webEngines.add(webEngine)) {
+                        webEngine.setUserStyleSheetLocation(
+                                this.theme.getAdditionalStylesheet().isPresent()
+                                        ? this.theme
+                                                .getAdditionalStylesheet()
+                                                .get()
+                                                .getWebEngineStylesheet()
+                                        : "");
+                    }
+                });
     }
 
     /**
@@ -242,9 +282,12 @@ public class ThemeManager {
         }
 
         if (workspacePreferences.shouldOverrideDefaultFontSize()) {
-            scene.getRoot().setStyle("-fx-font-size: " + workspacePreferences.getMainFontSize() + "pt;");
+            scene.getRoot()
+                    .setStyle("-fx-font-size: " + workspacePreferences.getMainFontSize() + "pt;");
         } else {
-            scene.getRoot().setStyle("-fx-font-size: " + workspacePreferences.getDefaultFontSize() + "pt;");
+            scene.getRoot()
+                    .setStyle(
+                            "-fx-font-size: " + workspacePreferences.getDefaultFontSize() + "pt;");
         }
     }
 

@@ -1,12 +1,11 @@
 package org.jabref.logic.layout.format;
 
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.jabref.logic.layout.AbstractParamLayoutFormatter;
-
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.List;
 
 public class AbstractParamLayoutFormatterTest {
     static class ParseArgumentTester extends AbstractParamLayoutFormatter {
@@ -20,23 +19,26 @@ public class AbstractParamLayoutFormatterTest {
         }
 
         @Override
-        public void setArgument(String arg) {
-        }
+        public void setArgument(String arg) {}
     }
 
     @Test
     void simpleArguments() {
         String input = "arg1,arg2,arg3";
         List<String> result = ParseArgumentTester.callParseArgument(input);
-        assertEquals(List.of("arg1", "arg2", "arg3"), result,
-            "Simple arguments should be split correctly by commas");
+        assertEquals(
+                List.of("arg1", "arg2", "arg3"),
+                result,
+                "Simple arguments should be split correctly by commas");
     }
 
     @Test
     void escapedCommas() {
         String input = "arg1\\,arg2,arg3";
         List<String> result = ParseArgumentTester.callParseArgument(input);
-        assertEquals(List.of("arg1,arg2", "arg3"), result,
+        assertEquals(
+                List.of("arg1,arg2", "arg3"),
+                result,
                 "Escaped commas should be treated as literal commas");
     }
 
@@ -44,7 +46,10 @@ public class AbstractParamLayoutFormatterTest {
     void escapedBackslash() {
         String input = "arg1\\\\,arg2";
         List<String> result = ParseArgumentTester.callParseArgument(input);
-        assertEquals(List.of("arg1\\", "arg2"), result, "Escaped backslashes should be treated correctly");
+        assertEquals(
+                List.of("arg1\\", "arg2"),
+                result,
+                "Escaped backslashes should be treated correctly");
     }
 
     @Test
@@ -58,7 +63,9 @@ public class AbstractParamLayoutFormatterTest {
     void singleArgument() {
         String input = "singleArg";
         List<String> result = ParseArgumentTester.callParseArgument(input);
-        assertEquals(List.of("singleArg"), result,
+        assertEquals(
+                List.of("singleArg"),
+                result,
                 "Single argument should return a list with the argument itself");
     }
 
@@ -66,7 +73,9 @@ public class AbstractParamLayoutFormatterTest {
     void newlineAndTabEscapeSequences() {
         String input = "arg1\\narg2\\targ3";
         List<String> result = ParseArgumentTester.callParseArgument(input);
-        assertEquals(List.of("arg1\narg2\targ3"), result,
+        assertEquals(
+                List.of("arg1\narg2\targ3"),
+                result,
                 "Escape sequences like newline and tab should be handled correctly");
     }
 
@@ -74,7 +83,9 @@ public class AbstractParamLayoutFormatterTest {
     void multipleEscapedCharacters() {
         String input = "arg1\\n,arg2\\t,arg3\\,arg4";
         List<String> result = ParseArgumentTester.callParseArgument(input);
-        assertEquals(List.of("arg1\n", "arg2\t", "arg3,arg4"), result,
+        assertEquals(
+                List.of("arg1\n", "arg2\t", "arg3,arg4"),
+                result,
                 "Multiple escaped characters should be handled correctly");
     }
 
@@ -82,7 +93,9 @@ public class AbstractParamLayoutFormatterTest {
     void mixedCases() {
         String input = "arg1,arg2\\,withComma,arg3\\nnewline,arg4\\\\backslash";
         List<String> result = ParseArgumentTester.callParseArgument(input);
-        assertEquals(List.of("arg1", "arg2,withComma", "arg3\nnewline", "arg4\\backslash"), result,
+        assertEquals(
+                List.of("arg1", "arg2,withComma", "arg3\nnewline", "arg4\\backslash"),
+                result,
                 "Mixed cases should be parsed correctly");
     }
 }

@@ -1,16 +1,15 @@
 package org.jabref.logic.shared;
 
+import org.jabref.logic.shared.prefs.SharedDatabasePreferences;
+import org.jabref.logic.shared.security.Password;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-
-import org.jabref.logic.shared.prefs.SharedDatabasePreferences;
-import org.jabref.logic.shared.security.Password;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Keeps all essential data for establishing a new connection to a DBMS using {@link DBMSConnection}.
@@ -47,7 +46,8 @@ public class DBMSConnectionProperties implements DatabaseConnectionProperties {
         prefs.getPort().ifPresent(thePort -> this.port = Integer.parseInt(thePort));
         prefs.getName().ifPresent(theDatabase -> this.database = theDatabase);
         prefs.getKeyStoreFile().ifPresent(theKeystore -> this.keyStore = theKeystore);
-        prefs.getServerTimezone().ifPresent(theServerTimezone -> this.serverTimezone = theServerTimezone);
+        prefs.getServerTimezone()
+                .ifPresent(theServerTimezone -> this.serverTimezone = theServerTimezone);
         prefs.getJdbcUrl().ifPresent(theJdbcUrl -> this.jdbcUrl = theJdbcUrl);
 
         this.expertMode = prefs.isUseExpertMode();
@@ -57,7 +57,11 @@ public class DBMSConnectionProperties implements DatabaseConnectionProperties {
             this.user = prefs.getUser().get();
             if (prefs.getPassword().isPresent()) {
                 try {
-                    this.password = new Password(prefs.getPassword().get().toCharArray(), prefs.getUser().get()).decrypt();
+                    this.password =
+                            new Password(
+                                            prefs.getPassword().get().toCharArray(),
+                                            prefs.getUser().get())
+                                    .decrypt();
                 } catch (UnsupportedEncodingException | GeneralSecurityException e) {
                     LOGGER.error("Could not decrypt password", e);
                 }
@@ -70,9 +74,19 @@ public class DBMSConnectionProperties implements DatabaseConnectionProperties {
         }
     }
 
-    DBMSConnectionProperties(DBMSType type, String host, int port, String database, String user,
-                             String password, boolean useSSL, boolean allowPublicKeyRetrieval,
-                             String serverTimezone, String keyStore, String jdbcUrl, boolean expertMode) {
+    DBMSConnectionProperties(
+            DBMSType type,
+            String host,
+            int port,
+            String database,
+            String user,
+            String password,
+            boolean useSSL,
+            boolean allowPublicKeyRetrieval,
+            String serverTimezone,
+            String keyStore,
+            String jdbcUrl,
+            boolean expertMode) {
         this.type = type;
         this.host = host;
         this.port = port;
@@ -198,7 +212,18 @@ public class DBMSConnectionProperties implements DatabaseConnectionProperties {
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, host, port, database, user, useSSL, allowPublicKeyRetrieval, serverTimezone, keyStore, jdbcUrl, expertMode);
+        return Objects.hash(
+                type,
+                host,
+                port,
+                database,
+                user,
+                useSSL,
+                allowPublicKeyRetrieval,
+                serverTimezone,
+                keyStore,
+                jdbcUrl,
+                expertMode);
     }
 
     @Override

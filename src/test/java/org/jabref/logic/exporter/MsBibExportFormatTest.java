@@ -1,19 +1,18 @@
 package org.jabref.logic.exporter;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
-
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MsBibExportFormatTest {
 

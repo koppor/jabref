@@ -1,14 +1,5 @@
 package org.jabref.logic.importer.fileformat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 import org.jabref.logic.importer.ImportFormatPreferences;
 import org.jabref.logic.importer.Importer;
 import org.jabref.logic.importer.ParserResult;
@@ -22,6 +13,15 @@ import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.StandardEntryType;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 /**
  * Importer for the MEDLINE Plain format.
  * <p>
@@ -32,7 +32,8 @@ public class MedlinePlainImporter extends Importer {
     private static final Pattern PMID_PATTERN = Pattern.compile("PMID.*-.*");
     private static final Pattern PMC_PATTERN = Pattern.compile("PMC.*-.*");
     private static final Pattern PMCR_PATTERN = Pattern.compile("PMCR.*-.*");
-    private static final Pattern CREATE_DATE_PATTERN = Pattern.compile("\\d{4}/[0123]?\\d/\\s?[012]\\d:[0-5]\\d");
+    private static final Pattern CREATE_DATE_PATTERN =
+            Pattern.compile("\\d{4}/[0123]?\\d/\\s?[012]\\d:[0-5]\\d");
     private static final Pattern COMPLETE_DATE_PATTERN = Pattern.compile("\\d{8}");
     private final ImportFormatPreferences importFormatPreferences;
 
@@ -67,7 +68,8 @@ public class MedlinePlainImporter extends Importer {
         // (i.e., PubMed Unique Identifier, PubMed Central Identifier, PubMed Central Release)
         String str;
         while ((str = reader.readLine()) != null) {
-            if (PMID_PATTERN.matcher(str).find() || PMC_PATTERN.matcher(str).find()
+            if (PMID_PATTERN.matcher(str).find()
+                    || PMC_PATTERN.matcher(str).find()
                     || PMCR_PATTERN.matcher(str).find()) {
                 return true;
             }
@@ -80,10 +82,15 @@ public class MedlinePlainImporter extends Importer {
         List<BibEntry> bibitems = new ArrayList<>();
 
         // use optional here, so that no exception will be thrown if the file is empty
-        String linesAsString = reader.lines().reduce((line, nextline) -> line + "\n" + nextline).orElse("");
+        String linesAsString =
+                reader.lines().reduce((line, nextline) -> line + "\n" + nextline).orElse("");
 
-        String[] entries = linesAsString.replace("\u2013", "-").replace("\u2014", "--").replace("\u2015", "--")
-                                        .split("\\n\\n");
+        String[] entries =
+                linesAsString
+                        .replace("\u2013", "-")
+                        .replace("\u2014", "--")
+                        .replace("\u2015", "--")
+                        .split("\\n\\n");
 
         for (String entry1 : entries) {
             if (entry1.trim().isEmpty() || !entry1.contains("-")) {
@@ -108,7 +115,8 @@ public class MedlinePlainImporter extends Importer {
                         continue;
                     }
                     if (lines[j + 1].charAt(4) != '-') {
-                        if ((!current.isEmpty()) && !Character.isWhitespace(current.charAt(current.length() - 1))) {
+                        if ((!current.isEmpty())
+                                && !Character.isWhitespace(current.charAt(current.length() - 1))) {
                             current.append(' ');
                         }
                         current.append(lines[j + 1].trim());
@@ -185,35 +193,41 @@ public class MedlinePlainImporter extends Importer {
                 }
 
                 switch (label) {
-                    case "IRAD",
-                         "IR",
-                         "FIR" -> {
-                        fieldConversionMap.merge(new UnknownField("investigator"), value, (a, b) -> a + ", " + b);
+                    case "IRAD", "IR", "FIR" -> {
+                        fieldConversionMap.merge(
+                                new UnknownField("investigator"), value, (a, b) -> a + ", " + b);
                     }
-                    case "MH",
-                         "OT" -> {
+                    case "MH", "OT" -> {
                         if (!fieldConversionMap.containsKey(StandardField.KEYWORDS)) {
                             fieldConversionMap.put(StandardField.KEYWORDS, value);
                         } else {
-                            fieldConversionMap.compute(StandardField.KEYWORDS, (k, kw) -> kw + importFormatPreferences.bibEntryPreferences().getKeywordSeparator() + " " + value);
+                            fieldConversionMap.compute(
+                                    StandardField.KEYWORDS,
+                                    (k, kw) ->
+                                            kw
+                                                    + importFormatPreferences
+                                                            .bibEntryPreferences()
+                                                            .getKeywordSeparator()
+                                                    + " "
+                                                    + value);
                         }
                     }
                     case "CON",
-                         "CIN",
-                         "EIN",
-                         "EFR",
-                         "CRI",
-                         "CRF",
-                         "PRIN",
-                         "PROF",
-                         "RPI",
-                         "RPF",
-                         "RIN",
-                         "ROF",
-                         "UIN",
-                         "UOF",
-                         "SPIN",
-                         "ORI" -> {
+                            "CIN",
+                            "EIN",
+                            "EFR",
+                            "CRI",
+                            "CRF",
+                            "PRIN",
+                            "PROF",
+                            "RPI",
+                            "RPF",
+                            "RIN",
+                            "ROF",
+                            "UIN",
+                            "UOF",
+                            "SPIN",
+                            "ORI" -> {
                         if (!comment.isEmpty()) {
                             comment.append("\n");
                         }
@@ -244,27 +258,22 @@ public class MedlinePlainImporter extends Importer {
     private EntryType addSourceType(String value, EntryType type) {
         String val = value.toLowerCase(Locale.ENGLISH);
         return switch (val) {
-            case "book" ->
-                    StandardEntryType.Book;
+            case "book" -> StandardEntryType.Book;
             case "journal article",
-                 "classical article",
-                 "corrected and republished article",
-                 "historical article",
-                 "introductory journal article",
-                 "newspaper article" ->
+                            "classical article",
+                            "corrected and republished article",
+                            "historical article",
+                            "introductory journal article",
+                            "newspaper article" ->
                     StandardEntryType.Article;
             case "clinical conference",
-                 "consensus development conference",
-                 "consensus development conference, nih" ->
+                            "consensus development conference",
+                            "consensus development conference, nih" ->
                     StandardEntryType.Conference;
-            case "technical report" ->
-                    StandardEntryType.TechReport;
-            case "editorial" ->
-                    StandardEntryType.InProceedings;
-            case "overall" ->
-                    StandardEntryType.Proceedings;
-            default ->
-                    type;
+            case "technical report" -> StandardEntryType.TechReport;
+            case "editorial" -> StandardEntryType.InProceedings;
+            case "overall" -> StandardEntryType.Proceedings;
+            default -> type;
         };
     }
 
@@ -305,7 +314,10 @@ public class MedlinePlainImporter extends Importer {
             } else if (value.indexOf('[') > 0) {
                 int startOfIdentifier = value.indexOf('[');
                 int endOfIdentifier = value.indexOf(']');
-                key = new UnknownField("article-" + value.substring(startOfIdentifier + 1, endOfIdentifier));
+                key =
+                        new UnknownField(
+                                "article-"
+                                        + value.substring(startOfIdentifier + 1, endOfIdentifier));
                 idValue = value.substring(0, startOfIdentifier - 1);
             }
             hm.put(key, idValue);

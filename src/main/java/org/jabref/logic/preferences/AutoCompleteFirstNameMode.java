@@ -16,7 +16,8 @@ public enum AutoCompleteFirstNameMode {
         try {
             return AutoCompleteFirstNameMode.valueOf(input);
         } catch (IllegalArgumentException ex) {
-            // Should only occur when preferences are set directly via preferences.put and not via setFirstnameMode
+            // Should only occur when preferences are set directly via preferences.put and not via
+            // setFirstnameMode
             return AutoCompleteFirstNameMode.BOTH;
         }
     }

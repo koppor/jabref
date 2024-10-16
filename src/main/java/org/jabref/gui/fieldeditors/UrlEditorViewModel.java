@@ -1,8 +1,6 @@
 package org.jabref.gui.fieldeditors;
 
-import java.io.IOException;
-
-import javax.swing.undo.UndoManager;
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -16,25 +14,28 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.strings.StringUtil;
 
-import com.tobiasdiez.easybind.EasyBind;
+import java.io.IOException;
+
+import javax.swing.undo.UndoManager;
 
 public class UrlEditorViewModel extends AbstractEditorViewModel {
     private final DialogService dialogService;
     private final GuiPreferences preferences;
     private final BooleanProperty validUrlIsNotPresent = new SimpleBooleanProperty(true);
 
-    public UrlEditorViewModel(Field field,
-                              SuggestionProvider<?> suggestionProvider,
-                              DialogService dialogService,
-                              GuiPreferences preferences,
-                              FieldCheckers fieldCheckers, UndoManager undoManager) {
+    public UrlEditorViewModel(
+            Field field,
+            SuggestionProvider<?> suggestionProvider,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            FieldCheckers fieldCheckers,
+            UndoManager undoManager) {
         super(field, suggestionProvider, fieldCheckers, undoManager);
         this.dialogService = dialogService;
         this.preferences = preferences;
 
         validUrlIsNotPresent.bind(
-                EasyBind.map(text, input -> StringUtil.isBlank(input) || !URLUtil.isURL(input))
-        );
+                EasyBind.map(text, input -> StringUtil.isBlank(input) || !URLUtil.isURL(input)));
     }
 
     public boolean isValidUrlIsNotPresent() {

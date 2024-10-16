@@ -1,12 +1,12 @@
 package org.jabref.gui.mergeentries.newmergedialog.fieldsmerger;
 
-import java.util.List;
-
 import org.jabref.logic.bibtex.FileFieldWriter;
 import org.jabref.logic.importer.util.FileFieldParser;
 import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.strings.StringUtil;
+
+import java.util.List;
 
 /**
  * A merger for the {@link StandardField#FILE} field

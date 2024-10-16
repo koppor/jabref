@@ -1,16 +1,15 @@
 package org.jabref.cli;
 
-import java.util.Collections;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javafx.util.Pair;
 
 import org.jabref.logic.os.OS;
-
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Collections;
+import java.util.List;
 
 class CliOptionsTest {
 
@@ -18,28 +17,44 @@ class CliOptionsTest {
 
     @Test
     void emptyCLILeftOversLongOptions() throws Exception {
-        CliOptions cli = new CliOptions(new String[] {"--nogui", "--import=some/file", "--output=some/export/file"});
+        CliOptions cli =
+                new CliOptions(
+                        new String[] {
+                            "--nogui", "--import=some/file", "--output=some/export/file"
+                        });
 
         assertEquals(Collections.emptyList(), cli.getLeftOver());
     }
 
     @Test
     void guiIsDisabledLongOptions() throws Exception {
-        CliOptions cli = new CliOptions(new String[] {"--nogui", "--import=some/file", "--output=some/export/file"});
+        CliOptions cli =
+                new CliOptions(
+                        new String[] {
+                            "--nogui", "--import=some/file", "--output=some/export/file"
+                        });
 
         assertTrue(cli.isDisableGui());
     }
 
     @Test
     void successfulParsingOfFileImportCLILongOptions() throws Exception {
-        CliOptions cli = new CliOptions(new String[] {"--nogui", "--import=some/file", "--output=some/export/file"});
+        CliOptions cli =
+                new CliOptions(
+                        new String[] {
+                            "--nogui", "--import=some/file", "--output=some/export/file"
+                        });
 
         assertEquals("some/file", cli.getFileImport());
     }
 
     @Test
     void successfulParsingOfFileExportCLILongOptions() throws Exception {
-        CliOptions cli = new CliOptions(new String[] {"--nogui", "--import=some/file", "--output=some/export/file"});
+        CliOptions cli =
+                new CliOptions(
+                        new String[] {
+                            "--nogui", "--import=some/file", "--output=some/export/file"
+                        });
 
         assertEquals("some/export/file", cli.getFileExport());
     }
@@ -137,18 +152,21 @@ class CliOptionsTest {
 
     @Test
     void alignStringTable() {
-        List<Pair<String, String>> given = List.of(
-                new Pair<>("Apple", "Slice"),
-                new Pair<>("Bread", "Loaf"),
-                new Pair<>("Paper", "Sheet"),
-                new Pair<>("Country", "County"));
+        List<Pair<String, String>> given =
+                List.of(
+                        new Pair<>("Apple", "Slice"),
+                        new Pair<>("Bread", "Loaf"),
+                        new Pair<>("Paper", "Sheet"),
+                        new Pair<>("Country", "County"));
 
-        String expected = """
+        String expected =
+                """
                 Apple   : Slice
                 Bread   : Loaf
                 Paper   : Sheet
                 Country : County
-                """.replace("\n", OS.NEWLINE);
+                """
+                        .replace("\n", OS.NEWLINE);
 
         assertEquals(expected, CliOptions.alignStringTable(given));
     }

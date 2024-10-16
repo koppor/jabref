@@ -1,8 +1,8 @@
 package org.jabref.model.openoffice.style;
 
-import java.util.Comparator;
-
 import org.jabref.model.entry.BibEntry;
+
+import java.util.Comparator;
 
 /*
  * Given a Comparator<BibEntry> provide a Comparator<ComparableCitation> that can handle unresolved
@@ -26,5 +26,3 @@ public class CompareCitation implements Comparator<ComparableCitation> {
         return res;
     }
 }
-
-

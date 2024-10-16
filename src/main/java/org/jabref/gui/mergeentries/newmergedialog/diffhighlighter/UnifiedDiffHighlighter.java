@@ -1,15 +1,15 @@
 package org.jabref.gui.mergeentries.newmergedialog.diffhighlighter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.jabref.gui.mergeentries.newmergedialog.DiffMethod;
-
 import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.AbstractDelta;
 import com.github.difflib.patch.DeltaType;
+
 import org.fxmisc.richtext.StyleClassedTextArea;
+import org.jabref.gui.mergeentries.newmergedialog.DiffMethod;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A diff highlighter in which differences of type {@link DeltaType#CHANGE} are unified and represented by an insertion
@@ -17,7 +17,10 @@ import org.fxmisc.richtext.StyleClassedTextArea;
  */
 public final class UnifiedDiffHighlighter extends DiffHighlighter {
 
-    public UnifiedDiffHighlighter(StyleClassedTextArea sourceTextview, StyleClassedTextArea targetTextview, DiffMethod diffMethod) {
+    public UnifiedDiffHighlighter(
+            StyleClassedTextArea sourceTextview,
+            StyleClassedTextArea targetTextview,
+            DiffMethod diffMethod) {
         super(sourceTextview, targetTextview, diffMethod);
     }
 
@@ -33,7 +36,8 @@ public final class UnifiedDiffHighlighter extends DiffHighlighter {
         List<String> targetWords = splitString(targetContent);
         List<String> unifiedWords = new ArrayList<>(targetWords);
 
-        List<AbstractDelta<String>> deltaList = DiffUtils.diff(sourceWords, targetWords).getDeltas();
+        List<AbstractDelta<String>> deltaList =
+                DiffUtils.diff(sourceWords, targetWords).getDeltas();
 
         List<Change> changeList = new ArrayList<>();
 
@@ -50,7 +54,9 @@ public final class UnifiedDiffHighlighter extends DiffHighlighter {
                     unifiedWords.add(deletionPoint, join(deltaSourceWords));
 
                     changeList.add(new Change(deletionPoint, 1, ChangeType.CHANGE_DELETION));
-                    changeList.add(new Change(insertionPoint, deltaTargetWords.size(), ChangeType.ADDITION));
+                    changeList.add(
+                            new Change(
+                                    insertionPoint, deltaTargetWords.size(), ChangeType.ADDITION));
                     deletionCount++;
                 }
                 case DELETE -> {
@@ -62,7 +68,11 @@ public final class UnifiedDiffHighlighter extends DiffHighlighter {
                 }
                 case INSERT -> {
                     int insertionPoint = delta.getTarget().getPosition() + deletionCount;
-                    changeList.add(new Change(insertionPoint, delta.getTarget().getLines().size(), ChangeType.ADDITION));
+                    changeList.add(
+                            new Change(
+                                    insertionPoint,
+                                    delta.getTarget().getLines().size(),
+                                    ChangeType.ADDITION));
                 }
             }
         }
@@ -76,19 +86,24 @@ public final class UnifiedDiffHighlighter extends DiffHighlighter {
                 appendToTextArea(targetTextview, getSeparator() + word, "unchanged");
             } else {
                 Change change = changeAtPosition.get();
-                List<String> changeWords = unifiedWords.subList(change.position(), change.position() + change.spanSize());
+                List<String> changeWords =
+                        unifiedWords.subList(
+                                change.position(), change.position() + change.spanSize());
 
                 if (change.type() == ChangeType.DELETION) {
-                    appendToTextArea(targetTextview, getSeparator() + join(changeWords), "deletion");
+                    appendToTextArea(
+                            targetTextview, getSeparator() + join(changeWords), "deletion");
                 } else if (change.type() == ChangeType.ADDITION) {
                     if (changeInProgress) {
                         appendToTextArea(targetTextview, join(changeWords), "addition");
                         changeInProgress = false;
                     } else {
-                        appendToTextArea(targetTextview, getSeparator() + join(changeWords), "addition");
+                        appendToTextArea(
+                                targetTextview, getSeparator() + join(changeWords), "addition");
                     }
                 } else if (change.type() == ChangeType.CHANGE_DELETION) {
-                    appendToTextArea(targetTextview, getSeparator() + join(changeWords), "deletion");
+                    appendToTextArea(
+                            targetTextview, getSeparator() + join(changeWords), "deletion");
                     changeInProgress = true;
                 }
                 position = (position + changeWords.size()) - 1;

@@ -1,20 +1,19 @@
 package org.jabref.gui.edit;
 
-import java.util.List;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.Mockito.mock;
 
 import org.jabref.gui.StateManager;
 import org.jabref.gui.edit.automaticfiededitor.editfieldcontent.EditFieldContentViewModel;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Mockito.mock;
+import java.util.List;
+import java.util.Optional;
 
 class EditFieldContentTabViewModelTest {
     EditFieldContentViewModel editFieldContentViewModel;
@@ -27,16 +26,19 @@ class EditFieldContentTabViewModelTest {
 
     @BeforeEach
     void setup() {
-        entryA = new BibEntry(BibEntry.DEFAULT_TYPE)
-                .withField(StandardField.YEAR, "2015")
-                .withField(StandardField.DATE, "2014");
+        entryA =
+                new BibEntry(BibEntry.DEFAULT_TYPE)
+                        .withField(StandardField.YEAR, "2015")
+                        .withField(StandardField.DATE, "2014");
 
-        entryB = new BibEntry(BibEntry.DEFAULT_TYPE)
-                .withField(StandardField.DATE, "1998")
-                .withField(StandardField.YEAR, "");
+        entryB =
+                new BibEntry(BibEntry.DEFAULT_TYPE)
+                        .withField(StandardField.DATE, "1998")
+                        .withField(StandardField.YEAR, "");
 
         bibDatabase = new BibDatabase();
-        editFieldContentViewModel = new EditFieldContentViewModel(bibDatabase, List.of(entryA, entryB), stateManager);
+        editFieldContentViewModel =
+                new EditFieldContentViewModel(bibDatabase, List.of(entryA, entryB), stateManager);
     }
 
     @Test

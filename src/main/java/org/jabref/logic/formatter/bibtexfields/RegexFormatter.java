@@ -1,17 +1,16 @@
 package org.jabref.logic.formatter.bibtexfields;
 
+import org.jabref.logic.cleanup.Formatter;
+import org.jabref.logic.l10n.Localization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import org.jabref.logic.cleanup.Formatter;
-import org.jabref.logic.l10n.Localization;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RegexFormatter extends Formatter {
     public static final String KEY = "regex";
@@ -34,8 +33,13 @@ public class RegexFormatter extends Formatter {
      * Matches a valid argument to the constructor. Two capturing groups are used to parse the {@link
      * RegexFormatter#regex} and {@link RegexFormatter#replacement} used in {@link RegexFormatter#format(String)}
      */
-    private static final Pattern CONSTRUCTOR_ARGUMENT = Pattern.compile(
-            "^\\(\"(?<" + REGEX_CAPTURING_GROUP + ">.*?)\" *?, *?\"(?<" + REPLACEMENT_CAPTURING_GROUP + ">.*)\"\\)$");
+    private static final Pattern CONSTRUCTOR_ARGUMENT =
+            Pattern.compile(
+                    "^\\(\"(?<"
+                            + REGEX_CAPTURING_GROUP
+                            + ">.*?)\" *?, *?\"(?<"
+                            + REPLACEMENT_CAPTURING_GROUP
+                            + ">.*)\"\\)$");
 
     // Magic arbitrary unicode char, which will never appear in bibtex files
     private static final String PLACEHOLDER_FOR_PROTECTED_GROUP = Character.toString('\u0A14');
@@ -57,8 +61,14 @@ public class RegexFormatter extends Formatter {
         input = input.trim().replace("\\\"", PLACEHOLDER_FOR_QUOTE_SIGN);
         Matcher constructorArgument = CONSTRUCTOR_ARGUMENT.matcher(input);
         if (constructorArgument.matches()) {
-            regex = constructorArgument.group(REGEX_CAPTURING_GROUP).replace(PLACEHOLDER_FOR_QUOTE_SIGN, "\"");
-            replacement = constructorArgument.group(REPLACEMENT_CAPTURING_GROUP).replace(PLACEHOLDER_FOR_QUOTE_SIGN, "\"");
+            regex =
+                    constructorArgument
+                            .group(REGEX_CAPTURING_GROUP)
+                            .replace(PLACEHOLDER_FOR_QUOTE_SIGN, "\"");
+            replacement =
+                    constructorArgument
+                            .group(REPLACEMENT_CAPTURING_GROUP)
+                            .replace(PLACEHOLDER_FOR_QUOTE_SIGN, "\"");
         } else {
             regex = null;
             replacement = null;
@@ -87,7 +97,10 @@ public class RegexFormatter extends Formatter {
         try {
             workingString = workingString.replaceAll(regex, replacement);
         } catch (PatternSyntaxException e) {
-            LOGGER.warn("There is a syntax error in the regular expression \"{}\" used by the regex modifier", regex, e);
+            LOGGER.warn(
+                    "There is a syntax error in the regular expression \"{}\" used by the regex modifier",
+                    regex,
+                    e);
             return input;
         }
 
@@ -105,10 +118,13 @@ public class RegexFormatter extends Formatter {
         }
 
         Matcher escapedOpeningCurlyBrace = ESCAPED_OPENING_CURLY_BRACE.matcher(input);
-        String inputWithPlaceholder = escapedOpeningCurlyBrace.replaceAll(PLACEHOLDER_FOR_OPENING_CURLY_BRACE);
+        String inputWithPlaceholder =
+                escapedOpeningCurlyBrace.replaceAll(PLACEHOLDER_FOR_OPENING_CURLY_BRACE);
 
-        Matcher escapedClosingCurlyBrace = ESCAPED_CLOSING_CURLY_BRACE.matcher(inputWithPlaceholder);
-        inputWithPlaceholder = escapedClosingCurlyBrace.replaceAll(PLACEHOLDER_FOR_CLOSING_CURLY_BRACE);
+        Matcher escapedClosingCurlyBrace =
+                ESCAPED_CLOSING_CURLY_BRACE.matcher(inputWithPlaceholder);
+        inputWithPlaceholder =
+                escapedClosingCurlyBrace.replaceAll(PLACEHOLDER_FOR_CLOSING_CURLY_BRACE);
 
         final String regexMatchesReplaced = replaceHonoringProtectedGroups(inputWithPlaceholder);
 

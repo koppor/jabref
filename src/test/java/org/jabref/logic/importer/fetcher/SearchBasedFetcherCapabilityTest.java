@@ -1,10 +1,10 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javafx.collections.FXCollections;
 
@@ -14,14 +14,13 @@ import org.jabref.logic.importer.SearchBasedFetcher;
 import org.jabref.model.database.BibDatabaseMode;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
-
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 /**
  * Defines the set of capability tests that each tests a given search capability, e.g. author based search.
@@ -41,16 +40,23 @@ interface SearchBasedFetcherCapabilityTest {
 
         List<BibEntry> result = getFetcher().performSearch(queryBuilder.toString());
         FieldPreferences fieldPreferences = mock(FieldPreferences.class);
-        when(fieldPreferences.getNonWrappableFields()).thenReturn(FXCollections.observableArrayList());
+        when(fieldPreferences.getNonWrappableFields())
+                .thenReturn(FXCollections.observableArrayList());
         ImportCleanup.targeting(BibDatabaseMode.BIBTEX, fieldPreferences).doPostCleanup(result);
 
         assertFalse(result.isEmpty());
-        result.forEach(bibEntry -> {
-            String author = bibEntry.getField(StandardField.AUTHOR).orElse("");
+        result.forEach(
+                bibEntry -> {
+                    String author = bibEntry.getField(StandardField.AUTHOR).orElse("");
 
-            // The co-authors differ, thus we check for the author present at all papers
-            getTestAuthors().forEach(expectedAuthor -> assertTrue(author.contains(expectedAuthor.replace("\"", ""))));
-        });
+                    // The co-authors differ, thus we check for the author present at all papers
+                    getTestAuthors()
+                            .forEach(
+                                    expectedAuthor ->
+                                            assertTrue(
+                                                    author.contains(
+                                                            expectedAuthor.replace("\"", ""))));
+                });
     }
 
     /**
@@ -60,14 +66,16 @@ interface SearchBasedFetcherCapabilityTest {
     default void supportsYearSearch() throws Exception {
         List<BibEntry> result = getFetcher().performSearch("year:" + getTestYear());
         FieldPreferences fieldPreferences = mock(FieldPreferences.class);
-        when(fieldPreferences.getNonWrappableFields()).thenReturn(FXCollections.observableArrayList());
+        when(fieldPreferences.getNonWrappableFields())
+                .thenReturn(FXCollections.observableArrayList());
         ImportCleanup.targeting(BibDatabaseMode.BIBTEX, fieldPreferences).doPostCleanup(result);
-        List<String> differentYearsInResult = result.stream()
-                                                    .map(bibEntry -> bibEntry.getField(StandardField.YEAR))
-                                                    .filter(Optional::isPresent)
-                                                    .map(Optional::get)
-                                                    .distinct()
-                                                    .collect(Collectors.toList());
+        List<String> differentYearsInResult =
+                result.stream()
+                        .map(bibEntry -> bibEntry.getField(StandardField.YEAR))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .distinct()
+                        .collect(Collectors.toList());
 
         assertEquals(Collections.singletonList(getTestYear().toString()), differentYearsInResult);
     }
@@ -81,14 +89,16 @@ interface SearchBasedFetcherCapabilityTest {
 
         List<BibEntry> result = getFetcher().performSearch("year-range:2018-2020");
         FieldPreferences fieldPreferences = mock(FieldPreferences.class);
-        when(fieldPreferences.getNonWrappableFields()).thenReturn(FXCollections.observableArrayList());
+        when(fieldPreferences.getNonWrappableFields())
+                .thenReturn(FXCollections.observableArrayList());
         ImportCleanup.targeting(BibDatabaseMode.BIBTEX, fieldPreferences).doPostCleanup(result);
-        List<String> differentYearsInResult = result.stream()
-                                                    .map(bibEntry -> bibEntry.getField(StandardField.YEAR))
-                                                    .filter(Optional::isPresent)
-                                                    .map(Optional::get)
-                                                    .distinct()
-                                                    .collect(Collectors.toList());
+        List<String> differentYearsInResult =
+                result.stream()
+                        .map(bibEntry -> bibEntry.getField(StandardField.YEAR))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .distinct()
+                        .collect(Collectors.toList());
         assertFalse(result.isEmpty());
         assertTrue(yearsInYearRange.containsAll(differentYearsInResult));
     }
@@ -103,15 +113,17 @@ interface SearchBasedFetcherCapabilityTest {
     default void supportsJournalSearch() throws Exception {
         List<BibEntry> result = getFetcher().performSearch("journal:\"" + getTestJournal() + "\"");
         FieldPreferences fieldPreferences = mock(FieldPreferences.class);
-        when(fieldPreferences.getNonWrappableFields()).thenReturn(FXCollections.observableArrayList());
+        when(fieldPreferences.getNonWrappableFields())
+                .thenReturn(FXCollections.observableArrayList());
         ImportCleanup.targeting(BibDatabaseMode.BIBTEX, fieldPreferences).doPostCleanup(result);
 
         assertFalse(result.isEmpty());
-        result.forEach(bibEntry -> {
-            assertTrue(bibEntry.hasField(StandardField.JOURNAL));
-            String journal = bibEntry.getField(StandardField.JOURNAL).orElse("");
-            assertTrue(journal.contains(getTestJournal().replace("\"", "")));
-        });
+        result.forEach(
+                bibEntry -> {
+                    assertTrue(bibEntry.hasField(StandardField.JOURNAL));
+                    String journal = bibEntry.getField(StandardField.JOURNAL).orElse("");
+                    assertTrue(journal.contains(getTestJournal().replace("\"", "")));
+                });
     }
 
     SearchBasedFetcher getFetcher();

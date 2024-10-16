@@ -1,12 +1,12 @@
 package org.jabref.logic.ai.processingstatus;
 
-import java.util.Optional;
+import jakarta.annotation.Nullable;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
-import jakarta.annotation.Nullable;
+import java.util.Optional;
 
 public class ProcessingInfo<O, D> {
     private final O object;
@@ -20,13 +20,15 @@ public class ProcessingInfo<O, D> {
     }
 
     public void setSuccess(@Nullable D data) {
-        // Listeners will probably handle only state property, so be careful to set the data BEFORE setting the state.
+        // Listeners will probably handle only state property, so be careful to set the data BEFORE
+        // setting the state.
         this.data = Optional.ofNullable(data);
         this.state.set(ProcessingState.SUCCESS);
     }
 
     public void setException(Exception exception) {
-        // Listeners will probably handle only state property, so be careful to set the error message BEFORE setting the state.
+        // Listeners will probably handle only state property, so be careful to set the error
+        // message BEFORE setting the state.
         this.exception = Optional.of(exception);
         this.state.set(ProcessingState.ERROR);
     }

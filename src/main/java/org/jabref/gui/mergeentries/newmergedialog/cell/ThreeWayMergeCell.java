@@ -1,10 +1,10 @@
 package org.jabref.gui.mergeentries.newmergedialog.cell;
 
+import com.tobiasdiez.easybind.EasyBind;
+
 import javafx.beans.property.StringProperty;
 import javafx.css.PseudoClass;
 import javafx.scene.layout.HBox;
-
-import com.tobiasdiez.easybind.EasyBind;
 
 public abstract class ThreeWayMergeCell extends HBox {
     public static final String ODD_PSEUDO_CLASS = "odd";
@@ -18,12 +18,16 @@ public abstract class ThreeWayMergeCell extends HBox {
         getStyleClass().add(DEFAULT_STYLE_CLASS);
         viewModel = new ThreeWayMergeCellViewModel(text, rowIndex);
 
-        EasyBind.subscribe(viewModel.oddProperty(), isOdd -> {
-            pseudoClassStateChanged(PseudoClass.getPseudoClass(ODD_PSEUDO_CLASS), isOdd);
-        });
-        EasyBind.subscribe(viewModel.evenProperty(), isEven -> {
-            pseudoClassStateChanged(PseudoClass.getPseudoClass(EVEN_PSEUDO_CLASS), isEven);
-        });
+        EasyBind.subscribe(
+                viewModel.oddProperty(),
+                isOdd -> {
+                    pseudoClassStateChanged(PseudoClass.getPseudoClass(ODD_PSEUDO_CLASS), isOdd);
+                });
+        EasyBind.subscribe(
+                viewModel.evenProperty(),
+                isEven -> {
+                    pseudoClassStateChanged(PseudoClass.getPseudoClass(EVEN_PSEUDO_CLASS), isEven);
+                });
     }
 
     public String getText() {

@@ -1,6 +1,8 @@
 package org.jabref.gui.plaincitationparser;
 
-import javax.swing.undo.UndoManager;
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -24,8 +26,7 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.model.util.FileUpdateMonitor;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import javax.swing.undo.UndoManager;
 
 /**
  * GUI Dialog for the feature "Extract BibTeX from plain text".
@@ -48,26 +49,28 @@ public class PlainCitationParserDialog extends BaseDialog<Void> {
     @FXML protected ComboBox<PlainCitationParserChoice> parserChoice;
 
     public PlainCitationParserDialog() {
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
         this.setTitle(Localization.lang("Plain Citations Parser"));
     }
 
     @FXML
     private void initialize() {
-        BibDatabaseContext database = stateManager.getActiveDatabase().orElseThrow(() -> new NullPointerException("Database null"));
+        BibDatabaseContext database =
+                stateManager
+                        .getActiveDatabase()
+                        .orElseThrow(() -> new NullPointerException("Database null"));
 
-        PlainCitationParserViewModel viewModel = new PlainCitationParserViewModel(
-                database,
-                dialogService,
-                aiService,
-                preferences,
-                fileUpdateMonitor,
-                taskExecutor,
-                undoManager,
-                stateManager);
+        PlainCitationParserViewModel viewModel =
+                new PlainCitationParserViewModel(
+                        database,
+                        dialogService,
+                        aiService,
+                        preferences,
+                        fileUpdateMonitor,
+                        taskExecutor,
+                        undoManager,
+                        stateManager);
 
         new ViewModelListCellFactory<PlainCitationParserChoice>()
                 .withText(PlainCitationParserChoice::getLocalizedName)
@@ -79,18 +82,24 @@ public class PlainCitationParserDialog extends BaseDialog<Void> {
 
         String clipText = ClipBoardManager.getContents();
         if (StringUtil.isBlank(clipText)) {
-            input.setPromptText(Localization.lang("Please enter the plain citations to parse from separated by double empty lines."));
+            input.setPromptText(
+                    Localization.lang(
+                            "Please enter the plain citations to parse from separated by double empty lines."));
         } else {
             input.setText(clipText);
             input.selectAll();
         }
 
-        Platform.runLater(() -> {
-            input.requestFocus();
-            Button buttonParse = (Button) getDialogPane().lookupButton(parseButtonType);
-            buttonParse.setTooltip(new Tooltip((Localization.lang("Starts the parsing and adds the resulting entries to the currently opened database"))));
-            buttonParse.setOnAction(event -> viewModel.startParsing());
-            buttonParse.disableProperty().bind(viewModel.inputTextProperty().isEmpty());
-        });
+        Platform.runLater(
+                () -> {
+                    input.requestFocus();
+                    Button buttonParse = (Button) getDialogPane().lookupButton(parseButtonType);
+                    buttonParse.setTooltip(
+                            new Tooltip(
+                                    (Localization.lang(
+                                            "Starts the parsing and adds the resulting entries to the currently opened database"))));
+                    buttonParse.setOnAction(event -> viewModel.startParsing());
+                    buttonParse.disableProperty().bind(viewModel.inputTextProperty().isEmpty());
+                });
     }
 }

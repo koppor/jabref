@@ -1,11 +1,10 @@
 package org.jabref.logic.formatter.bibtexfields;
 
-import org.jabref.logic.layout.format.ReplaceWithEscapedDoubleQuotes;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.jabref.logic.layout.format.ReplaceWithEscapedDoubleQuotes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ReplaceWithEscapedDoubleQuotesTest {
 
@@ -23,7 +22,8 @@ class ReplaceWithEscapedDoubleQuotesTest {
 
     @Test
     void replacingMultipleDoubleQuote() {
-        assertEquals("multiple \"\"double\"\" quote", formatter.format("multiple \"double\" quote"));
+        assertEquals(
+                "multiple \"\"double\"\" quote", formatter.format("multiple \"double\" quote"));
     }
 
     @Test

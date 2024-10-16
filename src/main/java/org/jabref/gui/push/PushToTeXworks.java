@@ -31,6 +31,10 @@ public class PushToTeXworks extends AbstractPushToApplication {
 
     @Override
     protected String[] getCommandLine(String keyString) {
-        return new String[] {commandPath, "--insert-text", "%s%s%s".formatted(getCitePrefix(), keyString, getCiteSuffix())};
+        return new String[] {
+            commandPath,
+            "--insert-text",
+            "%s%s%s".formatted(getCitePrefix(), keyString, getCiteSuffix())
+        };
     }
 }

@@ -1,11 +1,11 @@
 package org.jabref.logic.ai;
 
+import org.jabref.model.ai.AiProvider;
+import org.jabref.model.ai.EmbeddingModel;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import org.jabref.model.ai.AiProvider;
-import org.jabref.model.ai.EmbeddingModel;
 
 public class AiDefaultPreferences {
     public enum PredefinedChatModel {
@@ -58,17 +58,19 @@ public class AiDefaultPreferences {
 
     public static final AiProvider PROVIDER = AiProvider.OPEN_AI;
 
-    public static final Map<AiProvider, PredefinedChatModel> CHAT_MODELS = Map.of(
-            AiProvider.OPEN_AI, PredefinedChatModel.GPT_4O_MINI,
-            AiProvider.MISTRAL_AI, PredefinedChatModel.OPEN_MIXTRAL_8X22B,
-            AiProvider.GEMINI, PredefinedChatModel.GEMINI_1_5_FLASH,
-            AiProvider.HUGGING_FACE, PredefinedChatModel.HUGGING_FACE
-    );
+    public static final Map<AiProvider, PredefinedChatModel> CHAT_MODELS =
+            Map.of(
+                    AiProvider.OPEN_AI, PredefinedChatModel.GPT_4O_MINI,
+                    AiProvider.MISTRAL_AI, PredefinedChatModel.OPEN_MIXTRAL_8X22B,
+                    AiProvider.GEMINI, PredefinedChatModel.GEMINI_1_5_FLASH,
+                    AiProvider.HUGGING_FACE, PredefinedChatModel.HUGGING_FACE);
 
     public static final boolean CUSTOMIZE_SETTINGS = false;
 
-    public static final EmbeddingModel EMBEDDING_MODEL = EmbeddingModel.SENTENCE_TRANSFORMERS_ALL_MINILM_L12_V2;
-    public static final String SYSTEM_MESSAGE = "You are an AI assistant that analyses research papers. You answer questions about papers. You will be supplied with the necessary information. The supplied information will contain mentions of papers in form '@citationKey'. Whenever you refer to a paper, use its citation key in the same form with @ symbol. Whenever you find relevant information, always use the citation key. Here are the papers you are analyzing:\n";
+    public static final EmbeddingModel EMBEDDING_MODEL =
+            EmbeddingModel.SENTENCE_TRANSFORMERS_ALL_MINILM_L12_V2;
+    public static final String SYSTEM_MESSAGE =
+            "You are an AI assistant that analyses research papers. You answer questions about papers. You will be supplied with the necessary information. The supplied information will contain mentions of papers in form '@citationKey'. Whenever you refer to a paper, use its citation key in the same form with @ symbol. Whenever you find relevant information, always use the citation key. Here are the papers you are analyzing:\n";
     public static final double TEMPERATURE = 0.7;
     public static final int DOCUMENT_SPLITTER_CHUNK_SIZE = 300;
     public static final int DOCUMENT_SPLITTER_OVERLAP = 100;
@@ -79,16 +81,19 @@ public class AiDefaultPreferences {
 
     public static List<String> getAvailableModels(AiProvider aiProvider) {
         return Arrays.stream(AiDefaultPreferences.PredefinedChatModel.values())
-                     .filter(model -> model.getAiProvider() == aiProvider)
-                     .map(AiDefaultPreferences.PredefinedChatModel::getName)
-                     .toList();
+                .filter(model -> model.getAiProvider() == aiProvider)
+                .map(AiDefaultPreferences.PredefinedChatModel::getName)
+                .toList();
     }
 
     public static int getContextWindowSize(AiProvider aiProvider, String modelName) {
         return Arrays.stream(AiDefaultPreferences.PredefinedChatModel.values())
-                     .filter(model -> model.getAiProvider() == aiProvider && model.getName().equals(modelName))
-                     .map(AiDefaultPreferences.PredefinedChatModel::getContextWindowSize)
-                     .findFirst()
-                     .orElse(AiDefaultPreferences.FALLBACK_CONTEXT_WINDOW_SIZE);
+                .filter(
+                        model ->
+                                model.getAiProvider() == aiProvider
+                                        && model.getName().equals(modelName))
+                .map(AiDefaultPreferences.PredefinedChatModel::getContextWindowSize)
+                .findFirst()
+                .orElse(AiDefaultPreferences.FALLBACK_CONTEXT_WINDOW_SIZE);
     }
 }

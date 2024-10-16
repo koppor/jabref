@@ -2,8 +2,7 @@ package org.jabref.logic.net;
 
 public class ProxyRegisterer {
 
-    private ProxyRegisterer() {
-    }
+    private ProxyRegisterer() {}
 
     public static void register(ProxyPreferences proxyPrefs) {
         if (proxyPrefs.shouldUseProxy()) {
@@ -14,7 +13,8 @@ public class ProxyRegisterer {
             System.setProperty("https.proxyHost", proxyPrefs.getHostname());
             System.setProperty("https.proxyPort", proxyPrefs.getPort());
 
-            // NetworkTabView.java ensures that proxyUsername and proxyPassword are neither null nor empty
+            // NetworkTabView.java ensures that proxyUsername and proxyPassword are neither null nor
+            // empty
             if (proxyPrefs.shouldUseAuthentication()) {
                 System.setProperty("http.proxyUser", proxyPrefs.getUsername());
                 System.setProperty("http.proxyPassword", proxyPrefs.getPassword());

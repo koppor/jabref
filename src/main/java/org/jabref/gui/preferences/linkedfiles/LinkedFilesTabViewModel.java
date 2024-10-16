@@ -1,8 +1,9 @@
 package org.jabref.gui.preferences.linkedfiles;
 
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
+import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
+import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
+import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
+import de.saxsys.mvvmfx.utils.validation.Validator;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
@@ -20,10 +21,9 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.logic.util.io.AutoLinkPreferences;
 
-import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
-import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
-import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
-import de.saxsys.mvvmfx.utils.validation.Validator;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 
 public class LinkedFilesTabViewModel implements PreferenceTabViewModel {
 
@@ -35,7 +35,8 @@ public class LinkedFilesTabViewModel implements PreferenceTabViewModel {
     private final BooleanProperty autolinkUseRegexProperty = new SimpleBooleanProperty();
     private final StringProperty autolinkRegexKeyProperty = new SimpleStringProperty("");
     private final ListProperty<String> defaultFileNamePatternsProperty =
-            new SimpleListProperty<>(FXCollections.observableArrayList(FilePreferences.DEFAULT_FILENAME_PATTERNS));
+            new SimpleListProperty<>(
+                    FXCollections.observableArrayList(FilePreferences.DEFAULT_FILENAME_PATTERNS));
     private final BooleanProperty fulltextIndex = new SimpleBooleanProperty();
     private final StringProperty fileNamePatternProperty = new SimpleStringProperty();
     private final StringProperty fileDirectoryPatternProperty = new SimpleStringProperty();
@@ -53,32 +54,36 @@ public class LinkedFilesTabViewModel implements PreferenceTabViewModel {
         this.filePreferences = preferences.getFilePreferences();
         this.autoLinkPreferences = preferences.getAutoLinkPreferences();
 
-        mainFileDirValidator = new FunctionBasedValidator<>(
-                mainFileDirectoryProperty,
-                mainDirectoryPath -> {
-                    ValidationMessage error = ValidationMessage.error(
-                            Localization.lang("Main file directory '%0' not found.\nCheck the tab \"Linked files\".", mainDirectoryPath)
-                    );
-                    try {
-                        Path path = Path.of(mainDirectoryPath);
-                        if (!(Files.exists(path) && Files.isDirectory(path))) {
-                            return error;
-                        }
-                    } catch (InvalidPathException ex) {
-                        return error;
-                    }
-                    // main directory is valid
-                    return null;
-                }
-        );
+        mainFileDirValidator =
+                new FunctionBasedValidator<>(
+                        mainFileDirectoryProperty,
+                        mainDirectoryPath -> {
+                            ValidationMessage error =
+                                    ValidationMessage.error(
+                                            Localization.lang(
+                                                    "Main file directory '%0' not found.\nCheck the tab \"Linked files\".",
+                                                    mainDirectoryPath));
+                            try {
+                                Path path = Path.of(mainDirectoryPath);
+                                if (!(Files.exists(path) && Files.isDirectory(path))) {
+                                    return error;
+                                }
+                            } catch (InvalidPathException ex) {
+                                return error;
+                            }
+                            // main directory is valid
+                            return null;
+                        });
     }
 
     @Override
     public void setValues() {
         // External files preferences / Attached files preferences / File preferences
-        mainFileDirectoryProperty.setValue(filePreferences.getMainFileDirectory().orElse(Path.of("")).toString());
+        mainFileDirectoryProperty.setValue(
+                filePreferences.getMainFileDirectory().orElse(Path.of("")).toString());
         useMainFileDirectoryProperty.setValue(!filePreferences.shouldStoreFilesRelativeToBibFile());
-        useBibLocationAsPrimaryProperty.setValue(filePreferences.shouldStoreFilesRelativeToBibFile());
+        useBibLocationAsPrimaryProperty.setValue(
+                filePreferences.shouldStoreFilesRelativeToBibFile());
         fulltextIndex.setValue(filePreferences.shouldFulltextIndexLinkedFiles());
         fileNamePatternProperty.setValue(filePreferences.getFileNamePattern());
         fileDirectoryPatternProperty.setValue(filePreferences.getFileDirectoryPattern());
@@ -106,11 +111,14 @@ public class LinkedFilesTabViewModel implements PreferenceTabViewModel {
 
         // Autolink preferences
         if (autolinkFileStartsBibtexProperty.getValue()) {
-            autoLinkPreferences.setCitationKeyDependency(AutoLinkPreferences.CitationKeyDependency.START);
+            autoLinkPreferences.setCitationKeyDependency(
+                    AutoLinkPreferences.CitationKeyDependency.START);
         } else if (autolinkFileExactBibtexProperty.getValue()) {
-            autoLinkPreferences.setCitationKeyDependency(AutoLinkPreferences.CitationKeyDependency.EXACT);
+            autoLinkPreferences.setCitationKeyDependency(
+                    AutoLinkPreferences.CitationKeyDependency.EXACT);
         } else if (autolinkUseRegexProperty.getValue()) {
-            autoLinkPreferences.setCitationKeyDependency(AutoLinkPreferences.CitationKeyDependency.REGEX);
+            autoLinkPreferences.setCitationKeyDependency(
+                    AutoLinkPreferences.CitationKeyDependency.REGEX);
         }
 
         autoLinkPreferences.setRegularExpression(autolinkRegexKeyProperty.getValue());
@@ -126,8 +134,10 @@ public class LinkedFilesTabViewModel implements PreferenceTabViewModel {
     public boolean validateSettings() {
         ValidationStatus validationStatus = mainFileDirValidationStatus();
         if (!validationStatus.isValid() && useMainFileDirectoryProperty().get()) {
-            validationStatus.getHighestMessage().ifPresent(message ->
-                    dialogService.showErrorDialogAndWait(message.getMessage()));
+            validationStatus
+                    .getHighestMessage()
+                    .ifPresent(
+                            message -> dialogService.showErrorDialogAndWait(message.getMessage()));
             return false;
         }
         return true;
@@ -135,9 +145,12 @@ public class LinkedFilesTabViewModel implements PreferenceTabViewModel {
 
     public void mainFileDirBrowse() {
         DirectoryDialogConfiguration dirDialogConfiguration =
-                new DirectoryDialogConfiguration.Builder().withInitialDirectory(Path.of(mainFileDirectoryProperty.getValue())).build();
-        dialogService.showDirectorySelectionDialog(dirDialogConfiguration)
-                     .ifPresent(f -> mainFileDirectoryProperty.setValue(f.toString()));
+                new DirectoryDialogConfiguration.Builder()
+                        .withInitialDirectory(Path.of(mainFileDirectoryProperty.getValue()))
+                        .build();
+        dialogService
+                .showDirectorySelectionDialog(dirDialogConfiguration)
+                .ifPresent(f -> mainFileDirectoryProperty.setValue(f.toString()));
     }
 
     // External file links
@@ -193,4 +206,3 @@ public class LinkedFilesTabViewModel implements PreferenceTabViewModel {
         return this.moveToTrashProperty;
     }
 }
-

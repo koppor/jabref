@@ -1,12 +1,12 @@
 package org.jabref.logic.citationkeypattern;
 
+import org.jabref.model.entry.types.EntryType;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.jabref.model.entry.types.EntryType;
 
 /**
  * A small table, where an entry type is associated with a Bibtex key pattern (an
@@ -40,7 +40,8 @@ public abstract class AbstractCitationKeyPatterns {
             return false;
         }
         AbstractCitationKeyPatterns that = (AbstractCitationKeyPatterns) o;
-        return Objects.equals(defaultPattern, that.defaultPattern) && Objects.equals(data, that.data);
+        return Objects.equals(defaultPattern, that.defaultPattern)
+                && Objects.equals(data, that.data);
     }
 
     @Override
@@ -103,7 +104,8 @@ public abstract class AbstractCitationKeyPatterns {
     }
 
     public Map<EntryType, CitationKeyPattern> getPatterns() {
-        return data.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return data.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public abstract CitationKeyPattern getLastLevelCitationKeyPattern(EntryType key);

@@ -1,10 +1,9 @@
 package org.jabref.gui.util;
 
-import org.jabref.model.util.DirectoryMonitor;
-
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.jabref.model.util.DirectoryMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

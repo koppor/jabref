@@ -1,5 +1,35 @@
 package org.jabref.logic.importer.fileformat;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
+
+import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.input.BOMInputStream;
+import org.jabref.logic.formatter.bibtexfields.HtmlToLatexFormatter;
+import org.jabref.logic.formatter.bibtexfields.NormalizePagesFormatter;
+import org.jabref.logic.importer.Importer;
+import org.jabref.logic.importer.Parser;
+import org.jabref.logic.importer.ParserResult;
+import org.jabref.logic.importer.fileformat.citavi.CitaviExchangeData;
+import org.jabref.logic.importer.fileformat.citavi.CitaviExchangeData.KnowledgeItems;
+import org.jabref.logic.importer.fileformat.citavi.CitaviExchangeData.KnowledgeItems.KnowledgeItem;
+import org.jabref.logic.importer.fileformat.citavi.CitaviExchangeData.Persons.Person;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.util.StandardFileType;
+import org.jabref.model.entry.Author;
+import org.jabref.model.entry.AuthorList;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.Keyword;
+import org.jabref.model.entry.KeywordList;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.types.EntryType;
+import org.jabref.model.entry.types.IEEETranEntryType;
+import org.jabref.model.entry.types.StandardEntryType;
+import org.jabref.model.strings.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,42 +58,13 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.jabref.logic.formatter.bibtexfields.HtmlToLatexFormatter;
-import org.jabref.logic.formatter.bibtexfields.NormalizePagesFormatter;
-import org.jabref.logic.importer.Importer;
-import org.jabref.logic.importer.Parser;
-import org.jabref.logic.importer.ParserResult;
-import org.jabref.logic.importer.fileformat.citavi.CitaviExchangeData;
-import org.jabref.logic.importer.fileformat.citavi.CitaviExchangeData.KnowledgeItems;
-import org.jabref.logic.importer.fileformat.citavi.CitaviExchangeData.KnowledgeItems.KnowledgeItem;
-import org.jabref.logic.importer.fileformat.citavi.CitaviExchangeData.Persons.Person;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.util.StandardFileType;
-import org.jabref.model.entry.Author;
-import org.jabref.model.entry.AuthorList;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.Keyword;
-import org.jabref.model.entry.KeywordList;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.types.EntryType;
-import org.jabref.model.entry.types.IEEETranEntryType;
-import org.jabref.model.entry.types.StandardEntryType;
-import org.jabref.model.strings.StringUtil;
-
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
-import org.apache.commons.io.ByteOrderMark;
-import org.apache.commons.io.input.BOMInputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class CitaviXmlImporter extends Importer implements Parser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CitaviXmlImporter.class);
     private static final byte UUID_LENGTH = 36;
     private static final byte UUID_SEMICOLON_OFFSET_INDEX = 37;
-    private static final EnumSet<QuotationTypeMapping> QUOTATION_TYPES = EnumSet.allOf(QuotationTypeMapping.class);
+    private static final EnumSet<QuotationTypeMapping> QUOTATION_TYPES =
+            EnumSet.allOf(QuotationTypeMapping.class);
     private final HtmlToLatexFormatter htmlToLatexFormatter = new HtmlToLatexFormatter();
     private final NormalizePagesFormatter pagesFormatter = new NormalizePagesFormatter();
 
@@ -177,11 +178,10 @@ public class CitaviXmlImporter extends Importer implements Parser {
             this.refIdWithPublishers = buildPublisherList(refPublishers.getOnetoN());
         }
 
-        bibEntries = data
-                         .getReferences().getReference()
-                         .stream()
-                         .map(this::parseData)
-                         .collect(Collectors.toList());
+        bibEntries =
+                data.getReferences().getReference().stream()
+                        .map(this::parseData)
+                        .collect(Collectors.toList());
 
         return bibEntries;
     }
@@ -217,19 +217,24 @@ public class CitaviXmlImporter extends Importer implements Parser {
         Optional.ofNullable(getPublisher(data))
                 .ifPresent(value -> entry.setField(StandardField.PUBLISHER, clean(value)));
         Optional.ofNullable(getKnowledgeItem(data))
-                .ifPresent(value -> entry.setField(StandardField.COMMENT, StringUtil.unifyLineBreaks(value, "\n")));
+                .ifPresent(
+                        value ->
+                                entry.setField(
+                                        StandardField.COMMENT,
+                                        StringUtil.unifyLineBreaks(value, "\n")));
         return entry;
     }
 
     private EntryType getType(CitaviExchangeData.References.Reference data) {
         return Optional.ofNullable(data.getReferenceType())
-                       .map(CitaviXmlImporter::convertRefNameToType)
-                       .orElse(StandardEntryType.Article);
+                .map(CitaviXmlImporter::convertRefNameToType)
+                .orElse(StandardEntryType.Article);
     }
 
     private static EntryType convertRefNameToType(String refName) {
         return switch (refName.toLowerCase().trim()) {
-            case "artwork", "generic", "musicalbum", "audioorvideodocument", "movie" -> StandardEntryType.Misc;
+            case "artwork", "generic", "musicalbum", "audioorvideodocument", "movie" ->
+                    StandardEntryType.Misc;
             case "electronic article" -> IEEETranEntryType.Electronic;
             case "book section" -> StandardEntryType.InBook;
             case "book", "bookedited", "audiobook" -> StandardEntryType.Book;
@@ -283,14 +288,29 @@ public class CitaviXmlImporter extends Importer implements Parser {
             List<Author> jabrefAuthors = new ArrayList<>();
 
             for (String personId : personIds) {
-                // Store persons we already encountered, we can have the same author multiple times in the whole database
-                knownPersons.computeIfAbsent(personId, k -> {
-                    Optional<Person> person = persons.getPerson().stream().filter(p -> p.getId().equals(k)).findFirst();
-                    return person.map(p -> new Author(p.getFirstName(), "", "", p.getLastName(), "")).orElse(null);
-                });
+                // Store persons we already encountered, we can have the same author multiple times
+                // in the whole database
+                knownPersons.computeIfAbsent(
+                        personId,
+                        k -> {
+                            Optional<Person> person =
+                                    persons.getPerson().stream()
+                                            .filter(p -> p.getId().equals(k))
+                                            .findFirst();
+                            return person.map(
+                                            p ->
+                                                    new Author(
+                                                            p.getFirstName(),
+                                                            "",
+                                                            "",
+                                                            p.getLastName(),
+                                                            ""))
+                                    .orElse(null);
+                        });
                 jabrefAuthors.add(knownPersons.get(personId));
             }
-            String stringifiedAuthors = AuthorList.of(jabrefAuthors).getAsLastFirstNamesWithAnd(false);
+            String stringifiedAuthors =
+                    AuthorList.of(jabrefAuthors).getAsLastFirstNamesWithAnd(false);
             refToPerson.put(refId, stringifiedAuthors);
         }
         return refToPerson;
@@ -309,10 +329,15 @@ public class CitaviXmlImporter extends Importer implements Parser {
 
             for (String keywordId : keywordIds) {
                 // store keywords already encountered
-                knownKeywords.computeIfAbsent(keywordId, k -> {
-                    Optional<CitaviExchangeData.Keywords.Keyword> keyword = keywords.getKeyword().stream().filter(p -> p.getId().equals(k)).findFirst();
-                    return keyword.map(kword -> new Keyword(kword.getName())).orElse(null);
-                });
+                knownKeywords.computeIfAbsent(
+                        keywordId,
+                        k -> {
+                            Optional<CitaviExchangeData.Keywords.Keyword> keyword =
+                                    keywords.getKeyword().stream()
+                                            .filter(p -> p.getId().equals(k))
+                                            .findFirst();
+                            return keyword.map(kword -> new Keyword(kword.getName())).orElse(null);
+                        });
                 jabrefKeywords.add(knownKeywords.get(keywordId));
             }
 
@@ -336,10 +361,17 @@ public class CitaviXmlImporter extends Importer implements Parser {
 
             for (String pubId : publisherIds) {
                 // store publishers already encountered
-                knownPublishers.computeIfAbsent(pubId, k -> {
-                    Optional<CitaviExchangeData.Publishers.Publisher> publisher = publishers.getPublisher().stream().filter(p -> p.getId().equals(k)).findFirst();
-                    return publisher.map(CitaviExchangeData.Publishers.Publisher::getName).orElse(null);
-                });
+                knownPublishers.computeIfAbsent(
+                        pubId,
+                        k -> {
+                            Optional<CitaviExchangeData.Publishers.Publisher> publisher =
+                                    publishers.getPublisher().stream()
+                                            .filter(p -> p.getId().equals(k))
+                                            .findFirst();
+                            return publisher
+                                    .map(CitaviExchangeData.Publishers.Publisher::getName)
+                                    .orElse(null);
+                        });
                 jabrefPublishers.add(knownPublishers.get(pubId));
             }
 
@@ -372,21 +404,33 @@ public class CitaviXmlImporter extends Importer implements Parser {
 
     private String getKnowledgeItem(CitaviExchangeData.References.Reference data) {
         StringJoiner comment = new StringJoiner("\n\n");
-        List<KnowledgeItem> foundItems = knowledgeItems.getKnowledgeItem().stream().filter(p -> data.getId().equals(p.getReferenceID())).toList();
+        List<KnowledgeItem> foundItems =
+                knowledgeItems.getKnowledgeItem().stream()
+                        .filter(p -> data.getId().equals(p.getReferenceID()))
+                        .toList();
         for (KnowledgeItem knowledgeItem : foundItems) {
-            Optional<String> title = Optional.ofNullable(knowledgeItem.getCoreStatement()).filter(Predicate.not(String::isEmpty));
+            Optional<String> title =
+                    Optional.ofNullable(knowledgeItem.getCoreStatement())
+                            .filter(Predicate.not(String::isEmpty));
             title.ifPresent(t -> comment.add("# " + cleanUpText(t)));
 
-            Optional<String> text = Optional.ofNullable(knowledgeItem.getText()).filter(Predicate.not(String::isEmpty));
+            Optional<String> text =
+                    Optional.ofNullable(knowledgeItem.getText())
+                            .filter(Predicate.not(String::isEmpty));
             text.ifPresent(t -> comment.add(cleanUpText(t)));
 
-            Optional<Integer> pages = Optional.of(knowledgeItem.getPageRangeNumber()).filter(range -> range != -1);
+            Optional<Integer> pages =
+                    Optional.of(knowledgeItem.getPageRangeNumber()).filter(range -> range != -1);
             pages.ifPresent(p -> comment.add("page range: " + p));
 
-            Optional<String> quotationTypeDesc = Optional.of(knowledgeItem.getQuotationType()).flatMap(type ->
-                                                                    QUOTATION_TYPES.stream()
-                                                                    .filter(qt -> type == qt.getCitaviIndexType())
-                                                                    .map(QuotationTypeMapping::getName).findFirst());
+            Optional<String> quotationTypeDesc =
+                    Optional.of(knowledgeItem.getQuotationType())
+                            .flatMap(
+                                    type ->
+                                            QUOTATION_TYPES.stream()
+                                                    .filter(qt -> type == qt.getCitaviIndexType())
+                                                    .map(QuotationTypeMapping::getName)
+                                                    .findFirst());
             quotationTypeDesc.ifPresent(qt -> comment.add("quotation type: %s".formatted(qt)));
 
             Optional<Short> quotationIndex = Optional.of(knowledgeItem.getQuotationIndex());
@@ -403,14 +447,14 @@ public class CitaviXmlImporter extends Importer implements Parser {
     }
 
     private String removeSpacesBeforeLineBreak(String string) {
-        return string.replaceAll(" +\r\n", "\r\n")
-              .replaceAll(" +\n", "\n");
+        return string.replaceAll(" +\r\n", "\r\n").replaceAll(" +\n", "\n");
     }
 
     private void initUnmarshaller() throws JAXBException {
         if (unmarshaller == null) {
             // Lazy init because this is expensive
-            JAXBContext context = JAXBContext.newInstance("org.jabref.logic.importer.fileformat.citavi");
+            JAXBContext context =
+                    JAXBContext.newInstance("org.jabref.logic.importer.fileformat.citavi");
             unmarshaller = context.createUnmarshaller();
         }
     }
@@ -431,15 +475,19 @@ public class CitaviXmlImporter extends Importer implements Parser {
     @Override
     public ParserResult importDatabase(BufferedReader reader) throws IOException {
         Objects.requireNonNull(reader);
-        throw new UnsupportedOperationException("CitaviXmlImporter does not support importDatabase(BufferedReader reader). "
-                                                + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
+        throw new UnsupportedOperationException(
+                "CitaviXmlImporter does not support importDatabase(BufferedReader reader). "
+                        + "Instead use importDatabase(Path filePath, Charset defaultEncoding).");
     }
 
     @Override
     public List<BibEntry> parseEntries(InputStream inputStream) {
         try {
             return importDatabase(
-                                  new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))).getDatabase().getEntries();
+                            new BufferedReader(
+                                    new InputStreamReader(inputStream, StandardCharsets.UTF_8)))
+                    .getDatabase()
+                    .getEntries();
         } catch (IOException e) {
             LOGGER.error(e.getLocalizedMessage(), e);
         }
@@ -465,13 +513,15 @@ public class CitaviXmlImporter extends Importer implements Parser {
                         new BOMInputStream(
                                 Files.newInputStream(newFile, StandardOpenOption.READ),
                                 false,
-                                ByteOrderMark.UTF_8, ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE, ByteOrderMark.UTF_32BE, ByteOrderMark.UTF_32LE)));
+                                ByteOrderMark.UTF_8,
+                                ByteOrderMark.UTF_16BE,
+                                ByteOrderMark.UTF_16LE,
+                                ByteOrderMark.UTF_32BE,
+                                ByteOrderMark.UTF_32LE)));
     }
 
     private String clean(String input) {
-        String result = StringUtil.unifyLineBreaks(input, " ")
-                         .trim()
-                         .replaceAll(" +", " ");
+        String result = StringUtil.unifyLineBreaks(input, " ").trim().replaceAll(" +", " ");
         return htmlToLatexFormatter.format(result);
     }
 

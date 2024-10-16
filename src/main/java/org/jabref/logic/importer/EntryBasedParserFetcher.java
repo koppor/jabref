@@ -1,5 +1,8 @@
 package org.jabref.logic.importer;
 
+import org.jabref.model.entry.BibEntry;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,10 +12,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-
-import org.jabref.model.entry.BibEntry;
-
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides a convenient interface for entry-based fetcher, which follow the usual three-step procedure:
@@ -27,7 +26,8 @@ public interface EntryBasedParserFetcher extends EntryBasedFetcher, ParserFetche
      *
      * @param entry the entry to look information for
      */
-    URL getURLForEntry(BibEntry entry) throws URISyntaxException, MalformedURLException, FetcherException;
+    URL getURLForEntry(BibEntry entry)
+            throws URISyntaxException, MalformedURLException, FetcherException;
 
     /**
      * Returns the parser used to convert the response to a list of {@link BibEntry}.
@@ -55,9 +55,12 @@ public interface EntryBasedParserFetcher extends EntryBasedFetcher, ParserFetche
 
             return fetchedEntries;
         } catch (IOException e) {
-            // TODO: Catch HTTP Response 401 errors and report that user has no rights to access resource
-            //       Same TODO as in org.jabref.logic.net.URLDownload.openConnection. Code should be reused.
-            LoggerFactory.getLogger(EntryBasedParserFetcher.class).error("Could not fetch from URL {}", urlForEntry, e);
+            // TODO: Catch HTTP Response 401 errors and report that user has no rights to access
+            // resource
+            //       Same TODO as in org.jabref.logic.net.URLDownload.openConnection. Code should be
+            // reused.
+            LoggerFactory.getLogger(EntryBasedParserFetcher.class)
+                    .error("Could not fetch from URL {}", urlForEntry, e);
             throw new FetcherException(urlForEntry, "A network error occurred", e);
         } catch (ParseException e) {
             throw new FetcherException(urlForEntry, "An internal parser error occurred", e);

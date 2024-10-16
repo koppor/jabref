@@ -1,7 +1,5 @@
 package org.jabref.logic.openoffice;
 
-import java.util.List;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -13,12 +11,15 @@ import javafx.collections.ObservableList;
 
 import org.jabref.logic.openoffice.style.OOStyle;
 
+import java.util.List;
+
 public class OpenOfficePreferences {
 
     public static final String DEFAULT_WIN_EXEC_PATH = "C:\\Program Files\\LibreOffice\\program";
     public static final String WINDOWS_EXECUTABLE = "soffice.exe";
 
-    public static final String DEFAULT_OSX_EXEC_PATH = "/Applications/LibreOffice.app/Contents/MacOS/soffice";
+    public static final String DEFAULT_OSX_EXEC_PATH =
+            "/Applications/LibreOffice.app/Contents/MacOS/soffice";
     public static final String OSX_EXECUTABLE = "soffice";
 
     public static final String DEFAULT_LINUX_EXEC_PATH = "/usr/lib/libreoffice/program/soffice";
@@ -33,13 +34,14 @@ public class OpenOfficePreferences {
     private final ObjectProperty<OOStyle> currentStyle;
     private final BooleanProperty alwaysAddCitedOnPages;
 
-    public OpenOfficePreferences(String executablePath,
-                                 boolean useAllDatabases,
-                                 boolean syncWhenCiting,
-                                 List<String> externalStyles,
-                                 String currentJStyle,
-                                 OOStyle currentStyle,
-                                 boolean alwaysAddCitedOnPages) {
+    public OpenOfficePreferences(
+            String executablePath,
+            boolean useAllDatabases,
+            boolean syncWhenCiting,
+            List<String> externalStyles,
+            String currentJStyle,
+            OOStyle currentStyle,
+            boolean alwaysAddCitedOnPages) {
         this.executablePath = new SimpleStringProperty(executablePath);
         this.useAllDatabases = new SimpleBooleanProperty(useAllDatabases);
         this.syncWhenCiting = new SimpleBooleanProperty(syncWhenCiting);

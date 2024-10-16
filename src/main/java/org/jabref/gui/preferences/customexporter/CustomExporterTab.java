@@ -1,5 +1,8 @@
 package org.jabref.gui.preferences.customexporter;
 
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
@@ -10,10 +13,8 @@ import org.jabref.gui.preferences.AbstractPreferenceTabView;
 import org.jabref.gui.preferences.PreferencesTab;
 import org.jabref.logic.l10n.Localization;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-
-public class CustomExporterTab extends AbstractPreferenceTabView<CustomExporterTabViewModel> implements PreferencesTab {
+public class CustomExporterTab extends AbstractPreferenceTabView<CustomExporterTabViewModel>
+        implements PreferencesTab {
 
     @FXML private TableView<ExporterViewModel> exporterTable;
     @FXML private TableColumn<ExporterViewModel, String> nameColumn;
@@ -21,9 +22,7 @@ public class CustomExporterTab extends AbstractPreferenceTabView<CustomExporterT
     @FXML private TableColumn<ExporterViewModel, String> extensionColumn;
 
     public CustomExporterTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -37,7 +36,9 @@ public class CustomExporterTab extends AbstractPreferenceTabView<CustomExporterT
 
         exporterTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         exporterTable.itemsProperty().bind(viewModel.exportersProperty());
-        EasyBind.bindContent(viewModel.selectedExportersProperty(), exporterTable.getSelectionModel().getSelectedItems());
+        EasyBind.bindContent(
+                viewModel.selectedExportersProperty(),
+                exporterTable.getSelectionModel().getSelectedItems());
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().name());
         layoutColumn.setCellValueFactory(cellData -> cellData.getValue().layoutFileName());
         extensionColumn.setCellValueFactory(cellData -> cellData.getValue().extension());

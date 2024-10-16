@@ -1,9 +1,9 @@
 package org.jabref.logic.bibtex.comparator;
 
-import java.util.Optional;
-
 import org.jabref.model.groups.GroupTreeNode;
 import org.jabref.model.metadata.MetaData;
+
+import java.util.Optional;
 
 public class GroupDiff {
     private final GroupTreeNode originalGroupRoot;

@@ -1,5 +1,12 @@
 package org.jabref.logic.msbib;
 
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.Month;
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.entry.types.EntryType;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,19 +15,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.Month;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.field.UnknownField;
-import org.jabref.model.entry.types.EntryType;
-
 public class BibTeXConverter {
 
     private static final String MSBIB_PREFIX = "msbib-";
 
-    private BibTeXConverter() {
-    }
+    private BibTeXConverter() {}
 
     /**
      * Converts an {@link MSBibEntry} to a {@link BibEntry} for import
@@ -52,7 +51,8 @@ public class BibTeXConverter {
         addAuthor(fieldValues, StandardField.BOOKAUTHOR, entry.bookAuthors);
         addAuthor(fieldValues, StandardField.EDITOR, entry.editors);
         addAuthor(fieldValues, StandardField.TRANSLATOR, entry.translators);
-        addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "producername"), entry.producerNames);
+        addAuthor(
+                fieldValues, new UnknownField(MSBIB_PREFIX + "producername"), entry.producerNames);
         addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "composer"), entry.composers);
         addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "conductor"), entry.conductors);
         addAuthor(fieldValues, new UnknownField(MSBIB_PREFIX + "performer"), entry.performers);
@@ -103,12 +103,16 @@ public class BibTeXConverter {
         if (authors == null) {
             return;
         }
-        String allAuthors = authors.stream().map(MsBibAuthor::getLastFirst).collect(Collectors.joining(" and "));
+        String allAuthors =
+                authors.stream()
+                        .map(MsBibAuthor::getLastFirst)
+                        .collect(Collectors.joining(" and "));
 
         map.put(field, allAuthors);
     }
 
-    private static void parseSingleStandardNumber(String type, Field field, String standardNum, Map<Field, String> map) {
+    private static void parseSingleStandardNumber(
+            String type, Field field, String standardNum, Map<Field, String> map) {
         Pattern pattern = Pattern.compile(':' + type + ":(.[^:]+)");
         Matcher matcher = pattern.matcher(standardNum);
         if (matcher.matches()) {

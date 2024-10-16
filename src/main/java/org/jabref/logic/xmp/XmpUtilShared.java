@@ -1,16 +1,15 @@
 package org.jabref.logic.xmp;
 
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.xml.DomXmpParser;
+import org.jabref.model.entry.BibEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
-
-import org.jabref.model.entry.BibEntry;
-
-import org.apache.xmpbox.XMPMetadata;
-import org.apache.xmpbox.xml.DomXmpParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * XMPUtilShared provides support for reading (@link XMPUtilReader) and writing (@link XMPUtilWriter) BibTex data as XMP metadata
@@ -20,8 +19,7 @@ public class XmpUtilShared {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmpUtilShared.class);
 
-    private XmpUtilShared() {
-    }
+    private XmpUtilShared() {}
 
     protected static XMPMetadata parseXmpMetadata(InputStream is) throws IOException {
         XMPMetadata meta;
@@ -30,7 +28,8 @@ public class XmpUtilShared {
             meta = parser.parse(is);
             return meta;
         } catch (Exception e) {
-            // bad style to catch Exception but as this is called in a loop we do not want to break here when any schema encounters an error
+            // bad style to catch Exception but as this is called in a loop we do not want to break
+            // here when any schema encounters an error
             throw new IOException(e);
         }
     }

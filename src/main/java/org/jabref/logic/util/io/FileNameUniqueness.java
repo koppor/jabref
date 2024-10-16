@@ -1,5 +1,9 @@
 package org.jabref.logic.util.io;
 
+import org.jabref.logic.l10n.Localization;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,11 +12,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.logic.l10n.Localization;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FileNameUniqueness {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileNameUniqueness.class);
@@ -45,9 +44,7 @@ public class FileNameUniqueness {
 
         int counter = 1;
         while (Files.exists(targetDirectory.resolve(newFileName))) {
-            newFileName = fileNameWithoutExtension +
-                    " (" + counter + ")" +
-                    extensionSuffix;
+            newFileName = fileNameWithoutExtension + " (" + counter + ")" + extensionSuffix;
             counter++;
         }
 
@@ -65,7 +62,8 @@ public class FileNameUniqueness {
      *         false when there is no "similar" file name or the content is different from that of files with "similar" name
      * @throws IOException Fail when the file is not exist or something wrong when reading the file
      */
-    public static boolean isDuplicatedFile(Path directory, Path fileName, Consumer<String> messageOnDeletion) throws IOException {
+    public static boolean isDuplicatedFile(
+            Path directory, Path fileName, Consumer<String> messageOnDeletion) throws IOException {
         Objects.requireNonNull(directory);
         Objects.requireNonNull(fileName);
 
@@ -88,16 +86,21 @@ public class FileNameUniqueness {
             if (com.google.common.io.Files.equal(originalFile.toFile(), duplicateFile.toFile())) {
                 try {
                     Files.delete(duplicateFile);
-                    messageOnDeletion.accept(Localization.lang("File '%1' is a duplicate of '%0'. Keeping '%0'", originalFileName, fileName));
+                    messageOnDeletion.accept(
+                            Localization.lang(
+                                    "File '%1' is a duplicate of '%0'. Keeping '%0'",
+                                    originalFileName, fileName));
                 } catch (IOException e) {
-                    LOGGER.error("File '{}' is a duplicate of '{}'. Could not delete '{}'.", fileName, originalFileName, fileName);
+                    LOGGER.error(
+                            "File '{}' is a duplicate of '{}'. Could not delete '{}'.",
+                            fileName,
+                            originalFileName,
+                            fileName);
                 }
                 return true;
             }
 
-            originalFileName = fileNameWithoutDuplicated +
-                    " (" + counter + ")"
-                    + extensionSuffix;
+            originalFileName = fileNameWithoutDuplicated + " (" + counter + ")" + extensionSuffix;
             counter++;
 
             if (newFilename.equals(originalFileName)) {
@@ -123,8 +126,10 @@ public class FileNameUniqueness {
     }
 
     public static Path eraseDuplicateMarks(Path filePath) {
-        String extensionSuffix = FileUtil.getFileExtension(filePath).map(ext -> "." + ext).orElse("");
+        String extensionSuffix =
+                FileUtil.getFileExtension(filePath).map(ext -> "." + ext).orElse("");
 
-        return filePath.resolveSibling(eraseDuplicateMarks(FileUtil.getBaseName(filePath)) + extensionSuffix);
+        return filePath.resolveSibling(
+                eraseDuplicateMarks(FileUtil.getBaseName(filePath)) + extensionSuffix);
     }
 }

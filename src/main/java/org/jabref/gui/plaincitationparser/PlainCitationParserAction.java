@@ -1,10 +1,10 @@
 package org.jabref.gui.plaincitationparser;
 
+import static org.jabref.gui.actions.ActionHelper.needsDatabase;
+
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.actions.SimpleCommand;
-
-import static org.jabref.gui.actions.ActionHelper.needsDatabase;
 
 public class PlainCitationParserAction extends SimpleCommand {
     private final DialogService dialogService;

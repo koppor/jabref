@@ -1,6 +1,8 @@
 package org.jabref.gui.commonfxcontrols;
 
-import java.util.Collection;
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
 
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
@@ -19,8 +21,7 @@ import org.jabref.logic.preferences.CliPreferences;
 import org.jabref.model.entry.BibEntryType;
 import org.jabref.model.entry.types.EntryType;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
+import java.util.Collection;
 
 public class CitationKeyPatternsPanel extends TableView<CitationKeyPatternsPanelItemModel> {
 
@@ -38,14 +39,14 @@ public class CitationKeyPatternsPanel extends TableView<CitationKeyPatternsPanel
     public CitationKeyPatternsPanel() {
         super();
 
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @FXML
     private void initialize() {
-        viewModel = new CitationKeyPatternsPanelViewModel(preferences.getCitationKeyPatternPreferences());
+        viewModel =
+                new CitationKeyPatternsPanelViewModel(
+                        preferences.getCitationKeyPatternPreferences());
 
         this.setEditable(true);
 
@@ -55,8 +56,11 @@ public class CitationKeyPatternsPanel extends TableView<CitationKeyPatternsPanel
         new ValueTableCellFactory<CitationKeyPatternsPanelItemModel, EntryType>()
                 .withText(EntryType::getDisplayName)
                 .install(entryTypeColumn);
-        this.setOnSort(event ->
-                viewModel.patternListProperty().sort(CitationKeyPatternsPanelViewModel.defaultOnTopComparator));
+        this.setOnSort(
+                event ->
+                        viewModel
+                                .patternListProperty()
+                                .sort(CitationKeyPatternsPanelViewModel.defaultOnTopComparator));
 
         patternColumn.setSortable(true);
         patternColumn.setReorderable(false);
@@ -72,10 +76,15 @@ public class CitationKeyPatternsPanel extends TableView<CitationKeyPatternsPanel
         actionsColumn.setCellValueFactory(cellData -> cellData.getValue().entryType());
         new ValueTableCellFactory<CitationKeyPatternsPanelItemModel, EntryType>()
                 .withGraphic(entryType -> IconTheme.JabRefIcons.REFRESH.getGraphicNode())
-                .withTooltip(entryType ->
-                        Localization.lang("Reset %s to default value").formatted(entryType.getDisplayName()))
-                .withOnMouseClickedEvent(item -> evt ->
-                        viewModel.setItemToDefaultPattern(this.getFocusModel().getFocusedItem()))
+                .withTooltip(
+                        entryType ->
+                                Localization.lang("Reset %s to default value")
+                                        .formatted(entryType.getDisplayName()))
+                .withOnMouseClickedEvent(
+                        item ->
+                                evt ->
+                                        viewModel.setItemToDefaultPattern(
+                                                this.getFocusModel().getFocusedItem()))
                 .install(actionsColumn);
 
         this.setRowFactory(item -> new HighlightTableRow());
@@ -83,7 +92,8 @@ public class CitationKeyPatternsPanel extends TableView<CitationKeyPatternsPanel
         this.itemsProperty().bindBidirectional(viewModel.patternListProperty());
     }
 
-    public void setValues(Collection<BibEntryType> entryTypeList, AbstractCitationKeyPatterns keyPattern) {
+    public void setValues(
+            Collection<BibEntryType> entryTypeList, AbstractCitationKeyPatterns keyPattern) {
         viewModel.setValues(entryTypeList, keyPattern);
     }
 
@@ -112,8 +122,15 @@ public class CitationKeyPatternsPanel extends TableView<CitationKeyPatternsPanel
 
         lastKeyPressTime = System.currentTimeMillis();
 
-        this.getItems().stream().filter(item -> item.getEntryType().getName().toLowerCase().startsWith(tableSearchTerm))
-            .findFirst().ifPresent(this::scrollTo);
+        this.getItems().stream()
+                .filter(
+                        item ->
+                                item.getEntryType()
+                                        .getName()
+                                        .toLowerCase()
+                                        .startsWith(tableSearchTerm))
+                .findFirst()
+                .ifPresent(this::scrollTo);
     }
 
     private static class HighlightTableRow extends TableRow<CitationKeyPatternsPanelItemModel> {
@@ -124,7 +141,9 @@ public class CitationKeyPatternsPanel extends TableView<CitationKeyPatternsPanel
                 setStyle("");
             } else if (isSelected()) {
                 setStyle("-fx-background-color: -fx-selection-bar");
-            } else if (item.getEntryType().getName().equals(CitationKeyPatternsPanelViewModel.ENTRY_TYPE_DEFAULT_NAME)) {
+            } else if (item.getEntryType()
+                    .getName()
+                    .equals(CitationKeyPatternsPanelViewModel.ENTRY_TYPE_DEFAULT_NAME)) {
                 setStyle("-fx-background-color: -fx-default-button");
             } else {
                 setStyle("");

@@ -1,10 +1,6 @@
 package org.jabref.logic.util;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import com.tobiasdiez.easybind.EasyBind;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
@@ -15,9 +11,14 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-import com.tobiasdiez.easybind.EasyBind;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * This class is essentially a wrapper around {@link javafx.concurrent.Task}.
@@ -55,7 +56,8 @@ public abstract class BackgroundTask<V> {
     private Consumer<Exception> onException;
     private Runnable onFinished;
     private final BooleanProperty isCancelled = new SimpleBooleanProperty(false);
-    private final ObjectProperty<BackgroundProgress> progress = new SimpleObjectProperty<>(new BackgroundProgress(0, 0));
+    private final ObjectProperty<BackgroundProgress> progress =
+            new SimpleObjectProperty<>(new BackgroundProgress(0, 0));
     private final StringProperty message = new SimpleStringProperty("");
     private final StringProperty title = new SimpleStringProperty(this.getClass().getSimpleName());
     private final DoubleProperty workDonePercentage = new SimpleDoubleProperty(0);
@@ -63,7 +65,8 @@ public abstract class BackgroundTask<V> {
     private final BooleanProperty willBeRecoveredAutomatically = new SimpleBooleanProperty(false);
 
     public BackgroundTask() {
-        workDonePercentage.bind(EasyBind.map(progress, BackgroundTask.BackgroundProgress::getWorkDonePercentage));
+        workDonePercentage.bind(
+                EasyBind.map(progress, BackgroundTask.BackgroundProgress::getWorkDonePercentage));
     }
 
     public static <V> BackgroundTask<V> wrap(Callable<V> callable) {
@@ -267,7 +270,8 @@ public abstract class BackgroundTask<V> {
             @Override
             public Void call() throws Exception {
                 V result = BackgroundTask.this.call();
-                BackgroundTask<Void> nextTask = BackgroundTask.wrap(() -> nextOperation.accept(result));
+                BackgroundTask<Void> nextTask =
+                        BackgroundTask.wrap(() -> nextOperation.accept(result));
                 EasyBind.subscribe(nextTask.progressProperty(), this::updateProgress);
                 return nextTask.call();
             }
@@ -291,9 +295,7 @@ public abstract class BackgroundTask<V> {
         return this;
     }
 
-    public record BackgroundProgress(
-            double workDone,
-            double max) {
+    public record BackgroundProgress(double workDone, double max) {
 
         public double getWorkDonePercentage() {
             if (max == 0) {

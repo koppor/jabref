@@ -7,7 +7,6 @@ import org.jabref.gui.undo.UndoableStringChange;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibtexString;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,11 @@ public final class BibTexStringRename extends DatabaseChange {
     private final BibtexString oldString;
     private final BibtexString newString;
 
-    public BibTexStringRename(BibtexString oldString, BibtexString newString, BibDatabaseContext databaseContext, DatabaseChangeResolverFactory databaseChangeResolverFactory) {
+    public BibTexStringRename(
+            BibtexString oldString,
+            BibtexString newString,
+            BibDatabaseContext databaseContext,
+            DatabaseChangeResolverFactory databaseChangeResolverFactory) {
         super(databaseContext, databaseChangeResolverFactory);
         this.oldString = oldString;
         this.newString = newString;
@@ -29,7 +32,10 @@ public final class BibTexStringRename extends DatabaseChange {
     public void applyChange(NamedCompound undoEdit) {
         if (databaseContext.getDatabase().hasStringByName(newString.getName())) {
             // The name to change to is already in the database, so we can't comply.
-            LOGGER.info("Cannot rename string '{}' to '{}' because the name is already in use", oldString.getName(), newString.getName());
+            LOGGER.info(
+                    "Cannot rename string '{}' to '{}' because the name is already in use",
+                    oldString.getName(),
+                    newString.getName());
         }
 
         String currentName = oldString.getName();

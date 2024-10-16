@@ -14,15 +14,17 @@ public class MergeDialogPreferences {
     private final BooleanProperty mergeHighlightWords;
     private final BooleanProperty mergeShowChangedFieldsOnly;
     private final BooleanProperty mergeApplyToAllEntries;
-    private final ObjectProperty<DuplicateResolverDialog.DuplicateResolverResult> allEntriesDuplicateResolverDecision;
+    private final ObjectProperty<DuplicateResolverDialog.DuplicateResolverResult>
+            allEntriesDuplicateResolverDecision;
 
-    public MergeDialogPreferences(DiffMode mergeDiffMode,
-                                  boolean mergeShouldShowDiff,
-                                  boolean mergeShouldShowUnifiedDiff,
-                                  boolean mergeHighlightWords,
-                                  boolean mergeShowChangedFieldsOnly,
-                                  boolean mergeApplyToAllEntries,
-                                  DuplicateResolverDialog.DuplicateResolverResult allEntriesDuplicateResolverDecision) {
+    public MergeDialogPreferences(
+            DiffMode mergeDiffMode,
+            boolean mergeShouldShowDiff,
+            boolean mergeShouldShowUnifiedDiff,
+            boolean mergeHighlightWords,
+            boolean mergeShowChangedFieldsOnly,
+            boolean mergeApplyToAllEntries,
+            DuplicateResolverDialog.DuplicateResolverResult allEntriesDuplicateResolverDecision) {
         this.mergeDiffMode = new SimpleObjectProperty<>(mergeDiffMode);
         this.mergeShouldShowDiff = new SimpleBooleanProperty(mergeShouldShowDiff);
         this.mergeShouldShowUnifiedDiff = new SimpleBooleanProperty(mergeShouldShowUnifiedDiff);
@@ -30,7 +32,8 @@ public class MergeDialogPreferences {
 
         this.mergeShowChangedFieldsOnly = new SimpleBooleanProperty(mergeShowChangedFieldsOnly);
         this.mergeApplyToAllEntries = new SimpleBooleanProperty(mergeApplyToAllEntries);
-        this.allEntriesDuplicateResolverDecision = new SimpleObjectProperty<>(allEntriesDuplicateResolverDecision);
+        this.allEntriesDuplicateResolverDecision =
+                new SimpleObjectProperty<>(allEntriesDuplicateResolverDecision);
     }
 
     public DiffMode getMergeDiffMode() {
@@ -105,15 +108,18 @@ public class MergeDialogPreferences {
         this.mergeApplyToAllEntries.setValue(applyToAllEntries);
     }
 
-    public void setAllEntriesDuplicateResolverDecision(DuplicateResolverDialog.DuplicateResolverResult allEntriesDuplicateResolverDecision) {
+    public void setAllEntriesDuplicateResolverDecision(
+            DuplicateResolverDialog.DuplicateResolverResult allEntriesDuplicateResolverDecision) {
         this.allEntriesDuplicateResolverDecision.setValue(allEntriesDuplicateResolverDecision);
     }
 
-    public DuplicateResolverDialog.DuplicateResolverResult getAllEntriesDuplicateResolverDecision() {
+    public DuplicateResolverDialog.DuplicateResolverResult
+            getAllEntriesDuplicateResolverDecision() {
         return allEntriesDuplicateResolverDecision.get();
     }
 
-    public ObjectProperty<DuplicateResolverDialog.DuplicateResolverResult> allEntriesDuplicateResolverDecisionProperty() {
+    public ObjectProperty<DuplicateResolverDialog.DuplicateResolverResult>
+            allEntriesDuplicateResolverDecisionProperty() {
         return allEntriesDuplicateResolverDecision;
     }
 }

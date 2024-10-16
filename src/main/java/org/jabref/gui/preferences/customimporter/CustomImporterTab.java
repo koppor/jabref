@@ -1,5 +1,8 @@
 package org.jabref.gui.preferences.customimporter;
 
+import com.airhacks.afterburner.views.ViewLoader;
+import com.tobiasdiez.easybind.EasyBind;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
@@ -13,10 +16,8 @@ import org.jabref.gui.preferences.PreferencesTab;
 import org.jabref.gui.util.ViewModelTableRowFactory;
 import org.jabref.logic.l10n.Localization;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import com.tobiasdiez.easybind.EasyBind;
-
-public class CustomImporterTab extends AbstractPreferenceTabView<CustomImporterTabViewModel> implements PreferencesTab {
+public class CustomImporterTab extends AbstractPreferenceTabView<CustomImporterTabViewModel>
+        implements PreferencesTab {
 
     @FXML private TableView<ImporterViewModel> importerTable;
     @FXML private TableColumn<ImporterViewModel, String> nameColumn;
@@ -25,9 +26,7 @@ public class CustomImporterTab extends AbstractPreferenceTabView<CustomImporterT
     @FXML private Button addButton;
 
     public CustomImporterTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -41,7 +40,9 @@ public class CustomImporterTab extends AbstractPreferenceTabView<CustomImporterT
 
         importerTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         importerTable.itemsProperty().bind(viewModel.importersProperty());
-        EasyBind.bindContent(viewModel.selectedImportersProperty(), importerTable.getSelectionModel().getSelectedItems());
+        EasyBind.bindContent(
+                viewModel.selectedImportersProperty(),
+                importerTable.getSelectionModel().getSelectedItems());
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().name());
         classColumn.setCellValueFactory(cellData -> cellData.getValue().className());
         basePathColumn.setCellValueFactory(cellData -> cellData.getValue().basePath());
@@ -49,9 +50,13 @@ public class CustomImporterTab extends AbstractPreferenceTabView<CustomImporterT
                 .withTooltip(importer -> importer.getLogic().getDescription())
                 .install(importerTable);
 
-        addButton.setTooltip(new Tooltip(
-                Localization.lang("Add a (compiled) custom Importer class from a class path.")
-                        + "\n" + Localization.lang("The path need not be on the classpath of JabRef.")));
+        addButton.setTooltip(
+                new Tooltip(
+                        Localization.lang(
+                                        "Add a (compiled) custom Importer class from a class path.")
+                                + "\n"
+                                + Localization.lang(
+                                        "The path need not be on the classpath of JabRef.")));
     }
 
     @FXML

@@ -1,5 +1,9 @@
 package org.jabref.gui.openoffice;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
+
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
@@ -15,9 +19,6 @@ import org.jabref.gui.util.BaseDialog;
 import org.jabref.gui.util.ValueTableCellFactory;
 import org.jabref.logic.l10n.Localization;
 import org.jabref.model.strings.StringUtil;
-
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
 
 public class ManageCitationsDialogView extends BaseDialog<Void> {
 
@@ -37,16 +38,15 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
     public ManageCitationsDialogView(OOBibBase ooBase) {
         this.ooBase = ooBase;
 
-        ViewLoader.view(this)
-                  .load()
-                  .setAsDialogPane(this);
+        ViewLoader.view(this).load().setAsDialogPane(this);
 
-        setResultConverter(btn -> {
-            if (btn == ButtonType.OK) {
-                viewModel.storeSettings();
-            }
-            return null;
-        });
+        setResultConverter(
+                btn -> {
+                    if (btn == ButtonType.OK) {
+                        viewModel.storeSettings();
+                    }
+                    return null;
+                });
 
         setTitle(Localization.lang("Manage citations"));
     }
@@ -56,7 +56,9 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
         viewModel = new ManageCitationsDialogViewModel(ooBase, dialogService);
 
         citation.setCellValueFactory(cellData -> cellData.getValue().citationProperty());
-        new ValueTableCellFactory<CitationEntryViewModel, String>().withGraphic(this::getText).install(citation);
+        new ValueTableCellFactory<CitationEntryViewModel, String>()
+                .withGraphic(this::getText)
+                .install(citation);
 
         extraInfo.setCellValueFactory(cellData -> cellData.getValue().extraInformationProperty());
         extraInfo.setEditable(true);
@@ -65,15 +67,21 @@ public class ManageCitationsDialogView extends BaseDialog<Void> {
 
         citationsTableView.itemsProperty().bindBidirectional(viewModel.citationsProperty());
 
-        extraInfo.setOnEditCommit((CellEditEvent<CitationEntryViewModel, String> cell) ->
-                cell.getRowValue().setExtraInfo(cell.getNewValue()));
+        extraInfo.setOnEditCommit(
+                (CellEditEvent<CitationEntryViewModel, String> cell) ->
+                        cell.getRowValue().setExtraInfo(cell.getNewValue()));
         extraInfo.setCellFactory(TextFieldTableCell.forTableColumn());
     }
 
     private Node getText(String citationContext) {
-        String inBetween = StringUtil.substringBetween(citationContext, HTML_BOLD_START_TAG, HTML_BOLD_END_TAG);
+        String inBetween =
+                StringUtil.substringBetween(
+                        citationContext, HTML_BOLD_START_TAG, HTML_BOLD_END_TAG);
         String start = citationContext.substring(0, citationContext.indexOf(HTML_BOLD_START_TAG));
-        String end = citationContext.substring(citationContext.lastIndexOf(HTML_BOLD_END_TAG) + HTML_BOLD_END_TAG.length());
+        String end =
+                citationContext.substring(
+                        citationContext.lastIndexOf(HTML_BOLD_END_TAG)
+                                + HTML_BOLD_END_TAG.length());
 
         Text startText = new Text(start);
         Text inBetweenText = new Text(inBetween);

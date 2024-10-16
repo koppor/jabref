@@ -1,10 +1,5 @@
 package org.jabref.gui.push;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.icon.IconTheme;
 import org.jabref.gui.icon.JabRefIcon;
@@ -13,9 +8,13 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.util.HeadlessExecutorService;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 public class PushToVim extends AbstractPushToApplication {
 
@@ -38,8 +37,10 @@ public class PushToVim extends AbstractPushToApplication {
     }
 
     @Override
-    public PushToApplicationSettings getSettings(PushToApplication application, PushToApplicationPreferences preferences) {
-        return new PushToVimSettings(application, dialogService, this.preferences.getFilePreferences(), preferences);
+    public PushToApplicationSettings getSettings(
+            PushToApplication application, PushToApplicationPreferences preferences) {
+        return new PushToVimSettings(
+                application, dialogService, this.preferences.getFilePreferences(), preferences);
     }
 
     @Override
@@ -48,7 +49,11 @@ public class PushToVim extends AbstractPushToApplication {
         couldNotCall = false;
         notDefined = false;
 
-        commandPath = preferences.getPushToApplicationPreferences().getCommandPaths().get(this.getDisplayName());
+        commandPath =
+                preferences
+                        .getPushToApplicationPreferences()
+                        .getCommandPaths()
+                        .get(this.getDisplayName());
 
         if ((commandPath == null) || commandPath.trim().isEmpty()) {
             notDefined = true;
@@ -56,37 +61,43 @@ public class PushToVim extends AbstractPushToApplication {
         }
 
         try {
-            String[] com = new String[]{commandPath, "--servername",
-                    preferences.getPushToApplicationPreferences().getVimServer(), "--remote-send",
-                    "<C-\\><C-N>a" + getCitePrefix() + keys + getCiteSuffix()};
+            String[] com =
+                    new String[] {
+                        commandPath,
+                        "--servername",
+                        preferences.getPushToApplicationPreferences().getVimServer(),
+                        "--remote-send",
+                        "<C-\\><C-N>a" + getCitePrefix() + keys + getCiteSuffix()
+                    };
 
             LOGGER.atDebug()
-                  .setMessage("Executing command {}")
-                  .addArgument(() -> Arrays.toString(com))
-                  .log();
+                    .setMessage("Executing command {}")
+                    .addArgument(() -> Arrays.toString(com))
+                    .log();
 
             final Process p = Runtime.getRuntime().exec(com);
 
-            HeadlessExecutorService.INSTANCE.executeAndWait(() -> {
-                try (InputStream out = p.getErrorStream()) {
-                    int c;
-                    StringBuilder sb = new StringBuilder();
-                    try {
-                        while ((c = out.read()) != -1) {
-                            sb.append((char) c);
+            HeadlessExecutorService.INSTANCE.executeAndWait(
+                    () -> {
+                        try (InputStream out = p.getErrorStream()) {
+                            int c;
+                            StringBuilder sb = new StringBuilder();
+                            try {
+                                while ((c = out.read()) != -1) {
+                                    sb.append((char) c);
+                                }
+                            } catch (IOException e) {
+                                LOGGER.warn("Could not read from stderr.", e);
+                            }
+                            // Error stream has been closed. See if there were any errors:
+                            if (!sb.toString().trim().isEmpty()) {
+                                LOGGER.warn("Push to Vim error: {}", sb);
+                                couldNotPush = true;
+                            }
+                        } catch (IOException e) {
+                            LOGGER.warn("Error handling std streams", e);
                         }
-                    } catch (IOException e) {
-                        LOGGER.warn("Could not read from stderr.", e);
-                    }
-                    // Error stream has been closed. See if there were any errors:
-                    if (!sb.toString().trim().isEmpty()) {
-                        LOGGER.warn("Push to Vim error: {}", sb);
-                        couldNotPush = true;
-                    }
-                } catch (IOException e) {
-                    LOGGER.warn("Error handling std streams", e);
-                }
-            });
+                    });
         } catch (IOException excep) {
             LOGGER.warn("Problem pushing to Vim.", excep);
             couldNotCall = true;
@@ -96,10 +107,12 @@ public class PushToVim extends AbstractPushToApplication {
     @Override
     public void onOperationCompleted() {
         if (couldNotPush) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"),
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error pushing entries"),
                     Localization.lang("Could not push to a running Vim server."));
         } else if (couldNotCall) {
-            dialogService.showErrorDialogAndWait(Localization.lang("Error pushing entries"),
+            dialogService.showErrorDialogAndWait(
+                    Localization.lang("Error pushing entries"),
                     Localization.lang("Could not run the 'vim' program."));
         } else {
             super.onOperationCompleted();

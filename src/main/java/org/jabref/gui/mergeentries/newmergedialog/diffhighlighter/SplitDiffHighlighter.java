@@ -1,12 +1,12 @@
 package org.jabref.gui.mergeentries.newmergedialog.diffhighlighter;
 
-import java.util.List;
-
-import org.jabref.gui.mergeentries.newmergedialog.DiffMethod;
-
 import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.AbstractDelta;
+
 import org.fxmisc.richtext.StyleClassedTextArea;
+import org.jabref.gui.mergeentries.newmergedialog.DiffMethod;
+
+import java.util.List;
 
 /**
  * A diff highlighter in which changes are split between source and target text view.
@@ -14,7 +14,10 @@ import org.fxmisc.richtext.StyleClassedTextArea;
  */
 public final class SplitDiffHighlighter extends DiffHighlighter {
 
-    public SplitDiffHighlighter(StyleClassedTextArea sourceTextview, StyleClassedTextArea targetTextview, DiffMethod diffMethod) {
+    public SplitDiffHighlighter(
+            StyleClassedTextArea sourceTextview,
+            StyleClassedTextArea targetTextview,
+            DiffMethod diffMethod) {
         super(sourceTextview, targetTextview, diffMethod);
     }
 
@@ -29,7 +32,8 @@ public final class SplitDiffHighlighter extends DiffHighlighter {
         List<String> sourceTokens = splitString(sourceContent);
         List<String> targetTokens = splitString(targetContent);
 
-        List<AbstractDelta<String>> deltaList = DiffUtils.diff(sourceTokens, targetTokens).getDeltas();
+        List<AbstractDelta<String>> deltaList =
+                DiffUtils.diff(sourceTokens, targetTokens).getDeltas();
 
         for (AbstractDelta<String> delta : deltaList) {
             int affectedSourceTokensPosition = delta.getSource().getPosition();
@@ -37,28 +41,52 @@ public final class SplitDiffHighlighter extends DiffHighlighter {
 
             List<String> affectedTokensInSource = delta.getSource().getLines();
             List<String> affectedTokensInTarget = delta.getTarget().getLines();
-            int joinedSourceTokensLength = affectedTokensInSource.stream()
-                    .map(String::length)
-                    .reduce(Integer::sum)
-                    .map(value -> value + (getSeparator().length() * (affectedTokensInSource.size() - 1)))
-                    .orElse(0);
+            int joinedSourceTokensLength =
+                    affectedTokensInSource.stream()
+                            .map(String::length)
+                            .reduce(Integer::sum)
+                            .map(
+                                    value ->
+                                            value
+                                                    + (getSeparator().length()
+                                                            * (affectedTokensInSource.size() - 1)))
+                            .orElse(0);
 
-            int joinedTargetTokensLength = affectedTokensInTarget.stream()
-                    .map(String::length)
-                    .reduce(Integer::sum)
-                    .map(value -> value + (getSeparator().length() * (affectedTokensInTarget.size() - 1)))
-                    .orElse(0);
-            int affectedSourceTokensPositionInText = getPositionInText(affectedSourceTokensPosition, sourceTokens);
-            int affectedTargetTokensPositionInText = getPositionInText(affectedTargetTokensPosition, targetTokens);
+            int joinedTargetTokensLength =
+                    affectedTokensInTarget.stream()
+                            .map(String::length)
+                            .reduce(Integer::sum)
+                            .map(
+                                    value ->
+                                            value
+                                                    + (getSeparator().length()
+                                                            * (affectedTokensInTarget.size() - 1)))
+                            .orElse(0);
+            int affectedSourceTokensPositionInText =
+                    getPositionInText(affectedSourceTokensPosition, sourceTokens);
+            int affectedTargetTokensPositionInText =
+                    getPositionInText(affectedTargetTokensPosition, targetTokens);
             switch (delta.getType()) {
                 case CHANGE -> {
-                    sourceTextview.setStyleClass(affectedSourceTokensPositionInText, affectedSourceTokensPositionInText + joinedSourceTokensLength, "deletion");
-                    targetTextview.setStyleClass(affectedTargetTokensPositionInText, affectedTargetTokensPositionInText + joinedTargetTokensLength, "updated");
+                    sourceTextview.setStyleClass(
+                            affectedSourceTokensPositionInText,
+                            affectedSourceTokensPositionInText + joinedSourceTokensLength,
+                            "deletion");
+                    targetTextview.setStyleClass(
+                            affectedTargetTokensPositionInText,
+                            affectedTargetTokensPositionInText + joinedTargetTokensLength,
+                            "updated");
                 }
                 case DELETE ->
-                        sourceTextview.setStyleClass(affectedSourceTokensPositionInText, affectedSourceTokensPositionInText + joinedSourceTokensLength, "deletion");
+                        sourceTextview.setStyleClass(
+                                affectedSourceTokensPositionInText,
+                                affectedSourceTokensPositionInText + joinedSourceTokensLength,
+                                "deletion");
                 case INSERT ->
-                        targetTextview.setStyleClass(affectedTargetTokensPositionInText, affectedTargetTokensPositionInText + joinedTargetTokensLength, "addition");
+                        targetTextview.setStyleClass(
+                                affectedTargetTokensPositionInText,
+                                affectedTargetTokensPositionInText + joinedTargetTokensLength,
+                                "addition");
             }
         }
     }
@@ -67,7 +95,9 @@ public final class SplitDiffHighlighter extends DiffHighlighter {
         if (positionInTokenList == 0) {
             return 0;
         } else {
-            return tokenList.stream().limit(positionInTokenList).map(String::length)
+            return tokenList.stream()
+                    .limit(positionInTokenList)
+                    .map(String::length)
                     .reduce(Integer::sum)
                     .map(value -> value + (getSeparator().length() * positionInTokenList))
                     .orElse(0);

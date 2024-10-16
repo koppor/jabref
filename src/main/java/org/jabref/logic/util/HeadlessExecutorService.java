@@ -1,5 +1,8 @@
 package org.jabref.logic.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +16,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Responsible for managing of all threads (<em>except</em> GUI threads) in JabRef.
@@ -33,26 +33,29 @@ public class HeadlessExecutorService implements Executor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeadlessExecutorService.class);
 
-    private final ExecutorService executorService = Executors.newCachedThreadPool(r -> {
-        Thread thread = new Thread(r);
-        thread.setName("JabRef CachedThreadPool");
-        thread.setUncaughtExceptionHandler(new FallbackExceptionHandler());
-        return thread;
-    });
+    private final ExecutorService executorService =
+            Executors.newCachedThreadPool(
+                    r -> {
+                        Thread thread = new Thread(r);
+                        thread.setName("JabRef CachedThreadPool");
+                        thread.setUncaughtExceptionHandler(new FallbackExceptionHandler());
+                        return thread;
+                    });
 
-    private final ExecutorService lowPriorityExecutorService = Executors.newCachedThreadPool(r -> {
-        Thread thread = new Thread(r);
-        thread.setName("JabRef LowPriorityCachedThreadPool");
-        thread.setUncaughtExceptionHandler(new FallbackExceptionHandler());
-        return thread;
-    });
+    private final ExecutorService lowPriorityExecutorService =
+            Executors.newCachedThreadPool(
+                    r -> {
+                        Thread thread = new Thread(r);
+                        thread.setName("JabRef LowPriorityCachedThreadPool");
+                        thread.setUncaughtExceptionHandler(new FallbackExceptionHandler());
+                        return thread;
+                    });
 
     private final Timer timer = new Timer("timer", true);
 
     private Thread remoteThread;
 
-    private HeadlessExecutorService() {
-   }
+    private HeadlessExecutorService() {}
 
     public void execute(Runnable command) {
         Objects.requireNonNull(command);
@@ -98,7 +101,8 @@ public class HeadlessExecutorService implements Executor {
         }
     }
 
-    public <T> List<Future<T>> executeAll(Collection<Callable<T>> tasks, int timeout, TimeUnit timeUnit) {
+    public <T> List<Future<T>> executeAll(
+            Collection<Callable<T>> tasks, int timeout, TimeUnit timeUnit) {
         Objects.requireNonNull(tasks);
         try {
             return executorService.invokeAll(tasks, timeout, timeUnit);
@@ -196,11 +200,15 @@ public class HeadlessExecutorService implements Executor {
             // This is non-blocking. See https://stackoverflow.com/a/57383461/873282.
             executorService.shutdown();
             if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                LOGGER.debug("One minute passed, {} still not completed. Trying forced shutdown.", executorService.toString());
+                LOGGER.debug(
+                        "One minute passed, {} still not completed. Trying forced shutdown.",
+                        executorService.toString());
                 // those threads will be interrupted in their current task
                 executorService.shutdownNow();
                 if (executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                    LOGGER.debug("One minute passed again - forced shutdown of {} worked.", executorService.toString());
+                    LOGGER.debug(
+                            "One minute passed again - forced shutdown of {} worked.",
+                            executorService.toString());
                 } else {
                     LOGGER.error("{} did not terminate", executorService.toString());
                 }

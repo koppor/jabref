@@ -1,13 +1,13 @@
 package org.jabref.gui.slr;
 
-import java.util.Objects;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 import org.jabref.model.study.StudyDatabase;
+
+import java.util.Objects;
 
 /**
  * View representation of {@link StudyDatabase}
@@ -47,10 +47,7 @@ public class StudyCatalogItem {
 
     @Override
     public String toString() {
-        return "StudyCatalogItem{" +
-                "name=" + name.get() +
-                ", enabled=" + enabled.get() +
-                '}';
+        return "StudyCatalogItem{" + "name=" + name.get() + ", enabled=" + enabled.get() + '}';
     }
 
     @Override
@@ -62,7 +59,8 @@ public class StudyCatalogItem {
             return false;
         }
         StudyCatalogItem that = (StudyCatalogItem) o;
-        return Objects.equals(getName(), that.getName()) && Objects.equals(isEnabled(), that.isEnabled());
+        return Objects.equals(getName(), that.getName())
+                && Objects.equals(isEnabled(), that.isEnabled());
     }
 
     @Override

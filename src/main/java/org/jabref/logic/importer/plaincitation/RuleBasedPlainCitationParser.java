@@ -1,5 +1,11 @@
 package org.jabref.logic.importer.plaincitation;
 
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.types.EntryType;
+import org.jabref.model.entry.types.StandardEntryType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -7,12 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.types.EntryType;
-import org.jabref.model.entry.types.StandardEntryType;
 
 /**
  * Parse a plain citation using regex rules.
@@ -28,29 +28,41 @@ public class RuleBasedPlainCitationParser implements PlainCitationParser {
     private static final String INITIALS_GROUP = "INITIALS";
     private static final String LASTNAME_GROUP = "LASTNAME";
 
-    private static final Pattern URL_PATTERN = Pattern.compile(
-            "(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)" +
-                    "(([\\w\\-]+\\.)+?([\\w\\-.~]+\\/?)*" +
-                    "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    private static final Pattern URL_PATTERN =
+            Pattern.compile(
+                    "(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
+                            + "(([\\w\\-]+\\.)+?([\\w\\-.~]+\\/?)*"
+                            + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
+                    Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
-    private static final Pattern YEAR_PATTERN = Pattern.compile(
-            "\\d{4}",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    private static final Pattern YEAR_PATTERN =
+            Pattern.compile(
+                    "\\d{4}", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
-    private static final Pattern AUTHOR_PATTERN = Pattern.compile(
-            "(?<" + LASTNAME_GROUP + ">\\p{Lu}\\w+),?\\s(?<" + INITIALS_GROUP + ">(\\p{Lu}\\.\\s){1,2})" +
-                    "\\s*(and|,|\\.)*",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    private static final Pattern AUTHOR_PATTERN =
+            Pattern.compile(
+                    "(?<"
+                            + LASTNAME_GROUP
+                            + ">\\p{Lu}\\w+),?\\s(?<"
+                            + INITIALS_GROUP
+                            + ">(\\p{Lu}\\.\\s){1,2})"
+                            + "\\s*(and|,|\\.)*",
+                    Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
-    private static final Pattern AUTHOR_PATTERN_2 = Pattern.compile(
-            "(?<" + INITIALS_GROUP + ">(\\p{Lu}\\.\\s){1,2})(?<" + LASTNAME_GROUP + ">\\p{Lu}\\w+)" +
-                    "\\s*(and|,|\\.)*",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    private static final Pattern AUTHOR_PATTERN_2 =
+            Pattern.compile(
+                    "(?<"
+                            + INITIALS_GROUP
+                            + ">(\\p{Lu}\\.\\s){1,2})(?<"
+                            + LASTNAME_GROUP
+                            + ">\\p{Lu}\\w+)"
+                            + "\\s*(and|,|\\.)*",
+                    Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
-    private static final Pattern PAGES_PATTERN = Pattern.compile(
-            "(p.)?\\s?\\d+(-\\d+)?",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    private static final Pattern PAGES_PATTERN =
+            Pattern.compile(
+                    "(p.)?\\s?\\d+(-\\d+)?",
+                    Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
     private final List<String> urls = new ArrayList<>();
     private final List<String> authors = new ArrayList<>();
@@ -100,7 +112,8 @@ public class RuleBasedPlainCitationParser implements PlainCitationParser {
         while (matcher.find()) {
             String yearCandidate = input.substring(matcher.start(), matcher.end());
             int intYearCandidate = Integer.parseInt(yearCandidate);
-            if ((intYearCandidate > 1700) && (intYearCandidate <= Calendar.getInstance().get(Calendar.YEAR))) {
+            if ((intYearCandidate > 1700)
+                    && (intYearCandidate <= Calendar.getInstance().get(Calendar.YEAR))) {
                 year = yearCandidate;
                 return fixSpaces(input.replace(year, YEAR_TAG));
             }
@@ -116,7 +129,8 @@ public class RuleBasedPlainCitationParser implements PlainCitationParser {
     private String findAuthorsByPattern(String input, Pattern pattern) {
         Matcher matcher = pattern.matcher(input);
         while (matcher.find()) {
-            authors.add(GenerateAuthor(matcher.group(LASTNAME_GROUP), matcher.group(INITIALS_GROUP)));
+            authors.add(
+                    GenerateAuthor(matcher.group(LASTNAME_GROUP), matcher.group(INITIALS_GROUP)));
         }
         return fixSpaces(matcher.replaceAll(AUTHOR_TAG));
     }
@@ -135,8 +149,9 @@ public class RuleBasedPlainCitationParser implements PlainCitationParser {
 
     private String fixSpaces(String input) {
         return input.replaceAll("[,.!?;:]", "$0 ")
-                    .replaceAll("\\p{Lt}", " $0")
-                    .replaceAll("\\s+", " ").trim();
+                .replaceAll("\\p{Lt}", " $0")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 
     private String findParts(String input) {
@@ -149,9 +164,10 @@ public class RuleBasedPlainCitationParser implements PlainCitationParser {
         }
         int delimiterIndex = input.lastIndexOf("//");
         if (delimiterIndex != -1) {
-            lastParts.add(input.substring(afterAuthorsIndex, delimiterIndex)
-                               .replace(YEAR_TAG, "")
-                               .replace(PAGES_TAG, ""));
+            lastParts.add(
+                    input.substring(afterAuthorsIndex, delimiterIndex)
+                            .replace(YEAR_TAG, "")
+                            .replace(PAGES_TAG, ""));
             lastParts.addAll(Arrays.asList(input.substring(delimiterIndex + 2).split(",|\\.")));
         } else {
             lastParts.addAll(Arrays.asList(input.substring(afterAuthorsIndex).split(",|\\.")));

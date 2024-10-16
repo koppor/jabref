@@ -1,9 +1,9 @@
 package org.jabref.logic.layout.format;
 
+import org.jabref.logic.layout.LayoutFormatter;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jabref.logic.layout.LayoutFormatter;
 
 /**
  * Will interpret two consecutive newlines as the start of a new paragraph and thus

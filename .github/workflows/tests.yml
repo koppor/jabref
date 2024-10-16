@@ -25,8 +25,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  checkstyle:
-    name: Checkstyle
+  gjf-checkstyle:
+    name: GJF (AOSP) and Checkstyle
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
@@ -39,6 +39,13 @@ jobs:
         with:
           java-version: 21.0.2
           distribution: 'temurin'
+      - uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "-r -a --skip-reflowing-long-strings --skip-javadoc-formatting --set-exit-if-changed"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run git diff on failure
+        if: failure()
+        run: git diff
       - name: Run checkstyle reporter
         uses: dbelyaev/action-checkstyle@master
         with:

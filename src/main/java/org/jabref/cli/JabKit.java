@@ -1,16 +1,8 @@
 package org.jabref.cli;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.Authenticator;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import com.airhacks.afterburner.injection.Injector;
 
+import org.apache.commons.cli.ParseException;
 import org.jabref.logic.UiCommand;
 import org.jabref.logic.journals.JournalAbbreviationLoader;
 import org.jabref.logic.journals.JournalAbbreviationRepository;
@@ -29,18 +21,28 @@ import org.jabref.logic.util.Directories;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.DummyFileUpdateMonitor;
 import org.jabref.model.util.FileUpdateMonitor;
-
-import com.airhacks.afterburner.injection.Injector;
-import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.tinylog.configuration.Configuration;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.Authenticator;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+
 /// Entrypoint for a command-line only version of JabRef.
-/// It does not open any dialogs, just parses the command line arguments and outputs text and creates/modifies files.
+/// It does not open any dialogs, just parses the command line arguments and outputs text and
+// creates/modifies files.
 ///
-/// See [Command Line Interface Guidelines](https://clig.dev/) for general guidelines how to design a good CLI interface.
+/// See [Command Line Interface Guidelines](https://clig.dev/) for general guidelines how to design
+// a good CLI interface.
 ///
 /// It does not open any GUI.
 /// For the GUI application see {@link org.jabref.Launcher}.
@@ -70,7 +72,8 @@ public class JabKit {
         System.exit(0);
     }
 
-    public static List<UiCommand> processArguments(String[] args, JabRefCliPreferences preferences, FileUpdateMonitor fileUpdateMonitor) {
+    public static List<UiCommand> processArguments(
+            String[] args, JabRefCliPreferences preferences, FileUpdateMonitor fileUpdateMonitor) {
         try {
             Injector.setModelOrService(BuildInfo.class, new BuildInfo());
 
@@ -82,8 +85,13 @@ public class JabKit {
             BibEntryTypesManager entryTypesManager = preferences.getCustomEntryTypesRepository();
             Injector.setModelOrService(BibEntryTypesManager.class, entryTypesManager);
 
-            Injector.setModelOrService(JournalAbbreviationRepository.class, JournalAbbreviationLoader.loadRepository(preferences.getJournalAbbreviationPreferences()));
-            Injector.setModelOrService(ProtectedTermsLoader.class, new ProtectedTermsLoader(preferences.getProtectedTermsPreferences()));
+            Injector.setModelOrService(
+                    JournalAbbreviationRepository.class,
+                    JournalAbbreviationLoader.loadRepository(
+                            preferences.getJournalAbbreviationPreferences()));
+            Injector.setModelOrService(
+                    ProtectedTermsLoader.class,
+                    new ProtectedTermsLoader(preferences.getProtectedTermsPreferences()));
 
             configureProxy(preferences.getProxyPreferences());
             configureSSL(preferences.getSSLPreferences());
@@ -94,12 +102,13 @@ public class JabKit {
                 Injector.setModelOrService(FileUpdateMonitor.class, fileUpdateMonitor);
 
                 // Process arguments
-                ArgumentProcessor argumentProcessor = new ArgumentProcessor(
-                        args,
-                        ArgumentProcessor.Mode.INITIAL_START,
-                        preferences,
-                        fileUpdateMonitor,
-                        entryTypesManager);
+                ArgumentProcessor argumentProcessor =
+                        new ArgumentProcessor(
+                                args,
+                                ArgumentProcessor.Mode.INITIAL_START,
+                                preferences,
+                                fileUpdateMonitor,
+                                entryTypesManager);
                 argumentProcessor.processArguments();
                 if (argumentProcessor.shouldShutDown()) {
                     LOGGER.debug("JabRef shut down after processing command line arguments");
@@ -143,7 +152,8 @@ public class JabKit {
         }
 
         // addLogToDisk
-        // We cannot use `Injector.instantiateModelOrService(BuildInfo.class).version` here, because this initializes logging
+        // We cannot use `Injector.instantiateModelOrService(BuildInfo.class).version` here, because
+        // this initializes logging
         Path directory = Directories.getLogDirectory(new BuildInfo().version);
         try {
             Files.createDirectories(directory);
@@ -155,15 +165,18 @@ public class JabKit {
 
         // The "Shared File Writer" is explained at
         // https://tinylog.org/v2/configuration/#shared-file-writer
-        Map<String, String> configuration = Map.of(
-                "level", isDebugEnabled ? "debug" : "info",
-                "writerFile", "rolling file",
-                "writerFile.level", isDebugEnabled ? "debug" : "info",
-                // We need to manually join the path, because ".resolve" does not work on Windows, because ":" is not allowed in file names on Windows
-                "writerFile.file", directory + File.separator + "log_{date:yyyy-MM-dd_HH-mm-ss}.txt",
-                "writerFile.charset", "UTF-8",
-                "writerFile.policies", "startup",
-                "writerFile.backups", "30");
+        Map<String, String> configuration =
+                Map.of(
+                        "level", isDebugEnabled ? "debug" : "info",
+                        "writerFile", "rolling file",
+                        "writerFile.level", isDebugEnabled ? "debug" : "info",
+                        // We need to manually join the path, because ".resolve" does not work on
+                        // Windows, because ":" is not allowed in file names on Windows
+                        "writerFile.file",
+                                directory + File.separator + "log_{date:yyyy-MM-dd_HH-mm-ss}.txt",
+                        "writerFile.charset", "UTF-8",
+                        "writerFile.policies", "startup",
+                        "writerFile.backups", "30");
         configuration.forEach(Configuration::set);
 
         LOGGER = LoggerFactory.getLogger(JabKit.class);
@@ -172,7 +185,8 @@ public class JabKit {
     /**
      * @return true if JabRef should continue starting up, false if it should quit.
      */
-    private static boolean handleMultipleAppInstances(String[] args, RemotePreferences remotePreferences) throws InterruptedException {
+    private static boolean handleMultipleAppInstances(
+            String[] args, RemotePreferences remotePreferences) throws InterruptedException {
         LOGGER.trace("Checking for remote handling...");
         if (remotePreferences.useRemoteServer()) {
             // Try to contact already running JabRef
@@ -180,15 +194,20 @@ public class JabKit {
             if (remoteClient.ping()) {
                 LOGGER.debug("Pinging other instance succeeded.");
                 if (args.length == 0) {
-                    // There is already a server out there, avoid showing log "Passing arguments" while no arguments are provided.
-                    LOGGER.warn("This JabRef instance is already running. Please switch to that instance.");
+                    // There is already a server out there, avoid showing log "Passing arguments"
+                    // while no arguments are provided.
+                    LOGGER.warn(
+                            "This JabRef instance is already running. Please switch to that instance.");
                 } else {
-                    // We are not alone, there is already a server out there, send command line arguments to other instance
+                    // We are not alone, there is already a server out there, send command line
+                    // arguments to other instance
                     LOGGER.debug("Passing arguments passed on to running JabRef...");
                     if (remoteClient.sendCommandLineArguments(args)) {
                         // So we assume it's all taken care of, and quit.
-                        // Output to both to the log and the screen. Therefore, we do not have an additional System.out.println.
-                        LOGGER.info("Arguments passed on to running JabRef instance. Shutting down.");
+                        // Output to both to the log and the screen. Therefore, we do not have an
+                        // additional System.out.println.
+                        LOGGER.info(
+                                "Arguments passed on to running JabRef instance. Shutting down.");
                     } else {
                         LOGGER.warn("Could not communicate with other running JabRef instance.");
                     }
@@ -210,7 +229,8 @@ public class JabKit {
     }
 
     private static void configureSSL(SSLPreferences sslPreferences) {
-        TrustStoreManager.createTruststoreFileIfNotExist(Path.of(sslPreferences.getTruststorePath()));
+        TrustStoreManager.createTruststoreFileIfNotExist(
+                Path.of(sslPreferences.getTruststorePath()));
     }
 
     private static void clearOldSearchIndices() {
@@ -225,13 +245,15 @@ public class JabKit {
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(appData)) {
             for (Path path : stream) {
-                if (Files.isDirectory(path) && !path.toString().endsWith("ssl") && path.toString().contains("lucene")
+                if (Files.isDirectory(path)
+                        && !path.toString().endsWith("ssl")
+                        && path.toString().contains("lucene")
                         && !path.equals(currentIndexPath)) {
                     LOGGER.info("Deleting out-of-date fulltext search index at {}.", path);
                     Files.walk(path)
-                         .sorted(Comparator.reverseOrder())
-                         .map(Path::toFile)
-                         .forEach(File::delete);
+                            .sorted(Comparator.reverseOrder())
+                            .map(Path::toFile)
+                            .forEach(File::delete);
                 }
             }
         } catch (IOException e) {

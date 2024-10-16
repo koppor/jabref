@@ -1,32 +1,6 @@
 package org.jabref.logic.search.indexing;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import javafx.util.Pair;
-
-import org.jabref.logic.FilePreferences;
-import org.jabref.logic.importer.util.FileFieldParser;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.search.LuceneIndexer;
-import org.jabref.logic.util.BackgroundTask;
-import org.jabref.logic.util.HeadlessExecutorService;
-import org.jabref.logic.util.StandardFileType;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.LinkedFile;
-import org.jabref.model.search.SearchFieldConstants;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.document.Document;
@@ -41,8 +15,33 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.jabref.logic.FilePreferences;
+import org.jabref.logic.importer.util.FileFieldParser;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.search.LuceneIndexer;
+import org.jabref.logic.util.BackgroundTask;
+import org.jabref.logic.util.HeadlessExecutorService;
+import org.jabref.logic.util.StandardFileType;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.LinkedFile;
+import org.jabref.model.search.SearchFieldConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class DefaultLinkedFilesIndexer implements LuceneIndexer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLinkedFilesIndexer.class);
@@ -58,17 +57,25 @@ public class DefaultLinkedFilesIndexer implements LuceneIndexer {
     private Path indexDirectoryPath;
     private Map<String, Long> indexedFiles;
 
-    public DefaultLinkedFilesIndexer(BibDatabaseContext databaseContext, FilePreferences filePreferences) throws IOException {
+    public DefaultLinkedFilesIndexer(
+            BibDatabaseContext databaseContext, FilePreferences filePreferences)
+            throws IOException {
         this.databaseContext = databaseContext;
         this.filePreferences = filePreferences;
-        this.libraryName = databaseContext.getDatabasePath().map(path -> path.getFileName().toString()).orElseGet(() -> "untitled");
+        this.libraryName =
+                databaseContext
+                        .getDatabasePath()
+                        .map(path -> path.getFileName().toString())
+                        .orElseGet(() -> "untitled");
         this.indexedFiles = new ConcurrentHashMap<>();
 
         indexDirectoryPath = databaseContext.getFulltextIndexPath();
-        IndexWriterConfig config = new IndexWriterConfig(SearchFieldConstants.LINKED_FILES_ANALYZER);
+        IndexWriterConfig config =
+                new IndexWriterConfig(SearchFieldConstants.LINKED_FILES_ANALYZER);
         if ("unsaved".equals(indexDirectoryPath.getFileName().toString())) {
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-            indexDirectoryPath = indexDirectoryPath.resolveSibling("unsaved" + NUMBER_OF_UNSAVED_LIBRARIES++);
+            indexDirectoryPath =
+                    indexDirectoryPath.resolveSibling("unsaved" + NUMBER_OF_UNSAVED_LIBRARIES++);
         }
 
         this.indexDirectory = FSDirectory.open(indexDirectoryPath);
@@ -79,17 +86,22 @@ public class DefaultLinkedFilesIndexer implements LuceneIndexer {
     @Override
     public void updateOnStart(BackgroundTask<?> task) {
         indexedFiles = getLinkedFilesFromIndex();
-        Map<String, Pair<Long, Path>> currentFiles = getLinkedFilesFromEntries(databaseContext.getEntries());
+        Map<String, Pair<Long, Path>> currentFiles =
+                getLinkedFilesFromEntries(databaseContext.getEntries());
 
         Set<String> filesToRemove = new HashSet<>();
         for (Map.Entry<String, Long> entry : indexedFiles.entrySet()) {
             String fileLink = entry.getKey();
             long modification = entry.getValue();
             if (!currentFiles.containsKey(fileLink)) {
-                LOGGER.debug("File {} has been removed from the library. Will be removed from the index", fileLink);
+                LOGGER.debug(
+                        "File {} has been removed from the library. Will be removed from the index",
+                        fileLink);
                 filesToRemove.add(fileLink);
             } else if (currentFiles.get(fileLink).getKey() > modification) {
-                LOGGER.debug("File {} has been modified since last indexing. Will be removed from the index.", fileLink);
+                LOGGER.debug(
+                        "File {} has been modified since last indexing. Will be removed from the index.",
+                        fileLink);
                 filesToRemove.add(fileLink);
             }
         }
@@ -99,7 +111,9 @@ public class DefaultLinkedFilesIndexer implements LuceneIndexer {
         for (Map.Entry<String, Pair<Long, Path>> entry : currentFiles.entrySet()) {
             String fileLink = entry.getKey();
             if (!indexedFiles.containsKey(fileLink)) {
-                LOGGER.debug("File {} has been added to the library. Will be added to the index.", fileLink);
+                LOGGER.debug(
+                        "File {} has been added to the library. Will be added to the index.",
+                        fileLink);
                 filesToAdd.put(fileLink, entry.getValue());
             }
         }
@@ -144,7 +158,10 @@ public class DefaultLinkedFilesIndexer implements LuceneIndexer {
             }
             addToIndex(entry.getKey(), entry.getValue().getKey(), entry.getValue().getValue());
             task.updateProgress(i, linkedFiles.size());
-            task.updateMessage(Localization.lang("Indexing %0. %1 of %2 files added to the index.", entry.getValue().getValue().getFileName(), i, linkedFiles.size()));
+            task.updateMessage(
+                    Localization.lang(
+                            "Indexing %0. %1 of %2 files added to the index.",
+                            entry.getValue().getValue().getFileName(), i, linkedFiles.size()));
             i++;
         }
         LOGGER.debug("Added {} files to index", linkedFiles.size());
@@ -167,7 +184,8 @@ public class DefaultLinkedFilesIndexer implements LuceneIndexer {
         removeUnlinkedFiles(entries, linkedFiles.keySet());
     }
 
-    private void removeUnlinkedFiles(Collection<BibEntry> entriesToRemove, Collection<String> linkedFiles) {
+    private void removeUnlinkedFiles(
+            Collection<BibEntry> entriesToRemove, Collection<String> linkedFiles) {
         Map<String, Set<BibEntry>> currentFiles = new HashMap<>();
         for (BibEntry entry : databaseContext.getEntries()) {
             for (LinkedFile linkedFile : entry.getFiles()) {
@@ -175,16 +193,18 @@ public class DefaultLinkedFilesIndexer implements LuceneIndexer {
             }
         }
 
-        Set<String> filesToRemove = linkedFiles.stream()
-                                               .filter(link -> {
-                                                   Set<BibEntry> entriesLinkedToFile = currentFiles.get(link);
-                                                   if (entriesLinkedToFile != null) {
-                                                       entriesLinkedToFile.removeAll(entriesToRemove);
-                                                       return entriesLinkedToFile.isEmpty();
-                                                   }
-                                                   return true;
-                                               })
-                                               .collect(Collectors.toSet());
+        Set<String> filesToRemove =
+                linkedFiles.stream()
+                        .filter(
+                                link -> {
+                                    Set<BibEntry> entriesLinkedToFile = currentFiles.get(link);
+                                    if (entriesLinkedToFile != null) {
+                                        entriesLinkedToFile.removeAll(entriesToRemove);
+                                        return entriesLinkedToFile.isEmpty();
+                                    }
+                                    return true;
+                                })
+                        .collect(Collectors.toSet());
         removeFromIndex(filesToRemove);
     }
 
@@ -192,7 +212,8 @@ public class DefaultLinkedFilesIndexer implements LuceneIndexer {
         for (String fileLink : links) {
             try {
                 LOGGER.debug("Removing file {} from index.", fileLink);
-                indexWriter.deleteDocuments(new Term(SearchFieldConstants.PATH.toString(), fileLink));
+                indexWriter.deleteDocuments(
+                        new Term(SearchFieldConstants.PATH.toString(), fileLink));
                 indexedFiles.remove(fileLink);
             } catch (IOException e) {
                 LOGGER.warn("Could not remove linked file {} from index.", fileLink, e);
@@ -201,13 +222,16 @@ public class DefaultLinkedFilesIndexer implements LuceneIndexer {
     }
 
     @Override
-    public void updateEntry(BibEntry entry, String oldValue, String newValue, BackgroundTask<?> task) {
+    public void updateEntry(
+            BibEntry entry, String oldValue, String newValue, BackgroundTask<?> task) {
         Set<LinkedFile> oldFiles = new HashSet<>(FileFieldParser.parse(oldValue));
         Set<LinkedFile> newFiles = new HashSet<>(FileFieldParser.parse(newValue));
 
         Set<LinkedFile> toRemove = new HashSet<>(oldFiles);
         toRemove.removeAll(newFiles);
-        removeUnlinkedFiles(List.of(entry), toRemove.stream().map(LinkedFile::getLink).collect(Collectors.toSet()));
+        removeUnlinkedFiles(
+                List.of(entry),
+                toRemove.stream().map(LinkedFile::getLink).collect(Collectors.toSet()));
 
         Set<LinkedFile> toAdd = new HashSet<>(newFiles);
         toAdd.removeAll(oldFiles);
@@ -236,7 +260,8 @@ public class DefaultLinkedFilesIndexer implements LuceneIndexer {
         LOGGER.debug("Getting all linked files from index.");
         Map<String, Long> linkedFiles = new HashMap<>();
         try {
-            TermQuery query = new TermQuery(new Term(SearchFieldConstants.PAGE_NUMBER.toString(), "1"));
+            TermQuery query =
+                    new TermQuery(new Term(SearchFieldConstants.PAGE_NUMBER.toString(), "1"));
             searcherManager.maybeRefresh();
             IndexSearcher searcher = searcherManager.acquire();
             StoredFields storedFields = searcher.storedFields();
@@ -246,7 +271,8 @@ public class DefaultLinkedFilesIndexer implements LuceneIndexer {
                 var pathField = doc.getField(SearchFieldConstants.PATH.toString());
                 var modifiedField = doc.getField(SearchFieldConstants.MODIFIED.toString());
                 if (pathField != null && modifiedField != null) {
-                    linkedFiles.put(pathField.stringValue(), Long.valueOf(modifiedField.stringValue()));
+                    linkedFiles.put(
+                            pathField.stringValue(), Long.valueOf(modifiedField.stringValue()));
                 }
             }
             searcherManager.release(searcher);
@@ -270,20 +296,27 @@ public class DefaultLinkedFilesIndexer implements LuceneIndexer {
     }
 
     private Pair<Long, Path> getLinkedFileInfo(LinkedFile linkedFile) {
-        if (linkedFile.isOnlineLink() || !StandardFileType.PDF.getName().equals(linkedFile.getFileType())) {
-            LOGGER.debug("Linked file {} is not a local PDF file. The file will not be indexed.", linkedFile.getLink());
+        if (linkedFile.isOnlineLink()
+                || !StandardFileType.PDF.getName().equals(linkedFile.getFileType())) {
+            LOGGER.debug(
+                    "Linked file {} is not a local PDF file. The file will not be indexed.",
+                    linkedFile.getLink());
             return null;
         }
         Optional<Path> resolvedPath = linkedFile.findIn(databaseContext, filePreferences);
         if (resolvedPath.isEmpty()) {
-            LOGGER.debug("Could not resolve path of linked file {}. The file will not be indexed.", linkedFile.getLink());
+            LOGGER.debug(
+                    "Could not resolve path of linked file {}. The file will not be indexed.",
+                    linkedFile.getLink());
             return null;
         }
         try {
-            long fsModifiedTime = Files.getLastModifiedTime(resolvedPath.get()).to(TimeUnit.SECONDS);
+            long fsModifiedTime =
+                    Files.getLastModifiedTime(resolvedPath.get()).to(TimeUnit.SECONDS);
             return new Pair<>(fsModifiedTime, resolvedPath.get());
         } catch (IOException e) {
-            LOGGER.warn("Could not check the modification time of file {}.", linkedFile.getLink(), e);
+            LOGGER.warn(
+                    "Could not check the modification time of file {}.", linkedFile.getLink(), e);
             return null;
         }
     }

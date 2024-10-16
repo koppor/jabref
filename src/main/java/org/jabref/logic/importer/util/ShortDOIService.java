@@ -1,18 +1,18 @@
 package org.jabref.logic.importer.util;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import kong.unirest.core.json.JSONException;
+import kong.unirest.core.json.JSONObject;
 
+import org.apache.hc.core5.net.URIBuilder;
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.ParseException;
 import org.jabref.logic.net.URLDownload;
 import org.jabref.model.entry.identifier.DOI;
 
-import kong.unirest.core.json.JSONException;
-import kong.unirest.core.json.JSONObject;
-import org.apache.hc.core5.net.URIBuilder;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * Class for obtaining shortened DOI names. See <a href="https://shortdoi.org">https://shortdoi.org</a>.

@@ -1,5 +1,18 @@
 package org.jabref.logic.net;
 
+import kong.unirest.core.HttpResponse;
+import kong.unirest.core.Unirest;
+import kong.unirest.core.UnirestException;
+
+import org.jabref.http.dto.SimpleHttpResponse;
+import org.jabref.logic.importer.FetcherClientException;
+import org.jabref.logic.importer.FetcherException;
+import org.jabref.logic.importer.FetcherServerException;
+import org.jabref.logic.util.io.FileUtil;
+import org.jabref.model.strings.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -38,19 +51,6 @@ import java.util.Optional;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
-import org.jabref.http.dto.SimpleHttpResponse;
-import org.jabref.logic.importer.FetcherClientException;
-import org.jabref.logic.importer.FetcherException;
-import org.jabref.logic.importer.FetcherServerException;
-import org.jabref.logic.util.io.FileUtil;
-import org.jabref.model.strings.StringUtil;
-
-import kong.unirest.core.HttpResponse;
-import kong.unirest.core.Unirest;
-import kong.unirest.core.UnirestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * URL download to a string.
  * <p>
@@ -67,7 +67,8 @@ import org.slf4j.LoggerFactory;
  */
 public class URLDownload {
 
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0";
+    public static final String USER_AGENT =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0";
     private static final Logger LOGGER = LoggerFactory.getLogger(URLDownload.class);
     private static final Duration DEFAULT_CONNECT_TIMEOUT = Duration.ofSeconds(30);
     private static final int MAX_RETRIES = 3;
@@ -80,9 +81,9 @@ public class URLDownload {
 
     static {
         Unirest.config()
-               .followRedirects(true)
-               .enableCookieManagement(true)
-               .setDefaultHeader("User-Agent", USER_AGENT);
+                .followRedirects(true)
+                .enableCookieManagement(true)
+                .setDefaultHeader("User-Agent", USER_AGENT);
     }
 
     /**
@@ -103,7 +104,8 @@ public class URLDownload {
         try {
             sslContext = SSLContext.getInstance("TLSv1.2");
             sslContext.init(null, null, new SecureRandom());
-            // Note: SSL certificates are installed at {@link TrustStoreManager#configureTrustStore(Path)}
+            // Note: SSL certificates are installed at {@link
+            // TrustStoreManager#configureTrustStore(Path)}
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             LOGGER.error("Could not initialize SSL context", e);
             sslContext = null;
@@ -125,8 +127,10 @@ public class URLDownload {
             do {
                 retries++;
                 HttpResponse<String> response = Unirest.head(urlToCheck).asString();
-                // Check if we have redirects, e.g. arxiv will give otherwise content type html for the original url
-                // We need to do it "manually", because ".followRedirects(true)" only works for GET not for HEAD
+                // Check if we have redirects, e.g. arxiv will give otherwise content type html for
+                // the original url
+                // We need to do it "manually", because ".followRedirects(true)" only works for GET
+                // not for HEAD
                 locationHeader = response.getHeaders().getFirst("location");
                 if (!StringUtil.isNullOrEmpty(locationHeader)) {
                     urlToCheck = locationHeader;
@@ -143,7 +147,12 @@ public class URLDownload {
 
         // Use GET request as alternative if no HEAD request is available
         try {
-            contentType = Unirest.get(source.toString()).asString().getHeaders().get("Content-Type").getFirst();
+            contentType =
+                    Unirest.get(source.toString())
+                            .asString()
+                            .getHeaders()
+                            .get("Content-Type")
+                            .getFirst();
             if (!StringUtil.isNullOrEmpty(contentType)) {
                 return Optional.of(contentType);
             }
@@ -231,9 +240,10 @@ public class URLDownload {
      * @param connection an existing connection
      * @return the downloaded string
      */
-    public static String asString(Charset encoding, URLConnection connection) throws FetcherException {
+    public static String asString(Charset encoding, URLConnection connection)
+            throws FetcherException {
         try (InputStream input = new BufferedInputStream(connection.getInputStream());
-             Writer output = new StringWriter()) {
+                Writer output = new StringWriter()) {
             copy(input, output, encoding);
             return output.toString();
         } catch (IOException e) {
@@ -368,8 +378,8 @@ public class URLDownload {
             }
 
             if ((status == HttpURLConnection.HTTP_MOVED_TEMP)
-                || (status == HttpURLConnection.HTTP_MOVED_PERM)
-                || (status == HttpURLConnection.HTTP_SEE_OTHER)) {
+                    || (status == HttpURLConnection.HTTP_MOVED_PERM)
+                    || (status == HttpURLConnection.HTTP_SEE_OTHER)) {
                 // get redirect url from "location" header field
                 String newUrl = connection.getHeaderField("location");
                 // open the new connection again

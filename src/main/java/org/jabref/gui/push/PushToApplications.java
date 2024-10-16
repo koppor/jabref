@@ -1,11 +1,11 @@
 package org.jabref.gui.push;
 
+import org.jabref.gui.DialogService;
+import org.jabref.gui.preferences.GuiPreferences;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.jabref.gui.DialogService;
-import org.jabref.gui.preferences.GuiPreferences;
 
 public class PushToApplications {
 
@@ -21,31 +21,33 @@ public class PushToApplications {
 
     private static final List<PushToApplication> APPLICATIONS = new ArrayList<>();
 
-    private PushToApplications() {
-    }
+    private PushToApplications() {}
 
-    public static List<PushToApplication> getAllApplications(DialogService dialogService, GuiPreferences preferences) {
+    public static List<PushToApplication> getAllApplications(
+            DialogService dialogService, GuiPreferences preferences) {
         if (!APPLICATIONS.isEmpty()) {
             return APPLICATIONS;
         }
 
-        APPLICATIONS.addAll(List.of(
-                new PushToEmacs(dialogService, preferences),
-                new PushToLyx(dialogService, preferences),
-                new PushToSublimeText(dialogService, preferences),
-                new PushToTexmaker(dialogService, preferences),
-                new PushToTeXstudio(dialogService, preferences),
-                new PushToTeXworks(dialogService, preferences),
-                new PushToVim(dialogService, preferences),
-                new PushToWinEdt(dialogService, preferences),
-                new PushToTexShop(dialogService, preferences)));
+        APPLICATIONS.addAll(
+                List.of(
+                        new PushToEmacs(dialogService, preferences),
+                        new PushToLyx(dialogService, preferences),
+                        new PushToSublimeText(dialogService, preferences),
+                        new PushToTexmaker(dialogService, preferences),
+                        new PushToTeXstudio(dialogService, preferences),
+                        new PushToTeXworks(dialogService, preferences),
+                        new PushToVim(dialogService, preferences),
+                        new PushToWinEdt(dialogService, preferences),
+                        new PushToTexShop(dialogService, preferences)));
 
         return APPLICATIONS;
     }
 
-    public static Optional<PushToApplication> getApplicationByName(String applicationName, DialogService dialogService, GuiPreferences preferences) {
+    public static Optional<PushToApplication> getApplicationByName(
+            String applicationName, DialogService dialogService, GuiPreferences preferences) {
         return getAllApplications(dialogService, preferences).stream()
-                                                             .filter(application -> application.getDisplayName().equals(applicationName))
-                                                             .findAny();
+                .filter(application -> application.getDisplayName().equals(applicationName))
+                .findAny();
     }
 }

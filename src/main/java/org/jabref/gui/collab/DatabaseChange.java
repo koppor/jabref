@@ -1,7 +1,5 @@
 package org.jabref.gui.collab;
 
-import java.util.Optional;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,13 +19,28 @@ import org.jabref.gui.undo.NamedCompound;
 import org.jabref.gui.util.OptionalObjectProperty;
 import org.jabref.model.database.BibDatabaseContext;
 
-public sealed abstract class DatabaseChange permits EntryAdd, EntryChange, EntryDelete, GroupChange, MetadataChange, PreambleChange, BibTexStringAdd, BibTexStringChange, BibTexStringDelete, BibTexStringRename {
+import java.util.Optional;
+
+public abstract sealed class DatabaseChange
+        permits EntryAdd,
+                EntryChange,
+                EntryDelete,
+                GroupChange,
+                MetadataChange,
+                PreambleChange,
+                BibTexStringAdd,
+                BibTexStringChange,
+                BibTexStringDelete,
+                BibTexStringRename {
     protected final BibDatabaseContext databaseContext;
-    protected final OptionalObjectProperty<DatabaseChangeResolver> externalChangeResolver = OptionalObjectProperty.empty();
+    protected final OptionalObjectProperty<DatabaseChangeResolver> externalChangeResolver =
+            OptionalObjectProperty.empty();
     private final BooleanProperty accepted = new SimpleBooleanProperty();
     private final StringProperty name = new SimpleStringProperty();
 
-    protected DatabaseChange(BibDatabaseContext databaseContext, DatabaseChangeResolverFactory databaseChangeResolverFactory) {
+    protected DatabaseChange(
+            BibDatabaseContext databaseContext,
+            DatabaseChangeResolverFactory databaseChangeResolverFactory) {
         this.databaseContext = databaseContext;
         setChangeName("Unnamed Change!");
 

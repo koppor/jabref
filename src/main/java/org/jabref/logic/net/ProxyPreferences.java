@@ -1,11 +1,11 @@
 package org.jabref.logic.net;
 
-import java.util.Objects;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+
+import java.util.Objects;
 
 public class ProxyPreferences {
 
@@ -17,13 +17,14 @@ public class ProxyPreferences {
     private final StringProperty password;
     private final BooleanProperty persistPassword;
 
-    public ProxyPreferences(Boolean useProxy,
-                            String hostname,
-                            String port,
-                            Boolean useAuthentication,
-                            String username,
-                            String password,
-                            boolean persistPassword) {
+    public ProxyPreferences(
+            Boolean useProxy,
+            String hostname,
+            String port,
+            Boolean useAuthentication,
+            String username,
+            String password,
+            boolean persistPassword) {
         this.useProxy = new SimpleBooleanProperty(useProxy);
         this.hostname = new SimpleStringProperty(hostname);
         this.port = new SimpleStringProperty(port);

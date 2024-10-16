@@ -1,9 +1,9 @@
 package org.jabref.logic.bibtex.comparator;
 
+import org.jabref.model.entry.BibtexString;
+
 import java.util.Comparator;
 import java.util.Locale;
-
-import org.jabref.model.entry.BibtexString;
 
 public class BibtexStringComparator implements Comparator<BibtexString> {
 

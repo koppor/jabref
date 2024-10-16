@@ -1,6 +1,6 @@
 package org.jabref.gui.mergeentries;
 
-import java.util.List;
+import com.tobiasdiez.easybind.EasyObservableValue;
 
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.ObjectProperty;
@@ -13,23 +13,27 @@ import javafx.scene.Node;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
-import com.tobiasdiez.easybind.EasyObservableValue;
+import java.util.List;
 
 @DefaultProperty("children")
 public class DiffHighlightingEllipsingTextFlow extends TextFlow {
 
-    private final static String DEFAULT_ELLIPSIS_STRING = "...";
+    private static final String DEFAULT_ELLIPSIS_STRING = "...";
     private StringProperty ellipsisString;
 
     private final ObservableList<Node> allChildren = FXCollections.observableArrayList();
-    private final ChangeListener<Number> sizeChangeListener = (observableValue, number, t1) -> adjustText();
+    private final ChangeListener<Number> sizeChangeListener =
+            (observableValue, number, t1) -> adjustText();
     private final ListChangeListener<Node> listChangeListener = this::adjustChildren;
 
     private final String fullText;
     private final EasyObservableValue<String> comparisonString;
     private final ObjectProperty<DiffMode> diffMode;
 
-    public DiffHighlightingEllipsingTextFlow(String fullText, EasyObservableValue<String> comparisonString, ObjectProperty<DiffMode> diffMode) {
+    public DiffHighlightingEllipsingTextFlow(
+            String fullText,
+            EasyObservableValue<String> comparisonString,
+            ObjectProperty<DiffMode> diffMode) {
         this.fullText = fullText;
         allChildren.addListener(listChangeListener);
         widthProperty().addListener(sizeChangeListener);
@@ -89,7 +93,8 @@ public class DiffHighlightingEllipsingTextFlow extends TextFlow {
                     // all Texts are displayed, let's make sure all chars are as well
                     Node lastChildAsShown = super.getChildren().get(super.getChildren().size() - 1);
                     Node lastChild = allChildren.getLast();
-                    if (lastChildAsShown instanceof Text text && text.getText().length() < ((Text) lastChild).getText().length()) {
+                    if (lastChildAsShown instanceof Text text
+                            && text.getText().length() < ((Text) lastChild).getText().length()) {
                         text.setText(((Text) lastChild).getText());
                     } else {
                         // nothing to fill the space with
@@ -106,12 +111,15 @@ public class DiffHighlightingEllipsingTextFlow extends TextFlow {
 
     private boolean ellipseUntilTextFits() {
         while (getHeight() > getMaxHeight() || getWidth() > getMaxWidth()) {
-            Text lastChildAsShown = (Text) super.getChildren().remove(super.getChildren().size() - 1);
-            while (getEllipsisString().equals(lastChildAsShown.getText()) || "".equals(lastChildAsShown.getText())) {
+            Text lastChildAsShown =
+                    (Text) super.getChildren().remove(super.getChildren().size() - 1);
+            while (getEllipsisString().equals(lastChildAsShown.getText())
+                    || "".equals(lastChildAsShown.getText())) {
                 if (super.getChildren().isEmpty()) {
                     return false;
                 }
-                lastChildAsShown = (Text) super.getChildren().remove(super.getChildren().size() - 1);
+                lastChildAsShown =
+                        (Text) super.getChildren().remove(super.getChildren().size() - 1);
             }
             Text shortenedChild = new Text(ellipseString(lastChildAsShown.getText()));
             shortenedChild.getStyleClass().addAll(lastChildAsShown.getStyleClass());
@@ -124,16 +132,23 @@ public class DiffHighlightingEllipsingTextFlow extends TextFlow {
     public void highlightDiff() {
         allChildren.clear();
         if (comparisonString.get() != null && !comparisonString.get().equals(fullText)) {
-            final List<Text> highlightedText = switch (diffMode.getValue()) {
-                case PLAIN -> {
-                    Text text = new Text(fullText);
-                    text.getStyleClass().add("text-unchanged");
-                    yield List.of(text);
-                }
-                case WORD -> DiffHighlighting.generateDiffHighlighting(comparisonString.get(), fullText, " ");
-                case CHARACTER -> DiffHighlighting.generateDiffHighlighting(comparisonString.get(), fullText, "");
-                default -> throw new UnsupportedOperationException("Not implemented " + diffMode.getValue());
-            };
+            final List<Text> highlightedText =
+                    switch (diffMode.getValue()) {
+                        case PLAIN -> {
+                            Text text = new Text(fullText);
+                            text.getStyleClass().add("text-unchanged");
+                            yield List.of(text);
+                        }
+                        case WORD ->
+                                DiffHighlighting.generateDiffHighlighting(
+                                        comparisonString.get(), fullText, " ");
+                        case CHARACTER ->
+                                DiffHighlighting.generateDiffHighlighting(
+                                        comparisonString.get(), fullText, "");
+                        default ->
+                                throw new UnsupportedOperationException(
+                                        "Not implemented " + diffMode.getValue());
+                    };
             allChildren.addAll(highlightedText);
         } else {
             Text text = new Text(fullText);

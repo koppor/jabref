@@ -1,5 +1,9 @@
 package org.jabref.gui.preferences.protectedterms;
 
+import com.airhacks.afterburner.views.ViewLoader;
+
+import jakarta.inject.Inject;
+
 import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
@@ -20,13 +24,11 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.protectedterms.ProtectedTermsList;
 import org.jabref.logic.protectedterms.ProtectedTermsLoader;
 
-import com.airhacks.afterburner.views.ViewLoader;
-import jakarta.inject.Inject;
-
 /**
  * Dialog for managing term list files.
  */
-public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsTabViewModel> implements PreferencesTab {
+public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsTabViewModel>
+        implements PreferencesTab {
     @FXML private TableView<ProtectedTermsListItemModel> filesTable;
     @FXML private TableColumn<ProtectedTermsListItemModel, Boolean> filesTableEnabledColumn;
     @FXML private TableColumn<ProtectedTermsListItemModel, String> filesTableDescriptionColumn;
@@ -37,9 +39,7 @@ public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsT
     @Inject private ProtectedTermsLoader termsLoader;
 
     public ProtectedTermsTab() {
-        ViewLoader.view(this)
-                  .root(this)
-                  .load();
+        ViewLoader.view(this).root(this).load();
     }
 
     @Override
@@ -54,18 +54,21 @@ public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsT
         new ViewModelTableRowFactory<ProtectedTermsListItemModel>()
                 .withContextMenu(this::createContextMenu)
                 .install(filesTable);
-        filesTableEnabledColumn.setCellFactory(CheckBoxTableCell.forTableColumn(filesTableEnabledColumn));
+        filesTableEnabledColumn.setCellFactory(
+                CheckBoxTableCell.forTableColumn(filesTableEnabledColumn));
         filesTableEnabledColumn.setCellValueFactory(data -> data.getValue().enabledProperty());
-        filesTableDescriptionColumn.setCellValueFactory(data -> BindingsHelper.constantOf(data.getValue().getTermsList().getDescription()));
+        filesTableDescriptionColumn.setCellValueFactory(
+                data -> BindingsHelper.constantOf(data.getValue().getTermsList().getDescription()));
 
-        filesTableFileColumn.setCellValueFactory(data -> {
-            ProtectedTermsList list = data.getValue().getTermsList();
-            if (list.isInternalList()) {
-                return BindingsHelper.constantOf(Localization.lang("Internal list"));
-            } else {
-                return BindingsHelper.constantOf(list.getLocation());
-            }
-        });
+        filesTableFileColumn.setCellValueFactory(
+                data -> {
+                    ProtectedTermsList list = data.getValue().getTermsList();
+                    if (list.isInternalList()) {
+                        return BindingsHelper.constantOf(Localization.lang("Internal list"));
+                    } else {
+                        return BindingsHelper.constantOf(list.getLocation());
+                    }
+                });
 
         filesTableEditColumn.setCellValueFactory(data -> data.getValue().internalProperty().not());
         new ValueTableCellFactory<ProtectedTermsListItemModel, Boolean>()
@@ -74,7 +77,8 @@ public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsT
                 .withOnMouseClickedEvent((item, none) -> event -> viewModel.edit(item))
                 .install(filesTableEditColumn);
 
-        filesTableDeleteColumn.setCellValueFactory(data -> data.getValue().internalProperty().not());
+        filesTableDeleteColumn.setCellValueFactory(
+                data -> data.getValue().internalProperty().not());
         new ValueTableCellFactory<ProtectedTermsListItemModel, Boolean>()
                 .withGraphic(none -> IconTheme.JabRefIcons.DELETE_ENTRY.getGraphicNode())
                 .withVisibleExpression(ReadOnlyBooleanWrapper::new)
@@ -88,12 +92,25 @@ public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsT
     private ContextMenu createContextMenu(ProtectedTermsListItemModel file) {
         ActionFactory factory = new ActionFactory();
         ContextMenu contextMenu = new ContextMenu();
-        contextMenu.getItems().addAll(
-                factory.createMenuItem(StandardActions.EDIT_LIST, new ProtectedTermsTab.ContextAction(StandardActions.EDIT_LIST, file)),
-                factory.createMenuItem(StandardActions.VIEW_LIST, new ProtectedTermsTab.ContextAction(StandardActions.VIEW_LIST, file)),
-                factory.createMenuItem(StandardActions.REMOVE_LIST, new ProtectedTermsTab.ContextAction(StandardActions.REMOVE_LIST, file)),
-                factory.createMenuItem(StandardActions.RELOAD_LIST, new ProtectedTermsTab.ContextAction(StandardActions.RELOAD_LIST, file))
-        );
+        contextMenu
+                .getItems()
+                .addAll(
+                        factory.createMenuItem(
+                                StandardActions.EDIT_LIST,
+                                new ProtectedTermsTab.ContextAction(
+                                        StandardActions.EDIT_LIST, file)),
+                        factory.createMenuItem(
+                                StandardActions.VIEW_LIST,
+                                new ProtectedTermsTab.ContextAction(
+                                        StandardActions.VIEW_LIST, file)),
+                        factory.createMenuItem(
+                                StandardActions.REMOVE_LIST,
+                                new ProtectedTermsTab.ContextAction(
+                                        StandardActions.REMOVE_LIST, file)),
+                        factory.createMenuItem(
+                                StandardActions.RELOAD_LIST,
+                                new ProtectedTermsTab.ContextAction(
+                                        StandardActions.RELOAD_LIST, file)));
         contextMenu.getItems().forEach(item -> item.setGraphic(null));
         contextMenu.getStyleClass().add("context-menu");
 
@@ -119,11 +136,13 @@ public class ProtectedTermsTab extends AbstractPreferenceTabView<ProtectedTermsT
             this.command = command;
             this.itemModel = itemModel;
 
-            this.executable.bind(BindingsHelper.constantOf(
-                    switch (command) {
-                        case EDIT_LIST, REMOVE_LIST, RELOAD_LIST -> !itemModel.getTermsList().isInternalList();
-                        default -> true;
-                    }));
+            this.executable.bind(
+                    BindingsHelper.constantOf(
+                            switch (command) {
+                                case EDIT_LIST, REMOVE_LIST, RELOAD_LIST ->
+                                        !itemModel.getTermsList().isInternalList();
+                                default -> true;
+                            }));
         }
 
         @Override

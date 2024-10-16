@@ -1,16 +1,16 @@
 package org.jabref.model.openoffice.rangesort;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jabref.model.openoffice.uno.UnoScreenRefresh;
-
 import com.sun.star.awt.Point;
 import com.sun.star.text.XTextDocument;
 import com.sun.star.text.XTextRange;
 import com.sun.star.text.XTextViewCursor;
+
+import org.jabref.model.openoffice.uno.UnoScreenRefresh;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Sort XTextRange values visually (top-down,left-to-right).
@@ -23,8 +23,7 @@ public class RangeSortVisual {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RangeSortVisual.class);
 
-    private RangeSortVisual() {
-    }
+    private RangeSortVisual() {}
 
     /**
      * Sort the input {@code inputs} visually.
@@ -33,12 +32,12 @@ public class RangeSortVisual {
      *
      * @return The input, sorted by the elements XTextRange and getIndexInPosition.
      */
-    public static <T> List<RangeSortable<T>> visualSort(List<RangeSortable<T>> inputs,
-                                                        XTextDocument doc,
-                                                        FunctionalTextViewCursor fcursor) {
+    public static <T> List<RangeSortable<T>> visualSort(
+            List<RangeSortable<T>> inputs, XTextDocument doc, FunctionalTextViewCursor fcursor) {
 
         if (UnoScreenRefresh.hasControllersLocked(doc)) {
-            final String msg = "visualSort: with ControllersLocked, viewCursor.gotoRange is probably useless";
+            final String msg =
+                    "visualSort: with ControllersLocked, viewCursor.gotoRange is probably useless";
             LOGGER.warn(msg);
             throw new IllegalStateException(msg);
         }
@@ -58,9 +57,8 @@ public class RangeSortVisual {
         ArrayList<ComparableMark<RangeSortable<T>>> comparableMarks = new ArrayList<>(inputSize);
         for (int i = 0; i < inputSize; i++) {
             RangeSortable<T> input = inputs.get(i);
-            comparableMarks.add(new ComparableMark<>(positions.get(i),
-                    input.getIndexInPosition(),
-                    input));
+            comparableMarks.add(
+                    new ComparableMark<>(positions.get(i), input.getIndexInPosition(), input));
         }
         comparableMarks.sort(RangeSortVisual::compareTopToBottomLeftToRight);
 
@@ -111,6 +109,5 @@ public class RangeSortVisual {
      * <p>
      * Used for sorting reference marks by their visual positions.
      */
-    private record ComparableMark<T>(Point position, int indexInPosition, T content) {
-    }
+    private record ComparableMark<T>(Point position, int indexInPosition, T content) {}
 }

@@ -1,5 +1,12 @@
 package org.jabref.logic.importer.fileformat;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.jabref.logic.importer.Importer;
+import org.jabref.model.entry.BibEntry;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -7,22 +14,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.jabref.logic.importer.Importer;
-import org.jabref.model.entry.BibEntry;
-
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 class MsBibImporterTest {
 
     Importer importer = new MsBibImporter();
 
     @Test
     final void isNotRecognizedFormat() throws Exception {
-        List<String> notAccepted = Arrays.asList("CopacImporterTest1.txt", "IsiImporterTest1.isi",
-                "IsiImporterTestInspec.isi", "emptyFile.xml", "IsiImporterTestWOS.isi");
+        List<String> notAccepted =
+                Arrays.asList(
+                        "CopacImporterTest1.txt",
+                        "IsiImporterTest1.isi",
+                        "IsiImporterTestInspec.isi",
+                        "emptyFile.xml",
+                        "IsiImporterTestWOS.isi");
         for (String s : notAccepted) {
             Path file = Path.of(MsBibImporter.class.getResource(s).toURI());
             assertFalse(importer.isRecognizedFormat(file));

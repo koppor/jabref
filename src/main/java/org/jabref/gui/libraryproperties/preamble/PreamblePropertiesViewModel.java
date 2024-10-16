@@ -1,13 +1,13 @@
 package org.jabref.gui.libraryproperties.preamble;
 
-import javax.swing.undo.UndoManager;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 import org.jabref.gui.libraryproperties.PropertiesTabViewModel;
 import org.jabref.gui.undo.UndoablePreambleChange;
 import org.jabref.model.database.BibDatabaseContext;
+
+import javax.swing.undo.UndoManager;
 
 public class PreamblePropertiesViewModel implements PropertiesTabViewModel {
     private final StringProperty preambleProperty = new SimpleStringProperty("");
@@ -29,7 +29,11 @@ public class PreamblePropertiesViewModel implements PropertiesTabViewModel {
     public void storeSettings() {
         String newPreamble = preambleProperty.getValue();
         if (!databaseContext.getDatabase().getPreamble().orElse("").equals(newPreamble)) {
-            undoManager.addEdit(new UndoablePreambleChange(databaseContext.getDatabase(), databaseContext.getDatabase().getPreamble().orElse(null), newPreamble));
+            undoManager.addEdit(
+                    new UndoablePreambleChange(
+                            databaseContext.getDatabase(),
+                            databaseContext.getDatabase().getPreamble().orElse(null),
+                            newPreamble));
             databaseContext.getDatabase().setPreamble(newPreamble);
         }
     }

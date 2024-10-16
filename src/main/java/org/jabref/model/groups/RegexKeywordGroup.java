@@ -1,11 +1,11 @@
 package org.jabref.model.groups;
 
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.field.Field;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
-
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.field.Field;
 
 /**
  * Matches entries if the content of a given field is matched by a regular expression.
@@ -13,15 +13,20 @@ import org.jabref.model.entry.field.Field;
 public class RegexKeywordGroup extends KeywordGroup {
     private final Pattern pattern;
 
-    public RegexKeywordGroup(String name, GroupHierarchyType context, Field searchField,
-                             String searchExpression, boolean caseSensitive) {
+    public RegexKeywordGroup(
+            String name,
+            GroupHierarchyType context,
+            Field searchField,
+            String searchExpression,
+            boolean caseSensitive) {
         super(name, context, searchField, searchExpression, caseSensitive);
         this.pattern = compilePattern(searchExpression, caseSensitive);
     }
 
     private static Pattern compilePattern(String searchExpression, boolean caseSensitive) {
-        return caseSensitive ? Pattern.compile("\\b" + searchExpression + "\\b") : Pattern.compile(
-                "\\b" + searchExpression + "\\b", Pattern.CASE_INSENSITIVE);
+        return caseSensitive
+                ? Pattern.compile("\\b" + searchExpression + "\\b")
+                : Pattern.compile("\\b" + searchExpression + "\\b", Pattern.CASE_INSENSITIVE);
     }
 
     @Override
@@ -47,16 +52,13 @@ public class RegexKeywordGroup extends KeywordGroup {
 
     @Override
     public AbstractGroup deepCopy() {
-        return new RegexKeywordGroup(getName(), getHierarchicalContext(), searchField, searchExpression,
-                caseSensitive);
+        return new RegexKeywordGroup(
+                getName(), getHierarchicalContext(), searchField, searchExpression, caseSensitive);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(),
-                getHierarchicalContext(),
-                searchField,
-                searchExpression,
-                caseSensitive);
+        return Objects.hash(
+                getName(), getHierarchicalContext(), searchField, searchExpression, caseSensitive);
     }
 }

@@ -1,13 +1,15 @@
 package org.jabref.logic.exporter;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Stream;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javafx.collections.FXCollections;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.jabref.logic.FilePreferences;
 import org.jabref.logic.bibtex.FieldPreferences;
 import org.jabref.logic.importer.ImportFormatPreferences;
@@ -22,9 +24,6 @@ import org.jabref.model.entry.LinkedFile;
 import org.jabref.model.entry.Month;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,11 +31,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Answers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
 class EmbeddedBibFilePdfExporterTest {
 
@@ -80,7 +79,9 @@ class EmbeddedBibFilePdfExporterTest {
         olly2018.setFiles(List.of(linkedFile));
 
         toral2006.setField(StandardField.AUTHOR, "Toral, Antonio and Munoz, Rafael");
-        toral2006.setField(StandardField.TITLE, "A proposal to automatically build and maintain gazetteers for Named Entity Recognition by using Wikipedia");
+        toral2006.setField(
+                StandardField.TITLE,
+                "A proposal to automatically build and maintain gazetteers for Named Entity Recognition by using Wikipedia");
         toral2006.setField(StandardField.BOOKTITLE, "Proceedings of EACL");
         toral2006.setField(StandardField.PAGES, "56--61");
         toral2006.setField(StandardField.EPRINTTYPE, "asdf");
@@ -110,15 +111,17 @@ class EmbeddedBibFilePdfExporterTest {
 
         BibDatabaseMode bibDatabaseMode = BibDatabaseMode.BIBTEX;
         BibEntryTypesManager bibEntryTypesManager = new BibEntryTypesManager();
-        FieldPreferences fieldPreferences = new FieldPreferences(
-                true,
-                List.of(StandardField.MONTH),
-                Collections.emptyList());
+        FieldPreferences fieldPreferences =
+                new FieldPreferences(true, List.of(StandardField.MONTH), Collections.emptyList());
 
-        exporter = new EmbeddedBibFilePdfExporter(bibDatabaseMode, bibEntryTypesManager, fieldPreferences);
+        exporter =
+                new EmbeddedBibFilePdfExporter(
+                        bibDatabaseMode, bibEntryTypesManager, fieldPreferences);
 
-        ImportFormatPreferences importFormatPreferences = mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
-        when(importFormatPreferences.fieldPreferences().getNonWrappableFields()).thenReturn(FXCollections.emptyObservableList());
+        ImportFormatPreferences importFormatPreferences =
+                mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS);
+        when(importFormatPreferences.fieldPreferences().getNonWrappableFields())
+                .thenReturn(FXCollections.emptyObservableList());
         importer = new PdfEmbeddedBibFileImporter(importFormatPreferences);
 
         databaseContext = new BibDatabaseContext();
@@ -133,13 +136,26 @@ class EmbeddedBibFilePdfExporterTest {
     @ParameterizedTest
     @MethodSource("provideBibEntriesWithValidPdfFileLinks")
     void successfulExportToAllFilesOfEntry(BibEntry bibEntryWithValidPdfFileLink) throws Exception {
-        assertTrue(exporter.exportToAllFilesOfEntry(databaseContext, filePreferences, bibEntryWithValidPdfFileLink, List.of(olly2018), abbreviationRepository));
+        assertTrue(
+                exporter.exportToAllFilesOfEntry(
+                        databaseContext,
+                        filePreferences,
+                        bibEntryWithValidPdfFileLink,
+                        List.of(olly2018),
+                        abbreviationRepository));
     }
 
     @ParameterizedTest
     @MethodSource("provideBibEntriesWithInvalidPdfFileLinks")
-    void unsuccessfulExportToAllFilesOfEntry(BibEntry bibEntryWithValidPdfFileLink) throws Exception {
-        assertFalse(exporter.exportToAllFilesOfEntry(databaseContext, filePreferences, bibEntryWithValidPdfFileLink, List.of(olly2018), abbreviationRepository));
+    void unsuccessfulExportToAllFilesOfEntry(BibEntry bibEntryWithValidPdfFileLink)
+            throws Exception {
+        assertFalse(
+                exporter.exportToAllFilesOfEntry(
+                        databaseContext,
+                        filePreferences,
+                        bibEntryWithValidPdfFileLink,
+                        List.of(olly2018),
+                        abbreviationRepository));
     }
 
     public static Stream<Arguments> provideBibEntriesWithValidPdfFileLinks() {
@@ -153,13 +169,17 @@ class EmbeddedBibFilePdfExporterTest {
     @ParameterizedTest
     @MethodSource("providePathsToValidPDFs")
     void successfulExportToFileByPath(Path path) throws Exception {
-        assertTrue(exporter.exportToFileByPath(databaseContext, filePreferences, path, abbreviationRepository));
+        assertTrue(
+                exporter.exportToFileByPath(
+                        databaseContext, filePreferences, path, abbreviationRepository));
     }
 
     @ParameterizedTest
     @MethodSource("providePathsToInvalidPDFs")
     void unsuccessfulExportToFileByPath(Path path) throws Exception {
-        assertFalse(exporter.exportToFileByPath(databaseContext, filePreferences, path, abbreviationRepository));
+        assertFalse(
+                exporter.exportToFileByPath(
+                        databaseContext, filePreferences, path, abbreviationRepository));
     }
 
     public static Stream<Arguments> providePathToNewPDFs() {
@@ -178,7 +198,8 @@ class EmbeddedBibFilePdfExporterTest {
                 Arguments.of(Path.of(existingFileThatIsNotLinked.getLink())));
     }
 
-    private static LinkedFile createDefaultLinkedFile(String fileName, Path tempDir) throws IOException {
+    private static LinkedFile createDefaultLinkedFile(String fileName, Path tempDir)
+            throws IOException {
         Path pdfFile = tempDir.resolve(fileName);
         try (PDDocument pdf = new PDDocument()) {
             pdf.addPage(new PDPage());
@@ -191,12 +212,13 @@ class EmbeddedBibFilePdfExporterTest {
     @ParameterizedTest
     @MethodSource("providePathToNewPDFs")
     void roundtripExportImport(Path path) throws Exception {
-        BibEntry expected = new BibEntry(StandardEntryType.Misc)
-                .withCitationKey("test")
-                .withField(StandardField.AUTHOR, "Test Author")
-                .withField(StandardField.TITLE, "Test Title")
-                .withField(StandardField.URL, "http://example.com")
-                .withField(StandardField.DATE, "2020-10-14");
+        BibEntry expected =
+                new BibEntry(StandardEntryType.Misc)
+                        .withCitationKey("test")
+                        .withField(StandardField.AUTHOR, "Test Author")
+                        .withField(StandardField.TITLE, "Test Title")
+                        .withField(StandardField.URL, "http://example.com")
+                        .withField(StandardField.DATE, "2020-10-14");
         expected.setChanged(true);
 
         List<BibEntry> expectedEntries = Collections.singletonList(expected);

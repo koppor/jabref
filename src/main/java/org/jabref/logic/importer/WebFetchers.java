@@ -1,12 +1,9 @@
 package org.jabref.logic.importer;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import static org.jabref.model.entry.field.StandardField.DOI;
+import static org.jabref.model.entry.field.StandardField.EPRINT;
+import static org.jabref.model.entry.field.StandardField.ISBN;
+import static org.jabref.model.entry.field.StandardField.ISSN;
 
 import org.jabref.logic.FilePreferences;
 import org.jabref.logic.importer.fetcher.ACMPortalFetcher;
@@ -55,28 +52,27 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.identifier.DOI;
 import org.jabref.model.entry.identifier.Identifier;
 
-import static org.jabref.model.entry.field.StandardField.DOI;
-import static org.jabref.model.entry.field.StandardField.EPRINT;
-import static org.jabref.model.entry.field.StandardField.ISBN;
-import static org.jabref.model.entry.field.StandardField.ISSN;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class WebFetchers {
 
-    private WebFetchers() {
-    }
+    private WebFetchers() {}
 
-    public static Optional<IdBasedFetcher> getIdBasedFetcherForField(Field field, ImportFormatPreferences importFormatPreferences) {
+    public static Optional<IdBasedFetcher> getIdBasedFetcherForField(
+            Field field, ImportFormatPreferences importFormatPreferences) {
         IdBasedFetcher fetcher;
 
         switch (field) {
-            case DOI ->
-                    fetcher = new DoiFetcher(importFormatPreferences);
-            case ISBN ->
-                    fetcher = new IsbnFetcher(importFormatPreferences);
-            case EPRINT ->
-                    fetcher = new ArXivFetcher(importFormatPreferences);
-            case ISSN ->
-                    fetcher = new IssnFetcher();
+            case DOI -> fetcher = new DoiFetcher(importFormatPreferences);
+            case ISBN -> fetcher = new IsbnFetcher(importFormatPreferences);
+            case EPRINT -> fetcher = new ArXivFetcher(importFormatPreferences);
+            case ISSN -> fetcher = new IssnFetcher();
             case null, default -> {
                 return Optional.empty();
             }
@@ -89,7 +85,8 @@ public class WebFetchers {
         if (clazz == DOI.class) {
             return (IdFetcher<T>) new CrossRef();
         } else {
-            throw new IllegalArgumentException("No fetcher found for identifier" + clazz.getCanonicalName());
+            throw new IllegalArgumentException(
+                    "No fetcher found for identifier" + clazz.getCanonicalName());
         }
     }
 
@@ -103,7 +100,9 @@ public class WebFetchers {
     /**
      * @return sorted set containing search based fetchers
      */
-    public static SortedSet<SearchBasedFetcher> getSearchBasedFetchers(ImportFormatPreferences importFormatPreferences, ImporterPreferences importerPreferences) {
+    public static SortedSet<SearchBasedFetcher> getSearchBasedFetchers(
+            ImportFormatPreferences importFormatPreferences,
+            ImporterPreferences importerPreferences) {
         SortedSet<SearchBasedFetcher> set = new TreeSet<>(new CompositeSearchFirstComparator());
         set.add(new ArXivFetcher(importFormatPreferences));
         set.add(new ISIDOREFetcher());
@@ -137,14 +136,15 @@ public class WebFetchers {
     /**
      * @return sorted set containing id based fetchers
      */
-    public static SortedSet<IdBasedFetcher> getIdBasedFetchers(ImportFormatPreferences importFormatPreferences,
-                                                               ImporterPreferences importerPreferences) {
+    public static SortedSet<IdBasedFetcher> getIdBasedFetchers(
+            ImportFormatPreferences importFormatPreferences,
+            ImporterPreferences importerPreferences) {
         SortedSet<IdBasedFetcher> set = new TreeSet<>(Comparator.comparing(WebFetcher::getName));
         set.add(new ArXivFetcher(importFormatPreferences));
         set.add(new AstrophysicsDataSystem(importFormatPreferences, importerPreferences));
         set.add(new IsbnFetcher(importFormatPreferences));
-                // .addRetryFetcher(new EbookDeIsbnFetcher(importFormatPreferences)));
-                // .addRetryFetcher(new DoiToBibtexConverterComIsbnFetcher(importFormatPreferences)));
+        // .addRetryFetcher(new EbookDeIsbnFetcher(importFormatPreferences)));
+        // .addRetryFetcher(new DoiToBibtexConverterComIsbnFetcher(importFormatPreferences)));
         set.add(new DiVA(importFormatPreferences));
         set.add(new DoiFetcher(importFormatPreferences));
         set.add(new MedlineFetcher());
@@ -160,10 +160,11 @@ public class WebFetchers {
         return set;
     }
 
-    public static SortedSet<EntryBasedFetcher> getEntryBasedFetchers(ImporterPreferences importerPreferences,
-                                                                     ImportFormatPreferences importFormatPreferences,
-                                                                     FilePreferences filePreferences,
-                                                                     BibDatabaseContext databaseContext) {
+    public static SortedSet<EntryBasedFetcher> getEntryBasedFetchers(
+            ImporterPreferences importerPreferences,
+            ImportFormatPreferences importFormatPreferences,
+            FilePreferences filePreferences,
+            BibDatabaseContext databaseContext) {
         SortedSet<EntryBasedFetcher> set = new TreeSet<>(Comparator.comparing(WebFetcher::getName));
         set.add(new INSPIREFetcher(importFormatPreferences));
         set.add(new AstrophysicsDataSystem(importFormatPreferences, importerPreferences));
@@ -171,7 +172,7 @@ public class WebFetchers {
         set.add(new IsbnFetcher(importFormatPreferences));
         set.add(new IssnFetcher());
         // .addRetryFetcher(new EbookDeIsbnFetcher(importFormatPreferences)));
-                // .addRetryFetcher(new DoiToBibtexConverterComIsbnFetcher(importFormatPreferences)));
+        // .addRetryFetcher(new DoiToBibtexConverterComIsbnFetcher(importFormatPreferences)));
         set.add(new MathSciNet(importFormatPreferences));
         set.add(new CrossRef());
         set.add(new ZbMATH(importFormatPreferences));
@@ -180,7 +181,9 @@ public class WebFetchers {
 
         // Uses the PDFs - and then uses the parsed DOI. Makes it 10% a web fetcher.
         // We list it here, because otherwise, it would be much more effort (other UI button, ...)
-        set.add(new PdfMergeMetadataImporter.EntryBasedFetcherWrapper(importFormatPreferences, filePreferences, databaseContext));
+        set.add(
+                new PdfMergeMetadataImporter.EntryBasedFetcherWrapper(
+                        importFormatPreferences, filePreferences, databaseContext));
 
         return set;
     }
@@ -188,7 +191,8 @@ public class WebFetchers {
     /**
      * @return sorted set containing id fetchers
      */
-    public static SortedSet<IdFetcher<? extends Identifier>> getIdFetchers(ImportFormatPreferences importFormatPreferences) {
+    public static SortedSet<IdFetcher<? extends Identifier>> getIdFetchers(
+            ImportFormatPreferences importFormatPreferences) {
         SortedSet<IdFetcher<?>> set = new TreeSet<>(Comparator.comparing(WebFetcher::getName));
         set.add(new CrossRef());
         set.add(new ArXivFetcher(importFormatPreferences));
@@ -198,7 +202,9 @@ public class WebFetchers {
     /**
      * @return set containing fulltext fetchers
      */
-    public static Set<FulltextFetcher> getFullTextFetchers(ImportFormatPreferences importFormatPreferences, ImporterPreferences importerPreferences) {
+    public static Set<FulltextFetcher> getFullTextFetchers(
+            ImportFormatPreferences importFormatPreferences,
+            ImporterPreferences importerPreferences) {
         Set<FulltextFetcher> fetchers = new HashSet<>();
 
         // Original
@@ -226,7 +232,9 @@ public class WebFetchers {
     /**
      * @return set containing customizable api key fetchers
      */
-    public static Set<CustomizableKeyFetcher> getCustomizableKeyFetchers(ImportFormatPreferences importFormatPreferences, ImporterPreferences importerPreferences) {
+    public static Set<CustomizableKeyFetcher> getCustomizableKeyFetchers(
+            ImportFormatPreferences importFormatPreferences,
+            ImporterPreferences importerPreferences) {
         Set<CustomizableKeyFetcher> fetchers = new HashSet<>();
         fetchers.add(new IEEE(importFormatPreferences, importerPreferences));
         fetchers.add(new SpringerFetcher(importerPreferences));

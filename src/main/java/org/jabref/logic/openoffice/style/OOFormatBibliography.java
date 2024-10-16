@@ -1,9 +1,5 @@
 package org.jabref.logic.openoffice.style;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import org.jabref.logic.l10n.Localization;
 import org.jabref.logic.layout.Layout;
 import org.jabref.model.database.BibDatabase;
@@ -19,38 +15,45 @@ import org.jabref.model.openoffice.style.CitationPath;
 import org.jabref.model.openoffice.style.CitedKey;
 import org.jabref.model.openoffice.style.CitedKeys;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 public class OOFormatBibliography {
     private static final OOPreFormatter POSTFORMATTER = new OOPreFormatter();
     private static final Field UNIQUEFIER_FIELD = new UnknownField("uniq");
 
-    private OOFormatBibliography() {
-    }
+    private OOFormatBibliography() {}
 
     /**
      * @return The formatted bibliography, including its title.
      */
-    public static OOText formatBibliography(CitationGroups citationGroups,
-                                            CitedKeys bibliography,
-                                            JStyle style,
-                                            boolean alwaysAddCitedOnPages) {
+    public static OOText formatBibliography(
+            CitationGroups citationGroups,
+            CitedKeys bibliography,
+            JStyle style,
+            boolean alwaysAddCitedOnPages) {
 
         OOText title = style.getFormattedBibliographyTitle();
-        OOText body = formatBibliographyBody(citationGroups, bibliography, style, alwaysAddCitedOnPages);
+        OOText body =
+                formatBibliographyBody(citationGroups, bibliography, style, alwaysAddCitedOnPages);
         return OOText.fromString(title.toString() + body.toString());
     }
 
     /**
      * @return Formatted body of the bibliography. Excludes the title.
      */
-    public static OOText formatBibliographyBody(CitationGroups citationGroups,
-                                                CitedKeys bibliography,
-                                                JStyle style,
-                                                boolean alwaysAddCitedOnPages) {
+    public static OOText formatBibliographyBody(
+            CitationGroups citationGroups,
+            CitedKeys bibliography,
+            JStyle style,
+            boolean alwaysAddCitedOnPages) {
 
         StringBuilder stringBuilder = new StringBuilder();
 
         for (CitedKey citedKey : bibliography.values()) {
-            OOText entryText = formatBibliographyEntry(citationGroups, citedKey, style, alwaysAddCitedOnPages);
+            OOText entryText =
+                    formatBibliographyEntry(citationGroups, citedKey, style, alwaysAddCitedOnPages);
             stringBuilder.append(entryText.toString());
         }
 
@@ -60,10 +63,11 @@ public class OOFormatBibliography {
     /**
      * @return A paragraph. Includes label and "Cited on pages".
      */
-    public static OOText formatBibliographyEntry(CitationGroups citationGroups,
-                                                 CitedKey citedKey,
-                                                 JStyle style,
-                                                 boolean alwaysAddCitedOnPages) {
+    public static OOText formatBibliographyEntry(
+            CitationGroups citationGroups,
+            CitedKey citedKey,
+            JStyle style,
+            boolean alwaysAddCitedOnPages) {
         StringBuilder stringBuilder = new StringBuilder();
 
         // insert marker "[1]"
@@ -101,10 +105,11 @@ public class OOFormatBibliography {
             Layout layout = style.getReferenceFormat(bibentry.getType());
             layout.setPostFormatter(POSTFORMATTER);
 
-            return formatFullReferenceOfBibEntry(layout,
-                                                 bibentry,
-                                                 citedKey.getLookupResult().get().database,
-                                                 citedKey.getUniqueLetter().orElse(null));
+            return formatFullReferenceOfBibEntry(
+                    layout,
+                    bibentry,
+                    citedKey.getLookupResult().get().database,
+                    citedKey.getUniqueLetter().orElse(null));
         }
     }
 
@@ -118,10 +123,8 @@ public class OOFormatBibliography {
      *
      * @return OOText The reference part of a bibliography entry formatted as OOText
      */
-    private static OOText formatFullReferenceOfBibEntry(Layout layout,
-                                                        BibEntry entry,
-                                                        BibDatabase database,
-                                                        String uniquefier) {
+    private static OOText formatFullReferenceOfBibEntry(
+            Layout layout, BibEntry entry, BibDatabase database, String uniquefier) {
 
         // Backup the value of the uniq field, just in case the entry already has it:
         Optional<String> oldUniqVal = entry.getField(UNIQUEFIER_FIELD);
@@ -176,18 +179,20 @@ public class OOFormatBibliography {
         }
 
         // sort the citationGroups according to their indexInGlobalOrder
-        filteredList.sort((a, b) -> {
-                Integer aa = a.getIndexInGlobalOrder().orElseThrow(IllegalStateException::new);
-                Integer bb = b.getIndexInGlobalOrder().orElseThrow(IllegalStateException::new);
-                return aa.compareTo(bb);
-            });
+        filteredList.sort(
+                (a, b) -> {
+                    Integer aa = a.getIndexInGlobalOrder().orElseThrow(IllegalStateException::new);
+                    Integer bb = b.getIndexInGlobalOrder().orElseThrow(IllegalStateException::new);
+                    return aa.compareTo(bb);
+                });
 
         int index = 0;
         for (CitationGroup group : filteredList) {
             if (index > 0) {
                 stringBuilder.append(", ");
             }
-            String markName = group.getReferenceMarkNameForLinking().orElseThrow(IllegalStateException::new);
+            String markName =
+                    group.getReferenceMarkNameForLinking().orElseThrow(IllegalStateException::new);
             OOText xref = OOFormat.formatReferenceToPageNumberOfReferenceMark(markName);
             stringBuilder.append(xref.toString());
             index++;

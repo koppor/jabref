@@ -1,16 +1,15 @@
 package org.jabref.gui.importer.fetcher;
 
-import org.jabref.gui.DialogService;
-import org.jabref.gui.StateManager;
-import org.jabref.gui.preferences.GuiPreferences;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+
+import org.jabref.gui.DialogService;
+import org.jabref.gui.StateManager;
+import org.jabref.gui.preferences.GuiPreferences;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 class WebSearchPaneViewModelTest {
 
@@ -40,8 +39,8 @@ class WebSearchPaneViewModelTest {
         assertFalse(viewModel.queryValidationStatus().validProperty().getValue());
     }
 
-     @Test
-     void correctQueryValidationStatus() {
+    @Test
+    void correctQueryValidationStatus() {
         viewModel.queryProperty().setValue("Miami AND Beach OR Houston AND Texas");
         assertTrue(viewModel.queryValidationStatus().validProperty().getValue());
     }

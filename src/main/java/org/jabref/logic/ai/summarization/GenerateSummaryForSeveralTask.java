@@ -1,8 +1,6 @@
 package org.jabref.logic.ai.summarization;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
+import dev.langchain4j.model.chat.ChatLanguageModel;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.StringProperty;
@@ -18,10 +16,12 @@ import org.jabref.logic.util.ProgressCounter;
 import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
-
-import dev.langchain4j.model.chat.ChatLanguageModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * This task generates summaries for several {@link BibEntry}ies (typically used for groups).
@@ -29,7 +29,8 @@ import org.slf4j.LoggerFactory;
  * And it also will store the summaries.
  */
 public class GenerateSummaryForSeveralTask extends BackgroundTask<Void> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenerateSummaryForSeveralTask.class);
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(GenerateSummaryForSeveralTask.class);
 
     private final StringProperty groupName;
     private final List<ProcessingInfo<BibEntry, Summary>> entries;
@@ -54,8 +55,7 @@ public class GenerateSummaryForSeveralTask extends BackgroundTask<Void> {
             ReadOnlyBooleanProperty shutdownSignal,
             AiPreferences aiPreferences,
             FilePreferences filePreferences,
-            TaskExecutor taskExecutor
-    ) {
+            TaskExecutor taskExecutor) {
         this.groupName = groupName;
         this.entries = entries;
         this.bibDatabaseContext = bibDatabaseContext;
@@ -72,7 +72,10 @@ public class GenerateSummaryForSeveralTask extends BackgroundTask<Void> {
     private void configure() {
         showToUser(true);
         titleProperty().set(Localization.lang("Generating summaries for %0", groupName.get()));
-        groupName.addListener((o, oldValue, newValue) -> titleProperty().set(Localization.lang("Generating summaries for %0", newValue)));
+        groupName.addListener(
+                (o, oldValue, newValue) ->
+                        titleProperty()
+                                .set(Localization.lang("Generating summaries for %0", newValue)));
 
         progressCounter.increaseWorkMax(entries.size());
         progressCounter.listenToAllProperties(this::updateProgress);
@@ -85,27 +88,26 @@ public class GenerateSummaryForSeveralTask extends BackgroundTask<Void> {
 
         List<Pair<? extends Future<?>, BibEntry>> futures = new ArrayList<>();
 
-        entries
-                .stream()
-                .map(processingInfo -> {
-                    processingInfo.setState(ProcessingState.PROCESSING);
-                    return new Pair<>(
-                            new GenerateSummaryTask(
-                                    processingInfo.getObject(),
-                                    bibDatabaseContext,
-                                    summariesStorage,
-                                    chatLanguageModel,
-                                    shutdownSignal,
-                                    aiPreferences,
-                                    filePreferences
-                            )
-                                    .showToUser(false)
-                                    .onSuccess(processingInfo::setSuccess)
-                                    .onFailure(processingInfo::setException)
-                                    .onFinished(() -> progressCounter.increaseWorkDone(1))
-                                    .executeWith(taskExecutor),
-                            processingInfo.getObject());
-                })
+        entries.stream()
+                .map(
+                        processingInfo -> {
+                            processingInfo.setState(ProcessingState.PROCESSING);
+                            return new Pair<>(
+                                    new GenerateSummaryTask(
+                                                    processingInfo.getObject(),
+                                                    bibDatabaseContext,
+                                                    summariesStorage,
+                                                    chatLanguageModel,
+                                                    shutdownSignal,
+                                                    aiPreferences,
+                                                    filePreferences)
+                                            .showToUser(false)
+                                            .onSuccess(processingInfo::setSuccess)
+                                            .onFailure(processingInfo::setException)
+                                            .onFinished(() -> progressCounter.increaseWorkDone(1))
+                                            .executeWith(taskExecutor),
+                                    processingInfo.getObject());
+                        })
                 .forEach(futures::add);
 
         for (Pair<? extends Future<?>, BibEntry> pair : futures) {
@@ -113,7 +115,8 @@ public class GenerateSummaryForSeveralTask extends BackgroundTask<Void> {
             pair.getKey().get();
         }
 
-        LOGGER.debug("Finished embeddings generation task of several files for {}", groupName.get());
+        LOGGER.debug(
+                "Finished embeddings generation task of several files for {}", groupName.get());
         progressCounter.stop();
         return null;
     }

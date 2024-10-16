@@ -28,11 +28,16 @@ public class CitationKeyPatternTabViewModel implements PreferenceTabViewModel {
     private final StringProperty keyPatternReplacementProperty = new SimpleStringProperty();
     private final StringProperty unwantedCharactersProperty = new SimpleStringProperty();
 
-    // The list and the default properties are being overwritten by the bound properties of the tableView, but to
-    // prevent an NPE on storing the preferences before lazy-loading of the setValues, they need to be initialized.
-    private final ListProperty<CitationKeyPatternsPanelItemModel> patternListProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ObjectProperty<CitationKeyPatternsPanelItemModel> defaultKeyPatternProperty = new SimpleObjectProperty<>(
-            new CitationKeyPatternsPanelItemModel(new CitationKeyPatternsPanelViewModel.DefaultEntryType(), ""));
+    // The list and the default properties are being overwritten by the bound properties of the
+    // tableView, but to
+    // prevent an NPE on storing the preferences before lazy-loading of the setValues, they need to
+    // be initialized.
+    private final ListProperty<CitationKeyPatternsPanelItemModel> patternListProperty =
+            new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ObjectProperty<CitationKeyPatternsPanelItemModel> defaultKeyPatternProperty =
+            new SimpleObjectProperty<>(
+                    new CitationKeyPatternsPanelItemModel(
+                            new CitationKeyPatternsPanelViewModel.DefaultEntryType(), ""));
 
     private final CitationKeyPatternPreferences keyPatternPreferences;
 
@@ -70,23 +75,27 @@ public class CitationKeyPatternTabViewModel implements PreferenceTabViewModel {
     @Override
     public void storeSettings() {
         GlobalCitationKeyPatterns newKeyPattern =
-                new GlobalCitationKeyPatterns(keyPatternPreferences.getKeyPatterns().getDefaultValue());
-        patternListProperty.forEach(item -> {
-            String patternString = item.getPattern();
-            if (!"default".equals(item.getEntryType().getName())) {
-                if (!patternString.trim().isEmpty()) {
-                    newKeyPattern.addCitationKeyPattern(item.getEntryType(), patternString);
-                }
-            }
-        });
+                new GlobalCitationKeyPatterns(
+                        keyPatternPreferences.getKeyPatterns().getDefaultValue());
+        patternListProperty.forEach(
+                item -> {
+                    String patternString = item.getPattern();
+                    if (!"default".equals(item.getEntryType().getName())) {
+                        if (!patternString.trim().isEmpty()) {
+                            newKeyPattern.addCitationKeyPattern(item.getEntryType(), patternString);
+                        }
+                    }
+                });
 
         if (!defaultKeyPatternProperty.getValue().getPattern().trim().isEmpty()) {
-            // we do not trim the value at the assignment to enable users to have spaces at the beginning and
+            // we do not trim the value at the assignment to enable users to have spaces at the
+            // beginning and
             // at the end of the pattern
             newKeyPattern.setDefaultValue(defaultKeyPatternProperty.getValue().getPattern());
         }
 
-        CitationKeyPatternPreferences.KeySuffix keySuffix = CitationKeyPatternPreferences.KeySuffix.ALWAYS;
+        CitationKeyPatternPreferences.KeySuffix keySuffix =
+                CitationKeyPatternPreferences.KeySuffix.ALWAYS;
 
         if (letterStartAProperty.getValue()) {
             keySuffix = CitationKeyPatternPreferences.KeySuffix.SECOND_WITH_A;

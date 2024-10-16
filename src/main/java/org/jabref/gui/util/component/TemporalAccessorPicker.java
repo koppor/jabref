@@ -1,5 +1,16 @@
 package org.jabref.gui.util.component;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DatePicker;
+import javafx.util.StringConverter;
+
+import org.jabref.gui.fieldeditors.contextmenu.EditorContextAction;
+import org.jabref.gui.util.BindingsHelper;
+import org.jabref.model.entry.Date;
+import org.jabref.model.strings.StringUtil;
+
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,17 +22,6 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQueries;
 import java.util.Objects;
-
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.DatePicker;
-import javafx.util.StringConverter;
-
-import org.jabref.gui.fieldeditors.contextmenu.EditorContextAction;
-import org.jabref.gui.util.BindingsHelper;
-import org.jabref.model.entry.Date;
-import org.jabref.model.strings.StringUtil;
 
 /**
  * A date picker with configurable datetime format where both date and time can be changed via the text field and the
@@ -40,24 +40,35 @@ import org.jabref.model.strings.StringUtil;
  * Inspiration taken from <a href="https://github.com/edvin/tornadofx-controls/blob/master/src/main/java/tornadofx/control/DateTimePicker.java">Controlsfx DateTimePicker</a>
  */
 public class TemporalAccessorPicker extends DatePicker {
-    private final ObjectProperty<TemporalAccessor> temporalAccessorValue = new SimpleObjectProperty<>(null);
+    private final ObjectProperty<TemporalAccessor> temporalAccessorValue =
+            new SimpleObjectProperty<>(null);
 
-    private final DateTimeFormatter defaultFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private final ObjectProperty<StringConverter<TemporalAccessor>> converter = new SimpleObjectProperty<>(null);
+    private final DateTimeFormatter defaultFormatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private final ObjectProperty<StringConverter<TemporalAccessor>> converter =
+            new SimpleObjectProperty<>(null);
 
     public TemporalAccessorPicker() {
         setConverter(new InternalConverter());
 
         // Synchronize changes of the underlying date value with the temporalAccessorValue
-        BindingsHelper.bindBidirectional(valueProperty(), temporalAccessorValue,
+        BindingsHelper.bindBidirectional(
+                valueProperty(),
+                temporalAccessorValue,
                 TemporalAccessorPicker::addCurrentTime,
                 TemporalAccessorPicker::getDate);
 
-        getEditor().setOnContextMenuRequested(event -> {
-            ContextMenu contextMenu = new ContextMenu();
-            contextMenu.getItems().setAll(EditorContextAction.getDefaultContextMenuItems(getEditor()));
-            contextMenu.show(this, event.getScreenX(), event.getScreenY());
-        });
+        getEditor()
+                .setOnContextMenuRequested(
+                        event -> {
+                            ContextMenu contextMenu = new ContextMenu();
+                            contextMenu
+                                    .getItems()
+                                    .setAll(
+                                            EditorContextAction.getDefaultContextMenuItems(
+                                                    getEditor()));
+                            contextMenu.show(this, event.getScreenX(), event.getScreenY());
+                        });
     }
 
     private static TemporalAccessor addCurrentTime(LocalDate date) {
@@ -99,25 +110,26 @@ public class TemporalAccessorPicker extends DatePicker {
     }
 
     public final StringConverter<TemporalAccessor> getStringConverter() {
-        StringConverter<TemporalAccessor> newConverter = new StringConverter<>() {
-            @Override
-            public String toString(TemporalAccessor value) {
-                return defaultFormatter.format(value);
-            }
-
-            @Override
-            public TemporalAccessor fromString(String value) {
-                if (StringUtil.isNotBlank(value)) {
-                    try {
-                        return defaultFormatter.parse(value);
-                    } catch (DateTimeParseException exception) {
-                        return Date.parse(value).map(Date::toTemporalAccessor).orElse(null);
+        StringConverter<TemporalAccessor> newConverter =
+                new StringConverter<>() {
+                    @Override
+                    public String toString(TemporalAccessor value) {
+                        return defaultFormatter.format(value);
                     }
-                } else {
-                    return null;
-                }
-            }
-        };
+
+                    @Override
+                    public TemporalAccessor fromString(String value) {
+                        if (StringUtil.isNotBlank(value)) {
+                            try {
+                                return defaultFormatter.parse(value);
+                            } catch (DateTimeParseException exception) {
+                                return Date.parse(value).map(Date::toTemporalAccessor).orElse(null);
+                            }
+                        } else {
+                            return null;
+                        }
+                    }
+                };
         return Objects.requireNonNullElseGet(stringConverterProperty().get(), () -> newConverter);
     }
 

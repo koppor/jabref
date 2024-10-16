@@ -1,11 +1,5 @@
 package org.jabref.gui.externalfiles;
 
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-
 import javafx.concurrent.Task;
 
 import org.jabref.gui.DialogService;
@@ -20,9 +14,14 @@ import org.jabref.logic.l10n.Localization;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Try to download fulltext PDF for selected entry(ies) by following URL or DOI link.
@@ -38,10 +37,11 @@ public class DownloadFullTextAction extends SimpleCommand {
     private final GuiPreferences preferences;
     private final UiTaskExecutor taskExecutor;
 
-    public DownloadFullTextAction(DialogService dialogService,
-                                  StateManager stateManager,
-                                  GuiPreferences preferences,
-                                  UiTaskExecutor taskExecutor) {
+    public DownloadFullTextAction(
+            DialogService dialogService,
+            StateManager stateManager,
+            GuiPreferences preferences,
+            UiTaskExecutor taskExecutor) {
         this.dialogService = dialogService;
         this.stateManager = stateManager;
         this.preferences = preferences;
@@ -65,16 +65,20 @@ public class DownloadFullTextAction extends SimpleCommand {
         dialogService.notify(Localization.lang("Looking for full text document..."));
 
         if (entries.size() >= WARNING_LIMIT) {
-            boolean confirmDownload = dialogService.showConfirmationDialogAndWait(
-                    Localization.lang("Download full text documents"),
-                    Localization.lang(
-                            "You are about to download full text documents for %0 entries.",
-                            String.valueOf(stateManager.getSelectedEntries().size())) + "\n"
-                            + Localization.lang("JabRef will send at least one request per entry to a publisher.")
-                            + "\n"
-                            + Localization.lang("Do you still want to continue?"),
-                    Localization.lang("Download full text documents"),
-                    Localization.lang("Cancel"));
+            boolean confirmDownload =
+                    dialogService.showConfirmationDialogAndWait(
+                            Localization.lang("Download full text documents"),
+                            Localization.lang(
+                                            "You are about to download full text documents for %0 entries.",
+                                            String.valueOf(
+                                                    stateManager.getSelectedEntries().size()))
+                                    + "\n"
+                                    + Localization.lang(
+                                            "JabRef will send at least one request per entry to a publisher.")
+                                    + "\n"
+                                    + Localization.lang("Do you still want to continue?"),
+                            Localization.lang("Download full text documents"),
+                            Localization.lang("Cancel"));
 
             if (!confirmDownload) {
                 dialogService.notify(Localization.lang("Operation canceled."));
@@ -82,24 +86,29 @@ public class DownloadFullTextAction extends SimpleCommand {
             }
         }
 
-        Task<Map<BibEntry, Optional<URL>>> findFullTextsTask = new Task<>() {
-            @Override
-            protected Map<BibEntry, Optional<URL>> call() {
-                Map<BibEntry, Optional<URL>> downloads = new ConcurrentHashMap<>();
-                int count = 0;
-                for (BibEntry entry : entries) {
-                    FulltextFetchers fetchers = new FulltextFetchers(
-                            preferences.getImportFormatPreferences(),
-                            preferences.getImporterPreferences());
-                    downloads.put(entry, fetchers.findFullTextPDF(entry));
-                    updateProgress(++count, entries.size());
-                }
-                return downloads;
-            }
-        };
+        Task<Map<BibEntry, Optional<URL>>> findFullTextsTask =
+                new Task<>() {
+                    @Override
+                    protected Map<BibEntry, Optional<URL>> call() {
+                        Map<BibEntry, Optional<URL>> downloads = new ConcurrentHashMap<>();
+                        int count = 0;
+                        for (BibEntry entry : entries) {
+                            FulltextFetchers fetchers =
+                                    new FulltextFetchers(
+                                            preferences.getImportFormatPreferences(),
+                                            preferences.getImporterPreferences());
+                            downloads.put(entry, fetchers.findFullTextPDF(entry));
+                            updateProgress(++count, entries.size());
+                        }
+                        return downloads;
+                    }
+                };
 
-        findFullTextsTask.setOnSucceeded(value ->
-                downloadFullTexts(findFullTextsTask.getValue(), stateManager.getActiveDatabase().get()));
+        findFullTextsTask.setOnSucceeded(
+                value ->
+                        downloadFullTexts(
+                                findFullTextsTask.getValue(),
+                                stateManager.getActiveDatabase().get()));
 
         dialogService.showProgressDialog(
                 Localization.lang("Download full text documents"),
@@ -109,15 +118,18 @@ public class DownloadFullTextAction extends SimpleCommand {
         taskExecutor.execute(findFullTextsTask);
     }
 
-    private void downloadFullTexts(Map<BibEntry, Optional<URL>> downloads, BibDatabaseContext databaseContext) {
+    private void downloadFullTexts(
+            Map<BibEntry, Optional<URL>> downloads, BibDatabaseContext databaseContext) {
         for (Map.Entry<BibEntry, Optional<URL>> download : downloads.entrySet()) {
             BibEntry entry = download.getKey();
             Optional<URL> result = download.getValue();
             if (result.isPresent()) {
                 addLinkedFileFromURL(databaseContext, result.get(), entry);
             } else {
-                dialogService.notify(Localization.lang("No full text document found for entry %0.",
-                        entry.getCitationKey().orElse(Localization.lang("undefined"))));
+                dialogService.notify(
+                        Localization.lang(
+                                "No full text document found for entry %0.",
+                                entry.getCitationKey().orElse(Localization.lang("undefined"))));
             }
         }
     }
@@ -134,17 +146,20 @@ public class DownloadFullTextAction extends SimpleCommand {
         LinkedFile newLinkedFile = new LinkedFile(url, "");
 
         if (!entry.getFiles().contains(newLinkedFile)) {
-            LinkedFileViewModel onlineFile = new LinkedFileViewModel(
-                    newLinkedFile,
-                    entry,
-                    databaseContext,
-                    taskExecutor,
-                    dialogService,
-                    preferences);
+            LinkedFileViewModel onlineFile =
+                    new LinkedFileViewModel(
+                            newLinkedFile,
+                            entry,
+                            databaseContext,
+                            taskExecutor,
+                            dialogService,
+                            preferences);
             onlineFile.download(true);
         } else {
-            dialogService.notify(Localization.lang("Full text document for entry %0 already linked.",
-                    entry.getCitationKey().orElse(Localization.lang("undefined"))));
+            dialogService.notify(
+                    Localization.lang(
+                            "Full text document for entry %0 already linked.",
+                            entry.getCitationKey().orElse(Localization.lang("undefined"))));
         }
     }
 }

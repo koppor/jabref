@@ -1,12 +1,12 @@
 package org.jabref.logic.importer.fetcher.transformers;
 
-import java.util.Calendar;
-import java.util.Optional;
+import kong.unirest.core.json.JSONArray;
+import kong.unirest.core.json.JSONObject;
 
 import org.jabref.model.strings.StringUtil;
 
-import kong.unirest.core.json.JSONArray;
-import kong.unirest.core.json.JSONObject;
+import java.util.Calendar;
+import java.util.Optional;
 
 public class CiteSeerQueryTransformer extends AbstractQueryTransformer {
 
@@ -67,15 +67,15 @@ public class CiteSeerQueryTransformer extends AbstractQueryTransformer {
 
     @Override
     protected String handleYearRange(String yearRange) {
-         parseYearRange(yearRange);
-         if (endYear == Integer.MAX_VALUE) { // invalid year range
-             Calendar calendar = Calendar.getInstance();
-             this.getJSONPayload().put("yearEnd", calendar.get(Calendar.YEAR));
-             return "";
-         }
-         this.getJSONPayload().put("yearStart", startYear);
-         this.getJSONPayload().put("yearEnd", endYear);
-         return yearRange;
+        parseYearRange(yearRange);
+        if (endYear == Integer.MAX_VALUE) { // invalid year range
+            Calendar calendar = Calendar.getInstance();
+            this.getJSONPayload().put("yearEnd", calendar.get(Calendar.YEAR));
+            return "";
+        }
+        this.getJSONPayload().put("yearStart", startYear);
+        this.getJSONPayload().put("yearEnd", endYear);
+        return yearRange;
     }
 
     /**

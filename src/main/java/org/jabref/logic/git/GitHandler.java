@@ -1,12 +1,5 @@
 package org.jabref.logic.git;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Optional;
-
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.RmCommand;
 import org.eclipse.jgit.api.Status;
@@ -18,6 +11,13 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
+
 /**
  * This class handles the updating of the local and remote git repository that is located at the repository path
  * This provides an easy-to-use interface to manage a git repository
@@ -28,7 +28,8 @@ public class GitHandler {
     final File repositoryPathAsFile;
     String gitUsername = Optional.ofNullable(System.getenv("GIT_EMAIL")).orElse("");
     String gitPassword = Optional.ofNullable(System.getenv("GIT_PW")).orElse("");
-    final CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(gitUsername, gitPassword);
+    final CredentialsProvider credentialsProvider =
+            new UsernamePasswordCredentialsProvider(gitUsername, gitPassword);
 
     /**
      * Initialize the handler for the given repository
@@ -40,20 +41,14 @@ public class GitHandler {
         this.repositoryPathAsFile = this.repositoryPath.toFile();
         if (!isGitRepository()) {
             try {
-                Git.init()
-                   .setDirectory(repositoryPathAsFile)
-                   .setInitialBranch("main")
-                   .call();
+                Git.init().setDirectory(repositoryPathAsFile).setInitialBranch("main").call();
                 setupGitIgnore();
                 String initialCommit = "Initial commit";
                 if (!createCommitOnCurrentBranch(initialCommit, false)) {
                     // Maybe, setupGitIgnore failed and did not add something
                     // Then, we create an empty commit
                     try (Git git = Git.open(repositoryPathAsFile)) {
-                        git.commit()
-                           .setAllowEmpty(true)
-                           .setMessage(initialCommit)
-                           .call();
+                        git.commit().setAllowEmpty(true).setMessage(initialCommit).call();
                     }
                 }
             } catch (GitAPIException | IOException e) {
@@ -68,7 +63,9 @@ public class GitHandler {
             try (InputStream inputStream = this.getClass().getResourceAsStream("git.gitignore")) {
                 Files.copy(inputStream, gitignore);
             } catch (IOException e) {
-                LOGGER.error("Error occurred during copying of the gitignore file into the git repository.", e);
+                LOGGER.error(
+                        "Error occurred during copying of the gitignore file into the git repository.",
+                        e);
             }
         }
     }
@@ -77,8 +74,10 @@ public class GitHandler {
      * Returns true if the given path points to a directory that is a git repository (contains a .git folder)
      */
     boolean isGitRepository() {
-        // For some reason the solution from https://www.eclipse.org/lists/jgit-dev/msg01892.html does not work
-        // This solution is quite simple but might not work in special cases, for us it should suffice.
+        // For some reason the solution from https://www.eclipse.org/lists/jgit-dev/msg01892.html
+        // does not work
+        // This solution is quite simple but might not work in special cases, for us it should
+        // suffice.
         return Files.exists(Path.of(repositoryPath.toString(), ".git"));
     }
 
@@ -91,10 +90,10 @@ public class GitHandler {
         try (Git git = Git.open(this.repositoryPathAsFile)) {
             Optional<Ref> branch = getRefForBranch(branchToCheckout);
             git.checkout()
-               // If the branch does not exist, create it
-               .setCreateBranch(branch.isEmpty())
-               .setName(branchToCheckout)
-               .call();
+                    // If the branch does not exist, create it
+                    .setCreateBranch(branch.isEmpty())
+                    .setName(branchToCheckout)
+                    .call();
         }
     }
 
@@ -104,11 +103,9 @@ public class GitHandler {
      */
     Optional<Ref> getRefForBranch(String branchName) throws GitAPIException, IOException {
         try (Git git = Git.open(this.repositoryPathAsFile)) {
-            return git.branchList()
-                      .call()
-                      .stream()
-                      .filter(ref -> ref.getName().equals("refs/heads/" + branchName))
-                      .findAny();
+            return git.branchList().call().stream()
+                    .filter(ref -> ref.getName().equals("refs/heads/" + branchName))
+                    .findAny();
         }
     }
 
@@ -118,28 +115,22 @@ public class GitHandler {
      * @param amend Whether to amend to the last commit (true), or not (false)
      * @return Returns true if a new commit was created. This is the case if the repository was not clean on method invocation
      */
-    public boolean createCommitOnCurrentBranch(String commitMessage, boolean amend) throws IOException, GitAPIException {
+    public boolean createCommitOnCurrentBranch(String commitMessage, boolean amend)
+            throws IOException, GitAPIException {
         boolean commitCreated = false;
         try (Git git = Git.open(this.repositoryPathAsFile)) {
             Status status = git.status().call();
             if (!status.isClean()) {
                 commitCreated = true;
                 // Add new and changed files to index
-                git.add()
-                   .addFilepattern(".")
-                   .call();
+                git.add().addFilepattern(".").call();
                 // Add all removed files to index
                 if (!status.getMissing().isEmpty()) {
-                    RmCommand removeCommand = git.rm()
-                                                 .setCached(true);
+                    RmCommand removeCommand = git.rm().setCached(true);
                     status.getMissing().forEach(removeCommand::addFilepattern);
                     removeCommand.call();
                 }
-                git.commit()
-                   .setAmend(amend)
-                   .setAllowEmpty(false)
-                   .setMessage(commitMessage)
-                   .call();
+                git.commit().setAmend(amend).setAllowEmpty(false).setMessage(commitMessage).call();
             }
         }
         return commitCreated;
@@ -151,7 +142,8 @@ public class GitHandler {
      * @param targetBranch the name of the branch that is merged into
      * @param sourceBranch the name of the branch that gets merged
      */
-    public void mergeBranches(String targetBranch, String sourceBranch, MergeStrategy mergeStrategy) throws IOException, GitAPIException {
+    public void mergeBranches(String targetBranch, String sourceBranch, MergeStrategy mergeStrategy)
+            throws IOException, GitAPIException {
         String currentBranch = this.getCurrentlyCheckedOutBranch();
         try (Git git = Git.open(this.repositoryPathAsFile)) {
             Optional<Ref> sourceBranchRef = getRefForBranch(sourceBranch);
@@ -161,10 +153,10 @@ public class GitHandler {
             }
             this.checkoutBranch(targetBranch);
             git.merge()
-               .include(sourceBranchRef.get())
-               .setStrategy(mergeStrategy)
-               .setMessage("Merge search branch into working branch.")
-               .call();
+                    .include(sourceBranchRef.get())
+                    .setStrategy(mergeStrategy)
+                    .setMessage("Merge search branch into working branch.")
+                    .call();
         }
         this.checkoutBranch(currentBranch);
     }
@@ -176,9 +168,7 @@ public class GitHandler {
     public void pushCommitsToRemoteRepository() throws IOException {
         try (Git git = Git.open(this.repositoryPathAsFile)) {
             try {
-                git.push()
-                   .setCredentialsProvider(credentialsProvider)
-                   .call();
+                git.push().setCredentialsProvider(credentialsProvider).call();
             } catch (GitAPIException e) {
                 LOGGER.info("Failed to push");
             }
@@ -188,9 +178,7 @@ public class GitHandler {
     public void pullOnCurrentBranch() throws IOException {
         try (Git git = Git.open(this.repositoryPathAsFile)) {
             try {
-                git.pull()
-                   .setCredentialsProvider(credentialsProvider)
-                   .call();
+                git.pull().setCredentialsProvider(credentialsProvider).call();
             } catch (GitAPIException e) {
                 LOGGER.info("Failed to push");
             }

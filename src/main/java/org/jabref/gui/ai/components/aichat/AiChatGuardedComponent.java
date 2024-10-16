@@ -1,5 +1,7 @@
 package org.jabref.gui.ai.components.aichat;
 
+import dev.langchain4j.data.message.ChatMessage;
+
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -13,8 +15,6 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 
-import dev.langchain4j.data.message.ChatMessage;
-
 /**
  * Main class for AI chatting. It checks if the AI features are enabled and if the embedding model is properly set up.
  */
@@ -22,7 +22,8 @@ public class AiChatGuardedComponent extends EmbeddingModelGuardedComponent {
     /// This field is used for two purposes:
     /// 1. Logging
     /// 2. Title of group chat window
-    /// Thus, if you use {@link AiChatGuardedComponent} for one entry in {@link EntryEditor}, then you may not localize
+    /// Thus, if you use {@link AiChatGuardedComponent} for one entry in {@link EntryEditor}, then
+    // you may not localize
     /// this parameter. However, for group chat window, you should.
     private final StringProperty name;
 
@@ -34,16 +35,16 @@ public class AiChatGuardedComponent extends EmbeddingModelGuardedComponent {
     private final AiPreferences aiPreferences;
     private final TaskExecutor taskExecutor;
 
-    public AiChatGuardedComponent(StringProperty name,
-                                  ObservableList<ChatMessage> chatHistory,
-                                  BibDatabaseContext bibDatabaseContext,
-                                  ObservableList<BibEntry> entries,
-                                  AiService aiService,
-                                  DialogService dialogService,
-                                  AiPreferences aiPreferences,
-                                  ExternalApplicationsPreferences externalApplicationsPreferences,
-                                  TaskExecutor taskExecutor
-    ) {
+    public AiChatGuardedComponent(
+            StringProperty name,
+            ObservableList<ChatMessage> chatHistory,
+            BibDatabaseContext bibDatabaseContext,
+            ObservableList<BibEntry> entries,
+            AiService aiService,
+            DialogService dialogService,
+            AiPreferences aiPreferences,
+            ExternalApplicationsPreferences externalApplicationsPreferences,
+            TaskExecutor taskExecutor) {
         super(aiService, aiPreferences, externalApplicationsPreferences, dialogService);
 
         this.name = name;
@@ -68,7 +69,6 @@ public class AiChatGuardedComponent extends EmbeddingModelGuardedComponent {
                 bibDatabaseContext,
                 aiPreferences,
                 dialogService,
-                taskExecutor
-        );
+                taskExecutor);
     }
 }

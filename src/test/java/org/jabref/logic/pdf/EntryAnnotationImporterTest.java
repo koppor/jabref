@@ -1,23 +1,22 @@
 package org.jabref.logic.pdf;
 
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.jabref.logic.FilePreferences;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.pdf.FileAnnotation;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 class EntryAnnotationImporterTest {
 
@@ -27,7 +26,8 @@ class EntryAnnotationImporterTest {
     @BeforeEach
     void setUp() {
         entry = new BibEntry();
-        when(databaseContext.getFileDirectories(any())).thenReturn(Collections.singletonList(Path.of("src/test/resources/pdfs/")));
+        when(databaseContext.getFileDirectories(any()))
+                .thenReturn(Collections.singletonList(Path.of("src/test/resources/pdfs/")));
     }
 
     @Test
@@ -37,7 +37,9 @@ class EntryAnnotationImporterTest {
         EntryAnnotationImporter entryAnnotationImporter = new EntryAnnotationImporter(entry);
 
         // when
-        Map<Path, List<FileAnnotation>> annotations = entryAnnotationImporter.importAnnotationsFromFiles(databaseContext, mock(FilePreferences.class));
+        Map<Path, List<FileAnnotation>> annotations =
+                entryAnnotationImporter.importAnnotationsFromFiles(
+                        databaseContext, mock(FilePreferences.class));
 
         // then
         int fileCounter = 0;

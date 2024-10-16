@@ -1,8 +1,5 @@
 package org.jabref.gui.linkedfile;
 
-import java.nio.file.Path;
-import java.util.Optional;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.LibraryTab;
 import org.jabref.gui.StateManager;
@@ -19,6 +16,9 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
 
+import java.nio.file.Path;
+import java.util.Optional;
+
 public class AttachFileAction extends SimpleCommand {
 
     private final LibraryTab libraryTab;
@@ -27,11 +27,12 @@ public class AttachFileAction extends SimpleCommand {
     private final FilePreferences filePreferences;
     private final ExternalApplicationsPreferences externalApplicationsPreferences;
 
-    public AttachFileAction(LibraryTab libraryTab,
-                            DialogService dialogService,
-                            StateManager stateManager,
-                            FilePreferences filePreferences,
-                            ExternalApplicationsPreferences externalApplicationsPreferences) {
+    public AttachFileAction(
+            LibraryTab libraryTab,
+            DialogService dialogService,
+            StateManager stateManager,
+            FilePreferences filePreferences,
+            ExternalApplicationsPreferences externalApplicationsPreferences) {
         this.libraryTab = libraryTab;
         this.stateManager = stateManager;
         this.dialogService = dialogService;
@@ -49,7 +50,8 @@ public class AttachFileAction extends SimpleCommand {
         }
 
         if (stateManager.getSelectedEntries().size() != 1) {
-            dialogService.notify(Localization.lang("This operation requires exactly one item to be selected."));
+            dialogService.notify(
+                    Localization.lang("This operation requires exactly one item to be selected."));
             return;
         }
 
@@ -57,30 +59,42 @@ public class AttachFileAction extends SimpleCommand {
 
         BibEntry entry = stateManager.getSelectedEntries().getFirst();
 
-        Path workingDirectory = databaseContext.getFirstExistingFileDir(filePreferences)
-                                               .orElse(filePreferences.getWorkingDirectory());
+        Path workingDirectory =
+                databaseContext
+                        .getFirstExistingFileDir(filePreferences)
+                        .orElse(filePreferences.getWorkingDirectory());
 
-        FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
-                .withInitialDirectory(workingDirectory)
-                .build();
+        FileDialogConfiguration fileDialogConfiguration =
+                new FileDialogConfiguration.Builder()
+                        .withInitialDirectory(workingDirectory)
+                        .build();
 
-        dialogService.showFileOpenDialog(fileDialogConfiguration).ifPresent(newFile -> {
-            LinkedFile linkedFile = LinkedFilesEditorViewModel.fromFile(
-                    newFile,
-                    databaseContext.getFileDirectories(filePreferences),
-                    externalApplicationsPreferences);
+        dialogService
+                .showFileOpenDialog(fileDialogConfiguration)
+                .ifPresent(
+                        newFile -> {
+                            LinkedFile linkedFile =
+                                    LinkedFilesEditorViewModel.fromFile(
+                                            newFile,
+                                            databaseContext.getFileDirectories(filePreferences),
+                                            externalApplicationsPreferences);
 
-            LinkedFileEditDialog dialog = new LinkedFileEditDialog(linkedFile);
+                            LinkedFileEditDialog dialog = new LinkedFileEditDialog(linkedFile);
 
-            dialogService.showCustomDialogAndWait(dialog)
-                  .ifPresent(editedLinkedFile -> {
-                      Optional<FieldChange> fieldChange = entry.addFile(editedLinkedFile);
-                      fieldChange.ifPresent(change -> {
-                          UndoableFieldChange ce = new UndoableFieldChange(change);
-                          libraryTab.getUndoManager().addEdit(ce);
-                          libraryTab.markBaseChanged();
-                      });
-                  });
-        });
+                            dialogService
+                                    .showCustomDialogAndWait(dialog)
+                                    .ifPresent(
+                                            editedLinkedFile -> {
+                                                Optional<FieldChange> fieldChange =
+                                                        entry.addFile(editedLinkedFile);
+                                                fieldChange.ifPresent(
+                                                        change -> {
+                                                            UndoableFieldChange ce =
+                                                                    new UndoableFieldChange(change);
+                                                            libraryTab.getUndoManager().addEdit(ce);
+                                                            libraryTab.markBaseChanged();
+                                                        });
+                                            });
+                        });
     }
 }

@@ -1,11 +1,11 @@
 package org.jabref.logic.ai.ingestion;
 
-import java.nio.file.Path;
+import static org.mockito.Mockito.mock;
 
 import org.jabref.logic.ai.ingestion.storages.MVStoreFullyIngestedDocumentsTracker;
 import org.jabref.logic.util.NotificationService;
 
-import static org.mockito.Mockito.mock;
+import java.nio.file.Path;
 
 class MVStoreFullyIngestedDocumentsTrackerTest extends FullyIngestedDocumentsTrackerTest {
     @Override

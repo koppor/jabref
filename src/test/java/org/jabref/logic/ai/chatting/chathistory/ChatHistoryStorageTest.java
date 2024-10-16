@@ -1,17 +1,18 @@
 package org.jabref.logic.ai.chatting.chathistory;
 
-import java.nio.file.Path;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.nio.file.Path;
+import java.util.List;
 
 abstract class ChatHistoryStorageTest {
     @TempDir Path tempDir;
@@ -39,22 +40,17 @@ abstract class ChatHistoryStorageTest {
 
     @Test
     void entryChatHistory() {
-        List<ChatMessage> messages = List.of(
-                new UserMessage("hi!"),
-                new AiMessage("hello!")
-        );
+        List<ChatMessage> messages = List.of(new UserMessage("hi!"), new AiMessage("hello!"));
 
         storage.storeMessagesForEntry(tempDir.resolve("test.bib"), "citationKey", messages);
         reopen();
-        assertEquals(messages, storage.loadMessagesForEntry(tempDir.resolve("test.bib"), "citationKey"));
+        assertEquals(
+                messages, storage.loadMessagesForEntry(tempDir.resolve("test.bib"), "citationKey"));
     }
 
     @Test
     void groupChatHistory() {
-        List<ChatMessage> messages = List.of(
-                new UserMessage("hi!"),
-                new AiMessage("hello!")
-        );
+        List<ChatMessage> messages = List.of(new UserMessage("hi!"), new AiMessage("hello!"));
 
         storage.storeMessagesForGroup(tempDir.resolve("test.bib"), "group", messages);
         reopen();

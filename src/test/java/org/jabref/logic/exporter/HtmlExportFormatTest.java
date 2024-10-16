@@ -1,10 +1,7 @@
 package org.jabref.logic.exporter;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import org.jabref.logic.layout.LayoutFormatterPreferences;
 import org.jabref.logic.util.StandardFileType;
@@ -12,15 +9,17 @@ import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.metadata.SaveOrder;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Answers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 public class HtmlExportFormatTest {
     public BibDatabaseContext databaseContext;
@@ -30,13 +29,15 @@ public class HtmlExportFormatTest {
 
     @BeforeEach
     void setUp() {
-        exportFormat = new TemplateExporter("HTML",
-                "html",
-                "html",
-                null,
-                StandardFileType.HTML,
-                mock(LayoutFormatterPreferences.class, Answers.RETURNS_DEEP_STUBS),
-                SaveOrder.getDefaultSaveOrder());
+        exportFormat =
+                new TemplateExporter(
+                        "HTML",
+                        "html",
+                        "html",
+                        null,
+                        StandardFileType.HTML,
+                        mock(LayoutFormatterPreferences.class, Answers.RETURNS_DEEP_STUBS),
+                        SaveOrder.getDefaultSaveOrder());
 
         databaseContext = new BibDatabaseContext();
         charset = StandardCharsets.UTF_8;

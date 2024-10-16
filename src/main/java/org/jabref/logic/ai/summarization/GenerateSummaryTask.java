@@ -1,13 +1,12 @@
 package org.jabref.logic.ai.summarization;
 
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.DocumentSplitter;
+import dev.langchain4j.data.document.splitter.DocumentSplitters;
+import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.input.Prompt;
+import dev.langchain4j.model.input.PromptTemplate;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
 
@@ -21,16 +20,17 @@ import org.jabref.logic.util.ProgressCounter;
 import org.jabref.model.database.BibDatabaseContext;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.LinkedFile;
-
-import dev.langchain4j.data.document.Document;
-import dev.langchain4j.data.document.DocumentSplitter;
-import dev.langchain4j.data.document.splitter.DocumentSplitters;
-import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.input.Prompt;
-import dev.langchain4j.model.input.PromptTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This task generates a new summary for an entry.
@@ -45,8 +45,9 @@ public class GenerateSummaryTask extends BackgroundTask<Summary> {
     // Be careful when constructing prompt.
     // 1. It should contain variables `bullets` and `chunk`.
     // 2. Variables should be wrapped in `{{` and `}}` and only with them. No whitespace inside.
-    private static final PromptTemplate CHUNK_PROMPT_TEMPLATE = PromptTemplate.from(
-            """
+    private static final PromptTemplate CHUNK_PROMPT_TEMPLATE =
+            PromptTemplate.from(
+                    """
                 Please provide an overview of the following text. It's a part of a scientific paper.
                 The summary should include the main objectives, methodologies used, key findings, and conclusions.
                 Mention any significant experiments, data, or discussions presented in the paper.
@@ -54,19 +55,18 @@ public class GenerateSummaryTask extends BackgroundTask<Summary> {
                 DOCUMENT:
                 {{document}}
 
-                OVERVIEW:"""
-    );
+                OVERVIEW:""");
 
-    private static final PromptTemplate COMBINE_PROMPT_TEMPLATE = PromptTemplate.from(
-            """
+    private static final PromptTemplate COMBINE_PROMPT_TEMPLATE =
+            PromptTemplate.from(
+                    """
                 You have written an overview of a scientific paper. You have been collecting notes from various parts
                 of the paper. Now your task is to combine all of the notes in one structured message.
 
                 SUMMARIES:
                 {{summaries}}
 
-                FINAL OVERVIEW:"""
-    );
+                FINAL OVERVIEW:""");
 
     private static final int MAX_OVERLAP_SIZE_IN_CHARS = 100;
     private static final int CHAR_TOKEN_FACTOR = 4; // Means, every token is roughly 4 characters.
@@ -82,14 +82,14 @@ public class GenerateSummaryTask extends BackgroundTask<Summary> {
 
     private final ProgressCounter progressCounter = new ProgressCounter();
 
-    public GenerateSummaryTask(BibEntry entry,
-                               BibDatabaseContext bibDatabaseContext,
-                               SummariesStorage summariesStorage,
-                               ChatLanguageModel chatLanguageModel,
-                               ReadOnlyBooleanProperty shutdownSignal,
-                               AiPreferences aiPreferences,
-                               FilePreferences filePreferences
-    ) {
+    public GenerateSummaryTask(
+            BibEntry entry,
+            BibDatabaseContext bibDatabaseContext,
+            SummariesStorage summariesStorage,
+            ChatLanguageModel chatLanguageModel,
+            ReadOnlyBooleanProperty shutdownSignal,
+            AiPreferences aiPreferences,
+            FilePreferences filePreferences) {
         this.bibDatabaseContext = bibDatabaseContext;
         this.entry = entry;
         this.citationKey = entry.getCitationKey().orElse("<no citation key>");
@@ -116,11 +116,16 @@ public class GenerateSummaryTask extends BackgroundTask<Summary> {
         Optional<Summary> savedSummary = Optional.empty();
 
         if (bibDatabaseContext.getDatabasePath().isEmpty()) {
-            LOGGER.info("No database path is present. Summary will not be stored in the next sessions");
+            LOGGER.info(
+                    "No database path is present. Summary will not be stored in the next sessions");
         } else if (entry.getCitationKey().isEmpty()) {
-            LOGGER.info("No citation key is present. Summary will not be stored in the next sessions");
+            LOGGER.info(
+                    "No citation key is present. Summary will not be stored in the next sessions");
         } else {
-            savedSummary = summariesStorage.get(bibDatabaseContext.getDatabasePath().get(), entry.getCitationKey().get());
+            savedSummary =
+                    summariesStorage.get(
+                            bibDatabaseContext.getDatabasePath().get(),
+                            entry.getCitationKey().get());
         }
 
         Summary summary;
@@ -131,24 +136,31 @@ public class GenerateSummaryTask extends BackgroundTask<Summary> {
             try {
                 String result = summarizeAll();
 
-                summary = new Summary(
-                        LocalDateTime.now(),
-                        aiPreferences.getAiProvider(),
-                        aiPreferences.getSelectedChatModel(),
-                        result
-                );
+                summary =
+                        new Summary(
+                                LocalDateTime.now(),
+                                aiPreferences.getAiProvider(),
+                                aiPreferences.getSelectedChatModel(),
+                                result);
             } catch (InterruptedException e) {
-                LOGGER.debug("There was a summarization task for {}. It will be canceled, because user quits JabRef.", citationKey);
+                LOGGER.debug(
+                        "There was a summarization task for {}. It will be canceled, because user quits JabRef.",
+                        citationKey);
                 return null;
             }
         }
 
         if (bibDatabaseContext.getDatabasePath().isEmpty()) {
-            LOGGER.info("No database path is present. Summary will not be stored in the next sessions");
+            LOGGER.info(
+                    "No database path is present. Summary will not be stored in the next sessions");
         } else if (CitationKeyCheck.citationKeyIsPresentAndUnique(bibDatabaseContext, entry)) {
-            LOGGER.info("No valid citation key is present. Summary will not be stored in the next sessions");
+            LOGGER.info(
+                    "No valid citation key is present. Summary will not be stored in the next sessions");
         } else {
-            summariesStorage.set(bibDatabaseContext.getDatabasePath().get(), entry.getCitationKey().get(), summary);
+            summariesStorage.set(
+                    bibDatabaseContext.getDatabasePath().get(),
+                    entry.getCitationKey().get(),
+                    summary);
         }
 
         LOGGER.debug("Finished summarization task for entry {}", citationKey);
@@ -159,7 +171,8 @@ public class GenerateSummaryTask extends BackgroundTask<Summary> {
 
     private String summarizeAll() throws InterruptedException {
         // Rationale for RuntimeException here:
-        // It follows the same idiom as in langchain4j. See {@link JabRefChatLanguageModel.generate}, this method
+        // It follows the same idiom as in langchain4j. See {@link
+        // JabRefChatLanguageModel.generate}, this method
         // is used internally in the summarization, and it also throws RuntimeExceptions.
 
         // Stream API would look better here, but we need to catch InterruptedException.
@@ -174,10 +187,15 @@ public class GenerateSummaryTask extends BackgroundTask<Summary> {
 
         if (linkedFilesSummary.isEmpty()) {
             doneOneWork(); // Skipped generation of final summary.
-            throw new RuntimeException(Localization.lang("No summary can be generated for entry '%0'. Could not find attached linked files.", citationKey));
+            throw new RuntimeException(
+                    Localization.lang(
+                            "No summary can be generated for entry '%0'. Could not find attached linked files.",
+                            citationKey));
         }
 
-        LOGGER.debug("All summaries for attached files of entry {} are generated. Generating final summary.", citationKey);
+        LOGGER.debug(
+                "All summaries for attached files of entry {} are generated. Generating final summary.",
+                citationKey);
 
         String finalSummary;
 
@@ -195,44 +213,80 @@ public class GenerateSummaryTask extends BackgroundTask<Summary> {
     }
 
     private Optional<String> generateSummary(LinkedFile linkedFile) throws InterruptedException {
-        LOGGER.debug("Generating summary for file \"{}\" of entry {}", linkedFile.getLink(), citationKey);
+        LOGGER.debug(
+                "Generating summary for file \"{}\" of entry {}",
+                linkedFile.getLink(),
+                citationKey);
 
         Optional<Path> path = linkedFile.findIn(bibDatabaseContext, filePreferences);
 
         if (path.isEmpty()) {
-            LOGGER.error("Could not find path for a linked file \"{}\" of entry {}", linkedFile.getLink(), citationKey);
-            LOGGER.debug("Unable to generate summary for file \"{}\" of entry {}, because it was not found", linkedFile.getLink(), citationKey);
+            LOGGER.error(
+                    "Could not find path for a linked file \"{}\" of entry {}",
+                    linkedFile.getLink(),
+                    citationKey);
+            LOGGER.debug(
+                    "Unable to generate summary for file \"{}\" of entry {}, because it was not found",
+                    linkedFile.getLink(),
+                    citationKey);
             return Optional.empty();
         }
 
         Optional<Document> document = new FileToDocument(shutdownSignal).fromFile(path.get());
 
         if (document.isEmpty()) {
-            LOGGER.warn("Could not extract text from a linked file \"{}\" of entry {}. It will be skipped when generating a summary.", linkedFile.getLink(), citationKey);
-            LOGGER.debug("Unable to generate summary for file \"{}\" of entry {}, because it was not found", linkedFile.getLink(), citationKey);
+            LOGGER.warn(
+                    "Could not extract text from a linked file \"{}\" of entry {}. It will be skipped when generating a summary.",
+                    linkedFile.getLink(),
+                    citationKey);
+            LOGGER.debug(
+                    "Unable to generate summary for file \"{}\" of entry {}, because it was not found",
+                    linkedFile.getLink(),
+                    citationKey);
             return Optional.empty();
         }
 
-        String linkedFileSummary = summarizeOneDocument(path.get().toString(), document.get().text());
+        String linkedFileSummary =
+                summarizeOneDocument(path.get().toString(), document.get().text());
 
-        LOGGER.debug("Summary for file \"{}\" of entry {} was generated successfully", linkedFile.getLink(), citationKey);
+        LOGGER.debug(
+                "Summary for file \"{}\" of entry {} was generated successfully",
+                linkedFile.getLink(),
+                citationKey);
         return Optional.of(linkedFileSummary);
     }
 
-    public String summarizeOneDocument(String filePath, String document) throws InterruptedException {
+    public String summarizeOneDocument(String filePath, String document)
+            throws InterruptedException {
         addMoreWork(1); // For the combination of summary chunks.
 
-        DocumentSplitter documentSplitter = DocumentSplitters.recursive(aiPreferences.getContextWindowSize() - MAX_OVERLAP_SIZE_IN_CHARS * 2 - estimateTokenCount(CHUNK_PROMPT_TEMPLATE), MAX_OVERLAP_SIZE_IN_CHARS);
+        DocumentSplitter documentSplitter =
+                DocumentSplitters.recursive(
+                        aiPreferences.getContextWindowSize()
+                                - MAX_OVERLAP_SIZE_IN_CHARS * 2
+                                - estimateTokenCount(CHUNK_PROMPT_TEMPLATE),
+                        MAX_OVERLAP_SIZE_IN_CHARS);
 
-        List<String> chunkSummaries = documentSplitter.split(new Document(document)).stream().map(TextSegment::text).toList();
+        List<String> chunkSummaries =
+                documentSplitter.split(new Document(document)).stream()
+                        .map(TextSegment::text)
+                        .toList();
 
-        LOGGER.debug("The file \"{}\" of entry {} was split into {} chunk(s)", filePath, citationKey, chunkSummaries.size());
+        LOGGER.debug(
+                "The file \"{}\" of entry {} was split into {} chunk(s)",
+                filePath,
+                citationKey,
+                chunkSummaries.size());
 
         int passes = 0;
 
         do {
             passes++;
-            LOGGER.debug("Summarizing chunk(s) for file \"{}\" of entry {} ({} pass)", filePath, citationKey, passes);
+            LOGGER.debug(
+                    "Summarizing chunk(s) for file \"{}\" of entry {} ({} pass)",
+                    filePath,
+                    citationKey,
+                    passes);
 
             addMoreWork(chunkSummaries.size());
 
@@ -243,34 +297,55 @@ public class GenerateSummaryTask extends BackgroundTask<Summary> {
                     throw new InterruptedException();
                 }
 
-                Prompt prompt = CHUNK_PROMPT_TEMPLATE.apply(Collections.singletonMap("document", chunkSummary));
+                Prompt prompt =
+                        CHUNK_PROMPT_TEMPLATE.apply(
+                                Collections.singletonMap("document", chunkSummary));
 
-                LOGGER.debug("Sending request to AI provider to summarize a chunk from file \"{}\" of entry {}", filePath, citationKey);
+                LOGGER.debug(
+                        "Sending request to AI provider to summarize a chunk from file \"{}\" of entry {}",
+                        filePath,
+                        citationKey);
                 String chunk = chatLanguageModel.generate(prompt.toString());
-                LOGGER.debug("Chunk summary for file \"{}\" of entry {} was generated successfully", filePath, citationKey);
+                LOGGER.debug(
+                        "Chunk summary for file \"{}\" of entry {} was generated successfully",
+                        filePath,
+                        citationKey);
 
                 list.add(chunk);
                 doneOneWork();
             }
 
             chunkSummaries = list;
-        } while (estimateTokenCount(chunkSummaries) > aiPreferences.getContextWindowSize() - estimateTokenCount(COMBINE_PROMPT_TEMPLATE));
+        } while (estimateTokenCount(chunkSummaries)
+                > aiPreferences.getContextWindowSize()
+                        - estimateTokenCount(COMBINE_PROMPT_TEMPLATE));
 
         if (chunkSummaries.size() == 1) {
             doneOneWork(); // No need to call LLM for combination of summary chunks.
-            LOGGER.debug("Summary of the file \"{}\" of entry {} was generated successfully", filePath, citationKey);
+            LOGGER.debug(
+                    "Summary of the file \"{}\" of entry {} was generated successfully",
+                    filePath,
+                    citationKey);
             return chunkSummaries.getFirst();
         }
 
-        Prompt prompt = COMBINE_PROMPT_TEMPLATE.apply(Collections.singletonMap("summaries", String.join("\n\n", chunkSummaries)));
+        Prompt prompt =
+                COMBINE_PROMPT_TEMPLATE.apply(
+                        Collections.singletonMap("summaries", String.join("\n\n", chunkSummaries)));
 
         if (shutdownSignal.get()) {
             throw new InterruptedException();
         }
 
-        LOGGER.debug("Sending request to AI provider to combine summary chunk(s) for file \"{}\" of entry {}", filePath, citationKey);
+        LOGGER.debug(
+                "Sending request to AI provider to combine summary chunk(s) for file \"{}\" of entry {}",
+                filePath,
+                citationKey);
         String result = chatLanguageModel.generate(prompt.toString());
-        LOGGER.debug("Summary of the file \"{}\" of entry {} was generated successfully", filePath, citationKey);
+        LOGGER.debug(
+                "Summary of the file \"{}\" of entry {} was generated successfully",
+                filePath,
+                citationKey);
 
         doneOneWork();
         return result;

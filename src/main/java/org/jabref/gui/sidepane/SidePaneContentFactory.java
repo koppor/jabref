@@ -1,7 +1,5 @@
 package org.jabref.gui.sidepane;
 
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.Node;
 
 import org.jabref.gui.ClipBoardManager;
@@ -19,6 +17,8 @@ import org.jabref.logic.util.TaskExecutor;
 import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.util.FileUpdateMonitor;
 
+import javax.swing.undo.UndoManager;
+
 public class SidePaneContentFactory {
     private final LibraryTabContainer tabContainer;
     private final GuiPreferences preferences;
@@ -32,17 +32,18 @@ public class SidePaneContentFactory {
     private final ClipBoardManager clipBoardManager;
     private final UndoManager undoManager;
 
-    public SidePaneContentFactory(LibraryTabContainer tabContainer,
-                                  GuiPreferences preferences,
-                                  JournalAbbreviationRepository abbreviationRepository,
-                                  TaskExecutor taskExecutor,
-                                  DialogService dialogService,
-                                  AiService aiService,
-                                  StateManager stateManager,
-                                  FileUpdateMonitor fileUpdateMonitor,
-                                  BibEntryTypesManager entryTypesManager,
-                                  ClipBoardManager clipBoardManager,
-                                  UndoManager undoManager) {
+    public SidePaneContentFactory(
+            LibraryTabContainer tabContainer,
+            GuiPreferences preferences,
+            JournalAbbreviationRepository abbreviationRepository,
+            TaskExecutor taskExecutor,
+            DialogService dialogService,
+            AiService aiService,
+            StateManager stateManager,
+            FileUpdateMonitor fileUpdateMonitor,
+            BibEntryTypesManager entryTypesManager,
+            ClipBoardManager clipBoardManager,
+            UndoManager undoManager) {
         this.tabContainer = tabContainer;
         this.preferences = preferences;
         this.abbreviationRepository = abbreviationRepository;
@@ -58,32 +59,28 @@ public class SidePaneContentFactory {
 
     public Node create(SidePaneType sidePaneType) {
         return switch (sidePaneType) {
-            case GROUPS -> new GroupTreeView(
-                    taskExecutor,
-                    stateManager,
-                    preferences,
-                    dialogService,
-                    aiService);
-            case OPEN_OFFICE -> new OpenOfficePanel(
-                    tabContainer,
-                    preferences,
-                    preferences.getOpenOfficePreferences(),
-                    preferences.getExternalApplicationsPreferences(),
-                    preferences.getLayoutFormatterPreferences(),
-                    preferences.getCitationKeyPatternPreferences(),
-                    abbreviationRepository,
-                    (UiTaskExecutor) taskExecutor,
-                    dialogService,
-                    aiService,
-                    stateManager,
-                    fileUpdateMonitor,
-                    entryTypesManager,
-                    clipBoardManager,
-                    undoManager).getContent();
-            case WEB_SEARCH -> new WebSearchPaneView(
-                    preferences,
-                    dialogService,
-                    stateManager);
+            case GROUPS ->
+                    new GroupTreeView(
+                            taskExecutor, stateManager, preferences, dialogService, aiService);
+            case OPEN_OFFICE ->
+                    new OpenOfficePanel(
+                                    tabContainer,
+                                    preferences,
+                                    preferences.getOpenOfficePreferences(),
+                                    preferences.getExternalApplicationsPreferences(),
+                                    preferences.getLayoutFormatterPreferences(),
+                                    preferences.getCitationKeyPatternPreferences(),
+                                    abbreviationRepository,
+                                    (UiTaskExecutor) taskExecutor,
+                                    dialogService,
+                                    aiService,
+                                    stateManager,
+                                    fileUpdateMonitor,
+                                    entryTypesManager,
+                                    clipBoardManager,
+                                    undoManager)
+                            .getContent();
+            case WEB_SEARCH -> new WebSearchPaneView(preferences, dialogService, stateManager);
         };
     }
 }

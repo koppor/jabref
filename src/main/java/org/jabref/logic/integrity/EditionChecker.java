@@ -1,19 +1,20 @@
 package org.jabref.logic.integrity;
 
+import org.jabref.logic.l10n.Localization;
+import org.jabref.model.database.BibDatabaseContext;
+import org.jabref.model.strings.StringUtil;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import org.jabref.logic.l10n.Localization;
-import org.jabref.model.database.BibDatabaseContext;
-import org.jabref.model.strings.StringUtil;
-
 public class EditionChecker implements ValueChecker {
 
-    private static final Predicate<String> FIRST_LETTER_CAPITALIZED = Pattern.compile("^[A-Z]").asPredicate();
-    private static final Predicate<String> ONLY_NUMERALS_OR_LITERALS = Pattern.compile("^([0-9]+|[^0-9].+)$")
-                                                                              .asPredicate();
+    private static final Predicate<String> FIRST_LETTER_CAPITALIZED =
+            Pattern.compile("^[A-Z]").asPredicate();
+    private static final Predicate<String> ONLY_NUMERALS_OR_LITERALS =
+            Pattern.compile("^([0-9]+|[^0-9].+)$").asPredicate();
     private static final Predicate<String> ONLY_NUMERALS = Pattern.compile("[0-9]+").asPredicate();
     private static final String FIRST_EDITION = "1";
 

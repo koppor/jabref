@@ -1,5 +1,27 @@
 package org.jabref.logic.importer.fileformat;
 
+import com.google.common.base.Joiner;
+
+import org.jabref.logic.importer.ImportFormatPreferences;
+import org.jabref.logic.importer.Importer;
+import org.jabref.logic.importer.ParseException;
+import org.jabref.logic.importer.Parser;
+import org.jabref.logic.importer.ParserResult;
+import org.jabref.logic.importer.fileformat.mods.Identifier;
+import org.jabref.logic.importer.fileformat.mods.Name;
+import org.jabref.logic.importer.fileformat.mods.RecordInfo;
+import org.jabref.logic.l10n.Localization;
+import org.jabref.logic.util.StandardFileType;
+import org.jabref.model.entry.BibEntry;
+import org.jabref.model.entry.Date;
+import org.jabref.model.entry.field.Field;
+import org.jabref.model.entry.field.FieldFactory;
+import org.jabref.model.entry.field.StandardField;
+import org.jabref.model.entry.field.UnknownField;
+import org.jabref.model.entry.types.EntryTypeFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,28 +44,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 
-import org.jabref.logic.importer.ImportFormatPreferences;
-import org.jabref.logic.importer.Importer;
-import org.jabref.logic.importer.ParseException;
-import org.jabref.logic.importer.Parser;
-import org.jabref.logic.importer.ParserResult;
-import org.jabref.logic.importer.fileformat.mods.Identifier;
-import org.jabref.logic.importer.fileformat.mods.Name;
-import org.jabref.logic.importer.fileformat.mods.RecordInfo;
-import org.jabref.logic.l10n.Localization;
-import org.jabref.logic.util.StandardFileType;
-import org.jabref.model.entry.BibEntry;
-import org.jabref.model.entry.Date;
-import org.jabref.model.entry.field.Field;
-import org.jabref.model.entry.field.FieldFactory;
-import org.jabref.model.entry.field.StandardField;
-import org.jabref.model.entry.field.UnknownField;
-import org.jabref.model.entry.types.EntryTypeFactory;
-
-import com.google.common.base.Joiner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Importer for the MODS format.<br>
  * More details about the format can be found here <a href="http://www.loc.gov/standards/mods/">http://www.loc.gov/standards/mods/</a>. <br>
@@ -58,7 +58,8 @@ public class ModsImporter extends Importer implements Parser {
     private final XMLInputFactory xmlInputFactory;
 
     public ModsImporter(ImportFormatPreferences importFormatPreferences) {
-        keywordSeparator = importFormatPreferences.bibEntryPreferences().getKeywordSeparator() + " ";
+        keywordSeparator =
+                importFormatPreferences.bibEntryPreferences().getKeywordSeparator() + " ";
         xmlInputFactory = XMLInputFactory.newInstance();
         // prevent xxe (https://rules.sonarsource.com/java/RSPEC-2755)
         // Not supported by aalto-xml
@@ -87,7 +88,8 @@ public class ModsImporter extends Importer implements Parser {
         return new ParserResult(bibItems);
     }
 
-    private void parseModsCollection(List<BibEntry> bibItems, XMLStreamReader reader) throws XMLStreamException {
+    private void parseModsCollection(List<BibEntry> bibItems, XMLStreamReader reader)
+            throws XMLStreamException {
         while (reader.hasNext()) {
             reader.next();
             if (isStartXMLEvent(reader) && "mods".equals(reader.getName().getLocalPart())) {
@@ -107,7 +109,8 @@ public class ModsImporter extends Importer implements Parser {
         }
     }
 
-    private void parseModsGroup(Map<Field, String> fields, XMLStreamReader reader, BibEntry entry) throws XMLStreamException {
+    private void parseModsGroup(Map<Field, String> fields, XMLStreamReader reader, BibEntry entry)
+            throws XMLStreamException {
         // These elements (subject, keywords and authors) can appear more than once,
         // so they are collected in lists
         List<String> notes = new ArrayList<>();
@@ -188,7 +191,8 @@ public class ModsImporter extends Importer implements Parser {
      * Also, if there appears a title field, then this indicates that is the name of the journal
      * which the article belongs to.
      */
-    private void parseRelatedItem(XMLStreamReader reader, Map<Field, String> fields) throws XMLStreamException {
+    private void parseRelatedItem(XMLStreamReader reader, Map<Field, String> fields)
+            throws XMLStreamException {
         while (reader.hasNext()) {
             reader.next();
             if (isStartXMLEvent(reader)) {
@@ -214,7 +218,8 @@ public class ModsImporter extends Importer implements Parser {
         }
     }
 
-    private void handleExtent(XMLStreamReader reader, Map<Field, String> fields) throws XMLStreamException {
+    private void handleExtent(XMLStreamReader reader, Map<Field, String> fields)
+            throws XMLStreamException {
         String total = "";
         String startPage = "";
         String endPage = "";
@@ -254,14 +259,16 @@ public class ModsImporter extends Importer implements Parser {
         } else if (!startPage.isBlank()) {
             putIfValueNotNull(fields, StandardField.PAGES, startPage);
             if (!endPage.isBlank()) {
-                // if end appears, then there has to be a start page appeared, so get it and put it together with
+                // if end appears, then there has to be a start page appeared, so get it and put it
+                // together with
                 // the end page
                 fields.put(StandardField.PAGES, startPage + "-" + endPage);
             }
         }
     }
 
-    private void handleDetail(XMLStreamReader reader, Map<Field, String> fields) throws XMLStreamException {
+    private void handleDetail(XMLStreamReader reader, Map<Field, String> fields)
+            throws XMLStreamException {
         String type = reader.getAttributeValue(null, "type");
         Set<String> detailElementSet = Set.of("number", "caption", "title");
 
@@ -283,7 +290,8 @@ public class ModsImporter extends Importer implements Parser {
         }
     }
 
-    private void parseName(XMLStreamReader reader, Map<Field, String> fields, List<String> authors) throws XMLStreamException {
+    private void parseName(XMLStreamReader reader, Map<Field, String> fields, List<String> authors)
+            throws XMLStreamException {
         List<Name> names = new ArrayList<>();
 
         while (reader.hasNext()) {
@@ -293,7 +301,8 @@ public class ModsImporter extends Importer implements Parser {
                 if ("affiliation".equals(reader.getName().getLocalPart())) {
                     reader.next();
                     if (isCharacterXMLEvent(reader)) {
-                        putIfValueNotNull(fields, new UnknownField("affiliation"), reader.getText());
+                        putIfValueNotNull(
+                                fields, new UnknownField("affiliation"), reader.getText());
                     }
                 } else if ("namePart".equals(reader.getName().getLocalPart())) {
                     String type = reader.getAttributeValue(null, "type");
@@ -312,7 +321,8 @@ public class ModsImporter extends Importer implements Parser {
         handleAuthorsInNamePart(names, authors);
     }
 
-    private void parseOriginInfo(XMLStreamReader reader, Map<Field, String> fields) throws XMLStreamException {
+    private void parseOriginInfo(XMLStreamReader reader, Map<Field, String> fields)
+            throws XMLStreamException {
         List<String> places = new ArrayList<>();
 
         while (reader.hasNext()) {
@@ -324,7 +334,8 @@ public class ModsImporter extends Importer implements Parser {
                     case "issuance" -> {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
-                            putIfValueNotNull(fields, new UnknownField("issuance"), reader.getText());
+                            putIfValueNotNull(
+                                    fields, new UnknownField("issuance"), reader.getText());
                         }
                     }
                     case "placeTerm" -> {
@@ -362,7 +373,9 @@ public class ModsImporter extends Importer implements Parser {
         putIfListIsNotEmpty(fields, places, StandardField.ADDRESS, ", ");
     }
 
-    private void parseSubject(XMLStreamReader reader, Map<Field, String> fields, List<String> keywords) throws XMLStreamException {
+    private void parseSubject(
+            XMLStreamReader reader, Map<Field, String> fields, List<String> keywords)
+            throws XMLStreamException {
         while (reader.hasNext()) {
             reader.next();
 
@@ -383,7 +396,8 @@ public class ModsImporter extends Importer implements Parser {
                     case "country" -> {
                         reader.next();
                         if (isCharacterXMLEvent(reader)) {
-                            putIfValueNotNull(fields, new UnknownField("country"), reader.getText());
+                            putIfValueNotNull(
+                                    fields, new UnknownField("country"), reader.getText());
                         }
                     }
                 }
@@ -395,7 +409,8 @@ public class ModsImporter extends Importer implements Parser {
         }
     }
 
-    private void parseRecordInfo(XMLStreamReader reader, Map<Field, String> fields) throws XMLStreamException {
+    private void parseRecordInfo(XMLStreamReader reader, Map<Field, String> fields)
+            throws XMLStreamException {
         RecordInfo recordInfoDefinition = new RecordInfo();
         List<String> recordContents = recordInfoDefinition.recordContents();
         List<String> languages = recordInfoDefinition.languages();
@@ -428,7 +443,8 @@ public class ModsImporter extends Importer implements Parser {
         putIfListIsNotEmpty(fields, languages, StandardField.LANGUAGE, ", ");
     }
 
-    private void parseLanguage(XMLStreamReader reader, Map<Field, String> fields) throws XMLStreamException {
+    private void parseLanguage(XMLStreamReader reader, Map<Field, String> fields)
+            throws XMLStreamException {
         while (reader.hasNext()) {
             reader.next();
 
@@ -445,7 +461,8 @@ public class ModsImporter extends Importer implements Parser {
         }
     }
 
-    private void parseTitle(XMLStreamReader reader, Map<Field, String> fields) throws XMLStreamException {
+    private void parseTitle(XMLStreamReader reader, Map<Field, String> fields)
+            throws XMLStreamException {
         while (reader.hasNext()) {
             reader.next();
 
@@ -462,7 +479,8 @@ public class ModsImporter extends Importer implements Parser {
         }
     }
 
-    private void parseLocationAndUrl(XMLStreamReader reader, Map<Field, String> fields) throws XMLStreamException {
+    private void parseLocationAndUrl(XMLStreamReader reader, Map<Field, String> fields)
+            throws XMLStreamException {
         List<String> locations = new ArrayList<>();
         List<String> urls = new ArrayList<>();
 
@@ -508,7 +526,8 @@ public class ModsImporter extends Importer implements Parser {
             entry.setCitationKey(identifier.value());
         } else if (!"local".equals(type) && !"citekey".equals(type)) {
             // put all identifiers (doi, issn, isbn,...) except of local and citekey
-            putIfValueNotNull(fields, FieldFactory.parseField(identifier.type()), identifier.value());
+            putIfValueNotNull(
+                    fields, FieldFactory.parseField(identifier.type()), identifier.value());
         }
     }
 
@@ -517,14 +536,20 @@ public class ModsImporter extends Importer implements Parser {
             Optional<Date> optionalParsedDate = Date.parse(date);
             switch (elementName) {
                 case "dateIssued" -> {
-                    optionalParsedDate
-                            .ifPresent(parsedDate -> fields.put(StandardField.DATE, parsedDate.getNormalized()));
+                    optionalParsedDate.ifPresent(
+                            parsedDate ->
+                                    fields.put(StandardField.DATE, parsedDate.getNormalized()));
 
-                    optionalParsedDate.flatMap(Date::getYear)
+                    optionalParsedDate
+                            .flatMap(Date::getYear)
                             .ifPresent(year -> fields.put(StandardField.YEAR, year.toString()));
 
-                    optionalParsedDate.flatMap(Date::getMonth)
-                            .ifPresent(month -> fields.put(StandardField.MONTH, month.getJabRefFormat()));
+                    optionalParsedDate
+                            .flatMap(Date::getMonth)
+                            .ifPresent(
+                                    month ->
+                                            fields.put(
+                                                    StandardField.MONTH, month.getJabRefFormat()));
                 }
                 case "dateCreated" -> {
                     // If there was no year in date issued, then take the year from date created
@@ -532,18 +557,25 @@ public class ModsImporter extends Importer implements Parser {
                     fields.put(new UnknownField("created"), date);
                 }
                 case "dateCaptured" -> {
-                    optionalParsedDate
-                            .ifPresent(parsedDate -> fields.put(StandardField.CREATIONDATE, parsedDate.getNormalized()));
+                    optionalParsedDate.ifPresent(
+                            parsedDate ->
+                                    fields.put(
+                                            StandardField.CREATIONDATE,
+                                            parsedDate.getNormalized()));
                 }
                 case "dateModified" -> {
-                    optionalParsedDate
-                            .ifPresent(parsedDate -> fields.put(StandardField.MODIFICATIONDATE, parsedDate.getNormalized()));
+                    optionalParsedDate.ifPresent(
+                            parsedDate ->
+                                    fields.put(
+                                            StandardField.MODIFICATIONDATE,
+                                            parsedDate.getNormalized()));
                 }
             }
         }
     }
 
-    private void putIfListIsNotEmpty(Map<Field, String> fields, List<String> list, Field key, String separator) {
+    private void putIfListIsNotEmpty(
+            Map<Field, String> fields, List<String> list, Field key, String separator) {
         if (!list.isEmpty()) {
             fields.put(key, list.stream().collect(Collectors.joining(separator)));
         }
@@ -562,8 +594,10 @@ public class ModsImporter extends Importer implements Parser {
                 namePartValue = namePartValue.replaceAll(",$", "");
                 authors.add(namePartValue);
             } else if ("family".equals(type) && (name.value() != null)) {
-                // family should come first, so if family appears we can set the author then comes before
-                // we have to check if forename and family name are not empty in case it's the first author
+                // family should come first, so if family appears we can set the author then comes
+                // before
+                // we have to check if forename and family name are not empty in case it's the first
+                // author
                 if (!foreName.isEmpty() && !familyName.isEmpty()) {
                     // now set and add the old author
                     author = familyName + ", " + Joiner.on(" ").join(foreName);
@@ -631,7 +665,11 @@ public class ModsImporter extends Importer implements Parser {
     @Override
     public List<BibEntry> parseEntries(InputStream inputStream) throws ParseException {
         try {
-            return importDatabase(new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))).getDatabase().getEntries();
+            return importDatabase(
+                            new BufferedReader(
+                                    new InputStreamReader(inputStream, StandardCharsets.UTF_8)))
+                    .getDatabase()
+                    .getEntries();
         } catch (IOException e) {
             LOGGER.error(e.getLocalizedMessage(), e);
         }

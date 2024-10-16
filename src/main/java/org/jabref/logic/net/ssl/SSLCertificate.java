@@ -1,5 +1,10 @@
 package org.jabref.logic.net.ssl;
 
+import com.google.common.hash.Hashing;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -12,10 +17,6 @@ import java.time.ZoneId;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.google.common.hash.Hashing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class SSLCertificate {
     private static final Logger LOGGER = LoggerFactory.getLogger(SSLCertificate.class);
 
@@ -27,7 +28,14 @@ public class SSLCertificate {
     private final String signatureAlgorithm;
     private final Integer version;
 
-    public SSLCertificate(byte[] encoded, String serialNumber, String issuer, LocalDate validFrom, LocalDate validTo, String signatureAlgorithm, Integer version) {
+    public SSLCertificate(
+            byte[] encoded,
+            String serialNumber,
+            String issuer,
+            LocalDate validFrom,
+            LocalDate validTo,
+            String signatureAlgorithm,
+            Integer version) {
         this.serialNumber = serialNumber;
         this.issuer = issuer;
         this.validFrom = validFrom;
@@ -71,12 +79,19 @@ public class SSLCertificate {
     public static Optional<SSLCertificate> fromX509(X509Certificate x509Certificate) {
         Objects.requireNonNull(x509Certificate);
         try {
-            return Optional.of(new SSLCertificate(x509Certificate.getEncoded(), x509Certificate.getSerialNumber().toString(),
-                    x509Certificate.getIssuerX500Principal().getName(),
-                    LocalDate.ofInstant(x509Certificate.getNotBefore().toInstant(), ZoneId.systemDefault()),
-                    LocalDate.ofInstant(x509Certificate.getNotAfter().toInstant(), ZoneId.systemDefault()),
-                    x509Certificate.getSigAlgName(),
-                    x509Certificate.getVersion()));
+            return Optional.of(
+                    new SSLCertificate(
+                            x509Certificate.getEncoded(),
+                            x509Certificate.getSerialNumber().toString(),
+                            x509Certificate.getIssuerX500Principal().getName(),
+                            LocalDate.ofInstant(
+                                    x509Certificate.getNotBefore().toInstant(),
+                                    ZoneId.systemDefault()),
+                            LocalDate.ofInstant(
+                                    x509Certificate.getNotAfter().toInstant(),
+                                    ZoneId.systemDefault()),
+                            x509Certificate.getSigAlgName(),
+                            x509Certificate.getVersion()));
         } catch (CertificateEncodingException e) {
             LOGGER.warn("Error while encoding certificate", e);
         }
@@ -87,7 +102,10 @@ public class SSLCertificate {
         Objects.requireNonNull(certPath);
         try {
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X509");
-            return fromX509((X509Certificate) certificateFactory.generateCertificate(new FileInputStream(certPath.toFile())));
+            return fromX509(
+                    (X509Certificate)
+                            certificateFactory.generateCertificate(
+                                    new FileInputStream(certPath.toFile())));
         } catch (CertificateException e) {
             LOGGER.warn("Certificate doesn't follow X.509 format", e);
         } catch (FileNotFoundException e) {

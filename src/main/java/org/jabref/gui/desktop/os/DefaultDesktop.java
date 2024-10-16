@@ -1,17 +1,16 @@
 package org.jabref.gui.desktop.os;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-
 import org.jabref.Launcher;
 import org.jabref.architecture.AllowedToUseAwt;
 import org.jabref.gui.DialogService;
 import org.jabref.gui.frame.ExternalApplicationsPreferences;
 import org.jabref.logic.util.Directories;
-
 import org.slf4j.LoggerFactory;
+
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * This class contains some default implementations (if OS is neither linux, windows or osx) file directories and file/application open handling methods <br>
@@ -23,7 +22,11 @@ import org.slf4j.LoggerFactory;
 public class DefaultDesktop extends NativeDesktop {
 
     @Override
-    public void openFile(String filePath, String fileType, ExternalApplicationsPreferences externalApplicationsPreferences) throws IOException {
+    public void openFile(
+            String filePath,
+            String fileType,
+            ExternalApplicationsPreferences externalApplicationsPreferences)
+            throws IOException {
         Desktop.getDesktop().open(new File(filePath));
     }
 
@@ -40,7 +43,8 @@ public class DefaultDesktop extends NativeDesktop {
 
     @Override
     public void openConsole(String absolutePath, DialogService dialogService) throws IOException {
-        LoggerFactory.getLogger(DefaultDesktop.class).error("This feature is not supported by your Operating System.");
+        LoggerFactory.getLogger(DefaultDesktop.class)
+                .error("This feature is not supported by your Operating System.");
     }
 
     @Override

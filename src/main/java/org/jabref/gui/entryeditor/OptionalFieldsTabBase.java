@@ -1,11 +1,5 @@
 package org.jabref.gui.entryeditor;
 
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.SequencedSet;
-
-import javax.swing.undo.UndoManager;
-
 import javafx.scene.control.Tooltip;
 
 import org.jabref.gui.DialogService;
@@ -28,26 +22,34 @@ import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.entry.field.Field;
 import org.jabref.model.search.SearchQuery;
 
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.SequencedSet;
+
+import javax.swing.undo.UndoManager;
+
 public class OptionalFieldsTabBase extends FieldsEditorTab {
     private final BibEntryTypesManager entryTypesManager;
     private final boolean isImportantOptionalFields;
 
-    public OptionalFieldsTabBase(String title,
-                                 boolean isImportantOptionalFields,
-                                 BibDatabaseContext databaseContext,
-                                 SuggestionProviders suggestionProviders,
-                                 UndoManager undoManager,
-                                 UndoAction undoAction,
-                                 RedoAction redoAction,
-                                 DialogService dialogService,
-                                 GuiPreferences preferences,
-                                 ThemeManager themeManager,
-                                 BibEntryTypesManager entryTypesManager,
-                                 TaskExecutor taskExecutor,
-                                 JournalAbbreviationRepository journalAbbreviationRepository,
-                                 LuceneManager luceneManager,
-                                 OptionalObjectProperty<SearchQuery> searchQueryProperty) {
-        super(true,
+    public OptionalFieldsTabBase(
+            String title,
+            boolean isImportantOptionalFields,
+            BibDatabaseContext databaseContext,
+            SuggestionProviders suggestionProviders,
+            UndoManager undoManager,
+            UndoAction undoAction,
+            RedoAction redoAction,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            ThemeManager themeManager,
+            BibEntryTypesManager entryTypesManager,
+            TaskExecutor taskExecutor,
+            JournalAbbreviationRepository journalAbbreviationRepository,
+            LuceneManager luceneManager,
+            OptionalObjectProperty<SearchQuery> searchQueryProperty) {
+        super(
+                true,
                 databaseContext,
                 suggestionProviders,
                 undoManager,

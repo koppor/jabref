@@ -1,10 +1,12 @@
 package org.jabref.gui.preferences.general;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.airhacks.afterburner.injection.Injector;
+
+import de.saxsys.mvvmfx.utils.validation.CompositeValidator;
+import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
+import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
+import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
+import de.saxsys.mvvmfx.utils.validation.Validator;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
@@ -44,12 +46,11 @@ import org.jabref.model.entry.BibEntryTypesManager;
 import org.jabref.model.strings.StringUtil;
 import org.jabref.model.util.FileUpdateMonitor;
 
-import com.airhacks.afterburner.injection.Injector;
-import de.saxsys.mvvmfx.utils.validation.CompositeValidator;
-import de.saxsys.mvvmfx.utils.validation.FunctionBasedValidator;
-import de.saxsys.mvvmfx.utils.validation.ValidationMessage;
-import de.saxsys.mvvmfx.utils.validation.ValidationStatus;
-import de.saxsys.mvvmfx.utils.validation.Validator;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class GeneralTabViewModel implements PreferenceTabViewModel {
 
@@ -77,8 +78,10 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
     private final BooleanProperty inspectionWarningDuplicateProperty = new SimpleBooleanProperty();
     private final BooleanProperty confirmDeleteProperty = new SimpleBooleanProperty();
 
-    private final ListProperty<BibDatabaseMode> bibliographyModeListProperty = new SimpleListProperty<>();
-    private final ObjectProperty<BibDatabaseMode> selectedBiblatexModeProperty = new SimpleObjectProperty<>();
+    private final ListProperty<BibDatabaseMode> bibliographyModeListProperty =
+            new SimpleListProperty<>();
+    private final ObjectProperty<BibDatabaseMode> selectedBiblatexModeProperty =
+            new SimpleObjectProperty<>();
 
     private final BooleanProperty alwaysReformatBibProperty = new SimpleBooleanProperty();
     private final BooleanProperty autosaveLocalLibraries = new SimpleBooleanProperty();
@@ -104,7 +107,11 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
     private final BibEntryTypesManager entryTypesManager;
     private final TrustStoreManager trustStoreManager;
 
-    public GeneralTabViewModel(DialogService dialogService, GuiPreferences preferences, FileUpdateMonitor fileUpdateMonitor, BibEntryTypesManager entryTypesManager) {
+    public GeneralTabViewModel(
+            DialogService dialogService,
+            GuiPreferences preferences,
+            FileUpdateMonitor fileUpdateMonitor,
+            BibEntryTypesManager entryTypesManager) {
         this.dialogService = dialogService;
         this.preferences = preferences;
         this.workspacePreferences = preferences.getWorkspacePreferences();
@@ -114,44 +121,57 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
         this.fileUpdateMonitor = fileUpdateMonitor;
         this.entryTypesManager = entryTypesManager;
 
-        fontSizeValidator = new FunctionBasedValidator<>(
-                fontSizeProperty,
-                input -> {
-                    try {
-                        return Integer.parseInt(fontSizeProperty().getValue()) > 8;
-                    } catch (NumberFormatException ex) {
-                        return false;
-                    }
-                },
-                ValidationMessage.error("%s > %s %n %n %s".formatted(
-                        Localization.lang("General"),
-                        Localization.lang("Font settings"),
-                        Localization.lang("You must enter an integer value higher than 8."))));
+        fontSizeValidator =
+                new FunctionBasedValidator<>(
+                        fontSizeProperty,
+                        input -> {
+                            try {
+                                return Integer.parseInt(fontSizeProperty().getValue()) > 8;
+                            } catch (NumberFormatException ex) {
+                                return false;
+                            }
+                        },
+                        ValidationMessage.error(
+                                "%s > %s %n %n %s"
+                                        .formatted(
+                                                Localization.lang("General"),
+                                                Localization.lang("Font settings"),
+                                                Localization.lang(
+                                                        "You must enter an integer value higher than 8."))));
 
-        customPathToThemeValidator = new FunctionBasedValidator<>(
-                customPathToThemeProperty,
-                input -> !StringUtil.isNullOrEmpty(input),
-                ValidationMessage.error("%s > %s %n %n %s".formatted(
-                        Localization.lang("General"),
-                        Localization.lang("Visual theme"),
-                        Localization.lang("Please specify a css theme file."))));
+        customPathToThemeValidator =
+                new FunctionBasedValidator<>(
+                        customPathToThemeProperty,
+                        input -> !StringUtil.isNullOrEmpty(input),
+                        ValidationMessage.error(
+                                "%s > %s %n %n %s"
+                                        .formatted(
+                                                Localization.lang("General"),
+                                                Localization.lang("Visual theme"),
+                                                Localization.lang(
+                                                        "Please specify a css theme file."))));
 
-        remotePortValidator = new FunctionBasedValidator<>(
-                remotePortProperty,
-                input -> {
-                    try {
-                        int portNumber = Integer.parseInt(remotePortProperty().getValue());
-                        return RemoteUtil.isUserPort(portNumber);
-                    } catch (NumberFormatException ex) {
-                        return false;
-                    }
-                },
-                ValidationMessage.error("%s > %s %n %n %s".formatted(
-                        Localization.lang("Network"),
-                        Localization.lang("Remote operation"),
-                        Localization.lang("You must enter an integer value in the interval 1025-65535"))));
+        remotePortValidator =
+                new FunctionBasedValidator<>(
+                        remotePortProperty,
+                        input -> {
+                            try {
+                                int portNumber = Integer.parseInt(remotePortProperty().getValue());
+                                return RemoteUtil.isUserPort(portNumber);
+                            } catch (NumberFormatException ex) {
+                                return false;
+                            }
+                        },
+                        ValidationMessage.error(
+                                "%s > %s %n %n %s"
+                                        .formatted(
+                                                Localization.lang("Network"),
+                                                Localization.lang("Remote operation"),
+                                                Localization.lang(
+                                                        "You must enter an integer value in the interval 1025-65535"))));
 
-        this.trustStoreManager = new TrustStoreManager(Path.of(preferences.getSSLPreferences().getTruststorePath()));
+        this.trustStoreManager =
+                new TrustStoreManager(Path.of(preferences.getSSLPreferences().getTruststorePath()));
     }
 
     public ValidationStatus remotePortValidationStatus() {
@@ -162,13 +182,13 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
     public void setValues() {
         selectedLanguageProperty.setValue(workspacePreferences.getLanguage());
 
-        // The light theme is in fact the absence of any theme modifying 'base.css'. Another embedded theme like
-        // 'dark.css', stored in the classpath, can be introduced in {@link org.jabref.gui.theme.Theme}.
+        // The light theme is in fact the absence of any theme modifying 'base.css'. Another
+        // embedded theme like
+        // 'dark.css', stored in the classpath, can be introduced in {@link
+        // org.jabref.gui.theme.Theme}.
         switch (workspacePreferences.getTheme().getType()) {
-            case DEFAULT ->
-                    selectedThemeProperty.setValue(ThemeTypes.LIGHT);
-            case EMBEDDED ->
-                    selectedThemeProperty.setValue(ThemeTypes.DARK);
+            case DEFAULT -> selectedThemeProperty.setValue(ThemeTypes.LIGHT);
+            case EMBEDDED -> selectedThemeProperty.setValue(ThemeTypes.DARK);
             case CUSTOM -> {
                 selectedThemeProperty.setValue(ThemeTypes.CUSTOM);
                 customPathToThemeProperty.setValue(workspacePreferences.getTheme().getName());
@@ -181,11 +201,13 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
 
         openLastStartupProperty.setValue(workspacePreferences.shouldOpenLastEdited());
         showAdvancedHintsProperty.setValue(workspacePreferences.shouldShowAdvancedHints());
-        inspectionWarningDuplicateProperty.setValue(workspacePreferences.shouldWarnAboutDuplicatesInInspection());
+        inspectionWarningDuplicateProperty.setValue(
+                workspacePreferences.shouldWarnAboutDuplicatesInInspection());
 
         confirmDeleteProperty.setValue(workspacePreferences.shouldConfirmDelete());
 
-        bibliographyModeListProperty.setValue(FXCollections.observableArrayList(BibDatabaseMode.values()));
+        bibliographyModeListProperty.setValue(
+                FXCollections.observableArrayList(BibDatabaseMode.values()));
         selectedBiblatexModeProperty.setValue(libraryPreferences.getDefaultBibDatabaseMode());
 
         alwaysReformatBibProperty.setValue(libraryPreferences.shouldAlwaysReformatOnSave());
@@ -204,25 +226,26 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
         if (newLanguage != workspacePreferences.getLanguage()) {
             workspacePreferences.setLanguage(newLanguage);
             Localization.setLanguage(newLanguage);
-            restartWarning.add(Localization.lang("Changed language") + ": " + newLanguage.getDisplayName());
+            restartWarning.add(
+                    Localization.lang("Changed language") + ": " + newLanguage.getDisplayName());
         }
 
         workspacePreferences.setShouldOverrideDefaultFontSize(fontOverrideProperty.getValue());
         workspacePreferences.setMainFontSize(Integer.parseInt(fontSizeProperty.getValue()));
 
         switch (selectedThemeProperty.get()) {
-            case LIGHT ->
-                    workspacePreferences.setTheme(Theme.light());
-            case DARK ->
-                    workspacePreferences.setTheme(Theme.dark());
+            case LIGHT -> workspacePreferences.setTheme(Theme.light());
+            case DARK -> workspacePreferences.setTheme(Theme.dark());
             case CUSTOM ->
-                    workspacePreferences.setTheme(Theme.custom(customPathToThemeProperty.getValue()));
+                    workspacePreferences.setTheme(
+                            Theme.custom(customPathToThemeProperty.getValue()));
         }
         workspacePreferences.setThemeSyncOs(themeSyncOsProperty.getValue());
 
         workspacePreferences.setOpenLastEdited(openLastStartupProperty.getValue());
         workspacePreferences.setShowAdvancedHints(showAdvancedHintsProperty.getValue());
-        workspacePreferences.setWarnAboutDuplicatesInInspection(inspectionWarningDuplicateProperty.getValue());
+        workspacePreferences.setWarnAboutDuplicatesInInspection(
+                inspectionWarningDuplicateProperty.getValue());
 
         workspacePreferences.setConfirmDelete(confirmDeleteProperty.getValue());
 
@@ -232,28 +255,38 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
         libraryPreferences.setAutoSave(autosaveLocalLibraries.getValue());
 
         filePreferences.createBackupProperty().setValue(createBackupProperty.getValue());
-        filePreferences.backupDirectoryProperty().setValue(Path.of(backupDirectoryProperty.getValue()));
+        filePreferences
+                .backupDirectoryProperty()
+                .setValue(Path.of(backupDirectoryProperty.getValue()));
 
-        getPortAsInt(remotePortProperty.getValue()).ifPresent(newPort -> {
-            if (remotePreferences.isDifferentPort(newPort)) {
-                remotePreferences.setPort(newPort);
-            }
-        });
+        getPortAsInt(remotePortProperty.getValue())
+                .ifPresent(
+                        newPort -> {
+                            if (remotePreferences.isDifferentPort(newPort)) {
+                                remotePreferences.setPort(newPort);
+                            }
+                        });
 
-        getPortAsInt(remotePortProperty.getValue()).ifPresent(newPort -> {
-            if (remotePreferences.isDifferentPort(newPort)) {
-                remotePreferences.setPort(newPort);
-            }
-        });
+        getPortAsInt(remotePortProperty.getValue())
+                .ifPresent(
+                        newPort -> {
+                            if (remotePreferences.isDifferentPort(newPort)) {
+                                remotePreferences.setPort(newPort);
+                            }
+                        });
 
-        UiMessageHandler uiMessageHandler = Injector.instantiateModelOrService(UiMessageHandler.class);
-        RemoteListenerServerManager remoteListenerServerManager = Injector.instantiateModelOrService(RemoteListenerServerManager.class);
-        remoteListenerServerManager.stop(); // stop in all cases, because the port might have changed
+        UiMessageHandler uiMessageHandler =
+                Injector.instantiateModelOrService(UiMessageHandler.class);
+        RemoteListenerServerManager remoteListenerServerManager =
+                Injector.instantiateModelOrService(RemoteListenerServerManager.class);
+        remoteListenerServerManager
+                .stop(); // stop in all cases, because the port might have changed
 
         if (remoteServerProperty.getValue()) {
             remotePreferences.setUseRemoteServer(true);
             remoteListenerServerManager.openAndStart(
-                    new CLIMessageHandler(uiMessageHandler, preferences, fileUpdateMonitor, entryTypesManager),
+                    new CLIMessageHandler(
+                            uiMessageHandler, preferences, fileUpdateMonitor, entryTypesManager),
                     remotePreferences.getPort());
         } else {
             remotePreferences.setUseRemoteServer(false);
@@ -263,7 +296,8 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
         if (remoteServerProperty.getValue()) {
             remotePreferences.setUseRemoteServer(true);
             remoteListenerServerManager.openAndStart(
-                    new CLIMessageHandler(uiMessageHandler, preferences, fileUpdateMonitor, entryTypesManager),
+                    new CLIMessageHandler(
+                            uiMessageHandler, preferences, fileUpdateMonitor, entryTypesManager),
                     remotePreferences.getPort());
         } else {
             remotePreferences.setUseRemoteServer(false);
@@ -298,8 +332,10 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
 
         ValidationStatus validationStatus = validator.getValidationStatus();
         if (!validationStatus.isValid()) {
-            validationStatus.getHighestMessage().ifPresent(message ->
-                    dialogService.showErrorDialogAndWait(message.getMessage()));
+            validationStatus
+                    .getHighestMessage()
+                    .ifPresent(
+                            message -> dialogService.showErrorDialogAndWait(message.getMessage()));
             return false;
         }
         return true;
@@ -335,16 +371,27 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
     }
 
     public void importCSSFile() {
-        String fileDir = customPathToThemeProperty.getValue().isEmpty() ? preferences.getInternalPreferences().getLastPreferencesExportPath().toString()
-                : customPathToThemeProperty.getValue();
+        String fileDir =
+                customPathToThemeProperty.getValue().isEmpty()
+                        ? preferences
+                                .getInternalPreferences()
+                                .getLastPreferencesExportPath()
+                                .toString()
+                        : customPathToThemeProperty.getValue();
 
-        FileDialogConfiguration fileDialogConfiguration = new FileDialogConfiguration.Builder()
-                .addExtensionFilter(StandardFileType.CSS)
-                .withDefaultExtension(StandardFileType.CSS)
-                .withInitialDirectory(fileDir).build();
+        FileDialogConfiguration fileDialogConfiguration =
+                new FileDialogConfiguration.Builder()
+                        .addExtensionFilter(StandardFileType.CSS)
+                        .withDefaultExtension(StandardFileType.CSS)
+                        .withInitialDirectory(fileDir)
+                        .build();
 
-        dialogService.showFileOpenDialog(fileDialogConfiguration).ifPresent(file ->
-                customPathToThemeProperty.setValue(file.toAbsolutePath().toString()));
+        dialogService
+                .showFileOpenDialog(fileDialogConfiguration)
+                .ifPresent(
+                        file ->
+                                customPathToThemeProperty.setValue(
+                                        file.toAbsolutePath().toString()));
     }
 
     public BooleanProperty fontOverrideProperty() {
@@ -397,9 +444,12 @@ public class GeneralTabViewModel implements PreferenceTabViewModel {
 
     public void backupFileDirBrowse() {
         DirectoryDialogConfiguration dirDialogConfiguration =
-                new DirectoryDialogConfiguration.Builder().withInitialDirectory(Path.of(backupDirectoryProperty().getValue())).build();
-        dialogService.showDirectorySelectionDialog(dirDialogConfiguration)
-                     .ifPresent(dir -> backupDirectoryProperty.setValue(dir.toString()));
+                new DirectoryDialogConfiguration.Builder()
+                        .withInitialDirectory(Path.of(backupDirectoryProperty().getValue()))
+                        .build();
+        dialogService
+                .showDirectorySelectionDialog(dirDialogConfiguration)
+                .ifPresent(dir -> backupDirectoryProperty.setValue(dir.toString()));
     }
 
     public BooleanProperty remoteServerProperty() {

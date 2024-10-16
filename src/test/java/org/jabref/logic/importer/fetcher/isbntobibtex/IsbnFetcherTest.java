@@ -1,8 +1,9 @@
 package org.jabref.logic.importer.fetcher.isbntobibtex;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.ImportFormatPreferences;
@@ -11,15 +12,13 @@ import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.field.UnknownField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.testutils.category.FetcherTest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @FetcherTest
 class IsbnFetcherTest {
@@ -31,17 +30,20 @@ class IsbnFetcherTest {
     void setUp() {
         fetcher = new IsbnFetcher(mock(ImportFormatPreferences.class, Answers.RETURNS_DEEP_STUBS));
 
-        bibEntry = new BibEntry(StandardEntryType.Book)
-                .withField(StandardField.AUTHOR, "Bloch, Joshua")
-                .withField(StandardField.TITLE, "Effective Java")
-                .withField(StandardField.PUBLISHER, "Addison-Wesley")
-                .withField(StandardField.YEAR, "2018")
-                .withField(StandardField.ISBN, "9780134685991")
-                .withField(StandardField.NOTE, "Titelzusätze auf dem Umschlag: \"Updated for Java 9. Best practices for ... the Java platform\"")
-                .withField(StandardField.PAGETOTAL, "392")
-                .withField(new UnknownField("ppn_gvk"), "100121840X")
-                .withField(StandardField.EDITION, "Third edition")
-                .withField(StandardField.ADDRESS, "Boston");
+        bibEntry =
+                new BibEntry(StandardEntryType.Book)
+                        .withField(StandardField.AUTHOR, "Bloch, Joshua")
+                        .withField(StandardField.TITLE, "Effective Java")
+                        .withField(StandardField.PUBLISHER, "Addison-Wesley")
+                        .withField(StandardField.YEAR, "2018")
+                        .withField(StandardField.ISBN, "9780134685991")
+                        .withField(
+                                StandardField.NOTE,
+                                "Titelzusätze auf dem Umschlag: \"Updated for Java 9. Best practices for ... the Java platform\"")
+                        .withField(StandardField.PAGETOTAL, "392")
+                        .withField(new UnknownField("ppn_gvk"), "100121840X")
+                        .withField(StandardField.EDITION, "Third edition")
+                        .withField(StandardField.ADDRESS, "Boston");
     }
 
     @Test

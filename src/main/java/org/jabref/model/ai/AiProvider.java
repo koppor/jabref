@@ -3,8 +3,14 @@ package org.jabref.model.ai;
 import java.io.Serializable;
 
 public enum AiProvider implements Serializable {
-    OPEN_AI("OpenAI", "https://openai.com/policies/privacy-policy/", "https://openai.com/policies/privacy-policy/"),
-    MISTRAL_AI("Mistral AI", "https://mistral.ai/terms/#privacy-policy", "https://mistral.ai/terms/#privacy-policy"),
+    OPEN_AI(
+            "OpenAI",
+            "https://openai.com/policies/privacy-policy/",
+            "https://openai.com/policies/privacy-policy/"),
+    MISTRAL_AI(
+            "Mistral AI",
+            "https://mistral.ai/terms/#privacy-policy",
+            "https://mistral.ai/terms/#privacy-policy"),
     GEMINI("Gemini", "https://huggingface.co/privacy", "https://ai.google.dev/gemini-api/terms"),
     HUGGING_FACE("Hugging Face", "https://huggingface.co/api", "https://huggingface.co/privacy");
 
@@ -34,4 +40,3 @@ public enum AiProvider implements Serializable {
         return label;
     }
 }
-

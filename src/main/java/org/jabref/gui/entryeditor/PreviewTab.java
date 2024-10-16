@@ -24,13 +24,14 @@ public class PreviewTab extends EntryEditorTab implements OffersPreview {
     private final OptionalObjectProperty<SearchQuery> searchQueryProperty;
     private PreviewPanel previewPanel;
 
-    public PreviewTab(BibDatabaseContext databaseContext,
-                      DialogService dialogService,
-                      GuiPreferences preferences,
-                      ThemeManager themeManager,
-                      TaskExecutor taskExecutor,
-                      LuceneManager luceneManager,
-                      OptionalObjectProperty<SearchQuery> searchQueryProperty) {
+    public PreviewTab(
+            BibDatabaseContext databaseContext,
+            DialogService dialogService,
+            GuiPreferences preferences,
+            ThemeManager themeManager,
+            TaskExecutor taskExecutor,
+            LuceneManager luceneManager,
+            OptionalObjectProperty<SearchQuery> searchQueryProperty) {
         this.databaseContext = databaseContext;
         this.dialogService = dialogService;
         this.preferences = preferences;
@@ -65,7 +66,16 @@ public class PreviewTab extends EntryEditorTab implements OffersPreview {
     @Override
     protected void bindToEntry(BibEntry entry) {
         if (previewPanel == null) {
-            previewPanel = new PreviewPanel(databaseContext, dialogService, preferences.getKeyBindingRepository(), preferences, themeManager, taskExecutor, luceneManager, searchQueryProperty);
+            previewPanel =
+                    new PreviewPanel(
+                            databaseContext,
+                            dialogService,
+                            preferences.getKeyBindingRepository(),
+                            preferences,
+                            themeManager,
+                            taskExecutor,
+                            luceneManager,
+                            searchQueryProperty);
             setContent(previewPanel);
         }
 

@@ -1,9 +1,14 @@
 package org.jabref.logic.importer.fetcher;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javafx.collections.FXCollections;
+
+import kong.unirest.core.json.JSONObject;
 
 import org.jabref.logic.importer.FetcherException;
 import org.jabref.logic.importer.ImporterPreferences;
@@ -12,18 +17,13 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.jabref.testutils.category.FetcherTest;
-
-import kong.unirest.core.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 @FetcherTest
 class BiodiversityLibraryTest {
@@ -54,10 +54,7 @@ class BiodiversityLibraryTest {
 
     @Test
     void baseURLConstruction() throws MalformedURLException, URISyntaxException {
-        String expected = fetcher
-                .getTestUrl()
-                .concat(apiKey)
-                .concat(RESPONSE_FORMAT);
+        String expected = fetcher.getTestUrl().concat(apiKey).concat(RESPONSE_FORMAT);
 
         assertEquals(expected, fetcher.getBaseURL().toString());
     }
@@ -65,12 +62,12 @@ class BiodiversityLibraryTest {
     @ParameterizedTest
     @ValueSource(strings = {"1234", "331", "121"})
     void getPartMetadaUrl(String id) throws MalformedURLException, URISyntaxException {
-        String expected = fetcher
-                .getTestUrl()
-                .concat(apiKey)
-                .concat(RESPONSE_FORMAT)
-                .concat("&op=GetPartMetadata&pages=f&names=f")
-                .concat("&id=");
+        String expected =
+                fetcher.getTestUrl()
+                        .concat(apiKey)
+                        .concat(RESPONSE_FORMAT)
+                        .concat("&op=GetPartMetadata&pages=f&names=f")
+                        .concat("&id=");
 
         assertEquals(expected.concat(id), fetcher.getPartMetadataURL(id).toString());
     }
@@ -78,47 +75,60 @@ class BiodiversityLibraryTest {
     @ParameterizedTest
     @ValueSource(strings = {"1234", "4321", "331"})
     void getItemMetadaUrl(String id) throws MalformedURLException, URISyntaxException {
-        String expected = fetcher
-                .getTestUrl()
-                .concat(apiKey)
-                .concat(RESPONSE_FORMAT)
-                .concat("&op=GetItemMetadata&pages=f&ocr=f&ocr=f")
-                .concat("&id=");
+        String expected =
+                fetcher.getTestUrl()
+                        .concat(apiKey)
+                        .concat(RESPONSE_FORMAT)
+                        .concat("&op=GetItemMetadata&pages=f&ocr=f&ocr=f")
+                        .concat("&id=");
 
         assertEquals(expected.concat(id), fetcher.getItemMetadataURL(id).toString());
     }
 
     @Test
     void performSearch() throws FetcherException {
-        BibEntry expected = new BibEntry(StandardEntryType.Article)
-            .withField(StandardField.AUTHOR, "Clark, John L. (John Littner)  and Neill, David A. ")
-            .withField(StandardField.JOURNALTITLE, "PhytoKeys")
-            .withField(StandardField.LANGUAGE, "English")
-            .withField(StandardField.PUBLISHER, "Pensoft Publishers")
-            .withField(StandardField.TITLE, "\uFEFFAmanoa condorensis (Phyllanthaceae), a new shrubby species from the Cordillera del Condor in southern Ecuador")
-            .withField(StandardField.URL, "https://www.biodiversitylibrary.org/part/356490")
-            .withField(StandardField.DATE, "2023")
-            .withField(StandardField.VOLUME, "227")
-            .withField(StandardField.PAGES, "89--97")
-            .withField(StandardField.DOI, "10.3897/phytokeys.227.104703");
+        BibEntry expected =
+                new BibEntry(StandardEntryType.Article)
+                        .withField(
+                                StandardField.AUTHOR,
+                                "Clark, John L. (John Littner)  and Neill, David A. ")
+                        .withField(StandardField.JOURNALTITLE, "PhytoKeys")
+                        .withField(StandardField.LANGUAGE, "English")
+                        .withField(StandardField.PUBLISHER, "Pensoft Publishers")
+                        .withField(
+                                StandardField.TITLE,
+                                "\uFEFFAmanoa condorensis (Phyllanthaceae), a new shrubby species from the Cordillera del Condor in southern Ecuador")
+                        .withField(
+                                StandardField.URL,
+                                "https://www.biodiversitylibrary.org/part/356490")
+                        .withField(StandardField.DATE, "2023")
+                        .withField(StandardField.VOLUME, "227")
+                        .withField(StandardField.PAGES, "89--97")
+                        .withField(StandardField.DOI, "10.3897/phytokeys.227.104703");
 
-        assertEquals(expected, fetcher.performSearch("Amanoa condorensis (Phyllanthaceae)").getFirst());
+        assertEquals(
+                expected, fetcher.performSearch("Amanoa condorensis (Phyllanthaceae)").getFirst());
     }
 
     @Test
     void jsonResultToBibEntry() {
-        JSONObject input = new JSONObject("{\n\"BHLType\": \"Part\",\n\"FoundIn\": \"Metadata\",\n\"Volume\": \"3\",\n\"Authors\": [\n{\n\"Name\": \"Dimmock, George,\"\n}\n],\n\"PartUrl\": \"https://www.biodiversitylibrary.org/part/181199\",\n\"PartID\": \"181199\",\n\"Genre\": \"Article\",\n\"Title\": \"The Cocoons of Cionus Scrophulariae\",\n\"ContainerTitle\": \"Psyche.\",\n\"Date\": \"1882\",\n\"PageRange\": \"411--413\"\n}");
-        BibEntry expected = new BibEntry(StandardEntryType.Article)
-                .withField(StandardField.TITLE, "The Cocoons of Cionus Scrophulariae")
-                .withField(StandardField.AUTHOR, "Dimmock, George, ")
-                .withField(StandardField.PAGES, "411--413")
-                .withField(StandardField.DATE, "1882")
-                .withField(StandardField.JOURNALTITLE, "Psyche.")
-                .withField(StandardField.VOLUME, "3");
+        JSONObject input =
+                new JSONObject(
+                        "{\n\"BHLType\": \"Part\",\n\"FoundIn\": \"Metadata\",\n\"Volume\": \"3\",\n\"Authors\": [\n{\n\"Name\": \"Dimmock, George,\"\n}\n],\n\"PartUrl\": \"https://www.biodiversitylibrary.org/part/181199\",\n\"PartID\": \"181199\",\n\"Genre\": \"Article\",\n\"Title\": \"The Cocoons of Cionus Scrophulariae\",\n\"ContainerTitle\": \"Psyche.\",\n\"Date\": \"1882\",\n\"PageRange\": \"411--413\"\n}");
+        BibEntry expected =
+                new BibEntry(StandardEntryType.Article)
+                        .withField(StandardField.TITLE, "The Cocoons of Cionus Scrophulariae")
+                        .withField(StandardField.AUTHOR, "Dimmock, George, ")
+                        .withField(StandardField.PAGES, "411--413")
+                        .withField(StandardField.DATE, "1882")
+                        .withField(StandardField.JOURNALTITLE, "Psyche.")
+                        .withField(StandardField.VOLUME, "3");
 
         assertEquals(expected, fetcher.jsonResultToBibEntry(input));
 
-        input = new JSONObject("""
+        input =
+                new JSONObject(
+                        """
                 {
                             "BHLType": "Item",
                             "FoundIn": "Metadata",
@@ -138,15 +148,20 @@ class BiodiversityLibraryTest {
                             "Genre": "Book",
                             "Title": "Potatoes : the poor man's own crop : illustrated with plates, showing the decay and disease of the potatoe [sic] : with hints to improve the land and life of the poor man : published to aid the Industrial Marlborough Exhibition"
                         }""");
-         expected = new BibEntry(StandardEntryType.Book)
-                .withField(StandardField.TITLE, "Potatoes : the poor man's own crop : illustrated with plates, showing the decay and disease of the potatoe [sic] : with hints to improve the land and life of the poor man : published to aid the Industrial Marlborough Exhibition")
-                .withField(StandardField.AUTHOR, "George, George ")
-                .withField(StandardField.YEAR, "1861")
-                .withField(StandardField.LOCATION, "Salisbury")
-                .withField(StandardField.PUBLISHER, "Frederick A. Blake,");
+        expected =
+                new BibEntry(StandardEntryType.Book)
+                        .withField(
+                                StandardField.TITLE,
+                                "Potatoes : the poor man's own crop : illustrated with plates, showing the decay and disease of the potatoe [sic] : with hints to improve the land and life of the poor man : published to aid the Industrial Marlborough Exhibition")
+                        .withField(StandardField.AUTHOR, "George, George ")
+                        .withField(StandardField.YEAR, "1861")
+                        .withField(StandardField.LOCATION, "Salisbury")
+                        .withField(StandardField.PUBLISHER, "Frederick A. Blake,");
         assertEquals(expected, fetcher.jsonResultToBibEntry(input));
 
-        input = new JSONObject("""
+        input =
+                new JSONObject(
+                        """
                 {
                             "BHLType": "Item",
                             "FoundIn": "Metadata",
@@ -166,12 +181,13 @@ class BiodiversityLibraryTest {
                             "Genre": "Book",
                             "Title": "The extra cost of producing clean milk."
                         }""");
-        expected = new BibEntry(StandardEntryType.Book)
-                .withField(StandardField.TITLE, "The extra cost of producing clean milk.")
-                .withField(StandardField.AUTHOR, "Whitaker, George M. (George Mason) ")
-                .withField(StandardField.YEAR, "1911")
-                .withField(StandardField.LOCATION, "Washington")
-                .withField(StandardField.PUBLISHER, "Government Prining Office,");
+        expected =
+                new BibEntry(StandardEntryType.Book)
+                        .withField(StandardField.TITLE, "The extra cost of producing clean milk.")
+                        .withField(StandardField.AUTHOR, "Whitaker, George M. (George Mason) ")
+                        .withField(StandardField.YEAR, "1911")
+                        .withField(StandardField.LOCATION, "Washington")
+                        .withField(StandardField.PUBLISHER, "Government Prining Office,");
         assertEquals(expected, fetcher.jsonResultToBibEntry(input));
     }
 }

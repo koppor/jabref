@@ -1,11 +1,11 @@
 package org.jabref.logic.importer;
 
+import org.jabref.logic.importer.fetcher.TrustLevel;
+import org.jabref.model.entry.BibEntry;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
-
-import org.jabref.logic.importer.fetcher.TrustLevel;
-import org.jabref.model.entry.BibEntry;
 
 /**
  * This interface is used for classes that try to resolve a full-text PDF url for a BibTex entry.

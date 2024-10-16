@@ -1,21 +1,20 @@
 package org.jabref.gui.documentviewer;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Objects;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-
-import org.jabref.architecture.AllowedToUseAwt;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.jabref.architecture.AllowedToUseAwt;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Represents the view model of a pdf page backed by a {@link PDPage}.
@@ -35,7 +34,8 @@ public class PdfDocumentPageViewModel extends DocumentPageViewModel {
 
     // Taken from http://stackoverflow.com/a/9417836/873661
     private static BufferedImage resize(BufferedImage img, int newWidth, int newHeight) {
-        java.awt.Image tmp = img.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
+        java.awt.Image tmp =
+                img.getScaledInstance(newWidth, newHeight, java.awt.Image.SCALE_SMOOTH);
         BufferedImage dimg = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g2d = dimg.createGraphics();
@@ -51,7 +51,8 @@ public class PdfDocumentPageViewModel extends DocumentPageViewModel {
         PDFRenderer renderer = new PDFRenderer(document);
         try {
             int resolution = 96;
-            BufferedImage image = renderer.renderImageWithDPI(pageNumber, 2 * resolution, ImageType.RGB);
+            BufferedImage image =
+                    renderer.renderImageWithDPI(pageNumber, 2 * resolution, ImageType.RGB);
             return convertToFxImage(resize(image, width, height));
         } catch (IOException e) {
             // TODO: LOG

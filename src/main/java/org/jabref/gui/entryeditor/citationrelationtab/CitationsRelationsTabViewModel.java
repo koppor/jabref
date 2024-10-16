@@ -1,11 +1,5 @@
 package org.jabref.gui.entryeditor.citationrelationtab;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.swing.undo.UndoManager;
-
 import org.jabref.gui.DialogService;
 import org.jabref.gui.StateManager;
 import org.jabref.gui.entryeditor.citationrelationtab.semanticscholar.CitationFetcher;
@@ -19,6 +13,12 @@ import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
 import org.jabref.model.util.FileUpdateMonitor;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.swing.undo.UndoManager;
+
 public class CitationsRelationsTabViewModel {
 
     private final BibDatabaseContext databaseContext;
@@ -29,7 +29,14 @@ public class CitationsRelationsTabViewModel {
     private final FileUpdateMonitor fileUpdateMonitor;
     private final TaskExecutor taskExecutor;
 
-    public CitationsRelationsTabViewModel(BibDatabaseContext databaseContext, GuiPreferences preferences, UndoManager undoManager, StateManager stateManager, DialogService dialogService, FileUpdateMonitor fileUpdateMonitor, TaskExecutor taskExecutor) {
+    public CitationsRelationsTabViewModel(
+            BibDatabaseContext databaseContext,
+            GuiPreferences preferences,
+            UndoManager undoManager,
+            StateManager stateManager,
+            DialogService dialogService,
+            FileUpdateMonitor fileUpdateMonitor,
+            TaskExecutor taskExecutor) {
         this.databaseContext = databaseContext;
         this.preferences = preferences;
         this.undoManager = undoManager;
@@ -39,17 +46,21 @@ public class CitationsRelationsTabViewModel {
         this.taskExecutor = taskExecutor;
     }
 
-    public void importEntries(List<CitationRelationItem> entriesToImport, CitationFetcher.SearchType searchType, BibEntry existingEntry) {
+    public void importEntries(
+            List<CitationRelationItem> entriesToImport,
+            CitationFetcher.SearchType searchType,
+            BibEntry existingEntry) {
         List<BibEntry> entries = entriesToImport.stream().map(CitationRelationItem::entry).toList();
 
-        ImportHandler importHandler = new ImportHandler(
-                databaseContext,
-                preferences,
-                fileUpdateMonitor,
-                undoManager,
-                stateManager,
-                dialogService,
-                taskExecutor);
+        ImportHandler importHandler =
+                new ImportHandler(
+                        databaseContext,
+                        preferences,
+                        fileUpdateMonitor,
+                        undoManager,
+                        stateManager,
+                        dialogService,
+                        taskExecutor);
 
         switch (searchType) {
             case CITES -> importCites(entries, existingEntry, importHandler);
@@ -57,10 +68,14 @@ public class CitationsRelationsTabViewModel {
         }
     }
 
-    private void importCites(List<BibEntry> entries, BibEntry existingEntry, ImportHandler importHandler) {
-        CitationKeyPatternPreferences citationKeyPatternPreferences = preferences.getCitationKeyPatternPreferences();
-        CitationKeyGenerator generator = new CitationKeyGenerator(databaseContext, citationKeyPatternPreferences);
-        boolean generateNewKeyOnImport = preferences.getImporterPreferences().generateNewKeyOnImportProperty().get();
+    private void importCites(
+            List<BibEntry> entries, BibEntry existingEntry, ImportHandler importHandler) {
+        CitationKeyPatternPreferences citationKeyPatternPreferences =
+                preferences.getCitationKeyPatternPreferences();
+        CitationKeyGenerator generator =
+                new CitationKeyGenerator(databaseContext, citationKeyPatternPreferences);
+        boolean generateNewKeyOnImport =
+                preferences.getImporterPreferences().generateNewKeyOnImportProperty().get();
 
         List<String> citeKeys = getExistingEntriesFromCiteField(existingEntry);
         citeKeys.removeIf(String::isEmpty);
@@ -78,23 +93,30 @@ public class CitationsRelationsTabViewModel {
         importHandler.importEntries(entries);
     }
 
-    private void importCitedBy(List<BibEntry> entries, BibEntry existingEntry, ImportHandler importHandler) {
-        CitationKeyPatternPreferences citationKeyPatternPreferences = preferences.getCitationKeyPatternPreferences();
-        CitationKeyGenerator generator = new CitationKeyGenerator(databaseContext, citationKeyPatternPreferences);
-        boolean generateNewKeyOnImport = preferences.getImporterPreferences().generateNewKeyOnImportProperty().get();
+    private void importCitedBy(
+            List<BibEntry> entries, BibEntry existingEntry, ImportHandler importHandler) {
+        CitationKeyPatternPreferences citationKeyPatternPreferences =
+                preferences.getCitationKeyPatternPreferences();
+        CitationKeyGenerator generator =
+                new CitationKeyGenerator(databaseContext, citationKeyPatternPreferences);
+        boolean generateNewKeyOnImport =
+                preferences.getImporterPreferences().generateNewKeyOnImportProperty().get();
 
         for (BibEntry entryThatCitesOurExistingEntry : entries) {
-            List<String> existingCites = getExistingEntriesFromCiteField(entryThatCitesOurExistingEntry);
+            List<String> existingCites =
+                    getExistingEntriesFromCiteField(entryThatCitesOurExistingEntry);
             existingCites.removeIf(String::isEmpty);
             String key;
-            if (generateNewKeyOnImport || entryThatCitesOurExistingEntry.getCitationKey().isEmpty()) {
+            if (generateNewKeyOnImport
+                    || entryThatCitesOurExistingEntry.getCitationKey().isEmpty()) {
                 key = generator.generateKey(entryThatCitesOurExistingEntry);
                 entryThatCitesOurExistingEntry.setCitationKey(key);
             } else {
                 key = existingEntry.getCitationKey().get();
             }
             addToKeyToList(existingCites, key);
-            entryThatCitesOurExistingEntry.setField(StandardField.CITES, toCommaSeparatedString(existingCites));
+            entryThatCitesOurExistingEntry.setField(
+                    StandardField.CITES, toCommaSeparatedString(existingCites));
         }
 
         importHandler.importEntries(entries);
@@ -107,7 +129,8 @@ public class CitationsRelationsTabViewModel {
     }
 
     private List<String> getExistingEntriesFromCiteField(BibEntry entry) {
-        return Arrays.stream(entry.getField(StandardField.CITES).orElse("").split(",")).collect(Collectors.toList());
+        return Arrays.stream(entry.getField(StandardField.CITES).orElse("").split(","))
+                .collect(Collectors.toList());
     }
 
     private String toCommaSeparatedString(List<String> citeentries) {

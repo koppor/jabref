@@ -1,20 +1,19 @@
 package org.jabref.gui.util;
 
-import java.util.Optional;
-
-import org.jabref.gui.StateManager;
-import org.jabref.gui.frame.OpenConsoleAction;
-import org.jabref.gui.preferences.GuiPreferences;
-import org.jabref.model.database.BibDatabaseContext;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.jabref.gui.StateManager;
+import org.jabref.gui.frame.OpenConsoleAction;
+import org.jabref.gui.preferences.GuiPreferences;
+import org.jabref.model.database.BibDatabaseContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
 
 class OpenConsoleActionTest {
 
@@ -39,7 +38,8 @@ class OpenConsoleActionTest {
 
     @Test
     void newActionGetsSuppliedDatabase() {
-        OpenConsoleAction action = new OpenConsoleAction(() -> other, stateManager, preferences, null);
+        OpenConsoleAction action =
+                new OpenConsoleAction(() -> other, stateManager, preferences, null);
         action.execute();
         verify(stateManager, never()).getActiveDatabase();
         verify(other, times(1)).getDatabasePath();
@@ -47,7 +47,8 @@ class OpenConsoleActionTest {
 
     @Test
     void actionDefaultsToCurrentDatabase() {
-        OpenConsoleAction action = new OpenConsoleAction(() -> null, stateManager, preferences, null);
+        OpenConsoleAction action =
+                new OpenConsoleAction(() -> null, stateManager, preferences, null);
         action.execute();
         verify(stateManager, times(1)).getActiveDatabase();
         verify(current, times(1)).getDatabasePath();

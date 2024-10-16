@@ -1,10 +1,10 @@
 package org.jabref.gui.autocompleter;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import static org.jabref.gui.autocompleter.AutoCompleterUtil.getRequest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import javafx.collections.FXCollections;
 
@@ -12,15 +12,14 @@ import org.jabref.logic.journals.JournalAbbreviationRepository;
 import org.jabref.model.database.BibDatabase;
 import org.jabref.model.entry.BibEntry;
 import org.jabref.model.entry.field.StandardField;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.jabref.gui.autocompleter.AutoCompleterUtil.getRequest;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 class FieldValueSuggestionProviderTest {
 
@@ -35,7 +34,9 @@ class FieldValueSuggestionProviderTest {
 
     @Test
     void initAutoCompleterWithNullFieldThrowsException() {
-        assertThrows(NullPointerException.class, () -> new FieldValueSuggestionProvider(null, new BibDatabase()));
+        assertThrows(
+                NullPointerException.class,
+                () -> new FieldValueSuggestionProvider(null, new BibDatabase()));
     }
 
     @Test
@@ -66,11 +67,16 @@ class FieldValueSuggestionProviderTest {
     @Test
     void completeOnIgnoredFieldReturnsNothing() {
         AutoCompletePreferences autoCompletePreferences = mock(AutoCompletePreferences.class);
-        JournalAbbreviationRepository journalAbbreviationRepository = mock(JournalAbbreviationRepository.class);
-        when(autoCompletePreferences.getCompleteFields()).thenReturn(FXCollections.observableSet(Set.of(StandardField.AUTHOR)));
-        SuggestionProviders suggestionProviders = new SuggestionProviders(database, journalAbbreviationRepository, autoCompletePreferences);
+        JournalAbbreviationRepository journalAbbreviationRepository =
+                mock(JournalAbbreviationRepository.class);
+        when(autoCompletePreferences.getCompleteFields())
+                .thenReturn(FXCollections.observableSet(Set.of(StandardField.AUTHOR)));
+        SuggestionProviders suggestionProviders =
+                new SuggestionProviders(
+                        database, journalAbbreviationRepository, autoCompletePreferences);
 
-        SuggestionProvider<String> autoCompleter = (SuggestionProvider<String>) suggestionProviders.getForField(StandardField.TITLE);
+        SuggestionProvider<String> autoCompleter =
+                (SuggestionProvider<String>) suggestionProviders.getForField(StandardField.TITLE);
 
         BibEntry entry = new BibEntry();
         entry.setField(StandardField.TITLE, "testValue");
@@ -116,7 +122,9 @@ class FieldValueSuggestionProviderTest {
         entry.setField(StandardField.TITLE, "testKey");
         database.insertEntry(entry);
 
-        assertThrows(NullPointerException.class, () -> autoCompleter.provideSuggestions(getRequest(null)));
+        assertThrows(
+                NullPointerException.class,
+                () -> autoCompleter.provideSuggestions(getRequest(null)));
     }
 
     @Test

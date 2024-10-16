@@ -13,9 +13,10 @@ public class LibraryPreferences {
     private final BooleanProperty alwaysReformatOnSave;
     private final BooleanProperty autoSave;
 
-    public LibraryPreferences(BibDatabaseMode defaultBibDatabaseMode,
-                              boolean alwaysReformatOnSave,
-                              boolean autoSave) {
+    public LibraryPreferences(
+            BibDatabaseMode defaultBibDatabaseMode,
+            boolean alwaysReformatOnSave,
+            boolean autoSave) {
         this.defaultBibDatabaseMode = new SimpleObjectProperty<>(defaultBibDatabaseMode);
         this.alwaysReformatOnSave = new SimpleBooleanProperty(alwaysReformatOnSave);
         this.autoSave = new SimpleBooleanProperty(autoSave);

@@ -1,9 +1,9 @@
 package org.jabref.logic.l10n;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
 
 class EncodingsTest {
     @Test
