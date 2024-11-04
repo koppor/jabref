@@ -289,7 +289,6 @@ public class EntryEditor extends BorderPane {
         tabs.add(new SciteTab(preferences, taskExecutor, dialogService));
         tabs.add(new CitationRelationsTab(dialogService, databaseContext,
                 undoManager, stateManager, fileMonitor, preferences, libraryTab, taskExecutor, bibEntryTypesManager));
-        tabs.add(new RelatedArticlesTab(buildInfo, databaseContext, preferences, dialogService, taskExecutor));
         sourceTab = new SourceTab(
                 databaseContext,
                 undoManager,
@@ -333,7 +332,6 @@ public class EntryEditor extends BorderPane {
         entryEditorTabList.remove(FileAnnotationTab.NAME);
         entryEditorTabList.remove(SciteTab.NAME);
         entryEditorTabList.remove(CitationRelationsTab.NAME);
-        entryEditorTabList.remove(RelatedArticlesTab.NAME);
         // SourceTab is not listed, because it has different names for BibTeX and biblatex mode
         entryEditorTabList.remove(LatexCitationsTab.NAME);
         entryEditorTabList.remove(FulltextSearchResultsTab.NAME);

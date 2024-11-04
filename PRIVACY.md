@@ -68,7 +68,6 @@ These third-party services are the following:
 | [National Library of Medicine](https://www.ncbi.nlm.nih.gov/)                                                                | <https://www.nlm.nih.gov/web_policies.html>                                                   |
 | [MathSciNet](http://www.ams.org/mathscinet)                                                                                  | <https://www.ams.org/about-us/privacy>                                                        |
 | [mEDRA](https://www.medra.org/)                                                                                              | <https://www.medra.org/stdoc/en/Servizio_DOI_Informativa_ENG.pdf>                             |
-| [Mr. DLib](https://mr-dlib.org/) [1]                                                                                         | <https://support.dataverse.harvard.edu/harvard-dataverse-privacy-policy>                      |
 | [OpenAI](https://openai.com/)                                                                                                | <https://openai.com/policies/privacy-policy/>                                                 |
 | [Openlibrary](https://openlibrary.org)                                                                                       | <https://archive.org/about/terms.php>                                                         |
 | [ResearchGate](https://www.researchgate.net/)                                                                                | <https://www.researchgate.net/privacy-policy>                                                 |
@@ -78,8 +77,6 @@ These third-party services are the following:
 | [The SAO/NASA Astrophysics Data System](https://ui.adsabs.harvard.edu/)                                                      | <https://ui.adsabs.harvard.edu/help/privacy/>                                                 |
 | [Unpaywall](https://unpaywall.org/)                                                                                          | <https://unpaywall.org/legal/privacy>                                                         |
 | [zbMATH Open](https://www.zbmath.org)                                                                                        | <https://zbmath.org/privacy-policy/>                                                          |
-
-[1]: *Note: The Mr. DLib service is used for the related articles tab in the entry editor and collects also your language, your browser and operating system (*disabled* by default).*
 
 ## JabRef Browser Extension
 

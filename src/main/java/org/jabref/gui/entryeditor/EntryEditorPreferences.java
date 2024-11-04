@@ -39,7 +39,6 @@ public class EntryEditorPreferences {
     private final MapProperty<String, Set<Field>> entryEditorTabList;
     private final MapProperty<String, Set<Field>> defaultEntryEditorTabList;
     private final BooleanProperty shouldOpenOnNewEntry;
-    private final BooleanProperty shouldShowRecommendationsTab;
     private final BooleanProperty shouldShowAiSummaryTab;
     private final BooleanProperty shouldShowAiChatTab;
     private final BooleanProperty shouldShowLatexCitationsTab;
@@ -56,7 +55,6 @@ public class EntryEditorPreferences {
     public EntryEditorPreferences(Map<String, Set<Field>> entryEditorTabList,
                                   Map<String, Set<Field>> defaultEntryEditorTabList,
                                   boolean shouldOpenOnNewEntry,
-                                  boolean shouldShowRecommendationsTab,
                                   boolean shouldShowAiSummaryTab,
                                   boolean shouldShowAiChatTab,
                                   boolean shouldShowLatexCitationsTab,
@@ -73,7 +71,6 @@ public class EntryEditorPreferences {
         this.entryEditorTabList = new SimpleMapProperty<>(FXCollections.observableMap(entryEditorTabList));
         this.defaultEntryEditorTabList = new SimpleMapProperty<>(FXCollections.observableMap(defaultEntryEditorTabList));
         this.shouldOpenOnNewEntry = new SimpleBooleanProperty(shouldOpenOnNewEntry);
-        this.shouldShowRecommendationsTab = new SimpleBooleanProperty(shouldShowRecommendationsTab);
         this.shouldShowAiSummaryTab = new SimpleBooleanProperty(shouldShowAiSummaryTab);
         this.shouldShowAiChatTab = new SimpleBooleanProperty(shouldShowAiChatTab);
         this.shouldShowLatexCitationsTab = new SimpleBooleanProperty(shouldShowLatexCitationsTab);
@@ -114,18 +111,6 @@ public class EntryEditorPreferences {
 
     public void setShouldOpenOnNewEntry(boolean shouldOpenOnNewEntry) {
         this.shouldOpenOnNewEntry.set(shouldOpenOnNewEntry);
-    }
-
-    public boolean shouldShowRecommendationsTab() {
-        return shouldShowRecommendationsTab.get();
-    }
-
-    public BooleanProperty shouldShowRecommendationsTabProperty() {
-        return shouldShowRecommendationsTab;
-    }
-
-    public void setShouldShowRecommendationsTab(boolean shouldShowRecommendationsTab) {
-        this.shouldShowRecommendationsTab.set(shouldShowRecommendationsTab);
     }
 
     public boolean shouldShowAiSummaryTab() {

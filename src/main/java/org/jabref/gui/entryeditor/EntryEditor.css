@@ -112,10 +112,6 @@
     -fx-fill: -fx-text-background-color;
 }
 
-.recommendation-item {
-    -fx-padding: 0 0 0 20;
-}
-
 #bibtexSourceCodeArea {
     -fx-padding: 4 4 4 4;
     -fx-background-color: -fx-control-inner-background;

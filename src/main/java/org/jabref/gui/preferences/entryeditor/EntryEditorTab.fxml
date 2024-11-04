@@ -25,13 +25,6 @@
             fx:id="autoLinkFilesEnabled"
             text="%Automatically search and show unlinked files in the entry editor"/>
 
-    <CheckBox fx:id="enableRelatedArticlesTab" text="%Show tab 'Related articles'"/>
-    <CheckBox fx:id="acceptRecommendations" text="%Accept recommendations from Mr. DLib"
-              disable="${!enableRelatedArticlesTab.selected}">
-        <padding>
-            <Insets left="20.0"/>
-        </padding>
-    </CheckBox>
     <CheckBox fx:id="enableAiSummaryTab" text="%Show tab 'AI Summary'"/>
     <CheckBox fx:id="enableAiChatTab" text="%Show tab 'AI Chat'"/>
     <CheckBox fx:id="enableLatexCitationsTab" text="%Show tab 'LaTeX citations'"/>

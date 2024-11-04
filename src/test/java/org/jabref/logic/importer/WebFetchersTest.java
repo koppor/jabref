@@ -15,7 +15,6 @@ import org.jabref.logic.importer.fetcher.GoogleScholar;
 import org.jabref.logic.importer.fetcher.GvkFetcher;
 import org.jabref.logic.importer.fetcher.IssnFetcher;
 import org.jabref.logic.importer.fetcher.JstorFetcher;
-import org.jabref.logic.importer.fetcher.MrDLibFetcher;
 import org.jabref.logic.importer.fetcher.isbntobibtex.DoiToBibtexConverterComIsbnFetcher;
 import org.jabref.logic.importer.fetcher.isbntobibtex.EbookDeIsbnFetcher;
 import org.jabref.logic.importer.fetcher.isbntobibtex.OpenLibraryIsbnFetcher;
@@ -109,7 +108,6 @@ class WebFetchersTest {
             Set<Class<?>> expected = new HashSet<>(controlClasses.loadClasses());
 
             expected.remove(EntryBasedParserFetcher.class);
-            expected.remove(MrDLibFetcher.class);
             assertEquals(expected, getClasses(idFetchers));
         }
     }
